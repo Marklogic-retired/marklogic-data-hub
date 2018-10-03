@@ -16,6 +16,7 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
@@ -23,12 +24,16 @@ import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployForestsCommand;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.mgmt.PayloadParser;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.JsonNodeUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +62,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     private int undoSortOrder;
 
+    private ObjectMapper mapper;
+
     public DeployHubDatabaseCommand(HubConfig config, String databaseFilename) {
+        mapper = new ObjectMapper();
         setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES);
         setUndoSortOrder(SortOrderConstants.DELETE_OTHER_DATABASES);
         this.hubConfig = config;
@@ -80,10 +88,31 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         String payload = buildPayload(context);
         if (payload != null) {
             DatabaseManager dbMgr = new DatabaseManager(context.getManageClient());
-            SaveReceipt receipt = dbMgr.save(payload);
-            int forestCount = determineForestCountPerHost(payload, context);
-            if (forestCount > 0) {
-                buildDeployForestsCommand(payload, receipt, context).execute(context);
+            try {
+                SaveReceipt receipt = dbMgr.save(payload);
+                int forestCount = determineForestCountPerHost(payload, context);
+                if (forestCount > 0) {
+                    buildDeployForestsCommand(payload, receipt, context).execute(context);
+                }
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+                    // assume we're in a DHS environment, where we cannot send keys with database configurations.
+                    ObjectNode payloadJson = null;
+                    try {
+                        payloadJson = (ObjectNode) mapper.readTree(payload);
+                    } catch (IOException e1) {
+                        throw new DataHubConfigurationException(e);
+                    }
+                    // for DHS we have to remove some keys
+                    logger.warn("Deploying indexes only to a provisioned environment");
+                    payloadJson.remove("schema-database");
+                    payloadJson.remove("triggers-database");
+                    SaveReceipt receipt = dbMgr.save(payload);
+                    // no forest deploy required for DHS
+                }
+                else {
+                    throw (e);
+                }
             }
         }
     }
@@ -133,12 +162,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         if (logger.isInfoEnabled()) {
             logger.info("Merging JSON files at locations: " + files);
         }
-        ObjectNode mergedFile = (ObjectNode) JsonNodeUtil.mergeJsonFiles(files);
-        // for DHS we have to remove some keys
-        // FIXME for on-prem this will disrupt bootstrapping
-        mergedFile.remove("schema-database");
-        mergedFile.remove("triggers-database");
-        return mergedFile;
+        return JsonNodeUtil.mergeJsonFiles(files);
     }
 
     protected DeployForestsCommand buildDeployForestsCommand(String dbPayload, SaveReceipt receipt,
