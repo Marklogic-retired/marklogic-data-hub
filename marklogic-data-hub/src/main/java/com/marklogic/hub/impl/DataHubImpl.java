@@ -79,6 +79,7 @@ public class DataHubImpl implements DataHub {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private String finalFile = "final-database.json";
 	private String stagingFile = "staging-database.json";
+	private String jobsFile = "job-database.json";
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
@@ -536,11 +537,11 @@ public class DataHubImpl implements DataHub {
         List<Command> finalDBCommand = new ArrayList<>();
         finalDBCommand.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
         deployer.setFinalCommandsList(finalDBCommand);
-        //deployer.deploy(finalConfig);
-
+        
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         List<Command> stagingDBCommand = new ArrayList<>();
         stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
+        stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, jobsFile));
         deployer.setStagingCommandsList(stagingDBCommand);
 
         deployer.deployAll(finalConfig, stagingConfig);
