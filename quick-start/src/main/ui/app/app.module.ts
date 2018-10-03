@@ -31,7 +31,7 @@ import { FolderBrowserComponent } from './folder-browser/folder-browser.componen
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
-import { MlErrorComponent } from './ml-error';
+import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
@@ -70,7 +70,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
-import {ThemeModule} from "./theme/theme.module";
+import {ThemeModule} from "./shared/components/theme/theme.module";
 
 @NgModule({
   declarations: [

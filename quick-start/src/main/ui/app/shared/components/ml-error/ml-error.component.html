@@ -4,7 +4,7 @@
   <div class="stack">
     <div class="header">Stack</div>
     <ul class="stack-list">
-      <li *ngFor="let stack of error.stackFrames"
+      <li *ngFor="let stack of error.stacks"
         (click)=setActiveStack(stack)
         [ngClass]="{'active': isActiveStack(stack)}">
         <i class="fa fa-caret-right" [ngClass]="{ 'collapsed' : !isActiveStack(stack) }"></i>

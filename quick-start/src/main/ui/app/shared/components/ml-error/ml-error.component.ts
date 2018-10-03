@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-
 import { MlError, MlErrorStack } from './ml-error';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-ml-error',
