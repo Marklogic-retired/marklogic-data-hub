@@ -21,8 +21,6 @@ When deploying into a DHS environment, usernames, passwords, and roles are defin
 * `mlSecurityUsername` and `mlSecurityPassword`
 * `mlHubUserRole`, `mlHubUserName`, and `mlHubUserPassword`
 
-`hub-admin-role`, or . This user is provisioned by the administrator
-
 ## Required Modules Database Permissions
 DHF and custom code deployed to the DHS modules database must be inserted into the database with a specific set of permissions that fits the DHS security model. Therefore, your `gradle.properties` file must include the following when deploying into a Data Hub Service environment:
 ```
