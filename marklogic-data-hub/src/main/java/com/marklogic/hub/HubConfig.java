@@ -315,6 +315,12 @@ public interface HubConfig {
     Boolean getIsHostLoadBalancer();
 
     /**
+     * Signifies if we are dealing with a provisioned environment.
+     * @return a Boolean.
+     */
+    Boolean getIsProvisionedEnvironment();
+
+    /**
      * Returns the path for the custom forests definition
      * @return path where the custom forests are as string
      */
