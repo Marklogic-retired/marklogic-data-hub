@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -107,7 +108,11 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
                     logger.warn("Deploying indexes only to a provisioned environment");
                     payloadJson.remove("schema-database");
                     payloadJson.remove("triggers-database");
-                    SaveReceipt receipt = dbMgr.save(payload);
+                    try {
+                        SaveReceipt receipt = dbMgr.save(mapper.writeValueAsString(payloadJson));
+                    } catch (JsonProcessingException e1) {
+                        throw new DataHubConfigurationException(e1);
+                    }
                     // no forest deploy required for DHS
                 }
                 else {
