@@ -24,6 +24,7 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommandComparator;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -48,7 +49,7 @@ public class DeployHubDatabasesCommand extends AbstractUndoableCommand {
 
     private HubConfig hubConfig;
     private final String prefix = "staging";
-    
+
     public DeployHubDatabasesCommand(HubConfig config) {
         this.hubConfig = config;
         setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES);
@@ -104,7 +105,7 @@ public class DeployHubDatabasesCommand extends AbstractUndoableCommand {
             }
             ignore.add(prefix + "-" + DeploySchemasDatabaseCommand.DATABASE_FILENAME);
             ignore.add(prefix + "-" + DeployTriggersDatabaseCommand.DATABASE_FILENAME);
-            
+
             ResourceFilenameFilter filter = new ResourceFilenameFilter(ignore);
             setResourceFilenameFilter(filter);
 

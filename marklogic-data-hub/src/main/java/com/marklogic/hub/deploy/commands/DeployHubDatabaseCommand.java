@@ -16,6 +16,7 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
@@ -132,7 +133,12 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         if (logger.isInfoEnabled()) {
             logger.info("Merging JSON files at locations: " + files);
         }
-        return JsonNodeUtil.mergeJsonFiles(files);
+        ObjectNode mergedFile = (ObjectNode) JsonNodeUtil.mergeJsonFiles(files);
+        // for DHS we have to remove some keys
+        // FIXME for on-prem this will disrupt bootstrapping
+        mergedFile.remove("schema-database");
+        mergedFile.remove("triggers-database");
+        return mergedFile;
     }
 
     protected DeployForestsCommand buildDeployForestsCommand(String dbPayload, SaveReceipt receipt,
