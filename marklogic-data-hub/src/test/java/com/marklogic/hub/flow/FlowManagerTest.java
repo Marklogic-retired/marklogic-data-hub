@@ -109,7 +109,7 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add("data-hub-role", READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getHubAdminConfig().getHubRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -118,7 +118,7 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add("data-hub-role", READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getHubAdminConfig().getHubRoleName(), READ, UPDATE, EXECUTE);
         installFinalDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installFinalDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
