@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -33,7 +33,7 @@ class CreateEntityTask extends HubTask {
         def projectDir = getHubConfig().projectDir
         println "entityName: " + entityName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
+        Scaffolding scaffolding = Scaffolding.create(projectDir, getStagingClient())
         scaffolding.createEntity(entityName)
     }
 }

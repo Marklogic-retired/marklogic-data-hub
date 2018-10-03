@@ -23,10 +23,10 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Tag;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -53,7 +53,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
@@ -67,7 +67,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private void updateManagerEntity() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path managerDir = scaffolding.getEntityDir("manager");
         assertTrue(managerDir.toFile().exists());
         File targetFile = managerDir.resolve("manager.entity.json").toFile();
@@ -213,6 +213,7 @@ public class EntityManagerTest extends HubTestBase {
 
 
     @Test
+    @Tag("NoAWS")
     public void testDeployPiiConfigurations() throws IOException {
         installEntities();
 

@@ -1,11 +1,11 @@
 # SSL Example
 This example demonstrates how to enable SSL for your entire MarkLogic instance. This includes the builtin AppServers and your Data Hub Appservers.
 
-For additional information on SSL and Appservers see [Chapter 8 of the Security Guide](http://docs.marklogic.com/guide/security/SSL).
+For additional information on SSL and Appservers see [Chapter 9 of the Security Guide](http://docs.marklogic.com/guide/security/SSL).
 
 # What's required
 ### A certificate template
-We provide one for you in `user-config/security/certificate-templates/my-template.xml`
+We provide one for you in `src/main/ml-config/security/certificate-templates/my-template.xml`
 ```xml
 <certificate-template-properties xmlns="http://marklogic.com/manage">
   <template-name>dhf-cert</template-name>
@@ -28,7 +28,7 @@ We provide one for you in `user-config/security/certificate-templates/my-templat
 
 ### Set the certificate Template for each appserver
 We do this for you in 
-`user-config/servers/*-server.json`
+`src/main/ml-config/servers/*-server.json`
 
 ```json
 {
@@ -70,7 +70,7 @@ mlPassword=
 ```
 
 ### Step 2: Enable SSL for builtin AppServers
-First you should enable SSL for the builtin Appservers. You can do this manually via the instructions in [Chapter 8 of the Security Guide](http://docs.marklogic.com/guide/security/SSL) or you can use the shortcut we provide in this example.
+First you should enable SSL for the builtin Appservers. You can do this manually via the instructions in [Chapter 9 of the Security Guide](http://docs.marklogic.com/guide/security/SSL) or you can use the shortcut we provide in this example.
 
 To use the shortcut simply run:
 
@@ -106,4 +106,4 @@ gradle hubCreateInputFlow -PentityName=myNewEntity -PflowName=myInputFlow
 gradle hubCreateHarmonizeFlow -PentityName=myNewEntity -PflowName=myHarmonizationFlow
 ```
 
-For a complete list of gradle tasks, check here: [https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks)
+For a complete list of gradle tasks, check here: [https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks](https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks)

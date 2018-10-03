@@ -27,7 +27,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 public class E2ETestsRequestHelper extends HubTestBase {
-	
+
 	private Cookie requestCookie;
 	private int harmonizeFlowNameCount = 1;
 	private int mapNameCount = 1;
@@ -35,22 +35,22 @@ public class E2ETestsRequestHelper extends HubTestBase {
 	private String flowName;
 	private String sessionID;
 	static final protected Logger logger = LoggerFactory.getLogger(E2ETestsRequestHelper.class);
-	
+
 	public Response initilizeProjectConfiguration() {
 		String projectPath = new File(HubTestBase.PROJECT_PATH).getAbsolutePath();
-		Response projectInitResponse = 
+		Response projectInitResponse =
 				given()
 					.contentType("application/x-www-form-urlencoded")
 					.queryParam("path", projectPath)
 				.when()
 					.post("/api/projects/");
 		createLoginCredentials(projectInitResponse);
-		
+
 		return projectInitResponse;
 	}
 
 	public String doLogin() {
-		Response loginResponse = 
+		Response loginResponse =
 				given()
 					.body(loginInfo)
 				.when()
@@ -58,49 +58,60 @@ public class E2ETestsRequestHelper extends HubTestBase {
 		if(loginResponse.statusCode() == 200) {
 			sessionID = StringUtils.substringBetween(loginResponse.getHeader("Set-Cookie"), "JSESSIONID=", ";");
 		}
-		
+
 		// building cookie to use for subsequent endpoint requests
 		buildCookie();
-		
+
 		return sessionID;
 	}
-	
-	public Response createEntity(String createEntityJsonBody, String entityName) {
-		Response createEntityResponse = 
+
+    public Response createEntity(String createEntityJsonBody, String entityName) {
+        Response createEntityResponse =
+            given()
+                .cookie(requestCookie)
+                .contentType(ContentType.JSON)
+                .body(createEntityJsonBody).
+                when()
+                .put("/api/current-project/entities/"+entityName);
+
+        return createEntityResponse;
+    }
+
+	public Response deleteEntity(String entityName) {
+		Response createEntityResponse =
 				given()
 					.cookie(requestCookie)
 					.contentType(ContentType.JSON)
-					.body(createEntityJsonBody).
-				when()
-					.put("/api/current-project/entities/"+entityName);
-		
+				.when()
+					.delete("/api/current-project/entities/"+entityName);
+
 		return createEntityResponse;
 	}
-	
+
 	public Response getAllEntities() {
-		Response getEnitiesResponse = 
+		Response getEnitiesResponse =
 				given()
 					.cookie(requestCookie)
 				.when()
 					.get("/api/current-project/entities/");
-		
+
 		return getEnitiesResponse;
 	}
-	
+
 	public Response getDocStats() {
-		Response statsResponse = 
+		Response statsResponse =
 				given()
 					.cookie(requestCookie)
 				.when()
 					.get("/api/current-project/stats");
-		
+
 		return statsResponse;
 	}
-	
+
 	public Response createFlow(String entityName, String flowType, DataFormat dataFormat, CodeFormat codeFormat,
 			boolean useEsModel, String mappingName) {
 		FlowModel flowModel = createFlowModel(entityName, flowType, dataFormat, codeFormat, useEsModel, mappingName);
-		Response createFlowResponse = 
+		Response createFlowResponse =
 				given()
 					.contentType(ContentType.JSON)
 				    .cookie(requestCookie)
@@ -109,10 +120,10 @@ public class E2ETestsRequestHelper extends HubTestBase {
 					.pathParam("flowType", flowType)
 				.when()
 					.post("/api/current-project/entities/{entityName}/flows/{flowType}");
-		
+
 		return createFlowResponse;
 	}
-	
+
 	public Response runFlow(JsonNode bodyParams, String entityName, FlowType flowType) {
 		String runFlowPostURI = "";
 		if(flowType.toString().equalsIgnoreCase("input")) {
@@ -120,8 +131,8 @@ public class E2ETestsRequestHelper extends HubTestBase {
 		} else {
 			runFlowPostURI = "/api/current-project/entities/{entityName}/flows/harmonize/{flowName}/run";
 		}
-		
-		Response runFlowResponse = 
+
+		Response runFlowResponse =
 				given()
 					.cookie(requestCookie)
 					.contentType(ContentType.JSON)
@@ -130,12 +141,12 @@ public class E2ETestsRequestHelper extends HubTestBase {
 					.pathParam("flowName", flowName).
 				when()
 					.post(runFlowPostURI);
-		
+
 		return runFlowResponse;
 	}
-	
+
 	public Response deleteFlow(String entityName, String flowName, String flowType) {
-		Response deleteFlowResponse = 
+		Response deleteFlowResponse =
 				given()
 					.cookie(requestCookie)
 					.contentType(ContentType.JSON)
@@ -144,23 +155,23 @@ public class E2ETestsRequestHelper extends HubTestBase {
 					.pathParam("flowType", flowType).
 				when()
 					.delete("/api/current-project/entities/{entityName}/flows/{flowName}/{flowType}");
-					
+
 		return deleteFlowResponse;
 	}
-	
+
 	public Response getMap(String mapName) {
-		Response getMapResponse = 
+		Response getMapResponse =
 				given()
 					.cookie(requestCookie)
 					.pathParam("mapName", mapName)
 				.when()
 					.get("/api/current-project/mappings/{mapName}");
-		
+
 		return getMapResponse;
 	}
 
 	public Response getMapNames() {
-		Response getMapNamesResponse = 
+		Response getMapNamesResponse =
 				given()
 					.cookie(requestCookie)
 				.when()
@@ -170,7 +181,7 @@ public class E2ETestsRequestHelper extends HubTestBase {
 	}
 
 	public Response getMaps() {
-		Response getAllMapsResponse = 
+		Response getAllMapsResponse =
 				given()
 					.cookie(requestCookie)
 				.when()
@@ -178,9 +189,9 @@ public class E2ETestsRequestHelper extends HubTestBase {
 
 		return getAllMapsResponse;
 	}
-	
+
 	public Response createMap(String mapName, JsonNode mapJsonNode) {
-		Response createMapResponse = 
+		Response createMapResponse =
 				given()
 					.contentType(ContentType.JSON)
 				    .cookie(requestCookie)
@@ -188,12 +199,12 @@ public class E2ETestsRequestHelper extends HubTestBase {
 					.pathParam("mapName", mapName)
 				.when()
 					.post("/api/current-project/mappings/{mapName}");
-		
+
 		return createMapResponse;
 	}
-	
+
 	public Response deleteMap(String mapName) {
-		Response deleteMapResponse = 
+		Response deleteMapResponse =
 				given()
 				.contentType(ContentType.JSON)
 			    .cookie(requestCookie)
@@ -206,34 +217,34 @@ public class E2ETestsRequestHelper extends HubTestBase {
 
 	public Response getJobs(long start, long count) {
 		JobQuery jobQuery = buildJobQuery();
-		Response getJobsResponse = 
+		Response getJobsResponse =
 				given()
 					.contentType(ContentType.JSON)
 				    .cookie(requestCookie)
 					.body(jobQuery)
 				.when()
 					.post("/api/jobs");
-		
+
 		return getJobsResponse;
 	}
-	
+
 	public Response clearAllDatabases() {
-		Response clearDbResponse = 
+		Response clearDbResponse =
 				given()
 					.contentType(ContentType.JSON)
 				    .cookie(requestCookie)
 				.when()
 					.post("/api/current-project/clear-all");
-		
+
 		return clearDbResponse;
 	}
-	
-	public JsonNode generateMLCPOptions(String inputPath, String basePath, String entityName, String mlcpPath, 
-			CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options) 
+
+	public JsonNode generateMLCPOptions(String inputPath, String basePath, String entityName, String mlcpPath,
+			CodeFormat codeFormat, DataFormat dataFormat, Map<String, Object> options)
 					throws IOException {
-		
+
 		String optionString = toJsonString(options).replace("\"", "\\\"");
-		
+
 		String optionsJson = "{ " + "\"mlcpPath\":\"" + mlcpPath + "\"," + "\"mlcpOptions\":" +
                 "{" +
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
@@ -251,13 +262,13 @@ public class E2ETestsRequestHelper extends HubTestBase {
                 		+ "mlcp-flow-transform.xqy\\\"\"," + "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/"
                 		+ "mlcp-flow-transform\\\"\",";
         }
-		optionsJson += "\"transform_param\":\"entity-name=" + entityName + ",flow-name=" + flowName + ",options=" 
+		optionsJson += "\"transform_param\":\"entity-name=" + entityName + ",flow-name=" + flowName + ",options="
             			+ optionString + "\"" + "}}";
 		JsonNode ipFlowJsonNode = new ObjectMapper().readTree(optionsJson);
-        
+
 		return ipFlowJsonNode;
 	}
-	
+
 	public String toJsonString(Object value) {
         try {
             return new ObjectMapper().writeValueAsString(value);
@@ -265,11 +276,11 @@ public class E2ETestsRequestHelper extends HubTestBase {
             throw new RuntimeException(e);
         }
     }
-	
+
 	public String getFlowName() {
 		return this.flowName;
 	}
-	
+
 	public void waitForReloadModules() {
 		try {
 			logger.info("Waiting to load modules");
@@ -278,7 +289,7 @@ public class E2ETestsRequestHelper extends HubTestBase {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public String createMapName() {
 		String mapName = "map" + mapNameCount;
 		mapNameCount++;
@@ -297,7 +308,7 @@ public class E2ETestsRequestHelper extends HubTestBase {
 		requestCookie = new Cookie.Builder("JSESSIONID", sessionID).setSecured(true)
 			      .setComment("session id cookie").build();
 	}
-	
+
 	private void createLoginCredentials(Response projectInitResponse) {
 		JsonPath projectInitJson = projectInitResponse.jsonPath();
 		loginInfo.projectId = projectInitJson.getInt("id");
@@ -305,8 +316,8 @@ public class E2ETestsRequestHelper extends HubTestBase {
 		loginInfo.username = user;
 		loginInfo.password = password;
 	}
-	
-	private FlowModel createFlowModel(String entityName, String flowType, DataFormat dataFormat, 
+
+	private FlowModel createFlowModel(String entityName, String flowType, DataFormat dataFormat,
 			CodeFormat codeFormat, boolean useEsModel, String mappingName) {
 		FlowModel flowModel = new FlowModel();
 		flowModel.dataFormat = dataFormat;
@@ -318,7 +329,7 @@ public class E2ETestsRequestHelper extends HubTestBase {
 		this.flowName = flowModel.flowName;
 		return flowModel;
 	}
-	
+
 	private JobQuery buildJobQuery() {
 		JobQuery jobQuery = new JobQuery();
 		return jobQuery;

@@ -212,7 +212,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
 
-        QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .withJobId(jobId)
@@ -287,16 +287,6 @@ public class FlowRunnerImpl implements FlowRunner {
                 failedBatches.addAndGet(1);
                 failedEvents.addAndGet(batchSize);
             });
-
-
-        if (hubConfig.getLoadBalancerHosts() != null && hubConfig.getLoadBalancerHosts().length > 0){
-            tempQueryBatcher = tempQueryBatcher.withForestConfig(
-                new FilteredForestConfiguration(
-                    dataMovementManager.readForestConfig()
-                ).withWhiteList(hubConfig.getLoadBalancerHosts())
-            );
-        }
-        QueryBatcher queryBatcher = tempQueryBatcher;
 
 
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);

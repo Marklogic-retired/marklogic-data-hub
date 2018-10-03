@@ -121,7 +121,9 @@ public class HubConfigImpl implements HubConfig {
     private String mlUsername = null;
     private String mlPassword = null;
 
-    private String[] loadBalancerHosts;
+    private String loadBalancerHost;
+
+    private Boolean isHostLoadBalancer;
 
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
     protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
@@ -778,11 +780,17 @@ public class HubConfigImpl implements HubConfig {
 
 
     @JsonIgnore
-    @Override  public String[] getLoadBalancerHosts() {
-        return loadBalancerHosts;
+    @Override  public String getLoadBalancerHost() {
+        return loadBalancerHost;
     }
-    public void setLoadBalancerHosts(String[] loadBalancerHosts) {
-        this.loadBalancerHosts = loadBalancerHosts;
+
+    @Override
+    public Boolean getIsHostLoadBalancer(){
+        return isHostLoadBalancer;
+    }
+
+    public void setLoadBalancerHost(String loadBalancerHost) {
+        this.loadBalancerHost = loadBalancerHost;
     }
 
     @Override public String getCustomForestPath() {
@@ -913,9 +921,16 @@ public class HubConfigImpl implements HubConfig {
             mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
             mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
 
+            isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer", false);
+            String mlHost = getEnvPropString(environmentProperties, "mlHost", null);
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (lbh != null && lbh.length() > 0) {
-                loadBalancerHosts = lbh.split(",");
+            if (isHostLoadBalancer) {
+                if (mlHost != null && lbh != null && !mlHost.equals(lbh)){
+                    throw new DataHubConfigurationException("mlLoadBalancerHosts must be the same as mlHost");
+                }
+                else {
+                    loadBalancerHost = mlHost;
+                }
             }
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
@@ -963,24 +978,115 @@ public class HubConfigImpl implements HubConfig {
     }
 
     private DatabaseClient newStagingClient(String dbName) {
-        AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
-        config.setDatabase(dbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        if (isHostLoadBalancer) {
+            return newStagingDbClientForLoadBalancerHost(dbName);
+        }
+        else {
+            AppConfig appConfig = getStagingAppConfig();
+            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+            config.setDatabase(dbName);
+            config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+            config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+            config.setSslContext(stagingSslContext);
+            config.setCertFile(stagingCertFile);
+            config.setCertPassword(stagingCertPassword);
+            config.setExternalName(stagingExternalName);
+            config.setTrustManager(stagingTrustManager);
+            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        }
     }
 
     @Override
     // this method uses STAGING appserver but FINAL database.
     // it's only use is for reverse flows, which need to use staging modules.
     public DatabaseClient newReverseFlowClient() {
-        return newStagingClient(finalDbName);
+        if (isHostLoadBalancer) {
+            return newStagingDbClientForLoadBalancerHost(finalDbName);
+        } else {
+            return newStagingClient(finalDbName);
+        }
+    }
+
+    public DatabaseClient newStagingDbClientForLoadBalancerHost(String database){
+        return getDatabaseClientForLoadBalancerHost(stagingAuthMethod, stagingTrustManager, stagingSslHostnameVerifier, stagingCertFile, stagingCertPassword, stagingSslContext, stagingExternalName, stagingPort, database);
+
+    }
+
+    private DatabaseClient newJobDbClientForLoadBalancerHost(){
+        return getDatabaseClientForLoadBalancerHost(jobAuthMethod, jobTrustManager, jobSslHostnameVerifier, jobCertFile, jobCertPassword, jobSslContext, jobExternalName, jobPort, jobDbName);
+
+    }
+
+    private DatabaseClient getDatabaseClientForLoadBalancerHost(String stagingAuthMethod, X509TrustManager stagingTrustManager, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier, String stagingCertFile, String stagingCertPassword, SSLContext stagingSslContext, String stagingExternalName, Integer stagingPort, String stagingDbName)
+    {
+        AppConfig appConfig = getStagingAppConfig();
+
+        DatabaseClientFactory.SecurityContext securityContext;
+
+        SecurityContextType securityContextType = SecurityContextType.valueOf(stagingAuthMethod.toUpperCase());
+
+        if (SecurityContextType.BASIC.equals(securityContextType)) {
+            securityContext = new DatabaseClientFactory.BasicAuthContext(getMlUsername(), getMlPassword());
+        } else if (SecurityContextType.CERTIFICATE.equals(securityContextType)) {
+            X509TrustManager trustManager = stagingTrustManager;
+            DatabaseClientFactory.SSLHostnameVerifier verifier = stagingSslHostnameVerifier;
+
+            String certFile = stagingCertFile;
+            if (certFile != null) {
+                try {
+                    if (stagingCertPassword != null) {
+                        securityContext = new DatabaseClientFactory.CertificateAuthContext(certFile, stagingCertPassword, trustManager);
+                    }
+                    else {
+                        securityContext = new DatabaseClientFactory.CertificateAuthContext(certFile, trustManager);
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException("Unable to build CertificateAuthContext: " + ex.getMessage(), ex);
+                }
+            }
+            else if (verifier != null) {
+                securityContext = new DatabaseClientFactory.CertificateAuthContext(stagingSslContext, verifier, trustManager);
+            }
+            else {
+                securityContext = new DatabaseClientFactory.CertificateAuthContext(stagingSslContext, trustManager);
+
+            }
+        } else if (SecurityContextType.DIGEST.equals(securityContextType)) {
+            securityContext = new DatabaseClientFactory.DigestAuthContext(getMlUsername(), getMlPassword());
+        } else if (SecurityContextType.KERBEROS.equals(securityContextType)) {
+            securityContext = new DatabaseClientFactory.KerberosAuthContext(stagingExternalName);
+        } else if (SecurityContextType.NONE.equals(securityContextType)) {
+            securityContext = null;
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported SecurityContextType: " + securityContextType);
+        }
+
+        if (securityContext != null) {
+            SSLContext sslContext = stagingSslContext;
+            DatabaseClientFactory.SSLHostnameVerifier verifier = stagingSslHostnameVerifier;
+            if (sslContext != null) {
+                securityContext = securityContext.withSSLContext(sslContext, stagingTrustManager);
+            }
+            if (verifier != null) {
+                securityContext = securityContext.withSSLHostnameVerifier(verifier);
+            }
+        }
+
+        String host = appConfig.getHost();
+        int port = stagingPort;
+        String database = stagingDbName;
+
+        if (securityContext == null) {
+            if (database == null) {
+                return DatabaseClientFactory.newClient(host, port, null, DatabaseClient.ConnectionType.GATEWAY);
+            }
+            return DatabaseClientFactory.newClient(host, port, database, null, DatabaseClient.ConnectionType.GATEWAY);
+        }
+        if (database == null) {
+            return DatabaseClientFactory.newClient(host, port, securityContext, DatabaseClient.ConnectionType.GATEWAY);
+        }
+        return DatabaseClientFactory.newClient(host, port, database, securityContext, DatabaseClient.ConnectionType.GATEWAY);
     }
 
     @Override
@@ -999,17 +1105,22 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newJobDbClient() {
-        AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
-        config.setDatabase(jobDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(jobSslHostnameVerifier);
-        config.setSslContext(jobSslContext);
-        config.setCertFile(jobCertFile);
-        config.setCertPassword(jobCertPassword);
-        config.setExternalName(jobExternalName);
-        config.setTrustManager(jobTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        if (isHostLoadBalancer){
+            return newJobDbClientForLoadBalancerHost();
+        }
+        else {
+            AppConfig appConfig = getStagingAppConfig();
+            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
+            config.setDatabase(jobDbName);
+            config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
+            config.setSslHostnameVerifier(jobSslHostnameVerifier);
+            config.setSslContext(jobSslContext);
+            config.setCertFile(jobCertFile);
+            config.setCertPassword(jobCertPassword);
+            config.setExternalName(jobExternalName);
+            config.setTrustManager(jobTrustManager);
+            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        }
     }
 
     public DatabaseClient newTraceDbClient() {

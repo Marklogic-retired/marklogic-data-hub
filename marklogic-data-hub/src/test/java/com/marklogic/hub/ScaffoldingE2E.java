@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub;
 
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -51,12 +50,12 @@ public class ScaffoldingE2E extends HubTestBase {
     @BeforeAll
     public static void setupHub() {
         XMLUnit.setIgnoreWhitespace(true);
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     @BeforeEach
@@ -70,7 +69,7 @@ public class ScaffoldingE2E extends HubTestBase {
     private void installEntity() {
         String entityName = "my-fun-test";
 
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
 
         Path entityDir = scaffolding.getEntityDir(entityName);
         assertFalse(entityDir.toFile().exists(), entityDir.toString() + " should not exist but does");
@@ -95,7 +94,7 @@ public class ScaffoldingE2E extends HubTestBase {
         String entityName = "my-fun-test";
         String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
 
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);

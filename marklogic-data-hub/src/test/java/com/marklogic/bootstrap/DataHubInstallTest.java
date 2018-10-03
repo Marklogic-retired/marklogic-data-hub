@@ -13,92 +13,158 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.core;
+package com.marklogic.bootstrap;
 
+import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.hub.DataHub;
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.util.Versions;
+import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This test should really just be run as part of CD pipeline
+ * or on-demand.  It's the only test that requires setup/teardown
+ * and is not valid in a provisioned environment.
+ */
+@RunWith(JUnitPlatform.class)
 public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
 
     static boolean setupDone=false;
 
-    @Before
+    @BeforeEach
     public void setup() {
         // special case do-one setup.
         XMLUnit.setIgnoreWhitespace(true);
-        // the project dir must be available for uninstall to do anything because it relies on properties file.
+        // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
+
+        if (!setupDone) {
+        	HubProject project =  getHubAdminConfig().getHubProject();
+
+        	//creating directories for adding final schemas/ modules and trigger files
+            Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
+            Path userModulesDir = project.getUserFinalModulesDir();
+            Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
+
+            userSchemasDir.resolve("tde").toFile().mkdirs();
+            userModulesDir.resolve("ext").toFile().mkdirs();
+            userTriggersDir.toFile().mkdirs();
+
+          //creating directories for adding staging schemas/ modules and trigger files
+            Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
+            Path hubModulesDir = project.getHubStagingModulesDir();
+            Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
+
+            hubSchemasDir.resolve("tde").toFile().mkdirs();
+            hubModulesDir.resolve("ext").toFile().mkdirs();
+            hubTriggersDir.toFile().mkdirs();
+            //Copying files to their locations
+            try {
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), userSchemasDir.resolve("tde").toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), userModulesDir.resolve("ext").toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"),  userTriggersDir.toFile());
+
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), hubSchemasDir.resolve("tde").toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), hubModulesDir.resolve("ext").toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"),  hubTriggersDir.toFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        	getDataHub().install(null);
+        	setupDone=true;
+        }
+        afterTelemetryInstallCount = getTelemetryInstallCount();
     }
 
-    //should be removed after DHFPROD-1263 is fixed.
-	private Map<String, Boolean> runPreInstallCheck(){
-		Map<String, Boolean> resp = new HashMap<>();
-		try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.STAGING))) {
-	    	resp.put("stagingPortInUse", true);
-	    }
-	    catch (IOException ignored) {
-	    	resp.put("stagingPortInUse", false);
-	    }
-
-	    try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.FINAL))) {
-	    	resp.put("finalPortInUse", true);
-	    }
-	    catch (IOException ignored) {
-	    	resp.put("finalPortInUse", false);
-	    }
-		return resp;
-	}
 
     @Test
-    @Ignore
+    @Disabled
     public void testTelemetryInstallCount() throws IOException {
-        assertTrue("Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount, afterTelemetryInstallCount > 0);
+        assertTrue(afterTelemetryInstallCount > 0, "Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount);
     }
 
     @Test
+    @Disabled
+    public void testProjectScaffolding() throws IOException {
+    	DatabaseClient stagingTriggersClient = null;
+    	DatabaseClient finalTriggersClient = null;
+
+    	DatabaseClient stagingSchemasClient = null;
+    	DatabaseClient finalSchemasClient = null;
+    	try {
+			stagingTriggersClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME, user, password, stagingAuthMethod);
+			finalTriggersClient  = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, user, password, finalAuthMethod);
+			stagingSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, user, password, stagingAuthMethod);
+			finalSchemasClient  = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, user, password, finalAuthMethod);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+    	//checking if triggers are written
+        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue()==1);
+        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue()==1);
+
+        //checking if modules are written to correct db
+        assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
+
+        assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
+
+        ////checking if tdes are written to correct db
+        Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
+        Document actualXml = stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
+        assertXMLEqual(expectedXml, actualXml);
+        actualXml = finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
+        assertXMLEqual(expectedXml, actualXml);
+    }
+
+    @Test
+    @Disabled
     public void testInstallHubModules() throws IOException {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
 
-        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
-        assertTrue("jobs options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
-        assertTrue("staging options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
-        assertTrue("final options not installed", getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
+        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0, "trace options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0,"jobs options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0, "staging options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0, "final options not installed");
     }
 
     @Test
+    @Disabled
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
     }
 
     @Test
+    @Disabled
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
@@ -225,6 +291,7 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
+    @Disabled
     public void testClearUserModules() throws URISyntaxException {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
@@ -243,4 +310,13 @@ public class DataHubInstallTest extends HubTestBase {
 
     }
 
+    @Test
+    @Disabled
+    public void testAmpLoading() {
+        HubConfig config = getHubAdminConfig();
+        LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand(config);
+        CommandContext commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
+        DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
+        amps.execute(commandContext);
+    }
 }

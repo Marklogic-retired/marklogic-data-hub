@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.collector;
+package com.marklogic.hub_integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.DataMovementManager;
@@ -40,9 +40,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class StreamCollectorTest extends HubTestBase {
 
@@ -88,6 +86,7 @@ public class StreamCollectorTest extends HubTestBase {
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "stream-collector-test/content.xqy");
 
         DataMovementManager stagingDataMovementManager = stagingClient.newDataMovementManager();
+
         WriteBatcher writeBatcher = stagingDataMovementManager.newWriteBatcher()
             .withBatchSize(2000)
             .withThreadCount(8)

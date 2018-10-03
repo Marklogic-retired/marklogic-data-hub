@@ -25,9 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,10 +62,4 @@ public class LoadHubModulesCommandTest extends HubTestBase {
 
     }
 
-
-    @Test
-    public void testAmpLoading() {
-        DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
-        amps.execute(commandContext);
-    }
 }

@@ -13,37 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
-
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
-
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-import org.w3c.dom.Document;
+package com.marklogic.hub_integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,15 +28,32 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.Installer;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.*;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+import org.w3c.dom.Document;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 
 @RunWith(JUnitPlatform.class)
@@ -83,16 +70,16 @@ public class MappingE2E extends HubTestBase {
     private String installDocError;
     private List<String> modelProperties;
     private Scaffolding scaffolding;
-    
+
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     private static boolean isSetup = false;
@@ -105,7 +92,7 @@ public class MappingE2E extends HubTestBase {
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
-            scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+            scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
             scaffolding.createEntity(ENTITY);
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
@@ -167,7 +154,7 @@ public class MappingE2E extends HubTestBase {
 	            }));
 	        }
         });
-        
+
     	for(String mapping: getMappings()) {
 	    	allCombos((codeFormat, dataFormat, flowType, useEs) -> {
 	    		if(useEs && flowType.equals(FlowType.HARMONIZE)) {
@@ -187,20 +174,20 @@ public class MappingE2E extends HubTestBase {
 		                	testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, 1);
 		               }
 		               testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, mapping, version);
-		            	
-		            }));	    		
+
+		            }));
 	    		}
 	    	});
     	}
         return tests;
     }
-    
+
     private List<String> getMappings() {
     	Path mappingDir = getHubAdminConfig().getHubMappingsDir();
     	List<String> allMappings = new ArrayList<>();
     	try {
-    		Files.walk(mappingDir).filter(f->Files.isDirectory(f)).forEach(f -> allMappings.add(f.getFileName().toString()));    		
-			
+    		Files.walk(mappingDir).filter(f->Files.isDirectory(f)).forEach(f -> allMappings.add(f.getFileName().toString()));
+
 		} catch (IOException e) {
 		      throw new RuntimeException(e);
 		}
@@ -208,14 +195,14 @@ public class MappingE2E extends HubTestBase {
     	allMappings.remove(0);
     	return allMappings;
     }
-    
+
     private String getFlowName(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, String mapping, int version) {
         return prefix + "-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + mapping+"-"+version ;
     }
 
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, String mapping, int  version, CreateFlowListener listener) {
     	if(useEs && flowType.equals(FlowType.HARMONIZE)) {
-    		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);  		  
+    		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
     		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
     		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
@@ -243,7 +230,7 @@ public class MappingE2E extends HubTestBase {
     	//properties.put("twoProp","empid,fullname");
     	properties.put("threeProp","empid,fullname,monthlysalary");
     	properties.put("nonExistingProp", "fakeprop1");
-  
+
 
         for (Entry<String,String> sourceContext : sourceContexts.entrySet()) {
         	for (Entry<String,String> property : properties.entrySet()) {
@@ -256,17 +243,17 @@ public class MappingE2E extends HubTestBase {
         createMapping("nonExistentPath", "//test1/validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
         createMapping("inCorrectPath", "//invalidtestns/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
         createMapping("empty-sourceContext", null,"http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
-        
+
         createMapping("default-without-sourcedFrom", "/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
         createMapping("default-no-properties", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
         createMapping("default-diffCanonicalProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
-        
+
         createMapping("diff-entity-validPath", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
         //Create another version of existing mapping
         createMapping("validPath1-threeProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
         allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
-        
-        installUserModules(getHubAdminConfig(), true);      
+
+        installUserModules(getHubAdminConfig(), true);
     }
 
     private void createMapping(String name, String sourceContext, String targetEntityType,  String ... properties) {
@@ -310,14 +297,15 @@ public class MappingE2E extends HubTestBase {
 			testMap.setProperties(mappingProperties);
 		}
 		mappingManager.saveMapping(testMap, incrementVersion);
-    }	
+    }
 
     private void copyFile(String srcDir, Path dstDir) {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
     }
 
     private void installDocs(String flowName, DataFormat dataFormat, String collection, DatabaseClient srcClient) {
-        DataMovementManager mgr = srcClient.newDataMovementManager();
+        DataMovementManager mgr;
+        mgr = srcClient.newDataMovementManager();
 
         WriteBatcher writeBatcher = mgr.newWriteBatcher()
             .withBatchSize(100)
@@ -358,7 +346,7 @@ public class MappingE2E extends HubTestBase {
             assertEquals(0, getStagingDocCount(collection));
         }
     }
-    
+
     private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
         String flowName, DataFormat dataFormat,
         Vector<String> completed, Vector<String> failed,
@@ -438,9 +426,9 @@ public class MappingE2E extends HubTestBase {
             if (destDb.equals(HubConfig.DEFAULT_STAGING_NAME)) {
                 mgr = stagingDocMgr;
             }
-            
+
             String filename = null;
-            
+
             if(flowName.contains("validPath")) {
             	filename = "mapping/final-es";
             	if(flowName.contains("extranodes")) {
@@ -453,7 +441,7 @@ public class MappingE2E extends HubTestBase {
             else {
             	filename = "mapping/final-es-empty";
             }
-            
+
             if(flowName.contains("nonExistingProp")) {
             	filename = "mapping/final-es-empty";
             }
@@ -487,6 +475,6 @@ public class MappingE2E extends HubTestBase {
         else {
             assertNotEquals(TEST_SIZE, getFinalDocCount());
             tuple.x.awaitCompletion();
-        }        
+        }
     }
 }

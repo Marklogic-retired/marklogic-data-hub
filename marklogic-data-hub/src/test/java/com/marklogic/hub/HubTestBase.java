@@ -15,52 +15,7 @@
  */
 package com.marklogic.hub;
 
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
+import ch.qos.logback.core.net.ssl.SSL;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +23,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -82,12 +38,7 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.InputStreamHandle;
-import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
@@ -105,10 +56,43 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.resource.security.CertificateAuthorityManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.net.ssl.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.*;
+
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 
 
-// FIXME remove deprecated methods
-@SuppressWarnings(value="deprecation")
 public class HubTestBase {
 
     // to speedup dev cycle, you can create a hub and set this to true.
@@ -141,10 +125,9 @@ public class HubTestBase {
     public  DatabaseClient stagingModulesClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalFlowRunnerClient = null;
-    public  DatabaseClient finalModulesClientStagingModulesDatabase = null;
-    public  DatabaseClient finalModulesClient = null;
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
+    public Boolean isHostLoadBalancer = false;
 
     private  ManageConfig manageConfig = null;
     protected  ManageClient manageClient = null;
@@ -234,6 +217,11 @@ public class HubTestBase {
         secPassword = properties.getProperty("mlSecurityPassword");
         flowRunnerUser = properties.getProperty("mlHubUserName");
         flowRunnerPassword = properties.getProperty("mlHubUserPassword");
+        String isHostLB = properties.getProperty("mlIsHostLoadBalancer");
+        if (isHostLB != null) {
+            isHostLoadBalancer = Boolean.parseBoolean(isHostLB);
+        }
+
 
         //TODO refactor to new JCL Security context
         String auth = properties.getProperty("mlStagingAuth");
@@ -276,8 +264,6 @@ public class HubTestBase {
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             // NOTE finalClient must use staging port and final database to use DHF enode code.
             finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
-            finalModulesClientStagingModulesDatabase = getClient(host, finalPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
-            finalModulesClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
@@ -294,18 +280,49 @@ public class HubTestBase {
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
-    	if(isCertAuth()) {
-    		certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-    		datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
-    		flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
-    		return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.CertificateAuthContext((user==flowRunnerUser)?flowRunnercertContext:datahubadmincertContext,SSLHostnameVerifier.ANY));
-    	}
-    	else if(isSslRun()) {
-    		return DatabaseClientFactory.newClient(host, port, dbName, user, password, authMethod, SimpleX509TrustManager.newSSLContext(),SSLHostnameVerifier.ANY);
-    	}
-    	else {
-    		return DatabaseClientFactory.newClient(host, port, dbName, user, password, authMethod);
-    	}
+        if (isHostLoadBalancer) {
+            if (isCertAuth()) {
+                certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
+                datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
+                flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
+                return DatabaseClientFactory.newClient(
+                    host, port, dbName,
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY),
+                    DatabaseClient.ConnectionType.GATEWAY);
+            } else if (isSslRun()) {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
+                        DatabaseClient.ConnectionType.GATEWAY);
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
+                        DatabaseClient.ConnectionType.GATEWAY);
+                }
+            } else {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
+                }
+            }
+        } else {
+            if (isCertAuth()) {
+                certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
+                datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
+                flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
+                return DatabaseClientFactory.newClient(
+                    host, port, dbName,
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY));
+            } else if (isSslRun()) {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY));
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY));
+                }
+            } else {
+                switch (authMethod) {
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password));
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password));
+                }
+            }
+        }
+        return null;  // unreachable
     }
 
     public HubTestBase() {

@@ -95,6 +95,10 @@ public class MlcpRunner extends ProcessRunner {
             bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
             bean.setModules_root("/");
 
+            if (hubConfig.getIsHostLoadBalancer()) {
+                bean.setRestrict_hosts(true);
+            }
+
             buildCommand(bean);
 
             super.run();

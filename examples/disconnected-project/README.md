@@ -43,9 +43,9 @@ To merge this approach with your existing datahub project, you would typically -
 
 1. Replace the following directories with the existing ones from your project -
     * plugins
-    * hub-internal-config
-    * entity-config
-    * user-config
+    * src/main/hub-internal-config
+    * src/main/entity-config
+    * src/main/ml-config
 
 2. Merge the following files with the configuration from your existing project -
     * gradle.properties 
@@ -123,7 +123,7 @@ From the directory that you have unzipped the offline.zip file into, run
 Note that you need to customise the mlcp task to import the data you are interested in
 
 
-## Customise
+## Customize
 
 **IMPORTANT**: If you want to include dependencies for a configuration (e.g. compile, runtime, mlcp etc), then you need to modify the 'downloadToProjectMavenRepo' task to include the relevant configuration. E.g. by adding 'configurations.compile.files' to the beginning of the task, all of the dependencies for the 'compile' task will be downloaded.
 
