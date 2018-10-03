@@ -89,34 +89,29 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         String payload = buildPayload(context);
         if (payload != null) {
             DatabaseManager dbMgr = new DatabaseManager(context.getManageClient());
-            try {
+
+            if (hubConfig.getIsProvisionedEnvironment()){
+                ObjectNode payloadJson;
+                try {
+                    payloadJson = (ObjectNode) mapper.readTree(payload);
+                } catch (IOException e) {
+                    throw new DataHubConfigurationException(e);
+                }
+                // for DHS we have to remove some keys
+                logger.warn("Deploying indexes only to a provisioned environment");
+                payloadJson.remove("schema-database");
+                payloadJson.remove("triggers-database");
+                try {
+                    SaveReceipt receipt = dbMgr.save(mapper.writeValueAsString(payloadJson));
+                } catch (JsonProcessingException e) {
+                    throw new DataHubConfigurationException(e);
+                }
+            }
+            else {
                 SaveReceipt receipt = dbMgr.save(payload);
                 int forestCount = determineForestCountPerHost(payload, context);
                 if (forestCount > 0) {
                     buildDeployForestsCommand(payload, receipt, context).execute(context);
-                }
-            } catch (HttpClientErrorException e) {
-                if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
-                    // assume we're in a DHS environment, where we cannot send keys with database configurations.
-                    ObjectNode payloadJson = null;
-                    try {
-                        payloadJson = (ObjectNode) mapper.readTree(payload);
-                    } catch (IOException e1) {
-                        throw new DataHubConfigurationException(e);
-                    }
-                    // for DHS we have to remove some keys
-                    logger.warn("Deploying indexes only to a provisioned environment");
-                    payloadJson.remove("schema-database");
-                    payloadJson.remove("triggers-database");
-                    try {
-                        SaveReceipt receipt = dbMgr.save(mapper.writeValueAsString(payloadJson));
-                    } catch (JsonProcessingException e1) {
-                        throw new DataHubConfigurationException(e1);
-                    }
-                    // no forest deploy required for DHS
-                }
-                else {
-                    throw (e);
                 }
             }
         }
