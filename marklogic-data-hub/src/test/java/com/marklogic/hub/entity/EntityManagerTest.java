@@ -221,12 +221,15 @@ public class EntityManagerTest extends HubTestBase {
 
 
         // try a deploy too
+        /* this section causes a state change in the db that's hard to tear down/
+         so it's excluded from our automated testing for the time being
         try {
             getDataHub().updateIndexes();
             // pass
         } catch (Exception e) {
             throw (e);
         }
+         */
 
     }
 
