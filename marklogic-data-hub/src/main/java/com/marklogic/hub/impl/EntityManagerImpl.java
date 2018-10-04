@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -49,9 +50,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     private HubConfig hubConfig;
+    private ObjectMapper mapper;
 
     public EntityManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        mapper = new ObjectMapper();
     }
 
     @Override public boolean saveQueryOptions() {
@@ -137,8 +140,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             if (entities.size() > 0) {
                 DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
-                FileUtils.writeStringToFile(finalFile, indexes);
-                FileUtils.writeStringToFile(stagingFile, indexes);
+
+                // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
+                // ml-app-deployer removes these keys upon sending to marklogic.
+                ObjectNode indexNode = (ObjectNode) mapper.readTree(indexes);
+                indexNode.put("database-name", "%%mlFinalDbName%%");
+                mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
+                indexNode.put("database-name", "%%mlStagingDbName%%");
+                mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
                 return true;
             }
         }

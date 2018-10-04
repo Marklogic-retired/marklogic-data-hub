@@ -31,7 +31,8 @@ import java.util.*;
 public class DeployHubOtherDatabasesCommand extends AbstractUndoableCommand {
 
     private HubConfig hubConfig;
-
+    private final String prefix = "final";
+        
     public DeployHubOtherDatabasesCommand(HubConfig config) {
         this.hubConfig = config;
         setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES);
@@ -70,9 +71,9 @@ public class DeployHubOtherDatabasesCommand extends AbstractUndoableCommand {
         File dir = hubConfig.getUserDatabaseDir().toFile();
         if (dir != null && dir.exists()) {
             Set<String> ignore = new HashSet<>();
-            ignore.add(DeploySchemasDatabaseCommand.DATABASE_FILENAME);
-            ignore.add(DeployTriggersDatabaseCommand.DATABASE_FILENAME);
-
+            ignore.add(prefix + "-" + DeploySchemasDatabaseCommand.DATABASE_FILENAME);
+            ignore.add(prefix + "-" + DeployTriggersDatabaseCommand.DATABASE_FILENAME);
+            
             ResourceFilenameFilter filter = new ResourceFilenameFilter(ignore);
             setResourceFilenameFilter(filter);
 

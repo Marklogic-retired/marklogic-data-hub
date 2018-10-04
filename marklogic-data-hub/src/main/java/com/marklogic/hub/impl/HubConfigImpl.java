@@ -125,6 +125,8 @@ public class HubConfigImpl implements HubConfig {
 
     private Boolean isHostLoadBalancer;
 
+    private Boolean isProvisionedEnvironment;
+
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
     protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
 
@@ -789,6 +791,11 @@ public class HubConfigImpl implements HubConfig {
         return isHostLoadBalancer;
     }
 
+    @Override
+    public Boolean getIsProvisionedEnvironment(){
+        return isProvisionedEnvironment;
+    }
+
     public void setLoadBalancerHost(String loadBalancerHost) {
         this.loadBalancerHost = loadBalancerHost;
     }
@@ -932,6 +939,8 @@ public class HubConfigImpl implements HubConfig {
                     loadBalancerHost = mlHost;
                 }
             }
+
+            isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 
