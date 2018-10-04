@@ -927,18 +927,20 @@ public class HubConfigImpl implements HubConfig {
             // could be factored away with FlowRunner
             mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
             mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
-
+            
             isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer", false);
             String mlHost = getEnvPropString(environmentProperties, "mlHost", null);
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (isHostLoadBalancer) {
-                if (mlHost != null && lbh != null && !mlHost.equals(lbh)){
-                    throw new DataHubConfigurationException("mlLoadBalancerHosts must be the same as mlHost");
-                }
-                else {
-                    loadBalancerHost = mlHost;
-                }
+            
+            if (mlHost != null && lbh != null && !mlHost.equals(lbh)){
+                throw new DataHubConfigurationException("mlLoadBalancerHosts must be the same as mlHost");
             }
+            else {
+                loadBalancerHost = mlHost;
+                isHostLoadBalancer = true;
+            }
+            
+            isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
 
             isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
 
