@@ -25,9 +25,8 @@ ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    // refactor these after releases of java client api and ml-app-deployer
-    compile files('tmp-lib/marklogic-client-api-4.1.0.jar')
-//    compile 'com.marklogic:marklogic-client-api:4.1.0'
+    compile 'com.marklogic:marklogic-client-api:4.1.1'
+    // refactor these after release of ml-app-deployer
     compile files('tmp-lib/ml-app-deployer-3.9.1-rc.jar')
     //compile 'com.marklogic:ml-app-deployer:3.9.1-rc'
 
