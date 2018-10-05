@@ -4,7 +4,6 @@ import {withNotes} from '@storybook/addon-notes';
 import {action} from '@storybook/addon-actions';
 import {linkTo} from '@storybook/addon-links';
 import {centered} from '@storybook/addon-centered/angular';
-import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {SelectComponent} from '../../../components/select/select.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
 import {Component, Input} from '@angular/core';
@@ -17,7 +16,7 @@ storiesOf('Components|Select', module)
             imports: [
                 ThemeModule
             ],
-            declarations: [SelectComponent, StoryCardComponent]
+            declarations: [SelectComponent]
         })
     )
     .add('Search Component', () => ({
