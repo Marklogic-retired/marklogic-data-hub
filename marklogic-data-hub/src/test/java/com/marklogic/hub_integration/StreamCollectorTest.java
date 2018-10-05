@@ -62,7 +62,7 @@ public class StreamCollectorTest extends HubTestBase {
 
         // it triggers installation of staging db before staging schemas db exists.
         // a subtle bug. to solve, users must create schemas db hook here too.
-        Path dbDir = projectDir.resolve("src/main/ml-config").resolve("databases");
+        Path dbDir = projectDir.resolve("src/main/entity-config").resolve("databases");
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
 
@@ -71,7 +71,7 @@ public class StreamCollectorTest extends HubTestBase {
         // disable tracing because trying to trace the 3 million ids to a doc will fail.
         disableDebugging();
         disableTracing();
-
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
