@@ -10,19 +10,47 @@ When you deploy a DHF project into a DHS environment, the databases, App Servers
 
 To learn more about DHS, see http://www.marklogic.com/product/marklogic-database-overview/data-hub-service/.
 
-Deploying a DHF project to a DHS cluster requires the following project configuration differences:
+Deploying to a DHF project to a Data Hub Service cluster requires a specific set of gradle properties. Use the example below as a template for your `gradle.properties`. Notes on what to modify appear after the example.
 
-## Changes to Provisioning Users and Roles
-
-When deploying into a DHS environment, usernames, passwords, and roles are defined by the DHS Data Hub Security Admin. Your project should not define the following gradle properties:
-
-* `mlUsername` and `mlPassword`. The DHS administrator will provide an equivalent user with the DHS `FlowOperator` role.
-* `mlManageUsername` and `mlManagePassword`. The DHS administrator will provide an equivalent user with the DHS `FlowDeveloper` role.
-* `mlSecurityUsername` and `mlSecurityPassword`
-* `mlHubUserRole`, `mlHubUserName`, and `mlHubUserPassword`
-
-## Required Modules Database Permissions
-DHF and custom code deployed to the DHS modules database must be inserted into the database with a specific set of permissions that fits the DHS security model. Therefore, your `gradle.properties` file must include the following when deploying into a Data Hub Service environment:
 ```
+mlDHFVersion=4.0.1
+mlHost=YOUR_DHS_HOSTNAME
+
+mlIsHostLoadBalancer=true
+
+mlUsername=YOUR_FLOW_DEVELOPER_USER
+mlPassword=YOUR_FLOW_DEVELOPER_PASSWORD
+mlManageUsername=YOUR_FLOW_OPERATOR_USER
+mlManagePassword=YOUR_FLOW_OPERATOR_PASSWORD
+
+mlStagingAppserverName=data-hub-STAGING
+mlStagingPort=8006
+mlStagingDbName=data-hub-STAGING
+mlStagingForestsPerHost=1
+
+mlFinalAppserverName=data-hub-FINAL
+mlFinalPort=8004
+mlFinalDbName=data-hub-FINAL
+mlFinalForestsPerHost=1
+
+mlJobAppserverName=data-hub-JOBS
+mlJobPort=8007
+mlJobDbName=data-hub-JOBS
+mlJobForestsPerHost=1
+
+mlModulesDbName=data-hub-MODULES
+mlStagingTriggersDbName=data-hub-staging-TRIGGERS
+mlStagingSchemasDbName=data-hub-staging-SCHEMAS
+
+mlFinalTriggersDbName=data-hub-final-TRIGGERS
+mlFinalSchemasDbName=data-hub-final-SCHEMAS
+
 mlModulePermissions=flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert
+
+mlIsProvisionedEnvironment=true
 ```
+You will need to change the value of at least the following properties:
+
+* `mlHost`: Use the hostname of your
+* `mlUsername` and `mlPassword`: The DHS administrator should provide you credentials for a user with the DHS `FlowOperator` role.
+* `mlManageUsername` and `mlManagePassword`: The DHS administrator should provide you credentials for a user with the DHS `FlowDeveloper` role.
