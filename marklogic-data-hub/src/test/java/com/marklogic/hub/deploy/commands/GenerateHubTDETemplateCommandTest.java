@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
 
 
     private void installEntity(String entityName) {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path entityDir = scaffolding.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
         assertTrue(entityDir.toFile().exists());

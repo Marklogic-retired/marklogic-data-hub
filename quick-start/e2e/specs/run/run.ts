@@ -86,6 +86,18 @@ export default function(tmpDir) {
       fs.copy(customTriplesFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/triples.sjs');
     });
 
+    it ('should setup customized writer on Harmonize Products flow', function() {
+      //copy customized writer.sjs
+      console.log('copy customized writer.sjs');
+      let customWriterFilePath = 'e2e/qa-data/plugins/writerPiiPermissions.sjs';
+      fs.copy(customWriterFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/writer.sjs');
+    });
+
+    it ('should redeploy modules', function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+    });
+
     it ('should logout and login', function() {
       appPage.logout();
       loginPage.isLoaded();
@@ -178,6 +190,13 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
       appPage.flowsTab.click();
       flowPage.isLoaded();
+    });
+
+    it ('should setup customized input content on ES sjs xml INPUT flow', function() {
+      //copy customized content.sjs
+      console.log('copy customized input content.sjs on ES sjs xml INPUT flow');
+      let contentWithOptionsFilePath = 'e2e/qa-data/plugins/contentEsSkuXmlDoc.sjs';
+      fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/TestEntity/input/sjs\ xml\ INPUT/content.sjs');
     });
 
     it ('should setup customized input content on ES xqy json INPUT flow', function() {
@@ -303,12 +322,103 @@ export default function(tmpDir) {
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/bookstore-no-formatting.xml');
       expect(viewerPage.verifyTagName('sku').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedPropertyXml('sku', '16384759').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
       expect(viewerPage.verifyTagName('TestEntity').isPresent()).toBeTruthy();
       expect(viewerPage.verifyAttributeName('xmlns').isPresent()).toBeTruthy();
       expect(viewerPage.verifyTagName('bookstore').isPresent()).toBeTruthy();
       expect(viewerPage.verifyAttributeName('category').isPresent()).toBeTruthy();
       expect(viewerPage.verifyStringName('cooking').isPresent()).toBeTruthy();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
+    it ('should logout and login as no-pii-user to verify pii', function() {
+      appPage.logout();
+      loginPage.isLoaded();
+      loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      loginPage.loginAs('no-pii-user', 'x');
+      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
+    });
+
+    it('should verify that no-pii-user cannot see titlePii and attachment title on harmonized data', function() {
+      appPage.browseDataTab.click();
+      browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      browsePage.databaseDropDown().click();
+      browsePage.selectDatabase('FINAL').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.facetName('Product').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.searchBox().clear();
+      browsePage.searchBox().sendKeys('442403950907');
+      browsePage.searchButton().click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+      expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      browsePage.resultsUri().click();
+      viewerPage.isLoaded();
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeFalsy();
+      expect(viewerPage.verifyHarmonizedProperty('title', 'Cards').isPresent()).toBeFalsy();
+      expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
+    it ('should logout and login as pii-user to verify pii', function() {
+      appPage.logout();
+      loginPage.isLoaded();
+      loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      loginPage.loginAs('pii-user', 'x');
+      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
+    });
+
+    it('should verify that pii-user can see titlePii and attachment title on harmonized data', function() {
+      appPage.browseDataTab.click();
+      browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      browsePage.databaseDropDown().click();
+      browsePage.selectDatabase('FINAL').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.facetName('Product').click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      browsePage.searchBox().clear();
+      browsePage.searchBox().sendKeys('442403950907');
+      browsePage.searchButton().click();
+      browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+      expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      browsePage.resultsUri().click();
+      viewerPage.isLoaded();
+      expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
+      expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyVariableName('title').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('titlePii', 'Cards').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('title', 'Cards').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('user', 'admin').isPresent()).toBeTruthy();
+      expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
+      appPage.flowsTab.click();
+      flowPage.isLoaded();
+    });
+
+    it ('should logout and login as admin', function() {
+      appPage.logout();
+      loginPage.isLoaded();
+      loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      loginPage.login();
+      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
       appPage.flowsTab.click();
       flowPage.isLoaded();
     });

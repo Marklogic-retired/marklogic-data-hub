@@ -2,12 +2,11 @@ package com.marklogic.hub;
 
 import com.google.gson.*;
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.AppDeployer;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -17,7 +16,10 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.DeployHubRolesCommand;
+import com.marklogic.hub.deploy.commands.DeployHubUsersCommand;
+import com.marklogic.hub.deploy.commands.DeployUserRolesCommand;
+import com.marklogic.hub.deploy.commands.DeployUserUsersCommand;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
@@ -57,9 +59,12 @@ public class PiiE2E extends HubTestBase {
     private static DatabaseClient clerkClient, officerClient;
     private static boolean e2eInit = false;
 
+    private SimpleAppDeployer deployer;
+    private AppConfig secAppConfig;
+
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     @BeforeAll
@@ -76,7 +81,7 @@ public class PiiE2E extends HubTestBase {
             }
         });
 
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @BeforeEach
@@ -95,92 +100,114 @@ public class PiiE2E extends HubTestBase {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+
+        // command list for deploying/undeploying security
+        HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
+        // Security
+        List<Command> securityCommands = new ArrayList<Command>();
+        // these two should already be there... we don't want to remove them
+        //securityCommands.add(new DeployHubRolesCommand(hubConfig));
+        //securityCommands.add(new DeployHubUsersCommand(hubConfig));
+        securityCommands.add(new DeployUserRolesCommand(hubConfig));
+        securityCommands.add(new DeployUserUsersCommand(hubConfig));
+        // deploy just these users now...
+        deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(securityCommands);
+        secAppConfig = hubConfig.getStagingAppConfig();
+        secAppConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
+
+        deployer.deploy(secAppConfig);
+        securityCommands.add(new DeployProtectedPathsCommand());
+        securityCommands.add(new DeployQueryRolesetsCommand());
+        // now add the paths for test bodies
+        deployer.setCommands(securityCommands);
     }
 
     @Test
     public void testPiiE2E() throws Exception {
 
-    	//Clerk (without harmonized-reader role) shouldn't be able to see harmonized docs
-    	assertEquals("{}",getCustomerHistory(clerkClient, "Holland"));
-    	assertEquals("{}",getCustomerHistoryBySSN(clerkClient, "228-80-9858"));
+        //Clerk (without harmonized-reader role) shouldn't be able to see harmonized docs
+        assertEquals("{}", getCustomerHistory(clerkClient, "Holland"));
+        assertEquals("{}", getCustomerHistoryBySSN(clerkClient, "228-80-9858"));
 
-    	//Compliance officer should be able see harmonized docs including ssn
+        //Compliance officer should be able see harmonized docs including ssn
         assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}",
             getCustomerHistory(officerClient, "Holland"));
-       	assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",
+        assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",
             getCustomerHistoryBySSN(officerClient, "228-80-9858"));
 
         //Compliance officer should not be able to update harmonized docs
-       	try {
-       		updateHarmonizedDocument(officerClient);
-       		fail("Officer client should be able to update");
-       	}
-       	catch(Exception e) {
-       		Assert.assertTrue(e.getMessage().contains("Permission denied"));
-       	}
-       	//verify that doc is not changed
-       	assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"Linger Company\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}",getCustomerHistory(officerClient, "King"));
+        try {
+            updateHarmonizedDocument(officerClient);
+            fail("Officer client should be able to update");
+        } catch (Exception e) {
+            Assert.assertTrue(e.getMessage().contains("Permission denied"));
+        }
+        //verify that doc is not changed
+        assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"Linger Company\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}", getCustomerHistory(officerClient, "King"));
 
-       	JsonParser parser = new JsonParser();
-    	// Provide "harmonized-reader" role to clerk, "harmonized-updater" to compliance officer and make "ssn" as pii in the entity
+        JsonParser parser = new JsonParser();
+        // Provide "harmonized-reader" role to clerk, "harmonized-updater" to compliance officer and make "ssn" as pii in the entity
         Files.walk(Paths.get(projectPath.toUri()))
-        .filter(path -> path.toAbsolutePath().toString().contains("clerk.json")
-        		|| path.toAbsolutePath().toString().contains("Customer.entity.json")
-        		|| path.toAbsolutePath().toString().contains("compliance-officer.json"))
-        .forEach(f-> {
-        	FileReader reader = null;
-        	File jsonFile = f.toFile();
-			try {
-				reader = new FileReader(jsonFile);
-			} catch (FileNotFoundException e) {
+            .filter(path -> path.toAbsolutePath().toString().contains("clerk.json")
+                || path.toAbsolutePath().toString().contains("Customer.entity.json")
+                || path.toAbsolutePath().toString().contains("compliance-officer.json"))
+            .forEach(f -> {
+                FileReader reader = null;
+                File jsonFile = f.toFile();
+                try {
+                    reader = new FileReader(jsonFile);
+                } catch (FileNotFoundException e) {
 
-				throw new RuntimeException(e);
-			}
-        	JsonElement ele = parser.parse(reader);
-        	if(jsonFile.getAbsolutePath().contains("clerk.json")) {
-        		ele.getAsJsonObject().get("role").getAsJsonArray().add(new JsonPrimitive("harmonized-reader"));
-        	}
-        	else if(jsonFile.getAbsolutePath().contains("compliance-officer.json")) {
-        		ele.getAsJsonObject().get("role").getAsJsonArray().add(new JsonPrimitive("harmonized-updater"));
-        	}
-        	else {
-        		ele.getAsJsonObject().get("definitions").getAsJsonObject().get("Customer").getAsJsonObject().get("pii").getAsJsonArray().add(new JsonPrimitive("ssn"));
-        	}
-        	try {
-        		FileUtils.write(jsonFile, ele.getAsJsonObject().toString());
+                    throw new RuntimeException(e);
+                }
+                JsonElement ele = parser.parse(reader);
+                if (jsonFile.getAbsolutePath().contains("clerk.json")) {
+                    ele.getAsJsonObject().get("role").getAsJsonArray().add(new JsonPrimitive("harmonized-reader"));
+                } else if (jsonFile.getAbsolutePath().contains("compliance-officer.json")) {
+                    ele.getAsJsonObject().get("role").getAsJsonArray().add(new JsonPrimitive("harmonized-updater"));
+                } else {
+                    ele.getAsJsonObject().get("definitions").getAsJsonObject().get("Customer").getAsJsonObject().get("pii").getAsJsonArray().add(new JsonPrimitive("ssn"));
+                }
+                try {
+                    FileUtils.write(jsonFile, ele.getAsJsonObject().toString());
 
-			} catch (IOException e2) {
-				throw new RuntimeException(e2);
-			}
-        	finally {
-        		try {
-					reader.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-        	}
-        });
+                } catch (IOException e2) {
+                    throw new RuntimeException(e2);
+                } finally {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
 
         // save pii, install user modules and deploy security
         installUserModules(getHubAdminConfig(), true);
         EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         entityManager.savePii();
 
-        deploySecurity();
+        try {
+            deploySecurity();
 
-        //Clerk able to see harmonized document but not ssn
-        assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\"}",getCustomerHistory(clerkClient, "Holland"));
-    	// Clerk unable to search by "ssn"
-    	assertEquals("{}",getCustomerHistoryBySSN(clerkClient, "228-80-9858"));
+            //Clerk able to see harmonized document but not ssn
+            assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\"}", getCustomerHistory(clerkClient, "Holland"));
+            // Clerk unable to search by "ssn"
+            assertEquals("{}", getCustomerHistoryBySSN(clerkClient, "228-80-9858"));
 
-    	//Compliance oficer able to search using ssn and see all fields in harmonized document
-    	assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}",getCustomerHistory(officerClient, "Holland"));
-    	assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}",getCustomerHistoryBySSN(officerClient, "228-80-9858"));
+            //Compliance oficer able to search using ssn and see all fields in harmonized document
+            assertEquals("{\"fullName\":\"Ellie Holland\",\"worksFor\":\"SuperMemo Limited\",\"email\":\"ellie.holland@supermemolimited.biz\",\"ssn\":\"164-32-6412\"}", getCustomerHistory(officerClient, "Holland"));
+            assertEquals("{\"fullName\":\"Melanie Douglas\",\"worksFor\":\"Erntogra Inc.\",\"email\":\"melanie.douglas@erntograinc.eu\",\"ssn\":\"228-80-9858\"}", getCustomerHistoryBySSN(officerClient, "228-80-9858"));
 
-   		updateHarmonizedDocument(officerClient);
-   		//verify that doc is changed
-   		assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"MarkLogic\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}",getCustomerHistory(officerClient, "King"));
+            updateHarmonizedDocument(officerClient);
+            //verify that doc is changed
+            assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"MarkLogic\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}", getCustomerHistory(officerClient, "King"));
 
+        }
+   		finally{
+            undeploySecurity();
+        }
     }
 
     @Test
@@ -237,28 +264,21 @@ public class PiiE2E extends HubTestBase {
     }
 
 
+
+
     private void deploySecurity() {
-    	HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
-		// Security
-		List<Command> securityCommands = new ArrayList<Command>();
-		securityCommands.add(new DeployHubRolesCommand(hubConfig));
-		securityCommands.add(new DeployHubUsersCommand(hubConfig));
-		securityCommands.add(new DeployUserRolesCommand(hubConfig));
-		securityCommands.add(new DeployUserUsersCommand(hubConfig));
-        securityCommands.add(new DeployProtectedPathsCommand());
-        securityCommands.add(new DeployQueryRolesetsCommand());
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
-        deployer.setCommands(securityCommands);
-
-        AppConfig appConfig = hubConfig.getStagingAppConfig();
-        appConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
-
-        deployer.deploy(appConfig);
+        deployer.deploy(secAppConfig);
     }
 
+    private void undeploySecurity() {
+        deployer.undeploy(secAppConfig);
+    }
+
+
+
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path employeeDir = scaffolding.getEntityDir("EmployeePii");
         employeeDir.toFile().mkdirs();
         Assert.assertTrue(employeeDir.toFile().exists());
@@ -275,6 +295,7 @@ public class PiiE2E extends HubTestBase {
         runFlow.addParameter("job-id", UUID.randomUUID().toString());
 
         DataMovementManager stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
+
         WriteBatcher batcher = stagingDataMovementManager.newWriteBatcher();
         batcher.withBatchSize(1).withTransform(runFlow);
         batcher.onBatchSuccess(batch -> {
@@ -298,7 +319,8 @@ public class PiiE2E extends HubTestBase {
         stagingCount = getStagingDocCount();
         finalCount = getFinalDocCount();
 
-        assertEquals(12, stagingCount);
+        assertTrue("After save, pii, this value is 16, before, it's 15.  Actual is " + stagingCount, stagingCount == 15 ||
+            stagingCount == 16);
         assertTrue("After save, pii, this value is 4, before, it's 3.  Actual is " + finalCount, finalCount == 3 ||
             finalCount == 4);
     }

@@ -1,5 +1,5 @@
 {
-  "role" : [ "compliance-officer", "qconsole-user" , "eval"],
+  "role" : [ "compliance-officer", "qconsole-user" , "test-eval"],
   "user-name" : "GiannaEmerson",
   "description" : "A compliance officer.",
   "password" : "x"

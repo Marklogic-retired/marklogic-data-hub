@@ -57,7 +57,7 @@ describe('QuickStart', function () {
   });
 
   auth(tmpobj.name);
-  create();
+  create(tmpobj.name);
   runFlows(tmpobj.name);
   jobs();
   runTraces();

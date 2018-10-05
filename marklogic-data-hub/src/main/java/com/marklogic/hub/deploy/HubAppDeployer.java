@@ -219,30 +219,30 @@ public class HubAppDeployer extends SimpleAppDeployer {
         int count = stagingUndoableCommands.size() + finalUndoableCommands.size();
         int completed = 0;
         float percent = 0;
-        onStatusChange(0, "Un-installing Final App...");
-
-        CommandContext finalContext = new CommandContext(finalAppConfig, manageClient, adminManager);
-
-        for (UndoableCommand command : finalUndoableCommands) {
-            String name = command.getClass().getName();
-            logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
-            percent = ((float)completed / (float)count) * 100;
-            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
-            command.undo(finalContext);
-            logger.info(format("Finished undoing command [%s]\n", name));
-            completed++;
-        }
-        onStatusChange((int)percent, "Final App Un-installation Complete");
+        onStatusChange(0, "Un-installing Staging App...");
 
         CommandContext stagingContext = new CommandContext(stagingAppConfig, manageClient, adminManager);
 
-        onStatusChange((int)percent, "Un-installing Staging App...");
         for (UndoableCommand command : stagingUndoableCommands) {
             String name = command.getClass().getName();
             logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
             percent = ((float)completed / (float)count) * 100;
             onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
             command.undo(stagingContext);
+            logger.info(format("Finished undoing command [%s]\n", name));
+            completed++;
+        }
+        onStatusChange((int)percent, "Staging App Un-installation Complete");
+
+        CommandContext finalContext = new CommandContext(finalAppConfig, manageClient, adminManager);
+
+        onStatusChange((int)percent, "Un-installing Final App...");
+        for (UndoableCommand command : finalUndoableCommands) {
+            String name = command.getClass().getName();
+            logger.info(format("Undoing command [%s] with sort order [%d]", name, command.getUndoSortOrder()));
+            percent = ((float)completed / (float)count) * 100;
+            onStatusChange((int)percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+            command.undo(finalContext);
             logger.info(format("Finished undoing command [%s]\n", name));
             completed++;
         }

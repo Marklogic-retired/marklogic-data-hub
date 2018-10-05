@@ -15,23 +15,6 @@
  */
 package com.marklogic.hub.job;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
-
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.Tracing;
-import org.junit.*;
-import org.w3c.dom.Document;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DOMHandle;
@@ -39,8 +22,26 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.Tracing;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.Document;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.junit.Assert.*;
 
 
 public class TracingTest extends HubTestBase {
@@ -51,6 +52,7 @@ public class TracingTest extends HubTestBase {
 
     @Before
     public void setup() throws IOException, URISyntaxException {
+        XMLUnit.setIgnoreWhitespace(true);
         enableDebugging();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_FINAL_NAME);
 
@@ -89,6 +91,11 @@ public class TracingTest extends HubTestBase {
 
         assertEquals(5, getFinalDocCount());
         assertEquals(0, getTracingDocCount());
+
+        // disable must be idempotent
+        disableTracing();
+        disableDebugging();
+        disableDebugging();
     }
 
     @Test
@@ -304,6 +311,7 @@ public class TracingTest extends HubTestBase {
 
         DocumentRecord doc = finalDocMgr.read("1").next();
         Document finalDoc = doc.getContent(new DOMHandle()).get();
+        //debugOutput(finalDoc);
         assertXMLEqual(getXmlFromResource("tracing-test/traces/finalSjsXmlDoc.xml"), finalDoc);
 
         Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();

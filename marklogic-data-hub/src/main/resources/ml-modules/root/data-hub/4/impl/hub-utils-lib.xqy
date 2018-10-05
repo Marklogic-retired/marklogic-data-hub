@@ -29,6 +29,8 @@ declare namespace hub = "http://marklogic.com/data-hub";
 
 declare option xdmp:mapping "false";
 
+declare variable $hul:EXPIRATION as xs:dayTimeDuration := xs:dayTimeDuration("PT0.3S");
+
 declare variable $_cache := map:map();
 (:~
  : determine if a module exists or not

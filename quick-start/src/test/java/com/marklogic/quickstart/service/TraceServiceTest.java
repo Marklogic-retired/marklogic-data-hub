@@ -62,7 +62,7 @@ public class TraceServiceTest extends AbstractServiceTest {
         createProjectDir();
         enableTracing();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);

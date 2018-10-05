@@ -24,6 +24,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.hub.job.JobManager;

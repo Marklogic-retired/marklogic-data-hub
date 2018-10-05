@@ -25,9 +25,10 @@ ext.junitPlatformVersion = '1.0.0-RC3'
 ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.1.0'
+    compile 'com.marklogic:marklogic-client-api:4.1.1'
+    compile 'com.marklogic:ml-app-deployer:3.9.1'
+
     compile 'com.marklogic:mlcp-util:0.9.0'
-    compile 'com.marklogic:ml-app-deployer:3.8.3'
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
@@ -52,7 +53,7 @@ dependencies {
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
     testCompile 'org.slf4j:log4j-over-slf4j:1.7.13'
     testCompile("com.marklogic:mlcp-util:0.3.0")
-    testCompile("com.marklogic:mlcp:9.0.3") {
+    testCompile("com.marklogic:mlcp:9.0.7") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
 }
@@ -220,7 +221,7 @@ ext {
         moduleTokensPropertiesSources = new ArrayList<>()
 
         // override some default values with our values
-        modulesDatabaseName = mlStagingModulesDbName
+        modulesDatabaseName = mlModulesDbName
         triggersDatabaseName = mlStagingTriggersDbName
         schemasDatabaseName = mlStagingSchemasDbName
         restPort = Integer.parseInt(mlJobPort)
@@ -238,7 +239,7 @@ ext {
         customTokens.put("%%mlJobPort%%", mlJobPort)
         customTokens.put("%%mlJobDbName%%", mlJobDbName)
 
-        customTokens.put("%%mlStagingModulesDbName%%", mlStagingModulesDbName)
+        customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
         customTokens.put("%%mlStagingTriggersDbName%%", mlStagingTriggersDbName)
         customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
 
@@ -254,16 +255,60 @@ boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
 def props = new Properties()
 propFile.withInputStream { props.load(it) }
 
+task bootstrap(type: JavaExec) {
+	dependsOn 'setupSSL'
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.marklogic.hub.util.Installer'
+}
+
+task teardown(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.marklogic.hub.util.UnInstaller'
+}
+
 test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
-    
-    doFirst{
+    classpath = project.sourceSets.test.runtimeClasspath
+}
+
+task testAcceptance(type: Test) {
+    useJUnit {
+        include 'com/marklogic/hub/**'
+        if (!(certAuth || sslRun)){
+            include 'com/marklogic/hub/PiiE2E.class'
+        }
+    }
+}
+
+task testIntegration(type: Test) {
+    useJUnit {
+        include 'com/marklogic/hub_integration/**'
+    }
+}
+
+task testBootstrap(type: Test) {
+    useJUnit {
+        exclude 'com/marklogic/bootstrap/**'
+    }
+}
+
+task cleanupTask{
+	dependsOn 'teardown'
+	doLast{
+    	if(sslRun || certAuth){
+    		propFile.write(fileContents)
+		}
+    }
+}
+
+task setupSSL{
+	doFirst{
 		if(sslRun || certAuth){
 			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
 			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
 			def	bootStrapHost = hostManager.getHostNames().get(0)
-		    if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
+			if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
 				 throw new GradleException("The test with current options will run only in marklogic.com domain")
 			}
 			if(sslRun) {
@@ -289,22 +334,9 @@ test {
 				}
 			}
 		}
-    }
-
-    // include just the top-level tests.  they include setup/teardown
-	include 'com/marklogic/hub/CoreTestSuite.class'
-	include 'com/marklogic/hub/EndToEndFlowTests.class'
-	if (!(certAuth || sslRun)){
-		include 'com/marklogic/hub/PiiE2E.class'
 	}
-	include 'com/marklogic/hub/ScaffoldingE2E.class'
-	include 'com/marklogic/hub/MappingE2E.class'         
 }
-task restoreFile{
-	doFirst{
-    	if(sslRun || certAuth){
-    		propFile.write(fileContents)	
-		}
-    }
-}
-test.finalizedBy(restoreFile)
+
+test.dependsOn(bootstrap)
+//Uncomment this line if hub has to be uninstalled after test
+//test.finalizedBy(cleanupTask)

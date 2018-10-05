@@ -1,7 +1,7 @@
 # External Security 
 This example demonstrates how to use external security for the user that deploys the application as well as allowing ldsp users to authenticate to the application server
 
-For additional information on External Security see [Chapter 11 of the Security Guide](https://docs.marklogic.com/guide/security/external-auth).
+For additional information on External Security see [Chapter 12 of the Security Guide](https://docs.marklogic.com/guide/security/external-auth).
 
 # What's required
 ### An External Security

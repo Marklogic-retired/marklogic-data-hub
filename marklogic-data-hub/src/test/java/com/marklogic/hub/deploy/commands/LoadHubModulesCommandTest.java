@@ -25,9 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,7 +42,7 @@ public class LoadHubModulesCommandTest extends HubTestBase {
         createProjectDir();
         config = getHubAdminConfig();
         loadHubModulesCommand = new LoadHubModulesCommand(config);
-        commandContext = new CommandContext(config.getStagingAppConfig(), null, null);
+        commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
     }
 
     @Test
@@ -59,16 +56,10 @@ public class LoadHubModulesCommandTest extends HubTestBase {
         logger.info(jarVersion);
 
         // this test will work until major version 10
-        assertTrue(jarVersion.compareTo("4.0.0") >= 0);
+        assertTrue(jarVersion.compareTo("4.0.1") >= 0);
         assertEquals(jarVersion, versions.getHubVersion(),
             "Jar version must match version in config.xqy/config.sjs after installation");
 
     }
 
-
-    @Test
-    public void testAmpLoading() {
-        DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
-        amps.execute(commandContext);
-    }
 }

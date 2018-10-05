@@ -24,6 +24,14 @@ export class SettingsPage extends AppPage {
   get redeployButton() {
     return element(by.buttonText('Redeploy Hub'));
   }
+
+  get redeployConfirmation() {
+    return element(by.buttonText('Redeploy'));
+  }
+
+  get redeployStatus() {
+    return element(by.cssContainingText('h3', 'Redeploy Status'));
+  }
 }
 
 var settingsPage = new SettingsPage();

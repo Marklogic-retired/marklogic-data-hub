@@ -33,8 +33,9 @@ public enum DatabaseKind {
         FINAL_SCHEMAS,
         STAGING_TRIGGERS,
         FINAL_TRIGGERS,
-        STAGING_MODULES,
-        FINAL_MODULES;
+        MODULES,
+        @Deprecated STAGING_MODULES,
+        @Deprecated FINAL_MODULES;
 
        static private String[] databaseNames = {
            "staging",
@@ -45,8 +46,9 @@ public enum DatabaseKind {
            "final_schemas",
            "staging_triggers",
            "final_triggers",
-           "staging_modules",
-           "final_modules"
+           "modules",
+           "modules",
+           "modules"
         };
 
      /**

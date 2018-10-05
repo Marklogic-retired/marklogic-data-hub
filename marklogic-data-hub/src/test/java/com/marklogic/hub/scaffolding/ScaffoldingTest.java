@@ -23,15 +23,11 @@ import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
-import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,7 +52,7 @@ public class ScaffoldingTest extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
-        isMl9 = getMlMajorVersion() == 9;
+        //isMl9 = getMlMajorVersion() == 9;
     }
 
     @Test

@@ -1,6 +1,6 @@
 plugins {
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '3.0.0'
+    id 'com.marklogic.ml-data-hub' version '4.0.1'
 }
 
 repositories {
@@ -21,7 +21,7 @@ configurations {
 }
 
 dependencies {
-  mlcp "com.marklogic:mlcp:9.0.4"
+  mlcp "com.marklogic:mlcp:9.0.7"
   mlcp files("lib")
   data "export:cities5000:x@zip"
 }
@@ -40,13 +40,6 @@ task clearFinalDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseT
   }
   outputs.upToDateWhen { false }
 }
-task clearTraceDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
-  doFirst {
-    project.ext.database = project.properties.mlTraceDbName
-    project.ext.confirm = "true"
-  }
-  outputs.upToDateWhen { false }
-}
 task clearJobDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
   doFirst {
     project.ext.database = project.properties.mlJobDbName
@@ -56,7 +49,6 @@ task clearJobDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTas
 }
 task clearDatabases() {
   dependsOn clearFinalDatabase
-  dependsOn clearTraceDatabase
   dependsOn clearJobDatabase
 }
 
@@ -194,7 +186,7 @@ task loadSjsJson(type: MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".json"
   output_collections = "input-json"
-  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.sjs"
   transform_function = "transform"
   transform_param =  "entity-name=input-json,flow-name=input-sjs-json"
   modules_root = "/"
@@ -220,7 +212,7 @@ task loadXqyJson(type: MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".json"
   output_collections = "input-json"
-  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-json,flow-name=input-xqy-json"
   modules_root = "/"
@@ -246,7 +238,7 @@ task loadSjsXml(type: MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".xml"
   output_collections = "input-xml"
-  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.sjs"
   transform_function = "transform"
   transform_param =  "entity-name=input-xml,flow-name=input-sjs-xml"
   modules_root = "/"
@@ -272,7 +264,7 @@ task loadXqyXml(type: MlcpTask) {
   output_uri_prefix = "/city/"
   output_uri_suffix = ".xml"
   output_collections = "input-xml"
-  transform_module = "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.xqy"
   transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
   transform_param =  "entity-name=input-xml,flow-name=input-xqy-xml"
   modules_root = "/"

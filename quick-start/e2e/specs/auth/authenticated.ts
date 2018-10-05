@@ -51,14 +51,12 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
+      expect(loginPage.advancedSettingsValue('Modules Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-final-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-ol-final-MODULES');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-final-SCHEMAS');    
       loginPage.clickAdvancedSettings();
@@ -71,14 +69,12 @@ export default function(tmpDir) {
       expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Staging Modules Database Name').getAttribute('value'))
+      expect(loginPage.advancedSettingsValue('Modules Database Name').getAttribute('value'))
         .toEqual('data-hub-MODULES');
       expect(loginPage.advancedSettingsValue('Staging Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-SCHEMAS');
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-final-TRIGGERS');
-      expect(loginPage.advancedSettingsValue('Final Modules Database Name').getAttribute('value'))
-        .toEqual('data-hub-final-MODULES');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-final-SCHEMAS');
       loginPage.clickAdvancedSettings();
@@ -118,6 +114,20 @@ export default function(tmpDir) {
       console.log('copy flow-admin-user.json');
       let flowAdminUserFilePath = 'e2e/qa-data/users/flow-admin-user.json';
       fs.copy(flowAdminUserFilePath, tmpDir + '/src/main/ml-config/security/users/flow-admin-user.json');
+    });
+
+    it ('should copy pii-user.json file', function() {
+      //copy pii-user.json
+      console.log('copy pii-user.json');
+      let piiUserFilePath = 'e2e/qa-data/users/pii-user.json';
+      fs.copy(piiUserFilePath, tmpDir + '/src/main/ml-config/security/users/pii-user.json');
+    });
+
+    it ('should copy no-pii-user.json file', function() {
+      //copy no-pii-user.json
+      console.log('copy no-pii-user.json');
+      let noPiiUserFilePath = 'e2e/qa-data/users/no-pii-user.json';
+      fs.copy(noPiiUserFilePath, tmpDir + '/src/main/ml-config/security/users/no-pii-user.json');
     });
 
     it ('Should be on the post init page', function() {

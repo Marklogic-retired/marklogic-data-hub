@@ -96,10 +96,8 @@ public class HubConfigImpl implements HubConfig {
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-    protected String stagingModulesDbName = DEFAULT_STAGING_MODULES_DB_NAME;
-    protected Integer stagingModulesForestsPerHost = 1;
-    protected String finalModulesDbName = DEFAULT_FINAL_MODULES_DB_NAME;
-    protected Integer finalModulesForestsPerHost = 1;
+    protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    protected Integer modulesForestsPerHost = 1;
 
     protected String stagingTriggersDbName = DEFAULT_STAGING_TRIGGERS_DB_NAME;
     protected Integer stagingTriggersForestsPerHost = 1;
@@ -123,7 +121,11 @@ public class HubConfigImpl implements HubConfig {
     private String mlUsername = null;
     private String mlPassword = null;
 
-    private String[] loadBalancerHosts;
+    private String loadBalancerHost;
+
+    private Boolean isHostLoadBalancer;
+
+    private Boolean isProvisionedEnvironment;
 
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
     protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
@@ -174,11 +176,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 name = jobDbName;
                 break;
+            case MODULES:
+                name = modulesDbName;
+                break;
             case STAGING_MODULES:
-                name = stagingModulesDbName;
+                name = modulesDbName;
                 break;
             case FINAL_MODULES:
-                name = finalModulesDbName;
+                name = modulesDbName;
                 break;
             case STAGING_TRIGGERS:
                 name = stagingTriggersDbName;
@@ -212,11 +217,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 jobDbName = dbName;
                 break;
+            case MODULES:
+                modulesDbName = dbName;
+                break;
             case STAGING_MODULES:
-                stagingModulesDbName = dbName;
+                modulesDbName = dbName;
                 break;
             case FINAL_MODULES:
-                finalModulesDbName = dbName;
+                modulesDbName = dbName;
                 break;
             case STAGING_TRIGGERS:
                 stagingTriggersDbName = dbName;
@@ -290,11 +298,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 forests = jobForestsPerHost;
                 break;
+            case MODULES:
+                forests = modulesForestsPerHost;
+                break;
             case STAGING_MODULES:
-                forests = stagingModulesForestsPerHost;
+                forests = modulesForestsPerHost;
                 break;
             case FINAL_MODULES:
-                forests = finalModulesForestsPerHost;
+                forests = modulesForestsPerHost;
                 break;
             case STAGING_TRIGGERS:
                 forests = stagingTriggersForestsPerHost;
@@ -328,11 +339,14 @@ public class HubConfigImpl implements HubConfig {
             case TRACE:
                 jobForestsPerHost = forestsPerHost;
                 break;
+            case MODULES:
+                modulesForestsPerHost = forestsPerHost;
+                break;
             case STAGING_MODULES:
-                stagingModulesForestsPerHost = forestsPerHost;
+                modulesForestsPerHost = forestsPerHost;
                 break;
             case FINAL_MODULES:
-                finalModulesForestsPerHost = forestsPerHost;
+                modulesForestsPerHost = forestsPerHost;
                 break;
             case STAGING_TRIGGERS:
                 stagingTriggersForestsPerHost = forestsPerHost;
@@ -768,11 +782,22 @@ public class HubConfigImpl implements HubConfig {
 
 
     @JsonIgnore
-    @Override  public String[] getLoadBalancerHosts() {
-        return loadBalancerHosts;
+    @Override  public String getLoadBalancerHost() {
+        return loadBalancerHost;
     }
-    public void setLoadBalancerHosts(String[] loadBalancerHosts) {
-        this.loadBalancerHosts = loadBalancerHosts;
+
+    @Override
+    public Boolean getIsHostLoadBalancer(){
+        return isHostLoadBalancer;
+    }
+
+    @Override
+    public Boolean getIsProvisionedEnvironment(){
+        return isProvisionedEnvironment;
+    }
+
+    public void setLoadBalancerHost(String loadBalancerHost) {
+        this.loadBalancerHost = loadBalancerHost;
     }
 
     @Override public String getCustomForestPath() {
@@ -877,13 +902,9 @@ public class HubConfigImpl implements HubConfig {
 
             customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
 
-            stagingModulesDbName = getEnvPropString(environmentProperties, "mlStagingModulesDbName", stagingModulesDbName);
-            stagingModulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingModulesForestsPerHost", stagingModulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlStagingModulePermissions", modulePermissions);
-
-            finalModulesDbName = getEnvPropString(environmentProperties, "mlFinalModulesDbName", finalModulesDbName);
-            finalModulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalModulesForestsPerHost", finalModulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlFinalModulePermissions", modulePermissions);
+            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
+            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
+            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
 
             stagingTriggersDbName = getEnvPropString(environmentProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
             stagingTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
@@ -907,10 +928,44 @@ public class HubConfigImpl implements HubConfig {
             mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
             mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
 
+            isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer");
+            String mlHost = getEnvPropString(environmentProperties, "mlHost", null);
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (lbh != null && lbh.length() > 0) {
-                loadBalancerHosts = lbh.split(",");
+            if (isHostLoadBalancer != null){
+                if (isHostLoadBalancer) {
+                    if (mlHost != null && lbh != null){
+                        logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\", the value specified for \"mlHost\" will be used as the load balancer.");
+                        if (!mlHost.equals(lbh)) {
+                            throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
+                        }
+                        else {
+                            loadBalancerHost = mlHost;
+                        }
+                    }
+                }
+                else {
+                    if (lbh != null){
+                        throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
+                    }
+                }
             }
+            else{
+                if (mlHost != null && lbh != null){
+                    if (!mlHost.equals(lbh)) {
+                        throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
+                    }
+                    else {
+                        isHostLoadBalancer = true;
+                        loadBalancerHost = mlHost;
+                    }
+                }
+                else {
+                    isHostLoadBalancer = false;
+                }
+            }
+
+
+            isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 
@@ -957,24 +1012,115 @@ public class HubConfigImpl implements HubConfig {
     }
 
     private DatabaseClient newStagingClient(String dbName) {
-        AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
-        config.setDatabase(dbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-        config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        if (isHostLoadBalancer) {
+            return newStagingDbClientForLoadBalancerHost(dbName);
+        }
+        else {
+            AppConfig appConfig = getStagingAppConfig();
+            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+            config.setDatabase(dbName);
+            config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+            config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+            config.setSslContext(stagingSslContext);
+            config.setCertFile(stagingCertFile);
+            config.setCertPassword(stagingCertPassword);
+            config.setExternalName(stagingExternalName);
+            config.setTrustManager(stagingTrustManager);
+            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        }
     }
 
     @Override
     // this method uses STAGING appserver but FINAL database.
     // it's only use is for reverse flows, which need to use staging modules.
     public DatabaseClient newReverseFlowClient() {
-        return newStagingClient(finalDbName);
+        if (isHostLoadBalancer) {
+            return newStagingDbClientForLoadBalancerHost(finalDbName);
+        } else {
+            return newStagingClient(finalDbName);
+        }
+    }
+
+    public DatabaseClient newStagingDbClientForLoadBalancerHost(String database){
+        return getDatabaseClientForLoadBalancerHost(stagingAuthMethod, stagingTrustManager, stagingSslHostnameVerifier, stagingCertFile, stagingCertPassword, stagingSslContext, stagingExternalName, stagingPort, database);
+
+    }
+
+    private DatabaseClient newJobDbClientForLoadBalancerHost(){
+        return getDatabaseClientForLoadBalancerHost(jobAuthMethod, jobTrustManager, jobSslHostnameVerifier, jobCertFile, jobCertPassword, jobSslContext, jobExternalName, jobPort, jobDbName);
+
+    }
+
+    private DatabaseClient getDatabaseClientForLoadBalancerHost(String stagingAuthMethod, X509TrustManager stagingTrustManager, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier, String stagingCertFile, String stagingCertPassword, SSLContext stagingSslContext, String stagingExternalName, Integer stagingPort, String stagingDbName)
+    {
+        AppConfig appConfig = getStagingAppConfig();
+
+        DatabaseClientFactory.SecurityContext securityContext;
+
+        SecurityContextType securityContextType = SecurityContextType.valueOf(stagingAuthMethod.toUpperCase());
+
+        if (SecurityContextType.BASIC.equals(securityContextType)) {
+            securityContext = new DatabaseClientFactory.BasicAuthContext(getMlUsername(), getMlPassword());
+        } else if (SecurityContextType.CERTIFICATE.equals(securityContextType)) {
+            X509TrustManager trustManager = stagingTrustManager;
+            DatabaseClientFactory.SSLHostnameVerifier verifier = stagingSslHostnameVerifier;
+
+            String certFile = stagingCertFile;
+            if (certFile != null) {
+                try {
+                    if (stagingCertPassword != null) {
+                        securityContext = new DatabaseClientFactory.CertificateAuthContext(certFile, stagingCertPassword, trustManager);
+                    }
+                    else {
+                        securityContext = new DatabaseClientFactory.CertificateAuthContext(certFile, trustManager);
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException("Unable to build CertificateAuthContext: " + ex.getMessage(), ex);
+                }
+            }
+            else if (verifier != null) {
+                securityContext = new DatabaseClientFactory.CertificateAuthContext(stagingSslContext, verifier, trustManager);
+            }
+            else {
+                securityContext = new DatabaseClientFactory.CertificateAuthContext(stagingSslContext, trustManager);
+
+            }
+        } else if (SecurityContextType.DIGEST.equals(securityContextType)) {
+            securityContext = new DatabaseClientFactory.DigestAuthContext(getMlUsername(), getMlPassword());
+        } else if (SecurityContextType.KERBEROS.equals(securityContextType)) {
+            securityContext = new DatabaseClientFactory.KerberosAuthContext(stagingExternalName);
+        } else if (SecurityContextType.NONE.equals(securityContextType)) {
+            securityContext = null;
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported SecurityContextType: " + securityContextType);
+        }
+
+        if (securityContext != null) {
+            SSLContext sslContext = stagingSslContext;
+            DatabaseClientFactory.SSLHostnameVerifier verifier = stagingSslHostnameVerifier;
+            if (sslContext != null) {
+                securityContext = securityContext.withSSLContext(sslContext, stagingTrustManager);
+            }
+            if (verifier != null) {
+                securityContext = securityContext.withSSLHostnameVerifier(verifier);
+            }
+        }
+
+        String host = appConfig.getHost();
+        int port = stagingPort;
+        String database = stagingDbName;
+
+        if (securityContext == null) {
+            if (database == null) {
+                return DatabaseClientFactory.newClient(host, port, null, DatabaseClient.ConnectionType.GATEWAY);
+            }
+            return DatabaseClientFactory.newClient(host, port, database, null, DatabaseClient.ConnectionType.GATEWAY);
+        }
+        if (database == null) {
+            return DatabaseClientFactory.newClient(host, port, securityContext, DatabaseClient.ConnectionType.GATEWAY);
+        }
+        return DatabaseClientFactory.newClient(host, port, database, securityContext, DatabaseClient.ConnectionType.GATEWAY);
     }
 
     @Override
@@ -993,17 +1139,22 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newJobDbClient() {
-        AppConfig appConfig = getStagingAppConfig();
-        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
-        config.setDatabase(jobDbName);
-        config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(jobSslHostnameVerifier);
-        config.setSslContext(jobSslContext);
-        config.setCertFile(jobCertFile);
-        config.setCertPassword(jobCertPassword);
-        config.setExternalName(jobExternalName);
-        config.setTrustManager(jobTrustManager);
-        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        if (isHostLoadBalancer){
+            return newJobDbClientForLoadBalancerHost();
+        }
+        else {
+            AppConfig appConfig = getStagingAppConfig();
+            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
+            config.setDatabase(jobDbName);
+            config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
+            config.setSslHostnameVerifier(jobSslHostnameVerifier);
+            config.setSslContext(jobSslContext);
+            config.setCertFile(jobCertFile);
+            config.setCertPassword(jobCertPassword);
+            config.setExternalName(jobExternalName);
+            config.setTrustManager(jobTrustManager);
+            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
+        }
     }
 
     public DatabaseClient newTraceDbClient() {
@@ -1027,17 +1178,9 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    @Override public Path getHubStagingModulesDir() {
-        return hubProject.getHubStagingModulesDir();
+    @Override public Path getModulesDir() {
+        return hubProject.getModulesDir();
     }
-
-    @JsonIgnore
-    @Override public Path getUserStagingModulesDir() {
-        return hubProject.getUserStagingModulesDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserFinalModulesDir() { return hubProject.getUserFinalModulesDir(); }
 
     @JsonIgnore
     @Override public Path getHubPluginsDir() {
@@ -1145,7 +1288,7 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "4.0.0";
+            version = "4.0.1";
         }
         return version;
     }
@@ -1182,11 +1325,8 @@ public class HubConfigImpl implements HubConfig {
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
         customTokens.put("%%mlJobAuth%%", jobAuthMethod);
 
-        customTokens.put("%%mlStagingModulesDbName%%", stagingModulesDbName);
-        customTokens.put("%%mlStagingModulesForestsPerHost%%", stagingModulesForestsPerHost.toString());
-
-        customTokens.put("%%mlFinalModulesDbName%%", finalModulesDbName);
-        customTokens.put("%%mlFinalModulesForestsPerHost%%", finalModulesForestsPerHost.toString());
+        customTokens.put("%%mlModulesDbName%%", modulesDbName);
+        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
 
         customTokens.put("%%mlStagingTriggersDbName%%", stagingTriggersDbName);
         customTokens.put("%%mlStagingTriggersForestsPerHost%%", stagingTriggersForestsPerHost.toString());
@@ -1235,7 +1375,7 @@ public class HubConfigImpl implements HubConfig {
 
         config.setTriggersDatabaseName(stagingTriggersDbName);
         config.setSchemasDatabaseName(stagingSchemasDbName);
-        config.setModulesDatabaseName(stagingModulesDbName);
+        config.setModulesDatabaseName(modulesDbName);
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
@@ -1244,7 +1384,7 @@ public class HubConfigImpl implements HubConfig {
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(stagingDbName, stagingForestsPerHost);
         forestCounts.put(jobDbName, jobForestsPerHost);
-        forestCounts.put(stagingModulesDbName, stagingModulesForestsPerHost);
+        forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
         forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
@@ -1276,7 +1416,7 @@ public class HubConfigImpl implements HubConfig {
 
         config.setTriggersDatabaseName(finalTriggersDbName);
         config.setSchemasDatabaseName(finalSchemasDbName);
-        config.setModulesDatabaseName(finalModulesDbName);
+        config.setModulesDatabaseName(modulesDbName);
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
@@ -1284,7 +1424,7 @@ public class HubConfigImpl implements HubConfig {
 
         HashMap<String, Integer> forestCounts = new HashMap<>();
         forestCounts.put(finalDbName, finalForestsPerHost);
-        forestCounts.put(finalModulesDbName, finalModulesForestsPerHost);
+        forestCounts.put(modulesDbName, modulesForestsPerHost);
         forestCounts.put(finalTriggersDbName, finalTriggersForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
@@ -1293,7 +1433,7 @@ public class HubConfigImpl implements HubConfig {
         config.setConfigDir(configDir);
         config.setSchemasPath(getUserSchemasDir().toString());
         List<String> modulesPathList = new ArrayList<>();
-        modulesPathList.add(getUserStagingModulesDir().normalize().toAbsolutePath().toString());
+        modulesPathList.add(getModulesDir().normalize().toAbsolutePath().toString());
         config.setModulePaths(modulesPathList);
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
@@ -1343,6 +1483,18 @@ public class HubConfigImpl implements HubConfig {
         }
         else {
             res = fallback;
+        }
+        return res;
+    }
+
+    private Boolean getEnvPropBoolean(Properties environmentProperties, String key) {
+        String value = environmentProperties.getProperty(key);
+        Boolean res;
+        if (value != null) {
+            res = Boolean.parseBoolean(value);
+        }
+        else {
+            res = null;
         }
         return res;
     }
