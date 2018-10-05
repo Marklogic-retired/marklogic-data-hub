@@ -26,19 +26,7 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.1.1'
-    // refactor these after release of ml-app-deployer
-    compile files('tmp-lib/ml-app-deployer-3.9.1-rc.jar')
-    //compile 'com.marklogic:ml-app-deployer:3.9.1-rc'
-
-
-    // the following lines are only required with tmp-lib-included ml-app-deployer
-    compile 'com.marklogic:ml-javaclient-util:3.8.1'
-    compile 'jaxen:jaxen:1.1.6'
-    compile 'org.apache.httpcomponents:httpclient:4.3.5'
-    compile 'org.springframework:spring-web:4.3.5.RELEASE'
-    compile "org.apache.commons:commons-lang3:3.7"
-    compileOnly "com.beust:jcommander:1.72"
-    // remove the above lines before release
+    compile 'com.marklogic:ml-app-deployer:3.9.1'
 
     compile 'com.marklogic:mlcp-util:0.9.0'
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
