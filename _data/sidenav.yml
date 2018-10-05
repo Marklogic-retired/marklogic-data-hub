@@ -41,7 +41,8 @@ main:
           text: 'Create a Project',
           childPages: [
             { url: '/project/quickstart/', text: 'QuickStart' },
-            { url: '/project/gradle/', text: 'Gradle Plugin' }
+            { url: '/project/gradle/', text: 'Gradle Plugin' },
+            { url: '/project/dhsdeploy/', text: 'Deploying to a Data Hub Service' }
           ]
         },
         {
