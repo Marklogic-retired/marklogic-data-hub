@@ -4,13 +4,13 @@ title: Deploying to a Data Hub Service
 permalink: /project/dhsdeploy/
 ---
 
-You can use a MarkLogic Data Hub Service (DHS) managed cluster as a production deployment environment for an application based on Data Hub Framework. DHS is a cloud-based solution that provides a pre-configured MarkLogic cluster in which you can deploy DHF flows and harmonized data. DHS is not intended for development deployment.
+You can use a MarkLogic Data Hub Service (DHS) managed cluster as a production deployment environment for an application based on Data Hub Framework (DHF). DHS is a cloud-based solution that provides a pre-configured MarkLogic cluster in which you can deploy DHF flows and harmonized data. DHS is not intended for development deployment.
 
 When you deploy a DHF project into a DHS environment, the databases, App Servers, and security roles, users, and passwords are already provisioned by the DHS adminstrators. Deploying DHF simply deploys the DHF library, your flows, transforms, and other customizations.
 
 To learn more about DHS, see http://www.marklogic.com/product/marklogic-database-overview/data-hub-service/.
 
-Deploying to a DHF project to a Data Hub Service cluster requires a specific set of gradle properties. Use the example below as a template for your `gradle.properties`. Notes on what to modify appear after the example.
+Deploying your DHF project to a Data Hub Service cluster requires a specific set of gradle properties. Use the example below as a template for your `gradle.properties` file. Notes on what to modify appear after the example.
 
 ```
 mlDHFVersion=4.0.1
@@ -54,3 +54,5 @@ You will need to change the value of at least the following properties:
 * `mlHost`: Use the hostname of your
 * `mlUsername` and `mlPassword`: The DHS administrator should provide you credentials for a user with the DHS `FlowOperator` role.
 * `mlManageUsername` and `mlManagePassword`: The DHS administrator should provide you credentials for a user with the DHS `FlowDeveloper` role.
+
+Set `mlDHFVersion` to the version of DHF you are deploying.
