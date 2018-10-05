@@ -45,13 +45,7 @@ You must be running at least DHF 2.0.4 before upgrading to version 4.0.0 or late
 If you are upgrading both DHF and MarkLogic, you can upgrade them independently of each other as long as you are running at least the [minimally supported version of MarkLogic](#required-software). If you are running an older version of MarkLogic, then you should upgrade MarkLogic before upgrading DHF.
 
 ## How to Upgrade Data Hub Framework
-You can upgrade Data Hub Framework using the following methods. We recommend using `ml-gradle`.
-
-* [Upgrading Using ml-gradle](#upgrading-using-ml-gradle)
-* [Upgrading Using QuickStart](#upgrading-using-quickstart)
-
-### Upgrading Using ml-gradle
-Use the following procedure to upgrade your project to a new version of DHF using `ml-gradle`. You should not perform these steps if you have already upgraded using QuickStart.
+Use the following procedure to upgrade your project to a new version of DHF:
 
 1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
 1. Review the [release notes]({{site.baseurl}}/docs/release-notes) and the [upgrade notes](#notes-for-upgrading-to-the-latest-version) on this page.
@@ -65,34 +59,11 @@ Use the following procedure to upgrade your project to a new version of DHF usin
 
    {% include ostabs.html linux="./gradlew hubUpdate" windows="gradlew.bat hubUpdate" %}
 
-The `hubUpdate` task might report incompatibilities that you must correct.
+  The `hubUpdate` task might report incompatibilities that you must correct.
+
+1. If you upgrade to DHF 4.0.0 or later, update your gradle properties file to set `mlDHFVersion` to your new DHF version. For example, if you upgrade to DHF 4.0.1, then your `gradle.properties` file should contain the following: `mlDHFVersion='4.0.1'`.
 
 You should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
-
-From 4.0.0 on, the gradle properties file must indicate the version of the project.  This property is to tell DHF how to interpret
-the project structure so that we can support future upgrade paths more easily.  So as a last step, include
-
-mlDHFVersion=4.0.0
-
-
-### Upgrading Using QuickStart
-**NOTE**: Do not use QuickStart to upgrade DHF 3.0.0 to DHF 4.0.0 or DHF 4.0.1.
-
-Use the following procedure to upgrade your project to a new version of DHF using QuickStart. You do not need to perform these steps if you already upgraded using `ml-gradle`.
-
-1. Back up your project. For example, ensure your project is under source control and all changes are checked in.
-1. Review the [release notes]({{site.baseurl}}/docs/release-notes) and the [upgrade notes](#notes-for-upgrading-to-the-latest-version) on this page.
-1. Download the latest QuickStart. For details, see [Install the Data Hub Framework](../tutorial/install/).
-1. Launch the new QuickStart and navigate to it in your browser. For details, see [Install the Data Hub Framework](../tutorial/install/).
-1. Select the project to upgrade and click **NEXT**.
-1. Choose your project environment and click **NEXT**.
-1. Enter your MarkLogic Server username and password, then click **LOGIN**.
-
-At this point, QuickStart should detect that your project requires an upgrade and present you with the upgrade dialog. Follow the instructions displayed in the dialog.
-
-The upgrade may not be able to change everything in your project impacted by the upgrade. Review the upgrade notes for more details.
-
-Upgrading using QuickStart automatically updates `YOUR_PROJECT/build.gradle` for you. However, you should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
 
 ## Notes for Upgrading to the Latest Version
 
@@ -123,8 +94,6 @@ For example, where previously your `gradle.properties` or `gradle-local.properti
 The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0 and later. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.
 
 * [DHF Core Library Installation Changes](#dhf-core-library-installation-changes)
-
-**NOTE**: You can only upgrade from DHF 3.0.0 to DHF 4.0.0 or DHF 4.0.1 using `ml-gradle`. **You cannot upgrade from 3.0.0 to 4.0.x using QuickStart.**
 
 #### DHF Core Library Installation Changes
 
