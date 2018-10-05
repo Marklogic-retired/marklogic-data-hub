@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { Entity, PropertyType } from '../entities';
-import { ResizableComponent } from '../resizable/resizable.component';
+import { ResizableComponent } from '../shared/components/resizable/resizable.component';
 
 @Component({
   selector: 'app-entity-box',

@@ -37,7 +37,7 @@ import { NewEntityComponent } from './new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './shared/components/pagination';
-import { ResizableComponent } from './resizable/resizable.component';
+import { ResizableComponent } from './shared/components/resizable/resizable.component';
 import { SelectComponent } from './shared/components/select/select.component';
 import { SelectListComponent } from './shared/components/select-list/select-list.component';
 import { TooltipModule } from './tooltip';
