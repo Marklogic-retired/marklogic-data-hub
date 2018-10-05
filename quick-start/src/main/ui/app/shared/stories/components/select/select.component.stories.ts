@@ -4,34 +4,10 @@ import {withNotes} from '@storybook/addon-notes';
 import {action} from '@storybook/addon-actions';
 import {linkTo} from '@storybook/addon-links';
 import {centered} from '@storybook/addon-centered/angular';
-
+import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {SelectComponent} from '../../../components/select/select.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
 import {Component, Input} from '@angular/core';
-
-@Component({
-    selector: 'mlui-story-card',
-    template: `
-        <div class="container">
-            <div class="card story-card" [style.width]="width + 'px'" [style.height]="height + 'px'">
-                <ng-content></ng-content>
-            </div>
-        </div>
-    `,
-    styles: [`
-        .story-card {
-            padding: 10px 10px 10px 10px;
-            box-shadow: 10px 10px 20px;
-        }
-    `]
-})
-class StoryCardComponent {
-
-    @Input() width = 500;
-    @Input() height = 200;
-
-    constructor() {}
-}
 
 storiesOf('Components|Select', module)
     .addDecorator(withKnobs)
