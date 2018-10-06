@@ -10,13 +10,16 @@ There are cases where you don't want to run harmonize flows in batches. Perhaps 
 
 When the DHF library runs a flow, it first calls the collector to get a list of strings to operate on. Once it has the list, it then splits the strings into batches and calls a custom REST extension that invokes the main.(xqy\|sjs) for your flow.
 
-You can skip the collector phase and go to the harmonize phase by invoking the REST Client API "flow" extension that gets installed when you set up DHF. To use the extension, send a POST HTTP request to /LATEST/resources/flow.
+You can skip the collector phase and go to the harmonize phase by invoking one of the two REST Client API "flow" extensions that gets installed when you set up DHF. To use an XQuery extension, send a POST HTTP request to /LATEST/resources/ml:flow.  If your extension is implemented in JavaScript, use the `ml:sjsFlow` extension.
 
 #### Via HTTP
 
 ```
-POST /v1/resources/flow?rs:identifiers=someIdentifier&rs:entity-name=EntityName&rs:flow-name=FlowName&rs:target-database=Documents&rs:options={"some":"json"}&rs:job-id=SomeJobID
+POST /v1/resources/ml:flow?rs:identifiers=someIdentifier&rs:entity-name=EntityName&rs:flow-name=FlowName&rs:target-database=Documents&rs:options={"some":"json"}&rs:job-id=SomeJobID
+
+POST /v1/resources/ml:sjsFlow?rs:identifiers=someIdentifier&rs:entity-name=EntityName&rs:flow-name=FlowName&rs:target-database=Documents&rs:options={"some":"json"}&rs:job-id=SomeJobID
 ```
+
 
 The parameters are the following:
 

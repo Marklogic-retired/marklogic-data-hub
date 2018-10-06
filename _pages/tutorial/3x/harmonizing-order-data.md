@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Harmonize the Order Data
+title: Getting Started Tutorial<br>Harmonize the Order Data
 lead_text: ''
 permalink: /tutorial/harmonizing-order-data/
 ---

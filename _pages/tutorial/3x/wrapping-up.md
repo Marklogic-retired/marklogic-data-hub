@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Wrapping Up
+title: Getting Started Tutorial<br>Wrapping Up
 lead_text: ''
 permalink: /tutorial/wrapping-up/
 ---

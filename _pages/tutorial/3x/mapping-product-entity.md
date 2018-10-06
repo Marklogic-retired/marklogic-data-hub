@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Create a Model-to-Model Mapping for Product
+title: Getting Started Tutorial<br>Create a Model-to-Model Mapping for Product
 lead_text: ''
 permalink: /tutorial/mapping-product-entity/
 ---

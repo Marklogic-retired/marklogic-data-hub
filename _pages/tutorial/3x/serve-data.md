@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Serve the Data Out of MarkLogic
+title: Getting Started Tutorial<br>Serve the Data Out of MarkLogic
 lead_text: ''
 permalink: /tutorial/serve-data/
 ---

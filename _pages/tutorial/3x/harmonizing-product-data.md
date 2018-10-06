@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Harmonize the Product Data
+title: Getting Started Tutorial<br>Harmonize the Product Data
 lead_text: ''
 permalink: /tutorial/harmonizing-product-data/
 ---

@@ -23,13 +23,12 @@ needed by the hub to install and run properly.
 | mlJobPort | Specifies the port to be used by the Jobs App Server. |
 | mlJobDbName | Specifies the name for the Jobs Database. |
 | mlJobForestsPerHost | Specifies the number of forests per host for the Jobs Database. |
-| mlStagingModulesDbName | The Modules Database to be used along with Staging App Server. |
+| mlModulesDbName | The Modules Database to be used along with Staging, Final and Jobs App Server. |
 | mlStagingTriggersDbName | The Triggers Database to be used along with Staging App Server. |
 | mlStagingSchemasDbName | The Schemas Database to be used along with Staging App Server. |
-| mlFinalModulesDbName | The Modules Database to be used along with Final App Server. |
 | mlFinalTriggersDbName | The Triggers Database to be used along with Final App Server. |
 | mlFinalSchemasDbName | The Schemas Database to be used along with Final App Server. |
-| mlStagingModulePermissions | Comma-delimited string of role/capability/role/capability/etc that defines permissions for deployed Staging Modules. |
-| mlFinalModulePermissions | Comma-delimited string of role/capability/role/capability/etc that defines permissions for deployed Final Modules. |
+| mlModulePermissions | Comma-delimited string of role/capability/role/capability/etc that defines permissions for deployed Modules. |
+| mlIsHostLoadBalancer | Indicates if the value specified for "mlHost" should be treated as a load balancer or not. |
 
 Note: Any other properties are conformant to the `ml-gradle` properties and can be referenced via `ml-gradle` [Property Reference](https://github.com/marklogic-community/ml-gradle/wiki/Property-reference)

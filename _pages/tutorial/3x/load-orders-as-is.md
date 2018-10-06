@@ -1,6 +1,6 @@
 ---
 layout: inner
-title: Getting Started Tutorial 3.x<br>Load the Orders As-Is
+title: Getting Started Tutorial<br>Load the Orders As-Is
 lead_text: ''
 permalink: /tutorial/load-orders-as-is/
 ---
@@ -21,13 +21,13 @@ Follow these steps to configure the input flow:
 1. Under **Input Files**, use the file browser to select the **input/orders** directory.
 
     ![Input Files]({{site.baseurl}}/images/3x/load-orders-as-is/input-files.png){:.screenshot-border}
-    
+
 1. Under **General Options**, change **Input File Type** to **Delimited Text**.
 
     ![General Options]({{site.baseurl}}/images/3x/load-orders-as-is/general-options.png)
-    
+
 1. Under **Delimited Text Options**, slide the **Generate URI?** slider to the right, enabling automatic unique URI generation.
-    
+
     ![Delimited Text Options]({{site.baseurl}}/images/3x/load-orders-as-is/delimited-text-options.png)
 
 1. Scroll to the bottom of the wizard and click **SAVE OPTIONS**.
