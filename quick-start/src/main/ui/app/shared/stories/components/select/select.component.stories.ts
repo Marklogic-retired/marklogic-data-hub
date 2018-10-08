@@ -4,10 +4,7 @@ import {withNotes} from '@storybook/addon-notes';
 import {action} from '@storybook/addon-actions';
 import {linkTo} from '@storybook/addon-links';
 import {centered} from '@storybook/addon-centered/angular';
-<<<<<<< HEAD
-=======
 import {StoryCardComponent} from '../../utils/story-card/story-card.component';
->>>>>>> bf822c1ce2ecf21c8bd3a2f0f3793de0d522ebf3
 import {SelectComponent} from '../../../components/select/select.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
 import {Component, Input} from '@angular/core';
@@ -20,11 +17,8 @@ storiesOf('Components|Select', module)
             imports: [
                 ThemeModule
             ],
-<<<<<<< HEAD
-            declarations: [SelectComponent]
-=======
             declarations: [SelectComponent, StoryCardComponent]
->>>>>>> bf822c1ce2ecf21c8bd3a2f0f3793de0d522ebf3
+
         })
     )
     .add('Search Component', () => ({
@@ -40,7 +34,7 @@ storiesOf('Components|Select', module)
                             [value]="value"
                             [readOnly]="readOnly"
                             [allowRemove]="allowRemove"
-                            (selectedItemm)="selectedItem($event)"
+                            (selectedItem)="selectedItem($event)"
                         ></app-custom-select>
                 </mlui-story-card>
             </mlui-dhf-theme>
