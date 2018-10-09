@@ -18,17 +18,17 @@ mlHost=YOUR_DHS_HOSTNAME
 
 mlIsHostLoadBalancer=true
 
-mlUsername=YOUR_FLOW_DEVELOPER_USER
-mlPassword=YOUR_FLOW_DEVELOPER_PASSWORD
-mlManageUsername=YOUR_FLOW_OPERATOR_USER
-mlManagePassword=YOUR_FLOW_OPERATOR_PASSWORD
+mlUsername=YOUR_FLOW_OPERATOR_USER
+mlPassword=YOUR_FLOW_OPERATOR_PASSWORD
+mlManageUsername=YOUR_FLOW_DEVELOPER_USER
+mlManagePassword=YOUR_FLOW_DEVELOPER_PASSWORD
 
 mlStagingAppserverName=data-hub-STAGING
 mlStagingPort=8006
 mlStagingDbName=data-hub-STAGING
 mlStagingForestsPerHost=1
 
-mlFinalAppserverName=data-hub-FINAL
+mlFinalAppserverName=data-hub-ADMIN
 mlFinalPort=8004
 mlFinalDbName=data-hub-FINAL
 mlFinalForestsPerHost=1
