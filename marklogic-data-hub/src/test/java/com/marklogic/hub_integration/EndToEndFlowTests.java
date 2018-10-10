@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub;
+package com.marklogic.hub_integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +25,9 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -116,12 +119,12 @@ public class EndToEndFlowTests extends HubTestBase {
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterAll
     public static void teardown() {
-    	new Installer().uninstallHub();
+    	new Installer().teardownProject();
     }
 
     private static boolean isSetup = false;
@@ -130,14 +133,15 @@ public class EndToEndFlowTests extends HubTestBase {
     public void setupEach() {
     	createProjectDir();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        
+
         enableTracing();
         enableDebugging();
 
 
         flowManager = FlowManager.create(getHubFlowRunnerConfig());
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
-        scaffolding = Scaffolding.create(projectDir.toString(), finalClient);
+
+        scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
         // create some flows in a format that pre-dates the 2.0 flow format with properties files
@@ -191,6 +195,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     @TestFactory
+    @Disabled
     public List<DynamicTest> generateLegacyTests() {
         List<DynamicTest> tests = new ArrayList<>();
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
@@ -202,7 +207,7 @@ public class EndToEndFlowTests extends HubTestBase {
             String prefix = "legacy";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
             if (flowType.equals(FlowType.INPUT)) {
-//               
+//
 //                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
 //                        Map<String, Object> options = new HashMap<>();
 //                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
@@ -282,6 +287,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     @TestFactory
+    @Disabled
     public List<DynamicTest> generate1xLegacyTests() {
         List<DynamicTest> tests = new ArrayList<>();
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
@@ -502,7 +508,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 for (String plugin : new String[]{"main", "content", "headers", "triples"}) {
                     Map<String, Object> options = new HashMap<>();
                     options.put(plugin + "GoBoom", true);
-                   
+
                         // TODO
                         // THIS code should be turned back on when MLCP 9.0-5 is released.
                         // There is currently a bug in MLCP that doesn't work when an sjs transform
@@ -764,7 +770,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }));
         return tests;
     }
-    
+
     //The XML file in the following input flows have comments, processing instruction nodes in addition to root node.
     // DHFPROD-767 (Github #882)
     @TestFactory
@@ -795,9 +801,9 @@ public class EndToEndFlowTests extends HubTestBase {
         });
         return tests;
     }
-    
+
     @TestFactory
-    public List<DynamicTest> generateDefaultPluginsTests() {        
+    public List<DynamicTest> generateDefaultPluginsTests() {
         createFlow("default-plugins", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.INPUT, true, (CreateFlowListener)null);
         createFlow("default-plugins", CodeFormat.XQUERY, DataFormat.JSON, FlowType.INPUT, true, (CreateFlowListener)null);
         createFlow("default-plugins", CodeFormat.XQUERY, DataFormat.XML, FlowType.INPUT, true, (CreateFlowListener)null);
@@ -940,7 +946,7 @@ public class EndToEndFlowTests extends HubTestBase {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getHubAdminConfig(), true);
         }
-        
+
         scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
 
         String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
@@ -949,7 +955,7 @@ public class EndToEndFlowTests extends HubTestBase {
         		copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
 	            copyFile(srcDir + "writer." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
 	        }
-	
+
 	        if (useEs) {
 	            copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
 	        }
@@ -959,7 +965,7 @@ public class EndToEndFlowTests extends HubTestBase {
 	            } else {
 	                copyFile(srcDir + "headers-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
 	            }
-	
+
 	            copyFile(srcDir + "content-" + flowType.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
 	            copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
 	        }

@@ -43,7 +43,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
     /**
      * Installs the amps for DHF via CMA endpoint
-     * @param context
+     * @param context The command context for execution.
      */
     @Override
     public void execute(CommandContext context) {

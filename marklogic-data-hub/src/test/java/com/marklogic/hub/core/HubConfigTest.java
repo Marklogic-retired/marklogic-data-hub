@@ -1,14 +1,12 @@
 package com.marklogic.hub.core;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.FileUtils;
-//import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,14 +16,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class HubConfigTest extends HubTestBase {
@@ -76,21 +69,25 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
+        assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
 
-        writeProp("mlLoadBalancerHosts", "");
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHosts());
+        writeProp("mlIsHostLoadBalancer", "true");
+        assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
-        writeProp("mlLoadBalancerHosts", "host1,host2");
-        HubConfig config = getHubFlowRunnerConfig();
-        assertEquals(2, config.getLoadBalancerHosts().length);
-        assertEquals("host1", config.getLoadBalancerHosts()[0]);
-        assertEquals("host2", config.getLoadBalancerHosts()[1]);
+        writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
+        assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
 
-        writeProp("mlLoadBalancerHosts", "host1");
-        config = getHubFlowRunnerConfig();
-        assertEquals(1, config.getLoadBalancerHosts().length);
-        assertEquals("host1", config.getLoadBalancerHosts()[0]);
+        try {
+            writeProp("mlLoadBalancerHosts", "host1");
+            getHubFlowRunnerConfig();
+        }
+        catch (DataHubConfigurationException e){
+            assertEquals( "\"mlLoadBalancerHosts\" must be the same as \"mlHost\"", e.getMessage());
+        }
+
+        deleteProp("mlLoadBalancerHosts");
+        deleteProp("mlIsHostLoadBalancer");
+        assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 
 
@@ -104,13 +101,13 @@ public class HubConfigTest extends HubTestBase {
 
             JsonNode jsonNode = objmapper.readTree(config.getInfo());
 
-            assertTrue(jsonNode.get("stagingDbName").asText().equals(config.getDbName(DatabaseKind.STAGING)));
+            assertEquals(jsonNode.get("stagingDbName").asText(), config.getDbName(DatabaseKind.STAGING));
 
-            assertTrue(jsonNode.get("stagingHttpName").asText().equals(config.getHttpName(DatabaseKind.STAGING)));
+            assertEquals(jsonNode.get("stagingHttpName").asText(), config.getHttpName(DatabaseKind.STAGING));
 
-            assertTrue(jsonNode.get("finalForestsPerHost").asInt() == config.getForestsPerHost(DatabaseKind.FINAL));
+            assertEquals(jsonNode.get("finalForestsPerHost").asInt(), (int) config.getForestsPerHost(DatabaseKind.FINAL));
 
-            assertTrue(jsonNode.get("finalPort").asInt() == config.getPort(DatabaseKind.FINAL));
+            assertEquals(jsonNode.get("finalPort").asInt(), (int) config.getPort(DatabaseKind.FINAL));
 
         }
         catch (Exception e)

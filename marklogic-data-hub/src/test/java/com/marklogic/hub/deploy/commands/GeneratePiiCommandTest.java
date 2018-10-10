@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GeneratePiiCommandTest extends HubTestBase  {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
@@ -45,7 +46,7 @@ public class GeneratePiiCommandTest extends HubTestBase  {
     }
 
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         Path employeeDir = scaffolding.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
