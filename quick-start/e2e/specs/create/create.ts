@@ -4,11 +4,13 @@ import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
 import flowPage from '../../page-objects/flows/flows';
 import appPage from '../../page-objects/appPage';
+import settingsPage from '../../page-objects/settings/settings';
+const fs = require('fs-extra');
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
 const selectCardinalityOneToManyOption = 'select option:nth-child(2)';
 
-export default function() {
+export default function(tmpDir) {
   describe('create entities', () => {
     beforeAll(() => {
       loginPage.isLoaded();
@@ -146,6 +148,14 @@ export default function() {
       entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'decimal')).click();
       entityPage.getPropertyDescription(lastProperty).sendKeys('price description');
       entityPage.getPropertyRangeIndex(lastProperty).click();
+      // add titlePii property
+      console.log('add titlePii property');
+      entityPage.addProperty.click();
+      lastProperty = entityPage.lastProperty;
+      entityPage.getPropertyName(lastProperty).sendKeys('titlePii');
+      entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
+      entityPage.getPropertyDescription(lastProperty).sendKeys('titlePii description');
+      entityPage.getPropertyPii(lastProperty).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
@@ -209,6 +219,11 @@ export default function() {
       expect(entityPage.getPropertyType(priceProperty).getAttribute('value')).toContain('decimal');
       expect(entityPage.getPropertyDescription(priceProperty).getAttribute('value')).toEqual('price description');
       expect(entityPage.hasClass(entityPage.getPropertyRangeIndex(priceProperty), 'active')).toBe(true);
+      let titlePiiProperty = entityPage.getPropertyByPosition(3);
+      expect(entityPage.getPropertyName(titlePiiProperty).getAttribute('value')).toEqual('titlePii');
+      expect(entityPage.getPropertyType(titlePiiProperty).getAttribute('value')).toContain('string');
+      expect(entityPage.getPropertyDescription(titlePiiProperty).getAttribute('value')).toEqual('titlePii description');
+      expect(entityPage.hasClass(entityPage.getPropertyPii(titlePiiProperty), 'active')).toBe(true);
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
@@ -274,6 +289,7 @@ export default function() {
       entityPage.getPropertyCheckBox(removeProp1).click();
       entityPage.getPropertyCheckBox(removeProp2).click();
       entityPage.deleteProperty.click();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
@@ -604,6 +620,25 @@ export default function() {
       // move entity WorldBank
       entityPage.selectEntity('WorldBank');
       browser.actions().dragAndDrop(entityPage.entityBox('WorldBank'), {x: 750, y: 750}).perform();
+    });
+
+    it ('should copy attachment-pii.json file to protect title on attachment', function() {
+      //copy attachment-pii.json
+      console.log('copy attachment-pii.json');
+      let attachmentPiiFilePath = 'e2e/qa-data/protected-paths/attachment-pii.json';
+      fs.copy(attachmentPiiFilePath, tmpDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
+    });
+
+    it ('should redeploy hub to make the pii takes effect', function() {
+      appPage.settingsTab.click();
+      settingsPage.isLoaded();
+      settingsPage.redeployButton.click();
+      browser.wait(EC.elementToBeClickable(settingsPage.redeployConfirmation));
+      settingsPage.redeployConfirmation.click();
+      browser.wait(EC.visibilityOf(settingsPage.redeployStatus));
+      expect(settingsPage.redeployStatus.isDisplayed()).toBe(true);
+      browser.sleep(120000);
+      browser.wait(EC.invisibilityOf(settingsPage.redeployStatus));
     });
 
     it ('should go to the flow page', function() {
