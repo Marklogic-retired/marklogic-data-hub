@@ -125,6 +125,8 @@ public class HubConfigImpl implements HubConfig {
 
     private Boolean isHostLoadBalancer;
 
+    private Boolean isProvisionedEnvironment;
+
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
     protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
 
@@ -789,6 +791,11 @@ public class HubConfigImpl implements HubConfig {
         return isHostLoadBalancer;
     }
 
+    @Override
+    public Boolean getIsProvisionedEnvironment(){
+        return isProvisionedEnvironment;
+    }
+
     public void setLoadBalancerHost(String loadBalancerHost) {
         this.loadBalancerHost = loadBalancerHost;
     }
@@ -921,17 +928,44 @@ public class HubConfigImpl implements HubConfig {
             mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
             mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
 
-            isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer", false);
+            isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer");
             String mlHost = getEnvPropString(environmentProperties, "mlHost", null);
             String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (isHostLoadBalancer) {
-                if (mlHost != null && lbh != null && !mlHost.equals(lbh)){
-                    throw new DataHubConfigurationException("mlLoadBalancerHosts must be the same as mlHost");
+            if (isHostLoadBalancer != null){
+                if (isHostLoadBalancer) {
+                    if (mlHost != null && lbh != null){
+                        logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\", the value specified for \"mlHost\" will be used as the load balancer.");
+                        if (!mlHost.equals(lbh)) {
+                            throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
+                        }
+                        else {
+                            loadBalancerHost = mlHost;
+                        }
+                    }
                 }
                 else {
-                    loadBalancerHost = mlHost;
+                    if (lbh != null){
+                        throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
+                    }
                 }
             }
+            else{
+                if (mlHost != null && lbh != null){
+                    if (!mlHost.equals(lbh)) {
+                        throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
+                    }
+                    else {
+                        isHostLoadBalancer = true;
+                        loadBalancerHost = mlHost;
+                    }
+                }
+                else {
+                    isHostLoadBalancer = false;
+                }
+            }
+
+
+            isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
 
             projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
 
@@ -1449,6 +1483,18 @@ public class HubConfigImpl implements HubConfig {
         }
         else {
             res = fallback;
+        }
+        return res;
+    }
+
+    private Boolean getEnvPropBoolean(Properties environmentProperties, String key) {
+        String value = environmentProperties.getProperty(key);
+        Boolean res;
+        if (value != null) {
+            res = Boolean.parseBoolean(value);
+        }
+        else {
+            res = null;
         }
         return res;
     }

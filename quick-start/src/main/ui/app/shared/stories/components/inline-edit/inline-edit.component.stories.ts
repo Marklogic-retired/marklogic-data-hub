@@ -8,6 +8,7 @@ import {
   withKnobs
 } from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
+import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {InlineEditComponent} from '../../../components/inline-edit/inline-edit.component';
 import {ThemeModule} from "../../../components/theme/theme.module";
 
@@ -17,7 +18,7 @@ storiesOf('Components|Inline Edit', module)
     moduleMetadata({
       imports: [CommonModule, ThemeModule],
       schemas: [],
-      declarations: [InlineEditComponent],
+      declarations: [InlineEditComponent, StoryCardComponent],
       entryComponents: [],
       providers: []
     })
@@ -26,6 +27,7 @@ storiesOf('Components|Inline Edit', module)
   .add('Inline Edit Component', () => ({
     template: `
             <mlui-dhf-theme>
+              <mlui-story-card [width]="'150px'" [height]="'50px'">
               <app-inline-edit
                 [key]="key"
                 [value]="value"
@@ -33,6 +35,7 @@ storiesOf('Components|Inline Edit', module)
                 [editing]="editing"
                 (editingChange)="editingChange($event)"
               ></app-inline-edit>
+              </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
       key: text('Key', 'Key'),

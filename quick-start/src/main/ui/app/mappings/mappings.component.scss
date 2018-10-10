@@ -34,6 +34,16 @@ $header-height: 48px;
   }
 }
 
+.page-content {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  overflow: auto;
+  padding: 8px 8px 300px 8px;
+}
+
 .mdl-layout-title {
   width: 100%;
   display: flex;

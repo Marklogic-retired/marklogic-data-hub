@@ -52,7 +52,7 @@ public class ScaffoldingTest extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
-        isMl9 = getMlMajorVersion() == 9;
+        //isMl9 = getMlMajorVersion() == 9;
     }
 
     @Test

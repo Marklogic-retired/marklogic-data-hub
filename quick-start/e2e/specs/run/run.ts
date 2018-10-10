@@ -38,7 +38,7 @@ export default function(tmpDir) {
       appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      //expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('STAGING').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
@@ -60,7 +60,7 @@ export default function(tmpDir) {
       //verfiy on dashboard page
       appPage.dashboardTab.click();
       dashboardPage.isLoaded();
-      //expect(dashboardPage.stagingCount().getText()).toEqual('450');
+      expect(dashboardPage.stagingCount().getText()).toEqual('450');
       appPage.flowsTab.click();
       flowPage.isLoaded();
     });
@@ -144,7 +144,7 @@ export default function(tmpDir) {
       appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      //expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
@@ -169,7 +169,7 @@ export default function(tmpDir) {
       appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      //expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
@@ -254,7 +254,7 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       browsePage.facetName('xqyjsonINPUT').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      //expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       browsePage.searchBox().clear();
       browsePage.searchBox().sendKeys('442403950907');
       browsePage.searchButton().click();
