@@ -289,6 +289,7 @@ export default function(tmpDir) {
       entityPage.getPropertyCheckBox(removeProp1).click();
       entityPage.getPropertyCheckBox(removeProp2).click();
       entityPage.deleteProperty.click();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);

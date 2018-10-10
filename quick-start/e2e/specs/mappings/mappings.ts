@@ -53,11 +53,15 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // select source for sku
         mappingsPage.sourcePropertyDropDown('sku').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('sku')));
         mappingsPage.sourceTypeAheadInput('sku').sendKeys('sku');
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('sku', 'sku')));
         mappingsPage.mapSourceProperty('sku', 'sku').click();
         // select source for price
         mappingsPage.sourcePropertyDropDown('price').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('price')));
         mappingsPage.sourceTypeAheadInput('price').sendKeys('price');
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('price', 'price')));
         mappingsPage.mapSourceProperty('price', 'price').click();
         // verify the source property
         expect(mappingsPage.verifySourcePropertyName('sku').isPresent()).toBeTruthy();
@@ -104,11 +108,15 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // change the source to SKU
         mappingsPage.sourcePropertyDropDown('sku').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('sku')));
         mappingsPage.sourceTypeAheadInput('sku').sendKeys('SKU');
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('SKU', 'sku')));
         mappingsPage.mapSourceProperty('SKU', 'sku').click();
         // select source for price
         mappingsPage.sourcePropertyDropDown('price').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('price')));
         mappingsPage.sourceTypeAheadInput('price').sendKeys('price');
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('price', 'price')));
         mappingsPage.mapSourceProperty('price', 'price').click();
         // verify the source property
         expect(mappingsPage.verifySourcePropertyName('SKU').isPresent()).toBeTruthy();
@@ -215,7 +223,9 @@ export default function() {
         let originalDocUri = mappingsPage.getSourceURITitle();
         // change the sku source
         mappingsPage.sourcePropertyDropDown('sku').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('sku')));
         mappingsPage.sourceTypeAheadInput('sku').sendKeys('game_id');
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('game_id', 'sku')));
         mappingsPage.mapSourceProperty('game_id', 'sku').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.resetButton()));
         // verify reset - cancel behavior
@@ -239,7 +249,9 @@ export default function() {
         let originalDocUri = mappingsPage.getSourceURITitle();
         // change the sku source
         mappingsPage.sourcePropertyDropDown('sku').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('sku')));
         mappingsPage.sourceTypeAheadInput('sku').sendKeys('game_id');
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('game_id', 'sku')));
         mappingsPage.mapSourceProperty('game_id', 'sku').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.resetButton()));
         // verify reset - cancel behavior
