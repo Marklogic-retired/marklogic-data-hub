@@ -25,7 +25,7 @@ export class PaginationComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: any) {
-    if (changes.start || changes.pageLength) {
+    if (changes.total || changes.pageLength) {
       this.calculatePaging();
     }
   }
@@ -56,6 +56,9 @@ export class PaginationComponent implements OnInit, OnChanges {
 
   gotoPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.start = (this.currentPage - 1) * this.pageLength + 1;
+      this.calculatePaging();
       this.pageChanged.next(page);
     }
   }
