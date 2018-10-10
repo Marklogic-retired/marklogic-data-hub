@@ -60,7 +60,7 @@ import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmoniz
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
 import { InlineEditComponent } from './shared/components/inline-edit/inline-edit.component';
-import { FacetsComponent } from './facets/facets.component';
+import { FacetsComponent } from './shared/components/facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
