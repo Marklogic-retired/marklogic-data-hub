@@ -38,6 +38,10 @@ import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -52,7 +56,12 @@ import java.util.*;
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
     getterVisibility = JsonAutoDetect.Visibility.ANY,
     setterVisibility = JsonAutoDetect.Visibility.ANY)
-public class HubConfigImpl implements HubConfig {
+@Configuration
+public class HubConfigImpl implements HubConfig
+{
+    @Autowired
+    Environment environment;
+    @Value("${mlStagingDbName}")
 
     protected String stagingDbName = DEFAULT_STAGING_NAME;
     protected String stagingHttpName = DEFAULT_STAGING_NAME;
