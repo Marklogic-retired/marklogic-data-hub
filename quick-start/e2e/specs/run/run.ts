@@ -38,7 +38,7 @@ export default function(tmpDir) {
       appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('STAGING').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
@@ -144,7 +144,7 @@ export default function(tmpDir) {
       appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
@@ -169,7 +169,7 @@ export default function(tmpDir) {
       appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       browsePage.databaseDropDown().click();
       browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
