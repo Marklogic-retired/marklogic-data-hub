@@ -77,6 +77,9 @@ public class DataHubImpl implements DataHub {
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private String finalFile = "final-database.json";
+	private String stagingFile = "staging-database.json";
+	private String jobsFile = "job-database.json";
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
@@ -132,68 +135,55 @@ public class DataHubImpl implements DataHub {
 
         InstallInfo installInfo = InstallInfo.create();
 
-        ResourcesFragment srf = null;
-        try {
-            srf = getServerManager().getAsXml();
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new DataHubSecurityNotInstalledException();
-            }
-        } catch (HttpServerErrorException e) {
-            // this result comes from a disabled manage client.
-            // DHF gets this response from DHS, which has no public
-            // manage client.  So we'll assume a provisioned DH exists in this case.
-            // TODO I don't know what TODO
-            if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
-                return assumedProvisionedInstallInfo(installInfo);
-            }
-            else {
-                throw new DataHubConfigurationException(e);
-            }
-        } catch ( MarkLogicIOException e) {
-            // If server is off, this happens.
-            // we don't know about install state, so don't assume it's not?
-            return assumedProvisionedInstallInfo(installInfo);
-        } catch (ResourceAccessException e) {
-            // in ALB scenario we actually get a connection exception, not gateway
+        if (hubConfig.getIsProvisionedEnvironment()){
             return assumedProvisionedInstallInfo(installInfo);
         }
+        else {
+            ResourcesFragment srf = null;
+            try {
+                srf = getServerManager().getAsXml();
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    throw new DataHubSecurityNotInstalledException();
+                }
+            }
 
-        installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
-        installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
-        installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
+            installInfo.setAppServerExistent(DatabaseKind.STAGING, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.STAGING)));
+            installInfo.setAppServerExistent(DatabaseKind.FINAL, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.FINAL)));
+            installInfo.setAppServerExistent(DatabaseKind.JOB, srf.resourceExists(hubConfig.getHttpName(DatabaseKind.JOB)));
 
-        ResourcesFragment drf = getDatabaseManager().getAsXml();
-        installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING)));
-        installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
-        installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
+            ResourcesFragment drf = getDatabaseManager().getAsXml();
+            installInfo.setDbExistent(DatabaseKind.STAGING, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING)));
+            installInfo.setDbExistent(DatabaseKind.FINAL, drf.resourceExists(hubConfig.getDbName(DatabaseKind.FINAL)));
+            installInfo.setDbExistent(DatabaseKind.JOB, drf.resourceExists(hubConfig.getDbName(DatabaseKind.JOB)));
 
-        installInfo.setDbExistent(DatabaseKind.MODULES, drf.resourceExists(hubConfig.getDbName(DatabaseKind.MODULES)));
-        installInfo.setDbExistent(DatabaseKind.STAGING_SCHEMAS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS)));
-        installInfo.setDbExistent(DatabaseKind.STAGING_TRIGGERS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS)));
+            installInfo.setDbExistent(DatabaseKind.MODULES, drf.resourceExists(hubConfig.getDbName(DatabaseKind.MODULES)));
+            installInfo.setDbExistent(DatabaseKind.STAGING_SCHEMAS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS)));
+            installInfo.setDbExistent(DatabaseKind.STAGING_TRIGGERS, drf.resourceExists(hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS)));
 
-        if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.STAGING));
-            installInfo.setTripleIndexOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
-            installInfo.setCollectionLexiconOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
-            installInfo.setForestsExistent(DatabaseKind.STAGING, (f.getElements("//m:forest").size() > 0));
+            if (installInfo.isDbExistent(DatabaseKind.STAGING)) {
+                Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.STAGING));
+                installInfo.setTripleIndexOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
+                installInfo.setCollectionLexiconOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
+                installInfo.setForestsExistent(DatabaseKind.STAGING, (f.getElements("//m:forest").size() > 0));
+            }
+
+            if (installInfo.isDbExistent(DatabaseKind.FINAL)) {
+                Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.FINAL));
+                installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
+                installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
+                installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
+            }
+
+            if (installInfo.isDbExistent(DatabaseKind.JOB)) {
+                Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.JOB));
+                installInfo.setForestsExistent(DatabaseKind.JOB, (f.getElements("//m:forest").size() > 0));
+            }
+
+            logger.info(installInfo.toString());
+
+            return installInfo;
         }
-
-        if (installInfo.isDbExistent(DatabaseKind.FINAL)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.FINAL));
-            installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
-            installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
-            installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
-        }
-
-        if (installInfo.isDbExistent(DatabaseKind.JOB)) {
-            Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.JOB));
-            installInfo.setForestsExistent(DatabaseKind.JOB, (f.getElements("//m:forest").size() > 0));
-        }
-
-        logger.info(installInfo.toString());
-
-        return installInfo;
     }
 
     // this InstallInfo is used as a dummy to return DHS provisioned information
@@ -541,12 +531,20 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public void updateIndexes() {
-        AppConfig config = hubConfig.getStagingAppConfig();
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
-        List<Command> commands = new ArrayList<>();
-        commands.add(new DeployHubDatabasesCommand(hubConfig));
-        deployer.setCommands(commands);
-        deployer.deploy(config);
+    	HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+    	
+    	AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        List<Command> finalDBCommand = new ArrayList<>();
+        finalDBCommand.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
+        deployer.setFinalCommandsList(finalDBCommand);
+        
+        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
+        List<Command> stagingDBCommand = new ArrayList<>();
+        stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
+        stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, jobsFile));
+        deployer.setStagingCommandsList(stagingDBCommand);
+
+        deployer.deployAll(finalConfig, stagingConfig);
     }
 
     /**
