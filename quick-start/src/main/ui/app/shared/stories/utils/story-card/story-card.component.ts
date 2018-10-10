@@ -11,6 +11,7 @@ import {Component, Input, ViewChild, ElementRef} from '@angular/core';
     `,
     styles: [`
         .story-card {
+            background: white;
             padding: 10px 10px 10px 10px;
             box-shadow: 10px 10px 20px;
         }

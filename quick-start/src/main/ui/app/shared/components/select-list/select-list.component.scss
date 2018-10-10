@@ -1,4 +1,4 @@
-@import '../shared/components/theme/styles/variables';
+@import '../theme/styles/variables';
 
 $primary: unquote("rgb(#{$color-primary})");
 $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
