@@ -64,7 +64,7 @@ import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
-import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
+import { SelectKeyValuesComponent } from './shared/components/select-key-values/select-key-values.component';
 import {JobExportDialogComponent} from "./jobs/job-export.component";
 
 import { MapComponent } from './mappings';
