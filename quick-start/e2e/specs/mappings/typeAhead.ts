@@ -136,6 +136,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('id')));
         // verify the typeahead on property name
         mappingsPage.sourcePropertyDropDown('id').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('id')));
         mappingsPage.sourceTypeAheadInput('id').sendKeys('id');
         expect(mappingsPage.verifySourcePropertyName('_id').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('id').isPresent()).toBeTruthy();
@@ -144,15 +145,19 @@ export default function() {
         expect(mappingsPage.verifySourcePropertyType('string').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyType('number').isPresent()).toBeTruthy();
         // select the source property
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('id', 'id')));
         mappingsPage.mapSourceProperty('id', 'id').click();
         // verify the typeahead on date type
         mappingsPage.sourcePropertyDropDown('approvalDate').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('approvalDate')));
         mappingsPage.sourceTypeAheadInput('approvalDate').sendKeys('date');
         expect(mappingsPage.verifySourcePropertyName('boardapprovaldate').isPresent()).toBeTruthy();
         // select the source property
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('boardapprovaldate', 'approvalDate')));
         mappingsPage.mapSourceProperty('boardapprovaldate', 'approvalDate').click();
         // verify the typeahead on number type
         mappingsPage.sourcePropertyDropDown('cost').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('cost')));
         mappingsPage.sourceTypeAheadInput('cost').sendKeys('number');
         expect(mappingsPage.verifySourcePropertyName('grantamt').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('totalamt').isPresent()).toBeTruthy();
@@ -160,14 +165,17 @@ export default function() {
         expect(mappingsPage.verifySourcePropertyType('number').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyValue('60000000').isPresent()).toBeTruthy();
         // select the source property
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('lendprojectcost', 'cost')));
         mappingsPage.mapSourceProperty('lendprojectcost', 'cost').click();
         // verify the typeahead on string type
         mappingsPage.sourcePropertyDropDown('title').click();
+        browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('title')));
         mappingsPage.sourceTypeAheadInput('title').sendKeys('instr');
         expect(mappingsPage.verifySourcePropertyName('lendinginstr').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('lendinginstrtype').isPresent()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyType('string').isPresent()).toBeTruthy();
         // select the source property
+        browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('lendinginstr', 'title')));
         mappingsPage.mapSourceProperty('lendinginstr', 'title').click();
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
