@@ -59,7 +59,7 @@ import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
-import { InlineEditComponent } from './inline-edit/inline-edit.component';
+import { InlineEditComponent } from './shared/components/inline-edit/inline-edit.component';
 import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
