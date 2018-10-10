@@ -35,7 +35,7 @@ import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
-import { PaginationComponent } from './pagination';
+import { PaginationComponent } from './shared/components/pagination';
 import { ResizableComponent } from './resizable/resizable.component';
 import { SelectComponent } from './shared/components/select/select.component';
 import { SelectListComponent } from './select-list/select-list.component';
