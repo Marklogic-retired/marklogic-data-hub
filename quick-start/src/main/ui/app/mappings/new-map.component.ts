@@ -1,4 +1,4 @@
-import { Component, HostListener, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 
 import { MdlDialogReference } from '@angular-mdl/core';
 
@@ -11,14 +11,17 @@ import {Entity} from "../entities";
 
 @Component({
   selector: 'app-new-map',
-  templateUrl: './new-map.component.html',
-  styleUrls: ['./new-map.component.scss']
+  template: `
+    <app-new-map-ui
+      [mappings]="this.mappings"
+      (create)="this.create($event)" 
+      (cancel)="this.cancel()"
+    ></app-new-map-ui>
+  `
 })
 export class NewMapComponent {
   actions: any;
   entity: Entity;
-  mapName: string = '';
-  mapDesc: string = '';
   mappings: Array<Mapping>;
 
   constructor(
@@ -34,43 +37,14 @@ export class NewMapComponent {
     this.mappings = mappings;
   }
 
-  ngOnInit() {
-
-  }
-
-
   hide() {
     this.dialog.hide();
   }
 
-  @HostListener('keydown.esc')
-  public onEsc(): void {
-    this.cancel();
-  }
-
-  nameEmpty() {
-    let result = true;
-    if (this.mapName) {
-      result = this.mapName.length === 0;
-    }
-    return result;
-  }
-
-  nameDuplicate() {
-    let result;
-    if (this.mappings && this.mapName) {
-      let name = this.mapName;
-      result =  _.findIndex(this.mappings, function(m) { return m.name === name; });
-    }
-    return result > -1;
-  }
-
-  create() {
-    if (!this.nameEmpty() && !this.nameDuplicate()) {
-      this.hide();
-      if (this.actions && this.actions.save) {
-        this.actions.save(this.mapName, this.mapDesc);
-      }
+  create(event) {
+    this.hide();
+    if (this.actions && this.actions.save) {
+      this.actions.save(event.mapName, event.mapDesc);
     }
   }
 
