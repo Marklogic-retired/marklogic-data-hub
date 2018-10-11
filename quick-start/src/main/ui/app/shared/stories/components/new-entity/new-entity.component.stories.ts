@@ -7,7 +7,7 @@ import {centered} from '@storybook/addon-centered/angular';
 import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {NewEntityComponent} from '../../../components/new-entity/new-entity.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
-import {Component, Input} from '@angular/core';
+import {MdlDialogService} from '@angular-mdl/core';
 
 storiesOf('Components|New Entity', module)
     .addDecorator(withKnobs)
@@ -17,17 +17,16 @@ storiesOf('Components|New Entity', module)
             imports: [
                 ThemeModule
             ],
-            declarations: [NewEntityComponent, StoryCardComponent]
+            declarations: [NewEntityComponent, StoryCardComponent],
+            providers: [MdlDialogService]
         })
     )
     .add('New Entity Component', () => ({
         template: `
             <mlui-dhf-theme>
-                <mlui-story-card [width]="500" [height]="150">
-                    <app-new-entity
-                      
-                    ></app-new-entity>
-                </mlui-story-card>
+            <mlui-story-card [width]="500" [height]="150">
+            <button>Test</button>
+            </mlui-story-card>
             </mlui-dhf-theme>
         `,
         props: {
