@@ -60,7 +60,7 @@ export default function(tmpDir) {
       //verfiy on dashboard page
       appPage.dashboardTab.click();
       dashboardPage.isLoaded();
-      expect(dashboardPage.stagingCount().getText()).toEqual('450');
+      expect(dashboardPage.stagingCount().getText()).toEqual('456');
       appPage.flowsTab.click();
       flowPage.isLoaded();
     });
