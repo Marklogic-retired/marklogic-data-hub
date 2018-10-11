@@ -56,7 +56,7 @@ public class LoadHubModulesCommandTest extends HubTestBase {
         logger.info(jarVersion);
 
         // this test will work until major version 10
-        assertTrue(jarVersion.compareTo("4.0.0") >= 0);
+        assertTrue(jarVersion.compareTo("4.0.1") >= 0);
         assertEquals(jarVersion, versions.getHubVersion(),
             "Jar version must match version in config.xqy/config.sjs after installation");
 
