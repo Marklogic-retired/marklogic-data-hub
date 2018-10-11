@@ -18,10 +18,6 @@ package com.marklogic.hub.main.impl;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.main.MainPlugin;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.Properties;
-
 public class MainPluginImpl implements MainPlugin {
 
     private String module;

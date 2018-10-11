@@ -15,8 +15,6 @@
  */
 package com.marklogic.hub.error;
 
-import com.marklogic.hub.entity.Entity;
-
 public class EntityServicesGenerationException  extends RuntimeException {
 
     public EntityServicesGenerationException() {

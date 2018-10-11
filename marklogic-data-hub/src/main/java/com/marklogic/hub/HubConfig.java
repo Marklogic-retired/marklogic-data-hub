@@ -16,7 +16,6 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.marklogic.appdeployer.AppConfig;
@@ -25,9 +24,7 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
