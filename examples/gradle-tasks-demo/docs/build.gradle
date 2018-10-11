@@ -1,0 +1,11 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+  dependencies {
+    classpath "com.marklogic:ml-data-hub:dhaas-18"
+  }
+}
+
+apply plugin: "com.marklogic.ml-data-hub"
