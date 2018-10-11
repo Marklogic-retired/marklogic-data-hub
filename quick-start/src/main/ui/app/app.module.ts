@@ -28,6 +28,7 @@ import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
 import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
+import { FolderBrowserUiComponent } from './shared/components/folder-browser/folder-browser-ui.component';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
@@ -77,6 +78,7 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     AppComponent,
     CodemirrorComponent,
     FolderBrowserComponent,
+    FolderBrowserUiComponent,
     HeaderComponent,
     HasBugsDialogComponent,
     FlowsComponent,
