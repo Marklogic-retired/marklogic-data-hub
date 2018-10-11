@@ -18,7 +18,7 @@ export default function(tmpDir) {
     it ('should run Load Products flow', function() {
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlow('Product', 'Load Products', 'json', 'products', 
+      flowPage.runInputFlow('Product', 'Load Products', 'json', 'products',
         'delimited_text', '/product', '?doc=yes&type=foo');
     });
 
@@ -60,7 +60,7 @@ export default function(tmpDir) {
       //verfiy on dashboard page
       appPage.dashboardTab.click();
       dashboardPage.isLoaded();
-      expect(dashboardPage.stagingCount().getText()).toEqual('450');
+      expect(dashboardPage.stagingCount().getText()).toEqual('456');
       appPage.flowsTab.click();
       flowPage.isLoaded();
     });

@@ -58,7 +58,7 @@ export default function(tmpDir) {
       expect(loginPage.advancedSettingsValue('Final Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-final-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
-        .toEqual('data-hub-ol-final-SCHEMAS');    
+        .toEqual('data-hub-ol-final-SCHEMAS');
       loginPage.clickAdvancedSettings();
       console.log('restore to default settings');
       loginPage.clickRestoreDefaults();
@@ -200,9 +200,9 @@ export default function(tmpDir) {
       console.log('original jasmine timeout: ' + originalTimeout);
       jasmine.DEFAULT_TIMEOUT_INTERVAL = 370000;
       console.log('modified jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
-      browser.wait(EC.presenceOf(loginPage.installProgress));
+      browser.wait(EC.presenceOf(loginPage.installProgress), 600000, 'install progress is not present');
       expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      browser.wait(EC.elementToBeClickable(appPage.flowsTab), 360000, 'dashboard page is not displayed');
+      browser.wait(EC.elementToBeClickable(appPage.flowsTab), 600000, 'dashboard page is not displayed');
       jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       console.log('changed back to original jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
     });

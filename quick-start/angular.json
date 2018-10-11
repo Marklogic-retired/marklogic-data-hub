@@ -25,7 +25,8 @@
               "node_modules/material-design-icons-iconfont/dist/material-design-icons.css",
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/codemirror/lib/codemirror.css",
-              "src/main/ui/styles.scss"
+              "node_modules/@angular-mdl/popover/popover.css",
+              "node_modules/@angular-mdl/select/select.css"
             ],
             "scripts": []
           },
