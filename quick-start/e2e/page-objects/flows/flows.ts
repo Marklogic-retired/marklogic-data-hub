@@ -22,6 +22,7 @@ export class FlowPage extends AppPage {
   clickEntityDisclosure(entityName: string) {
     if(this.isEntityCollapsed(entityName)) {
       this.entityDisclosure(entityName).click();
+      browser.wait(EC.elementToBeClickable(this.inputFlowButton(entityName)));
     }
   }
 
