@@ -42,6 +42,11 @@ public interface HubProject {
     }
 
     /**
+     * Sets the project dir
+     */
+    void setProjectDirString(String projectDirString);
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */

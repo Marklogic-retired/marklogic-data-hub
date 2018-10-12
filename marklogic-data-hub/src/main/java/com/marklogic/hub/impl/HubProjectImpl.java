@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -38,6 +39,7 @@ import java.util.Set;
 /**
  * Class for creating a hub Project
  */
+@Component
 public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
@@ -49,8 +51,15 @@ public class HubProjectImpl implements HubProject {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public HubProjectImpl(){}
+
     public HubProjectImpl(String projectDirStr) {
         this.projectDir = Paths.get(projectDirStr).toAbsolutePath();
+        this.pluginsDir = this.projectDir.resolve("plugins");
+    }
+
+    public void setProjectDirString(String projectDirString) {
+        this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
     }
 

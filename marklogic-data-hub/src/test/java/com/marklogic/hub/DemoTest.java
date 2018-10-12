@@ -1,6 +1,6 @@
 package com.marklogic.hub;
 
-import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.util.Installer;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
@@ -32,6 +32,15 @@ public class DemoTest extends HubTestBase
     @Autowired
     HubConfig hubConfig2;
 
+    @Autowired
+    DataHub dataHub;
+
+    @Autowired
+    HubConfigBuilder hubConfigBuilder;
+
+    @Autowired
+    HubProject hubProject;
+
     @BeforeAll
     public static void setupHub()
     {
@@ -57,7 +66,10 @@ public class DemoTest extends HubTestBase
     @Test
     public void test()
     {
+        hubConfigBuilder.withProjectDir(PROJECT_PATH).withPropertiesFromEnvironment().build();
         hubConfig.setProjectDir(PROJECT_PATH);
         Assert.assertEquals(hubConfig, hubConfig2);
+        System.out.println(hubProject.getUserConfigDir());
+        System.out.println(dataHub.isInstalled());
     }
 }

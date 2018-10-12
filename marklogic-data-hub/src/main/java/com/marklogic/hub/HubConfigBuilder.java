@@ -47,6 +47,13 @@ public interface HubConfigBuilder {
     HubConfigBuilder withPropertiesFromEnvironment();
 
     /**
+     * Tells the builder to use the parameter as the project dir
+     * @param projectDir - the hub's project directory
+     * @return the {@link HubConfigBuilder} instance
+     */
+    HubConfigBuilder withProjectDir(String projectDir);
+
+    /**
      * Tells the builder to load properties from the gradle files in the project dir
      * but to look for an environment properties file with overrides
      * @param environment - the name of the environment to use (local,dev,qa,prod,...)

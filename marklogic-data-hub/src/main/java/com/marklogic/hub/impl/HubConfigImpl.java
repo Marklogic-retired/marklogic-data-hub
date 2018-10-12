@@ -39,9 +39,10 @@ import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -56,12 +57,14 @@ import java.util.*;
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
     getterVisibility = JsonAutoDetect.Visibility.ANY,
     setterVisibility = JsonAutoDetect.Visibility.ANY)
-@Configuration
+@Component
 public class HubConfigImpl implements HubConfig
 {
     @Autowired
-    Environment environment;
-    @Value("${mlStagingDbName}")
+    ConfigurableEnvironment environment;
+
+    @Autowired
+    private HubProject hubProject;
 
     protected String stagingDbName = DEFAULT_STAGING_NAME;
     protected String stagingHttpName = DEFAULT_STAGING_NAME;
@@ -143,8 +146,6 @@ public class HubConfigImpl implements HubConfig
 
     private Properties environmentProperties;
 
-    private HubProject hubProject;
-
     private ManageConfig manageConfig;
     private ManageClient manageClient;
     private AdminConfig adminConfig;
@@ -164,7 +165,8 @@ public class HubConfigImpl implements HubConfig
 
     public HubConfigImpl(String projectDir) {
         this();
-        setProjectDir(new File(projectDir).getAbsolutePath());
+        this.projectDir = projectDir;
+        this.hubProject = HubProject.create(new File(projectDir).getAbsolutePath());
     }
 
 
@@ -829,7 +831,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override public void setProjectDir(String projectDir) {
         this.projectDir = projectDir;
-        this.hubProject = HubProject.create(projectDir);
+        hubProject.setProjectDirString(projectDir);
     }
 
     @JsonIgnore
@@ -856,8 +858,25 @@ public class HubConfigImpl implements HubConfig
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
-    public void loadConfigurationFromProperties(Properties environmentProperties) {
-        this.environmentProperties = environmentProperties;
+    private static Properties getAllKnownProperties(ConfigurableEnvironment env) {
+        Properties properties = new Properties();
+            for (PropertySource<?> propertySource : env.getPropertySources()) {
+                if (propertySource instanceof ResourcePropertySource) {
+                    for (String key : ((ResourcePropertySource) propertySource).getPropertyNames()) {
+                        properties.setProperty(key, String.valueOf(propertySource.getProperty(key)));
+                    }
+                }
+            }
+        return properties;
+    }
+
+    public Properties loadConfigurationFromProperties(Properties environmentProps) {
+        if (environmentProps != null){
+            this.environmentProperties = environmentProps;
+        }
+        else {
+            this.environmentProperties = getAllKnownProperties(environment);
+        }
 
         if (this.environmentProperties != null) {
             stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
@@ -983,6 +1002,8 @@ public class HubConfigImpl implements HubConfig
         else {
             logger.error("Missing environmentProperties");
         }
+
+        return environmentProperties;
     }
 
     @JsonIgnore

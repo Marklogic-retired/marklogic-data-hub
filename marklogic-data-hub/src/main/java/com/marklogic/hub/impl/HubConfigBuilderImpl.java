@@ -27,6 +27,8 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
@@ -45,10 +47,12 @@ import java.util.Properties;
  *         .build();
  *}</pre>
  */
+@Component
 public class HubConfigBuilderImpl implements HubConfigBuilder {
 
     private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
+    @Autowired
     private HubConfigImpl hubConfig;
 
     private String projectDir;
@@ -65,10 +69,17 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
     private AppConfig stagingAppConfig;
     private AppConfig finalAppConfig;
 
+    public HubConfigBuilderImpl(){}
 
     public HubConfigBuilderImpl(String projectDir) {
         this.projectDir = projectDir;
         this.hubConfig = (HubConfigImpl)HubConfig.create(projectDir);
+    }
+
+    public HubConfigBuilder withProjectDir(String projectDir) {
+        this.projectDir = projectDir;
+        hubConfig.setProjectDir(projectDir);
+        return this;
     }
 
     @Override public HubConfigBuilder withPropertiesFromEnvironment() {
@@ -125,11 +136,12 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
     @Override public HubConfig build() {
         Properties actualProperties = null;
         if (usePropertiesFromEnvironment) {
-            actualProperties = getPropertiesFromEnvironment();
+            actualProperties = hubConfig.loadConfigurationFromProperties(null);
         }
 
         if (actualProperties == null) {
             actualProperties = new Properties();
+            hubConfig.loadConfigurationFromProperties(actualProperties);
         }
 
 
@@ -137,8 +149,6 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
         if (properties != null) {
             properties.forEach(tmpProperties::put);
         }
-
-        hubConfig.loadConfigurationFromProperties(actualProperties);
 
         SimplePropertySource propertySource = new SimplePropertySource(actualProperties);
 

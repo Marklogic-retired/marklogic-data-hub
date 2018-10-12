@@ -49,10 +49,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -63,11 +65,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@Component
 public class DataHubImpl implements DataHub {
 
     private ManageClient _manageClient;
     private DatabaseManager _databaseManager;
     private ServerManager _serverManager;
+
+    @Autowired
     private HubConfigImpl hubConfig;
 
     private AdminManager _adminManager;
@@ -76,6 +81,8 @@ public class DataHubImpl implements DataHub {
 	private String finalFile = "final-database.json";
 	private String stagingFile = "staging-database.json";
 	private String jobsFile = "job-database.json";
+
+	public DataHubImpl(){}
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
