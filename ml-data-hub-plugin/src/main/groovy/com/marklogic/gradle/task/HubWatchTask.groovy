@@ -17,33 +17,30 @@
 
 package com.marklogic.gradle.task
 
+import com.marklogic.gradle.task.client.WatchTask
+import com.marklogic.hub.HubConfig
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import org.gradle.api.tasks.TaskAction
 
 /**
- * Runs an infinite loop, and each second, it loads any new/modified modules. Often useful to run with the Gradle "-i" flag
- * so you can see which modules are loaded.
- *
- * Depends on an instance of LoadModulesCommand being in the Gradle Project, which should have been placed there by
- * MarkLogicPlugin. This prevents this class from having to know how to construct a ModulesLoader.
+ * Extends the ml-gradle WatchTask so that hub modules - those in the plugins directory - can be loaded as well.
+ * Often useful to run with the Gradle "-i" flag so you can see which modules are loaded.
  */
-class HubWatchTask extends HubTask {
+class HubWatchTask extends WatchTask {
 
-    long sleepTime = 1000
+    LoadUserStagingModulesCommand command
 
+    @Override
     @TaskAction
-    public void watchModules() {
+    void watchModules() {
+        HubConfig hubConfig = getProject().property("hubConfig")
+        command = new LoadUserStagingModulesCommand(hubConfig)
+        println "Watching hub modules in path: " + hubConfig.getHubPluginsDir()
+    }
 
-        LoadUserStagingModulesCommand command = new LoadUserStagingModulesCommand(getHubConfig())
-        println "Watching modules in paths: " + getHubConfig().projectDir
-
-        while (true) {
-            command.execute(getCommandContext())
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException ie) {
-                // Ignore
-            }
-        }
+    @Override
+    void afterModulesLoaded() {
+        super.afterModulesLoaded()
+        command.execute(getCommandContext())
     }
 }
