@@ -50,6 +50,8 @@ export default function() {
         mappingsPage.inputSourceURI().clear();
         mappingsPage.inputSourceURI().sendKeys(sourceDocUriWithSmallSku);
         mappingsPage.editSourceURITick().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // select source for sku
         mappingsPage.sourcePropertyDropDown('sku').click();
@@ -206,6 +208,8 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.docNotFoundConfirmationOK()));
         expect(mappingsPage.docNotFoundMessage().getText()).toContain('Document URI not found: invalidURI');
         mappingsPage.docNotFoundConfirmationOK().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the old valid URI persists
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
