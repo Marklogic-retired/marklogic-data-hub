@@ -801,6 +801,7 @@ export default function(tmpDir) {
       browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
       //verify the options are retained
       console.log('verify the flow options');
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
