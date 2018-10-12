@@ -43,15 +43,15 @@ class UpdateIndexesTaskTest extends BaseTest {
 		// Creating an Order Entity
 		propertiesFile << """
             ext {
-                entityName=Order
+                entityName=my-unique-order-entity
             }
         """
 		runTask('hubCreateEntity')
-		File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Order").toFile()
+		File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-order-entity").toFile()
 		entityDir.isDirectory() == true
 		
-		// Copying Order.entity.json file to plugins/entities/Order directory
-		String entityStream = new File("src/test/resources/update-indexes/Order.entity.json").getAbsolutePath()
+		// Copying Order.entity.json file to plugins/entities/my-unique-order-entity directory
+		String entityStream = new File("src/test/resources/update-indexes/my-unique-order-entity.entity.json").getAbsolutePath()
 		Files.copy(new File(entityStream).toPath(), entityDir.toPath(), StandardCopyOption.REPLACE_EXISTING)
 		
 		// Loading modules to databases

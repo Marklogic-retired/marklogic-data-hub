@@ -111,7 +111,7 @@
     }, {
       "collation" : "http://marklogic.com/collation/codepoint",
       "invalid-values" : "reject",
-      "path-expression" : "//*:instance/Order/id",
+      "path-expression" : "//*:instance/my-unique-order-entity/id",
       "range-value-positions" : false,
       "scalar-type" : "string"
   }
