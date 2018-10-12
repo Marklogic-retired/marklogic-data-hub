@@ -26,8 +26,13 @@ import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.client.io.Format
 import com.marklogic.client.io.InputStreamHandle
 import com.marklogic.client.io.StringHandle
+import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.HubConfigBuilder
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.resource.databases.DatabaseManager
+import com.marklogic.rest.util.Fragment
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.custommonkey.xmlunit.XMLUnit
@@ -56,6 +61,9 @@ class BaseTest extends Specification {
     static File buildFile
     static File propertiesFile
 
+	static ManageClient _manageClient;
+	static DatabaseManager _databaseManager;
+	
     static HubConfig _hubConfig = null
 
     static BuildResult runTask(String... task) {
@@ -221,6 +229,35 @@ class BaseTest extends Specification {
         createFullPropertiesFile()
     }
 
+	static DatabaseManager getDatabaseManager() {
+		if (_databaseManager == null) {
+			_databaseManager = new DatabaseManager(getManageClient());
+		}
+		return _databaseManager;
+	}
+	
+	static ManageClient getManageClient() {
+		if (_manageClient == null) {
+			_manageClient = hubConfig().getManageClient();
+		}
+		return _manageClient;
+	}
+
+	static int getStagingRangePathIndexSize() {
+		Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.STAGING));
+		return databseFragment.getElementValues("//m:range-path-index").size()
+	}
+	
+	static int getFinalRangePathIndexSize() {
+		Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.FINAL));
+		return databseFragment.getElementValues("//m:range-path-index").size()
+	}
+	
+	static int getJobsRangePathIndexSize() {
+		Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
+		return databseFragment.getElementValues("//m:range-path-index").size()
+	}
+	
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
         testProjectDir.create()
