@@ -105,6 +105,8 @@ export default function() {
         mappingsPage.editSourceURITick().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
         mappingsPage.editSourceURIConfirmationOK().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // change the source to SKU
         mappingsPage.sourcePropertyDropDown('sku').click();
