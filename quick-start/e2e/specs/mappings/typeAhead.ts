@@ -133,6 +133,8 @@ export default function() {
         mappingsPage.inputSourceURI().clear();
         mappingsPage.inputSourceURI().sendKeys(sourceDocUri);
         mappingsPage.editSourceURITick().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('id')));
         // verify the typeahead on property name
         mappingsPage.sourcePropertyDropDown('id').click();
