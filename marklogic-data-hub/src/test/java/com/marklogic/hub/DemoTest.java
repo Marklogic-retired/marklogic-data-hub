@@ -68,6 +68,7 @@ public class DemoTest extends HubTestBase
     {
         hubConfigBuilder.withProjectDir(PROJECT_PATH).withPropertiesFromEnvironment().build();
         Assert.assertEquals(hubConfig, hubConfig2);
+        System.out.println(hubConfig.getDbName(DatabaseKind.STAGING));
         System.out.println(hubProject.getUserConfigDir());
         System.out.println(dataHub.isInstalled());
     }

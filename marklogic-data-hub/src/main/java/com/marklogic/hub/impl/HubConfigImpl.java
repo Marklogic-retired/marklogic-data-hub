@@ -61,9 +61,6 @@ import java.util.*;
 public class HubConfigImpl implements HubConfig
 {
     @Autowired
-    ConfigurableEnvironment environment;
-
-    @Autowired
     private HubProject hubProject;
 
     protected String stagingDbName = DEFAULT_STAGING_NAME;
@@ -858,25 +855,8 @@ public class HubConfigImpl implements HubConfig
         return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
     }
 
-    private static Properties getAllKnownProperties(ConfigurableEnvironment env) {
-        Properties properties = new Properties();
-            for (PropertySource<?> propertySource : env.getPropertySources()) {
-                if (propertySource instanceof ResourcePropertySource) {
-                    for (String key : ((ResourcePropertySource) propertySource).getPropertyNames()) {
-                        properties.setProperty(key, String.valueOf(propertySource.getProperty(key)));
-                    }
-                }
-            }
-        return properties;
-    }
-
-    public Properties loadConfigurationFromProperties(Properties environmentProps) {
-        if (environmentProps != null){
-            this.environmentProperties = environmentProps;
-        }
-        else {
-            this.environmentProperties = getAllKnownProperties(environment);
-        }
+    public void loadConfigurationFromProperties(Properties environmentProperties) {
+        this.environmentProperties = environmentProperties;
 
         if (this.environmentProperties != null) {
             stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
@@ -1002,8 +982,6 @@ public class HubConfigImpl implements HubConfig
         else {
             logger.error("Missing environmentProperties");
         }
-
-        return environmentProperties;
     }
 
     @JsonIgnore

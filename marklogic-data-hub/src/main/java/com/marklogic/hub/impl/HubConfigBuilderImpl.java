@@ -136,12 +136,11 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
     @Override public HubConfig build() {
         Properties actualProperties = null;
         if (usePropertiesFromEnvironment) {
-            actualProperties = hubConfig.loadConfigurationFromProperties(null);
+            actualProperties = getPropertiesFromEnvironment();
         }
 
         if (actualProperties == null) {
             actualProperties = new Properties();
-            hubConfig.loadConfigurationFromProperties(actualProperties);
         }
 
 
@@ -149,6 +148,8 @@ public class HubConfigBuilderImpl implements HubConfigBuilder {
         if (properties != null) {
             properties.forEach(tmpProperties::put);
         }
+
+        hubConfig.loadConfigurationFromProperties(actualProperties);
 
         SimplePropertySource propertySource = new SimplePropertySource(actualProperties);
 
