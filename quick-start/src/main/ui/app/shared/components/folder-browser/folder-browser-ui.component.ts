@@ -4,7 +4,7 @@ import { MdlTextFieldComponent } from '@angular-mdl/core';
 @Component({
   selector: 'app-folder-browser-ui',
   templateUrl: './folder-browser-ui.component.html',
-  styleUrls: ['./folder-browser-ui.component.scss'],
+  styleUrls: ['./folder-browser-ui.component.scss']
 })
 export class FolderBrowserUiComponent implements OnInit {
 
