@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ScaffoldingTest extends HubTestBase {

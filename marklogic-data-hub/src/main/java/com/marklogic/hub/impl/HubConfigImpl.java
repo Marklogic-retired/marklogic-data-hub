@@ -57,10 +57,8 @@ import java.util.*;
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
     getterVisibility = JsonAutoDetect.Visibility.ANY,
     setterVisibility = JsonAutoDetect.Visibility.ANY)
-@Component
 public class HubConfigImpl implements HubConfig
 {
-    @Autowired
     private HubProject hubProject;
 
     protected String stagingDbName = DEFAULT_STAGING_NAME;

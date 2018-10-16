@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;

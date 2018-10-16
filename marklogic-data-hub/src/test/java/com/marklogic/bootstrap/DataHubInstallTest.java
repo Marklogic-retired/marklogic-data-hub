@@ -27,6 +27,7 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.util.Versions;
+import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -315,6 +317,7 @@ public class DataHubInstallTest extends HubTestBase {
     public void testAmpLoading() {
         HubConfig config = getHubAdminConfig();
         LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand(config);
+        ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
         CommandContext commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
         DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
         amps.execute(commandContext);

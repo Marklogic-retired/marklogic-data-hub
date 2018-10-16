@@ -21,11 +21,15 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.HubTestConfig;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,12 +38,14 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HubTestConfig.class)
 public class EmptyCollectorTest extends HubTestBase {
 
     private static final String ENTITY = "streamentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         // note, not basicSetup
 

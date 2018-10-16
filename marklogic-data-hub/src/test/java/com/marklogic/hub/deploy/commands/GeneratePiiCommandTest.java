@@ -19,19 +19,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.HubTestConfig;
 import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HubTestConfig.class)
 public class GeneratePiiCommandTest extends HubTestBase  {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
@@ -39,7 +46,7 @@ public class GeneratePiiCommandTest extends HubTestBase  {
 
     GeneratePiiCommand generatePiiCommand;
 
-    @Before
+    @BeforeEach
     public void setup() {
         generatePiiCommand = new GeneratePiiCommand(getHubAdminConfig());
         deleteProjectDir();

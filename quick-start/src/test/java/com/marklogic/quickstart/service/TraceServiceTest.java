@@ -40,6 +40,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 public class TraceServiceTest extends AbstractServiceTest {

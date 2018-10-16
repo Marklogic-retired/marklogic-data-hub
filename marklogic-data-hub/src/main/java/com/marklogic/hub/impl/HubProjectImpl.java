@@ -39,7 +39,6 @@ import java.util.Set;
 /**
  * Class for creating a hub Project
  */
-@Component
 public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
@@ -240,7 +239,7 @@ public class HubProjectImpl implements HubProject {
 
         writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
         writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
-        writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
+        writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local_properties"));
     }
 
     private void makeExecutable(Path file) {

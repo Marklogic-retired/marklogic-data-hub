@@ -47,12 +47,10 @@ import java.util.Properties;
  *         .build();
  *}</pre>
  */
-@Component
 public class HubConfigBuilderImpl implements HubConfigBuilder {
 
     private static final String GRADLE_PROPERTIES_FILENAME = "gradle.properties";
 
-    @Autowired
     private HubConfigImpl hubConfig;
 
     private String projectDir;

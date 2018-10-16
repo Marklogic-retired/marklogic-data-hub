@@ -41,6 +41,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)

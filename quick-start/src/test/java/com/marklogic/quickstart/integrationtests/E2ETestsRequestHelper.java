@@ -1,5 +1,6 @@
 package com.marklogic.quickstart.integrationtests;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static io.restassured.RestAssured.given;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class E2ETestsRequestHelper extends HubTestBase {
 	static final protected Logger logger = LoggerFactory.getLogger(E2ETestsRequestHelper.class);
 
 	public Response initilizeProjectConfiguration() {
-		String projectPath = new File(HubTestBase.PROJECT_PATH).getAbsolutePath();
+		String projectPath = new File(PROJECT_PATH).getAbsolutePath();
 		Response projectInitResponse =
 				given()
 					.contentType("application/x-www-form-urlencoded")

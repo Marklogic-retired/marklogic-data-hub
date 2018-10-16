@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.HubTestConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,17 +20,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
+import static org.junit.jupiter.api.Assertions.*;
 
 //import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HubTestConfig.class)
 public class HubConfigTest extends HubTestBase {
 
 
     private static File projectPath = new File(PROJECT_PATH);
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         FileUtils.deleteDirectory(projectPath);
         HubConfig config = getHubFlowRunnerConfig();
@@ -72,6 +79,7 @@ public class HubConfigTest extends HubTestBase {
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
 
         writeProp("mlIsHostLoadBalancer", "true");
+        // TODO this test method requires a re-read of properties
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
         writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());

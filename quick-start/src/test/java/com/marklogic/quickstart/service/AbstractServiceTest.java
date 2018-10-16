@@ -10,6 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.POST;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
+
 @Configuration
 public class AbstractServiceTest extends HubTestBase {
 

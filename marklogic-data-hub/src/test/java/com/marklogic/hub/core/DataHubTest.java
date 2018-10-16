@@ -18,6 +18,7 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.HubTestConfig;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
@@ -29,6 +30,9 @@ import org.easymock.EasyMockRule;
 import org.easymock.Mock;
 import org.jdom2.Namespace;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.*;
 
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = HubTestConfig.class)
 public class DataHubTest extends HubTestBase {
     @Rule
     public EasyMockRule mocks = new EasyMockRule(this);

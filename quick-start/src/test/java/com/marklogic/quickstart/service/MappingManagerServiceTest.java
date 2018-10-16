@@ -33,6 +33,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 public class MappingManagerServiceTest extends AbstractServiceTest {

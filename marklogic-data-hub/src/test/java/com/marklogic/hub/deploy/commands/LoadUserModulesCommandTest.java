@@ -16,21 +16,27 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.hub.HubTestBase;
-import org.junit.Before;
-import org.junit.Test;
+import com.marklogic.hub.HubTestConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = HubTestConfig.class)
 public class LoadUserModulesCommandTest extends HubTestBase {
 
     public LoadUserStagingModulesCommand loadUserModulesCommand;
 
-    @Before
+    @BeforeEach
     public void setup() {
         loadUserModulesCommand = new LoadUserStagingModulesCommand(getHubAdminConfig());
     }

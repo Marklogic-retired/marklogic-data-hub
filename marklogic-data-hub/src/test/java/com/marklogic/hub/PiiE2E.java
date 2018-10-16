@@ -47,6 +47,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -71,7 +72,7 @@ public class PiiE2E extends HubTestBase {
     public static void setupAll() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
         Path src = Paths.get(PiiE2E.class.getClassLoader().getResource("pii-test").toURI());
-        Path dest = Paths.get(HubTestBase.PROJECT_PATH).getFileName().toAbsolutePath();
+        Path dest = Paths.get(PROJECT_PATH).getFileName().toAbsolutePath();
         Stream<Path> stream = Files.walk(src);
         stream.filter(f -> !Files.isDirectory(f)).forEach(sourcePath -> {
             try {
