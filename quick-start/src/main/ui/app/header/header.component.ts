@@ -1,17 +1,28 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-
+import { Component, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
 import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
+  template: `
+    <app-header-ui
+      [runningJobs]="runningJobs"
+      [percentageComplete]="percentageComplete"
+      (logout)="this.logout()"
+    ></app-header-ui>
+  `
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnDestroy {
+
+  @Input() runningJobs: number;
+  @Input() percentageComplete: number;
+  //@Output() jobCount = new EventEmitter<number>();
+  jobCountSubscription: Subscription;
+  percentageSubscription: Subscription;
 
   constructor(
     private projectService: ProjectService,
@@ -19,18 +30,26 @@ export class HeaderComponent {
     private jobListener: JobListenerService,
     private envService: EnvironmentService,
     private router: Router
-  ) {}
+  ) {
+    this.jobCountSubscription = this.jobListener.getJobCount().subscribe(jobCount => this.runningJobs = jobCount);
+    this.percentageSubscription = this.jobListener.getPercentageComplete().subscribe(percentage => this.percentageComplete = percentage);
 
+  }
+  ngOnDestroy() {
+    // unsubscribe to ensure no memory leaks
+    this.jobCountSubscription.unsubscribe();
+    this.percentageSubscription.unsubscribe();
+  }
   gotoJobs() {
     this.router.navigate(['jobs']);
   }
 
-  getRunningJobCount(): number {
-    return this.jobListener.runningJobCount();
+  getRunningJobCount() {
+    this.runningJobs = this.jobListener.runningJobCount();
   }
 
-  getPercentComplete(): number {
-    return this.jobListener.totalPercentComplete();
+  getPercentComplete() {
+    this.percentageComplete = this.jobListener.totalPercentComplete();
   }
 
   getMarkLogicVersion(): number {
@@ -45,11 +64,14 @@ export class HeaderComponent {
     });
   }
 
-  isActive(url: string): boolean {
-    if (url === '/') {
-      return this.router.url === url;
-    }
+  isActive(url: string) {
+    console.log('header active url', url);
+    // if(this.router.url.startsWith(url)){
+    //   this.activeLink.emit({true});
+    // }
+    //this.activeLink.emit(true);
 
-    return this.router.url.startsWith(url);
+    //return this.router.url.startsWith(url);
+    //this.activeLink.emit({ url: this.router.url.startsWith(url)});
   }
 }
