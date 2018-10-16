@@ -22,7 +22,7 @@ export default function() {
         //create WorldBank input flow
         flowPage.clickEntityDisclosure('WorldBank');
         flowPage.createInputFlow('WorldBank', 'Load WorldBank', 'json', 'sjs', false);
-        browser.wait(EC.visibilityOf(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
+        browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
         expect(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT').isDisplayed()).
           toBe(true, 'Load WorldBank' + ' is not present');
       });
@@ -202,7 +202,7 @@ export default function() {
       it('should create Harmonize WorldBank flow', function() {
         flowPage.clickEntityDisclosure('WorldBank');
         flowPage.createHarmonizeFlow('WorldBank', 'Harmonize WorldBank', 'json', 'sjs', true, 'MapWorldBank');
-        browser.wait(EC.visibilityOf(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
+        browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isDisplayed()).
           toBe(true, 'Harmonize WorldBank' + ' is not present');
       });
@@ -214,10 +214,10 @@ export default function() {
       
       it('should run Harmonize WorldBank flow with mapping', function() {
         flowPage.clickEntityDisclosure('WorldBank');
-        browser.wait(EC.visibilityOf(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
+        browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isPresent()).toBe(true);
         flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').click();
-        browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+        browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
         expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         flowPage.runHarmonizeButton().click();
         browser.sleep(10000);
