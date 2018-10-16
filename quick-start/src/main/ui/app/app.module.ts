@@ -71,6 +71,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
+import { NewMapUiComponent } from "./shared/components/mappings/new-map-ui.component";
 import {ThemeModule} from "./shared/components/theme/theme.module";
 
 @NgModule({
@@ -96,6 +97,7 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     NewEntityComponent,
     NewFlowComponent,
     NewMapComponent,
+    NewMapUiComponent,
     PaginationComponent,
     ResizableComponent,
     SelectComponent,
