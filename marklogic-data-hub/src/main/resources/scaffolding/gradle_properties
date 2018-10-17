@@ -30,17 +30,12 @@ mlPassword=
 # To use SSL on the Manage appserver (port 8002 by default)
 # mlManageScheme=https
 # mlManageSimpleSsl=true
-
-# If specified, the admin username/password combo is used with the ML Management REST API for creating users and roles. This
-# user must have the manage-admin or admin role. A good practice is to use your admin account here to create app-specific
-# users and roles, which can then be used as mlManageUsername/mlManagePassword and mlUsername/mlPassword.
 #
-# These properties are also used for connecting to the admin application on port 8001 - e.g. for initializing ML and for
-# waiting for ML to restart.
+# If specified, mlSecurityUsername/mlSecurityPassword is used for talking to Security end points on port 8002; this 
+# user must have the "manage-admin" and "security" roles.
 #
-# If these properties are not set, then mlUsername/mlPassword will be used.
-# mlAdminUsername=
-# mlAdminPassword=
+# mlSecurityUsername=
+# mlSecurityPassword=
 #
 # To change the Admin Port
 # mlAdminPort=8001
