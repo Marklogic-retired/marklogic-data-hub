@@ -22,7 +22,7 @@ import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.impl.ScaffoldingImpl;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -42,9 +42,9 @@ public interface Scaffolding {
      * @param databaseClient - the database client that will be used to connect
      * @return Scaffolding object with project directory and database set
      */
-    static Scaffolding create(String projectDir, DatabaseClient databaseClient) {
-        return new ScaffoldingImpl(projectDir, databaseClient);
-    }
+    //static Scaffolding create(String projectDir, DatabaseClient databaseClient) {
+        //return new ScaffoldingImpl(projectDir, databaseClient);
+    //}
 
     /**
      * Returns the directory of the flow

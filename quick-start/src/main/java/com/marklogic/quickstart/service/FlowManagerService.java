@@ -32,6 +32,7 @@ import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -49,17 +50,13 @@ public class FlowManagerService extends EnvironmentAware {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
+    @Autowired
     private FlowManager flowManager;
 
-    // before login, flowManager is null, so check each time.
-    private FlowManager flowManager() {
-        flowManager = FlowManager.create(envConfig().getMlSettings());
-        return flowManager;
-    }
 
     public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
         Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
-        return flowManager().getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
+        return flowManager.getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
             flowModel.dataFormat = flow.getDataFormat();
@@ -100,12 +97,12 @@ public class FlowManagerService extends EnvironmentAware {
     }
 
     public Flow getServerFlow(String entityName, String flowName, FlowType flowType) {
-        return flowManager().getFlow(entityName, flowName, flowType);
+        return flowManager.getFlow(entityName, flowName, flowType);
     }
 
     public JobTicket runFlow(Flow flow, int batchSize, int threadCount, Map<String, Object> options, FlowStatusListener statusListener) {
 
-        FlowRunner flowRunner = flowManager().newFlowRunner()
+        FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
             .withBatchSize(batchSize)
@@ -183,6 +180,6 @@ public class FlowManagerService extends EnvironmentAware {
     }
 
     public FlowManager getFlowManager() {
-        return flowManager();
+        return flowManager;
     }
 }

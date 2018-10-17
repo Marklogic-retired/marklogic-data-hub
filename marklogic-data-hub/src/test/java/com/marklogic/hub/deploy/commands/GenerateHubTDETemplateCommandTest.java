@@ -15,13 +15,15 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.config.ApplicationConfig;
+import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -32,15 +34,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.Assert.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
     private static final String RESOURCES_DIR = "scaffolding-test/generate-tde-template/";
+
+    @Autowired
+    HubProject project;
 
     GenerateHubTDETemplateCommand GenerateHubTDETemplateCommand;
 
@@ -53,8 +57,7 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
 
 
     private void installEntity(String entityName) {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
-        Path entityDir = scaffolding.getEntityDir(entityName);
+        Path entityDir = project.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
         assertTrue(entityDir.toFile().exists());
         FileUtil.copy(getResourceStream(RESOURCES_DIR + entityName + ".entity.json"), entityDir.resolve(entityName + ".entity.json").toFile());

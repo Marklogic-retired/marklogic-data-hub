@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -31,12 +30,14 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -45,7 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @WebAppConfiguration
 public class EntitiesControllerTest extends BaseTestController {
@@ -55,13 +56,16 @@ public class EntitiesControllerTest extends BaseTestController {
     @Autowired
     private EntitiesController ec;
 
+    @Autowired
+    Scaffolding scaffolding;
+
 
     @Test
     public void getInputFlowOptions() throws Exception {
         String path = "/some/project/path";
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"/some/project/path\" }", new ObjectMapper().writeValueAsString(options), true);
     }
@@ -72,7 +76,7 @@ public class EntitiesControllerTest extends BaseTestController {
 
         envConfig.setInitialized(true);
         envConfig.setProjectDir(path);
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
     }
@@ -84,10 +88,9 @@ public class EntitiesControllerTest extends BaseTestController {
 
         envConfig.setInitialized(true);
         envConfig.setProjectDir(PROJECT_PATH);
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -102,7 +105,7 @@ public class EntitiesControllerTest extends BaseTestController {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -128,9 +131,8 @@ public class EntitiesControllerTest extends BaseTestController {
 
         envConfig.setInitialized(true);
         envConfig.setProjectDir(PROJECT_PATH);
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         Path projectDir = Paths.get(".", PROJECT_PATH);
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
 
         scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -145,7 +147,7 @@ public class EntitiesControllerTest extends BaseTestController {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
         final String OPT_VALUE = "test-value";

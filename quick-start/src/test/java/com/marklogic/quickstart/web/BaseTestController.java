@@ -40,6 +40,9 @@ public class BaseTestController extends HubTestBase {
     @Autowired
     private ProjectManagerService projectManagerService;
 
+    @Autowired
+    private DataHub dh;
+
     protected void setEnvConfig(EnvironmentConfig envConfig) {
 
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", envConfig.getMlSettings().getHost(), 1, "local");
@@ -51,7 +54,6 @@ public class BaseTestController extends HubTestBase {
     public void baseSetUp() throws IOException {
         envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
         setEnvConfig(envConfig);
-        DataHub dh = DataHub.create(envConfig.getMlSettings());
         dh.initProject();
         projectManagerService.addProject(PROJECT_PATH);
     }

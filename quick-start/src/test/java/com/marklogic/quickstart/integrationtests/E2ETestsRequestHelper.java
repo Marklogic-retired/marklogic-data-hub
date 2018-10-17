@@ -1,6 +1,5 @@
 package com.marklogic.quickstart.integrationtests;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static io.restassured.RestAssured.given;
 
 import java.io.File;

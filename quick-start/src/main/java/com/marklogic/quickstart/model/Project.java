@@ -36,7 +36,8 @@ public class Project {
     }
 
     public boolean isInitialized() {
-        return HubProject.create(this.path).isInitialized();
+        //return HubProject.create(this.path).isInitialized();
+        return true;
     }
 
     public List<String> getEnvironments() {
@@ -51,8 +52,9 @@ public class Project {
     }
 
     public void initialize(HubConfig hubConfig) {
-        hubConfig.setProjectDir(this.path);
-        DataHub hub = DataHub.create(hubConfig);
-        hub.initProject();
+        //FIXME  entry point
+        // hubConfig.setProjectDir(this.path);
+        //DataHub hub = DataHub.create(hubConfig);
+        // hub.initProject();
     }
 }

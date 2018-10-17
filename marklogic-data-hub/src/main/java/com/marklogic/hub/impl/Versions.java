@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.util;
+package com.marklogic.hub.impl;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -23,16 +23,26 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
+@Component
 public class Versions extends ResourceManager {
     private static final String NAME = "ml:hubversion";
 
     DatabaseClient stagingClient;
+
+    @Autowired
     private HubConfig hubConfig;
 
-    public Versions(HubConfig hubConfig) {
+    public Versions() {
         super();
-        this.hubConfig = hubConfig;
+    }
+
+    @PostConstruct
+    public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
     }

@@ -13,58 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.scaffold.impl;
+package com.marklogic.hub.impl;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.scaffold.ScaffoldingValidator;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class ScaffoldingImpl implements Scaffolding {
 
-    private String projectDir;
-    private Path pluginsDir;
-    private Path entitiesDir;
-    private Path mappingsDir;
+    @Autowired
+    private HubProject project;
+
+    @Autowired
+    HubConfig hubConfig;
+
+    @Autowired
     private ScaffoldingValidator validator;
+
+    // TODO
     private DatabaseClient databaseClient;
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public ScaffoldingImpl(String projectDir, DatabaseClient databaseClient) {
-        this.projectDir = projectDir;
-        this.pluginsDir = Paths.get(this.projectDir, "plugins");
-        this.entitiesDir = this.pluginsDir.resolve("entities");
-        this.mappingsDir = this.pluginsDir.resolve("mappings");
-        this.databaseClient = databaseClient;
-        validator = new ScaffoldingValidator(projectDir);
-    }
 
     public static String getAbsolutePath(String first, String... more) {
         StringBuilder absolutePath = new StringBuilder(first);
@@ -76,19 +76,19 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
-        Path entityDir = entitiesDir.resolve(entityName);
+        Path entityDir = project.getEntityDir(entityName);
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
         return flowDir;
     }
 
     @Override public void createEntity(String entityName) {
-        Path entityDir = entitiesDir.resolve(entityName);
+        Path entityDir = project.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
     }
 
     @Override public void createMappingDir(String mappingName) {
-        Path mappingDir = mappingsDir.resolve(mappingName);
+        Path mappingDir = project.getMappingDir(mappingName);
         mappingDir.toFile().mkdirs();
     }
 
@@ -170,7 +170,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public List<String> updateLegacyFlows(String fromVersion, String entityName) {
-        Path entityDir = entitiesDir.resolve(entityName);
+        Path entityDir = project.getHubEntitiesDir().resolve(entityName);
         Path inputDir = entityDir.resolve("input");
         Path harmonizeDir = entityDir.resolve("harmonize");
 
@@ -206,7 +206,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void updateLegacyEntity(String entityName) {
-        Path entityDir = entitiesDir.resolve(entityName);
+        Path entityDir = project.getHubEntitiesDir().resolve(entityName);
 
         File[] entityFiles = entityDir.toFile().listFiles((dir, name) -> name.matches("[^.]+\\.entity\\.json"));
         if (entityFiles != null && entityFiles.length == 0) {
@@ -444,13 +444,6 @@ public class ScaffoldingImpl implements Scaffolding {
         return file;
     }
 
-    public Path getEntityDir(String entityName) {
-        return entitiesDir.resolve(entityName);
-    }
-
-    public Path getMappingDir(String mappingName) {
-        return mappingsDir.resolve(mappingName);
-    }
 
     private Path getRestDirectory(String entityName, FlowType flowType) {
         return getFlowDir(entityName, "REST", flowType);

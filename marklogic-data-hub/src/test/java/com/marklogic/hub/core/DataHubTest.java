@@ -18,9 +18,9 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class DataHubTest extends HubTestBase {
     @Rule
     public EasyMockRule mocks = new EasyMockRule(this);
@@ -65,14 +65,12 @@ public class DataHubTest extends HubTestBase {
     @Before
     public void beforeTests() {
         dh = EasyMock.createMockBuilder(DataHubImpl.class)
-            .withConstructor(HubConfig.class)
             .withArgs(getHubFlowRunnerConfig())
             .createMock();
         dh.setServerManager(serverManager);
 
         versions = EasyMock.createMockBuilder(Versions.class)
             .addMockedMethod("getMarkLogicVersion")
-            .withConstructor(HubConfig.class)
             .withArgs(getHubFlowRunnerConfig())
             .createMock();
     }
@@ -203,7 +201,7 @@ public class DataHubTest extends HubTestBase {
         expect(versions.getMarkLogicVersion()).andReturn("9.0-6");
         replay(dh, serverManager, versions);
 
-        dh.runPreInstallCheck(versions);
+        dh.runPreInstallCheck();
         assertTrue(dh.isServerVersionOk());
         assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
@@ -226,7 +224,7 @@ public class DataHubTest extends HubTestBase {
         expect(versions.getMarkLogicVersion()).andReturn("9.0-6");
         replay(dh, serverManager, versions);
 
-        dh.runPreInstallCheck(versions);
+        dh.runPreInstallCheck();
         assertTrue(dh.isServerVersionOk());
         assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
@@ -248,7 +246,7 @@ public class DataHubTest extends HubTestBase {
         expect(versions.getMarkLogicVersion()).andReturn("9.0-6");
         replay(serverManager, dh, versions);
 
-        dh.runPreInstallCheck(versions);
+        dh.runPreInstallCheck();
         assertTrue(dh.isServerVersionOk());
         assertTrue(dh.isPortInUse(DatabaseKind.STAGING));
         assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.STAGING));
@@ -271,7 +269,7 @@ public class DataHubTest extends HubTestBase {
         expect(versions.getMarkLogicVersion()).andReturn("9.0-1");
         replay(dh, versions, serverManager);
 
-        dh.runPreInstallCheck(versions);
+        dh.runPreInstallCheck();
         assertFalse(dh.isServerVersionOk());
         assertTrue(dh.isPortInUse(DatabaseKind.STAGING));
         assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.STAGING));
@@ -293,7 +291,7 @@ public class DataHubTest extends HubTestBase {
         expect(versions.getMarkLogicVersion()).andReturn("9.0-6");
         replay(dh, versions, serverManager);
 
-        dh.runPreInstallCheck(versions);
+        dh.runPreInstallCheck();
         assertTrue(dh.isServerVersionOk());
         assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
         assertTrue(dh.isPortInUse(DatabaseKind.FINAL));

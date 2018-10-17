@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.scaffold;
+package com.marklogic.hub.impl;
 
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
+import com.marklogic.hub.HubProject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -24,20 +27,20 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.List;
 
+@Component
 public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
 
-    private static String UNIQUE_KEY = "unique";
-   private Path pluginsDir;
+   private static String UNIQUE_KEY = "unique";
 
-   public ScaffoldingValidator(String projectDir) {
-       this.pluginsDir = Paths.get(projectDir, "plugins");
-   }
+   // can be autowired instead
+   @Autowired
+   private HubProject project;
 
    public boolean isUniqueRestServiceExtension(String name) {
        HashMap<String, Boolean> result = new HashMap<>();
        result.put(UNIQUE_KEY, true);
        try {
-           Files.walkFileTree(pluginsDir.resolve("entities"), new SimpleFileVisitor<Path>() {
+           Files.walkFileTree(project.getEntityConfigDir(), new SimpleFileVisitor<Path>() {
                @Override
                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                    if (isRestDir(dir)) {
@@ -66,7 +69,7 @@ public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
        HashMap<String, Boolean> result = new HashMap<>();
        result.put(UNIQUE_KEY, true);
        try {
-           Files.walkFileTree(pluginsDir.resolve("entities"), new SimpleFileVisitor<Path>() {
+           Files.walkFileTree(project.getHubEntitiesDir(), new SimpleFileVisitor<Path>() {
                @Override
                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                    if (isRestDir(dir)) {

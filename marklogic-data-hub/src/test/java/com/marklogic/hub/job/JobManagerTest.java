@@ -19,12 +19,17 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +47,8 @@ import java.util.zip.ZipFile;
 import static org.junit.Assert.*;
 
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class JobManagerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static final String HARMONIZE_FLOW_XML = "testharmonize-xml";
@@ -64,7 +71,6 @@ public class JobManagerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         // Traces can be XML or JSON, depending on the DataFormat of the flow that created them. Get some of each
         // to make sure export and import work correctly.
@@ -85,7 +91,6 @@ public class JobManagerTest extends HubTestBase {
 
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");

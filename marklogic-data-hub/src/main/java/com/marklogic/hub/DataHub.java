@@ -19,8 +19,6 @@ package com.marklogic.hub;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
-import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.util.Versions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +30,9 @@ import java.util.List;
  */
 public interface DataHub {
 
-    static DataHub create(HubConfig hubConfig) {
-        return new DataHubImpl(hubConfig);
-    }
+    //static DataHub create(HubConfig hubConfig) {
+        //return new DataHubImpl(hubConfig);
+    //}
 
     /**
      * Clears the database of all documents
@@ -75,16 +73,6 @@ public interface DataHub {
      * @return - a hashmap of the results of the preinstall check
      */
     HashMap runPreInstallCheck();
-
-    /**
-     * Runs the pre-install check for the datahub populating the object
-     * with variables necessary to perform the install.
-     * This is used for running install.
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param versions - the versions that the check is to be run against
-     * @return - a hashmap of the results of the preinstall check
-     */
-    HashMap runPreInstallCheck(Versions versions);
 
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic

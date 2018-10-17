@@ -22,11 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.InstallInfo;
-import com.marklogic.hub.util.Versions;
-
-import java.util.Properties;
+import com.marklogic.hub.impl.Versions;
 
 public class EnvironmentConfig {
 
@@ -96,6 +93,7 @@ public class EnvironmentConfig {
         this.projectDir = projectDir;
         this.environment = environment;
 
+        /*
         Properties overrides = new Properties();
         overrides.put("mlUsername", username);
         overrides.put("mlPassword", password);
@@ -108,13 +106,15 @@ public class EnvironmentConfig {
             mlSettings.getStagingAppConfig().setAppServicesPassword(password);
         }
         dataHub = DataHub.create(mlSettings);
+        */
 
     }
 
     @JsonIgnore
     public void checkIfInstalled() {
         this.installInfo = dataHub.isInstalled();
-        Versions versions = new Versions(mlSettings);
+        //FIXME
+        Versions versions = new Versions();
         this.installedVersion = versions.getHubVersion();
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();

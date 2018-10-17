@@ -29,9 +29,9 @@ public interface EntityManager {
      * @param hubConfig - the hubConfig for the EntityManager to use
      * @return an EntityManager object with a set hubConfig
      */
-    static EntityManager create(HubConfig hubConfig) {
-       return new EntityManagerImpl(hubConfig);
-    }
+    //static EntityManager create(HubConfig hubConfig) {
+       //return new EntityManagerImpl(hubConfig);
+    //}
 
     /**
      * Updates the query options to the file system

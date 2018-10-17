@@ -58,6 +58,12 @@ public class EntityManagerService extends EnvironmentAware {
     public static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     @Autowired
+    EntityManager em;
+
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
     private FlowManagerService flowManagerService;
 
     @Autowired
@@ -123,7 +129,6 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -202,17 +207,14 @@ public class EntityManagerService extends EnvironmentAware {
 
     //TODO Autowire in an Entity Manager
     public void deploySearchOptions(EnvironmentConfig environmentConfig) {
-        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.deployQueryOptions();
     }
 
     public void saveDbIndexes(EnvironmentConfig environmentConfig) {
-        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.saveDbIndexes();
     }
 
     public void savePii(EnvironmentConfig environmentConfig) {
-        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
         em.savePii();
     }
 
@@ -304,7 +306,6 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
         newFlow.entityName = entityName;
         if(newFlow.mappingName != null) {
             try {
@@ -319,7 +320,6 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }

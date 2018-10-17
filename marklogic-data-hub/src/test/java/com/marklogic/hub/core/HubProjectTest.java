@@ -3,7 +3,7 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
+import com.marklogic.hub.config.ApplicationConfig;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +17,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class HubProjectTest extends HubTestBase {
 
     private static File projectPath = new File(PROJECT_PATH);

@@ -2,7 +2,6 @@ package com.marklogic.hub;
 
 import com.google.gson.*;
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.AppDeployer;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
@@ -16,15 +15,14 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.deploy.commands.DeployHubRolesCommand;
-import com.marklogic.hub.deploy.commands.DeployHubUsersCommand;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.deploy.commands.DeployUserRolesCommand;
 import com.marklogic.hub.deploy.commands.DeployUserUsersCommand;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.Installer;
 import org.apache.commons.io.FileUtils;
@@ -35,9 +33,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -47,12 +47,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PiiE2E extends HubTestBase {
 	static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
@@ -62,6 +62,18 @@ public class PiiE2E extends HubTestBase {
 
     private SimpleAppDeployer deployer;
     private AppConfig secAppConfig;
+
+    @Autowired
+    protected EntityManager entityManager;
+
+    @Autowired
+    protected FlowManager flowManager;
+
+    @Autowired
+    private Scaffolding scaffolding;
+
+    @Autowired
+    private HubProject project;
 
     @AfterAll
     public static void teardown() {
@@ -186,7 +198,6 @@ public class PiiE2E extends HubTestBase {
 
         // save pii, install user modules and deploy security
         installUserModules(getHubAdminConfig(), true);
-        EntityManager entityManager = EntityManager.create(getHubAdminConfig());
         entityManager.savePii();
 
         try {
@@ -214,7 +225,6 @@ public class PiiE2E extends HubTestBase {
     @Test
     public void testSavePii() throws Exception {
     	installEntities();
-    	EntityManager entityManager = EntityManager.create(getHubAdminConfig());
     	entityManager.savePii();
 
         verifyResults(getHubAdminConfig().getUserSecurityDir());
@@ -279,8 +289,7 @@ public class PiiE2E extends HubTestBase {
 
 
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
-        Path employeeDir = scaffolding.getEntityDir("EmployeePii");
+        Path employeeDir = project.getEntityDir("EmployeePii");
         employeeDir.toFile().mkdirs();
         Assert.assertTrue(employeeDir.toFile().exists());
         FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), employeeDir.resolve("EmployeePii.entity.json").toFile());
@@ -327,7 +336,6 @@ public class PiiE2E extends HubTestBase {
     }
 
     private void runHarmonizeFlow(String flowName, DatabaseClient srcClient, String destDb){
-    	FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = flowManager.getFlow("SupportCall", flowName, FlowType.HARMONIZE);
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)

@@ -15,11 +15,9 @@
  */
 package com.marklogic.hub.core;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.io.DOMHandle;
 import com.marklogic.hub.*;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.config.ApplicationConfig;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -44,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
 
@@ -98,7 +96,7 @@ public class DataHubInstallTest extends HubTestBase {
     @Test
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
-        assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
+        assertEquals(version, versions.getHubVersion());
     }
 
     @Test
@@ -208,7 +206,7 @@ public class DataHubInstallTest extends HubTestBase {
             getResource("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-input-transform/assets/transform.xqy"));
 
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.initialize();
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/my-lib.xqy")));
@@ -233,7 +231,6 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
         HubConfig hubConfig = getHubAdminConfig(path);
-        DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 
 

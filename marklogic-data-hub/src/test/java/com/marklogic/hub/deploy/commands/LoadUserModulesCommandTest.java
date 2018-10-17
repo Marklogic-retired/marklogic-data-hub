@@ -16,7 +16,7 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
+import com.marklogic.hub.config.ApplicationConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,14 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class LoadUserModulesCommandTest extends HubTestBase {
 
     public LoadUserStagingModulesCommand loadUserModulesCommand;
 
     @BeforeEach
     public void setup() {
-        loadUserModulesCommand = new LoadUserStagingModulesCommand(getHubAdminConfig());
+        loadUserModulesCommand = new LoadUserStagingModulesCommand();
+        loadUserModulesCommand.setHubConfig(getHubAdminConfig());
     }
 
     @Test

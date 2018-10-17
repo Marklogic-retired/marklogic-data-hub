@@ -138,10 +138,8 @@ public class EndToEndFlowTests extends HubTestBase {
         enableDebugging();
 
 
-        flowManager = FlowManager.create(getHubFlowRunnerConfig());
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
 
-        scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
         // create some flows in a format that pre-dates the 2.0 flow format with properties files
@@ -149,7 +147,6 @@ public class EndToEndFlowTests extends HubTestBase {
             createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
         });
 
-        flowManager = FlowManager.create(getHubFlowRunnerConfig());
         List<String> legacyFlows = flowManager.getLegacyFlows();
         assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value

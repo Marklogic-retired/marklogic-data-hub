@@ -16,18 +16,24 @@
 
 package com.marklogic.hub.scaffolding;
 
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.impl.ScaffoldingImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,15 +43,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class ScaffoldingTest extends HubTestBase {
 
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
     private static File pluginDir = projectPath.resolve("plugins").toFile();
     private static boolean isMl9 = true;
+
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    HubProject project;
 
     @Before
     public void setup() throws IOException {
@@ -58,11 +71,10 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createEntity() throws FileNotFoundException {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
-        Path entityDir = scaffolding.getEntityDir("my-fun-test");
+        Path entityDir = project.getEntityDir("my-fun-test");
         assertTrue(entityDir.toFile().exists());
         assertEquals(
                 Paths.get(pluginDir.toString(), "entities", "my-fun-test"),
@@ -76,11 +88,10 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createMappingDir() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
         scaffolding.createMappingDir("my-fun-test");
         assertTrue(projectDir.exists());
 
-        Path mappingDir = scaffolding.getMappingDir("my-fun-test");
+        Path mappingDir = project.getMappingDir("my-fun-test");
         assertTrue(mappingDir.toFile().exists());
         assertEquals(
             Paths.get(pluginDir.toString(), "mappings", "my-fun-test"),
@@ -94,7 +105,6 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.HARMONIZE;
         CodeFormat pluginCodeFormat = CodeFormat.XQUERY;
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestExtension(entityName, extensionName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
@@ -118,7 +128,6 @@ public class ScaffoldingTest extends HubTestBase {
         String extensionName = "myExtension";
         FlowType flowType = FlowType.INPUT;
         CodeFormat pluginCodeFormat = CodeFormat.JAVASCRIPT;
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestExtension(entityName, extensionName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
@@ -142,7 +151,6 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.HARMONIZE;
         CodeFormat pluginCodeFormat = CodeFormat.XQUERY;
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestTransform(entityName, transformName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
@@ -162,7 +170,6 @@ public class ScaffoldingTest extends HubTestBase {
         String transformName = "myTransform";
         FlowType flowType = FlowType.HARMONIZE;
         CodeFormat pluginCodeFormat = CodeFormat.JAVASCRIPT;
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         try {
             scaffolding.createRestTransform(entityName, transformName, flowType, pluginCodeFormat);
         } catch (ScaffoldingValidationException e) {
@@ -180,7 +187,6 @@ public class ScaffoldingTest extends HubTestBase {
         try {
             String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
 
-            Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
             assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, entityName).size());
 
             Path flowParentDir = projectPath.resolve("plugins").resolve("entities").resolve(entityName).resolve(flowType.toString());

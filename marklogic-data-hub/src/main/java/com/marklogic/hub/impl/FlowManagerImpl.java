@@ -29,11 +29,14 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,16 +46,26 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+@Component
 public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     private static final String NAME = "ml:flow";
 
     private DatabaseClient stagingClient;
+
+
+    @Autowired
     private HubConfig hubConfig;
 
-    public FlowManagerImpl(HubConfig hubConfig) {
+    @Autowired
+    private Scaffolding scaffolding;
+
+    public FlowManagerImpl() {
         super();
-        this.hubConfig = hubConfig;
+    }
+
+    @PostConstruct
+    public void makeClients() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
     }
@@ -257,8 +270,6 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
     }
 
     @Override public List<String> updateLegacyFlows(String fromVersion) {
-
-        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingClient());
 
         List<String> updatedFlows = new ArrayList<>();
         File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());

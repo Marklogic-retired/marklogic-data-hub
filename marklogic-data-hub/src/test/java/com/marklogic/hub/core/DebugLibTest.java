@@ -7,7 +7,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -15,18 +15,18 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class DebugLibTest extends HubTestBase {
 
     private static final String entityName = "bug-516";
@@ -35,11 +35,13 @@ public class DebugLibTest extends HubTestBase {
     private String errorMessage;
     private boolean runFlowFailed;
 
+    @Autowired
+    Scaffolding scaffolding;
+
     @BeforeEach
     public void setup() {
         basicSetup();
 
-        Scaffolding scaffolding = Scaffolding.create(PROJECT_PATH, stagingClient);
         scaffolding.createFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML, false);
 
         installUserModules(getHubAdminConfig(), true);

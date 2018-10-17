@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,14 +20,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.jupiter.api.Assertions.*;
 
 //import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class HubConfigTest extends HubTestBase {
 
 

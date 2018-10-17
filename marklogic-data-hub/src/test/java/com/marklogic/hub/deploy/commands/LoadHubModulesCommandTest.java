@@ -19,26 +19,22 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
-import com.marklogic.hub.core.HubConfigTest;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.mgmt.ManageClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class LoadHubModulesCommandTest extends HubTestBase {
 
     private static Logger logger = LoggerFactory.getLogger(LoadHubModulesCommandTest.class);
@@ -51,7 +47,8 @@ public class LoadHubModulesCommandTest extends HubTestBase {
     public void setup() {
         createProjectDir();
         config = getHubAdminConfig();
-        loadHubModulesCommand = new LoadHubModulesCommand(config);
+        loadHubModulesCommand = new LoadHubModulesCommand();
+        loadHubModulesCommand.setHubConfig(config);
         ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
         commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
     }
@@ -62,7 +59,6 @@ public class LoadHubModulesCommandTest extends HubTestBase {
 
         String jarVersion = config.getJarVersion();
 
-        Versions versions = new Versions(config);
 
         logger.info(jarVersion);
 

@@ -45,8 +45,10 @@ import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,9 +58,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+@Component
 public class LoadUserStagingModulesCommand extends AbstractCommand {
 
+    @Autowired
     private HubConfig hubConfig;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private FlowManager flowManager;
+
+
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
@@ -68,13 +80,12 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
 
     private boolean forceLoad = false;
 
-    public LoadUserStagingModulesCommand(HubConfig hubConfig) {
+    public LoadUserStagingModulesCommand() {
         setExecuteSortOrder(460);
-        this.hubConfig = hubConfig;
     }
 
     private PropertiesModuleManager getModulesManager() {
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
         if (forceLoad) {
             pmm.deletePropertiesFile();
@@ -141,7 +152,6 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        FlowManager flowManager = FlowManager.create(hubConfig);
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
             throw new LegacyFlowsException(legacyFlows);
@@ -173,13 +183,12 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
-        Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        Path dir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
 
         // deploy the auto-generated ES search options
-        EntityManager entityManager = EntityManager.create(hubConfig);
         entityManager.deployQueryOptions();
 
         try {
@@ -301,6 +310,10 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
             e.printStackTrace();
             //throw new RuntimeException(e);
         }
+    }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
     }
 }
 

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
+import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.DatabaseClientConfig;
@@ -30,36 +31,46 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.PropertySource;
-import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.X509TrustManager;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.security.cert.X509Certificate;
 import java.util.*;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
     getterVisibility = JsonAutoDetect.Visibility.ANY,
     setterVisibility = JsonAutoDetect.Visibility.ANY)
+@Component
+@PropertySource("file:gradle.properties")
 public class HubConfigImpl implements HubConfig
 {
+    @Autowired
     private HubProject hubProject;
+
+    @Autowired
+    private Environment environment;
 
     protected String stagingDbName = DEFAULT_STAGING_NAME;
     protected String stagingHttpName = DEFAULT_STAGING_NAME;
@@ -130,16 +141,12 @@ public class HubConfigImpl implements HubConfig
 
     private String loadBalancerHost;
 
-    private Boolean isHostLoadBalancer;
+    private Boolean isHostLoadBalancer = false;
 
     private Boolean isProvisionedEnvironment;
 
     protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
     protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
-
-    private String projectDir;
-
-    private Properties environmentProperties;
 
     private ManageConfig manageConfig;
     private ManageClient manageClient;
@@ -153,15 +160,24 @@ public class HubConfigImpl implements HubConfig
 
     private ObjectMapper objmapper;
 
-    public HubConfigImpl() {
+    public static class EnvironmentPropertySource implements com.marklogic.mgmt.util.PropertySource {
 
-        objmapper = new ObjectMapper();
+        Environment env;
+
+        public EnvironmentPropertySource(Environment env) {
+            this.env = env;
+        }
+
+        @Override
+        public String getProperty(String name) {
+            return env.getProperty(name);
+        }
     }
 
-    public HubConfigImpl(String projectDir) {
-        this();
-        this.projectDir = projectDir;
-        this.hubProject = HubProject.create(new File(projectDir).getAbsolutePath());
+    public HubConfigImpl(HubProject project) {
+        objmapper = new ObjectMapper();
+        //this.hubProject = HubProject.create(new File(projectDir).getAbsolutePath());
+        this.hubProject = project;
     }
 
 
@@ -820,15 +836,6 @@ public class HubConfigImpl implements HubConfig
         this.modulePermissions = modulePermissions;
     }
 
-    @Override public String getProjectDir() {
-        return this.projectDir;
-    }
-
-    @Override public void setProjectDir(String projectDir) {
-        this.projectDir = projectDir;
-        hubProject.setProjectDirString(projectDir);
-    }
-
     @JsonIgnore
     @Override  public HubProject getHubProject() {
         return this.hubProject;
@@ -838,148 +845,159 @@ public class HubConfigImpl implements HubConfig
         this.hubProject.init(getCustomTokens());
     }
 
-    @JsonIgnore
-    @Override  public String getHubModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
-    }
 
-    @JsonIgnore
-    @Override public String getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
-    }
-
-    @JsonIgnore
-    public File getUserContentDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
-    }
-
-    public void loadConfigurationFromProperties(Properties environmentProperties) {
-        this.environmentProperties = environmentProperties;
-
-        if (this.environmentProperties != null) {
-            stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
-            stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
-            stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
-            stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
-            stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
-            stagingScheme = getEnvPropString(environmentProperties, "mlStagingScheme", stagingScheme);
-            stagingSimpleSsl = getEnvPropBoolean(environmentProperties, "mlStagingSimpleSsl", false);
-            if (stagingSimpleSsl) {
-                stagingSslContext = SimpleX509TrustManager.newSSLContext();
-                stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-                stagingTrustManager = new SimpleX509TrustManager();
-            }
-            stagingCertFile = getEnvPropString(environmentProperties, "mlStagingCertFile", stagingCertFile);
-            stagingCertPassword = getEnvPropString(environmentProperties, "mlStagingCertPassword", stagingCertPassword);
-            stagingExternalName = getEnvPropString(environmentProperties, "mlStagingExternalName", stagingExternalName);
+    @PostConstruct
+    public void loadConfigurationFromProperties() {
+        stagingDbName = getEnvPropString("mlStagingDbName", stagingDbName);
+        stagingHttpName = getEnvPropString("mlStagingAppserverName", stagingHttpName);
+        stagingForestsPerHost = getEnvPropInteger("mlStagingForestsPerHost", stagingForestsPerHost);
+        stagingPort = getEnvPropInteger("mlStagingPort", stagingPort);
+        stagingAuthMethod = getEnvPropString("mlStagingAuth", stagingAuthMethod);
+        stagingScheme = getEnvPropString("mlStagingScheme", stagingScheme);
+        stagingSimpleSsl = getEnvPropBoolean("mlStagingSimpleSsl", false);
+        if (stagingSimpleSsl) {
+            stagingSslContext = SimpleX509TrustManager.newSSLContext();
+            stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+            stagingTrustManager = new SimpleX509TrustManager();
+        }
+        stagingCertFile = getEnvPropString("mlStagingCertFile", stagingCertFile);
+        stagingCertPassword = getEnvPropString("mlStagingCertPassword", stagingCertPassword);
+        stagingExternalName = getEnvPropString("mlStagingExternalName", stagingExternalName);
 
 
-            finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
-            finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
-            finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
-            finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
-            finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
-            finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            if (finalSimpleSsl) {
-                finalSslContext = SimpleX509TrustManager.newSSLContext();
-                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-                finalTrustManager = new SimpleX509TrustManager();
-            }
-            finalCertFile = getEnvPropString(environmentProperties, "mlfinalCertFile", finalCertFile);
-            finalCertPassword = getEnvPropString(environmentProperties, "mlfinalCertPassword", finalCertPassword);
-            finalExternalName = getEnvPropString(environmentProperties, "mlfinalExternalName", finalExternalName);
+        finalDbName = getEnvPropString("mlFinalDbName", finalDbName);
+        finalHttpName = getEnvPropString("mlFinalAppserverName", finalHttpName);
+        finalForestsPerHost = getEnvPropInteger("mlFinalForestsPerHost", finalForestsPerHost);
+        finalPort = getEnvPropInteger("mlFinalPort", finalPort);
+        finalAuthMethod = getEnvPropString("mlFinalAuth", finalAuthMethod);
+        finalScheme = getEnvPropString("mlFinalScheme", finalScheme);
+        if (finalSimpleSsl) {
+            finalSslContext = SimpleX509TrustManager.newSSLContext();
+            finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+            finalTrustManager = new SimpleX509TrustManager();
+        }
+        finalCertFile = getEnvPropString("mlfinalCertFile", finalCertFile);
+        finalCertPassword = getEnvPropString("mlfinalCertPassword", finalCertPassword);
+        finalExternalName = getEnvPropString("mlfinalExternalName", finalExternalName);
 
 
-            jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
-            jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
-            jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
-            jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
-            jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
-            jobScheme = getEnvPropString(environmentProperties, "mlJobScheme", jobScheme);
-            jobSimpleSsl = getEnvPropBoolean(environmentProperties, "mlJobSimpleSsl", false);
-            if (jobSimpleSsl) {
-                jobSslContext = SimpleX509TrustManager.newSSLContext();
-                jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-                jobTrustManager = new SimpleX509TrustManager();
-            }
-            jobCertFile = getEnvPropString(environmentProperties, "mlJobCertFile", jobCertFile);
-            jobCertPassword = getEnvPropString(environmentProperties, "mlJobCertPassword", jobCertPassword);
-            jobExternalName = getEnvPropString(environmentProperties, "mlJobExternalName", jobExternalName);
+        jobDbName = getEnvPropString("mlJobDbName", jobDbName);
+        jobHttpName = getEnvPropString("mlJobAppserverName", jobHttpName);
+        jobForestsPerHost = getEnvPropInteger("mlJobForestsPerHost", jobForestsPerHost);
+        jobPort = getEnvPropInteger("mlJobPort", jobPort);
+        jobAuthMethod = getEnvPropString("mlJobAuth", jobAuthMethod);
+        jobScheme = getEnvPropString("mlJobScheme", jobScheme);
+        jobSimpleSsl = getEnvPropBoolean("mlJobSimpleSsl", false);
+        if (jobSimpleSsl) {
+            jobSslContext = SimpleX509TrustManager.newSSLContext();
+            jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+            jobTrustManager = new SimpleX509TrustManager();
+        }
+        jobCertFile = getEnvPropString("mlJobCertFile", jobCertFile);
+        jobCertPassword = getEnvPropString("mlJobCertPassword", jobCertPassword);
+        jobExternalName = getEnvPropString("mlJobExternalName", jobExternalName);
 
-            customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
+        customForestPath = getEnvPropString("mlCustomForestPath", customForestPath);
 
-            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
-            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
+        modulesDbName = getEnvPropString("mlModulesDbName", modulesDbName);
+        modulesForestsPerHost = getEnvPropInteger("mlModulesForestsPerHost", modulesForestsPerHost);
+        modulePermissions = getEnvPropString("mlModulePermissions", modulePermissions);
 
-            stagingTriggersDbName = getEnvPropString(environmentProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
-            stagingTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
+        stagingTriggersDbName = getEnvPropString("mlStagingTriggersDbName", stagingTriggersDbName);
+        stagingTriggersForestsPerHost = getEnvPropInteger("mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
 
-            finalTriggersDbName = getEnvPropString(environmentProperties, "mlFinalTriggersDbName", finalTriggersDbName);
-            finalTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost);
+        finalTriggersDbName = getEnvPropString("mlFinalTriggersDbName", finalTriggersDbName);
+        finalTriggersForestsPerHost = getEnvPropInteger("mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost);
 
-            stagingSchemasDbName = getEnvPropString(environmentProperties, "mlStagingSchemasDbName", stagingSchemasDbName);
-            stagingSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
+        stagingSchemasDbName = getEnvPropString("mlStagingSchemasDbName", stagingSchemasDbName);
+        stagingSchemasForestsPerHost = getEnvPropInteger("mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
 
-            finalSchemasDbName = getEnvPropString(environmentProperties, "mlFinalSchemasDbName", finalSchemasDbName);
-            finalSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost);
+        finalSchemasDbName = getEnvPropString("mlFinalSchemasDbName", finalSchemasDbName);
+        finalSchemasForestsPerHost = getEnvPropInteger("mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost);
 
-            hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
-            hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
+        hubRoleName = getEnvPropString("mlHubUserRole", hubRoleName);
+        hubUserName = getEnvPropString("mlHubUserName", hubUserName);
 
-            DHFVersion = getEnvPropString(environmentProperties, "mlDHFVersion", DHFVersion);
+        DHFVersion = getEnvPropString("mlDHFVersion", DHFVersion);
 
-            // this is a runtime username/password for running flows
-            // could be factored away with FlowRunner
-            mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
-            mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
+        // this is a runtime username/password for running flows
+        // could be factored away with FlowRunner
+        mlUsername = getEnvPropString("mlUsername", mlUsername);
+        mlPassword = getEnvPropString("mlPassword", mlPassword);
 
-            isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer");
-            String mlHost = getEnvPropString(environmentProperties, "mlHost", null);
-            String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (isHostLoadBalancer != null){
-                if (isHostLoadBalancer) {
-                    if (mlHost != null && lbh != null){
-                        logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\", the value specified for \"mlHost\" will be used as the load balancer.");
-                        if (!mlHost.equals(lbh)) {
-                            throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
-                        }
-                        else {
-                            loadBalancerHost = mlHost;
-                        }
-                    }
-                }
-                else {
-                    if (lbh != null){
-                        throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
-                    }
-                }
-            }
-            else{
+        isHostLoadBalancer = getEnvPropBoolean("mlIsHostLoadBalancer");
+        String mlHost = getEnvPropString("mlHost", null);
+        String lbh = getEnvPropString("mlLoadBalancerHosts", null);
+        if (isHostLoadBalancer != null){
+            if (isHostLoadBalancer) {
                 if (mlHost != null && lbh != null){
+                    logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\", the value specified for \"mlHost\" will be used as the load balancer.");
                     if (!mlHost.equals(lbh)) {
                         throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
                     }
                     else {
-                        isHostLoadBalancer = true;
                         loadBalancerHost = mlHost;
                     }
                 }
-                else {
-                    isHostLoadBalancer = false;
+            }
+            else {
+                if (lbh != null){
+                    throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
                 }
             }
-
-
-            isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
-
-            projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
-
-            logger.info("Hub Project Dir: " + projectDir);
         }
-        else {
-            logger.error("Missing environmentProperties");
+        else{
+            if (mlHost != null && lbh != null){
+                if (!mlHost.equals(lbh)) {
+                    throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
+                }
+                else {
+                    isHostLoadBalancer = true;
+                    loadBalancerHost = mlHost;
+                }
+            }
+            else {
+                isHostLoadBalancer = false;
+            }
         }
+
+
+        com.marklogic.mgmt.util.PropertySource propertySource = new EnvironmentPropertySource(environment);
+
+        setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
+
+        setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
+
+        setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
+        setAdminManager(new AdminManager(getAdminConfig()));
+
+        ManageConfig manageConfig = new DefaultManageConfigFactory(propertySource).newManageConfig();
+        manageConfig.setHostnameVerifier(new X509HostnameVerifier() {
+            @Override
+            public void verify(String s, SSLSocket sslSocket) {}
+
+            @Override
+            public void verify(String s, X509Certificate x509Certificate) {}
+
+            @Override
+            public void verify(String s, String[] strings, String[] strings1) {}
+
+            @Override
+            public boolean verify(String s, SSLSession sslSession) {
+                return true;
+            }
+        });
+        setManageConfig(manageConfig);
+        setManageClient(new ManageClient(getManageConfig()));
+
+        isProvisionedEnvironment = getEnvPropBoolean("mlIsProvisionedEnvironment", false);
+
+        //FIXME this is a backdoor
+        // projectDir = getEnvPropString("hubProjectDir", projectDir);
+
+        logger.info("Hub Project: " + hubProject);
     }
 
     @JsonIgnore
@@ -1363,6 +1381,7 @@ public class HubConfigImpl implements HubConfig
         //version of DHF the user INTENDS to use
         customTokens.put("%%mlDHFVersion%%", getJarVersion());
 
+        /* FIXME
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();
             while (keyEnum.hasMoreElements()) {
@@ -1372,6 +1391,7 @@ public class HubConfigImpl implements HubConfig
                 }
             }
         }
+        */
 
         return customTokens;
     }
@@ -1399,6 +1419,7 @@ public class HubConfigImpl implements HubConfig
         config.setConfigDir(configDir);
         config.setSchemasPath(getHubConfigDir().resolve("schemas").toString());
 
+        /* FIXME replace
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
         if (environmentProperties != null) {
             Enumeration keyEnum = environmentProperties.propertyNames();
@@ -1413,6 +1434,7 @@ public class HubConfigImpl implements HubConfig
 
         String version = getJarVersion();
         customTokens.put("%%mlHubVersion%%", version);
+        */
 
         stagingAppConfig = config;
     }
@@ -1444,8 +1466,9 @@ public class HubConfigImpl implements HubConfig
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
-        if (environmentProperties != null) {
-            Enumeration keyEnum = environmentProperties.propertyNames();
+        // spring has custom tokens handling FIXME
+        /*  use an itertion over custom tokens rather than properties?
+        Enumeration keyEnum = environmentProperties.propertyNames();
             while (keyEnum.hasMoreElements()) {
                 String key = (String) keyEnum.nextElement();
                 if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
@@ -1453,6 +1476,7 @@ public class HubConfigImpl implements HubConfig
                 }
             }
         }
+        */
 
 
         String version = getJarVersion();
@@ -1461,16 +1485,16 @@ public class HubConfigImpl implements HubConfig
         finalAppConfig = config;
     }
 
-    private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
-        String value = environmentProperties.getProperty(key);
+    private String getEnvPropString(String key, String fallback) {
+        String value = environment.getProperty(key);
         if (value == null) {
             value = fallback;
         }
         return value;
     }
 
-    private int getEnvPropInteger(Properties environmentProperties, String key, int fallback) {
-        String value = environmentProperties.getProperty(key);
+    private int getEnvPropInteger(String key, int fallback) {
+        String value = environment.getProperty(key);
         int res;
         if (value != null) {
             res = Integer.parseInt(value);
@@ -1481,8 +1505,8 @@ public class HubConfigImpl implements HubConfig
         return res;
     }
 
-    private boolean getEnvPropBoolean(Properties environmentProperties, String key, boolean fallback) {
-        String value = environmentProperties.getProperty(key);
+    private boolean getEnvPropBoolean(String key, boolean fallback) {
+        String value = environment.getProperty(key);
         boolean res;
         if (value != null) {
             res = Boolean.parseBoolean(value);
@@ -1493,8 +1517,8 @@ public class HubConfigImpl implements HubConfig
         return res;
     }
 
-    private Boolean getEnvPropBoolean(Properties environmentProperties, String key) {
-        String value = environmentProperties.getProperty(key);
+    private Boolean getEnvPropBoolean(String key) {
+        String value = environment.getProperty(key);
         Boolean res;
         if (value != null) {
             res = Boolean.parseBoolean(value);

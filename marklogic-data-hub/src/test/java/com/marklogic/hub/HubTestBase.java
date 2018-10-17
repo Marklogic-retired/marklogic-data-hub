@@ -42,9 +42,10 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.CertificateTemplateManagerPlus;
 import com.marklogic.hub.util.ComboListener;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -91,23 +92,45 @@ import java.util.*;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 
 
 
+@SuppressWarnings("deprecation")
 public class HubTestBase {
 
+    public static final String PROJECT_PATH = "ye-olde-project";
     @Autowired
     private ApplicationContext context;
 
     @Autowired
-    @Qualifier("adminHubConfig")
-    protected HubConfig adminHubConfig;
+    protected HubConfigImpl adminHubConfig;
+
+    //@Autowired
+    //protected HubConfig hubConfig;
 
     @Autowired
-    @Qualifier("hubConfig")
-    protected HubConfig hubConfig;
+    protected DataHub dataHub;
 
+    @Autowired
+    protected HubProject project;
+
+    @Autowired
+    protected Versions versions;
+
+    @Autowired
+    protected LoadHubModulesCommand loadHubModulesCommand;
+
+    @Autowired
+    protected LoadUserStagingModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    protected Scaffolding scaffolding;
+
+    @Autowired
+    protected MappingManager mappingManager;
+
+    @Autowired
+    protected FlowManager fm;
 
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'
@@ -186,7 +209,6 @@ public class HubTestBase {
     }
 
 
-    //FIXME this shouldn't be static, it's just for tmf to be.
     static {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
@@ -387,11 +409,12 @@ public class HubTestBase {
 
     //getHubFlowRunnerConfig is used for running flows
     protected HubConfig getHubFlowRunnerConfig() {
-        return hubConfig;
+        //FIXME return hubConfig;
+        return adminHubConfig;
     }
 
     public DataHub getDataHub() {
-        return DataHub.create(getHubAdminConfig());
+        return dataHub;
     }
 
 
@@ -551,7 +574,7 @@ public class HubTestBase {
     }
 
     protected int getMlMajorVersion() {
-        return Integer.parseInt(new Versions(getHubFlowRunnerConfig()).getMarkLogicVersion().substring(0, 1));
+        return Integer.parseInt(versions.getMarkLogicVersion().substring(0, 1));
     }
 
     public void clearDatabases(String... databases) {
@@ -749,19 +772,17 @@ public class HubTestBase {
     //installHubModules(), installUserModules() and clearUserModules() must be run as 'hub-admin-user'.
     protected void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
-        HubConfigImpl hubConfig = (HubConfigImpl) getHubAdminConfig();
         List<Command> commands = new ArrayList<>();
-        commands.add(new LoadHubModulesCommand(hubConfig));
+        commands.add(loadHubModulesCommand);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(adminHubConfig.getManageClient(), adminHubConfig.getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getStagingAppConfig());
+        deployer.deploy(adminHubConfig.getStagingAppConfig());
     }
 
     protected void installUserModules(HubConfig hubConfig, boolean force) {
         logger.debug("Installing user modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
-        LoadUserStagingModulesCommand loadUserModulesCommand = new LoadUserStagingModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
 

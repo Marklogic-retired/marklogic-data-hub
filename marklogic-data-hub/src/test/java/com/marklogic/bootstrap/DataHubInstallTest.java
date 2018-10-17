@@ -16,17 +16,14 @@
 package com.marklogic.bootstrap;
 
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -45,7 +42,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -162,7 +158,7 @@ public class DataHubInstallTest extends HubTestBase {
     @Disabled
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
-        assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
+        assertEquals(version, versions.getHubVersion());
     }
 
     @Test
@@ -273,7 +269,7 @@ public class DataHubInstallTest extends HubTestBase {
             getResource("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-input-transform/assets/transform.xqy"));
 
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.initialize();
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/my-lib.xqy")));
@@ -298,12 +294,8 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        HubConfig hubConfig = getHubAdminConfig(path);
-        DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
-
-
-        installUserModules(hubConfig, true);
+        installUserModules(adminHubConfig, true);
 
         // removed counts assertions which were so brittle as to be just an impediment to life.
 
@@ -316,10 +308,12 @@ public class DataHubInstallTest extends HubTestBase {
     @Disabled
     public void testAmpLoading() {
         HubConfig config = getHubAdminConfig();
-        LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand(config);
+        LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand();
+        loadHubModulesCommand.setHubConfig(config);
         ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
         CommandContext commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
-        DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
+        DeployHubAmpsCommand amps = new DeployHubAmpsCommand();
+        amps.setHubConfig(config);
         amps.execute(commandContext);
     }
 }

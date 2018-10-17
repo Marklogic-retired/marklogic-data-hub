@@ -21,13 +21,14 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.HubTestConfig;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -39,11 +40,17 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = HubTestConfig.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class EmptyCollectorTest extends HubTestBase {
 
     private static final String ENTITY = "streamentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
+
+    @Autowired
+    private FlowManager fm;
+
+    @Autowired
+    Scaffolding scaffolding;
 
     @BeforeEach
     public void setup() throws IOException {
@@ -54,7 +61,6 @@ public class EmptyCollectorTest extends HubTestBase {
 
         createProjectDir();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
@@ -69,7 +75,6 @@ public class EmptyCollectorTest extends HubTestBase {
     public void runCollector() {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

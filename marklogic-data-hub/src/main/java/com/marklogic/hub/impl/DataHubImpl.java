@@ -38,7 +38,6 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
-import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
@@ -58,6 +57,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -75,6 +75,21 @@ public class DataHubImpl implements DataHub {
     @Autowired
     private HubConfigImpl hubConfig;
 
+    @Autowired
+    private HubProject project;
+
+    @Autowired
+    private LoadHubModulesCommand loadHubModulesCommand;
+
+    @Autowired
+    private LoadUserStagingModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    private DeployHubAmpsCommand deployHubAmpsCommand;
+
+    @Autowired
+    private Versions versions;
+
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -82,32 +97,21 @@ public class DataHubImpl implements DataHub {
 	private String stagingFile = "staging-database.json";
 	private String jobsFile = "job-database.json";
 
-	public DataHubImpl(){}
-
-    public DataHubImpl(HubConfig hubConfig) {
-        if (hubConfig == null) {
-            throw new DataHubConfigurationException("HubConfig must not be null when creating a data hub");
-        }
-        this.hubConfig = ((HubConfigImpl) hubConfig);
-    }
-
-    private ManageClient getManageClient() {
-        if (this._manageClient == null) {
-            this._manageClient = this.hubConfig.getManageClient();
-        }
-        return this._manageClient;
+	@PostConstruct
+    public void wireClient() {
+	    this._manageClient = hubConfig.getManageClient();
+	    this._adminManager = hubConfig.getAdminManager();
+        this._databaseManager = new DatabaseManager(_manageClient);
+        this._serverManager = new ServerManager(_manageClient);
     }
 
     @Override
     public void clearDatabase(String database) {
-        DatabaseManager mgr = new DatabaseManager(this.getManageClient());
+        DatabaseManager mgr = new DatabaseManager(_manageClient);
         mgr.clearDatabase(database);
     }
 
     private AdminManager getAdminManager() {
-        if (this._adminManager == null) {
-            this._adminManager = this.hubConfig.getAdminManager();
-        }
         return this._adminManager;
     }
 
@@ -115,17 +119,15 @@ public class DataHubImpl implements DataHub {
         this._adminManager = manager;
     }
 
+    private ManageClient getManageClient() {
+	    return _manageClient;
+    }
+
     private DatabaseManager getDatabaseManager() {
-        if (this._databaseManager == null) {
-            this._databaseManager = new DatabaseManager(getManageClient());
-        }
         return this._databaseManager;
     }
 
     private ServerManager getServerManager() {
-        if (this._serverManager == null) {
-            this._serverManager = new ServerManager(getManageClient());
-        }
         return this._serverManager;
     }
 
@@ -221,7 +223,7 @@ public class DataHubImpl implements DataHub {
     public boolean isServerVersionValid(String versionString) {
         try {
             if (versionString == null) {
-                versionString = new Versions(hubConfig).getMarkLogicVersion();
+                versionString = versions.getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 9) {
@@ -383,12 +385,7 @@ public class DataHubImpl implements DataHub {
 
 
     @Override
-    public HashMap runPreInstallCheck() {
-        return runPreInstallCheck(null);
-    }
-
-    @Override
-    public HashMap<String, Boolean> runPreInstallCheck(Versions versions) {
+    public HashMap<String, Boolean> runPreInstallCheck() {
 
 
         Map<Integer, String> portsInUse = null;
@@ -432,9 +429,6 @@ public class DataHubImpl implements DataHub {
         }
 
 
-        if (versions == null) {
-            versions = new Versions(hubConfig);
-        }
         serverVersion = versions.getMarkLogicVersion();
         serverVersionOk = isServerVersionValid(serverVersion);
         HashMap response = new HashMap();
@@ -457,7 +451,7 @@ public class DataHubImpl implements DataHub {
     private void hubInstallModules() {
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         CommandContext stagingContext = new CommandContext(stagingConfig, null, null);
-        new LoadHubModulesCommand(hubConfig).execute(stagingContext);
+        loadHubModulesCommand.execute(stagingContext);
     }
 
     /*
@@ -466,7 +460,7 @@ public class DataHubImpl implements DataHub {
     private void loadUserModules() {
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         CommandContext stagingContext = new CommandContext(stagingConfig, null, null);
-        new LoadUserStagingModulesCommand(hubConfig).execute(stagingContext);
+        loadUserModulesCommand.execute(stagingContext);
     }
 
     /**
@@ -628,7 +622,7 @@ public class DataHubImpl implements DataHub {
 
         // staging deploys amps.
         List<Command> securityCommand = new ArrayList<>();
-        securityCommand.add(new DeployHubAmpsCommand(hubConfig));
+        securityCommand.add(deployHubAmpsCommand);
         commandMap.put("mlSecurityCommand", securityCommand);
 
         // don't deploy rest api servers
@@ -642,8 +636,8 @@ public class DataHubImpl implements DataHub {
         commandMap.put("mlServerCommands", serverCommands);
 
         List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(new LoadHubModulesCommand(hubConfig));
-        moduleCommands.add(new LoadUserStagingModulesCommand(hubConfig));
+        moduleCommands.add(loadHubModulesCommand);
+        moduleCommands.add(loadUserModulesCommand);
         commandMap.put("mlModuleCommands", moduleCommands);
 
         List<Command> forestCommands = commandMap.get("mlForestCommands");
@@ -826,7 +820,7 @@ public class DataHubImpl implements DataHub {
     @Override
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled = this.isInstalled().isInstalled();
-        String currentVersion = new Versions(hubConfig).getHubVersion();
+        String currentVersion = versions.getHubVersion();
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
@@ -834,7 +828,7 @@ public class DataHubImpl implements DataHub {
 
         boolean result = false;
         boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
-        File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
+        File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
 
         // update the hub-internal-config files
         hubConfig.initHubProject();
@@ -853,20 +847,9 @@ public class DataHubImpl implements DataHub {
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
 
-            // update legacy flows to include main.(sjs|xqy)
-            List<String> flows = FlowManager.create(hubConfig).updateLegacyFlows(currentVersion);
-            if (updatedFlows != null) {
-                updatedFlows.addAll(flows);
-            }
-
-            if (isHubInstalled) {
-                // install hub modules into MarkLogic
-                runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
-
-                // should be install user modules and hub modules, not install
-                this.hubInstallModules();
-                this.loadUserModules();
-            }
+            runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
+            this.hubInstallModules();
+            this.loadUserModules();
 
             //if none of this has thrown an exception, we're clear and can set the result to true
             result = true;

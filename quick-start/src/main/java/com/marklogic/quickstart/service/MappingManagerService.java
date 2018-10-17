@@ -46,26 +46,25 @@ public class MappingManagerService extends EnvironmentAware {
     @Autowired
     private DataHubService dataHubService;
 
+    @Autowired
     private MappingManager mappingManager;
 
+    @Autowired
+    private Scaffolding scaffolding;
 
     public ArrayList<Mapping> getMappings() {
-        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         ArrayList<Mapping> mappings = mappingManager.getMappings();
 
         return mappings;
     }
 
     public ArrayList<String> getMappingsNames() {
-        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         ArrayList<String> mappings = mappingManager.getMappingsNames();
 
         return mappings;
     }
 
     public MappingModel createMapping(String projectDir, MappingModel newMapping) throws IOException {
-        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
         scaffolding.createMappingDir(newMapping.getName());
         Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
@@ -77,7 +76,6 @@ public class MappingManagerService extends EnvironmentAware {
     }
 
     public MappingModel saveMapping(String mapName, JsonNode jsonMapping) throws IOException {
-        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping = null;
@@ -103,7 +101,6 @@ public class MappingManagerService extends EnvironmentAware {
     }
 
     public MappingModel getMapping(String mappingName) throws IOException {
-        mappingManager = MappingManager.getMappingManager(envConfig().getMlSettings());
         try{
            ObjectMapper objectMapper = new ObjectMapper();
             return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1)));

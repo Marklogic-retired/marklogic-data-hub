@@ -84,12 +84,12 @@ public interface HubConfig {
 
     /**
      * Creates and returns a hubconfig object for a project directory
-     * @param projectDir - string path to the project directory
+     * @param project - A HubProject, which is a directory that contains DHF state.
      * @return HubConfig based in the project directory
      */
-    static HubConfig create(String projectDir) {
-        return new HubConfigImpl(projectDir);
-    }
+    ///static HubConfig create(HubProject project) {
+        ///return new HubConfigImpl(project);
+    ///}
 
     /**
      * Returns the database name for the DatabaseKind set in the config
@@ -333,13 +333,13 @@ public interface HubConfig {
      * Obtains the project directory as a string
      * @return project directory
      */
-    String getProjectDir();
+    //String getProjectDir();
 
     /**
      * Sets the directory for the current project
      * @param projectDir - a string that represents the path to the project directory
      */
-    void setProjectDir(String projectDir);
+    //void setProjectDir(String projectDir);
 
     /**
      * Returns the HubProject associated with the HubConfig
@@ -356,13 +356,15 @@ public interface HubConfig {
      * Returns the last deployed timestamp file for the hub config and modules
      * @return string of what's located in the timestamp file
      */
-    String getHubModulesDeployTimestampFile();
+    // FIXME make passthrough to project
+    //String getHubModulesDeployTimestampFile();
 
     /**
      * Returns the last deployed timestamp file for the user modules
      * @return string of what's located in the timestamp file
      */
-    String getUserModulesDeployTimestampFile();
+    // FIXME make passthrough to project
+    //String getUserModulesDeployTimestampFile();
 
     /**
      * Creates a new DatabaseClient for accessing the AppServices app

@@ -87,8 +87,8 @@ public class ProjectsController {
         ObjectMapper om = new ObjectMapper();
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
-            HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
-                .build();
+            //HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path).build();
+            HubConfig config = null;
             config = om.readerForUpdating(config).readValue(hubConfig);
             AppConfig appConfig = config.getStagingAppConfig();
             if (hubConfig.get("host") != null) {
@@ -110,8 +110,9 @@ public class ProjectsController {
     @ResponseBody
     public HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return HubSettings.fromHubConfig(HubConfigBuilder.newHubConfigBuilder(project.path)
-            .withPropertiesFromEnvironment()
-            .build());
+        //return HubSettings.fromHubConfig(HubConfigBuilder.newHubConfigBuilder(project.path)
+            //.withPropertiesFromEnvironment()
+            //.build());
+        return null;
     }
 }

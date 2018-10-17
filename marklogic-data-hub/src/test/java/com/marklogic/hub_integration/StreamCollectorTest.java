@@ -33,6 +33,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -54,6 +55,12 @@ public class StreamCollectorTest extends HubTestBase {
     private boolean installDocsFailed = false;
     private String installDocError;
 
+    @Autowired
+    private FlowManager fm;
+
+    @Autowired
+    private Scaffolding scaffolding;
+
     @Before
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
@@ -72,7 +79,6 @@ public class StreamCollectorTest extends HubTestBase {
         disableDebugging();
         disableTracing();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
@@ -131,7 +137,6 @@ public class StreamCollectorTest extends HubTestBase {
         // having to wait for the entire harmonize flow to finish.
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

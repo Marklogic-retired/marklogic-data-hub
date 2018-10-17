@@ -21,9 +21,8 @@ import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.DataHub
-import com.marklogic.hub.HubConfigBuilder
 import com.marklogic.hub.impl.DataHubImpl
-import com.marklogic.hub.util.Versions
+import com.marklogic.hub.impl.Versions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger

@@ -21,12 +21,13 @@ import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.scaffold.ScaffoldingValidator;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.impl.ScaffoldingValidator;
+import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +44,12 @@ public class ScaffoldingValidatorTest extends HubTestBase {
 
    private static final String projectPath = "./test-project";
    private static final String TEST_ENTITY_NAME = "test-entity";
-   private Scaffolding scaffolding = Scaffolding.create(projectPath, stagingClient);
-   private ScaffoldingValidator validator = new ScaffoldingValidator(projectPath);
+
+   @Autowired
+   private Scaffolding scaffolding;
+
+   @Autowired
+   private ScaffoldingValidator validator;
 
    @BeforeClass
    public static void setupClass() throws IOException {

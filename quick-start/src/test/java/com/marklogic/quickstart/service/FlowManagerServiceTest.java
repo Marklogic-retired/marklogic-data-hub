@@ -26,7 +26,6 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -51,7 +50,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.marklogic.hub.HubTestConfig.PROJECT_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -65,10 +63,15 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     FlowManagerService fm;
 
+    @Autowired
+    FlowManager flowManager;
+
+    @Autowired
+    Scaffolding scaffolding;
+
     @BeforeEach
     public void setup() {
         createProjectDir();
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -122,7 +125,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     public void getFlowMlcpOptionsFromFileNix() throws Exception {
         String pdir = "/some/crazy/path/to/project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
@@ -133,7 +136,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     public void getFlowMlcpOptionsFromFileWin() throws Exception {
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
@@ -149,7 +152,6 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -193,11 +195,10 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();
@@ -236,11 +237,10 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();

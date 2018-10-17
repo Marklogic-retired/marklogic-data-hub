@@ -35,9 +35,9 @@ public interface FlowManager {
      * @param hubConfig - the hubConfig for the FlowManager to use
      * @return a FlowManager object with a set hubConfig
      */
-    static FlowManager create(HubConfig hubConfig){
-        return new FlowManagerImpl(hubConfig);
-    }
+    //static FlowManager create(HubConfig hubConfig){
+        //return new FlowManagerImpl(hubConfig);
+    //}
 
     /**
      * Turns an XML document into a flow
