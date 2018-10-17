@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -134,7 +135,7 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
         assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));
 
-        File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
+        File gradleLocalProperties = new File(projectPath, "gradle-local_properties");
         assertTrue(gradleLocalProperties.exists());
     }
 }

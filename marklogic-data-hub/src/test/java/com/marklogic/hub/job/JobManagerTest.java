@@ -16,18 +16,15 @@
 package com.marklogic.hub.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.flow.*;
-import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -44,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -61,7 +58,7 @@ public class JobManagerTest extends HubTestBase {
     private FlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
 
-    @Before
+    @BeforeEach
     public void setupStuff() throws InterruptedException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
@@ -119,7 +116,7 @@ public class JobManagerTest extends HubTestBase {
         jobManager = JobManager.create(getHubAdminConfig().newJobDbClient());
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
     	try {
 			Files.deleteIfExists(exportPath);

@@ -174,10 +174,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    public HubConfigImpl(HubProject project) {
+    public HubConfigImpl() {
         objmapper = new ObjectMapper();
-        //this.hubProject = HubProject.create(new File(projectDir).getAbsolutePath());
-        this.hubProject = project;
     }
 
 

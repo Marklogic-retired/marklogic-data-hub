@@ -100,13 +100,13 @@ public class HubTestBase {
 
     public static final String PROJECT_PATH = "ye-olde-project";
     @Autowired
-    private ApplicationContext context;
+    protected ApplicationContext context;
 
     @Autowired
     protected HubConfigImpl adminHubConfig;
 
-    //@Autowired
-    //protected HubConfig hubConfig;
+    @Autowired
+    protected HubConfig hubConfig;
 
     @Autowired
     protected DataHub dataHub;
@@ -219,6 +219,7 @@ public class HubTestBase {
             throw new DataHubConfigurationException("Root ca lot loaded", e);
         }
     }
+
     protected void basicSetup() {
         XMLUnit.setIgnoreWhitespace(true);
         createProjectDir();
@@ -426,9 +427,9 @@ public class HubTestBase {
     public void createProjectDir(String projectDirName) {
         try {
             File projectDir = new File(projectDirName);
-            if (!projectDir.isDirectory() || !projectDir.exists()) {
-                getDataHub().initProject();
-            }
+            //if (!projectDir.isDirectory() || !projectDir.exists()) {
+                //getDataHub().initProject();
+            //}
 
             // force module loads for new test runs.
             File timestampDirectory = new File(projectDir + "/.tmp");

@@ -19,7 +19,6 @@ package com.marklogic.quickstart.web;
 
 
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;

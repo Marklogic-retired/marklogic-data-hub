@@ -24,12 +24,11 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.impl.ScaffoldingImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -60,7 +59,7 @@ public class ScaffoldingTest extends HubTestBase {
     @Autowired
     HubProject project;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
