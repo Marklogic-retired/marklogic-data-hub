@@ -76,7 +76,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             try (InputStream is = new ClassPathResource("installer-util/install-amps.xqy").getInputStream()) {
                 String ampCall = IOUtils.toString(is, "utf-8");
                 is.close();
-                ampCall = ampCall.replace("data-hub-MODULES", modulesDatabaseName);
+                ampCall = ampCall.replaceAll("data-hub-MODULES", modulesDatabaseName);
                 call.xquery(ampCall);
                 call.eval();
             } catch (IOException e) {
@@ -89,7 +89,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
             try (InputStream is = new ClassPathResource("hub-internal-config/configurations/amps.json").getInputStream()) {
                 String payload = IOUtils.toString(is, "utf-8");
-                payload = payload.replace("data-hub-MODULES", modulesDatabaseName);
+                payload = payload.replaceAll("data-hub-MODULES", modulesDatabaseName);
                 manageClient.postJsonAsSecurityUser("/manage/v3", payload);
             } catch (IOException e) {
                 throw new DataHubConfigurationException(e);
@@ -122,7 +122,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             try (InputStream is = new ClassPathResource("installer-util/uninstall-amps.xqy").getInputStream()) {
                 String ampCall = IOUtils.toString(is, "utf-8");
                 is.close();
-                ampCall = ampCall.replace("data-hub-MODULES", modulesDatabaseName);
+                ampCall = ampCall.replaceAll("data-hub-MODULES", modulesDatabaseName);
                 call.xquery(ampCall);
                 call.eval();
             } catch (IOException e) {
