@@ -64,6 +64,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -96,6 +98,7 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 
 
 @SuppressWarnings("deprecation")
+@Component
 public class HubTestBase {
 
     public static final String PROJECT_PATH = "ye-olde-project";
@@ -106,7 +109,7 @@ public class HubTestBase {
     protected HubConfigImpl adminHubConfig;
 
     @Autowired
-    protected HubConfig hubConfig;
+    protected HubConfigImpl hubConfig;
 
     @Autowired
     protected DataHub dataHub;
@@ -228,6 +231,7 @@ public class HubTestBase {
     protected void init() {
         try {
             Properties p = new Properties();
+            p.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
             p.load(new FileInputStream("gradle.properties"));
             properties.putAll(p);
         }

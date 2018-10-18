@@ -5,6 +5,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.config.ApplicationConfig;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,11 @@ public class HubProjectTest extends HubTestBase {
     @BeforeEach
     public void setupDir() {
         deleteProjectDir();
+    }
+
+    @AfterEach
+    public void resetProperties() {
+        hubConfig.loadConfigurationFromProperties();
     }
 
     @Test

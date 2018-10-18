@@ -43,6 +43,7 @@ import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -63,7 +64,8 @@ import java.util.*;
     getterVisibility = JsonAutoDetect.Visibility.ANY,
     setterVisibility = JsonAutoDetect.Visibility.ANY)
 @Component
-@PropertySource("file:gradle.properties")
+@PropertySource({"classpath:dhf-defaults.properties", "file:gradle.properties"})
+// TODO change to DHS defaults
 public class HubConfigImpl implements HubConfig
 {
     @Autowired
@@ -72,13 +74,22 @@ public class HubConfigImpl implements HubConfig
     @Autowired
     private Environment environment;
 
-    protected String stagingDbName = DEFAULT_STAGING_NAME;
-    protected String stagingHttpName = DEFAULT_STAGING_NAME;
-    protected Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    protected Integer stagingPort = DEFAULT_STAGING_PORT;
-    protected String stagingAuthMethod = DEFAULT_AUTH_METHOD;
-    private String stagingScheme = DEFAULT_SCHEME;
-    private boolean stagingSimpleSsl = false;
+    @Value("${mlStagingDbName}")
+    protected String stagingDbName;
+    @Value("${mlStagingHttpName}")
+    protected String stagingHttpName;
+    @Value("${mlStagingForestsPerHost}")
+    protected Integer stagingForestsPerHost;
+    @Value("${mlStagingPort}")
+    protected Integer stagingPort;
+    @Value("${mlStagingAuthMethod}")
+    protected String stagingAuthMethod;
+    @Value("${mlStagingScheme}")
+    private String stagingScheme;
+    @Value("${mlStagingSimpleSsl}")
+    private boolean stagingSimpleSsl;
+
+
     private SSLContext stagingSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier;
     private String stagingCertFile;
@@ -86,13 +97,20 @@ public class HubConfigImpl implements HubConfig
     private String stagingExternalName;
     private X509TrustManager stagingTrustManager;
 
-    protected String finalDbName = DEFAULT_FINAL_NAME;
-    protected String finalHttpName = DEFAULT_FINAL_NAME;
-    protected Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    protected Integer finalPort = DEFAULT_FINAL_PORT;
-    protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
-    private String finalScheme = DEFAULT_SCHEME;
-    private boolean finalSimpleSsl = false;
+    @Value("${mlFinalDbName}")
+    protected String finalDbName;
+    @Value("${mlFinalHttpName}")
+    protected String finalHttpName;
+    @Value("${mlFinalForestsPerHost}")
+    protected Integer finalForestsPerHost;
+    @Value("${mlFinalPort}")
+    protected Integer finalPort;
+    @Value("${mlFinalAuthMethod}")
+    protected String finalAuthMethod;
+    @Value("${mlFinalScheme}")
+    private String finalScheme;
+    @Value("${mlFinalSimpleSsl}")
+    private boolean finalSimpleSsl;
     private SSLContext finalSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
     private String finalCertFile;
@@ -100,13 +118,20 @@ public class HubConfigImpl implements HubConfig
     private String finalExternalName;
     private X509TrustManager finalTrustManager;
 
-    protected String jobDbName = DEFAULT_JOB_NAME;
-    protected String jobHttpName = DEFAULT_JOB_NAME;
-    protected Integer jobForestsPerHost = 1;
-    protected Integer jobPort = DEFAULT_JOB_PORT;
-    protected String jobAuthMethod = DEFAULT_AUTH_METHOD;
-    private String jobScheme = DEFAULT_SCHEME;
-    private boolean jobSimpleSsl = false;
+    @Value("${mlJobDbName}")
+    protected String jobDbName;
+    @Value("${mlJobHttpName}")
+    protected String jobHttpName;
+    @Value("${mlJobForestsPerHost}")
+    protected Integer jobForestsPerHost;
+    @Value("${mlJobPort}")
+    protected Integer jobPort;
+    @Value("${mlJobAuthMethod}")
+    protected String jobAuthMethod;
+    @Value("${mlJobScheme}")
+    private String jobScheme;
+    @Value("${mlJobSimpleSsl}")
+    private boolean jobSimpleSsl;
     private SSLContext jobSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier;
     private String jobCertFile;
@@ -114,23 +139,37 @@ public class HubConfigImpl implements HubConfig
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-    protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
+    @Value("${mlModulesDbName}")
+    protected String modulesDbName;
+    @Value("${mlModulesForestsPerHost}")
     protected Integer modulesForestsPerHost = 1;
 
-    protected String stagingTriggersDbName = DEFAULT_STAGING_TRIGGERS_DB_NAME;
-    protected Integer stagingTriggersForestsPerHost = 1;
-    protected String finalTriggersDbName = DEFAULT_FINAL_TRIGGERS_DB_NAME;
-    protected Integer finalTriggersForestsPerHost = 1;
+    @Value("${mlStagingTriggersDbName}")
+    protected String stagingTriggersDbName;
+    @Value("${mlStagingTriggersForestsPerHost}")
+    protected Integer stagingTriggersForestsPerHost;
+    @Value("${mlFinalTriggersDbName}")
+    protected String finalTriggersDbName;
+    @Value("${mlFinalTriggersForestsPerHost}")
+    protected Integer finalTriggersForestsPerHost;
 
-    protected String stagingSchemasDbName = DEFAULT_STAGING_SCHEMAS_DB_NAME;
-    protected Integer stagingSchemasForestsPerHost = 1;
-    protected String finalSchemasDbName = DEFAULT_FINAL_SCHEMAS_DB_NAME;
-    protected Integer finalSchemasForestsPerHost = 1;
+    @Value("${mlStagingSchemasDbName}")
+    protected String stagingSchemasDbName;
+    @Value("${mlStagingSchemasForestsPerHost}")
+    protected Integer stagingSchemasForestsPerHost;
+    @Value("${mlFinalSchemasDbName}")
+    protected String finalSchemasDbName;
+    @Value("${mlFinalSchemasForestsPerHost}")
+    protected Integer finalSchemasForestsPerHost;
 
-    private String hubRoleName = DEFAULT_ROLE_NAME;
-    private String hubUserName = DEFAULT_USER_NAME;
-    private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
-    private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
+    @Value("${mlHubRoleName}")
+    private String hubRoleName;
+    @Value("${mlHubUserName}")
+    private String hubUserName;
+    @Value("${mlHubAdminRoleName}")
+    private String hubAdminRoleName;
+    @Value("${mlHubAdminUserName}")
+    private String hubAdminUserName;
 
     //we assume DHF 2.x unless otherwise told, our earliest 'from' version
     private String DHFVersion = "2.0.0";
@@ -139,14 +178,19 @@ public class HubConfigImpl implements HubConfig
     private String mlUsername = null;
     private String mlPassword = null;
 
+    @Value("${mlLoadBalancerHost}")
     private String loadBalancerHost;
 
-    private Boolean isHostLoadBalancer = false;
+    @Value("${mlIsHostLoadBalancer}")
+    private Boolean isHostLoadBalancer;
 
+    @Value("${mlIsProvisionedEnvironment}")
     private Boolean isProvisionedEnvironment;
 
-    protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
-    protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
+    @Value("${mlCustomForestPath}")
+    protected String customForestPath;
+    @Value("${mlModulesPermissions}")
+    protected String modulePermissions;
 
     private ManageConfig manageConfig;
     private ManageClient manageClient;

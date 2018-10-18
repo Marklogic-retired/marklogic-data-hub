@@ -6,6 +6,7 @@ plugins {
     id 'com.marklogic.ml-gradle' version '3.8.2'
     id 'com.moowork.node' version '1.1.1'
     id 'org.springframework.boot' version '2.0.6.RELEASE'
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
 repositories {
@@ -60,6 +61,9 @@ dependencies {
     testCompile("com.marklogic:mlcp:9.0.7") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
+    testCompile("org.springframework.boot:spring-boot-starter-actuator")
+    testCompile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("org.springframework.boot:spring-boot-starter-websocket")
 }
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.hosts.HostManager
