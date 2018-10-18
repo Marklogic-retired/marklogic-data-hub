@@ -50,6 +50,8 @@ export default function() {
         mappingsPage.inputSourceURI().clear();
         mappingsPage.inputSourceURI().sendKeys(sourceDocUriWithSmallSku);
         mappingsPage.editSourceURITick().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // select source for sku
         mappingsPage.sourcePropertyDropDown('sku').click();
@@ -105,6 +107,8 @@ export default function() {
         mappingsPage.editSourceURITick().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
         mappingsPage.editSourceURIConfirmationOK().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // change the source to SKU
         mappingsPage.sourcePropertyDropDown('sku').click();
@@ -138,8 +142,9 @@ export default function() {
 
       it('should create Harmonize SKU flow on Product', function() {
         flowPage.clickEntityDisclosure('Product');
+        browser.sleep(5000);
         flowPage.createHarmonizeFlow('Product', 'Harmonize SKU', 'json', 'sjs', true, 'MapProduct');
-        browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
+        browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isDisplayed()).
           toBe(true, 'Harmonize Product' + ' is not present');
       });
@@ -151,10 +156,11 @@ export default function() {
       
       it('should run Harmonize SKU flow with mapping', function() {
         flowPage.clickEntityDisclosure('Product');
-        browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
+        browser.sleep(5000);
+        browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
         flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
-        browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+        browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
         expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         flowPage.runHarmonizeButton().click();
         browser.sleep(10000);
@@ -204,6 +210,8 @@ export default function() {
         browser.wait(EC.elementToBeClickable(mappingsPage.docNotFoundConfirmationOK()));
         expect(mappingsPage.docNotFoundMessage().getText()).toContain('Document URI not found: invalidURI');
         mappingsPage.docNotFoundConfirmationOK().click();
+        // putting sleep right until the flickering bug is fixed
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the old valid URI persists
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);

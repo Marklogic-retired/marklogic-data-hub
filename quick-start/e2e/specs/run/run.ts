@@ -124,10 +124,10 @@ export default function(tmpDir) {
       console.log('clicking Product entity');
       flowPage.clickEntityDisclosure('Product');
       console.log('clicking Harmonize Products flow');
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
+      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       console.log('found the button and clicking Run Harmonize button');
       flowPage.runHarmonizeButton().click();
