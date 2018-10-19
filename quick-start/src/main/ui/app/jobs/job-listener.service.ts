@@ -2,7 +2,6 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp/stomp.service';
 import { FlowStatus } from '../entities/flow-status.model';
-import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class JobListenerService {
@@ -13,20 +12,9 @@ export class JobListenerService {
   private runningJobs: Map<string, FlowStatus> = new Map<string, FlowStatus>();
   private jobOutputs: Map<string, Array<string>> = new Map<string, Array<string>>();
 
-  private jobCount = new Subject<number>();
-  private percentageComplete = new Subject<number>();
-
   constructor(private stomp: STOMPService) {
     this.stomp.messages.subscribe(this.onWebsockMessage);
     this.stomp.subscribe('/topic/flow-status');
-  }
-
-  getJobCount(): Observable<number> {
-    return this.jobCount.asObservable();
-  }
-
-  getPercentageComplete(): Observable<number> {
-    return this.percentageComplete.asObservable();
   }
 
   public runningJobCount(): number {
@@ -61,11 +49,9 @@ export class JobListenerService {
         if (!this.runningJobs.has(status.jobId)) {
           this.jobStarted.next(status.jobId);
         }
-        // update running job count
+
         this.runningJobs.set(status.jobId, status);
-        this.jobCount.next(this.runningJobs.size);
-        let complete = this.totalPercentComplete();
-        console.log('percentage complete', complete);
+
         if (status.message && status.message !== '') {
           // initialize the array if it doesn't exist
           if (!this.jobOutputs.has(status.jobId)) {
@@ -73,10 +59,6 @@ export class JobListenerService {
           }
           let arr: Array<string> = this.jobOutputs.get(status.jobId);
           arr.push(status.message);
-
-          // update percentage complete
-          
-          this.percentageComplete.next(status.percentComplete);
         }
       } else {
         // a job finished
@@ -84,7 +66,6 @@ export class JobListenerService {
 
         if (this.runningJobs.has(status.jobId)) {
           this.runningJobs.delete(status.jobId);
-          this.jobCount.next(this.runningJobs.size);
         }
 
         if (this.jobOutputs.has(status.jobId)) {

@@ -1,10 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects/projects.service';
 import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -12,18 +11,16 @@ import { Subscription } from 'rxjs';
     <app-header-ui
       [runningJobs]="runningJobs"
       [percentageComplete]="percentageComplete"
-      (logout)="this.logout()"
+      [routeToJobs]="routeToJobs"
+      (logout)="logout()"
     ></app-header-ui>
   `
 })
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent implements OnInit {
 
-  @Input() runningJobs: number;
-  @Input() percentageComplete: number;
-  //@Output() jobCount = new EventEmitter<number>();
-  jobCountSubscription: Subscription;
-  percentageSubscription: Subscription;
-
+  public runningJobs: Function;
+  public percentageComplete: Function;
+  public routeToJobs: Function;
   constructor(
     private projectService: ProjectService,
     private auth: AuthService,
@@ -31,25 +28,24 @@ export class HeaderComponent implements OnDestroy {
     private envService: EnvironmentService,
     private router: Router
   ) {
-    this.jobCountSubscription = this.jobListener.getJobCount().subscribe(jobCount => this.runningJobs = jobCount);
-    this.percentageSubscription = this.jobListener.getPercentageComplete().subscribe(percentage => this.percentageComplete = percentage);
 
   }
-  ngOnDestroy() {
-    // unsubscribe to ensure no memory leaks
-    this.jobCountSubscription.unsubscribe();
-    this.percentageSubscription.unsubscribe();
+  ngOnInit() {
+    this.runningJobs = this.getRunningJobCount.bind(this);
+    this.percentageComplete = this.getPercentComplete.bind(this);
+    this.routeToJobs = this.gotoJobs.bind(this);
   }
+
   gotoJobs() {
     this.router.navigate(['jobs']);
   }
 
-  getRunningJobCount() {
-    this.runningJobs = this.jobListener.runningJobCount();
+  getRunningJobCount(): number {
+    return this.jobListener.runningJobCount();
   }
 
-  getPercentComplete() {
-    this.percentageComplete = this.jobListener.totalPercentComplete();
+  getPercentComplete(): number {
+    return this.jobListener.totalPercentComplete();
   }
 
   getMarkLogicVersion(): number {
@@ -62,16 +58,5 @@ export class HeaderComponent implements OnDestroy {
       this.auth.setAuthenticated(false);
       this.router.navigate(['login']);
     });
-  }
-
-  isActive(url: string) {
-    console.log('header active url', url);
-    // if(this.router.url.startsWith(url)){
-    //   this.activeLink.emit({true});
-    // }
-    //this.activeLink.emit(true);
-
-    //return this.router.url.startsWith(url);
-    //this.activeLink.emit({ url: this.router.url.startsWith(url)});
   }
 }
