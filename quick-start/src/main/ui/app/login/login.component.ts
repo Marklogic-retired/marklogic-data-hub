@@ -1,24 +1,50 @@
-import { Component, Renderer, NgZone, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-
+import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
-import { AuthService } from '../auth/auth.service';
-import { ProjectService } from '../projects/projects.service';
-import { InstallService } from '../installer';
-import { LoginInfo } from './login-info.model';
-import { HubSettings } from '../environment/hub-settings.model';
-import { MdlDialogService } from '@angular-mdl/core';
+import {LoginUIComponent} from "../shared/components";
+import {AuthService} from '../auth';
+import {ProjectService} from '../projects';
+import {InstallService} from '../installer';
+import {LoginInfo} from './login-info.model';
+import {HubSettings} from '../environment/hub-settings.model';
+import {MdlDialogService} from '@angular-mdl/core';
 
 import * as SemVer from 'semver';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  template: `
+    <app-login-ui
+      [currentEnvironment]="this.currentEnvironment"
+      [installationStatus]="this.installationStatus"
+      [installing]="this.installing"
+      [percentComplete]="this.percentComplete"
+      [uninstalling]="this.uninstalling"
+      [showInitAdvanced]="this.showInitAdvanced"
+      [showFolderBrowser]="this.showFolderBrowser"
+      [projects]="this.projects"
+      [currentProject]="this.currentProject"
+      [loggingIn]="this.loggingIn"
+      [loginError]="this.loginError"
+      [loginInfo]="this.loginInfo"
+      
+      (onInstall)="this.install()"
+      (onUninstall)="this.unInstall()"
+      (onInstallNext)="this.installNext()"
+      (onChooseProject)="this.chooseProject()"
+      (onPostInitNext)="this.postInitNext()"
+      (onLogin)="this.login()"
+    >
+    </app-login-ui>
+  `
 })
 
 export class LoginComponent implements OnInit {
+
+  @ViewChild(LoginUIComponent)
+  private loginUi: LoginUIComponent;
+
   defaultSettings: HubSettings;
   initSettings: HubSettings = new HubSettings();
   showInitAdvanced: boolean = false;
@@ -27,10 +53,6 @@ export class LoginComponent implements OnInit {
   hubUpdating: boolean = false;
   hubUpdateFailed: boolean = false;
   hubUpdateError: string = '';
-
-  currentTab: string = 'ProjectDir';
-
-  visitedTabs: Array<string> = [];
 
   loginError: string = null;
   loggingIn: boolean = false;
@@ -41,19 +63,6 @@ export class LoginComponent implements OnInit {
     'job',
     'trace'
   ];
-
-  tabs: any = {
-    ProjectDir: true,
-    InitIfNeeded: false,
-    PostInit: false,
-    Environment: false,
-    Login: false,
-    InstalledCheck: false,
-    PreInstallCheck: false,
-    Installer: false,
-    RequiresUpdate: false
-  };
-
 
   installing: boolean = false;
   uninstalling: boolean = false;
@@ -91,8 +100,8 @@ export class LoginComponent implements OnInit {
     private installService: InstallService,
     private dialogService: MdlDialogService,
     private router: Router,
-    private ngZone: NgZone,
-    private renderer: Renderer) {}
+    private ngZone: NgZone) {
+  }
 
   ngOnInit() {
     this.projectService.getProjects().subscribe((resp) => {
@@ -135,7 +144,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate([redirect]);
         } else {
           // go to install hub tab
-          this.gotoTab('Installer');
+          this.loginUi.gotoTab('Installer');
         }
       })
     });
@@ -154,7 +163,7 @@ export class LoginComponent implements OnInit {
       this.currentEnvironment = env;
       setTimeout(() => {
         this.uninstalling = false;
-          this.installationStatus = null;
+        this.installationStatus = null;
       }, 1000);
       emitter.unsubscribe();
 
@@ -165,7 +174,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate([redirect]);
       } else {
         // go to install hub tab
-        this.gotoTab('Installer');
+        this.loginUi.gotoTab('Installer');
       }
     });
   }
@@ -176,25 +185,6 @@ export class LoginComponent implements OnInit {
 
   folderClicked(folders: any): void {
     this.folder = folders.absolutePath;
-  }
-
-  back() {
-    if (this.visitedTabs.length > 0) {
-      this.disableTabs();
-      this.currentTab = this.visitedTabs.pop();
-      this.tabs[this.currentTab] = true;
-    }
-  }
-
-  gotoTab(tabName: string): void {
-    this.disableTabs();
-    this.tabs[tabName] = true;
-
-    const skipUs = ['InstalledCheck', 'InitIfNeeded', 'PostInit', 'PreInstallCheck'];
-    if (skipUs.indexOf(this.currentTab) < 0) {
-      this.visitedTabs.push(this.currentTab);
-    }
-    this.currentTab = tabName;
   }
 
   canProjectNext() {
@@ -215,7 +205,9 @@ export class LoginComponent implements OnInit {
   removeProject($event: any) {
     const project = $event.item;
     this.projectService.removeProject(project).subscribe(() => {
-      _.remove(this.projects, p => { return p.id === project.id; });
+      _.remove(this.projects, p => {
+        return p.id === project.id;
+      });
       if (this.projects.length === 0) {
         this.showFolderBrowser = true;
       }
@@ -227,22 +219,23 @@ export class LoginComponent implements OnInit {
     this.loginInfo.projectId = project.id;
     if (project.initialized) {
       // go straight to the environment choose
-      this.gotoTab('Environment');
+      this.loginUi.gotoTab('Environment');
     } else {
       this.projectService.getProjectDefaults(this.currentProject.id).subscribe(defaults => {
         this.defaultSettings = defaults;
         _.merge(this.initSettings, _.clone(defaults));
         // go to the init project tab
-        this.gotoTab('InitIfNeeded');
+        this.loginUi.gotoTab('InitIfNeeded');
       });
     }
-  }
+  };
 
   restoreInitDefaults($evt: MouseEvent) {
     this.dialogService.confirm('Really restore the default settings?', 'Cancel', 'Restore').subscribe(() => {
-      this.initSettings = _.clone(this.defaultSettings);
-    },
-    () => {});
+        this.initSettings = _.clone(this.defaultSettings);
+      },
+      () => {
+      });
   }
 
   gotEnvironment(environment: string) {
@@ -250,16 +243,8 @@ export class LoginComponent implements OnInit {
     this.currentEnvironmentString = environment;
   }
 
-  environmentNext() {
-    this.gotoTab('Login');
-    setTimeout(() => {
-      this.renderer.invokeElementMethod(
-        this.renderer.selectRootElement('input#username'), 'focus');
-    }, 500);
-  }
-
   loginNext() {
-    this.gotoTab('InstalledCheck');
+    this.loginUi.gotoTab('InstalledCheck');
     this.projectService.getProjectEnvironment().subscribe((env: any) => {
       this.currentEnvironment = env;
 
@@ -267,11 +252,11 @@ export class LoginComponent implements OnInit {
 
       if (installInfo && installInfo.installed) {
         if (this.currentEnvironment.runningVersion !== '0.1.2' &&
-            this.currentEnvironment.runningVersion !== '%%mlHubVersion%%' &&
-            this.currentEnvironment.installedVersion !== '%%mlHubVersion%%' &&
+          this.currentEnvironment.runningVersion !== '%%mlHubVersion%%' &&
+          this.currentEnvironment.installedVersion !== '%%mlHubVersion%%' &&
           (SemVer.gt(this.currentEnvironment.runningVersion, this.currentEnvironment.installedVersion)
-          || this.currentEnvironment.runningVersion !== this.currentEnvironment.dhfversion )) {
-          this.gotoTab('RequiresUpdate');
+            || this.currentEnvironment.runningVersion !== this.currentEnvironment.dhfversion)) {
+          this.loginUi.gotoTab('RequiresUpdate');
         } else {
           // goto login tab
           let redirect = this.auth.redirectUrl || '';
@@ -284,21 +269,21 @@ export class LoginComponent implements OnInit {
   }
 
   doPreinstallCheck() {
-    this.gotoTab('PreInstallCheck');
+    this.loginUi.gotoTab('PreInstallCheck');
     this.runningPreinstallCheck = true;
     this.projectService.preinstallCheck().subscribe((resp: any) => {
-      this.runningPreinstallCheck = false;
-      this.preinstallCheck = resp;
-      if (this.preinstallCheck.safeToInstall) {
-        this.gotoTab('Installer');
-      } else {
-        console.log('bad!');
-      }
-    },
-    () => {
-      this.runningPreinstallCheck = false;
-      this.preinstallCheck = null;
-    });
+        this.runningPreinstallCheck = false;
+        this.preinstallCheck = resp;
+        if (this.preinstallCheck.safeToInstall) {
+          this.loginUi.gotoTab('Installer');
+        } else {
+          console.log('bad!');
+        }
+      },
+      () => {
+        this.runningPreinstallCheck = false;
+        this.preinstallCheck = null;
+      });
   }
 
   initProject() {
@@ -308,26 +293,26 @@ export class LoginComponent implements OnInit {
     ).subscribe((project: any) => {
       this.currentProject = project;
       this.loginInfo.projectId = project.id;
-      this.gotoTab('PostInit');
+      this.loginUi.gotoTab('PostInit');
     });
   }
 
   updateProject() {
     this.hubUpdating = true;
     this.projectService.updateProject().subscribe(() => {
-      this.hubUpdating = false;
-      this.hubUpdateError = '';
-      this.loginNext();
-    },
-    error => {
-      this.hubUpdating = false;
-      this.hubUpdateFailed = true;
-      this.hubUpdateError = error.json().message;
-    });
+        this.hubUpdating = false;
+        this.hubUpdateError = '';
+        this.loginNext();
+      },
+      error => {
+        this.hubUpdating = false;
+        this.hubUpdateFailed = true;
+        this.hubUpdateError = error.json().message;
+      });
   }
 
   postInitNext() {
-    this.gotoTab('Environment');
+    this.loginUi.gotoTab('Environment');
   }
 
   login() {
@@ -344,7 +329,7 @@ export class LoginComponent implements OnInit {
         this.loggingIn = false;
       },
       error => {
-      let errorMsg = error;
+        let errorMsg = error;
         try {
           errorMsg = error.json().message;
         } catch (e) {
@@ -384,11 +369,5 @@ export class LoginComponent implements OnInit {
 
   getInstalledIcon(isTrue: boolean) {
     return isTrue ? 'fa-check' : 'fa-close';
-  }
-
-  private disableTabs() {
-    _.each(this.tabs, (tab, key) => {
-      this.tabs[key] = false;
-    });
   }
 }

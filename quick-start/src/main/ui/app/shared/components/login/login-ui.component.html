@@ -48,7 +48,7 @@
           </div>
 
           <div layout="row" layout-align="end center" class="init-buttons">
-            <button type="button" mdl-button mdl-button-type="raised" (click)="chooseProject()" >Next</button>
+            <button type="button" mdl-button mdl-button-type="raised" (click)="onChooseProject.emit()" >Next</button>
           </div>
         </section>
       </div>
@@ -142,7 +142,7 @@
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" mdl-button (click)="back()">&lt; Back</button>
-          <button type="button" mdl-button mdl-button-type="raised" (click)="postInitNext()">Next</button>
+          <button type="button" mdl-button mdl-button-type="raised" (click)="onPostInitNext.emit()">Next</button>
         </div>
       </div>
 
@@ -178,7 +178,7 @@
         <section layout="row" layout-align="center center">
           <section class="login-box" flex layout="column" layout-align="center center">
             <h3>Login to the Data Hub</h3>
-            <form class="loginForm" (submit)="login()">
+            <form class="loginForm" (submit)="onLogin.emit()">
               <div flex layout-fill layout-padding layout="column">
                 <div class="center-text" [hidden]="!loggingIn">
                   <mdl-spinner single-color active></mdl-spinner>
@@ -291,7 +291,7 @@
               MarkLogic server.
               </p>
               <div class="center-text">
-                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
               </div>
             </div>
             <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
@@ -352,10 +352,10 @@
                 </tbody>
               </table>
               <div class="action-button center-text">
-                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
               </div>
               <div class="action-button center-text">
-                <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="unInstall()">UnInstall</button>
+                <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="onUninstall.emit()">UnInstall</button>
               </div>
             </div>
           </div>
@@ -378,7 +378,7 @@
 
           <div layout="row" layout-align="end center" class="init-buttons">
             <button type="button" mdl-button (click)="back()">&lt; Back</button>
-            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installInfo.installed" (click)="installNext()">Finished</button>
+            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installInfo.installed" (click)="onInstallNext.emit()">Finished</button>
           </div>
         </div>
       </div>

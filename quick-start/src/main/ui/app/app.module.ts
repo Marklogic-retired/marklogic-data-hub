@@ -16,6 +16,7 @@ import {
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
+import { LoginUIComponent } from './shared/components'
 import { SettingsComponent } from './settings';
 
 import { MdlModule } from '@angular-mdl/core';
@@ -92,6 +93,7 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     JobExportDialogComponent,
     JobOutputComponent,
     LoginComponent,
+    LoginUIComponent,
     MlcpUiComponent,
     MlErrorComponent,
     NewEntityComponent,
