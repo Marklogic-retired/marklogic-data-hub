@@ -26,8 +26,8 @@ export default function() {
         browsePage.searchBox().sendKeys('442403950907');
         browsePage.searchButton().click();
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-        let sourceDocUriWithSmallSku = 
-          browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1?doc=yes&type=foo').getText(); 
+        let sourceDocUriWithSmallSku =
+          browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1?doc=yes&type=foo').getText();
         // create the map with specific sku doc uri
         appPage.mappingsTab.click();
         mappingsPage.isLoaded();
@@ -91,7 +91,7 @@ export default function() {
         browsePage.searchBox().sendKeys('159929577929');
         browsePage.searchButton().click();
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-        let sourceDocUriWithBigSku = 
+        let sourceDocUriWithBigSku =
           browsePage.resultsSpecificUri('/board_games.csv-0-10?doc=yes&type=foo').getText();
         // update the map with specific SKU doc uri
         appPage.mappingsTab.click();
@@ -133,7 +133,7 @@ export default function() {
         //flicker bug, sleep will be removed once it's fixed
         browser.sleep(8000);
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
-      }); 
+      });
 
       it('should go to flows tab', function() {
         appPage.flowsTab.click();
@@ -153,14 +153,14 @@ export default function() {
         flowPage.redeployButton.click();
         browser.sleep(5000);
       });
-      
+
       it('should run Harmonize SKU flow with mapping', async function() {
         await flowPage.clickEntityDisclosure('Product');
         browser.sleep(5000);
         await browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         await expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
         await flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
-        await browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()), 10000);
+        await browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
         await expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         await flowPage.runHarmonizeButton().click();
         browser.sleep(10000);
