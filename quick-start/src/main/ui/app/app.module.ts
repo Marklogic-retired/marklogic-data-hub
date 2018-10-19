@@ -54,7 +54,7 @@ import { ProjectService } from './projects/projects.service';
 import { SettingsService } from './settings/settings.service';
 import { STOMPService } from './stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
-import { FocusElementDirective } from './focus-element/focus-element.directive';
+import { FocusElementDirective } from './shared/directives/focus-element/focus-element.directive';
 import { TraceService } from './traces/trace.service';
 import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
