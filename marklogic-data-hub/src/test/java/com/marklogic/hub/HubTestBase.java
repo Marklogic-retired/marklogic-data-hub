@@ -529,7 +529,7 @@ public class HubTestBase {
             try {
                 FileUtils.forceDelete(new File(PROJECT_PATH));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+            	logger.warn("Unable to delete the project directory", e);
             }
         }
     }
