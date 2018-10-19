@@ -16,7 +16,7 @@ import {
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
-import { SettingsComponent } from './settings';
+import { SettingsComponent } from './shared/components/settings';
 
 import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
@@ -46,13 +46,13 @@ import { SearchComponent, SearchViewerComponent } from './search';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
-import { InstallService } from './installer';
+import { InstallService } from './shared/services/installer';
 import { JobService } from './jobs/jobs.service';
 import { JobListenerService } from './jobs/job-listener.service';
 import { MapService } from './mappings/map.service';
-import { ProjectService } from './projects/projects.service';
-import { SettingsService } from './settings/settings.service';
-import { STOMPService } from './stomp/stomp.service';
+import { ProjectService } from './shared/services/projects/projects.service';
+import { SettingsService } from './shared/services/settings/settings.service';
+import { STOMPService } from './shared/services/stomp/stomp.service';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { FocusElementDirective } from './shared/directives/focus-element/focus-element.directive';
 import { TraceService } from './traces/trace.service';

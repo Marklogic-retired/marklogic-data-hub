@@ -10,7 +10,7 @@ import { Connection, Entity, PropertyType } from '../entities';
 
 import { EntitiesService } from '../entities/entities.service';
 
-import { InstallService } from '../installer';
+import { InstallService } from '../shared/services/installer';
 
 import { MdlDialogService, MdlSnackbarService } from '@angular-mdl/core';
 
