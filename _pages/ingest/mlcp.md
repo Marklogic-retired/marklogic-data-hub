@@ -55,7 +55,7 @@ This is how you would run a flow named "My Awesome Flow" for the entity named "Y
 ... \
 -transform_module "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.xqy" \
 -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" \
--transform_param "entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={'your':'options'}"
+-transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
 </pre>
 
 If your flow is implemented with JavaScript, use this module:
@@ -65,4 +65,4 @@ If your flow is implemented with JavaScript, use this module:
 /path/to/mlcp import \
 ... \
 -transform_module "/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs" \
--transform_param "entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={'your':'options'}"
+-transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'

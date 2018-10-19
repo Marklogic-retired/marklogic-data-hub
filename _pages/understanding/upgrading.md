@@ -60,8 +60,7 @@ Use the following procedure to upgrade your project to a new version of DHF:
    {% include ostabs.html linux="./gradlew hubUpdate" windows="gradlew.bat hubUpdate" %}
 
   The `hubUpdate` task might report incompatibilities that you must correct.
-
-1. If you upgrade to DHF 4.0.0 or later, update your gradle properties file to set `mlDHFVersion` to your new DHF version. For example, if you upgrade to DHF 4.0.1, then your `gradle.properties` file should contain the following: `mlDHFVersion='4.0.1'`.
+1. If you upgrade to DHF 4.0.0 or later, update your `gradle properties` file to set `mlDHFVersion` to your new DHF version. For example, if you upgrade to DHF 4.0.1, then your `gradle.properties` file should contain the following: `mlDHFVersion=4.0.1`.
 
 You should also update the DHF version in the `dependencies` section of any custom build.gradle files that depend on DHF.
 
