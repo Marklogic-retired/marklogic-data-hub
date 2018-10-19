@@ -154,15 +154,15 @@ export default function() {
         browser.sleep(5000);
       });
       
-      it('should run Harmonize SKU flow with mapping', function() {
-        flowPage.clickEntityDisclosure('Product');
+      it('should run Harmonize SKU flow with mapping', async function() {
+        await flowPage.clickEntityDisclosure('Product');
         browser.sleep(5000);
-        browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
-        expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
-        flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
-        browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-        expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
-        flowPage.runHarmonizeButton().click();
+        await browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
+        await expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
+        await flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
+        await browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
+        await expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+        await flowPage.runHarmonizeButton().click();
         browser.sleep(10000);
       });
 
