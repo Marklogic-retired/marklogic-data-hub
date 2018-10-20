@@ -23,7 +23,7 @@ import { HasBugsDialogComponent } from '../shared/components';
 
 import { DeployService } from '../deploy/deploy.service';
 
-import { CodemirrorComponent } from '../codemirror';
+import { CodemirrorComponent } from '../shared/components/codemirror';
 
 import { Ng2DeviceService } from 'ng2-device-detector';
 

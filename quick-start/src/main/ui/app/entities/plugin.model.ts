@@ -1,4 +1,4 @@
-import { CodemirrorComponent } from '../codemirror';
+import { CodemirrorComponent } from '../shared/components/codemirror';
 
 export class Plugin {
   $dirty: boolean;

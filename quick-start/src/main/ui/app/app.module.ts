@@ -25,7 +25,7 @@ import { BsDropdownModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
-import { CodemirrorComponent } from './codemirror';
+import { CodemirrorComponent } from './shared/components/codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { FolderBrowserUiComponent } from './shared/components';
 import { HeaderComponent } from './header/header.component';
