@@ -405,21 +405,20 @@ public class DataHubImpl implements DataHub {
         }
 
         Set<Integer> ports = portsInUse.keySet();
-
         String serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.STAGING));
-        stagingPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.STAGING)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.STAGING));
+        stagingPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.STAGING)) && serverName != null && serverName.equals(hubConfig.getHttpName(DatabaseKind.STAGING));
         if (stagingPortInUse) {
             stagingPortInUseBy = serverName;
         }
 
         serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.FINAL));
-        finalPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.FINAL)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.FINAL));
+        finalPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.FINAL)) && serverName != null && serverName.equals(hubConfig.getHttpName(DatabaseKind.FINAL));
         if (finalPortInUse) {
             finalPortInUseBy = serverName;
         }
 
         serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.JOB));
-        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.JOB));
+        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && serverName.equals(hubConfig.getHttpName(DatabaseKind.JOB));
         if (jobPortInUse) {
             jobPortInUseBy = serverName;
         }
@@ -440,7 +439,9 @@ public class DataHubImpl implements DataHub {
         response.put("jobPortInUse", jobPortInUse);
         response.put("jobPortInUseBy", jobPortInUseBy);
         response.put("safeToInstall", isSafeToInstall());
-
+        if(!(boolean)response.get("safeToInstall")) {
+            response.put("dhfVersion", versions.getHubVersion());
+        }
         return response;
     }
 
