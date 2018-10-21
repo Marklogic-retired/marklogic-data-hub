@@ -221,10 +221,10 @@ public class DataHubTest extends HubTestBase {
 
         dh.runPreInstallCheck(versions);
         assertTrue(dh.isServerVersionOk());
-        assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
-        assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
-        assertFalse(dh.isPortInUse(DatabaseKind.JOB));
-        assertTrue(dh.isSafeToInstall());
+        assertTrue(dh.isPortInUse(DatabaseKind.STAGING));
+        assertTrue(dh.isPortInUse(DatabaseKind.FINAL));
+        assertTrue(dh.isPortInUse(DatabaseKind.JOB));
+        assertFalse(dh.isSafeToInstall());
     }
 
     @Test
