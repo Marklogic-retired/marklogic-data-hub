@@ -6,9 +6,10 @@
         Entities
         <ng-template [ngIf]="getMarkLogicVersion().startsWith('8')">
           <div class="mdl-layout-spacer"></div>
-          <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
+          <!-- <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
             <i class="fa fa-plus"></i>
-          </mdl-button>
+          </mdl-button> -->
+          <app-new-entity></app-new-entity>
         </ng-template>
       </span>
 

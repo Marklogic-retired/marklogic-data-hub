@@ -1,6 +1,6 @@
-import { Component, HostListener, Inject } from '@angular/core';
+import { Component, HostListener, Inject, ViewChild } from '@angular/core';
 
-import { MdlDialogReference } from '@angular-mdl/core';
+import { MdlDialogReference, MdlDialogComponent } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 
@@ -28,17 +28,17 @@ export class NewEntityComponent {
   };
 
   entity: any = _.clone(this.DEFAULTENTITY);
-
+  @ViewChild('newEntityDialog') private  newEntityDialog: MdlDialogComponent;
   constructor(
-    private dialog: MdlDialogReference,
-    @Inject('actions') actions: any
+    // private dialog: MdlDialogReference,
+    // @Inject('actions') actions: any
   ) {
     this.entity = _.clone(this.DEFAULTENTITY);
-    this.actions = actions;
+    //this.actions = actions;
   }
 
   hide() {
-    this.dialog.hide();
+    //this.dialog.hide();
   }
 
   create() {
@@ -50,7 +50,7 @@ export class NewEntityComponent {
     }
   }
 
-  cancel() {
-    this.hide();
-  }
+  // cancel() {
+  //   this.hide();
+  // }
 }

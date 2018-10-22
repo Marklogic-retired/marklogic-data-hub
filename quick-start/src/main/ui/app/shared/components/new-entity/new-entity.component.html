@@ -1,8 +1,18 @@
-<div class="dialog-container new-entity-dialog">
+<mdl-button #newEntityButton mdl-button-type="icon" id="new-entity" (click)="newEntityDialog.show()">
+  <i class="fa fa-plus"></i>
+</mdl-button>
+<mdl-dialog #newEntityDialog
+[mdl-dialog-config]="{
+  clickOutsideToClose: true,
+  styles:{'width': '300px'},
+  isModal:true,
+  openFrom: newEntityButton,
+  enterTransitionDuration: 400,
+  leaveTransitionDuration: 400}">
   <div class="mdl-dialog__title">
     <div>Create Entity</div>
     <div class="mdl-layout-spacer"></div>
-    <mdl-button mdl-button-type="icon" (click)="cancel()">
+    <mdl-button mdl-button-type="icon" (click)="newEntityDialog.close()">
       <i class="fa fa-close"></i>
     </mdl-button>
   </div>
@@ -15,8 +25,8 @@
       </div>
       <div class="mdl-dialog__actions">
         <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
-        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="newEntityDialog.close()">Cancel</button>
       </div>
     </form>
   </div>
-</div>
+</mdl-dialog>
