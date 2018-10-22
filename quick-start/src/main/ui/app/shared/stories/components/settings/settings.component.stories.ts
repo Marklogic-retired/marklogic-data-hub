@@ -1,4 +1,5 @@
 import {CommonModule} from '@angular/common';
+import {HttpModule} from '@angular/http';
 import {storiesOf, moduleMetadata} from '@storybook/angular';
 import {centered} from '@storybook/addon-centered/angular';
 import { MdlDialogService } from '@angular-mdl/core';
@@ -16,20 +17,22 @@ import {SettingsComponent} from "../../../components";
 import { SettingsService } from '../../../services/settings/settings.service';
 import { InstallService } from '../../../services/installer';
 import { ProjectService } from '../../../services/projects';
+import { STOMPService } from '../../../services/stomp/stomp.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 
 storiesOf('Components|Settings', module)
   .addDecorator(withKnobs)
   .addDecorator(
     moduleMetadata({
-      imports: [CommonModule, ThemeModule],
+      imports: [CommonModule, ThemeModule, HttpModule, RouterTestingModule],
       schemas: [],
       declarations: [
         SettingsComponent,
         StoryCardComponent
       ],
       entryComponents: [],
-      providers: [MdlDialogService, SettingsService, InstallService, ProjectService]
+      providers: [MdlDialogService, SettingsService, InstallService, ProjectService, STOMPService]
     })
   )
   .addDecorator(centered)
