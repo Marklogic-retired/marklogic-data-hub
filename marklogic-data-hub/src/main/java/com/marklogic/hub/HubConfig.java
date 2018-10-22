@@ -554,4 +554,9 @@ public interface HubConfig {
     String getInfo();
 
 
+    /**
+     * Forces a re-read of properties from the gradle.properties file in the project.
+     * TODO what about the gradle-env.properties files?
+     */
+    void refreshProject();
 }

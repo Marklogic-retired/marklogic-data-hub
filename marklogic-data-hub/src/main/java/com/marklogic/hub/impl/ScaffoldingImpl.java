@@ -64,6 +64,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
     // TODO
     private DatabaseClient databaseClient;
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static String getAbsolutePath(String first, String... more) {

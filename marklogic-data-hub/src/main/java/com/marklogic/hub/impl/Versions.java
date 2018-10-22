@@ -41,7 +41,6 @@ public class Versions extends ResourceManager {
         super();
     }
 
-    @PostConstruct
     public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);

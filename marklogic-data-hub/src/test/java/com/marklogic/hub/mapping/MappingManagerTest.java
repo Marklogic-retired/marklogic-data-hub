@@ -55,7 +55,7 @@ public class MappingManagerTest extends HubTestBase {
         //clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_MODULES_DB_NAME);
         //installHubModules();
         //getPropsMgr().deletePropertiesFile();
-        hubConfig.initHubProject();
+        adminHubConfig.initHubProject();
     }
 
     @AfterEach

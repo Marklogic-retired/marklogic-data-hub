@@ -50,10 +50,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @BeforeEach
     public void setup() {
-        // special case do-one setup.
         XMLUnit.setIgnoreWhitespace(true);
-        // the project dir must be available for uninstall to do anything because it relies on properties file.
-        createProjectDir();
     }
 
     //should be removed after DHFPROD-1263 is fixed.

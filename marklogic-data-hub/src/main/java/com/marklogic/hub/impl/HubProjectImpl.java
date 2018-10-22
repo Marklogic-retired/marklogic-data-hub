@@ -352,4 +352,9 @@ public class HubProjectImpl implements HubProject {
     public Path getMappingDir(String mappingName) {
         return getHubMappingsDir().resolve(mappingName);
     }
+
+    @Override
+    public Path getProjectDir() {
+        return projectDir;
+    }
 }

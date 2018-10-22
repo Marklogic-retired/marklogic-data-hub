@@ -17,7 +17,7 @@ package com.marklogic.hub.util;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubTestBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.InputStream;

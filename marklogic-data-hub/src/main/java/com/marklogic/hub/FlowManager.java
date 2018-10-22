@@ -49,6 +49,12 @@ public interface FlowManager {
     }
 
     /**
+     * initializes the FlowManager with a new DatabaseClient.  Needed
+     * when the project is refreshed.
+     */
+    void setupClient();
+
+    /**
      * retrieves a list of all the flows on the local files systems
      * @return a list of Flows
      */

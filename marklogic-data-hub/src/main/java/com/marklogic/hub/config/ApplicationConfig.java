@@ -14,11 +14,14 @@ import com.marklogic.mgmt.admin.AdminManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.cglib.core.internal.Function;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import java.util.Properties;
 
@@ -30,7 +33,6 @@ public class ApplicationConfig {
         .getLogger(ApplicationConfig.class);
 
     @Bean
-    @Qualifier("currentDirectory")
     public HubProject getDefaultProject() {
        return new HubProjectImpl("ye-olde-project");
     }

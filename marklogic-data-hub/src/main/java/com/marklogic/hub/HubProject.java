@@ -17,6 +17,7 @@
 package com.marklogic.hub;
 
 import com.marklogic.hub.impl.HubProjectImpl;
+import org.springframework.core.io.ProtocolResolver;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -216,4 +217,10 @@ public interface HubProject {
     Path getEntityDir(String entityName);
 
     Path getMappingDir(String mappingName);
+
+    /**
+     * Returns the base directory for this project
+     * @return the project's directory as a Path
+     */
+    Path getProjectDir();
 }

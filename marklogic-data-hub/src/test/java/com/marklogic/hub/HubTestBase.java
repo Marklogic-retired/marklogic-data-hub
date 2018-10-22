@@ -35,6 +35,7 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
@@ -42,6 +43,7 @@ import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.CertificateTemplateManagerPlus;
 import com.marklogic.hub.util.ComboListener;
@@ -64,11 +66,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.annotation.PostConstruct;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -108,14 +114,14 @@ public class HubTestBase {
     @Autowired
     protected HubConfigImpl adminHubConfig;
 
-    @Autowired
-    protected HubConfigImpl hubConfig;
+    //@Autowired
+    //protected HubConfigImpl hubConfig;
 
     @Autowired
     protected DataHub dataHub;
 
     @Autowired
-    protected HubProject project;
+    protected HubProjectImpl project;
 
     @Autowired
     protected Versions versions;
@@ -228,11 +234,14 @@ public class HubTestBase {
         createProjectDir();
     }
 
+    @PostConstruct
     protected void init() {
+        //dataHub.initProject();
+        createProjectDir();
         try {
             Properties p = new Properties();
             p.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
-            p.load(new FileInputStream("gradle.properties"));
+            p.load(new FileInputStream(PROJECT_PATH + "/gradle.properties"));
             properties.putAll(p);
         }
         catch (IOException e) {
@@ -242,7 +251,7 @@ public class HubTestBase {
         // try to load the local environment overrides file
         try {
             Properties p = new Properties();
-            p.load(new FileInputStream("gradle-local.properties"));
+            p.load(new FileInputStream(PROJECT_PATH + "/gradle-local.properties"));
             properties.putAll(p);
         }
         catch (IOException e) {
@@ -366,10 +375,6 @@ public class HubTestBase {
         return null;  // unreachable
     }
 
-    public HubTestBase() {
-        init();
-    }
-
 	public static boolean isCertAuth() {
 		return certAuth;
 	}
@@ -402,9 +407,7 @@ public class HubTestBase {
         Tracing.create(stagingClient).disable();
     }
 
-    //getHubAdminConfig is used for installation, scaffolding
     protected HubConfig getHubAdminConfig(String projectDir) {
-        // FIXME this gets the wrong project dir
         return adminHubConfig;
     }
 
@@ -413,8 +416,8 @@ public class HubTestBase {
     }
 
     //getHubFlowRunnerConfig is used for running flows
+    // FIXME get hubConfig working too
     protected HubConfig getHubFlowRunnerConfig() {
-        //FIXME return hubConfig;
         return adminHubConfig;
     }
 

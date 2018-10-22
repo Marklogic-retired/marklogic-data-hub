@@ -75,10 +75,11 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
+        adminHubConfig.refreshProject();
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
 
         writeProp("mlIsHostLoadBalancer", "true");
-        // TODO this test method requires a re-read of properties
+        adminHubConfig.refreshProject();
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
         writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());

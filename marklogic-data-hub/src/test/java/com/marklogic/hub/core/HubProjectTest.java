@@ -35,7 +35,7 @@ public class HubProjectTest extends HubTestBase {
 
     @AfterEach
     public void resetProperties() {
-        hubConfig.loadConfigurationFromProperties();
+        adminHubConfig.loadConfigurationFromProperties();
     }
 
     @Test
