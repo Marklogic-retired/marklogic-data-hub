@@ -59,7 +59,6 @@ public class FlowRunnerTest extends HubTestBase {
     @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        deleteProjectDir();
         createProjectDir();
         enableDebugging();
         enableTracing();

@@ -57,7 +57,6 @@ public class EmptyCollectorTest extends HubTestBase {
         // note, not basicSetup
 
         XMLUnit.setIgnoreWhitespace(true);
-        deleteProjectDir();
 
         createProjectDir();
 

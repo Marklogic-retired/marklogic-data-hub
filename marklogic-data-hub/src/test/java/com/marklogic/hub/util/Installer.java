@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.annotation.PostConstruct;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ApplicationConfig.class, HubTestBase.class})
+@ContextConfiguration(classes = {ApplicationConfig.class})
 @EnableAutoConfiguration
 public class Installer {
 

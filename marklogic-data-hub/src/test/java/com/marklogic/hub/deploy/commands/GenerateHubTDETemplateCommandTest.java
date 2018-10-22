@@ -50,8 +50,8 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
 
     @BeforeEach
     public void setup() {
-        GenerateHubTDETemplateCommand = new GenerateHubTDETemplateCommand(getHubAdminConfig());
         deleteProjectDir();
+        GenerateHubTDETemplateCommand = new GenerateHubTDETemplateCommand(getHubAdminConfig());
         createProjectDir();
     }
 

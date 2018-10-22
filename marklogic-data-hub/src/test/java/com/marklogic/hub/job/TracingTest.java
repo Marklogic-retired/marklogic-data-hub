@@ -22,32 +22,32 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -62,15 +62,15 @@ public class TracingTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
         enableDebugging();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_FINAL_NAME);
-
-        //URL url = TracingTest.class.getClassLoader().getResource("tracing-test");
-        //String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
-        //createProjectDir(path);
-        //installUserModules(getHubAdminConfig(path), true);
+        clearUserModules();
+        deleteProjectDir();
         createProjectDir();
-        installUserModules(getHubAdminConfig(), true);
-
-
+        dataHub.initProject();
+        FileUtils.copyDirectory(
+            new File("src/test/resources/tracing-test/plugins"),
+            new File(PROJECT_PATH + "/plugins")
+        );
+        installUserModules(adminHubConfig, true);
      }
 
     @AfterEach
@@ -179,7 +179,7 @@ public class TracingTest extends HubTestBase {
         Document finalDoc = doc.getContent(new DOMHandle()).get();
         assertXMLEqual(getXmlFromResource("tracing-test/traces/finalSjsXmlDoc.xml"), finalDoc);
 
-        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
+        Document node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         assertEquals(4, node.getElementsByTagName("step").getLength());
         assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
         assertEquals(BINARY_HEX_ENCODED_XQY, node.getElementsByTagName("output").item(0).getTextContent().toLowerCase());
@@ -223,7 +223,7 @@ public class TracingTest extends HubTestBase {
         assertJsonEqual(getResource("tracing-test/traces/finalXqyJsonDoc.json"), finalDoc, true);
 
 
-        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         assertEquals(4, node.get("trace").get("steps").size());
         assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
         assertEquals(BINARY_HEX_ENCODED_XQY, node.get("trace").get("steps").get(0).get("output").asText().toLowerCase());
@@ -281,7 +281,7 @@ public class TracingTest extends HubTestBase {
         String finalDoc= doc.getContent(new StringHandle()).get();
         assertJsonEqual(getResource("tracing-test/traces/finalSjsJsonDoc.json"), finalDoc, true);
 
-        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         assertEquals(4, node.get("trace").get("steps").size());
         assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
         assertEquals(BINARY_HEX_ENCODED_SJS, node.get("trace").get("steps").get(0).get("output").asText().toLowerCase());
@@ -315,7 +315,7 @@ public class TracingTest extends HubTestBase {
         //debugOutput(finalDoc);
         assertXMLEqual(getXmlFromResource("tracing-test/traces/finalSjsXmlDoc.xml"), finalDoc);
 
-        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
+        Document node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         assertEquals(4, node.getElementsByTagName("step").getLength());
         assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
         assertEquals(BINARY_HEX_ENCODED_SJS, node.getElementsByTagName("output").item(0).getTextContent().toLowerCase());
@@ -342,7 +342,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
+        Document node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         assertEquals(1, node.getElementsByTagName("step").getLength());
         assertEquals("content", node.getElementsByTagName("label").item(0).getTextContent());
     }
@@ -367,7 +367,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        Document node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
+        Document node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         assertEquals(1, node.getElementsByTagName("step").getLength());
         assertEquals("writer", node.getElementsByTagName("label").item(0).getTextContent());
     }
@@ -392,7 +392,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         System.out.println(node.asText());
         assertEquals(1, node.get("trace").get("steps").size());
         assertEquals("content", node.get("trace").get("steps").get(0).get("label").asText());
@@ -419,7 +419,7 @@ public class TracingTest extends HubTestBase {
         assertEquals(0, getFinalDocCount());
         assertEquals(5, getTracingDocCount());
 
-        JsonNode node = traceDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
+        JsonNode node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         assertEquals(1, node.get("trace").get("steps").size());
         assertEquals("writer", node.get("trace").get("steps").get(0).get("label").asText());
     }

@@ -7,7 +7,6 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,18 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HubConfigTest extends HubTestBase {
 
 
-    private static File projectPath = new File(PROJECT_PATH);
-
     @BeforeEach
     public void setup() throws IOException {
-        FileUtils.deleteDirectory(projectPath);
-        HubConfig config = getHubFlowRunnerConfig();
-        config.initHubProject();
+        deleteProjectDir();
+        createProjectDir();
+        dataHub.initProject();
     }
 
     private void deleteProp(String key) {
         try {
-            File gradleProperties = new File(projectPath, "gradle.properties");
+            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
             Properties props = new Properties();
             FileInputStream fis = new FileInputStream(gradleProperties);
             props.load(fis);
@@ -57,7 +54,7 @@ public class HubConfigTest extends HubTestBase {
     }
     private void writeProp(String key, String value) {
         try {
-            File gradleProperties = new File(projectPath, "gradle.properties");
+            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
             Properties props = new Properties();
             FileInputStream fis = new FileInputStream(gradleProperties);
             props.load(fis);
@@ -83,6 +80,7 @@ public class HubConfigTest extends HubTestBase {
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
         writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
+        adminHubConfig.refreshProject();
         assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
 
         try {

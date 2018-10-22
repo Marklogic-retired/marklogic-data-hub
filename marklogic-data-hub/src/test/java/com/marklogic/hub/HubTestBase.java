@@ -89,6 +89,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -100,7 +101,7 @@ import java.util.*;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
-
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 
 @SuppressWarnings("deprecation")
@@ -188,35 +189,10 @@ public class HubTestBase {
     public  GenericDocumentManager flowRunnerDocMgr;
     public  GenericDocumentManager finalDocMgr;
     public  JSONDocumentManager jobDocMgr;
-    public  GenericDocumentManager traceDocMgr;
     public  GenericDocumentManager modMgr;
     public  String bootStrapHost = null;
 	static TrustManagerFactory tmf;
 	private List<DatabaseClient> clients = new ArrayList<DatabaseClient>();
-    private GenericDocumentManager getStagingMgr() {
-        return stagingClient.newDocumentManager();
-    }
-
-    private GenericDocumentManager getModMgr() {
-        return stagingModulesClient.newDocumentManager();
-    }
-
-    private GenericDocumentManager getFinalMgr() {
-        return finalClient.newDocumentManager();
-    }
-
-    private JSONDocumentManager getJobMgr() {
-        return jobClient.newJSONDocumentManager();
-    }
-
-    private GenericDocumentManager getTraceMgr() {
-        return jobClient.newDocumentManager();
-    }
-
-    private GenericDocumentManager getFlowRunnerMgr() {
-        return flowRunnerClient.newDocumentManager();
-    }
-
 
     static {
         try {
@@ -238,11 +214,13 @@ public class HubTestBase {
     protected void init() {
         //dataHub.initProject();
         createProjectDir();
+        // note the app config loads dhf defaults from classpath
         try {
             Properties p = new Properties();
-            p.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
-            p.load(new FileInputStream(PROJECT_PATH + "/gradle.properties"));
+            InputStream p2 = new FileInputStream(PROJECT_PATH + "/gradle.properties");
+            p.load(p2);
             properties.putAll(p);
+            p2.close();
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
@@ -251,7 +229,8 @@ public class HubTestBase {
         // try to load the local environment overrides file
         try {
             Properties p = new Properties();
-            p.load(new FileInputStream(PROJECT_PATH + "/gradle-local.properties"));
+            InputStream is = new FileInputStream(PROJECT_PATH + "/gradle-local.properties");
+            p.load(is);
             properties.putAll(p);
         }
         catch (IOException e) {
@@ -324,12 +303,12 @@ public class HubTestBase {
         	System.err.println("client objects not created.");
         	e.printStackTrace();
         }
-        stagingDocMgr = getStagingMgr();
-        flowRunnerDocMgr = getFlowRunnerMgr();
-        finalDocMgr = getFinalMgr();
-        jobDocMgr = getJobMgr();
-        traceDocMgr = getTraceMgr();
-        modMgr = getModMgr();
+        stagingDocMgr = stagingClient.newDocumentManager();
+        flowRunnerDocMgr = flowRunnerClient.newDocumentManager();
+        finalDocMgr = finalClient.newDocumentManager();
+        jobDocMgr = jobClient.newJSONDocumentManager();
+        modMgr = stagingModulesClient.newDocumentManager();
+        adminHubConfig.refreshProject();
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
@@ -434,9 +413,9 @@ public class HubTestBase {
     public void createProjectDir(String projectDirName) {
         try {
             File projectDir = new File(projectDirName);
-            //if (!projectDir.isDirectory() || !projectDir.exists()) {
-                //getDataHub().initProject();
-            //}
+            if (!projectDir.isDirectory() || !projectDir.exists()) {
+                projectDir.mkdirs();
+            }
 
             // force module loads for new test runs.
             File timestampDirectory = new File(projectDir + "/.tmp");
@@ -449,11 +428,13 @@ public class HubTestBase {
             }
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
-            FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
+            Files.copy(devProperties, projectProperties, REPLACE_EXISTING);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+        // note at this point the properties from the project have not been  read.  maybe
+        // props reading should be in this directory...
     }
 
     public void deleteProjectDir() {

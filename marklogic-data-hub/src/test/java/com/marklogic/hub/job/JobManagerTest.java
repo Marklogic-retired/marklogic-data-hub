@@ -215,9 +215,9 @@ public class JobManagerTest extends HubTestBase {
 
         ZipFile actual = new ZipFile(zipFile);
         // There should be one job and two trace documents
-        assertEquals(3, actual.size());
-
+        int actualSize = actual.size();
         actual.close();
+        assertEquals(3, actualSize);
     }
 
     @Test
@@ -231,9 +231,9 @@ public class JobManagerTest extends HubTestBase {
         assertTrue(zipFile.exists());
         ZipFile actual = new ZipFile(zipFile);
         // There should be two job and four trace documents
-        assertEquals(6, actual.size());
-
+        int actualSize = actual.size();
         actual.close();
+        assertEquals(6, actualSize);
     }
 
     @Test
@@ -245,11 +245,11 @@ public class JobManagerTest extends HubTestBase {
 
         assertTrue(zipFile.exists());
 
+        assertTrue(zipFile.exists());
         ZipFile actual = new ZipFile(zipFile);
-        // There should be four job and eight trace documents
-        assertEquals(12, actual.size());
-
+        int actualSize = actual.size();
         actual.close();
+        assertEquals(12, actual.size());
     }
 
     @Test

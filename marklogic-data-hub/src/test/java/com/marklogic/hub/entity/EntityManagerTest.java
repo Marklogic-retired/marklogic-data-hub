@@ -264,9 +264,8 @@ public class EntityManagerTest extends HubTestBase {
         assertTrue(protectedPaths.get("path-expression").isTextual(),
             "Protected Path Config should have path expression.");
         JsonNode rolesets = mapper.readTree(queryRolesetsConfig);
-        assertEquals("Config should have one roleset, pii-reader.",
-            "pii-reader",
-            rolesets.get("role-name").get(0).asText());
+        assertEquals( "pii-reader",
+            rolesets.get("role-name").get(0).asText(), "Config should have one roleset, pii-reader.");
 
 
     }

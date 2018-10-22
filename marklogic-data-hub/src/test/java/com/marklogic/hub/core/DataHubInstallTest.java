@@ -51,6 +51,7 @@ public class DataHubInstallTest extends HubTestBase {
     @BeforeEach
     public void setup() {
         XMLUnit.setIgnoreWhitespace(true);
+        createProjectDir();
     }
 
     //should be removed after DHFPROD-1263 is fixed.

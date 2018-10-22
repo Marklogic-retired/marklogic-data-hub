@@ -192,8 +192,6 @@ public class FlowManagerTest extends HubTestBase {
     public void testGetFlowFromProperties() throws IOException {
         scaffolding.createEntity("my-entity");
 
-        createProjectDir("del-me-dir");
-
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
             scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
@@ -202,7 +200,7 @@ public class FlowManagerTest extends HubTestBase {
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-            Path propertiesFile = Paths.get("del-me-dir", "plugins", "entities", "my-entity", flowType.toString(), flowName, flowName + ".properties");
+            Path propertiesFile = Paths.get(PROJECT_PATH, "plugins", "entities", "my-entity", flowType.toString(), flowName, flowName + ".properties");
             Flow flow = fm.getFlowFromProperties(propertiesFile);
             assertEquals(flowName, flow.getName());
             assertEquals("my-entity", flow.getEntityName());
@@ -211,7 +209,7 @@ public class FlowManagerTest extends HubTestBase {
             assertEquals(flowType, flow.getType());
         });
 
-        FileUtils.deleteDirectory(Paths.get("./del-me-dir").toFile());
+        deleteProjectDir();
     }
 
     @Test
@@ -298,8 +296,8 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
         DocumentMetadataHandle metadata = finalDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
         DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
-        assertEquals("Default permissions on harmonized documents should contain harmonized-reader/read", permissions.get("harmonized-reader").toString(),     "[READ]");
-        assertEquals("Default permissions on harmonized documents should contain harmonized-updater/update", permissions.get("harmonized-updater").toString(), "[UPDATE]");
+        assertEquals( permissions.get("harmonized-reader").toString(),     "[READ]", "Default permissions on harmonized documents should contain harmonized-reader/read");
+        assertEquals(permissions.get("harmonized-updater").toString(), "[UPDATE]", "Default permissions on harmonized documents should contain harmonized-updater/update");
     }
 
     @Test
@@ -323,8 +321,8 @@ public class FlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), stagingDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
         DocumentMetadataHandle metadata = stagingDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
         DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
-        assertEquals("Default permissions on harmonized documents should contain harmonized-reader/read", permissions.get("harmonized-reader").toString(),     "[READ]");
-        assertEquals("Default permissions on harmonized documents should contain harmonized-updater/update", permissions.get("harmonized-updater").toString(), "[UPDATE]");
+        assertEquals(permissions.get("harmonized-reader").toString(), "[READ]", "Default permissions on harmonized documents should contain harmonized-reader/read");
+        assertEquals(permissions.get("harmonized-updater").toString(), "[UPDATE]", "Default permissions on harmonized documents should contain harmonized-updater/update");
     }
 
     @Test

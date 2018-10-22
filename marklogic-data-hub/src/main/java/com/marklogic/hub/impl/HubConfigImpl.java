@@ -38,6 +38,7 @@ import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
@@ -58,7 +59,6 @@ import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -76,6 +76,11 @@ public class HubConfigImpl implements HubConfig
 
     @Autowired
     private Environment environment;
+
+    // TODO fix this. hooks into every singleton for refresh :(
+    @Autowired FlowManagerImpl flowManager;
+    @Autowired DataHubImpl dataHub;
+    @Autowired Versions versions;
 
     @Value("${mlHost}")
     protected String host;
@@ -208,20 +213,6 @@ public class HubConfigImpl implements HubConfig
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
     private ObjectMapper objmapper;
-
-    public static class EnvironmentPropertySource implements com.marklogic.mgmt.util.PropertySource {
-
-        Environment env;
-
-        public EnvironmentPropertySource(Environment env) {
-            this.env = env;
-        }
-
-        @Override
-        public String getProperty(String name) {
-            return env.getProperty(name);
-        }
-    }
 
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
@@ -895,6 +886,11 @@ public class HubConfigImpl implements HubConfig
 
     @PostConstruct
     /* this method takes care of setting app config and other non-injected dependencies */
+    public void initializeApplicationConfigurations() {
+        hydrateAppConfigs(environment);
+        hydrateConfigs();
+    }
+
     public void hydrateConfigs() {
         if (stagingSimpleSsl) {
             stagingSslContext = SimpleX509TrustManager.newSSLContext();
@@ -945,38 +941,7 @@ public class HubConfigImpl implements HubConfig
         }
 
 
-        // TODO check whether this needs rehydrating from properties too
-        com.marklogic.mgmt.util.PropertySource propertySource = new EnvironmentPropertySource(environment);
-
-        setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
-        getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
-
-        setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
-        getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
-
-        setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
-        setAdminManager(new AdminManager(getAdminConfig()));
-
-        ManageConfig manageConfig = new DefaultManageConfigFactory(propertySource).newManageConfig();
-        manageConfig.setHostnameVerifier(new X509HostnameVerifier() {
-            @Override
-            public void verify(String s, SSLSocket sslSocket) {}
-
-            @Override
-            public void verify(String s, X509Certificate x509Certificate) {}
-
-            @Override
-            public void verify(String s, String[] strings, String[] strings1) {}
-
-            @Override
-            public boolean verify(String s, SSLSession sslSession) {
-                return true;
-            }
-        });
-        setManageConfig(manageConfig);
-        setManageClient(new ManageClient(getManageConfig()));
     }
-
 
 
     public void loadConfigurationFromProperties() {
@@ -985,8 +950,10 @@ public class HubConfigImpl implements HubConfig
         try {
             inputStream = new FileSystemResource(hubProject.getProjectDir().resolve("gradle.properties").toFile()).getInputStream();
             properties.load(inputStream);
+            inputStream.close();
         } catch (IOException e) {
             throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
+        } finally {
         }
 
         host = getEnvPropString(properties, "mlHost", host);
@@ -1052,12 +1019,65 @@ public class HubConfigImpl implements HubConfig
         mlUsername = getEnvPropString(properties, "mlUsername", mlUsername);
         mlPassword = getEnvPropString(properties, "mlPassword", mlPassword);
 
-        isHostLoadBalancer = getEnvPropBoolean(properties,"mlIsHostLoadBalancer", false);
+        isHostLoadBalancer = getEnvPropBoolean(properties, "mlIsHostLoadBalancer", false);
 
         isProvisionedEnvironment = getEnvPropBoolean(properties, "mlIsProvisionedEnvironment", false);
 
+        hydrateAppConfigs(properties);
         hydrateConfigs();
         logger.info("Hub Project: " + hubProject);
+    }
+
+    private void hydrateAppConfigs(Properties properties) {
+        com.marklogic.mgmt.util.PropertySource propertySource = new com.marklogic.mgmt.util.PropertySource() {
+            @Override
+            public String getProperty(String name) {
+                return properties.getProperty(name);
+            }
+        };
+        hydrateAppConfigs(propertySource);
+    }
+    private void hydrateAppConfigs(Environment environment) {
+        com.marklogic.mgmt.util.PropertySource propertySource = new com.marklogic.mgmt.util.PropertySource() {
+            @Override
+            public String getProperty(String name) {
+                return environment.getProperty(name);
+            }
+        };
+        hydrateAppConfigs(propertySource);
+    }
+    private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
+
+        setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
+
+        setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
+
+        setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
+        setAdminManager(new AdminManager(getAdminConfig()));
+
+        ManageConfig manageConfig = new DefaultManageConfigFactory(propertySource).newManageConfig();
+        manageConfig.setHostnameVerifier(new X509HostnameVerifier() {
+            @Override
+            public void verify(String s, SSLSocket sslSocket) {
+            }
+
+            @Override
+            public void verify(String s, X509Certificate x509Certificate) {
+            }
+
+            @Override
+            public void verify(String s, String[] strings, String[] strings1) {
+            }
+
+            @Override
+            public boolean verify(String s, SSLSession sslSession) {
+                return true;
+            }
+        });
+        setManageConfig(manageConfig);
+        setManageClient(new ManageClient(getManageConfig()));
     }
 
     @JsonIgnore
@@ -1596,6 +1616,9 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public void refreshProject() {
         loadConfigurationFromProperties();
+        flowManager.setupClient();
+        dataHub.wireClient();
+        versions.setupClient();
     }
 
     public String toString() {
