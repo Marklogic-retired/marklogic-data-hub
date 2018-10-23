@@ -7,7 +7,33 @@ import {centered} from '@storybook/addon-centered/angular';
 import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {NewEntityComponent} from '../../../components/new-entity/new-entity.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
-import {MdlDialogComponent} from '@angular-mdl/core';
+import {MdlDialogService} from '@angular-mdl/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-dialog-button',
+  template: '<button (click)="openModal()">Open Modal</button>'
+})
+export class DialogButtonComponent {
+  @Output() createClicked = new EventEmitter();
+  constructor(
+    private dialogService: MdlDialogService
+  ) { }
+  openModal() {
+    this.dialogService.showCustomDialog({
+      component: NewEntityComponent,
+      providers: [
+        { provide: 'actions', useValue: {save: () => {
+          this.create();
+        }}}
+      ],
+      isModal: true
+    });
+  }
+  create() {
+    this.createClicked.emit();
+  }
+}
 
 storiesOf('Components|New Entity', module)
     .addDecorator(withKnobs)
@@ -17,19 +43,23 @@ storiesOf('Components|New Entity', module)
             imports: [
                 ThemeModule
             ],
-            declarations: [NewEntityComponent, StoryCardComponent],
-            providers: [MdlDialogComponent]
+            declarations: [NewEntityComponent, StoryCardComponent, DialogButtonComponent],
+            entryComponents: [NewEntityComponent],
+            providers: [MdlDialogService]
         })
     )
     .add('New Entity Component', () => ({
         template: `
             <mlui-dhf-theme>
               <mlui-story-card [width]="500" [height]="150">
-                <app-new-entity></app-new-entity>
+                <app-dialog-button
+                (createClicked)="createClicked()"
+                ></app-dialog-button>
               </mlui-story-card>
+              <dialog-outlet></dialog-outlet>
             </mlui-dhf-theme>
         `,
         props: {
-
+          createClicked: action('create entity clicked')
         },
     }));
