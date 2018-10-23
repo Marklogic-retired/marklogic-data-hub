@@ -28,6 +28,7 @@ import * as SemVer from 'semver';
       [loggingIn]="this.loggingIn"
       [loginError]="this.loginError"
       [loginInfo]="this.loginInfo"
+      [initSettings]="this.initSettings"
       
       (onInstall)="this.install()"
       (onUninstall)="this.unInstall()"
@@ -35,7 +36,14 @@ import * as SemVer from 'semver';
       (onChooseProject)="this.chooseProject()"
       (onPostInitNext)="this.postInitNext()"
       (onLogin)="this.login()"
+      (onHubNameChanged)="this.hubNameChanged()"
     >
+      <app-folder-browser class="app-folder-browser"
+        *ngIf="showFolderBrowser"
+        start-path='.'
+        absoluteOnly="true"
+        (folderChosen)="folderClicked($event)">
+      </app-folder-browser>
     </app-login-ui>
   `
 })

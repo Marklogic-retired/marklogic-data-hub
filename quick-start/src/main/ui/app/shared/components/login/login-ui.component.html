@@ -1,11 +1,11 @@
 <div class="credentials-prompt">
   <div class="marklogic-logo" id="mla-marklogic-logo">
-    <img src="/main/ui/assets/img/logo.svg">
+    <img src="/img/logo.svg">
   </div>
   <div class="login-wrapper" layout="row" layout-align="center start">
     <section layout="column" layout-align="center center" class="left-pane">
       <h1 id="mla-loginPage-Text">Data Hub QuickStart</h1>
-      <img class="odh-icon" src="/main/ui/assets/img/odh.svg">
+      <img class="odh-icon" src="/img/odh.svg">
       <section flex layout-padding class="install-status" *ngIf="installationStatus">
         <pre>{{installationStatus}}</pre>
       </section>
@@ -39,12 +39,8 @@
               <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
             </div>
 
-            <app-folder-browser
-              *ngIf="showFolderBrowser"
-              start-path='.'
-              absoluteOnly="true"
-              (folderChosen)="folderClicked($event)">
-            </app-folder-browser>
+            <ng-content select=".app-folder-browser"></ng-content>
+
           </div>
 
           <div layout="row" layout-align="end center" class="init-buttons">
@@ -63,7 +59,7 @@
             <form class="initForm" (submit)="initProject()">
               <div flex layout="column" class="scroller">
                 <div class="sub-section">
-                  <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></mdl-textfield>
+                  <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="onHubNameChanged.emit()"  required="required"></mdl-textfield>
                   <mdl-textfield floating-label label="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></mdl-textfield>
                 </div>
                 <div class="sub-section advanced-section">
@@ -162,7 +158,7 @@
             <app-select-list
               [items]="currentProject.environments"
               [initialSelectedItem]="currentProject.environments[0]"
-              (selectedItem)="gotEnvironment($event)"
+              (selectedItem)="onGotEnvironment.emit($event)"
               md-whiteframe-2dp
               class="shrink-me"></app-select-list>
 
@@ -219,14 +215,14 @@
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
               <p>But...your project doesn't seem to match this version of DHF!</p>
-              <p>Please update your project before proceeding onward! <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a></p>
+              <p>Please update your project before proceeding onward! <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a></p>
             </span>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
-              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="onUpdateProject.emit()">Update It</button>
               <div class="manual">
                 <p>Curious about what that button does? Prefer to do it yourself?</p>
                 <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
-                <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+                <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a>
               </div>
             </span>
           </section>
@@ -237,7 +233,7 @@
               <span>{{hubUpdateError}}.</span>
             </p>
             <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
-            <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+            <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a>
           </section>
         </section>
       </div>

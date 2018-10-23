@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output, Renderer2} from "@angular/core";
 import * as _ from "lodash";
 import {LoginInfo} from "../../../login/login-info.model";
+import {HubSettings} from "../../../environment/hub-settings.model";
 
 @Component({
   selector: 'app-login-ui',
@@ -24,6 +25,7 @@ export class LoginUIComponent {
   @Input() hubUpdateFailed: boolean;
   @Input() runningPreinstallCheck: boolean;
   @Input() preinstallCheck: any;
+  @Input() initSettings: HubSettings;
 
   @Output() onPostInitNext: EventEmitter<any> = new EventEmitter<any>();
   @Output() onChooseProject: EventEmitter<any> = new EventEmitter<any>();
@@ -31,6 +33,10 @@ export class LoginUIComponent {
   @Output() onUninstall: EventEmitter<any> = new EventEmitter<any>();
   @Output() onInstallNext: EventEmitter<any> = new EventEmitter<any>();
   @Output() onLogin: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onHubNameChanged: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onGotEnvironment: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onHubUpdateUrl: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onUpdateProject: EventEmitter<any> = new EventEmitter<any>();
 
 
   constructor(private renderer: Renderer2) {
