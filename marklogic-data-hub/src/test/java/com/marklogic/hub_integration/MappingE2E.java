@@ -36,7 +36,7 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.Installer;
+import com.marklogic.bootstrap.Installer;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;

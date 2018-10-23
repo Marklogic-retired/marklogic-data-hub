@@ -1,18 +1,14 @@
-package com.marklogic.hub.util;
+package com.marklogic.bootstrap;
 
 
 import com.marklogic.hub.config.ApplicationConfig;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.marklogic.hub.HubTestBase;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.PostConstruct;
 
@@ -43,7 +39,9 @@ public class Installer extends HubTestBase {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(new Class[]{Installer.class, ApplicationConfig.class}, new String[] { });
+        SpringApplication app = new SpringApplication(new Class[]{Installer.class, ApplicationConfig.class});
+        app.setWebApplicationType(WebApplicationType.NONE);
+        ConfigurableApplicationContext ctx = app.run(new String[] { "--hubProjectDir=" + PROJECT_PATH });
     }
 
 }

@@ -1,4 +1,4 @@
-package com.marklogic.hub.util;
+package com.marklogic.bootstrap;
 
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.config.ApplicationConfig;
@@ -15,7 +15,7 @@ public class UnInstaller extends HubTestBase {
     private static Logger logger = LoggerFactory.getLogger(UnInstaller.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(new Class[]{UnInstaller.class, ApplicationConfig.class}, new String[]{});
+        SpringApplication.run(new Class[]{UnInstaller.class, ApplicationConfig.class}, new String[]{ "--hubProjectDir=" + PROJECT_PATH});
     }
 
     @PostConstruct
