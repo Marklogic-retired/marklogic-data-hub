@@ -91,7 +91,7 @@ public class HubConfigImpl implements HubConfig
 
     @Value("${mlStagingDbName}")
     protected String stagingDbName;
-    @Value("${mlStagingHttpName}")
+    @Value("${mlStagingAppserverName}")
     protected String stagingHttpName;
     @Value("${mlStagingForestsPerHost}")
     protected Integer stagingForestsPerHost;
@@ -114,7 +114,7 @@ public class HubConfigImpl implements HubConfig
 
     @Value("${mlFinalDbName}")
     protected String finalDbName;
-    @Value("${mlFinalHttpName}")
+    @Value("${mlFinalAppserverName}")
     protected String finalHttpName;
     @Value("${mlFinalForestsPerHost}")
     protected Integer finalForestsPerHost;
@@ -135,7 +135,7 @@ public class HubConfigImpl implements HubConfig
 
     @Value("${mlJobDbName}")
     protected String jobDbName;
-    @Value("${mlJobHttpName}")
+    @Value("${mlJobAppserverName}")
     protected String jobHttpName;
     @Value("${mlJobForestsPerHost}")
     protected Integer jobForestsPerHost;
@@ -177,11 +177,11 @@ public class HubConfigImpl implements HubConfig
     @Value("${mlFinalSchemasForestsPerHost}")
     protected Integer finalSchemasForestsPerHost;
 
-    @Value("${mlHubRoleName}")
+    @Value("${mlHubUserRole}")
     private String hubRoleName;
     @Value("${mlHubUserName}")
     private String hubUserName;
-    @Value("${mlHubAdminRoleName}")
+    @Value("${mlHubAdminRole}")
     private String hubAdminRoleName;
     @Value("${mlHubAdminUserName}")
     private String hubAdminUserName;
@@ -203,7 +203,7 @@ public class HubConfigImpl implements HubConfig
 
     @Value("${mlCustomForestPath}")
     protected String customForestPath;
-    @Value("${mlModulesPermissions}")
+    @Value("${mlModulePermissions}")
     protected String modulePermissions;
 
     private ManageConfig manageConfig;
@@ -1465,6 +1465,13 @@ public class HubConfigImpl implements HubConfig
         //version of DHF the user INTENDS to use
         customTokens.put("%%mlDHFVersion%%", getJarVersion());
 
+        // in a load-from-properties situation we don't want a random string...
+        if (projectProperties.containsKey("mlHubUserPassword")) {
+            customTokens.put("%%mlHubUserPassword%%", projectProperties.getProperty("mlHubUserPassword"));
+        }
+        if (projectProperties.containsKey("mlHubAdminUserPassword")) {
+            customTokens.put("%%mlHubAdminUserPassword%%", projectProperties.getProperty("mlHubAdminUserPassword"));
+        }
         /* can't iterate through env properties, so rely on custom tokens itself?
         if (environment != null) {
             Enumeration keyEnum = environment.propertyNames();

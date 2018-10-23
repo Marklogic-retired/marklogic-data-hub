@@ -16,8 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.PostConstruct;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ApplicationConfig.class})
 @EnableAutoConfiguration
 public class Installer extends HubTestBase {
 
@@ -33,33 +31,19 @@ public class Installer extends HubTestBase {
 
     @PostConstruct
     public void bootstrapHub() {
-        createProjectDir();
-        if (isCertAuth() || isSslRun()) {
-            sslSetup();
-        }
+        super.init();
         dataHub.install();
         try {
-            getDataHub().upgradeHub();
+            //dataHub.upgradeHub();
+            // this throws exception right now.
         } catch (Exception e) {
             logger.warn("Upgrade threw an exception during test bootstrapping");
 
         }
-}
-    public static void main(String[] args) {
-        SpringApplication.run(Installer.class);
     }
 
-    public void teardownHub() {
-    	createProjectDir();
-        getDataHub().uninstall();
-        if (isCertAuth() || isSslRun()) {
-        	sslCleanup();
-        }
-        try {
-        	deleteProjectDir();
-        }
-        catch(Exception e) {
-        	logger.warn("Unable to delete the project directory", e);
-        }
+    public static void main(String[] args) {
+        SpringApplication.run(new Class[]{Installer.class, ApplicationConfig.class}, new String[] { });
     }
+
 }
