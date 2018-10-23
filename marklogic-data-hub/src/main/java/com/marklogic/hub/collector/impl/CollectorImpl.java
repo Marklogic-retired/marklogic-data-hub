@@ -32,6 +32,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -60,6 +62,8 @@ public class CollectorImpl implements Collector {
     private DatabaseClient client = null;
     private HubConfig hubConfig = null;
     private CodeFormat codeFormat;
+
+    private static Logger logger = LoggerFactory.getLogger(CollectorImpl.class);
 
     private String module;
 
@@ -129,6 +133,7 @@ public class CollectorImpl implements Collector {
                 uriString += "&options=" + URLEncoder.encode(objectMapper.writeValueAsString(options), "UTF-8");
             }
             URI uri = new URI(uriString);
+
             RequestCallback requestCallback = request -> request.getHeaders()
                 .setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
 

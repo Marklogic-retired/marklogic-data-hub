@@ -33,7 +33,6 @@ import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.impl.HubConfigImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

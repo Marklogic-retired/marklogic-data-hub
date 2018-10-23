@@ -41,26 +41,24 @@ public class LoadHubModulesCommandTest extends HubTestBase {
 
     LoadHubModulesCommand loadHubModulesCommand;
     CommandContext commandContext;
-    HubConfig config;
 
     @BeforeEach
     public void setup() {
         createProjectDir();
-        config = getHubAdminConfig();
         loadHubModulesCommand = new LoadHubModulesCommand();
-        loadHubModulesCommand.setHubConfig(config);
+        loadHubModulesCommand.setHubConfig(adminHubConfig);
         ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
-        commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
+        commandContext = new CommandContext(adminHubConfig.getStagingAppConfig(), manageClient, null);
     }
 
     @Test
     public void ensureHubFourLoaded() {
         loadHubModulesCommand.execute(commandContext);
 
-        String jarVersion = config.getJarVersion();
+        String jarVersion = adminHubConfig.getJarVersion();
 
 
-        logger.info(jarVersion);
+        //logger.info(jarVersion);
 
         // this test will work until major version 10
         assertTrue(jarVersion.compareTo("4.0.1") >= 0);

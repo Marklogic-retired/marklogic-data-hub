@@ -19,30 +19,27 @@ import javax.annotation.PostConstruct;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @EnableAutoConfiguration
-public class Installer {
-
-    @Autowired
-    HubTestBase htb;
+public class Installer extends HubTestBase {
 
     private static Logger logger = LoggerFactory.getLogger(Installer.class);
 
     public void setupProject() {
-        htb.createProjectDir();
+        createProjectDir();
     }
 
     public void teardownProject() {
-        htb.deleteProjectDir();
+        deleteProjectDir();
     }
 
     @PostConstruct
     public void bootstrapHub() {
-        htb.createProjectDir();
-        if (htb.isCertAuth() || htb.isSslRun()) {
-            htb.sslSetup();
+        createProjectDir();
+        if (isCertAuth() || isSslRun()) {
+            sslSetup();
         }
-        htb.getDataHub().install();
+        dataHub.install();
         try {
-            htb.getDataHub().upgradeHub();
+            getDataHub().upgradeHub();
         } catch (Exception e) {
             logger.warn("Upgrade threw an exception during test bootstrapping");
 
@@ -53,13 +50,13 @@ public class Installer {
     }
 
     public void teardownHub() {
-    	htb.createProjectDir();
-        htb.getDataHub().uninstall();
-        if (htb.isCertAuth() || htb.isSslRun()) {
-        	htb.sslCleanup();
+    	createProjectDir();
+        getDataHub().uninstall();
+        if (isCertAuth() || isSslRun()) {
+        	sslCleanup();
         }
         try {
-        	htb.deleteProjectDir();
+        	deleteProjectDir();
         }
         catch(Exception e) {
         	logger.warn("Unable to delete the project directory", e);

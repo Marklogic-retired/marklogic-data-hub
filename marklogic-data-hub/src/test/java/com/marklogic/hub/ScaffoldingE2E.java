@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -25,9 +26,12 @@ import com.marklogic.hub.util.Installer;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -41,7 +45,8 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class ScaffoldingE2E extends HubTestBase {
 
 

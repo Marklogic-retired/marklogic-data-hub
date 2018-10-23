@@ -62,9 +62,6 @@ public class ScaffoldingImpl implements Scaffolding {
     @Autowired
     private ScaffoldingValidator validator;
 
-    // TODO
-    private DatabaseClient databaseClient;
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static String getAbsolutePath(String first, String... more) {
@@ -113,7 +110,7 @@ public class ScaffoldingImpl implements Scaffolding {
             flowDir.toFile().mkdirs();
 
             if (useEsModel) {
-                ContentPlugin cp = new ContentPlugin(databaseClient);
+                ContentPlugin cp = new ContentPlugin(hubConfig.newStagingClient());
                 String content = cp.getContents(entityName, codeFormat, flowType, mappingNameWithVersion);
                 writeBuffer(content, flowDir.resolve("content." + codeFormat));
             } else {
