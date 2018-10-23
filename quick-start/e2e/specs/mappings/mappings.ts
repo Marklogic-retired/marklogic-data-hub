@@ -160,7 +160,7 @@ export default function() {
         await browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         await expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
         await flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
-        await browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
+        await browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()), 10000);
         await expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         await flowPage.runHarmonizeButton().click();
         browser.sleep(10000);
