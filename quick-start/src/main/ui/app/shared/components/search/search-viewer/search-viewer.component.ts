@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { SearchService } from './search.service';
+import { SearchService } from '../../../../search/search.service';
 
 import * as _ from 'lodash';
 

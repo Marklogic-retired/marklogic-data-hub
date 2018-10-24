@@ -42,7 +42,8 @@ import { SelectComponent } from './shared/components/select/select.component';
 import { SelectListComponent } from './shared/components/select-list/select-list.component';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
-import { SearchComponent, SearchViewerComponent } from './search';
+import { SearchComponent,  } from './search';
+import { SearchViewerComponent } from './shared/components/search/search-viewer/search-viewer.component';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
