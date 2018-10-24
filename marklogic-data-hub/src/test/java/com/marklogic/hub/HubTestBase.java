@@ -193,6 +193,7 @@ public class HubTestBase {
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
             datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
             flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
+            System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
             throw new DataHubConfigurationException("Root ca lot loaded", e);
         }
