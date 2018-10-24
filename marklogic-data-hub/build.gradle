@@ -44,9 +44,6 @@ dependencies {
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.6.RELEASE'
-    // If you also want to support JUnit 3 and JUnit 4 tests
-    testCompile "junit:junit:${junit4Version}"
-    testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
 
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"

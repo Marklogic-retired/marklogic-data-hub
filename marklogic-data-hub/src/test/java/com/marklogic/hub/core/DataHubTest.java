@@ -16,7 +16,6 @@
 package com.marklogic.hub.core;
 
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.impl.DataHubImpl;
@@ -29,23 +28,29 @@ import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
 import org.easymock.Mock;
 import org.jdom2.Namespace;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.SpringApplication;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class DataHubTest extends HubTestBase {
-    @Rule
+
     public EasyMockRule mocks = new EasyMockRule(this);
 
     @Mock
@@ -57,12 +62,12 @@ public class DataHubTest extends HubTestBase {
     @Mock
     private Versions versions;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
     }
 
-    @Before
+    @BeforeEach
     public void beforeTests() {
         dh = EasyMock.createMockBuilder(DataHubImpl.class)
             .withConstructor()
@@ -72,7 +77,6 @@ public class DataHubTest extends HubTestBase {
         versions = EasyMock.createMockBuilder(Versions.class)
             .withConstructor()
             .addMockedMethod("getMarkLogicVersion")
-            .withArgs(getHubFlowRunnerConfig())
             .createMock();
     }
 
@@ -234,7 +238,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    @Ignore
+    @Disabled
     // something about jenkins environment makes this test fail.   it's a mocking issue we think.
     public void testPreFlightCheckStagingPortTaken() {
         List<Namespace> list = new ArrayList<>();
@@ -257,7 +261,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    @Ignore
+    @Disabled
     // something about jenkins environment makes this test fail.   it's a mocking issue we think.
     public void testPreFlightCheckStagingPortTakenAndBadVersion() {
         List<Namespace> list = new ArrayList<>();
@@ -280,7 +284,7 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testPreFlightCheckFinalPortTaken() {
         List<Namespace> list = new ArrayList<>();
         expect(serverManager.getAsXml()).andReturn(new ResourcesFragment(new Fragment("<server-default-list xmlns=\"http://marklogic.com/manage/servers\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://marklogic.com/manage/servers manage-servers.xsd\"> <meta> <uri>/manage/v2/servers</uri> <current-time>2017-10-01T19:15:38.140598-04:00</current-time> <elapsed-time units=\"sec\">0.030447</elapsed-time> </meta> <relations> <relation-group array=\"true\"> <typeref>groups</typeref> <relation-count units=\"quantity\">1</relation-count> <relation array=\"true\"> <uriref>/manage/v2/groups/Default</uriref> <idref>3341249095562999141</idref> <nameref>Default</nameref> </relation> </relation-group> </relations> <list-items> <list-count units=\"quantity\">8</list-count> <list-item array=\"true\"> <relation-id>3341249095562999141</relation-id> <groupnameref>Default</groupnameref> <uriref>/manage/v2/servers/Admin?group-id=Default</uriref> <kindref>http</kindref> <content-db>Security</content-db> <idref>7776582106827683360</idref> <nameref>Admin</nameref> </list-item> <list-item array=\"true\"> <relation-id>3341249095562999141</relation-id> <groupnameref>Default</groupnameref> <uriref>/manage/v2/servers/App-Services?group-id=Default</uriref> <kindref>http</kindref> <content-db>Documents</content-db> <modules-db>Modules</modules-db> <idref>4626187627163603518</idref> <nameref>App-Services</nameref> </list-item> <list-item array=\"true\"> <relation-id>3341249095562999141</relation-id> <groupnameref>Default</groupnameref> <uriref>/manage/v2/servers/port-stealer?group-id=Default</uriref> <kindref>http</kindref> <content-db>data-hub-STAGING</content-db> <modules-db>data-hub-MODULES</modules-db> <idref>10842453788764821876</idref> <nameref>port-stealer</nameref> </list-item> <list-item array=\"true\"> <relation-id>3341249095562999141</relation-id> <groupnameref>Default</groupnameref> <uriref>/manage/v2/servers/HealthCheck?group-id=Default</uriref> <kindref>http</kindref> <content-db>App-Services</content-db> <idref>16530884482127520539</idref> <nameref>HealthCheck</nameref> </list-item> <list-item array=\"true\"> <relation-id>3341249095562999141</relation-id> <groupnameref>Default</groupnameref> <uriref>/manage/v2/servers/Manage?group-id=Default</uriref> <kindref>http</kindref> <content-db>App-Services</content-db> <idref>15392081774558336614</idref> <nameref>Manage</nameref> </list-item> </list-items> <related-views> <related-view array=\"true\"> <view-type>root</view-type> <view-name>default</view-name> <view-uri>/manage/v2</view-uri> </related-view> <related-view array=\"true\"> <view-type>list</view-type> <view-name>metrics</view-name> <view-uri>/manage/v2/servers?view=metrics</view-uri> </related-view> <related-view array=\"true\"> <view-type>list</view-type> <view-name>package</view-name> <view-uri>/manage/v2/servers?view=package</view-uri> </related-view> <related-view array=\"true\"> <view-type>list</view-type> <view-name>schema</view-name> <view-uri>/manage/v2/servers?view=schema</view-uri> </related-view> <related-view array=\"true\"> <view-type>list</view-type> <view-name>status</view-name> <view-uri>/manage/v2/servers?view=status</view-uri> </related-view> </related-views> </server-default-list>", list.toArray(new Namespace[] {}))));
