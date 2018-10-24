@@ -25,12 +25,15 @@ buildscript {
     }
 }
 
+
 plugins {
     id 'net.saliman.properties' version '1.4.6'
     id "groovy"
     id "java-gradle-plugin"
     id "maven-publish"
     id "com.jfrog.bintray" version "1.7.3"
+    id 'org.springframework.boot' version '2.0.6.RELEASE'
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
 apply plugin: "com.gradle.plugin-publish"
@@ -41,6 +44,7 @@ targetCompatibility = 1.8
 repositories {
     jcenter()
     mavenCentral()
+    maven { url 'http://repo.spring.io/milestone' }
     maven { url 'http://developer.marklogic.com/maven2' }
 }
 
