@@ -11,12 +11,12 @@ import {MdlDialogService} from '@angular-mdl/core';
 import { Component, Input, Output, EventEmitter, NgModule } from '@angular/core';
 
  @Component({
-  selector: 'app-dialog-button',
+  selector: 'app-collation-button',
   template: '<button (click)="openModal()">Open Modal</button>'
 })
 export class CollationButtonComponent {
-  //@Input() selectedCollation: string;
-  @Output() createClicked = new EventEmitter();
+  @Output() saveClicked = new EventEmitter();
+  @Output() cancelClicked = new EventEmitter();
   constructor(
     private dialogService: MdlDialogService
   ) { }
@@ -27,16 +27,16 @@ export class CollationButtonComponent {
         { provide: 'actions',
           useValue: {
             save: () => {
-              this.createClicked.emit();
+              this.saveClicked.emit();
             },
             cancel: () => {
-              console.log('cancel');
+              this.cancelClicked.emit();
             }
           }
         },
         {
           provide: 'collation',
-          useValue: this.selectedCollation
+          useValue: ''
         }
       ],
       isModal: true
@@ -65,16 +65,16 @@ export class CollationButtonModule {}
         template: `
             <mlui-dhf-theme>
               <mlui-story-card [width]="500" [height]="150">
-                <app-dialog-button
- 
-                (createClicked)="createClicked()"
-                ></app-dialog-button>
+                <app-collation-button
+                  (saveClicked)="saveClicked()"
+                  (cancelClicked)="cancelClicked()"
+                ></app-collation-button>
               </mlui-story-card>
               <dialog-outlet></dialog-outlet>
             </mlui-dhf-theme>
         `,
         props: {
-          //selectedCollation: text('Value', 'test'),
-          createClicked: action('create entity clicked')
+          saveClicked: action('save clicked'),
+          cancelClicked: action('cancel clicked')
         },
     }));
