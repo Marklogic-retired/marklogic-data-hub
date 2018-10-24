@@ -26,12 +26,8 @@ import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
@@ -39,9 +35,6 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -55,7 +48,6 @@ import java.util.stream.Collectors;
 
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
-    private static final String ENTITY_COLLECTION_STAGING = "http://marklogic.com/entity-services/models";
 
     private HubConfig hubConfig;
     private ObjectMapper mapper;
