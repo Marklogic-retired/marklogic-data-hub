@@ -26,8 +26,12 @@ import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
@@ -35,6 +39,9 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -48,6 +55,7 @@ import java.util.stream.Collectors;
 
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
+    private static final String ENTITY_COLLECTION_STAGING = "http://marklogic.com/entity-services/models";
 
     private HubConfig hubConfig;
     private ObjectMapper mapper;
@@ -128,15 +136,15 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     @Override public boolean saveDbIndexes() {
         try {
-            Path dir = hubConfig.getEntityDatabaseDir();
+    		Path dir = hubConfig.getEntityDatabaseDir();
+        	File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
+        	File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
-            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
 
-            long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
-            List<JsonNode> entities = getModifiedRawEntities(lastModified);
+            List<JsonNode> entities = getAllEntities();
+
             if (entities.size() > 0) {
                 DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
@@ -150,8 +158,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
                 return true;
             }
-        }
-        catch(IOException e) {
+    	} catch (IOException e) {
             e.printStackTrace();
         }
         return false;
@@ -176,7 +183,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                boolean hasOneChanged = false;
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
                     for (File entityDef : entityDefs) {
