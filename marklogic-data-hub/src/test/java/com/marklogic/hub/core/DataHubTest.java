@@ -16,10 +16,10 @@
 package com.marklogic.hub.core;
 
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.config.ApplicationConfig;
 import com.marklogic.hub.impl.DataHubImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.rest.util.Fragment;
@@ -31,6 +31,7 @@ import org.easymock.Mock;
 import org.jdom2.Namespace;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -54,6 +55,9 @@ public class DataHubTest extends HubTestBase {
     @Mock
     private DataHubImpl dh;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     @Mock
     private Versions versions;
 
@@ -68,12 +72,13 @@ public class DataHubTest extends HubTestBase {
             .withConstructor()
             .createMock();
         dh.setServerManager(serverManager);
+        dh.setHubConfig(hubConfig);
 
         versions = EasyMock.createMockBuilder(Versions.class)
             .withConstructor()
             .addMockedMethod("getMarkLogicVersion")
-            .withArgs(getHubFlowRunnerConfig())
             .createMock();
+        dh.setVersions(versions);
     }
 
     @Test

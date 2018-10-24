@@ -859,4 +859,16 @@ public class DataHubImpl implements DataHub {
 
         return result;
     }
+
+    // only used in test
+    public void setHubConfig(HubConfigImpl hubConfig)
+    {
+        this.hubConfig = hubConfig;
+    }
+
+    // only used in test
+    public void setVersions(Versions versions)
+    {
+        this.versions = versions;
+    }
 }
