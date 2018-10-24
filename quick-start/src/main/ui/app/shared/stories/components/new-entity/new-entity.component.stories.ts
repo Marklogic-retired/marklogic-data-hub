@@ -8,8 +8,11 @@ import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {NewEntityComponent} from '../../../components/new-entity/new-entity.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
 import {MdlDialogService} from '@angular-mdl/core';
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, NgModule } from '@angular/core';
 
+@NgModule({
+  declarations: [DialogButtonComponent]
+})
 @Component({
   selector: 'app-dialog-button',
   template: '<button (click)="openModal()">Open Modal</button>'
@@ -24,14 +27,11 @@ export class DialogButtonComponent {
       component: NewEntityComponent,
       providers: [
         { provide: 'actions', useValue: {save: () => {
-          this.create();
+          this.createClicked.emit();
         }}}
       ],
       isModal: true
     });
-  }
-  create() {
-    this.createClicked.emit();
   }
 }
 
