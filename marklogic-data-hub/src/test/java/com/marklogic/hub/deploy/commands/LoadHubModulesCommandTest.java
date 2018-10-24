@@ -17,9 +17,8 @@ package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.config.ApplicationConfig;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.mgmt.ManageClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

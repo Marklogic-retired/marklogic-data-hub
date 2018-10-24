@@ -21,7 +21,7 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.config.ApplicationConfig;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;

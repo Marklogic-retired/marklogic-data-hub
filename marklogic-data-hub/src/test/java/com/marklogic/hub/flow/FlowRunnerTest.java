@@ -24,7 +24,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.config.ApplicationConfig;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;

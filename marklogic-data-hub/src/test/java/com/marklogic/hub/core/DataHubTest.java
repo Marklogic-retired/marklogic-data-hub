@@ -17,7 +17,7 @@ package com.marklogic.hub.core;
 
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.config.ApplicationConfig;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
@@ -26,8 +26,6 @@ import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.easymock.EasyMock;
-import org.easymock.EasyMockRule;
-import org.easymock.Mock;
 import org.jdom2.Namespace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.BeforeAll;

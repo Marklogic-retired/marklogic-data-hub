@@ -1,6 +1,5 @@
-package com.marklogic.hub.config;
+package com.marklogic.hub;
 
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.HubProjectImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

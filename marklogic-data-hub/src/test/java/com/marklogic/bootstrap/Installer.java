@@ -1,7 +1,7 @@
 package com.marklogic.bootstrap;
 
 
-import com.marklogic.hub.config.ApplicationConfig;
+import com.marklogic.hub.ApplicationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.marklogic.hub.HubTestBase;
