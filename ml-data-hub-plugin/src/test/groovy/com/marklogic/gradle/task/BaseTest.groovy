@@ -17,6 +17,8 @@
 
 package com.marklogic.gradle.task
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.client.FailedRequestException
 import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
@@ -35,6 +37,7 @@ import com.marklogic.rest.util.Fragment
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.io.IOUtils
 import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -46,6 +49,8 @@ import spock.lang.Specification
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
@@ -144,6 +149,24 @@ class BaseTest extends Specification {
         DocumentBuilder builder = factory.newDocumentBuilder()
         return builder.parse(new File("src/test/resources/" + resourceName).getAbsoluteFile())
     }
+	
+	protected InputStream getResourceStream(String resourceName) {
+		try {
+			return new FileInputStream(new File(resourceName));
+		} catch(FileNotFoundException e) {
+			throw new RuntimeException(e)
+		}
+	}
+	
+	protected JsonNode getJsonResource(String absoluteFilePath) {
+		try {
+			InputStream jsonDataStream = getResourceStream(absoluteFilePath);
+			ObjectMapper jsonDataMapper = new ObjectMapper();
+			return jsonDataMapper.readTree(jsonDataStream);
+		} catch (IOException e) {
+			e.printStackTrace()
+		} 
+	}
 
     static void copyResourceToFile(String resourceName, File dest) {
         def file = new File("src/test/resources/" + resourceName)

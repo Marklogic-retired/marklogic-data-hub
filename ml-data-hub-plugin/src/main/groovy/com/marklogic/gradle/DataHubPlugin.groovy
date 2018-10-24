@@ -84,6 +84,9 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
 
+        project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
+			description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
+
         project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
             description: "Installs user modules into the STAGING modules database for DHF extension.")
         project.tasks.mlLoadModules.getDependsOn().add("hubDeployUserModules")
