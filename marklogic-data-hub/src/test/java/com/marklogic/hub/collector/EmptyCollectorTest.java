@@ -46,12 +46,6 @@ public class EmptyCollectorTest extends HubTestBase {
     private static final String ENTITY = "streamentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
-    @Autowired
-    private FlowManager fm;
-
-    @Autowired
-    Scaffolding scaffolding;
-
     @BeforeEach
     public void setup() throws IOException {
         // note, not basicSetup
