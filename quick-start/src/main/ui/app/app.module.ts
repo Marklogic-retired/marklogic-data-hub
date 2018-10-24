@@ -37,7 +37,7 @@ import { NewEntityComponent } from './new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './shared/components/pagination';
-import { ResizableComponent } from './resizable/resizable.component';
+import { ResizableComponent } from './shared/components/resizable/resizable.component';
 import { SelectComponent } from './shared/components/select/select.component';
 import { SelectListComponent } from './shared/components/select-list/select-list.component';
 import { TooltipModule } from './tooltip';
@@ -71,6 +71,7 @@ import {JobExportDialogComponent} from "./jobs/job-export.component";
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
+import { NewMapUiComponent } from "./shared/components/mappings/new-map-ui.component";
 import {ThemeModule} from "./shared/components/theme/theme.module";
 
 @NgModule({
@@ -96,6 +97,7 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     NewEntityComponent,
     NewFlowComponent,
     NewMapComponent,
+    NewMapUiComponent,
     PaginationComponent,
     ResizableComponent,
     SelectComponent,

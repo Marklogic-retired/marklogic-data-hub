@@ -33,7 +33,7 @@
             <p>or</p>
           </div>
 
-          <div layout="column" layout-align="center center">
+          <div layout="column">
             <h3>Browse for a Project Folder</h3>
             <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
               <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
@@ -41,7 +41,6 @@
 
             <app-folder-browser
               *ngIf="showFolderBrowser"
-              class="shrink-me shrinky"
               start-path='.'
               absoluteOnly="true"
               (folderChosen)="folderClicked($event)">

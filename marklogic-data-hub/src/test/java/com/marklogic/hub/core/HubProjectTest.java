@@ -76,8 +76,8 @@ public class HubProjectTest extends HubTestBase {
         fileContents = fileContents.replace("mlPassword=", "mlPassword=twitpassword");
         fileContents = fileContents.replace("# mlManageUsername=", "mlManageUsername=manage-user");
         fileContents = fileContents.replace("# mlManagePassword=", "mlManagePassword=manage-password");
-        fileContents = fileContents.replace("# mlAdminUsername=", "mlAdminUsername=admin-user");
-        fileContents = fileContents.replace("# mlAdminPassword=", "mlAdminPassword=admin-password");
+        fileContents = fileContents.replace("# mlSecurityUsername=", "mlSecurityUsername=security-user");
+        fileContents = fileContents.replace("# mlSecurityPassword=", "mlSecurityPassword=security-password");
         fileContents = fileContents.replace("# mlAppServicesPort=8000", "mlAppServicesPort=9000");
         fileContents = fileContents.replace("# mlAdminPort=8001", "mlAdminPort=9001");
         fileContents = fileContents.replace("# mlManagePort=8002", "mlManagePort=9002");
@@ -94,8 +94,8 @@ public class HubProjectTest extends HubTestBase {
         assertEquals("manage-user", props.getProperty("mlManageUsername"));
         assertEquals("manage-password", props.getProperty("mlManagePassword"));
 
-        assertEquals("admin-user", props.getProperty("mlAdminUsername"));
-        assertEquals("admin-password", props.getProperty("mlAdminPassword"));
+        assertEquals("security-user", props.getProperty("mlSecurityUsername"));
+        assertEquals("security-password", props.getProperty("mlSecurityPassword"));
 
         assertEquals("9000", props.getProperty("mlAppServicesPort"));
         assertEquals("9001", props.getProperty("mlAdminPort"));
