@@ -51,17 +51,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class DataHubTest extends HubTestBase {
 
-    public EasyMockRule mocks = new EasyMockRule(this);
-
     private ServerManager serverManager;
 
-    @Mock
     private DataHubImpl dh;
 
     @Autowired
     private HubConfigImpl hubConfig;
 
-    @Mock
     private Versions versions;
 
     @BeforeAll
