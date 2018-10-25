@@ -36,7 +36,7 @@ class MockSettingsService {
 
   set mlcpPath(path: string) { this._mlcpPath = path; }
 
-  validateMlcpPath(path: string): Observable<Data[]> { return Observable.of([]) }
+  validateMlcpPath(path: string) { return Observable.of([]) } 
 
   toggleDebugging() {
     if (this.debugEnabled) {
