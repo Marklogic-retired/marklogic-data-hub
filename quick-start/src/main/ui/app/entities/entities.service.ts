@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { ProjectService } from '../shared/services/projects';
 import { Subject } from 'rxjs/Subject';
-import { SettingsService } from '../shared/services/settings/settings.service';
+import { SettingsService } from '../shared/services/settings';
 
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';

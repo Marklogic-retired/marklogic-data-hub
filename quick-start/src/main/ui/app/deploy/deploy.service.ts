@@ -1,8 +1,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
-import { STOMPService } from '../shared/services/stomp/stomp.service';
-import { ProjectService } from '../shared/services/projects/projects.service';
+import { STOMPService } from '../shared/services/stomp';
+import { ProjectService } from '../shared/services/projects';
 import { parse } from 'date-fns';
 
 @Injectable()

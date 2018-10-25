@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { SettingsService } from '../../services/settings/settings.service';
+import { SettingsService } from '../../services/settings';
 import { InstallService } from '../../services/installer';
 
 import { ProjectService } from '../../services/projects';
