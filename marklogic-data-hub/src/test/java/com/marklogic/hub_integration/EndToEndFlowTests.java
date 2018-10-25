@@ -25,6 +25,7 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -37,12 +38,14 @@ import com.marklogic.hub.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.TransformerException;
@@ -101,19 +104,21 @@ class FinalCounts {
     }
 }
 
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class EndToEndFlowTests extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
+    @Autowired
     private FlowManager flowManager;
     private DataMovementManager flowRunnerDataMovementManager;
 
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
-
+    @Autowired
     private Scaffolding scaffolding;
 
     @BeforeAll

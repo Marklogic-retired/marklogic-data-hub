@@ -23,8 +23,8 @@ subprojects {
 
 
     dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.+'
-            testCompile 'org.apache.httpcomponents:httpclient:4.3.5'
+        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
+		testCompile 'org.apache.httpcomponents:httpclient:4.3.5'
     }
 
     test{
@@ -37,5 +37,5 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5'
+    gradleVersion = '4.10'
 }

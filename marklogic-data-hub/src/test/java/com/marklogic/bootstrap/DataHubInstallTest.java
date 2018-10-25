@@ -19,6 +19,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
@@ -30,8 +31,10 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -50,7 +53,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * or on-demand.  It's the only test that requires setup/teardown
  * and is not valid in a provisioned environment.
  */
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
 
