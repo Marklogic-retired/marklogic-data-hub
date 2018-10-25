@@ -28,13 +28,15 @@ public class Installer extends HubTestBase {
     @PostConstruct
     public void bootstrapHub() {
         super.init();
-        dataHub.install();
-        try {
-            //dataHub.upgradeHub();
-            // this throws exception right now.
-        } catch (Exception e) {
-            logger.warn("Upgrade threw an exception during test bootstrapping");
-
+        if(! dataHub.isInstalled().isInstalled()) {
+	        dataHub.install();
+	        try {
+	            //dataHub.upgradeHub();
+	            // this throws exception right now.
+	        } catch (Exception e) {
+	            logger.warn("Upgrade threw an exception during test bootstrapping");
+	
+	        }
         }
     }
 

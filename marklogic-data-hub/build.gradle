@@ -24,7 +24,7 @@ targetCompatibility = 1.8
 ext.junit4Version        = '4.12'
 ext.junitVintageVersion  = '4.12.0-RC3'
 ext.junitPlatformVersion = '1.0.0-RC3'
-ext.junitJupiterVersion  = '5.0.0-RC3'
+ext.junitJupiterVersion  = '5.3.1'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.1.1'
@@ -41,12 +41,12 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
-    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+    //testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.6.RELEASE'
 
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
-    testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+    //testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 
     testCompile 'xmlunit:xmlunit:1.3'
     testCompile 'org.skyscreamer:jsonassert:1.5.0'
@@ -272,13 +272,14 @@ task teardown(type: JavaExec) {
 }
 
 test {
+	useJUnitPlatform()
     minHeapSize = "128m"
     maxHeapSize = "256m"
     classpath = project.sourceSets.test.runtimeClasspath
 }
 
 task testAcceptance(type: Test) {
-    useJUnit {
+    useJUnitPlatform  {
         include 'com/marklogic/hub/**'
         if (!(certAuth || sslRun)){
             include 'com/marklogic/hub/PiiE2E.class'
@@ -287,13 +288,13 @@ task testAcceptance(type: Test) {
 }
 
 task testIntegration(type: Test) {
-    useJUnit {
+    useJUnitPlatform  {
         include 'com/marklogic/hub_integration/**'
     }
 }
 
 task testBootstrap(type: Test) {
-    useJUnit {
+    useJUnitPlatform  {
         exclude 'com/marklogic/bootstrap/**'
     }
 }
@@ -341,7 +342,9 @@ task setupSSL{
 		}
 	}
 }
-
+setupSSL.dependsOn(testClasses)
 test.dependsOn(bootstrap)
+testIntegration.dependsOn(bootstrap)
+testAcceptance.dependsOn(bootstrap)
 //Uncomment this line if hub has to be uninstalled after test
 //test.finalizedBy(cleanupTask)
