@@ -85,7 +85,7 @@ public class HubConfigTest extends HubTestBase {
 
         try {
             writeProp("mlLoadBalancerHosts", "host1");
-            getHubFlowRunnerConfig();
+            adminHubConfig.refreshProject();
         }
         catch (DataHubConfigurationException e){
             assertEquals( "\"mlLoadBalancerHosts\" must be the same as \"mlHost\"", e.getMessage());
@@ -93,6 +93,7 @@ public class HubConfigTest extends HubTestBase {
 
         deleteProp("mlLoadBalancerHosts");
         deleteProp("mlIsHostLoadBalancer");
+        adminHubConfig.refreshProject();
         assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 

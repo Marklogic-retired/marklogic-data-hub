@@ -950,6 +950,7 @@ public class HubConfigImpl implements HubConfig
 
 
     public void loadConfigurationFromProperties() {
+        projectProperties = new Properties();
         InputStream inputStream = null;
         try {
             inputStream = new FileSystemResource(hubProject.getProjectDir().resolve("gradle.properties").toFile()).getInputStream();
@@ -1023,6 +1024,7 @@ public class HubConfigImpl implements HubConfig
         mlUsername = getEnvPropString(projectProperties, "mlUsername", mlUsername);
         mlPassword = getEnvPropString(projectProperties, "mlPassword", mlPassword);
 
+        loadBalancerHost = getEnvPropString(projectProperties, "mlLoadBalancerHosts", null);
         isHostLoadBalancer = getEnvPropBoolean(projectProperties, "mlIsHostLoadBalancer", false);
 
         isProvisionedEnvironment = getEnvPropBoolean(projectProperties, "mlIsProvisionedEnvironment", false);
