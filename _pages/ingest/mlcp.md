@@ -23,14 +23,14 @@ _Note: If you are loading content with QuickStart, it will generate the appropri
 The `-transform_module` and `-transform_namespace` parameters must be set to the following:
 
 <pre class="cmdline">
--transform_module "/MarkLogic/data-hub-framework/mlcp-flow-transform.xqy"
+-transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy"
 -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform"
 </pre>
 
 For SJS transforms use
 
 <pre class="cmdline">
--transform_module "/MarkLogic/data-hub-framework/mlcp-flow-transform.sjs"
+-transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs"
 </pre>
 
 The `-transform_param` parameter will contain a comma-delimited list of key=value pairs to be passed to the `mlcp-flow-transform.xqy` module. Here are the keys and a description of their values:
