@@ -10,11 +10,11 @@ import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './has-bugs-dialog';
 import {
   ChooseCollationComponent,
-  EntityBoxComponent,
   EntityModelerComponent,
   EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
+import { EntityBoxComponent } from './shared/components/entity-box/entity-box.component';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
