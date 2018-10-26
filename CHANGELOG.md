@@ -1,5 +1,57 @@
 # Change Log
 
+## [v4.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.1) (2018-10-05)
+
+Bug
+
+    [DHFPROD-653] - #799 ⁃ Tests failing on AWS if host is set to ELB host
+    [DHFPROD-760] - #873 ⁃ RFE: Single location for all resource configuration
+    [DHFPROD-789] - FlowManager.getFlow() and Mlcp flows failing with ELB
+    [DHFPROD-1045] - #1120 ⁃ On Harmonize flow page, the plus sign for Options is not aligned
+    [DHFPROD-1126] - #1183 ⁃ Outdated references to dhf.xqy
+    [DHFPROD-1175] - gradle mlUndeploy is throwing 401 unauthorized error
+    [DHFPROD-1248] - LoadUserModules not loading mappings if force load is set to 'false'
+    [DHFPROD-1250] - #1279 ⁃ main.sjs not properly updated during upgrade
+    [DHFPROD-1278] - QuickStart uninstall status is delayed
+    [DHFPROD-1299] - Installation/Uninstallation fails when App-Services set to ssl/cert-auth
+    [DHFPROD-1343] - QuickStart install has 404 not found error message when changing the data-hub modules db name
+    [DHFPROD-1346] - Test failures in VPC environment in AWS
+    [DHFPROD-1368] - Incompatibility between DHF and DHaaS with respect to usage of 'finalClient'
+    [DHFPROD-1374] - Unable to load user modules from gradle
+    [DHFPROD-1376] - Unable to create flows with "FlowDeveloper" role
+    [DHFPROD-1378] - Unable to getFlow()
+    [DHFPROD-1399] - DHS - hubRunFlowTask is failing as final AppServer details are MISSING
+    [DHFPROD-1402] - DHS - hubExportJobs and hubDeleteJobs are failing due to missing indexes in Jobs Database
+
+Task
+
+    [DHFPROD-1373] - Unable to load hub modules in DHaaS environment
+    [DHFPROD-1375] - Specify permissions for modules in gradle.properties
+    [DHFPROD-1380] - Replace java client api static binary to publicly available one
+
+Sub-task
+
+    [DHFPROD-1329] - On upgrade, new databases created should not have default names
+
+Epic
+
+    [DHFPROD-1084] - Upgrade improvements - Doc and e-node changes
+
+Story
+
+    [DHFPROD-1085] - Upgrade to 3.0 overall guidance
+    [DHFPROD-1087] - Upgrade instructions
+    [DHFPROD-1228] - Integrated Testing for DHaaS in a simulated environment
+    [DHFPROD-1229] - Install DHF via lambda/appdeployer task
+    [DHFPROD-1234] - Create roles and test DHF with hardened RBAC model for DHaaS
+    [DHFPROD-1240] - Release DHaaS-related work as 4.0.1
+    [DHFPROD-1251] - Integrated Testing for DHaaS in a 'real' environment
+    [DHFPROD-1261] - Document differences in managing a data hub on-prem. vs in DHaaS
+    [DHFPROD-1310] - Refactor DHF to use a single modules database (again)
+    [DHFPROD-1335] - Deprecate mlLoadBalancerHosts with error checking
+
+
+
 ## [v4.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.0) (2018-09-11)
 
 Bugs

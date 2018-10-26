@@ -30,8 +30,6 @@ import com.marklogic.mgmt.PayloadParser;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.JsonNodeUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;
 import java.io.IOException;

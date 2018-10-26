@@ -26,7 +26,6 @@ import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -48,7 +47,6 @@ import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -57,11 +55,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -532,12 +528,12 @@ public class DataHubImpl implements DataHub {
     @Override
     public void updateIndexes() {
     	HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
-    	
+
     	AppConfig finalConfig = hubConfig.getFinalAppConfig();
         List<Command> finalDBCommand = new ArrayList<>();
         finalDBCommand.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
         deployer.setFinalCommandsList(finalDBCommand);
-        
+
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         List<Command> stagingDBCommand = new ArrayList<>();
         stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
