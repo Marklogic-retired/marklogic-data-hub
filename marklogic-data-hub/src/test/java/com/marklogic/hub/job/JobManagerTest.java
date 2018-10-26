@@ -245,9 +245,8 @@ public class JobManagerTest extends HubTestBase {
         assertTrue(zipFile.exists());
 
         ZipFile actual = new ZipFile(zipFile);
-        int actualSize = actual.size();
-        actual.close();
         assertEquals(12, actual.size());
+        actual.close();
     }
 
     @Test
