@@ -2,17 +2,35 @@ import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JobOutputComponent } from './job-output.component';
 import { Job } from './job.model';
-import { JobService } from './jobs.service';
-import { JobListenerService } from './job-listener.service';
-import { SearchResponse } from '../search';
-import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
-import { differenceInSeconds } from 'date-fns';
+import { JobService, JobListenerService } from "../../services/jobs/";
+
+import { SearchResponse } from '../../../search';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import {JobExportDialogComponent} from "./job-export.component";
 
 @Component({
   selector: 'app-jobs',
+  template: `
+    <app-jobs-ui      
+      [searchText]="searchText"
+      [searchResponse]="searchResponse"
+      [loadingJobs]="loadingJobs"
+      [activeFacets]="activeFacets"
+      [selectedJobs]="selectedJobs"
+      [jobListener]="jobListener"
+      (searchClicked)="doSearch()"
+      (exportJobsClicked)="exportJobs()"
+      (deleteJobsClicked)="deleteJobs()"
+      (pageChanged)="pageChanged($event)"
+      (activeFacetsChange)="updateFacets($event)"      
+      (searchTextChanged)="searchTextChanged($event)"   
+      (showConsoleClicked)="showConsole($event)"   
+      (showTracesClicked)="showTraces($event)"
+      (toggleSelectJobClicked)="toggleSelectJob($event)"
+    ></app-jobs-ui>
+  `,
   templateUrl: './jobs.component.html',
   styleUrls: ['./jobs.component.scss'],
 })
@@ -81,13 +99,13 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     }, 2000);
   };
 
-  private hasLiveOutput(job: Job): boolean {
-    return this.jobListener.jobHasOutput(job.jobId);
-  }
-
   public doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
+  }
+
+  public searchTextChanged(txt: string): void {
+    this.searchText = txt;
   }
 
   private runQuery(): void {
@@ -133,10 +151,6 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     });
   }
 
-  getDuration(job: Job): number {
-    return differenceInSeconds(job.endTime, job.startTime);
-  }
-
   showConsole(job: Job): void {
     this.dialogService.showCustomDialog({
       component: JobOutputComponent,
@@ -146,15 +160,6 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       ],
       isModal: true
     });
-  }
-
-  getIconClass(flowType: string) {
-    if (flowType === 'harmonize') {
-      return 'mdi-looks';
-    } else if (flowType === 'input') {
-      return 'mdi-import';
-    }
-    return '';
   }
 
   updateFacets() {

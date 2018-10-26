@@ -1,6 +1,6 @@
 import {Component, HostListener, Inject, Input} from '@angular/core';
 import {MdlDialogReference, MdlDialogService} from '@angular-mdl/core';
-import {JobService} from "./jobs.service";
+import {JobService} from "../../services/jobs";
 
 @Component({
   selector: 'job-export-dialog',
