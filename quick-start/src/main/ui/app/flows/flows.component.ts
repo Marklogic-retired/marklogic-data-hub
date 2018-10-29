@@ -16,7 +16,7 @@ import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmoni
 import { NewEntityComponent } from '../shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from '../new-flow/new-flow.component';
 
-import { JobListenerService } from '../shared/services/jobs/job-listener.service';
+import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
 
 import { HasBugsDialogComponent } from '../has-bugs-dialog';

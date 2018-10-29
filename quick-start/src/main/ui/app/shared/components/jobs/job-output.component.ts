@@ -4,7 +4,7 @@ import { Job } from './job.model';
 
 import { MdlDialogReference } from '@angular-mdl/core';
 
-import { JobListenerService } from "../../services/jobs";
+import { JobListenerService } from "../../../jobs";
 
 import * as _ from 'lodash';
 

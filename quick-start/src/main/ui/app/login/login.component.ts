@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { AuthService } from '../auth/auth.service';
-import { ProjectService } from '../shared/services/projects';
-import { InstallService } from '../shared/services/installer';
+import { ProjectService } from '../projects';
+import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';
 import { MdlDialogService } from '@angular-mdl/core';

@@ -6,7 +6,7 @@
       <input 
         type="search" 
         name="searchText" 
-        [(value)]="searchText" 
+        [(ngModel)]="searchText" 
         (ngModelChange)="searchTextChanged.emit($event)"
         placeholder="Enter you search query here..." />
       <button type="submit" mdl-colored="primary" mdl-button mdl-button-type="raised">Search</button>

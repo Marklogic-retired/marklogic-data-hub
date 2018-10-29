@@ -2,7 +2,7 @@ import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JobOutputComponent } from './job-output.component';
 import { Job } from './job.model';
-import { JobService, JobListenerService } from "../../services/jobs/";
+import { JobService, JobListenerService } from "../../../jobs";
 
 import { SearchResponse } from '../../../search';
 import { MdlDialogService } from '@angular-mdl/core';
@@ -18,6 +18,7 @@ import {JobExportDialogComponent} from "./job-export.component";
       [searchText]="searchText"
       [searchResponse]="searchResponse"
       [activeFacets]="activeFacets"
+      [jobs]="jobs"
       [selectedJobs]="selectedJobs"
       [jobListener]="jobListener"
       (searchClicked)="doSearch()"

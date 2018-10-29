@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
-import { ProjectService } from '../shared/services/projects';
-import { JobListenerService } from '../shared/services/jobs/job-listener.service';
+import { ProjectService } from '../projects';
+import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
 
 @Component({

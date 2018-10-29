@@ -46,12 +46,13 @@ import { SearchComponent, SearchViewerComponent } from './search';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
-import { InstallService } from './shared/services/installer';
-import { JobService, JobListenerService } from './shared/services/jobs';
+import { InstallService } from './installer';
+import { JobService } from './jobs/jobs.service';
+import { JobListenerService } from './jobs/job-listener.service';
 import { MapService } from './mappings/map.service';
-import { ProjectService } from './shared/services/projects';
-import { SettingsService } from './shared/services/settings';
-import { STOMPService } from './shared/services/stomp';
+import { ProjectService } from './projects';
+import { SettingsService } from './settings';
+import { STOMPService } from './stomp';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { FocusElementDirective } from './shared/directives/focus-element/focus-element.directive';
 import { TraceService } from './traces/trace.service';

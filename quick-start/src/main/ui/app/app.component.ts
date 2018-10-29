@@ -7,11 +7,11 @@ import { AuthService } from './auth';
 
 import { EnvironmentService } from './environment';
 
-import { JobService } from './shared/services/jobs';
+import { JobService } from './jobs';
 
-import { ProjectService } from './shared/services/projects';
+import { ProjectService } from './projects';
 
-import { STOMPService } from './shared/services/stomp';
+import { STOMPService } from './stomp';
 
 import { TraceService } from './traces/trace.service';
 

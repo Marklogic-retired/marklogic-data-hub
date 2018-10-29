@@ -1,7 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ProjectService } from '../shared/services/projects';
+import { ProjectService } from '../projects';
 
 import { MdlDialogService } from '@angular-mdl/core';
 
