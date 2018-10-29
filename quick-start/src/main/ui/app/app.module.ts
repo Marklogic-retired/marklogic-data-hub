@@ -14,7 +14,7 @@ import {
   EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
-import { EntityBoxComponent } from './shared/components/entity-box/entity-box.component';
+import { EntityBoxComponent } from './shared/components/';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 

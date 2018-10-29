@@ -5,11 +5,11 @@ import {action} from '@storybook/addon-actions';
 import {linkTo} from '@storybook/addon-links';
 import {centered} from '@storybook/addon-centered/angular';
 import {StoryCardComponent} from '../../utils/story-card/story-card.component';
-import {EntityBoxComponent} from '../../../components/entity-box/entity-box.component';
-import {ResizableComponent} from '../../../components/resizable/resizable.component';
-import {ThemeModule} from '../../../components/theme/theme.module';
-import {Component, Input} from '@angular/core';
-
+import {
+  EntityBoxComponent,
+  ResizableComponent,
+  ThemeModule
+} from '../../../components/';
 
 storiesOf('Components|Entity Box', module)
     .addDecorator(withKnobs)
