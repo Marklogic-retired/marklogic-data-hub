@@ -14,9 +14,9 @@ import {JobExportDialogComponent} from "./job-export.component";
   selector: 'app-jobs',
   template: `
     <app-jobs-ui      
+      [loadingJobs]="loadingJobs"
       [searchText]="searchText"
       [searchResponse]="searchResponse"
-      [loadingJobs]="loadingJobs"
       [activeFacets]="activeFacets"
       [selectedJobs]="selectedJobs"
       [jobListener]="jobListener"
@@ -31,7 +31,6 @@ import {JobExportDialogComponent} from "./job-export.component";
       (toggleSelectJobClicked)="toggleSelectJob($event)"
     ></app-jobs-ui>
   `,
-  templateUrl: './jobs.component.html',
   styleUrls: ['./jobs.component.scss'],
 })
 export class JobsComponent implements OnChanges, OnDestroy, OnInit {
