@@ -83,8 +83,8 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "any-uri",
-      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "privilege-name": "unprotected-uri",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
       "kind": "execute"
     }
   ]
