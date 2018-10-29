@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
-import { ProjectService } from '../shared/services/projects';
+import { ProjectService } from '../projects';
 import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
 

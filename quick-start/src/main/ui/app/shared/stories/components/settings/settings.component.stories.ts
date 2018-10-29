@@ -10,10 +10,10 @@ import {
 import {StoryCardComponent} from '../../utils';
 import {ThemeModule} from "../../../components";
 import {SettingsComponent} from "../../../components";
-import { SettingsService } from '../../../services/settings';
-import { InstallService } from '../../../services/installer';
-import { ProjectService } from '../../../services/projects';
-import { STOMPService } from '../../../services/stomp';
+import { SettingsService } from '../../../../settings';
+import { InstallService } from '../../../../installer';
+import { ProjectService } from '../../../../projects';
+import { STOMPService } from '../../../../stomp';
 
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';

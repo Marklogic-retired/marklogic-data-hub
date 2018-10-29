@@ -1,10 +1,10 @@
 import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { SettingsService } from '../../services/settings';
-import { InstallService } from '../../services/installer';
+import { SettingsService } from '../../../settings';
+import { InstallService } from '../../../installer';
 
-import { ProjectService } from '../../services/projects';
+import { ProjectService } from '../../../projects';
 
 import { MdlDialogService } from '@angular-mdl/core';
 

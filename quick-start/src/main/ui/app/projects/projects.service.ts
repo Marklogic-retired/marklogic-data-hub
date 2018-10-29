@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Http, Response, Headers, RequestOptions} from '@angular/http';
-import { HubSettings } from '../../../environment/hub-settings.model';
+import { HubSettings } from '../environment/hub-settings.model';
 
 @Injectable()
 export class ProjectService {

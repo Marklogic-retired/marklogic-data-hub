@@ -9,9 +9,9 @@ import { EnvironmentService } from './environment';
 
 import { JobService } from './jobs/jobs.service';
 
-import { ProjectService } from './shared/services/projects';
+import { ProjectService } from './projects';
 
-import { STOMPService } from './shared/services/stomp';
+import { STOMPService } from './stomp';
 
 import { TraceService } from './traces/trace.service';
 
