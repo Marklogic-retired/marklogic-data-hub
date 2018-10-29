@@ -176,7 +176,8 @@ public class EntityManagerTest extends HubTestBase {
     	getDataHub().clearUserModules();
         installEntities();
 
-        Path dir = getHubFlowRunnerConfig().getHubEntitiesDir();
+        HubConfig hubConfig = getHubFlowRunnerConfig();
+        Path dir = Paths.get(PROJECT_PATH, hubConfig.ENTITY_CONFIG_DIR);
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));

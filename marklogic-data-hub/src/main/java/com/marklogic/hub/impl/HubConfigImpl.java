@@ -949,16 +949,25 @@ public class HubConfigImpl implements HubConfig
     }
 
 
-    public void loadConfigurationFromProperties() {
-        projectProperties = new Properties();
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileSystemResource(hubProject.getProjectDir().resolve("gradle.properties").toFile()).getInputStream();
-            projectProperties.load(inputStream);
-            inputStream.close();
-        } catch (IOException e) {
-            throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
-        } finally {
+    public void loadConfigurationFromProperties(){
+        loadConfigurationFromProperties(null);
+    }
+
+    public void loadConfigurationFromProperties(Properties properties) {
+        if (properties != null){
+            properties.forEach(projectProperties::put);
+        }
+        else {
+            projectProperties = new Properties();
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileSystemResource(hubProject.getProjectDir().resolve("gradle.properties").toFile()).getInputStream();
+                projectProperties.load(inputStream);
+                inputStream.close();
+            } catch (IOException e) {
+                throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
+            } finally {
+            }
         }
 
         host = getEnvPropString(projectProperties, "mlHost", host);
@@ -1035,21 +1044,11 @@ public class HubConfigImpl implements HubConfig
     }
 
     private void hydrateAppConfigs(Properties properties) {
-        com.marklogic.mgmt.util.PropertySource propertySource = new com.marklogic.mgmt.util.PropertySource() {
-            @Override
-            public String getProperty(String name) {
-                return properties.getProperty(name);
-            }
-        };
+        com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
         hydrateAppConfigs(propertySource);
     }
     private void hydrateAppConfigs(Environment environment) {
-        com.marklogic.mgmt.util.PropertySource propertySource = new com.marklogic.mgmt.util.PropertySource() {
-            @Override
-            public String getProperty(String name) {
-                return environment.getProperty(name);
-            }
-        };
+        com.marklogic.mgmt.util.PropertySource propertySource = environment::getProperty;
         hydrateAppConfigs(propertySource);
     }
     private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
@@ -1627,6 +1626,17 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public void refreshProject() {
         loadConfigurationFromProperties();
+
+        flowManager.setupClient();
+        dataHub.wireClient();
+        versions.setupClient();
+
+    }
+
+    @Override
+    @JsonIgnore
+    public void refreshProject(Properties properties) {
+        loadConfigurationFromProperties(properties);
 
         flowManager.setupClient();
         dataHub.wireClient();

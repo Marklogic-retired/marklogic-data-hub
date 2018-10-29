@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class ScaffoldingValidatorTest extends HubTestBase {
 
-   private static final String projectPath = "./test-project";
+   private static final String projectPath = PROJECT_PATH;
    private static final String TEST_ENTITY_NAME = "test-entity";
 
    @Autowired

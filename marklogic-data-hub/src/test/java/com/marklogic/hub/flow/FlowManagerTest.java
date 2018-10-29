@@ -161,7 +161,7 @@ public class FlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetLocalFlows() throws IOException {
-        createProjectDir("del-me-dir");
+        createProjectDir(PROJECT_PATH);
         scaffolding.createEntity("my-entity");
 
         assertEquals(0, fm.getLocalFlows().size());
@@ -283,6 +283,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
+        getHubFlowRunnerConfig().refreshProject();
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)

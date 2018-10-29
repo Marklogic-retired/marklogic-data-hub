@@ -381,16 +381,25 @@ public class HubTestBase {
     }
 
     protected HubConfig getHubAdminConfig(String projectDir) {
+        adminHubConfig.refreshProject(properties);
         return adminHubConfig;
     }
 
     protected HubConfig getHubAdminConfig() {
+        adminHubConfig.refreshProject(properties);
         return adminHubConfig;
     }
 
     //getHubFlowRunnerConfig is used for running flows
     // FIXME get hubConfig working too
     protected HubConfig getHubFlowRunnerConfig() {
+        Properties properties = new Properties();
+        properties.put("mlUsername", flowRunnerUser);
+        properties.put("mlPassword", flowRunnerPassword);
+        properties.put("mlManageUsername", flowRunnerUser);
+        properties.put("mlManagePassword", flowRunnerPassword);
+
+        adminHubConfig.refreshProject(properties);
         return adminHubConfig;
     }
 
@@ -462,6 +471,9 @@ public class HubTestBase {
         try {
             String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
             return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
+        }
+        catch (IllegalStateException e){
+            return null;
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -1004,6 +1016,40 @@ public class HubTestBase {
             transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
         } catch (TransformerException e) {
             throw new DataHubConfigurationException(e);
+        }
+    }
+
+    protected void writeProp(String key, String value) {
+        try {
+            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream(gradleProperties);
+            props.load(fis);
+            fis.close();
+            props.put(key, value);
+            FileOutputStream fos = new FileOutputStream(gradleProperties);
+            props.store(fos, "");
+            fos.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void deleteProp(String key) {
+        try {
+            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream(gradleProperties);
+            props.load(fis);
+            fis.close();
+            props.remove(key);
+            FileOutputStream fos = new FileOutputStream(gradleProperties);
+            props.store(fos, "");
+            fos.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
