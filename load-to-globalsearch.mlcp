@@ -1,3 +1,12 @@
+#-----------------------------------------------------------------------------#
+# An mlcp option file to push the _pages folder into the global search dhf
+# instance. Use as follows (assumes mlcp as a globally configured executable):
+#
+# mlcp -options_file load-to-globalsearch.mlcp -username user -password pass
+#
+# Use your network credentials for `user` and `pass`. VPN connection is
+# required if outside the company network.
+#-----------------------------------------------------------------------------#
 import
 -input_file_path
 _pages/*
@@ -10,7 +19,7 @@ false
 -host
 globalsearch.marklogic.com
 -port
-8010
+8011
 -modules_root
 /
 -transform_module
