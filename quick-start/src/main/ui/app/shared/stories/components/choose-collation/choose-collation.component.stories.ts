@@ -4,9 +4,8 @@ import {withNotes} from '@storybook/addon-notes';
 import {action} from '@storybook/addon-actions';
 import {linkTo} from '@storybook/addon-links';
 import {centered} from '@storybook/addon-centered/angular';
-import {StoryCardComponent} from '../../utils/story-card/story-card.component';
-import {ChooseCollationComponent} from '../../../components/choose-collation/choose-collation.component';
-import {ThemeModule} from '../../../components/theme/theme.module';
+import {StoryCardComponent} from '../../utils';
+import {ThemeModule, ChooseCollationComponent} from '../../../components/';
 import {MdlDialogService} from '@angular-mdl/core';
 import { Component, Input, Output, EventEmitter, NgModule } from '@angular/core';
 

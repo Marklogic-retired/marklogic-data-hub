@@ -14,7 +14,7 @@ import {
   EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
-import { ChooseCollationComponent } from './shared/components/choose-collation/choose-collation.component';
+import { ChooseCollationComponent } from './shared/components/';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
 
