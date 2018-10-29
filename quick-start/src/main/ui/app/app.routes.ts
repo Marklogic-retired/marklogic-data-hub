@@ -5,7 +5,7 @@ import { EntityModelerComponent } from './entity-modeler/entity-modeler.componen
 import { MapComponent } from './mappings';
 import { MappingsComponent } from './mappings';
 import { LoginComponent } from './login';
-import { JobsComponent } from './shared/components/jobs';
+import { JobsComponent } from './jobs';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
 import { SettingsComponent } from './shared/components/settings';

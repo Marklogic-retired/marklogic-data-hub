@@ -2,9 +2,10 @@ import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JobOutputComponent } from './job-output.component';
 import { Job } from './job.model';
-import { JobService, JobListenerService } from "../../../jobs";
+import { JobService } from "./jobs.service";
+import { JobListenerService } from "./job-listener.service";
 
-import { SearchResponse } from '../../../search';
+import { SearchResponse } from '../search';
 import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';

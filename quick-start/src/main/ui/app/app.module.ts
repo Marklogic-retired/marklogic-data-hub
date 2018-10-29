@@ -30,7 +30,8 @@ import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { FolderBrowserUiComponent } from './shared/components/folder-browser/folder-browser-ui.component';
 import { HeaderComponent } from './header/header.component';
-import { JobsComponent, JobsUiComponent, JobOutputComponent } from './shared/components/jobs';
+import { JobsComponent, JobOutputComponent } from './jobs';
+import { JobsUiComponent } from './shared/components/jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
@@ -66,7 +67,7 @@ import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
 import { SelectKeyValuesComponent } from './shared/components/select-key-values/select-key-values.component';
-import {JobExportDialogComponent} from "./shared/components/jobs/job-export.component";
+import {JobExportDialogComponent} from ".//jobs/job-export.component";
 
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";

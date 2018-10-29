@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import { SearchResponse } from '../../../search';
-import { Job } from './job.model';
-import { JobListenerService } from "../../../jobs/";
+import { Job } from '../../../jobs/job.model';
+import { JobListenerService } from "../../../jobs";
 import { differenceInSeconds } from 'date-fns';
 
 @Component({
