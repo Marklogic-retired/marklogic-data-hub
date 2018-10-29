@@ -618,7 +618,10 @@ function safeRun(func) {
   try {
     let resp = func();
     let duration = xdmp.elapsedTime().subtract(before);
-    tracelib.pluginTrace(rfc.getItemContext(), xdmp.describe(resp, 1000000, 1000000), duration);
+    if(!resp instanceof Document){
+      resp = xdmp.describe(resp, 1000000, 1000000);
+    }
+    tracelib.pluginTrace(rfc.getItemContext(), resp, duration);
     return resp;
   }
   catch(ex) {
