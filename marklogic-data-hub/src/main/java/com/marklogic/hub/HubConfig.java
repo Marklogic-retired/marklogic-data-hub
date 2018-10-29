@@ -26,6 +26,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
+import java.util.Properties;
 
 /**
  * An interface to set, manage and recall the Data Hub's Configuration
@@ -559,4 +560,6 @@ public interface HubConfig {
      * TODO what about the gradle-env.properties files?
      */
     void refreshProject();
+
+    void refreshProject(Properties properties);
 }

@@ -36,39 +36,6 @@ public class HubConfigTest extends HubTestBase {
         dataHub.initProject();
     }
 
-    private void deleteProp(String key) {
-        try {
-            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
-            Properties props = new Properties();
-            FileInputStream fis = new FileInputStream(gradleProperties);
-            props.load(fis);
-            fis.close();
-            props.remove(key);
-            FileOutputStream fos = new FileOutputStream(gradleProperties);
-            props.store(fos, "");
-            fos.close();
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    private void writeProp(String key, String value) {
-        try {
-            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
-            Properties props = new Properties();
-            FileInputStream fis = new FileInputStream(gradleProperties);
-            props.load(fis);
-            fis.close();
-            props.put(key, value);
-            FileOutputStream fos = new FileOutputStream(gradleProperties);
-            props.store(fos, "");
-            fos.close();
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
