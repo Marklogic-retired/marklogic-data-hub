@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, Input} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { SearchService } from '../../../../search/search.service';
@@ -20,8 +20,8 @@ export class SearchViewerComponent implements OnInit, OnDestroy {
 
   private sub: any;
   currentDatabase: string = 'STAGING';
-  doc: string = null;
-  uri: string;
+  @Input() doc: string = null;
+  @Input() uri: string;
   codeMirrorConfig = {
     lineNumbers: true,
     indentWithTabs: true,
@@ -37,8 +37,12 @@ export class SearchViewerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.sub = this.route.queryParams.subscribe(params => {
-     this.uri = params['docUri'];
-     this.currentDatabase = params['database'];
+     if (!!params['docUri']) {
+      this.uri = params['docUri'];
+     }
+     if (!!params['database']) {
+      this.currentDatabase = params['database'];
+     }
      this.searchService.getDoc(this.currentDatabase, this.uri).subscribe(doc => {
        this.doc = this.formatData(doc);
      });
