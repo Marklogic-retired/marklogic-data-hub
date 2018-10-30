@@ -60,7 +60,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             throw new DataHubConfigurationException("DHF " + hubConfig.getDHFVersion() +" cannot deploy security to server version " + serverVersion);
         }
         if (serverVersion.startsWith("9.0-5")) {
-            logger.info("Using non-SSL-compatable method for 9.0-5 servers, for demos only");
+            logger.info("Using non-SSL-compatible method for 9.0-5 servers, for demos only");
             String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();

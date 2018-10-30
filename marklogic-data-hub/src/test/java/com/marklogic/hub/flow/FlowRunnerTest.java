@@ -254,7 +254,7 @@ public class FlowRunnerTest extends HubTestBase {
 
     }
 
-    @Ignore
+    @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
 
         Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), flowRunnerClient);
@@ -267,14 +267,23 @@ public class FlowRunnerTest extends HubTestBase {
         Files.copy(getResourceStream("flow-runner-test/content-testing-envelope.xqy"),
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/content.xqy"),
             StandardCopyOption.REPLACE_EXISTING);
-
-        installUserModules(getHubFlowRunnerConfig(), false);
+        try {
+        	installUserModules(getHubFlowRunnerConfig(), false);
+        }
+        catch(Exception e) {
+        	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+        }
         //The flow should not be deployed.
         assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/FlowWithHubUser/FlowWithHubUser.xml"));
 
     	Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
     	copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-        installUserModules(getHubFlowRunnerConfig(), false);
+    	 try {
+         	installUserModules(getHubFlowRunnerConfig(), false);
+         }
+         catch(Exception e) {
+         	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+         }
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
         //deploys the entity to final db
         installUserModules(getHubAdminConfig(), false);
@@ -291,14 +300,24 @@ public class FlowRunnerTest extends HubTestBase {
 		mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "salary"));
 		mappingManager.saveMapping(testMap);
 
-		installUserModules(getHubFlowRunnerConfig(), false);
+		try {
+        	installUserModules(getHubFlowRunnerConfig(), false);
+        }
+        catch(Exception e) {
+        	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+        }
 		// Mapping should not be deployed
         Assert.assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
         installUserModules(getHubAdminConfig(), true);
 
 		scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
-        installUserModules(getHubFlowRunnerConfig(), false);
+		try {
+        	installUserModules(getHubFlowRunnerConfig(), false);
+        }
+        catch(Exception e) {
+        	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+        }
         assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/MappingFlowWithHubUser/MappingFlowWithHubUser.xml"));
     }
 

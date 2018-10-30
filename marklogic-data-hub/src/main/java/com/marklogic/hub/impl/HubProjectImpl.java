@@ -189,12 +189,14 @@ public class HubProjectImpl implements HubProject {
         Path userSecurityDir = getUserSecurityDir();
         Path rolesDir = hubSecurityDir.resolve("roles");
         Path usersDir = hubSecurityDir.resolve("users");
+        Path privDir = hubSecurityDir.resolve("privileges"); 
 
         Path userRolesDir = userSecurityDir.resolve("roles");
         Path userUsersDir = userSecurityDir.resolve("users");
 
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
+        privDir.toFile().mkdirs();
         userRolesDir.toFile().mkdirs();
         userUsersDir.toFile().mkdirs();
 
@@ -202,8 +204,12 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
         writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
         writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
-
-
+        
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privDir.resolve("dhf-internal-data-hub.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privDir.resolve("dhf-internal-entities.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-mappings.json", privDir.resolve("dhf-internal-mappings.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-trace-ui.json", privDir.resolve("dhf-internal-trace-ui.json"), true);
+        
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
