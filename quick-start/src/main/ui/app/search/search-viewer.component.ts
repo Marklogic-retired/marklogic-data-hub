@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, Input} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { SearchService } from '../../../../search/search.service';
+import { SearchService } from './search.service';
 
 import * as _ from 'lodash';
 
@@ -9,19 +9,14 @@ require('codemirror/mode/xquery/xquery');
 require('codemirror/mode/javascript/javascript');
 
 @Component({
-  selector: 'app-search-viewer',
-  encapsulation: ViewEncapsulation.None,
   templateUrl: './search-viewer.component.html',
-  styleUrls: [
-    './search-viewer.component.scss'
-  ],
 })
 export class SearchViewerComponent implements OnInit, OnDestroy {
 
   private sub: any;
-  currentDatabase: string = 'STAGING';
-  @Input() doc: string = null;
-  @Input() uri: string;
+  currentDatabase = 'STAGING';
+  doc: string;
+  uri: string;
   codeMirrorConfig = {
     lineNumbers: true,
     indentWithTabs: true,
@@ -37,12 +32,8 @@ export class SearchViewerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.sub = this.route.queryParams.subscribe(params => {
-     if (!!params['docUri']) {
-      this.uri = params['docUri'];
-     }
-     if (!!params['database']) {
-      this.currentDatabase = params['database'];
-     }
+     this.uri = params['docUri'];
+     this.currentDatabase = params['database'];
      this.searchService.getDoc(this.currentDatabase, this.uri).subscribe(doc => {
        this.doc = this.formatData(doc);
      });

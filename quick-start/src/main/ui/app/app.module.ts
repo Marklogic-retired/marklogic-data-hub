@@ -42,8 +42,8 @@ import { SelectComponent } from './shared/components/select/select.component';
 import { SelectListComponent } from './shared/components/select-list/select-list.component';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
-import { SearchComponent,  } from './search';
-import { SearchViewerComponent } from './shared/components/search/search-viewer/search-viewer.component';
+import { SearchComponent, SearchViewerComponent } from './search';
+import { SearchViewerUiComponent } from './shared/components/search';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
@@ -108,6 +108,7 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     TraceViewerComponent,
     SearchComponent,
     SearchViewerComponent,
+    SearchViewerUiComponent,
     NoContentComponent,
     ClipboardDirective,
     FocusElementDirective,

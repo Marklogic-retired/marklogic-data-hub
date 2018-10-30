@@ -1,49 +1,26 @@
+import 'rxjs/add/observable/of';
+
 import { CommonModule } from '@angular/common';
-import { HttpModule } from '@angular/http';
-import { RouterTestingModule } from '@angular/router/testing';
-import { action } from '@storybook/addon-actions';
 import { centered } from '@storybook/addon-centered/angular';
 import { withKnobs } from '@storybook/addon-knobs';
 import { moduleMetadata, storiesOf } from '@storybook/angular';
 
-import { SearchViewerComponent } from '../../../../components/search/search-viewer/search-viewer.component';
-import { ThemeModule } from '../../../../components/theme/theme.module';
+import { SearchViewerUiComponent } from '../../../../components/search/';
+import { ThemeModule } from '../../../../components/theme/';
 import { StoryCardComponent } from '../../../utils/story-card/story-card.component';
-import { SearchService } from './../../../../../search/search.service';
-import { CodemirrorComponent } from './../../../../../codemirror/codemirror.component';
-import { Observable } from 'rxjs';
-import 'rxjs/add/observable/of';
-
-
-
-class SearchServiceMock {
-  getDoc(database: string, docUri: string) {
-    const mockDoc = `
-      {"info":{"title":"Order", "version":"0.0.1"},
-      "definitions":{"Order":{"primaryKey":"id", "required":[],
-      "pii":[], "elementRangeIndex":[], "rangeIndex":["id"], "wordLexicon":[],
-      "properties":{"id":{"datatype":"string", "collation":"http://marklogic.com/collation/codepoint"},
-      "price":{"datatype":"decimal"}, "products":{"datatype":"array", "items":{"$ref":"#/definitions/Product"}}}}}}
-    `;
-    return Observable.of(JSON.parse(mockDoc));
-  }
-}
-
+import { CodemirrorComponent } from './../../../../../codemirror/';
 
 storiesOf('Components|Search', module)
   .addDecorator(withKnobs)
   .addDecorator(
     moduleMetadata({
-      imports: [CommonModule, ThemeModule, RouterTestingModule],
+      imports: [CommonModule, ThemeModule],
       schemas: [],
       declarations: [
         CodemirrorComponent,
-        SearchViewerComponent,
+        SearchViewerUiComponent,
         StoryCardComponent],
       entryComponents: [],
-      providers: [
-        { provide: SearchService, useClass: SearchServiceMock }
-      ]
     })
   )
   .addDecorator(centered)
@@ -51,12 +28,35 @@ storiesOf('Components|Search', module)
     template: `
             <mlui-dhf-theme width = "1000px">
               <mlui-story-card width="800px" height="800px">
-                    <app-search-viewer
+                    <app-search-viewer-ui
                       [uri]="sampleUri"
-                    ></app-search-viewer>
+                      [doc]="sampleDoc"
+                    ></app-search-viewer-ui>
               </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
       sampleUri: 'doc/sample.json',
+      sampleDoc: `
+      {
+        "envelope": {
+          "headers": {},
+          "triples": [],
+          "instance": {
+            "id": "741",
+            "customer": "204",
+            "order_date": "08/20/2017",
+            "ship_date": "08/29/2017",
+            "product_id": "1000249",
+            "sku": "298337297722",
+            "price": "5.0",
+            "quantity": "1.0",
+            "discounted_price": "5.0",
+            "title": "varied slope Extension 1",
+            "description": ""
+          },
+          "attachments": null
+        }
+      }
+    `
     }
   }));
