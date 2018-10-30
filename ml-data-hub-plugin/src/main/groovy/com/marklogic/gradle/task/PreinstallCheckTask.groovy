@@ -55,6 +55,11 @@ class PreinstallCheckTask extends HubTask {
 
             throw new TaskExecutionException(this, new Throwable(sb.toString()))
         }
-        print(dh.toString())
+
+        if(preInstallCheck.get("safeToInstall")) {
+            print("DHF is not installed. Run mlDeploy task to install DHF")
+        } else {
+            print("DHF Version: " + preInstallCheck.get("dhfVersion") + " is installed")
+        }
     }
 }
