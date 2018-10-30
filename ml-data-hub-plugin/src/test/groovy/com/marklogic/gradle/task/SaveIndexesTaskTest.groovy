@@ -39,65 +39,65 @@ class SaveIndexesTaskTest extends BaseTest {
         createGradleFiles()
         runTask("hubInit")
     }
-	
-	def setup() {
-		// Creating a test Entity one
-		propertiesFile << """
+
+    def setup() {
+        // Creating a test Entity one
+        propertiesFile << """
             ext {
                 entityName=my-unique-save-index-entity-1
             }
         """
-		runTask('hubCreateEntity')
-		File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-save-index-entity-1").toFile()
-		entityDir.isDirectory() == true
-		
-		// Copying my-unique-save-index-entity-1.entity.json file to plugins/entities/my-unique-save-index-entity-1 directory
-		String entityCopy = new File("src/test/resources/update-indexes/my-unique-save-index-entity-1.entity.json").getAbsolutePath()
-		String entityDirCopy = new File(entityDir.toPath().toString()).getAbsolutePath()+"/my-unique-save-index-entity-1.entity.json"
-		Files.copy(new File(entityCopy).toPath(), new File(entityDirCopy).toPath(), StandardCopyOption.REPLACE_EXISTING)
-		
-		// Creating a test Entity two
-		propertiesFile << """
+        runTask('hubCreateEntity')
+        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-save-index-entity-1").toFile()
+        entityDir.isDirectory() == true
+
+        // Copying my-unique-save-index-entity-1.entity.json file to plugins/entities/my-unique-save-index-entity-1 directory
+        String entityCopy = new File("src/test/resources/update-indexes/my-unique-save-index-entity-1.entity.json").getAbsolutePath()
+        String entityDirCopy = new File(entityDir.toPath().toString()).getAbsolutePath() + "/my-unique-save-index-entity-1.entity.json"
+        Files.copy(new File(entityCopy).toPath(), new File(entityDirCopy).toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        // Creating a test Entity two
+        propertiesFile << """
             ext {
                 entityName=my-unique-save-index-entity-2
             }
         """
-		runTask('hubCreateEntity')
-		entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-save-index-entity-2").toFile()
-		entityDir.isDirectory() == true
-		
-		// Copying my-unique-save-index-entity-2.entity.json file to plugins/entities/my-unique-save-index-entity-2 directory
-		entityCopy = new File("src/test/resources/update-indexes/my-unique-save-index-entity-2.entity.json").getAbsolutePath()
-		entityDirCopy = new File(entityDir.toPath().toString()).getAbsolutePath()+"/my-unique-save-index-entity-2.entity.json"
-		Files.copy(new File(entityCopy).toPath(), new File(entityDirCopy).toPath(), StandardCopyOption.REPLACE_EXISTING)
-	}
-	
-	def "test to save indexes to staging-database.json and final-database.json files"() {
-		given:
-		Path dir = hubConfig().getEntityDatabaseDir()
-		File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
-		File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
-		
-		stagingFile.exists() == false
-		finalFile.exists() == false
-		
-		when:
-		def result = runTask('hubSaveIndexes')
+        runTask('hubCreateEntity')
+        entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-save-index-entity-2").toFile()
+        entityDir.isDirectory() == true
 
-		then:
-		notThrown(UnexpectedBuildFailure)
-		result.task(":hubSaveIndexes").outcome == SUCCESS
-		
-		stagingFile.exists() == true
-		finalFile.exists() == true
-		
-		JsonNode stagingDatabaseIndexObj = getJsonResource(stagingFile.getAbsolutePath())
-		int savedStagingIndexes = stagingDatabaseIndexObj.get("range-path-index").size()
-		
-		JsonNode finalDatabaseIndexObj = getJsonResource(finalFile.getAbsolutePath())
-		int savedFinalIndexes = finalDatabaseIndexObj.get("range-path-index").size()
-		
-		assert (savedStagingIndexes == 2)
-		assert (savedFinalIndexes == 2)
-	}
+        // Copying my-unique-save-index-entity-2.entity.json file to plugins/entities/my-unique-save-index-entity-2 directory
+        entityCopy = new File("src/test/resources/update-indexes/my-unique-save-index-entity-2.entity.json").getAbsolutePath()
+        entityDirCopy = new File(entityDir.toPath().toString()).getAbsolutePath() + "/my-unique-save-index-entity-2.entity.json"
+        Files.copy(new File(entityCopy).toPath(), new File(entityDirCopy).toPath(), StandardCopyOption.REPLACE_EXISTING)
+    }
+
+    def "test to save indexes to staging-database.json and final-database.json files"() {
+        given:
+        Path dir = hubConfig().getEntityDatabaseDir()
+        File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
+        File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
+
+        stagingFile.exists() == false
+        finalFile.exists() == false
+
+        when:
+        def result = runTask('hubSaveIndexes')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubSaveIndexes").outcome == SUCCESS
+
+        stagingFile.exists() == true
+        finalFile.exists() == true
+
+        JsonNode stagingDatabaseIndexObj = getJsonResource(stagingFile.getAbsolutePath())
+        int savedStagingIndexes = stagingDatabaseIndexObj.get("range-path-index").size()
+
+        JsonNode finalDatabaseIndexObj = getJsonResource(finalFile.getAbsolutePath())
+        int savedFinalIndexes = finalDatabaseIndexObj.get("range-path-index").size()
+
+        assert (savedStagingIndexes == 2)
+        assert (savedFinalIndexes == 2)
+    }
 }

@@ -66,9 +66,9 @@ class BaseTest extends Specification {
     static File buildFile
     static File propertiesFile
 
-	static ManageClient _manageClient;
-	static DatabaseManager _databaseManager;
-	
+    static ManageClient _manageClient;
+    static DatabaseManager _databaseManager;
+
     static HubConfig _hubConfig = null
 
     static BuildResult runTask(String... task) {
@@ -110,7 +110,7 @@ class BaseTest extends Specification {
 
         InputStreamHandle handle = new InputStreamHandle(new File("src/test/resources/" + localPath).newInputStream())
         String ext = FilenameUtils.getExtension(path)
-        switch(ext) {
+        switch (ext) {
             case "xml":
                 handle.setFormat(Format.XML)
                 break
@@ -149,16 +149,16 @@ class BaseTest extends Specification {
         DocumentBuilder builder = factory.newDocumentBuilder()
         return builder.parse(new File("src/test/resources/" + resourceName).getAbsoluteFile())
     }
-	
-	protected JsonNode getJsonResource(String absoluteFilePath) {
-		try {
-			InputStream jsonDataStream = new FileInputStream(new File(absoluteFilePath))
-			ObjectMapper jsonDataMapper = new ObjectMapper()
-			return jsonDataMapper.readTree(jsonDataStream)
-		} catch (IOException e) {
-			e.printStackTrace()
-		} 
-	}
+
+    protected JsonNode getJsonResource(String absoluteFilePath) {
+        try {
+            InputStream jsonDataStream = new FileInputStream(new File(absoluteFilePath))
+            ObjectMapper jsonDataMapper = new ObjectMapper()
+            return jsonDataMapper.readTree(jsonDataStream)
+        } catch (IOException e) {
+            e.printStackTrace()
+        }
+    }
 
     static void copyResourceToFile(String resourceName, File dest) {
         def file = new File("src/test/resources/" + resourceName)
@@ -176,6 +176,7 @@ class BaseTest extends Specification {
     static int getFinalDocCount() {
         return getFinalDocCount(null)
     }
+
     static int getFinalDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection)
     }
@@ -191,7 +192,7 @@ class BaseTest extends Specification {
             collectionName = "'" + collection + "'"
         }
         EvalResultIterator resultItr = runInDatabase("xdmp:estimate(fn:collection(" + collectionName + "))", database)
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return count
         }
         EvalResult res = resultItr.next()
@@ -201,7 +202,7 @@ class BaseTest extends Specification {
 
     static EvalResultIterator runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval
-        switch(databaseName) {
+        switch (databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
                 eval = hubConfig().newStagingClient().newServerEval()
                 break
@@ -217,7 +218,7 @@ class BaseTest extends Specification {
         try {
             return eval.xquery(query).eval()
         }
-        catch(FailedRequestException e) {
+        catch (FailedRequestException e) {
             e.printStackTrace()
             throw e
         }
@@ -244,35 +245,35 @@ class BaseTest extends Specification {
         createFullPropertiesFile()
     }
 
-	static DatabaseManager getDatabaseManager() {
-		if (_databaseManager == null) {
-			_databaseManager = new DatabaseManager(getManageClient());
-		}
-		return _databaseManager;
-	}
-	
-	static ManageClient getManageClient() {
-		if (_manageClient == null) {
-			_manageClient = hubConfig().getManageClient();
-		}
-		return _manageClient;
-	}
+    static DatabaseManager getDatabaseManager() {
+        if (_databaseManager == null) {
+            _databaseManager = new DatabaseManager(getManageClient());
+        }
+        return _databaseManager;
+    }
 
-	static int getStagingRangePathIndexSize() {
-		Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.STAGING));
-		return databseFragment.getElementValues("//m:range-path-index").size()
-	}
-	
-	static int getFinalRangePathIndexSize() {
-		Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.FINAL));
-		return databseFragment.getElementValues("//m:range-path-index").size()
-	}
-	
-	static int getJobsRangePathIndexSize() {
-		Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
-		return databseFragment.getElementValues("//m:range-path-index").size()
-	}
-	
+    static ManageClient getManageClient() {
+        if (_manageClient == null) {
+            _manageClient = hubConfig().getManageClient();
+        }
+        return _manageClient;
+    }
+
+    static int getStagingRangePathIndexSize() {
+        Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.STAGING));
+        return databseFragment.getElementValues("//m:range-path-index").size()
+    }
+
+    static int getFinalRangePathIndexSize() {
+        Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.FINAL));
+        return databseFragment.getElementValues("//m:range-path-index").size()
+    }
+
+    static int getJobsRangePathIndexSize() {
+        Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
+        return databseFragment.getElementValues("//m:range-path-index").size()
+    }
+
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
         testProjectDir.create()
