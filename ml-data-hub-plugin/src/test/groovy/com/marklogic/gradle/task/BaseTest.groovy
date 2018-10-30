@@ -150,19 +150,11 @@ class BaseTest extends Specification {
         return builder.parse(new File("src/test/resources/" + resourceName).getAbsoluteFile())
     }
 	
-	protected InputStream getResourceStream(String resourceName) {
-		try {
-			return new FileInputStream(new File(resourceName));
-		} catch(FileNotFoundException e) {
-			throw new RuntimeException(e)
-		}
-	}
-	
 	protected JsonNode getJsonResource(String absoluteFilePath) {
 		try {
-			InputStream jsonDataStream = getResourceStream(absoluteFilePath);
-			ObjectMapper jsonDataMapper = new ObjectMapper();
-			return jsonDataMapper.readTree(jsonDataStream);
+			InputStream jsonDataStream = new FileInputStream(new File(absoluteFilePath))
+			ObjectMapper jsonDataMapper = new ObjectMapper()
+			return jsonDataMapper.readTree(jsonDataStream)
 		} catch (IOException e) {
 			e.printStackTrace()
 		} 

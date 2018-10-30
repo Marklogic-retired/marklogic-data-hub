@@ -52,9 +52,9 @@ class SaveIndexesTaskTest extends BaseTest {
 		entityDir.isDirectory() == true
 		
 		// Copying my-unique-save-index-entity-1.entity.json file to plugins/entities/my-unique-save-index-entity-1 directory
-		String entityStream = new File("src/test/resources/update-indexes/my-unique-save-index-entity-1.entity.json").getAbsolutePath()
-		String entityDirStream = new File(entityDir.toPath().toString()).getAbsolutePath()+"/my-unique-save-index-entity-1.entity.json"
-		Files.copy(new File(entityStream).toPath(), new File(entityDirStream).toPath(), StandardCopyOption.REPLACE_EXISTING)
+		String entityCopy = new File("src/test/resources/update-indexes/my-unique-save-index-entity-1.entity.json").getAbsolutePath()
+		String entityDirCopy = new File(entityDir.toPath().toString()).getAbsolutePath()+"/my-unique-save-index-entity-1.entity.json"
+		Files.copy(new File(entityCopy).toPath(), new File(entityDirCopy).toPath(), StandardCopyOption.REPLACE_EXISTING)
 		
 		// Creating a test Entity two
 		propertiesFile << """
@@ -67,9 +67,9 @@ class SaveIndexesTaskTest extends BaseTest {
 		entityDir.isDirectory() == true
 		
 		// Copying my-unique-save-index-entity-2.entity.json file to plugins/entities/my-unique-save-index-entity-2 directory
-		entityStream = new File("src/test/resources/update-indexes/my-unique-save-index-entity-2.entity.json").getAbsolutePath()
-		entityDirStream = new File(entityDir.toPath().toString()).getAbsolutePath()+"/my-unique-save-index-entity-2.entity.json"
-		Files.copy(new File(entityStream).toPath(), new File(entityDirStream).toPath(), StandardCopyOption.REPLACE_EXISTING)
+		entityCopy = new File("src/test/resources/update-indexes/my-unique-save-index-entity-2.entity.json").getAbsolutePath()
+		entityDirCopy = new File(entityDir.toPath().toString()).getAbsolutePath()+"/my-unique-save-index-entity-2.entity.json"
+		Files.copy(new File(entityCopy).toPath(), new File(entityDirCopy).toPath(), StandardCopyOption.REPLACE_EXISTING)
 	}
 	
 	def "test to save indexes to staging-database.json and final-database.json files"() {
