@@ -31,6 +31,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -62,11 +63,15 @@ public class FlowRunnerTest extends HubTestBase {
         createProjectDir();
         enableDebugging();
         enableTracing();
-
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
         scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
-        scaffolding.createEntity(ENTITY);
-        clearUserModules();
-
+        scaffolding.createEntity(ENTITY);       
+    }
+    
+    @After
+    public void tearDown() {
+    	clearUserModules();
+    	deleteProjectDir();
     }
 
     @Test
