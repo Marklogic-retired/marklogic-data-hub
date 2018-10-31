@@ -39,14 +39,14 @@ storiesOf('Components|Mappings', module)
              </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
-      mappings: [
+      mappings: object('mappings', [
         {
           name: "exists",
           properties: {},
           targetEntityType: "http://example.org/Entity-0.0.1/Entity",
           version: 3
         }
-      ],
+      ]),
       create: action('create'),
       cancel: action('cancel'),
     }
