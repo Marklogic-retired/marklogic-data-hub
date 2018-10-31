@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
-import { STOMPService } from '../stomp/stomp.service';
+import { STOMPService } from '../stomp';
 
 @Injectable()
 export class InstallService {
