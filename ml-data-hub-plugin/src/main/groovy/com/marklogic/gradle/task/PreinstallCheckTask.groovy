@@ -27,7 +27,10 @@ class PreinstallCheckTask extends HubTask {
     void runPreinstallCheck() {
         DataHub dh = getDataHub();
         def preInstallCheck = dh.runPreInstallCheck()
-        if (preInstallCheck.get("safeToInstall") == null) {
+        if (preInstallCheck.get("safeToInstall")) {
+            print("PreInstall check: [PASSED]")
+        }
+        else {
             StringBuilder sb = new StringBuilder();
             sb.append("PreInstall Check: [FAILED]\n")
             .append("---------------------------------------\n")
@@ -54,12 +57,6 @@ class PreinstallCheckTask extends HubTask {
             }
 
             throw new TaskExecutionException(this, new Throwable(sb.toString()))
-        }
-
-        if(preInstallCheck.get("safeToInstall")) {
-            print("DHF is not installed. Run mlDeploy task to install DHF")
-        } else {
-            print("DHF Version: " + preInstallCheck.get("dhfVersion") + " is installed")
         }
     }
 }
