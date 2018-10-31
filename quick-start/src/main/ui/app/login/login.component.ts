@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { AuthService } from '../auth/auth.service';
-import { ProjectService } from '../projects/projects.service';
+import { ProjectService } from '../projects';
 import { InstallService } from '../installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../environment/hub-settings.model';

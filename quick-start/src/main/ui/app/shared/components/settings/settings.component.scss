@@ -1,4 +1,9 @@
-@import '../shared/components/theme/styles/variables';
+@import '../theme/styles/variables';
+
+:host {
+  display: block;
+  max-width: 100%;
+}
 
 pre {
   margin: 0px;
@@ -34,12 +39,16 @@ button {
   float: right;
 }
 
-.mdl-data-table tbody tr {
-  &:hover {
-    background-color: inherit;
-  }
+.mdl-data-table {
+  white-space: normal;
 
-  cursor: inherit;
+  tbody tr {
+    &:hover {
+      background-color: inherit;
+    }
+
+    cursor: inherit;
+  } 
 }
 
 .mdl-textfield {
