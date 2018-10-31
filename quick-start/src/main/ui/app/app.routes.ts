@@ -8,7 +8,7 @@ import { LoginComponent } from './login';
 import { JobsComponent } from './jobs';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
-import { SettingsComponent } from './shared/components/settings';
+import { SettingsComponent } from './settings';
 import { NoContentComponent } from './no-content';
 import { AuthGuard } from './auth/auth-guard.service';
 

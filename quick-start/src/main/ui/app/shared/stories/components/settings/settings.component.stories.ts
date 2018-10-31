@@ -2,115 +2,29 @@ import {CommonModule} from '@angular/common';
 import {HttpModule} from '@angular/http';
 import {storiesOf, moduleMetadata} from '@storybook/angular';
 import {centered} from '@storybook/addon-centered/angular';
-import { MdlDialogService } from '@angular-mdl/core';
-import { EventEmitter } from '@angular/core';
 import {
+  text,
+  boolean,
   withKnobs
 } from '@storybook/addon-knobs';
+import {action} from '@storybook/addon-actions';
 import {StoryCardComponent} from '../../utils';
 import {ThemeModule} from "../../../components";
-import {SettingsComponent} from "../../../components";
-import { SettingsService } from '../../../../settings';
-import { InstallService } from '../../../../installer';
-import { ProjectService } from '../../../../projects';
-import { STOMPService } from '../../../../stomp';
+import {SettingsUiComponent} from "../../../components";
 
-import { RouterTestingModule } from '@angular/router/testing';
-import { Observable } from 'rxjs';
-
-
-/**
- * Create a mock of each service
- */
-class MockSettingsService {
-
-  private _mlcpPath: string = '';
-  traceEnabled: boolean = false;
-  debugEnabled: boolean = false;
-
-  constructor() { }
-
-  get mlcpPath(): string {
-    return this._mlcpPath;
-  }
-
-  set mlcpPath(path: string) { this._mlcpPath = path; }
-
-  validateMlcpPath(path: string) { return Observable.of([]) } 
-
-  toggleDebugging() {
-    if (this.debugEnabled) {
-      this.disableDebugging();
-    } else {
-      this.enableDebugging();
-    }
-  }
-
-  toggleTracing() {
-    if (this.traceEnabled) {
-      this.disableTracing();
-    } else {
-      this.enableTracing();
-    }
-  }
-
-  enableDebugging() { 
-    this.debugEnabled = true;
-  }
-
-  disableDebugging() { 
-    this.debugEnabled = false;
-  }
-
-  enableTracing() {
-    this.traceEnabled = true;
-  }
-
-  disableTracing() {
-    this.traceEnabled = false;
-  }
-
-}
-
-class MockInstallService {
-  messageEmitter: EventEmitter<any> = new EventEmitter<any>();
-
-  install() {}
-  uninstall() {}
-}
-
-class MockProjectService {
-
-}
-
-class MockSTOMPService {
-
-}
-
-class MockMdlDialogService {
-  confirm(question: string, declineText?: string, confirmText?: string, title?: string): Observable<void> {
-    return Observable.of();
-  };
-}
 
 storiesOf('Components|Settings', module)
   .addDecorator(withKnobs)
   .addDecorator(
     moduleMetadata({
-      imports: [CommonModule, ThemeModule, HttpModule, RouterTestingModule],
+      imports: [CommonModule, ThemeModule, HttpModule],
       schemas: [],
       declarations: [
-        SettingsComponent,
+        SettingsUiComponent,
         StoryCardComponent
       ],
       entryComponents: [],
-      providers: [
-        { provide: MdlDialogService, useValue: new MockMdlDialogService() }, 
-        { provide: SettingsService, useValue: new MockSettingsService() }, 
-        { provide: InstallService, useValue: new MockInstallService() }, 
-        { provide: ProjectService, useValue: new MockProjectService() }, 
-        { provide: STOMPService, useValue: new MockSTOMPService() }
-      ]
+      providers: []
     })
   )
   .addDecorator(centered)
@@ -118,8 +32,30 @@ storiesOf('Components|Settings', module)
     template: `
            <mlui-dhf-theme>
              <mlui-story-card [width]="'640px'" [height]="'675px'">
-                <app-settings></app-settings>
+                <app-settings-ui      
+                  [mlcpPath]=""
+                  [isMlcpPathValid]="isMlcpPathValid"
+                  [isTraceEnabled]="isTraceEnabled"
+                  [isDebugEnabled]="isDebugEnabled"
+                  [isPerformingInstallUninstall]="isPerformingInstallUninstall"
+                  (mlcpPathChanged)="mlcpPathChanged($event)"
+                  (toggleTrace)="toggleTrace($event)"
+                  (toggleDebug)="toggleDebug($event)"
+                  (uninstallClicked)="uninstallClicked()"
+                  (redeployClicked)="redeployClicked()"
+                ></app-settings-ui>  
              </mlui-story-card>
            </mlui-dhf-theme>`,
-    props: { }
+    props: { 
+      mlcpPath: text('mlcpPath', 'mlcpPath'),
+      isMlcpPathValid: boolean('isMlcpPathValid', undefined),
+      isTraceEnabled: boolean('isTraceEnabled', true),
+      isDebugEnabled: boolean('isDebugEnabled', true),
+      isMlcpPaisPerformingInstallUninstallthValid: boolean('isPerformingInstallUninstall', false),
+      mlcpPathChanged: action('mlcpPathChanged'),
+      toggleTrace: action('toggleTrace'),
+      toggleDebug: action('toggleDebug'),
+      uninstallClicked: action('uninstallClicked'),
+      redeployClicked: action('redeployClicked'),
+    }
   }));

@@ -1,17 +1,27 @@
 import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { SettingsService } from '../../../settings';
-import { InstallService } from '../../../installer';
-
-import { ProjectService } from '../../../projects';
-
+import { SettingsService } from './settings.service';
+import { InstallService } from '../installer';
+import { ProjectService } from '../projects';
 import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss'],
+  template: `
+    <app-settings-ui      
+      [mlcpPath]="mlcpPath"
+      [isMlcpPathValid]="isMlcpPathValid"
+      [isTraceEnabled]="isTraceEnabled"
+      [isDebugEnabled]="isDebugEnabled"
+      [isPerformingInstallUninstall]="isPerformingInstallUninstall"
+      (mlcpPathChanged)="mlcpPathChanged($event)"
+      (toggleTrace)="toggleTrace($event)"
+      (toggleDebug)="toggleDebug($event)"
+      (uninstallClicked)="uninstall()"
+      (redeployClicked)="redeploy()"
+    ></app-settings-ui>  
+  `
 })
 export class SettingsComponent {
 
@@ -48,6 +58,22 @@ export class SettingsComponent {
     } else {
       this.settings.mlcpPath = path;
     }
+  }
+
+  get isPerformingInstallUninstall(): boolean {
+    return this.isInstalling || this.isUninstalling;
+  }
+
+  get isTraceEnabled(): boolean {
+    return this.settings.traceEnabled;
+  }
+
+  get isDebugEnabled(): boolean {
+    return this.settings.debugEnabled;
+  }
+
+  mlcpPathChanged(path: string) {
+    return this.mlcpPath = path;
   }
 
   debugEnabled() {

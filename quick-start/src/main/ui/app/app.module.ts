@@ -16,7 +16,8 @@ import {
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
-import { SettingsComponent } from './shared/components/settings';
+import { SettingsComponent } from './settings';
+import { SettingsUiComponent } from './shared/components/settings';
 
 import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
