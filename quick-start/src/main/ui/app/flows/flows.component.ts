@@ -13,7 +13,7 @@ import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
 import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
-import { NewEntityComponent } from '../new-entity/new-entity.component';
+import { NewEntityComponent } from '../shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from '../new-flow/new-flow.component';
 
 import { JobListenerService } from '../jobs/job-listener.service';

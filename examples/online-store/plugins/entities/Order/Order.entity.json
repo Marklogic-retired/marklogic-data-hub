@@ -8,7 +8,7 @@
       "primaryKey" : "id",
       "required" : [ ],
       "pii" : [ ],
-      "elementRangeIndex" : [ ],
+      "elementRangeIndex" : [ "id"  ],
       "rangeIndex" : [ "id" ],
       "wordLexicon" : [ ],
       "properties" : {

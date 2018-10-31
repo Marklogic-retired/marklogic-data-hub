@@ -655,121 +655,121 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should open the Entity disclosure', function() {
-      flowPage.clickEntityDisclosure('TestEntity');
+    it ('should open the Entity disclosure', async function() {
+      await flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('TestEntity')));
-      browser.sleep(5000);
+      await browser.sleep(5000);
     });
 
-    it('should create sjs xml input flow with ES', function() {
+    it('should create sjs xml input flow with ES', async function() {
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create sjs json input flow', function() {
+    it('should create sjs json input flow', async function() {
       let codeFormat = 'sjs';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create xqy xml input flow', function() {
+    it('should create xqy xml input flow', async function() {
       let codeFormat = 'xqy';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, false);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create xqy json input flow with ES', function() {
+    it('should create xqy json input flow with ES', async function() {
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createInputFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'INPUT')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'INPUT').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create sjs xml harmonize flow', function() {
+    it('should create sjs xml harmonize flow', async function() {
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
-      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create sjs json harmonize flow', function() {
+    it('should create sjs json harmonize flow', async function() {
       let codeFormat = 'sjs';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
-      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create xqy xml harmonize flow', function() {
+    it('should create xqy xml harmonize flow', async function() {
       let codeFormat = 'xqy';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
-      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
 
-    it('should create xqy json harmonize flow', function() {
+    it('should create xqy json harmonize flow', async function() {
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
-      flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
-      expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
+      await flowPage.createHarmonizeFlow('TestEntity', flowName, dataFormat, codeFormat, true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE')));
+      await expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
     
-    it ('should open Product entity disclosure', function() {
-      flowPage.clickEntityDisclosure('Product');
-      browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('Product')));
+    it ('should open Product entity disclosure', async function() {
+      await flowPage.clickEntityDisclosure('Product');
+      await browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('Product')));
     });
 
-    it ('should create input flow on Product entity', function() {
+    it ('should create input flow on Product entity', async function() {
       //create Product input flow
-      flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      expect(flowPage.getFlow('Product', 'Load Products', 'INPUT').isDisplayed()).toBe(true, 'Load Products' + ' is not present');
+      await flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
+      await expect(flowPage.getFlow('Product', 'Load Products', 'INPUT').isDisplayed()).toBe(true, 'Load Products' + ' is not present');
       browser.sleep(3000);
     });
 
-    it ('should create harmonize flow on Product entity', function() {
+    it ('should create harmonize flow on Product entity', async function() {
       //create Product harmonize flow
-      flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
+      await flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
+      await browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
+      await expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true, 'Harmonize Products' + ' is not present');
       browser.sleep(3000);
       //add flow options
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.elementToBeClickable(flowPage.tabs));
+      await flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      await browser.wait(EC.elementToBeClickable(flowPage.tabs));
       console.log('clicking + button to add options')
-      flowPage.addFlowOptionsButton().click();
-      flowPage.addFlowOptionsButton().click();
+      await flowPage.addFlowOptionsButton().click();
+      await flowPage.addFlowOptionsButton().click();
       console.log('setting key value options')
-      flowPage.setKeyValueFlowOptionsByPosition(1, 'hello', 'world');
-      flowPage.setKeyValueFlowOptionsByPosition(2, 'myNumber', '250.456');
-      flowPage.setKeyValueFlowOptionsByPosition(3, 'myDate', '2017-03-07');
+      await flowPage.setKeyValueFlowOptionsByPosition(1, 'hello', 'world');
+      await flowPage.setKeyValueFlowOptionsByPosition(2, 'myNumber', '250.456');
+      await flowPage.setKeyValueFlowOptionsByPosition(3, 'myDate', '2017-03-07');
     });
 
     /*it ('should retain flow options when moving around', function() {

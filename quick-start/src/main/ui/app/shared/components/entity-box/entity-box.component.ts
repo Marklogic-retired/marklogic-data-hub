@@ -9,8 +9,8 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Entity, PropertyType } from '../entities';
-import { ResizableComponent } from '../shared/components/resizable/resizable.component';
+import { Entity, PropertyType } from '../../../entities';
+import { ResizableComponent } from '../resizable/resizable.component';
 
 @Component({
   selector: 'app-entity-box',

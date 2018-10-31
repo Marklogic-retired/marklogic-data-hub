@@ -9,14 +9,14 @@ import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './has-bugs-dialog';
 import {
-  ChooseCollationComponent,
   EntityBoxComponent,
+  ChooseCollationComponent,
   EntityModelerComponent,
   EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
-import { SettingsComponent } from './settings';
+import { SettingsComponent } from './shared/components/settings';
 
 import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
@@ -33,7 +33,7 @@ import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './shared/components/ml-error';
-import { NewEntityComponent } from './new-entity/new-entity.component';
+import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './shared/components/pagination';
@@ -51,9 +51,9 @@ import { InstallService } from './installer';
 import { JobService } from './jobs/jobs.service';
 import { JobListenerService } from './jobs/job-listener.service';
 import { MapService } from './mappings/map.service';
-import { ProjectService } from './projects/projects.service';
-import { SettingsService } from './settings/settings.service';
-import { STOMPService } from './stomp/stomp.service';
+import { ProjectService } from './projects';
+import { SettingsService } from './settings';
+import { STOMPService } from './stomp';
 import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { FocusElementDirective } from './shared/directives/focus-element/focus-element.directive';
 import { TraceService } from './traces/trace.service';
