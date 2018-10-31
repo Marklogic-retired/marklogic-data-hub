@@ -56,7 +56,7 @@ import java.util.HashMap;
 public class StreamCollectorTest extends HubTestBase {
 
     private static final String ENTITY = "streamentity";
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
+    private static Path projectDir = Paths.get(PROJECT_PATH);
     private static final int TEST_SIZE = 3000000;
     private static final int BATCH_SIZE = 1000;
     private static int DOC_COUNT = TEST_SIZE / BATCH_SIZE;
@@ -76,14 +76,13 @@ public class StreamCollectorTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
 
         createProjectDir();
+        dataHub.initProject();
 
         // it triggers installation of staging db before staging schemas db exists.
         // a subtle bug. to solve, users must create schemas db hook here too.
         Path dbDir = projectDir.resolve("src/main/entity-config").resolve("databases");
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
-
-        createProjectDir();
 
         // disable tracing because trying to trace the 3 million ids to a doc will fail.
         disableDebugging();

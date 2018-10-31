@@ -40,7 +40,7 @@ public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
        HashMap<String, Boolean> result = new HashMap<>();
        result.put(UNIQUE_KEY, true);
        try {
-           Files.walkFileTree(project.getEntityConfigDir(), new SimpleFileVisitor<Path>() {
+           Files.walkFileTree(project.getHubEntitiesDir(), new SimpleFileVisitor<Path>() {
                @Override
                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                    if (isRestDir(dir)) {
