@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
-import { ChooseCollationComponent } from './choose-collation.component';
+import { ChooseCollationComponent } from '../shared/components/choose-collation/choose-collation.component';
 import { ExternalDefDialogComponent } from './externaldef-dialog.component';
 
 import { Cardinality, Entity, PropertyType } from '../entities';

@@ -9,12 +9,12 @@ import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './has-bugs-dialog';
 import {
+  EntityBoxComponent,
   ChooseCollationComponent,
   EntityModelerComponent,
   EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
-import { EntityBoxComponent } from './shared/components/';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './shared/components/settings';
 
