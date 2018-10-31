@@ -20,7 +20,7 @@ import { SettingsUiComponent } from './shared/components';
 import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
 import { MdlSelectModule } from '@angular-mdl/select';
-import { GridManiaModule } from './grid';
+import { GridManiaModule } from './shared/components/grid';
 import { BsDropdownModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
