@@ -14,6 +14,8 @@ import { MdlDialogService } from '@angular-mdl/core';
       [isMlcpPathValid]="isMlcpPathValid"
       [isTraceEnabled]="isTraceEnabled"
       [isDebugEnabled]="isDebugEnabled"
+      [installStatus]="installStatus"
+      [uninstallStatus]="uninstallStatus"
       [isPerformingInstallUninstall]="isPerformingInstallUninstall"
       (mlcpPathChanged)="mlcpPathChanged($event)"
       (toggleTrace)="toggleTrace($event)"

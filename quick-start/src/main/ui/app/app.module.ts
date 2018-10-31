@@ -9,15 +9,13 @@ import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './has-bugs-dialog';
 import {
-  EntityBoxComponent,
-  ChooseCollationComponent,
   EntityModelerComponent,
   EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
 import { SettingsComponent } from './settings';
-import { SettingsUiComponent } from './shared/components/settings';
+import { SettingsUiComponent } from './shared/components';
 
 import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
@@ -29,7 +27,7 @@ import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
 import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
-import { FolderBrowserUiComponent } from './shared/components/folder-browser/folder-browser-ui.component';
+import { FolderBrowserUiComponent } from './shared/components';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
@@ -38,9 +36,9 @@ import { NewEntityComponent } from './shared/components/new-entity/new-entity.co
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './shared/components/pagination';
-import { ResizableComponent } from './shared/components/resizable/resizable.component';
-import { SelectComponent } from './shared/components/select/select.component';
-import { SelectListComponent } from './shared/components/select-list/select-list.component';
+import { ResizableComponent } from './shared/components';
+import { SelectComponent } from './shared/components';
+import { SelectListComponent } from './shared/components';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
@@ -58,22 +56,26 @@ import { ClipboardDirective } from './clipboard/clipboard.directive';
 import { FocusElementDirective } from './shared/directives/focus-element/focus-element.directive';
 import { TraceService } from './traces/trace.service';
 import { SearchService } from './search/search.service';
-import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options';
+import { DashboardComponent } from './dashboard';
 import { TitlecasePipe } from './titlecase.pipe';
-import { InlineEditComponent } from './shared/components/inline-edit/inline-edit.component';
+import { InlineEditComponent } from './shared/components';
 import { FacetsComponent } from './shared/components/facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
-import { SelectKeyValuesComponent } from './shared/components/select-key-values/select-key-values.component';
-import {JobExportDialogComponent} from "./jobs/job-export.component";
+import {SelectKeyValuesComponent} from './shared/components';
+import {JobExportDialogComponent} from "./jobs";
 
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
-import { NewMapUiComponent } from "./shared/components/mappings/new-map-ui.component";
-import {ThemeModule} from "./shared/components/theme/theme.module";
+import { NewMapUiComponent } from "./shared/components";
+import {ThemeModule} from "./shared/components";
+import {
+  ChooseCollationComponent,
+  EntityBoxComponent
+} from "./shared/components";
 
 @NgModule({
   declarations: [
@@ -121,7 +123,8 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
     MapComponent,
-    MappingsComponent
+    MappingsComponent,
+    SettingsUiComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,

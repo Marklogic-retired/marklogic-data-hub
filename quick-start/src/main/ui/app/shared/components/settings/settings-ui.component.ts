@@ -10,8 +10,10 @@ export class SettingsUiComponent {
   @Input() isMlcpPathValid: boolean;
   @Input() isTraceEnabled: boolean;
   @Input() isDebugEnabled: boolean;
+  @Input() installStatus: string;
+  @Input() uninstallStatus: string;
   @Input() isPerformingInstallUninstall: boolean;   // isUninstalling || isInstalling
-  
+
   @Output() mlcpPathChanged = new EventEmitter();
   @Output() toggleTrace = new EventEmitter();
   @Output() toggleDebug = new EventEmitter();
