@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Message } from 'stompjs/lib/stomp.min';
-import { STOMPService } from '../stomp/stomp.service';
+import { STOMPService } from '../stomp';
 import { FlowStatus } from '../entities/flow-status.model';
 
 @Injectable()
