@@ -32,8 +32,7 @@ import {JobExportDialogComponent} from "./job-export.component";
       (showTracesClicked)="showTraces($event)"
       (toggleSelectJobClicked)="toggleSelectJob($event)"
     ></app-jobs-ui>
-  `,
-  styleUrls: ['./jobs.component.scss'],
+  `
 })
 export class JobsComponent implements OnChanges, OnDestroy, OnInit {
 
