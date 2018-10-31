@@ -4,6 +4,7 @@ import { JobOutputComponent } from './job-output.component';
 import { Job } from './job.model';
 import { JobService } from "./jobs.service";
 import { JobListenerService } from "./job-listener.service";
+import { differenceInSeconds } from 'date-fns';
 
 import { SearchResponse } from '../search';
 import { MdlDialogService } from '@angular-mdl/core';
@@ -21,7 +22,6 @@ import {JobExportDialogComponent} from "./job-export.component";
       [activeFacets]="activeFacets"
       [jobs]="jobs"
       [selectedJobs]="selectedJobs"
-      [jobListener]="jobListener"
       (searchClicked)="doSearch()"
       (exportJobsClicked)="exportJobs()"
       (deleteJobsClicked)="deleteJobs()"
@@ -143,6 +143,10 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       this.selectedJobs.length = 0;
       this.searchResponse = response;
       this.jobs = _.map(response.results, (result: any) => {
+        // compute data for presentational component
+        result.content.duration = this.getDuration(result.content);
+        result.content.iconClass = this.getIconClass(result.content.flowType);
+        result.content.hasLiveOutput = this.hasLiveOutput(result.content);
         return result.content;
       });
     },
@@ -213,6 +217,25 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       leaveTransitionDuration: 400
     });
   }
+
+
+  getDuration(job: Job): number {
+    return differenceInSeconds(job.endTime, job.startTime);
+  }
+
+  public hasLiveOutput(job: Job): boolean {
+    return this.jobListener.jobHasOutput(job.jobId);
+  } 
+
+  public getIconClass(flowType: string) {
+    if (flowType === 'harmonize') {
+      return 'mdi-looks';
+    } else if (flowType === 'input') {
+      return 'mdi-import';
+    }
+    return '';
+  }  
+ 
 
   render(o) {
     return JSON.stringify(o);

@@ -8,3 +8,4 @@ export * from './select/select.component';
 export * from './mappings/new-map-ui.component';
 export * from './resizable/resizable.component';
 export * from './settings/settings.component';
+export * from './jobs/jobs-ui.component';

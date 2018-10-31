@@ -52,16 +52,16 @@
           </thead>
           <tbody>
             <tr *ngFor="let job of jobs" [ngClass]="{'error' : job.status === 'FAILED' }">
-              <td><i class="mdi" [ngClass]="getIconClass(job.flowType)"></i> {{job.flowType}}</td>
+              <td><i class="mdi" [ngClass]="job.iconClass"></i> {{job.flowType}}</td>
               <td>{{job.jobId}}</td>
               <td>{{job.entityName}}</td>
               <td>{{job.flowName}}</td>
               <td>{{job.status}}</td>
               <td>{{job.startTime | datePipe}}</td>
-              <td><span *ngIf="job.endTime">{{getDuration(job)}} seconds</span></td>
+              <td><span *ngIf="job.endTime">{{job.duration}} seconds</span></td>
               <td>
                 <mdl-button
-                  *ngIf="job.jobOutput || hasLiveOutput(job)"
+                  *ngIf="job.jobOutput || job.hasLiveOutput"
                   mdl-button-type="raised" mdl-colored="primary" mdl-ripple
                   (click)="showConsoleClicked.emit(job)"><i class="fa fa-terminal"></i></mdl-button>
               </td>
