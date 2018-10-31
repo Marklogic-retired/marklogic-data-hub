@@ -95,13 +95,13 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.replace("mlDeployRoles", DeployHubRolesTask);
         project.tasks.replace("mlDeployUsers", DeployHubUsersTask);
         project.tasks.replace("mlDeployAmps", DeployHubAmpsTask);
-		project.tasks.replace("mlDeployPrivileges", DeployHubPrivilegesTask);
+        project.tasks.replace("mlDeployPrivileges", DeployHubPrivilegesTask);
         project.tasks.replace("mlUndeployRoles", UndeployHubRolesTask);
         project.tasks.replace("mlUndeployUsers", UndeployHubUsersTask);
         project.tasks.replace("mlUndeployAmps", UndeployHubAmpsTask);
-		project.tasks.replace("mlUndeployPrivileges", UndeployHubPrivilegesTask);
+        project.tasks.replace("mlUndeployPrivileges", UndeployHubPrivilegesTask);
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
-		project.tasks.replace("mlUpdateIndexes", UpdateIndexes)
+        project.tasks.replace("mlUpdateIndexes", UpdateIndexes)
         project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployRoles");
         project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployUsers");
         project.tasks.mlUndeploySecurity.getDependsOn().add("mlUndeployRoles");

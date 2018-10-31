@@ -15,15 +15,13 @@
  */
 package com.marklogic.hub.deploy.commands;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -34,47 +32,49 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.resource.ResourceManager;
 
 public class DeployHubPrivilegesCommand extends DeployPrivilegesCommand {
-
-    /**
+	private List<String> payLoads;
+	
+	public DeployHubPrivilegesCommand() {
+		super();
+		payLoads = new ArrayList<String>();
+		try (
+			InputStream is1 = new ClassPathResource("hub-internal-config/security/privileges/dhf-internal-data-hub.json").getInputStream();
+			InputStream is2 = new ClassPathResource("hub-internal-config/security/privileges/dhf-internal-entities.json").getInputStream();
+			InputStream is3 = new ClassPathResource("hub-internal-config/security/privileges/dhf-internal-mappings.json").getInputStream();
+			InputStream is4 = new ClassPathResource("hub-internal-config/security/privileges/dhf-internal-trace-ui.json").getInputStream();
+		) {
+			this.payLoads.add(IOUtils.toString(is1, "utf-8"));
+			this.payLoads.add(IOUtils.toString(is2, "utf-8"));
+			this.payLoads.add(IOUtils.toString(is3, "utf-8"));
+			this.payLoads.add(IOUtils.toString(is4, "utf-8"));	       
+		} catch (IOException e) {
+			throw new DataHubConfigurationException(e);
+		}
+	}
+	
+	/**
      * Deploys the privileges if they are not already present
      * @param context The command context for execution.
      */
     @Override
     public void execute(CommandContext context) {
-    	Path src;
-		try {
-			src = Paths.get(DeployHubPrivilegesCommand.class.getClassLoader().getResource("hub-internal-config/security/privileges").toURI());
-		} catch (URISyntaxException e2) {
-			 throw new DataHubConfigurationException(e2);
-		}
-                
-		try (Stream<Path> stream = Files.walk(src)){
-	        stream.filter(f -> ! Files.isDirectory(f)).forEach(sourcePath -> {
-	        	String privFile = null;
-				try {
-					privFile = FileUtils.readFileToString(sourcePath.toFile());
-				} catch (IOException e1) {
-					throw new DataHubConfigurationException(e1);
-				}
-	        	ObjectNode node = null;
-				try {
-					node = new ObjectMapper().readValue(privFile, ObjectNode.class);
-				} catch (IOException e1) {
-					throw new DataHubConfigurationException(e1);
-				}
-	        	String privName = node.get("privilege-name").asText();
-	        	ManageClient manageClient = context.getManageClient();
-	        	try {
-	        		manageClient.getJsonAsSecurityUser("/manage/v2/privileges/"+ privName + "/properties?kind=uri");
-	        	}
-	        	catch(Exception e) {
-	        		logger.info("Creating privilege "+privName);
-	        		manageClient.postJsonAsSecurityUser("/manage/v2/privileges/", privFile);
-	        	}
-	        });
-		} catch (IOException e1) {
-			throw new DataHubConfigurationException(e1);
-		}
+    	payLoads.stream().forEach((String payLoad)->{
+    		ObjectNode node = null;
+			try {
+				node = new ObjectMapper().readValue(payLoad, ObjectNode.class);
+			} catch (IOException e1) {
+				throw new DataHubConfigurationException(e1);
+			}
+        	String privName = node.get("privilege-name").asText();
+        	ManageClient manageClient = context.getManageClient();
+        	try {
+        		manageClient.getJsonAsSecurityUser("/manage/v2/privileges/"+ privName + "/properties?kind=uri");
+        	}
+        	catch(Exception e) {
+        		logger.info("Creating privilege "+privName);
+        		manageClient.postJsonAsSecurityUser("/manage/v2/privileges/", payLoad);
+        	}
+    	});    	
     }
     
     /**
@@ -83,18 +83,11 @@ public class DeployHubPrivilegesCommand extends DeployPrivilegesCommand {
      */
     @Override
     public void undo(CommandContext context) {
-    	File resourceDir = null;
-		try {
-			resourceDir = new File(DeployHubPrivilegesCommand.class.getClassLoader().getResource("hub-internal-config/security/privileges").toURI());
-		} catch (URISyntaxException e) {
-			throw new DataHubConfigurationException(e);
-		}      
-        final ResourceManager mgr = getResourceManager(context);
-        for (File f : listFilesInDirectory(resourceDir)) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Processing file: " + f.getAbsolutePath());
-            }
-            deleteResource(mgr, context, f);
+    	logger.info("Removing privileges");
+        ResourceManager mgr = getResourceManager(context);
+        for (String f : this.payLoads) {
+        	mgr.delete(f);
+            
         }                  
     }
 }
