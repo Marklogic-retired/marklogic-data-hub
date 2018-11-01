@@ -25,6 +25,7 @@ public class UnInstaller extends HubTestBase {
     @PostConstruct
     public void teardownHub() {
         super.init();
+        dataHub.initProject();
         dataHub.uninstall();
         if (isCertAuth() || isSslRun()) {
             sslCleanup();

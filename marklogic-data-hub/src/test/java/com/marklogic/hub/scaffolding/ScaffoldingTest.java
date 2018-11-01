@@ -27,6 +27,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,10 +63,13 @@ public class ScaffoldingTest extends HubTestBase {
     @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        deleteProjectDir();
-
         createProjectDir();
         //isMl9 = getMlMajorVersion() == 9;
+    }
+
+    @AfterEach
+    public void teardown() {
+        deleteProjectDir();
     }
 
     @Test

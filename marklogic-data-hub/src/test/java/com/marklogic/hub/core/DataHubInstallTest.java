@@ -20,6 +20,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.ApplicationConfig;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,11 @@ public class DataHubInstallTest extends HubTestBase {
     public void setup() {
         XMLUnit.setIgnoreWhitespace(true);
         createProjectDir();
+    }
+
+    @AfterEach
+    public void teardown() {
+        deleteProjectDir();
     }
 
     //should be removed after DHFPROD-1263 is fixed.
