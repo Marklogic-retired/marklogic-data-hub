@@ -17,24 +17,22 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader
+import com.marklogic.hub.DataHub
+import com.marklogic.hub.EntityManager
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
+import com.marklogic.hub.impl.DataHubImpl
+import com.marklogic.hub.impl.EntityManagerImpl
+import com.marklogic.rest.util.ResourcesFragment
+
 import org.gradle.api.tasks.TaskAction
 
-class DeployUserModulesTask extends HubTask {
+class SaveIndexes extends HubTask {
 
     @TaskAction
-    void deployUserModules() {
-        def dh = getDataHub()
-        if (!isHubInstalled()) {
-            println("Data Hub is not installed.")
-            return
-        }
-        def cmd = new LoadUserStagingModulesCommand(getHubConfig())
-        // TODO: make this user configurable
-        cmd.setForceLoad(true);
-
-        cmd.execute(getCommandContext())
-
+    public void saveIndexes() {
+        println "Saving Indexes to src/main/entity-config/databases directory"
+        EntityManager em = new EntityManagerImpl(getHubConfig())
+        em.saveDbIndexes()
+        println "Saving Indexes to src/main/entity-config/databases directory complete"
     }
 }

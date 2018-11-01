@@ -189,21 +189,21 @@ public class HubProjectImpl implements HubProject {
         Path userSecurityDir = getUserSecurityDir();
         Path rolesDir = hubSecurityDir.resolve("roles");
         Path usersDir = hubSecurityDir.resolve("users");
-
+        
         Path userRolesDir = userSecurityDir.resolve("roles");
         Path userUsersDir = userSecurityDir.resolve("users");
 
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
+        
         userRolesDir.toFile().mkdirs();
         userUsersDir.toFile().mkdirs();
 
         writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
         writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
         writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
-
-
+        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);               
+        
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 

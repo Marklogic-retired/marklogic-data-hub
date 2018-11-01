@@ -29,8 +29,9 @@
         <dispatch>/trace-ui/index.html</dispatch>
     </match-path>
 
-    <match-path matches="^/.*\.(js|css|ttf|eot|woff|woff2|svg)$">
+    <match-path matches="^/.*\.(ico|js|css|ttf|eot|woff|woff2|svg)$">
         <add-query-param name="uri">$0</add-query-param>
+        <add-query-param name="extension">$1</add-query-param>
         <dispatch>/data-hub/4/tracing/trace-ui.xqy</dispatch>
     </match-path>
 

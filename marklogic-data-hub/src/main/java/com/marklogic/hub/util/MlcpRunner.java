@@ -196,16 +196,12 @@ public class MlcpRunner extends ProcessRunner {
                                 u -> (
                                     u.contains("jdk") ||
                                     u.contains("jre") ||
-                                    u.contains(System.getProperty("user.dir")) ||
-                                    u.contains("marklogic") ||
-                                    u.contains("logback") ||
-                                    u.contains("slf4j-api") ||
-                                    u.contains("log4j-over-slf4j") ||
-                                    u.contains("winutils") ||
+                                    u.contains("log") ||
                                     u.contains("xml") ||
                                     u.contains("json") ||
                                     u.contains("jackson") ||
                                     u.contains("xerces") ||
+                                    u.contains("slf") ||
                                     u.contains("mlcp") ||
                                     u.contains("xcc") ||
                                     u.contains("xpp") ||

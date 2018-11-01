@@ -211,15 +211,6 @@ public class EntityManagerTest extends HubTestBase {
         assertJsonEqual(getResource("entity-manager-test/db-config2.json"), FileUtils.readFileToString(dir.resolve("final-database.json").toFile()), true);
         assertJsonEqual(getResource("entity-manager-test/db-config2.json"), FileUtils.readFileToString(dir.resolve("staging-database.json").toFile()), true);
 
-        // shouldn't save them on round 2 because of timestamps
-        assertFalse(entityManager.saveDbIndexes());
-
-        installUserModules(getHubAdminConfig(), false);
-
-        // shouldn't save them on round 3 because of timestamps
-        assertFalse(entityManager.saveDbIndexes());
-
-
         // try a deploy too
         /* this section causes a state change in the db that's hard to tear down/
          so it's excluded from our automated testing for the time being

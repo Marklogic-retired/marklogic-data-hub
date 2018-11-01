@@ -57,7 +57,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         mapper = new ObjectMapper();
     }
 
-    @Override public boolean saveQueryOptions() {
+    @Override
+    public boolean saveQueryOptions() {
         QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
         try {
             Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
@@ -76,14 +77,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 FileUtils.writeStringToFile(finalFile, options);
                 return true;
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    @Override public HashMap<Enum, Boolean> deployQueryOptions() {
+    @Override
+    public HashMap<Enum, Boolean> deployQueryOptions() {
         // save them first
         saveQueryOptions();
 
@@ -97,6 +98,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     public boolean deployFinalQueryOptions() {
         return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
     }
+
     public boolean deployStagingQueryOptions() {
         return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
     }
@@ -126,17 +128,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return isLoaded;
     }
 
-    @Override public boolean saveDbIndexes() {
+    @Override
+    public boolean saveDbIndexes() {
         try {
             Path dir = hubConfig.getEntityDatabaseDir();
+            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
-            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
 
-            long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
-            List<JsonNode> entities = getModifiedRawEntities(lastModified);
+            List<JsonNode> entities = getAllEntities();
+
             if (entities.size() > 0) {
                 DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
@@ -150,8 +153,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
                 return true;
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
@@ -176,7 +178,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                boolean hasOneChanged = false;
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
                     for (File entityDef : entityDefs) {
@@ -247,7 +248,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode node = objectMapper.valueToTree(entities);
             ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-            if (resultItr == null || ! resultItr.hasNext()) {
+            if (resultItr == null || !resultItr.hasNext()) {
                 throw new EntityServicesGenerationException("Unable to generate pii config");
             }
             ResourceServices.ServiceResult res = resultItr.next();
@@ -255,6 +256,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
 
     }
+
     private class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 
@@ -270,13 +272,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || ! resultItr.hasNext()) {
+                if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate query options");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return "{}";
@@ -298,13 +299,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || ! resultItr.hasNext()) {
+                if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate database indexes");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return "{}";
@@ -338,20 +338,20 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 v3ConfigAsJson = mapper.readTree(v3Config);
 
                 ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
-                int i=0;
+                int i = 0;
                 // write each path as a separate file for ml-gradle
                 Iterator<JsonNode> pathsIterator = paths.iterator();
                 while (pathsIterator.hasNext()) {
                     JsonNode n = pathsIterator.next();
                     i++;
-                    String thisPath = String.format("%02d_%s", i , HubConfig.PII_PROTECTED_PATHS_FILE);
+                    String thisPath = String.format("%02d_%s", i, HubConfig.PII_PROTECTED_PATHS_FILE);
                     File protectedPathConfig = protectedPaths.resolve(thisPath).toFile();
                     writer.writeValue(protectedPathConfig, n);
                 }
-                writer.writeValue(queryRolesetsConfig,  v3ConfigAsJson.get("config").get("query-roleset"));
+                writer.writeValue(queryRolesetsConfig, v3ConfigAsJson.get("config").get("query-roleset"));
             }
         } catch (IOException e) {
-            throw new EntityServicesGenerationException("Protected path writing failed",e);
+            throw new EntityServicesGenerationException("Protected path writing failed", e);
         }
         return true;
     }
