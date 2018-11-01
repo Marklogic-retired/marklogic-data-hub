@@ -7,7 +7,7 @@ import { AuthService } from './auth';
 
 import { EnvironmentService } from './environment';
 
-import { JobService } from './jobs/jobs.service';
+import { JobService } from './jobs';
 
 import { ProjectService } from './projects';
 

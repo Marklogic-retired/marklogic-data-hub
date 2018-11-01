@@ -30,6 +30,7 @@ import { FolderBrowserComponent } from './folder-browser/folder-browser.componen
 import { FolderBrowserUiComponent } from './shared/components';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
+import { JobsUiComponent } from './shared/components/jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
@@ -92,6 +93,7 @@ import {
     EntityModelerComponent,
     ExternalDefDialogComponent,
     JobsComponent,
+    JobsUiComponent,
     JobExportDialogComponent,
     JobOutputComponent,
     LoginComponent,
@@ -106,6 +108,7 @@ import {
     SelectComponent,
     SelectListComponent,
     SettingsComponent,
+    SettingsUiComponent,
     TracesComponent,
     TraceViewerComponent,
     SearchComponent,
@@ -123,8 +126,7 @@ import {
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
     MapComponent,
-    MappingsComponent,
-    SettingsUiComponent
+    MappingsComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
