@@ -20,7 +20,7 @@ exports.config = {
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
-  framework: 'jasmine',
+  framework: 'jasmine2',
   allScriptsTimeout: 220000,
   getPageTimeout: 70000,
   jasmineNodeOpts: {
@@ -30,7 +30,24 @@ exports.config = {
     defaultTimeoutInterval: 220000,
     print: function() {}
   },
-  onPrepare() {
+  plugins: [{
+    package: 'protractor-screenshoter-plugin',
+    screenshotPath: './e2e/reports/screenshoter-plugin',
+    screenshotOnExpect: 'failure',
+    screenshotOnSpec: 'none',
+    withLogs: true,
+    writeReportFreq: 'asap',
+    imageToAscii: 'none',
+    clearFoldersBeforeTest: true
+  }],
+
+  onPrepare: function() {
+    // returning the promise makes protractor wait for the reporter config before executing tests
+    return global.browser.getProcessedConfig().then(function(config) {
+      //it is ok to be empty
+    });
+  },
+  onPrepare: function() {
     require('ts-node').register({
       project: 'e2e/tsconfig.e2e.json'
     });
