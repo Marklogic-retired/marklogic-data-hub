@@ -19,7 +19,7 @@ export class GridManiaComponent {}
   template: '<ng-content></ng-content>'
 })
 export class DividerComponent implements OnDestroy, OnInit {
-  protected resizing: boolean = false;
+  protected resizing = false;
   protected documentColumnResizeListener: any;
   protected documentColumnResizeEndListener: any;
   protected draggerPosX: number;
@@ -27,7 +27,7 @@ export class DividerComponent implements OnDestroy, OnInit {
   protected draggerWidth: number;
   protected draggerHeight: number;
   protected previousCursor: any;
-  protected horizontal: boolean = false;
+  protected horizontal = false;
 
   protected container: any;
   protected prev: any;
@@ -82,13 +82,13 @@ export class DividerComponent implements OnDestroy, OnInit {
   onHorizontalResize(event) {
     const totalWidth = this.prev.offsetWidth + this.next.offsetWidth;
 
-    let leftPercentage = (
+    const leftPercentage = (
       (
         (event.pageX - this.prev.getBoundingClientRect().left + document.body.scrollLeft) +
         (this.draggerPosX - this.draggerWidth / 2)
       ) / totalWidth
     );
-    let rightPercentage = 1 - leftPercentage;
+    const rightPercentage = 1 - leftPercentage;
 
     this.prev.style['flex'] = leftPercentage.toString();
     this.next.style['flex'] = rightPercentage.toString();
@@ -97,13 +97,13 @@ export class DividerComponent implements OnDestroy, OnInit {
   onVerticalResize(event) {
     const totalHeight = this.prev.offsetHeight + this.next.offsetHeight;
 
-    let topPercentage = (
+    const topPercentage = (
       (
         (event.pageY - this.prev.getBoundingClientRect().top + document.body.scrollTop) +
         (this.draggerPosY - this.draggerHeight / 2)
       ) / totalHeight
     );
-    let bottomPercentage = 1 - topPercentage;
+    const bottomPercentage = 1 - topPercentage;
 
     this.prev.style['flex'] = topPercentage.toString();
     this.next.style['flex'] = bottomPercentage.toString();
