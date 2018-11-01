@@ -11,3 +11,4 @@ export * from './entity-box/entity-box.component';
 export * from './resizable/resizable.component';
 export * from './settings/settings-ui.component';
 export * from './select-key-values/select-key-values.component';
+export * from './jobs/jobs-ui.component';
