@@ -1,9 +1,14 @@
 Assumptions:
-1) This project assumes that DHF environment is already provisioned
-2) You have information about load balancer hosts
+1) This project assumes that DHS environment is already provisioned (DHS environment is provisioned in AWS. All the app servers, databases and required roles 
+are provisioned and the users are created)
+2) You have information about load balancer hosts. The loadbalancerhosts can be configured to be public. If the loadbalancerhosts are public, you can run this project from local environment. If the loadbalancerhosts are not public, then these hosts are only accessible from the VPC that is peered to the MarkLogic VPC (This can be accessed from your local by ssh tunneling)
 
+Example Demonstration:
+This example demonstrates the usage of gradle tasks to ingest and harmonize sample Product data into MarkLogic.
+The example will walk you through an end to end flow of loading datahub modules into DHS environment, creating entites, mappings, input/harmonize flows and 
+running the flows in DHS environment
 
-Sample Project to work on DHS:
+Steps to work on DHS:
 
 1) Add the build.gradle file from the docs folder into the current directory
 2) install gradle and run gradle wrapper --gradle-version 3.4
