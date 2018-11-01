@@ -1,0 +1,10 @@
+{
+  "functionName" : "customerWithSalesAsTitle",
+  "params" : [{
+                "name" : "title",
+                "datatype" : "string"
+  }],
+  "return" : {
+        "datatype" : "jsonDocument"
+  }
+}
