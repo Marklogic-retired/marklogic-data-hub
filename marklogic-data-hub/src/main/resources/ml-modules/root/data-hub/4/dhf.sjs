@@ -110,7 +110,9 @@ function contentContext() {
  */
 function contentContext(rawContent) {
   let ctx = context('content');
-  addTraceInput(ctx, "rawContent", rawContent);
+  if(rawContent) {
+    addTraceInput(ctx, "rawContent", rawContent);
+  }
   return ctx;
 };
 

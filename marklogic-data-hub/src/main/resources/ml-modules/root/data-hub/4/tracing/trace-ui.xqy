@@ -23,7 +23,21 @@ import module namespace debug = "http://marklogic.com/data-hub/debug"
 
 declare option xdmp:mapping "false";
 
-debug:dump-env(),
+debug:dump-env()
+,
+switch (xdmp:get-request-field("extension"))
+case "css" return   xdmp:set-response-content-type("text/css")
+case "js" return    xdmp:set-response-content-type("application/javascript")
+case "ico" return   xdmp:set-response-content-type("image/vnd.microsoft.icon")
+case "ttf" return   xdmp:set-response-content-type("application/font-sfont")
+case "eot" return   xdmp:set-response-content-type("application/vnd.ms-fontobject")
+case "woff" return  xdmp:set-response-content-type("application/font-woff")
+case "woff2" return xdmp:set-response-content-type("application/font-woff2")
+case "svg" return   xdmp:set-response-content-type("image/svg+xml")
+default return      ()
+,
+xdmp:log(("FIELD", xdmp:get-request-field("uri")))
+,
 hul:run-in-modules(function() {
   fn:doc("/trace-ui" || xdmp:get-request-field("uri"))
 })

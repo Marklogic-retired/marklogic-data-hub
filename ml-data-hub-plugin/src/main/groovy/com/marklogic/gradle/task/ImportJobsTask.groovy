@@ -33,7 +33,7 @@ class ImportJobsTask extends HubTask {
 
         def jobManager = getJobManager()
         def dh = getDataHub()
-        if (!dh.isInstalled()) {
+        if (!isHubInstalled()) {
             println("Data Hub is not installed.")
             return
         }
