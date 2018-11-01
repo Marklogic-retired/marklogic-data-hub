@@ -11,44 +11,44 @@ export default function(tmpDir) {
     });
 
     //Verify  logo and product name along with text
-    it('Starts off with the right stuff', function() {
+    it('Starts off with the right stuff', async function() {
 
-      expect(loginPage.browseButton.isPresent()).toBe(true);
-      expect(loginPage.projectList.isPresent()).toBe(false);
-      expect(loginPage.folderBrowser.isDisplayed()).toBe(true);
-      expect(loginPage.nextButton('ProjectDirTab').isPresent()).toBe(true);
-      expect(loginPage.odhIcon.isDisplayed()).toBe(true);
+      expect(await loginPage.browseButton.isDisplayed()).toBe(true);
+      expect(await loginPage.projectList.isDisplayed()).toBe(false);
+      expect(await loginPage.folderBrowser.isDisplayed()).toBe(true);
+      expect(await loginPage.nextButton('ProjectDirTab').isDisplayed()).toBe(true);
+      expect(await loginPage.odhIcon.isDisplayed()).toBe(true);
 
-      expect(loginPage.projectDirTab.isDisplayed()).toBe(true);
-      expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
-      expect(loginPage.postInitTab.isDisplayed()).toBe(false);
-      expect(loginPage.environmentTab.isDisplayed()).toBe(false);
-      expect(loginPage.loginTab.isDisplayed()).toBe(false);
-      expect(loginPage.installedCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
-      expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.installerTab.isPresent()).toBe(false);
+      expect(await loginPage.projectDirTab.isDisplayed()).toBe(true);
+      expect(await loginPage.initIfNeededTab.isDisplayed()).toBe(false);
+      expect(await loginPage.postInitTab.isDisplayed()).toBe(false);
+      expect(await loginPage.environmentTab.isDisplayed()).toBe(false);
+      expect(await loginPage.loginTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installedCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
+      expect(await loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installerTab.isDisplayed()).toBe(false);
     });
 
     it ('Has the correct current folder', function() {
       expect(loginPage.currentFolderValue).toContain('quick-start');
     });
 
-    it ('Should select the temp folder', function() {
+    it ('Should select the temp folder', async function() {
       loginPage.setCurrentFolder(tmpDir);
       console.log('clicking next!');
-      loginPage.clickNext('ProjectDirTab');
+      await loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.initIfNeededTab));
     });
 
-    it ('Should be on the init project page', function() {
-      expect(loginPage.dataHubNameLabel.isPresent()).toBe(true);
+    it ('Should be on the init project page', async function() {
+      expect(await loginPage.dataHubNameLabel.isDisplayed()).toBe(true);
       loginPage.setDataHubName('data-hub-ol');
-      expect(loginPage.marklogicHostLabel.isPresent()).toBe(true);
+      expect(await loginPage.marklogicHostLabel.isDisplayed()).toBe(true);
       console.log('clicking advanced settings');
-      loginPage.clickAdvancedSettings();
+      await loginPage.clickAdvancedSettings();
       console.log('verify advanced settings');
-      expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
+      expect(await loginPage.stagingAppserverNameLabel.isDisplayed()).toBe(true);
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-staging-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Modules Database Name').getAttribute('value'))
@@ -59,14 +59,14 @@ export default function(tmpDir) {
         .toEqual('data-hub-ol-final-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-ol-final-SCHEMAS');
-      loginPage.clickAdvancedSettings();
+      await loginPage.clickAdvancedSettings();
       console.log('restore to default settings');
-      loginPage.clickRestoreDefaults();
+      await loginPage.clickRestoreDefaults();
       browser.wait(EC.elementToBeClickable(loginPage.restoreButton));
-      loginPage.clickRestore();
-      loginPage.clickAdvancedSettings();
+      await loginPage.clickRestore();
+      await loginPage.clickAdvancedSettings();
       console.log('verify restored settings');
-      expect(loginPage.stagingAppserverNameLabel.isPresent()).toBe(true);
+      expect(await loginPage.stagingAppserverNameLabel.isDisplayed()).toBe(true);
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-staging-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Modules Database Name').getAttribute('value'))
@@ -77,28 +77,28 @@ export default function(tmpDir) {
         .toEqual('data-hub-final-TRIGGERS');
       expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-final-SCHEMAS');
-      loginPage.clickAdvancedSettings();
+      await loginPage.clickAdvancedSettings();
       expect(loginPage.dataHubName.getAttribute('value')).toEqual('data-hub');
       //use custom advanced settings
       loginPage.setDataHubName('data-hub-qa');
       //verify custom advanced settings
-      loginPage.clickAdvancedSettings();
+      await loginPage.clickAdvancedSettings();
       expect(loginPage.advancedSettingsValue('Staging Triggers Database Name').getAttribute('value'))
         .toEqual('data-hub-qa-staging-TRIGGERS');
         expect(loginPage.advancedSettingsValue('Final Schemas Database Name').getAttribute('value'))
         .toEqual('data-hub-qa-final-SCHEMAS');
-      loginPage.clickAdvancedSettings();
+      await loginPage.clickAdvancedSettings();
       browser.driver.sleep(3000);
-      expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
-      expect(loginPage.initIfNeededTab.isDisplayed()).toBe(true);
-      expect(loginPage.postInitTab.isDisplayed()).toBe(false);
-      expect(loginPage.environmentTab.isDisplayed()).toBe(false);
-      expect(loginPage.loginTab.isDisplayed()).toBe(false);
-      expect(loginPage.installedCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
-      expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.installerTab.isPresent()).toBe(false);
-      loginPage.clickInitialize();
+      expect(await loginPage.projectDirTab.isDisplayed()).toBe(false);
+      expect(await loginPage.initIfNeededTab.isDisplayed()).toBe(true);
+      expect(await loginPage.postInitTab.isDisplayed()).toBe(false);
+      expect(await loginPage.environmentTab.isDisplayed()).toBe(false);
+      expect(await loginPage.loginTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installedCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
+      expect(await loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installerTab.isDisplayed()).toBe(false);
+      await loginPage.clickInitialize();
       browser.wait(EC.elementToBeClickable(loginPage.postInitTab));
     });
 
@@ -130,78 +130,78 @@ export default function(tmpDir) {
       fs.copy(noPiiUserFilePath, tmpDir + '/src/main/ml-config/security/users/no-pii-user.json');
     });
 
-    it ('Should be on the post init page', function() {
-      expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
-      expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
-      expect(loginPage.postInitTab.isDisplayed()).toBe(true);
-      expect(loginPage.environmentTab.isDisplayed()).toBe(false);
-      expect(loginPage.loginTab.isDisplayed()).toBe(false);
-      expect(loginPage.installedCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
-      expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.installerTab.isPresent()).toBe(false);
-      loginPage.clickNext('PostInit');
+    it ('Should be on the post init page', async function() {
+      expect(await loginPage.projectDirTab.isDisplayed()).toBe(false);
+      expect(await loginPage.initIfNeededTab.isDisplayed()).toBe(false);
+      expect(await loginPage.postInitTab.isDisplayed()).toBe(true);
+      expect(await loginPage.environmentTab.isDisplayed()).toBe(false);
+      expect(await loginPage.loginTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installedCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
+      expect(await loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installerTab.isDisplayed()).toBe(false);
+      await loginPage.clickNext('PostInit');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
     });
 
-    it ('Should be on the environment tab', function() {
-      expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
-      expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
-      expect(loginPage.postInitTab.isDisplayed()).toBe(false);
-      expect(loginPage.environmentTab.isDisplayed()).toBe(true);
-      expect(loginPage.loginTab.isDisplayed()).toBe(false);
-      expect(loginPage.installedCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
-      expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.installerTab.isPresent()).toBe(false);
-      loginPage.clickNext('EnvironmentTab');
+    it ('Should be on the environment tab', async function() {
+      expect(await loginPage.projectDirTab.isDisplayed()).toBe(false);
+      expect(await loginPage.initIfNeededTab.isDisplayed()).toBe(false);
+      expect(await loginPage.postInitTab.isDisplayed()).toBe(false);
+      expect(await loginPage.environmentTab.isDisplayed()).toBe(true);
+      expect(await loginPage.loginTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installedCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
+      expect(await loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installerTab.isDisplayed()).toBe(false);
+      await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
     });
 
-    it ('Should be on the login tab', function() {
-      expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
-      expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
-      expect(loginPage.postInitTab.isDisplayed()).toBe(false);
-      expect(loginPage.environmentTab.isDisplayed()).toBe(false);
-      expect(loginPage.loginTab.isDisplayed()).toBe(true);
-      expect(loginPage.installedCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
-      expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.installerTab.isPresent()).toBe(false);
+    it ('Should be on the login tab', async function() {
+      expect(await loginPage.projectDirTab.isDisplayed()).toBe(false);
+      expect(await loginPage.initIfNeededTab.isDisplayed()).toBe(false);
+      expect(await loginPage.postInitTab.isDisplayed()).toBe(false);
+      expect(await loginPage.environmentTab.isDisplayed()).toBe(false);
+      expect(await loginPage.loginTab.isDisplayed()).toBe(true);
+      expect(await loginPage.installedCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
+      expect(await loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installerTab.isDisplayed()).toBe(false);
       //negative test on login
       console.log('login negative test');
-      loginPage.loginAs('foo', 'foo');
-      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
-      loginPage.loginAs('foo', '');
-      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
-      loginPage.loginAs('', 'foo');
-      expect(loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
-      loginPage.login();
+      await loginPage.loginAs('foo', 'foo');
+      expect(await loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      await loginPage.loginAs('foo', '');
+      expect(await loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      await loginPage.loginAs('', 'foo');
+      expect(await loginPage.loginInvalidCredentialsError.isDisplayed()).toBe(true);
+      await loginPage.login();
     });
 
-    it ('Should be on the needs install tab', function() {
+    it ('Should be on the needs install tab', async function() {
       browser.wait(EC.visibilityOf(loginPage.installerTab));
-      expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
-      expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
-      expect(loginPage.postInitTab.isDisplayed()).toBe(false);
-      expect(loginPage.environmentTab.isDisplayed()).toBe(false);
-      expect(loginPage.loginTab.isDisplayed()).toBe(false);
-      expect(loginPage.installedCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
-      expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
-      expect(loginPage.installerTab.isDisplayed()).toBe(true);
-      expect(loginPage.installProgress.isPresent()).toBe(false);
-      loginPage.clickInstall();
+      expect(await loginPage.projectDirTab.isDisplayed()).toBe(false);
+      expect(await loginPage.initIfNeededTab.isDisplayed()).toBe(false);
+      expect(await loginPage.postInitTab.isDisplayed()).toBe(false);
+      expect(await loginPage.environmentTab.isDisplayed()).toBe(false);
+      expect(await loginPage.loginTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installedCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
+      expect(await loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
+      expect(await loginPage.installerTab.isDisplayed()).toBe(true);
+      expect(await loginPage.installProgress.isDisplayed()).toBe(false);
+      await loginPage.clickInstall();
     });
 
-    it ('should install the hub into MarkLogic', function() {
+    it ('should install the hub into MarkLogic', async function() {
       let originalTimeout;
       originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
       console.log('original jasmine timeout: ' + originalTimeout);
       jasmine.DEFAULT_TIMEOUT_INTERVAL = 370000;
       console.log('modified jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
       browser.wait(EC.presenceOf(loginPage.installProgress), 600000, 'install progress is not present');
-      expect(loginPage.installProgress.isDisplayed()).toBe(true);
+      expect(await loginPage.installProgress.isDisplayed()).toBe(true);
       browser.wait(EC.elementToBeClickable(appPage.flowsTab), 600000, 'dashboard page is not displayed');
       jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       console.log('changed back to original jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
@@ -212,8 +212,8 @@ export default function(tmpDir) {
       browser.refresh();
       console.log('loading dashboard page');
       dashboardPage.isLoaded();
-      expect(appPage.flowsTab.isPresent()).toBe(true);
-      expect(appPage.jobsTab.isPresent()).toBe(true);
+      expect(appPage.flowsTab.isDisplayed()).toBe(true);
+      expect(appPage.jobsTab.isDisplayed()).toBe(true);
     });
 
     it ('should logout', function() {

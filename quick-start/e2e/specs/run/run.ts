@@ -98,12 +98,12 @@ export default function(tmpDir) {
       browser.sleep(5000);
     });
 
-    it ('should logout and login', function() {
+    it ('should logout and login', async function() {
       appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
+      await loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
+      await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
@@ -333,14 +333,14 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should logout and login as no-pii-user to verify pii', function() {
+    it ('should logout and login as no-pii-user to verify pii', async function() {
       appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
+      await loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
+      await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.loginAs('no-pii-user', 'x');
+      await loginPage.loginAs('no-pii-user', 'x');
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
@@ -369,14 +369,14 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should logout and login as pii-user to verify pii', function() {
+    it ('should logout and login as pii-user to verify pii', async function() {
       appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
+      await loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
+      await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.loginAs('pii-user', 'x');
+      await loginPage.loginAs('pii-user', 'x');
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
@@ -410,12 +410,12 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should logout and login as admin', function() {
+    it ('should logout and login as admin', async function() {
       appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
+      await loginPage.clickNext('ProjectDirTab');
       browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
+      await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.elementToBeClickable(loginPage.loginTab));
       loginPage.login();
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
