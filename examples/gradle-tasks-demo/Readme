@@ -1,10 +1,15 @@
+Assumptions:
+1) This project assumes that DHF environment is already provisioned
+2) You have information about load balancer hosts
+
+
 Sample Project to work on DHS:
 
 1) Add the build.gradle file from the docs folder into the current directory
 2) install gradle and run gradle wrapper --gradle-version 3.4
 3) ./gradlew build
 4) ./gradlew hubInit
-5) Copy the gradle.properties file from docs and update the user credentials
+5) Copy the gradle.properties file from docs and update the user credentials (Refer to this documentation: https://marklogic.github.io/marklogic-data-hub/project/dhsdeploy/)
 6) ./gradlew hubInstallModules (Installs dhf modules into DHS env)
 7) ./gradlew hubCreateEntity -PentityName=Product
 8) Copy the file Product.entity.json file from docs/entities folder into plugins/entities/Product in your current directory
