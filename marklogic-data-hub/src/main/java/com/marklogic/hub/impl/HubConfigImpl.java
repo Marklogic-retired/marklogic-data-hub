@@ -67,7 +67,6 @@ import java.util.*;
     setterVisibility = JsonAutoDetect.Visibility.ANY)
 @Component
 @PropertySource({"classpath:dhf-defaults.properties"})
-// TODO change to DHS defaults
 public class HubConfigImpl implements HubConfig
 {
     @Autowired
