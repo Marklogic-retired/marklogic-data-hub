@@ -10,8 +10,8 @@ const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('Run Flows', () => {
-    it ('should go to the flow page', function() {
-      appPage.flowsTab.click();
+    it ('should go to the flow page', async function() {
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -22,20 +22,20 @@ export default function(tmpDir) {
         'delimited_text', '/product', '?doc=yes&type=foo');
     });
 
-    it('should verify the loaded data', function() {
+    it('should verify the loaded data', async function() {
       //verify on jobs page
-      appPage.jobsTab.click();
+      await appPage.jobsTab.click();
       jobsPage.isLoaded();
-      expect(jobsPage.lastFinishedJob.isPresent()).toBe(true);
+      expect(jobsPage.lastFinishedJob.isDisplayed()).toBe(true);
       //verify the output
-      jobsPage.jobOutputByPosition(1).click();
+      await jobsPage.jobOutputByPosition(1).click();
       browser.wait(EC.visibilityOf(jobsPage.jobOutputTitle()));
-      expect(jobsPage.jobOutputTitle().isPresent()).toBe(true);
-      expect(jobsPage.jobOutputContent('OUTPUT_RECORDS: 450').isPresent()).toBe(true);
-      expect(jobsPage.jobOutputContent('OUTPUT_RECORDS_FAILED: 0').isPresent()).toBe(true);
-      jobsPage.jobOutputCloseButton().click();
+      expect(jobsPage.jobOutputTitle().isDisplayed()).toBe(true);
+      expect(jobsPage.jobOutputContent('OUTPUT_RECORDS: 450').isDisplayed()).toBe(true);
+      expect(jobsPage.jobOutputContent('OUTPUT_RECORDS_FAILED: 0').isDisplayed()).toBe(true);
+      await jobsPage.jobOutputCloseButton().click();
       //verify on browse data page
-      appPage.browseDataTab.click();
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
@@ -58,10 +58,10 @@ export default function(tmpDir) {
       expect(viewerPage.verifyVariableName('opt1').isPresent()).toBeFalsy();
       expect(viewerPage.verifyStringName('world').isPresent()).toBeFalsy();
       //verfiy on dashboard page
-      appPage.dashboardTab.click();
+      await appPage.dashboardTab.click();
       dashboardPage.isLoaded();
       expect(dashboardPage.stagingCount().getText()).toEqual('456');
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -98,19 +98,19 @@ export default function(tmpDir) {
       browser.sleep(5000);
     });
 
-    it ('should logout and login', function() {
-      appPage.logout();
+    it ('should logout and login', async function() {
+      await appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.login();
+      await loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      await loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await loginPage.login();
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
-    it ('should go to the flow page', function() {
-      appPage.flowsTab.click();
+    it ('should go to the flow page', async function() {
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -119,7 +119,7 @@ export default function(tmpDir) {
       browser.sleep(5000);
     });
 
-    it('should run Harmonize Products flow', function() {
+    it('should run Harmonize Products flow', async function() {
       flowPage.isLoaded();
       console.log('clicking Product entity');
       flowPage.clickEntityDisclosure('Product');
@@ -133,15 +133,15 @@ export default function(tmpDir) {
       flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
       browser.sleep(10000);
-      appPage.jobsTab.click();
+      await appPage.jobsTab.click();
       jobsPage.isLoaded();
-      expect(jobsPage.finishedHarmonizedFlows.isPresent()).toBe(true);
-      appPage.flowsTab.click();
+      expect(jobsPage.finishedHarmonizedFlows.isDisplayed()).toBe(true);
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it('should verify the harmonized data with sku as original property', function() {
-      appPage.browseDataTab.click();
+    it('should verify the harmonized data with sku as original property', async function() {
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
@@ -161,12 +161,12 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('user', 'admin').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it('should verify the harmonized data with SKU as original property', function() {
-      appPage.browseDataTab.click();
+    it('should verify the harmonized data with SKU as original property', async function() {
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
@@ -188,7 +188,7 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('user', 'admin').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -244,9 +244,9 @@ export default function(tmpDir) {
       flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntityJsonWithES', '');
     });
 
-    it('should verify the ES json data with small sku', function() {
+    it('should verify the ES json data with small sku', async function() {
       //verify on browse data page
-      appPage.browseDataTab.click();
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       browsePage.databaseDropDown().click();
@@ -268,13 +268,13 @@ export default function(tmpDir) {
       expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it('should verify the ES json data with big SKU', function() {
+    it('should verify the ES json data with big SKU', async function() {
       //verify on browse data page
-      appPage.browseDataTab.click();
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       browsePage.databaseDropDown().click();
@@ -296,13 +296,13 @@ export default function(tmpDir) {
       expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('sku', '159929577929').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it('should verify the ES xml data', function() {
+    it('should verify the ES xml data', async function() {
       //verify on browse data page
-      appPage.browseDataTab.click();
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       browsePage.databaseDropDown().click();
@@ -329,23 +329,23 @@ export default function(tmpDir) {
       expect(viewerPage.verifyTagName('bookstore').isPresent()).toBeTruthy();
       expect(viewerPage.verifyAttributeName('category').isPresent()).toBeTruthy();
       expect(viewerPage.verifyStringName('cooking').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it ('should logout and login as no-pii-user to verify pii', function() {
-      appPage.logout();
+    it ('should logout and login as no-pii-user to verify pii', async function() {
+      await appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.loginAs('no-pii-user', 'x');
+      await loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      await loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await loginPage.loginAs('no-pii-user', 'x');
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
-    it('should verify that no-pii-user cannot see titlePii and attachment title on harmonized data', function() {
-      appPage.browseDataTab.click();
+    it('should verify that no-pii-user cannot see titlePii and attachment title on harmonized data', async function() {
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       browsePage.databaseDropDown().click();
@@ -365,23 +365,23 @@ export default function(tmpDir) {
       expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeFalsy();
       expect(viewerPage.verifyHarmonizedProperty('title', 'Cards').isPresent()).toBeFalsy();
       expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it ('should logout and login as pii-user to verify pii', function() {
-      appPage.logout();
+    it ('should logout and login as pii-user to verify pii', async function() {
+      await appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.loginAs('pii-user', 'x');
+      await loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      await loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await loginPage.loginAs('pii-user', 'x');
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
-    it('should verify that pii-user can see titlePii and attachment title on harmonized data', function() {
-      appPage.browseDataTab.click();
+    it('should verify that pii-user can see titlePii and attachment title on harmonized data', async function() {
+      await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       browsePage.databaseDropDown().click();
@@ -406,20 +406,20 @@ export default function(tmpDir) {
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('user', 'admin').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('object', 'http://www.marklogic.com/foo/456').isPresent()).toBeTruthy();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it ('should logout and login as admin', function() {
-      appPage.logout();
+    it ('should logout and login as admin', async function() {
+      await appPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.login();
+      await loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      await loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await loginPage.login();
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
   });

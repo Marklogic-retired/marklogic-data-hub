@@ -17,10 +17,10 @@ export default function(tmpDir) {
     });
 
     it('Starts off with the right stuff', function() {
-      expect(loginPage.browseButton.isPresent()).toBe(true);
-      expect(loginPage.projectList.isPresent()).toBe(true);
+      expect(loginPage.browseButton.isDisplayed()).toBe(true);
+      expect(loginPage.projectList.isDisplayed()).toBe(true);
       expect(loginPage.folderBrowser.isPresent()).toBe(false);
-      expect(loginPage.nextButton('ProjectDirTab').isPresent()).toBe(true);
+      expect(loginPage.nextButton('ProjectDirTab').isDisplayed()).toBe(true);
       expect(loginPage.odhIcon.isDisplayed()).toBe(true);
 
       expect(loginPage.projectDirTab.isDisplayed()).toBe(true);
@@ -34,12 +34,12 @@ export default function(tmpDir) {
       expect(loginPage.installerTab.isPresent()).toBe(false);
     });
 
-    it ('Should open the examples folder', function() {
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+    it ('Should open the examples folder', async function() {
+      await loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.visibilityOf(loginPage.environmentTab));
     });
 
-    it ('Should be on the environment tab', function() {
+    it ('Should be on the environment tab', async function() {
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
       expect(loginPage.postInitTab.isDisplayed()).toBe(false);
@@ -49,11 +49,11 @@ export default function(tmpDir) {
       expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isPresent()).toBe(false);
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
+      await loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.visibilityOf(loginPage.loginTab));
     });
 
-    it ('Should be on the login tab', function() {
+    it ('Should be on the login tab', async function() {
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);
       expect(loginPage.initIfNeededTab.isDisplayed()).toBe(false);
       expect(loginPage.postInitTab.isDisplayed()).toBe(false);
@@ -63,23 +63,26 @@ export default function(tmpDir) {
       expect(loginPage.requiresUpdateUpdateTab.isDisplayed()).toBe(false);
       expect(loginPage.preInstallCheckTab.isDisplayed()).toBe(false);
       expect(loginPage.installerTab.isPresent()).toBe(false);
-      loginPage.login();
+      await loginPage.login();
     });
 
-    it ('should go to the dashboard', function() {
+    it ('should go to the dashboard', async function() {
       dashboardPage.isLoaded();
-      dashboardPage.clearDatabases.click();
-      browser.driver.sleep(3000);
+      await dashboardPage.clearDatabases.click();
+      //browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
-      dashboardPage.clearButton.click();
+      await dashboardPage.clearButton.click();
       //wait for all three to be 0
       browser.wait(dashboardPage.zeroCounts.count().then((count) => {
         expect(count).toEqual(3);
       }));
+      let count = await dashboardPage.zeroCounts.count();
+      expect(count).toEqual(3);
+      console.log(count);
     });
 
-    it ('should go to the entities page', function() {
-      appPage.entitiesTab.click();
+    it ('should go to the entities page', async function() {
+      await appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
 
@@ -88,11 +91,11 @@ export default function(tmpDir) {
       console.log('create Order entity');
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       entityPage.entityTitle.sendKeys('Order');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -109,11 +112,11 @@ export default function(tmpDir) {
       console.log('create Product entity');
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       entityPage.entityTitle.sendKeys('Product');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -132,7 +135,7 @@ export default function(tmpDir) {
       let lastProperty = entityPage.lastProperty;
       entityPage.clickEditEntity('Product');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       // add sku property
       console.log('add sku property');
       entityPage.addProperty.click();
@@ -158,7 +161,7 @@ export default function(tmpDir) {
       entityPage.getPropertyPii(lastProperty).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -198,7 +201,7 @@ export default function(tmpDir) {
       entityPage.getPropertyWordLexicon(lastProperty).click();
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -208,7 +211,7 @@ export default function(tmpDir) {
       console.log('verify properties to Product entity');
       entityPage.clickEditEntity('Product');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(skuProperty).getAttribute('value')).toEqual('sku');
       expect(entityPage.getPropertyType(skuProperty).getAttribute('value')).toContain('string');
@@ -232,7 +235,7 @@ export default function(tmpDir) {
       console.log('verify properties to Order entity');
       entityPage.clickEditEntity('Order');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let idProperty = entityPage.getPropertyByPosition(1);
       // verify that primary key is retained
       expect(entityPage.getPropertyName(idProperty).getAttribute('value')).toEqual('id');
@@ -262,7 +265,7 @@ export default function(tmpDir) {
       let lastProperty = entityPage.lastProperty;
       entityPage.clickEditEntity('Order');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //add some additional properties
       console.log('add additional properties');
       entityPage.addProperty.click();
@@ -275,7 +278,7 @@ export default function(tmpDir) {
       entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop2 description');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -283,7 +286,7 @@ export default function(tmpDir) {
       console.log('remove additional properties');
       entityPage.clickEditEntity('Order');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let removeProp1 = entityPage.getPropertyByPosition(4);
       let removeProp2 = entityPage.getPropertyByPosition(5);
       entityPage.getPropertyCheckBox(removeProp1).click();
@@ -296,7 +299,7 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -304,7 +307,7 @@ export default function(tmpDir) {
       console.log('verify properties are removed');
       entityPage.clickEditEntity('Order');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //console.log('verify properties count');
       //entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(3)});
       entityPage.cancelEntity.click();
@@ -324,7 +327,7 @@ export default function(tmpDir) {
       entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop1 description');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -333,7 +336,7 @@ export default function(tmpDir) {
       //remove removeEntity entity
       entityPage.deleteEntityButton('removeEntity').click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       //count entities
       console.log('verify entity is deleted by count');
@@ -343,11 +346,11 @@ export default function(tmpDir) {
     it ('should create a new entity', function() {
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       entityPage.entityTitle.sendKeys('TestEntity');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
-      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogNoButton.click();
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('TestEntity')));
       expect(entityPage.getEntityBox('TestEntity').isDisplayed()).toBe(true);
@@ -365,7 +368,7 @@ export default function(tmpDir) {
     it('should create a new property', function(){
       entityPage.clickEditEntity('TestEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //tell the UI to add the visual row
       entityPage.addProperty.click();
       //now compare to see if the current count is 1
@@ -373,7 +376,7 @@ export default function(tmpDir) {
 
       //select the last (or first if only 1) property
       let lastProperty = entityPage.lastProperty;
-      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
       entityPage.getPropertyName(lastProperty).sendKeys("sku");
       entityPage.getPropertyRangeIndex(lastProperty).click();
@@ -388,7 +391,7 @@ export default function(tmpDir) {
       entityPage.addProperty.click();
       //repoint last property to the new last property
       lastProperty = entityPage.lastProperty;
-      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
       entityPage.getPropertyName(lastProperty).sendKeys("ID");
       entityPage.getPropertyPrimaryKey(lastProperty).click();
@@ -397,7 +400,7 @@ export default function(tmpDir) {
       //let's save it now that it's populated
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
-      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogNoButton.click();
     });
 
@@ -405,15 +408,15 @@ export default function(tmpDir) {
       //now time to delete, let's reopen the editor
       entityPage.clickEditEntity('TestEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //let's grab the count of the rows before we add so we can compare
       entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(2)});
       let lastProperty = entityPage.lastProperty;
-      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       entityPage.getPropertyCheckBox(lastProperty).click();
       entityPage.deleteProperty.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
@@ -421,7 +424,7 @@ export default function(tmpDir) {
       //let's save it now that it's populated
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
-      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogNoButton.click();
     });
 
@@ -429,12 +432,12 @@ export default function(tmpDir) {
       //now let's confirm we didn't lose any settings, reopen editor
       entityPage.clickEditEntity('TestEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //Do we still have 1 property left?
       entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(1)});
       //if so, grab it
       let lastProperty = entityPage.lastProperty;
-      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       //now let's compare them with our original tests to make sure the values are equal
       //let's see if our values hold!
       expect(entityPage.getPropertyName(lastProperty).getAttribute('value')).toEqual("sku");
@@ -445,18 +448,18 @@ export default function(tmpDir) {
       //so let's save this and go on with the other tests
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
-      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogNoButton.click();
     });
 
     it ('should create a new entity for PII', function() {
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       entityPage.entityTitle.sendKeys('PIIEntity');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
-      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogNoButton.click();
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
       expect(entityPage.getEntityBox('PIIEntity').isDisplayed()).toBe(true);
@@ -469,7 +472,7 @@ export default function(tmpDir) {
     it('should create a pii property', function(){
       entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //tell the UI to add the visual row
       entityPage.addProperty.click();
       //now compare to see if the current count is 1
@@ -477,7 +480,7 @@ export default function(tmpDir) {
 
       //select the last (or first if only 1) property
       let lastProperty = entityPage.lastProperty;
-      expect(lastProperty.isPresent() && lastProperty.isDisplayed());
+      expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       //populate the fields for name, range index, type, and description
       entityPage.getPropertyName(lastProperty).sendKeys("pii_test");
       entityPage.getPropertyPii(lastProperty).click();
@@ -498,7 +501,7 @@ export default function(tmpDir) {
 
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogYesButton.click();
       browser.wait(EC.presenceOf(entityPage.toast));
       browser.wait(EC.stalenessOf(entityPage.toast));
@@ -508,7 +511,7 @@ export default function(tmpDir) {
       console.log('verify pii property to PII entity');
       entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let piiProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
       expect(entityPage.getPropertyType(piiProperty).getAttribute('value')).toContain('string');
@@ -538,7 +541,7 @@ export default function(tmpDir) {
     it ('should verify naming conventions on properties', function() {
       entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       // add test property to verify white spaces
       console.log('add test property');
       entityPage.addProperty.click();
@@ -556,7 +559,7 @@ export default function(tmpDir) {
     it ('should not be able to create duplicate properties', function() {
       entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       // add test property to verify duplicate property
       console.log('add duplicate property');
       entityPage.addProperty.click();
@@ -571,19 +574,19 @@ export default function(tmpDir) {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
-    it ('should logout and login', function() {
+    it ('should logout and login', async function() {
       entityPage.logout();
       loginPage.isLoaded();
-      loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
-      loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.elementToBeClickable(loginPage.loginTab));
-      loginPage.login();
+      await loginPage.clickNext('ProjectDirTab');
+      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      await loginPage.clickNext('EnvironmentTab');
+      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await loginPage.login();
       browser.wait(EC.elementToBeClickable(appPage.odhLogo));
     });
 
-    it ('should go to the entity page', function() {
-      appPage.entitiesTab.click();
+    it ('should go to the entity page', async function() {
+      await appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
 
@@ -591,7 +594,7 @@ export default function(tmpDir) {
       console.log('verify pii property is retained after logout');
       entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let piiProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
       expect(entityPage.getPropertyType(piiProperty).getAttribute('value')).toContain('string');
@@ -608,11 +611,11 @@ export default function(tmpDir) {
     it ('should create a new entity for WorldBank', function() {
       entityPage.toolsButton.click();
       entityPage.newEntityButton.click();
-      expect(entityPage.entityEditor.isPresent()).toBe(true);
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       entityPage.entityTitle.sendKeys('WorldBank');
       entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
-      expect(entityPage.confirmDialogNoButton.isPresent()).toBe(true);
+      expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       entityPage.confirmDialogNoButton.click();
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
       expect(entityPage.getEntityBox('WorldBank').isDisplayed()).toBe(true);
@@ -629,8 +632,8 @@ export default function(tmpDir) {
       fs.copy(attachmentPiiFilePath, tmpDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
     });
 
-    it ('should redeploy hub to make the pii takes effect', function() {
-      appPage.settingsTab.click();
+    it ('should redeploy hub to make the pii takes effect', async function() {
+      await appPage.settingsTab.click();
       settingsPage.isLoaded();
       settingsPage.redeployButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.redeployConfirmation));
@@ -641,17 +644,17 @@ export default function(tmpDir) {
       browser.wait(EC.invisibilityOf(settingsPage.redeployStatus));
     });
 
-    it ('should go to the flow page', function() {
-      appPage.flowsTab.click();
+    it ('should go to the flow page', async function() {
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', function() {
+    it ('should redeploy modules', async function() {
       flowPage.redeployButton.click();
       browser.sleep(5000);
-      appPage.dashboardTab.click();
+      await appPage.dashboardTab.click();
       dashboardPage.isLoaded();
-      appPage.flowsTab.click();
+      await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
 
@@ -740,7 +743,7 @@ export default function(tmpDir) {
       await expect(flowPage.getFlow('TestEntity', flowName, 'HARMONIZE').isDisplayed()).toBe(true, flowName + ' is not present');
       browser.sleep(3000);
     });
-    
+
     it ('should open Product entity disclosure', async function() {
       await flowPage.clickEntityDisclosure('Product');
       await browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('Product')));
@@ -795,20 +798,20 @@ export default function(tmpDir) {
       console.log('going to the other flow and back');
       flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
-      expect(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').isPresent()).toBe(true);
+      expect(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').isDisplayed()).toBe(true);
       flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
       browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
+      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
       //verify the options are retained
       console.log('verify the flow options');
       browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
       expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('value')).toEqual('hello');
       expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('value')).toEqual('world');
       expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('value')).toEqual('myNumber');
@@ -831,10 +834,10 @@ export default function(tmpDir) {
       flowPage.isLoaded();
       flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
+      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true);
       flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
+      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
       expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
       expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
       //verify the flow options count
