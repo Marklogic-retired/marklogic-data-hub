@@ -17,24 +17,23 @@
 package com.marklogic.quickstart;
 
 import com.marklogic.contentpump.ContentPump;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.ApplicationConfig;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 
 @SpringBootApplication
 @EnableAsync
-public class Application extends SpringBootServletInitializer {
+public class DataHubApiConfiguration extends SpringBootServletInitializer {
+
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
+        return application.sources(new Class[] { DataHubApiConfiguration.class, ApplicationConfig.class });
     }
 
     public static void main(String[] args) throws Exception {
@@ -43,7 +42,7 @@ public class Application extends SpringBootServletInitializer {
             ContentPump.main(newArgs);
         }
         else {
-            SpringApplication.run(Application.class, args);
+            SpringApplication.run(new Class[] { DataHubApiConfiguration.class, ApplicationConfig.class } , args);
         }
     }
 }

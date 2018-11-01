@@ -2,18 +2,16 @@ package com.marklogic.quickstart.service;
 
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.annotation.PostConstruct;
-import javax.ws.rs.POST;
 
-
-@Configuration
 public class AbstractServiceTest extends HubTestBase {
 
+    @Autowired
+    protected EnvironmentConfig envConfig;
 
+    /*
     @PostConstruct
     protected void setupEnv() {
         createProjectDir();
@@ -22,6 +20,7 @@ public class AbstractServiceTest extends HubTestBase {
         envConfig.checkIfInstalled();
         setEnvConfig(envConfig);
     }
+    */
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {
 

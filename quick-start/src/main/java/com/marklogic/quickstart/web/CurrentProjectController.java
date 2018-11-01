@@ -29,7 +29,7 @@ import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.model.StatusMessage;
 import com.marklogic.quickstart.service.*;
 import org.springframework.beans.factory.annotation.Autowired;

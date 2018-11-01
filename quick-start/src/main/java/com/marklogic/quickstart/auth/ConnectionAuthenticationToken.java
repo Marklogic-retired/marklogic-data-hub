@@ -16,7 +16,7 @@
  */
 package com.marklogic.quickstart.auth;
 
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;

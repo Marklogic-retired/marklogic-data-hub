@@ -20,15 +20,13 @@ package com.marklogic.quickstart.web;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.service.ProjectManagerService;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.io.File;
 import java.io.IOException;
 
 public class BaseTestController extends HubTestBase {

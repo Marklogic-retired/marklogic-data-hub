@@ -18,7 +18,6 @@ package com.marklogic.quickstart.service;
 
 import com.marklogic.hub.HubConfig;
 import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;

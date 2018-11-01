@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package com.marklogic.quickstart.model;
+package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,9 +22,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EnvironmentConfig {
 
     private String projectDir;
@@ -35,7 +41,14 @@ public class EnvironmentConfig {
 
     private HubConfig mlSettings;
 
+    @Autowired
     private DataHub dataHub;
+
+    @Autowired
+    private HubConfigImpl hubConfig;
+
+    @Autowired
+    private HubProjectImpl project;
 
     private String installedVersion;
 
@@ -89,9 +102,14 @@ public class EnvironmentConfig {
         return DHFVersion;
     }
 
+    public EnvironmentConfig() {
+
+    }
     public EnvironmentConfig(String projectDir, String environment, String username, String password) {
+        //FIXME this will prevent project switching?
         this.projectDir = projectDir;
         this.environment = environment;
+        hubConfig.refreshProject();
 
         /*
         Properties overrides = new Properties();

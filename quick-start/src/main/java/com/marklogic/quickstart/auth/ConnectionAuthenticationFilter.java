@@ -17,7 +17,7 @@
 package com.marklogic.quickstart.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
 import org.springframework.security.authentication.AuthenticationServiceException;
