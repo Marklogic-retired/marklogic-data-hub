@@ -18,7 +18,7 @@ Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/question
 
 ### What MarkLogic version works with what DHF version?
 
-See [Required Software]({{site.baseurl}}/understanding/updating#required-software).
+See [Required Software]({{site.baseurl}}/understanding/upgrading/#required-software).
 
 ### How do I deploy my own custom modules?
 
