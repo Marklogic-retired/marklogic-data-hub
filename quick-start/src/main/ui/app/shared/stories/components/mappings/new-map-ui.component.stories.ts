@@ -33,7 +33,7 @@ storiesOf('Components|Mappings', module)
              <mlui-story-card [width]="'520px'" [height]="'260px'">
                 <app-new-map-ui
                   [mappings]="mappings"
-                  (create)="create($event)" 
+                  (create)="create($event)"
                   (cancel)="cancel()"
                 ></app-new-map-ui>
              </mlui-story-card>
