@@ -70,6 +70,7 @@ import {SelectKeyValuesComponent} from './shared/components';
 import {JobExportDialogComponent} from "./jobs";
 
 import { MapComponent } from './mappings';
+import { MapUiComponent } from "./shared/components";
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
 import { NewMapUiComponent } from "./shared/components";
@@ -130,7 +131,9 @@ import {
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
     MapComponent,
-    MappingsComponent
+    MapUiComponent,
+    MappingsComponent,
+    SettingsUiComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,

@@ -5,6 +5,7 @@ export * from './theme';
 export * from './inline-edit/inline-edit.component';
 export * from './pagination';
 export * from './select/select.component';
+export * from './mappings/map-ui.component';
 export * from './mappings/new-map-ui.component';
 export * from './search';
 export * from './choose-collation/choose-collation.component';
