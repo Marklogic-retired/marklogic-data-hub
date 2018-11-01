@@ -2,7 +2,7 @@
 layout: inner
 title: Getting Started Tutorial 2.x<br>Wrapping Up
 lead_text: ''
-permalink: /tutorial/2x/wrapping-up
+permalink: /tutorial/2x/wrapping-up/
 ---
 
 ## Congratulations!

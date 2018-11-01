@@ -99,9 +99,9 @@ Upgrading does not affect any existing **TRACES** database. However, DHF will no
 
 As of DHF 4.0.0, the **STAGING** and **FINAL** final App Servers each have their own content, schemas, and triggers databases. In previous versions, the **STAGING** and **FINAL** application servers shared the same modules, triggers, and schemas databases. This change introduces several new gradle properties.
 
-You do not need to make changes to your project to accommodate this change unless your hub databases and App Servers use a prefix other than "data-hub". For example, if your **STAGING** database is not named "data-hub-STAGING", then see [Upgrading a Project with a Custom Hub Name]({{site.baseurl}}/understanding/upgrading#upgrading-a-project-with-a-custom-hub-name).
+You do not need to make changes to your project to accommodate this change unless your hub databases and App Servers use a prefix other than "data-hub". For example, if your **STAGING** database is not named "data-hub-STAGING", then see [Upgrading a Project with a Custom Hub Name]({{site.baseurl}}/understanding/upgrading/#upgrading-a-project-with-a-custom-hub-name).
 
-**NOTE**: DHF 4.0.0 projects have separate modules databases for **STAGING** and **FINAL**. As of DHF 4.0.1, **STAGING** and **FINAL** share a single modules database. For details, see [Shared Modules Database for Staging and Final Environments](shared-modules-database-for-staging-and-final-environments).
+**NOTE**: DHF 4.0.0 projects have separate modules databases for **STAGING** and **FINAL**. As of DHF 4.0.1, **STAGING** and **FINAL** share a single modules database. For details, see [Shared Modules Database for Staging and Final Environments](#shared-modules-database-for-staging-and-final-environments).
 
 See also [Servers and Databases]({{site.baseurl}}/docs/architecture#servers-and-databases).
 
@@ -109,7 +109,7 @@ See also [Servers and Databases]({{site.baseurl}}/docs/architecture#servers-and-
 
 DHF 4.0.1 introduces no incompatibilities with DHF 4.0.1. However, you should be aware of the following changes:
 
-* [Shared Modules Database for Staging and Final Environments](shared-modules-database-for-staging-and-final-environments)
+* [Shared Modules Database for Staging and Final Environments](#shared-modules-database-for-staging-and-final-environments)
 
 #### Shared Modules Database for Staging and Final Environments
 

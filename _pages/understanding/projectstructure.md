@@ -161,7 +161,7 @@ Each of the above JSON files conforms to the MarkLogic REST API for creating [da
 
 This folder contains sub-folders and JSON files used to configure your MarkLogic server.
 It contains some configuration that is used to bootstrap a DHF's **FINAL** environment.  In addition, users can place more configuration artifacts here to customize the system
-See [ml-gradle wiki](https://github.com/marklogic/ml-gradle/wiki) for details on what goes in here.
+See [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki) for details on what goes in here.
 Any JSON files you put here will be merged with the hub-internal-config configurations by the Data Hub Framework upon deploy.
 
 ### src/main/ml-modules

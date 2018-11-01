@@ -1,7 +1,7 @@
 ---
 layout: inner
 title: Upgrading DHF
-permalink: /understanding/updating/
+permalink: /understanding/upgrading/
 ---
 
 This page contains the following topics related to upgrading Data Hub Framework and your DHF project.

@@ -2,7 +2,7 @@
 layout: inner
 title: Getting Started Tutorial 2.x<br>Modeling the Product Entity
 lead_text: ''
-permalink: /tutorial/2x/modeling-product-entity
+permalink: /tutorial/2x/modeling-product-entity/
 ---
 
 ## Modeling the Product Entity
