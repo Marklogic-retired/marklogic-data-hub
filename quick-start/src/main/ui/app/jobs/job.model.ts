@@ -7,7 +7,6 @@ export class Job {
   endTime: string;
   lastUpdated: string;
   status: string;
-
   entity: string;
   flow: string;
   jobOutput: string;
