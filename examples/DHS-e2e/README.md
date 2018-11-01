@@ -37,13 +37,13 @@ You can create them with username/password of your own choice. In that case ensu
 # Steps to run end to end #
 
 ## Getting your flows in DHS ##
-1. cd <path to DHS>
+1. cd `<path to DHS>`
 2. Install data-hub core MODULES
   1. gradle hubInstallModules
 3. Load your modules for input/harmoninzation flows
   1. gradle mlLoadModules
 4. Run input flow
-  1. mlcp.sh import -mode "local" -host "<Ingest/Flows endpoint>" -port "8006" -username "xx" -password "yy" -input_file_path "path to DHS/input/json/customers/" -input_file_type "documents" -output_collections "Customer,DHS" -output_permissions "rest-reader,read,rest-writer,update" -output_uri_replace "path to DHS/input/json,''" -document_type "json" -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" -transform_param "entity-name=Customer,flow-name=custInput" -restrict_hosts true
+  1. mlcp.sh import -mode "local" -host "`Ingest/Flows endpoint`" -port "8006" -username "xx" -password "yy" -input_file_path "`path to DHS/input/json/customers/`" -input_file_type "documents" -output_collections "Customer,DHS" -output_permissions "rest-reader,read,rest-writer,update" -output_uri_replace "`path to DHS/input/json,''`" -document_type "json" -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" -transform_param "entity-name=Customer,flow-name=custInput" -restrict_hosts true
   ___Alternately you can run___
   2. gradle importAllCustomers
     1. Ensure to update path to input documents in DHS/build.gradle where the task is defined
@@ -51,7 +51,7 @@ You can create them with username/password of your own choice. In that case ensu
   1. gradle hubRunFlow -PentityName=Customer -PflowName=custESJJ
 
 ## Consuming curated data from FINAL database ##
-1. cd <path to DSF>
+1. cd `<path to DSF>`
 2. Load your APIs into data-hub-MODULES database
   1. gradle mlLoadModules
 3. Call the API. The API runs a query on FINAL database to return all the Customers who have "Sales" in their title
