@@ -45,7 +45,7 @@ export class RouterLinkStubDirective {
     private element: ElementRef
   ) {}
   @HostListener('click') onClick() {
-    // Clicked element is <a> tag, the elements variabel queries the parent node in order to find <a> tag sibling with active class
+    // Clicked element is <a> tag, the elements variable queries the parent node in order to find <a> tag sibling with active class
     const elements = this.element.nativeElement.parentNode.querySelectorAll('.active');
     // Loop through elements array and remove active class
     elements.forEach(element => {
