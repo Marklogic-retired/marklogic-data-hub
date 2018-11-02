@@ -29,7 +29,7 @@ import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { FolderBrowserUiComponent } from './shared/components';
 import { HeaderComponent } from './header/header.component';
-import { HeaderUiComponent } from './shared/components/header/header-ui.component';
+import { HeaderUiComponent } from './shared/components/';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { JobsUiComponent, JobOutputUiComponent, JobExportUiComponent } from './shared/components/jobs';
 import { MlcpUiComponent } from './mlcp-ui';
