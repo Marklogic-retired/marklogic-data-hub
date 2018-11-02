@@ -14,3 +14,4 @@ export * from './settings/settings-ui.component';
 export * from './select-key-values/select-key-values.component';
 export * from './jobs/jobs-ui.component';
 export * from './jobs/job-output-ui.component';
+export * from './has-bugs-dialog/has-bugs-dialog.component';

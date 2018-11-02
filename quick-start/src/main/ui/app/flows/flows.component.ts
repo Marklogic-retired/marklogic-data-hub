@@ -19,7 +19,7 @@ import { NewFlowComponent } from '../new-flow/new-flow.component';
 import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
 
-import { HasBugsDialogComponent } from '../has-bugs-dialog';
+import { HasBugsDialogComponent } from '../shared/components';
 
 import { DeployService } from '../deploy/deploy.service';
 
