@@ -7,7 +7,7 @@ import { TruncateCharactersPipe } from './truncate';
 import { ListFilterPipe } from './listfilter';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
-import { HasBugsDialogComponent } from './has-bugs-dialog';
+import { HasBugsDialogComponent } from './shared/components';
 import {
   EntityModelerComponent,
   EntityEditorComponent,
