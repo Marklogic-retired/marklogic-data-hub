@@ -3,43 +3,76 @@ import {HttpModule} from '@angular/http';
 import {storiesOf, moduleMetadata} from '@storybook/angular';
 import {centered} from '@storybook/addon-centered/angular';
 import {
-  text,
+  object,
   withKnobs
 } from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
 import {StoryCardComponent} from '../../utils';
 import {ThemeModule} from "../../../components";
 import {JobExportUiComponent} from "../../../components";
+import {MdlDialogService} from '@angular-mdl/core';
+import { Component, Input, Output, EventEmitter, NgModule } from '@angular/core';
 
-storiesOf('Components|Jobs', module)
-  .addDecorator(withKnobs)
-  .addDecorator(
-    moduleMetadata({
-      imports: [CommonModule, ThemeModule, HttpModule],
-      schemas: [],
-      declarations: [
-        JobExportUiComponent,
-        StoryCardComponent
+@Component({
+  selector: 'app-job-export-button',
+  template: '<button (click)="openModal()">Open Modal</button>'
+})
+export class JobExportButtonComponent {
+  @Input() jobIds: string[];
+  @Output() exportClicked = new EventEmitter();
+  constructor(
+    private dialogService: MdlDialogService
+  ) { }
+  openModal() {
+    this.dialogService.showCustomDialog({
+      component: JobExportUiComponent,
+      providers: [
+        { provide: 'exportClicked',
+          useValue: () => {
+            this.exportClicked.emit();
+          }
+        },
+        {
+          provide: 'jobIds',
+          useValue: this.jobIds
+        }
       ],
-      entryComponents: [],
-      providers: []
-    })
-  )
+      isModal: true
+    });
+  }
+}
+ @NgModule({
+  declarations: [JobExportButtonComponent]
+})
+export class JobExportButtonModule {}
+
+ storiesOf('Components|Jobs', module)
+    .addDecorator(withKnobs)
+    .addDecorator(centered)
+    .addDecorator(
+        moduleMetadata({
+            imports: [
+                ThemeModule
+            ],
+            declarations: [JobExportUiComponent, StoryCardComponent, JobExportButtonComponent],
+            entryComponents: [JobExportUiComponent],
+            providers: [MdlDialogService]
+        })
+    )
   .addDecorator(centered)
   .add('Job Export Component', () => ({
     template: `
            <mlui-dhf-theme>
-             <mlui-story-card [width]="'350px'" [height]="'150px'">
-              <app-job-export-ui      
-                [question]="question"
+           <mlui-story-card [width]="500" [height]="150">
+              <app-job-export-button
+                [jobIds]="jobIds"
                 (exportClicked)="exportClicked()"
-                (cancelClicked)="cancelClicked()"
-              ></app-job-export-ui>
+              ></app-job-export-button>
             </mlui-story-card>
+            <dialog-outlet></dialog-outlet>
            </mlui-dhf-theme>`,
     props: { 
-      question: text('question', 'Export and download 1 job and its traces?'),
-      exportClicked: action('exportClicked'),   
-      cancelClicked: action('cancelClicked')
+      jobIds: object('jobIds', ['ccacd1fc-6cf5-4a6f-ad8c-6505cb0be062']),
+      exportClicked: action('exportClicked')
     }
   }));

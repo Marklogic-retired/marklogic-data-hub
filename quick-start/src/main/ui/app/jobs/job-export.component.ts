@@ -1,41 +1,28 @@
-import {Component, HostListener, Inject, Input} from '@angular/core';
-import {MdlDialogReference, MdlDialogService} from '@angular-mdl/core';
+import {Component, Inject} from '@angular/core';
 import {JobService} from "./jobs.service";
+import {MdlDialogService} from '@angular-mdl/core';
 
 @Component({
   selector: 'job-export-dialog',
   template: `
   <app-job-export-ui      
-    [question]="question"
+    [jobIds]="jobIds"
     (exportClicked)="export()"
-    (cancelClicked)="cancel()"
   ></app-job-export-ui>
   `
 })
 export class JobExportDialogComponent {
   jobIds: string[];
-  question: string;
 
   constructor(
-    public dialog: MdlDialogReference,
-    private dialogService: MdlDialogService,
     private jobService: JobService,
+    private dialogService: MdlDialogService,
     @Inject('jobIds') jobIds: string[]
   ) {
-
     this.jobIds = jobIds;
-    this.question = "Export and download ";
-    if (jobIds.length === 0) {
-      this.question += "all jobs and their traces?";
-    } else if (this.jobIds.length === 1) {
-      this.question += "1 job and its traces?";
-    } else {
-      this.question += this.jobIds.length + " jobs and their traces?";
-    }
   }
 
   public export() {
-    this.dialog.hide();
     this.jobService.exportJobs(this.jobIds)
       .subscribe(response => {
           let body = response['_body'];
@@ -54,15 +41,6 @@ export class JobExportDialogComponent {
         () => {
           this.dialogService.alert("Unable to export jobs");
         });
-  }
-
-  @HostListener('keydown.esc')
-  public onEsc(): void {
-    this.dialog.hide();
-  }
-
-  public cancel(): void {
-    this.dialog.hide();
   }
 
 }
