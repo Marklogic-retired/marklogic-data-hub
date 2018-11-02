@@ -9,10 +9,4 @@ export class JobOutputUiComponent {
   @Input() job: any;
   @Input() jobOutput: Array<any>;
   @Output() cancelClicked = new EventEmitter();
-
-  ngOnChanges(changes: any) {
-    console.log(JSON.stringify(this.job));
-    console.log(JSON.stringify(this.jobOutput));
-  }
-
 }
