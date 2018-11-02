@@ -23,7 +23,6 @@ import { MdlMenuComponent, MdlButtonComponent } from '@angular-mdl/core';
 export class DummyComponent {
 }
 
-// Routes within the header
 const routes: Route[] = [
   { path: '', component: DummyComponent },
   { path: 'entities', component: DummyComponent },
