@@ -35,23 +35,42 @@ storiesOf('Components|Codemirror', module)
                 <app-codemirror 
                 [ngModel]="contents"
                 [config]="codemirrorConfig"
-                (ngModelChange)="ngModelChange($event)"
+                (ngModelChange)="modelChange($event)"
                 (saveEvent)="saveEvent($event)"
                 (cmChange)="cmChange($event)"></app-codemirror>
             </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
-      contents: text('contents', 'this is some text rendered in the editor'),
-      cmChange: action('cmChange:'),
-      saveEvent: action('saveEvent:'),
-      ngModelChange: action('ngModelChange:'),
+      contents: text('contents', `
+        /*
+        * Create Triples Plugin
+        *
+        * @param id       - the identifier returned by the collector
+        * @param content  - the output of your content plugin
+        * @param headers  - the output of your heaaders plugin
+        * @param options  - an object containing options. Options are sent from Java
+        *
+        * @return - an array of triples
+        */
+
+        function createTriples(id, content, headers, options) {
+          return [];
+        }
+        
+        module.exports = {
+          createTriples: createTriples
+        };           
+      `),
       codemirrorConfig: object('codemirrorConfig', {
         lineNumbers: true,
         indentWithTabs: true,
         lineWrapping: true,
-        readOnly: true,
+        readOnly: false,
         cursorBlinkRate: 0
-      })
+      }),
+      cmChange: action('cmChange:'),
+      saveEvent: action('saveEvent:'),
+      modelChange: action('modelChange:')
     }
   }));
 
