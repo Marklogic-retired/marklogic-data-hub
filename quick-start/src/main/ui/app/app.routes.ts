@@ -6,9 +6,9 @@ import { MapComponent } from './mappings';
 import { MappingsComponent } from './mappings';
 import { LoginComponent } from './login';
 import { JobsComponent } from './jobs';
+import { SettingsComponent } from './settings';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
-import { SettingsComponent } from './settings';
 import { NoContentComponent } from './no-content';
 import { AuthGuard } from './auth/auth-guard.service';
 
