@@ -1,0 +1,25 @@
+{
+  "info" : {
+    "title" : "my-unique-save-index-entity-1",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "my-unique-save-index-entity-1" : {
+      "primaryKey" : "saveIndexID1",
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ "saveIndexID1" ],
+      "rangeIndex" : [ "saveIndexID1" ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "saveIndexID1" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "price" : {
+          "datatype" : "decimal"
+        }
+      }
+    }
+  }
+}

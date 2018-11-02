@@ -9,7 +9,7 @@ import {SelectComponent} from '../../../components/select/select.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
 import {Component, Input} from '@angular/core';
 
-storiesOf('Components|Search', module)
+storiesOf('Components|Select', module)
     .addDecorator(withKnobs)
     .addDecorator(centered)
     .addDecorator(
@@ -20,7 +20,7 @@ storiesOf('Components|Search', module)
             declarations: [SelectComponent, StoryCardComponent]
         })
     )
-    .add('Search Component', () => ({
+    .add('Select Component', () => ({
         template: `
             <mlui-dhf-theme>
                 <mlui-story-card [width]="500" [height]="150">

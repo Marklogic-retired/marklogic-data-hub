@@ -26,7 +26,7 @@ class DeployUserModulesTask extends HubTask {
     @TaskAction
     void deployUserModules() {
         def dh = getDataHub()
-        if (!dh.isInstalled()) {
+        if (!isHubInstalled()) {
             println("Data Hub is not installed.")
             return
         }

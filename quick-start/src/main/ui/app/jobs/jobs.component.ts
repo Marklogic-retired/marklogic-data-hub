@@ -2,19 +2,37 @@ import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { JobOutputComponent } from './job-output.component';
 import { Job } from './job.model';
-import { JobService } from './jobs.service';
-import { JobListenerService } from './job-listener.service';
-import { SearchResponse } from '../search';
-import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
+import { JobService } from "./jobs.service";
+import { JobListenerService } from "./job-listener.service";
 import { differenceInSeconds } from 'date-fns';
+
+import { SearchResponse } from '../search';
+import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import {JobExportDialogComponent} from "./job-export.component";
 
 @Component({
   selector: 'app-jobs',
-  templateUrl: './jobs.component.html',
-  styleUrls: ['./jobs.component.scss'],
+  template: `
+    <app-jobs-ui      
+      [loadingJobs]="loadingJobs"
+      [searchText]="searchText"
+      [searchResponse]="searchResponse"
+      [activeFacets]="activeFacets"
+      [jobs]="jobs"
+      [selectedJobs]="selectedJobs"
+      (searchClicked)="doSearch()"
+      (exportJobsClicked)="exportJobs()"
+      (deleteJobsClicked)="deleteJobs()"
+      (pageChanged)="pageChanged($event)"
+      (activeFacetsChange)="updateFacets()"      
+      (searchTextChanged)="searchTextChanged($event)"   
+      (showConsoleClicked)="showConsole($event)"   
+      (showTracesClicked)="showTraces($event)"
+      (toggleSelectJobClicked)="toggleSelectJob($event)"
+    ></app-jobs-ui>
+  `
 })
 export class JobsComponent implements OnChanges, OnDestroy, OnInit {
 
@@ -81,13 +99,13 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     }, 2000);
   };
 
-  private hasLiveOutput(job: Job): boolean {
-    return this.jobListener.jobHasOutput(job.jobId);
-  }
-
   public doSearch(): void {
     this.currentPage = 1;
     this.runQuery();
+  }
+
+  public searchTextChanged(txt: string): void {
+    this.searchText = txt;
   }
 
   private runQuery(): void {
@@ -124,6 +142,10 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       this.selectedJobs.length = 0;
       this.searchResponse = response;
       this.jobs = _.map(response.results, (result: any) => {
+        // compute data for presentational component
+        result.content.duration = this.getDuration(result.content);
+        result.content.iconClass = this.getIconClass(result.content.flowType);
+        result.content.hasLiveOutput = this.hasLiveOutput(result.content);
         return result.content;
       });
     },
@@ -131,10 +153,6 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     () => {
       this.loadingJobs = false;
     });
-  }
-
-  getDuration(job: Job): number {
-    return differenceInSeconds(job.endTime, job.startTime);
   }
 
   showConsole(job: Job): void {
@@ -146,15 +164,6 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       ],
       isModal: true
     });
-  }
-
-  getIconClass(flowType: string) {
-    if (flowType === 'harmonize') {
-      return 'mdi-looks';
-    } else if (flowType === 'input') {
-      return 'mdi-import';
-    }
-    return '';
   }
 
   updateFacets() {
@@ -207,6 +216,25 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
       leaveTransitionDuration: 400
     });
   }
+
+
+  getDuration(job: Job): number {
+    return differenceInSeconds(job.endTime, job.startTime);
+  }
+
+  public hasLiveOutput(job: Job): boolean {
+    return this.jobListener.jobHasOutput(job.jobId);
+  } 
+
+  public getIconClass(flowType: string) {
+    if (flowType === 'harmonize') {
+      return 'mdi-looks';
+    } else if (flowType === 'input') {
+      return 'mdi-import';
+    }
+    return '';
+  }  
+ 
 
   render(o) {
     return JSON.stringify(o);

@@ -26,27 +26,31 @@ import java.util.HashMap;
 public interface EntityManager {
     /**
      * Creates and returns the EntityManager object
+     *
      * @param hubConfig - the hubConfig for the EntityManager to use
      * @return an EntityManager object with a set hubConfig
      */
     static EntityManager create(HubConfig hubConfig) {
-       return new EntityManagerImpl(hubConfig);
+        return new EntityManagerImpl(hubConfig);
     }
 
     /**
      * Updates the query options to the file system
+     *
      * @return boolean - if it fails to so, false is returned
      */
     boolean saveQueryOptions();
 
     /**
      * Deploys the query option
+     *
      * @return hashmap - ENUM DatabaseKind of what database and boolean if the deploy was successful or not.
      */
     HashMap<Enum, Boolean> deployQueryOptions();
 
     /**
      * Updates the indexes for the entity on the filesystem
+     *
      * @return boolean - if it fails to do so, false is returned
      */
     boolean saveDbIndexes();
@@ -54,10 +58,12 @@ public interface EntityManager {
     /**
      * Scans the entities in the project for pii properties, and saves the
      * required ELS configurations to support those properties.
+     *
      * @return - true if successfully saved, false if it did not
      */
     boolean savePii();
 
     boolean deployFinalQueryOptions();
+
     boolean deployStagingQueryOptions();
 }

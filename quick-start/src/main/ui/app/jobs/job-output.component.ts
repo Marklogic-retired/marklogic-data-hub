@@ -10,8 +10,13 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-job-output',
-  templateUrl: './job-output.component.html',
-  styleUrls: ['./job-output.component.scss']
+  template: `
+  <app-job-output-ui     
+    [job]="job"
+    [jobOutput]="jobOutput"
+    (cancelClicked)="cancel()"
+  ></app-job-output-ui>
+  `
 })
 export class JobOutputComponent {
   job: Job;

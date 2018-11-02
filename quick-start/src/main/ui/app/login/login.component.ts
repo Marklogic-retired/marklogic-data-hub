@@ -2,13 +2,13 @@ import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
+import { AuthService } from '../auth/auth.service';
+import { ProjectService } from '../projects';
+import { InstallService } from '../installer';
+import { LoginInfo } from './login-info.model';
+import { HubSettings } from '../environment/hub-settings.model';
+import { MdlDialogService } from '@angular-mdl/core';
 import {LoginUIComponent} from "../shared/components";
-import {AuthService} from '../auth';
-import {ProjectService} from '../projects';
-import {InstallService} from '../installer';
-import {LoginInfo} from './login-info.model';
-import {HubSettings} from '../environment/hub-settings.model';
-import {MdlDialogService} from '@angular-mdl/core';
 
 import * as SemVer from 'semver';
 
@@ -370,7 +370,7 @@ export class LoginComponent implements OnInit {
   hubUpdateUrl() {
     if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
       const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
-      return `https://marklogic.github.io/marklogic-data-hub/understanding/updating/${versionString}`;
+      return `https://marklogic.github.io/marklogic-data-hub/understanding/updating/`;
     }
     return '';
   }
