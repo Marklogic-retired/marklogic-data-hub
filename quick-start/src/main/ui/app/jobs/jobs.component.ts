@@ -26,7 +26,7 @@ import {JobExportDialogComponent} from "./job-export.component";
       (exportJobsClicked)="exportJobs()"
       (deleteJobsClicked)="deleteJobs()"
       (pageChanged)="pageChanged($event)"
-      (activeFacetsChange)="updateFacets($event)"      
+      (activeFacetsChange)="updateFacets()"      
       (searchTextChanged)="searchTextChanged($event)"   
       (showConsoleClicked)="showConsole($event)"   
       (showTracesClicked)="showTraces($event)"
