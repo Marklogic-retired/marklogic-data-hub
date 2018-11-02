@@ -7,12 +7,12 @@ Gradle 4.x+ installed globally.
 * wget https://services.gradle.org/distributions/gradle-4.2.1-bin.zip
 * unzip to a dir of choice
 * update env var PATH in bash_profile
-  * export PATH=$PATH:<unzipped dir>/gradle4.2.1/bin
+  * `export PATH=$PATH:<unzipped dir>/gradle4.2.1/bin`
   * source ~/.bash_profile
 
 There is a gradle task “importAllCustomers” to ingest source documents. So you can either run that task or use your locally installed mlcp.sh as described later.
 * Download and Extract mlcp-9.0.7.zip to a directory of your choice
-  * export PATH=$PATH:<unzipped dir>/mlcp-9.0.7/bin
+  * `export PATH=$PATH:<unzipped dir>/mlcp-9.0.7/bin`
   * source ~/.bash_profile
 
 
@@ -44,7 +44,9 @@ You can create them with username/password of your own choice. In that case ensu
   1. gradle mlLoadModules
 4. Run input flow
   1. mlcp.sh import -mode "local" -host "`Ingest/Flows endpoint`" -port "8006" -username "xx" -password "yy" -input_file_path "`path to DHS/input/json/customers/`" -input_file_type "documents" -output_collections "Customer,DHS" -output_permissions "rest-reader,read,rest-writer,update" -output_uri_replace "`path to DHS/input/json,''`" -document_type "json" -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" -transform_param "entity-name=Customer,flow-name=custInput" -restrict_hosts true
+  
   ___Alternately you can run___
+  
   2. gradle importAllCustomers
     1. Ensure to update path to input documents in DHS/build.gradle where the task is defined
 5. Run harmonization flow
