@@ -43,6 +43,7 @@ import { SelectListComponent } from './shared/components';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
+import { SearchViewerUiComponent } from './shared/components/search';
 
 import { DeployService } from './deploy/deploy.service';
 import { EntitiesService } from './entities/entities.service';
@@ -113,6 +114,7 @@ import {
     TraceViewerComponent,
     SearchComponent,
     SearchViewerComponent,
+    SearchViewerUiComponent,
     NoContentComponent,
     ClipboardDirective,
     FocusElementDirective,
