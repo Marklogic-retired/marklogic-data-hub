@@ -1,35 +1,22 @@
-import { Component, EventEmitter, OnInit, OnDestroy, QueryList, ViewChildren, ViewChild } from '@angular/core';
+import { MdlDialogService, MdlSnackbarService } from '@angular-mdl/core';
+import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { distanceInWords } from 'date-fns';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs/Rx';
 
+import { DeployService } from '../deploy/deploy.service';
+import { EntitiesService } from '../entities/entities.service';
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
 import { Plugin } from '../entities/plugin.model';
-
-import { EntitiesService } from '../entities/entities.service';
-
-import { MdlSnackbarService } from '@angular-mdl/core';
-
-import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
-
-import { MlcpUiComponent } from '../mlcp-ui';
-import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
-import { NewEntityComponent } from '../shared/components/new-entity/new-entity.component';
-import { NewFlowComponent } from '../new-flow/new-flow.component';
-
-import { JobListenerService } from '../jobs/job-listener.service';
 import { EnvironmentService } from '../environment';
-
+import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
+import { JobListenerService } from '../jobs/job-listener.service';
+import { NewFlowComponent } from '../new-flow/new-flow.component';
 import { HasBugsDialogComponent } from '../shared/components';
-
-import { DeployService } from '../deploy/deploy.service';
-
 import { CodemirrorComponent } from '../shared/components/codemirror';
-
-import { Ng2DeviceService } from 'ng2-device-detector';
-
-import { distanceInWords } from 'date-fns';
-
-import * as _ from 'lodash';
+import { NewEntityComponent } from '../shared/components/new-entity/new-entity.component';
 
 @Component({
   selector: 'app-flows',
@@ -49,6 +36,11 @@ export class FlowsComponent implements OnInit, OnDestroy {
   isSaving = false;
   mlcpOptions: any;
   entitiesReady: EventEmitter<boolean> = new EventEmitter();
+  hasErrorsInput = false;
+  markLogicVersionInput: string;
+  lastDeployedInput: string;
+  errorsInput: any;
+
 
   private paramListener: any;
 
@@ -93,7 +85,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   registerParamListener() {
     this.paramListener = this.route.params.subscribe(params => {
       if (params.entityName && params.flowName && params.flowType) {
-        let entity = _.find(this.entities, (e: Entity) => {
+        const entity = _.find(this.entities, (e: Entity) => {
           return e.name === params.entityName;
         });
 
@@ -101,8 +93,8 @@ export class FlowsComponent implements OnInit, OnDestroy {
           return;
         }
 
-        let flow = _.find(params.flowType === 'HARMONIZE' ? entity.harmonizeFlows : entity.inputFlows, (f: Flow) => {
-          return f.flowName == params.flowName;
+        const flow = _.find(params.flowType === 'HARMONIZE' ? entity.harmonizeFlows : entity.inputFlows, (f: Flow) => {
+          return f.flowName === params.flowName;
         });
 
         if (!flow) {
@@ -118,6 +110,11 @@ export class FlowsComponent implements OnInit, OnDestroy {
     if (this.entities && !this.paramListener) {
       this.registerParamListener();
     }
+    this.hasErrorsInput = this.hasErrors();
+    this.markLogicVersionInput = this.getMarkLogicVersion();
+    Observable.timer(300).subscribe(() => {
+      this.lastDeployedInput = this.getLastDeployed();
+    });
   }
 
   ngOnDestroy() {
@@ -128,13 +125,15 @@ export class FlowsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.snackbar.showSnackbar({
         message: `Job ${jobId} Finished.`,
-        action:{
+        action: {
           handler: () => {},
           text: 'OK'
         }
       });
     }, 0);
-  };
+  }
+
+
 
   getLastDeployed() {
     const lastDeployed = this.deployService.getLastDeployed();
@@ -149,22 +148,22 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   hasErrors(): boolean {
-    let errors = this.getErrors();
+    const errors = this.getErrors();
     return !!(errors && _.keys(errors).length > 0);
   }
 
   entityHasError(entityName: string): boolean {
-    let errors = this.getErrors();
+    const errors = this.getErrors();
     return !!(errors && errors[entityName]);
   }
 
   flowHasError(entityName: string, flowName: string): boolean {
-    let errors = this.getErrors();
+    const errors = this.getErrors();
     return !!(errors && errors[entityName] && errors[entityName][flowName]);
   }
 
   pluginHasError(flow: Flow, pluginType: string) {
-    let errors = this.getErrors();
+    const errors = this.getErrors();
     return !!(
       errors &&
       errors[flow.entityName] &&
@@ -174,7 +173,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   getPluginErrors(flow: Flow, pluginType: string): any {
-    let errors = this.getErrors();
+    const errors = this.getErrors();
     if (errors &&
       errors[flow.entityName] &&
       errors[flow.entityName][flow.flowName] &&
@@ -185,8 +184,8 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   getErrorMessage(flow: Flow, pluginType: string) {
-    let errors = this.getErrors();
-    let o = errors[flow.entityName][flow.flowName][pluginType];
+    const errors = this.getErrors();
+    const o = errors[flow.entityName][flow.flowName][pluginType];
     return `ERROR:\n${o.msg}\n\nat\n\n${o.uri}:${o.line}:${o.column}`;
   }
 
@@ -212,14 +211,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.setCollapsed(entity, !collapsed);
   }
 
-  deleteFlow(event: MouseEvent, flow: Flow, flowType: string): void {
-    if (event.stopPropagation) {
-      event.stopPropagation();
-    }
-    if (event.preventDefault) {
-      event.preventDefault();
-    }
-    event.cancelBubble = true;
+  deleteFlow( {flow, flowType}: {flow: Flow, flowType: string}): void {
     this.dialogService.confirm(`Really delete ${flow.flowName}`, 'Cancel', 'Delete').subscribe(() => {
       this.entitiesService.deleteFlow(flow, flowType).subscribe(() => {
         this.harmonizeFlowOptions.deleteSettings(flow.flowName);
@@ -230,14 +222,14 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   setFlow(flow: Flow, flowType: string): void {
-    this.router.navigate(['/flows', flow.entityName, flow.flowName, flowType])
+    this.router.navigate(['/flows', flow.entityName, flow.flowName, flowType]);
   }
 
   _setFlow(entity: Entity, flow: Flow, flowType: string) {
     this.view = 'flow';
     this.entity = entity;
     flow.plugins.forEach((plugin: Plugin) => {
-      let mode = plugin.pluginPath.endsWith('js') ? 'text/javascript' : 'application/xquery';
+      const mode = plugin.pluginPath.endsWith('js') ? 'text/javascript' : 'application/xquery';
       plugin.codemirrorConfig = this.baseCodemirrorConfig(mode);
     });
     this.flow = flow;
@@ -281,7 +273,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
   }
 
   showNewEntity(ev: Event): void {
-    let actions = {
+    const actions = {
       save: (newEntity: Entity) => {
       this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
         this.entities.splice(_.sortedIndexBy(this.entities, entity, 'name'), 0, entity);
@@ -298,8 +290,8 @@ export class FlowsComponent implements OnInit, OnDestroy {
     });
   }
 
-  showNewFlow(entity: Entity, flowType: string): void {
-    let actions = {
+  showNewFlow({entity, flowType}: {entity: Entity, flowType: string}): void {
+    const actions = {
       save: (newFlow: Flow) => {
         this.entitiesService.createFlow(entity, flowType.toUpperCase(), newFlow).subscribe((flow: Flow) => {
           if (flowType.toUpperCase() === 'INPUT') {
@@ -382,14 +374,14 @@ export class FlowsComponent implements OnInit, OnDestroy {
   tabChanged(event) {
     if (this.flow) {
       this.flow.tabIndex = event.index;
-      let plugin: Plugin = this.flow.plugins[event.index - 1];
+      const plugin: Plugin = this.flow.plugins[event.index - 1];
       if (plugin && !plugin.hasShown) {
         plugin.$dirty = false;
         plugin.hasShown = true;
       }
       if (plugin) {
         setTimeout(() => {
-          let mode = plugin.pluginPath.endsWith('js') ? 'text/javascript' : 'application/xquery';
+          const mode = plugin.pluginPath.endsWith('js') ? 'text/javascript' : 'application/xquery';
           plugin.codemirrorConfig.mode = mode;
           this.codemirrors.toArray()[event.index - 1].refresh();
         }, 250);
