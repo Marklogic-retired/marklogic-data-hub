@@ -4,10 +4,15 @@ import {JobService} from "./jobs.service";
 
 @Component({
   selector: 'job-export-dialog',
-  templateUrl: 'job-export.component.html'
+  template: `
+  <app-job-export-ui      
+    [question]="question"
+    (exportClicked)="export()"
+    (cancelClicked)="cancel()"
+  ></app-job-export-ui>
+  `
 })
 export class JobExportDialogComponent {
-
   jobIds: string[];
   question: string;
 
@@ -55,4 +60,9 @@ export class JobExportDialogComponent {
   public onEsc(): void {
     this.dialog.hide();
   }
+
+  public cancel(): void {
+    this.dialog.hide();
+  }
+
 }
