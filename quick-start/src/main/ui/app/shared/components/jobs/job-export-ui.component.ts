@@ -41,4 +41,9 @@ export class JobExportUiComponent {
   public cancel(): void {
     this.dialog.hide();
   }
+
+  public alert(msg: string): void {
+    this.dialogService.alert(msg);
+  }
+  
 }
