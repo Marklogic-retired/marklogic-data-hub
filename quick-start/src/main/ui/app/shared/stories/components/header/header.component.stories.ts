@@ -5,60 +5,79 @@ import {
   object,
   text,
   boolean,
+  number,
   withKnobs
 } from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
 import {StoryCardComponent} from '../../utils';
-import {ThemeModule} from "../../../components";
-import {HeaderUiComponent} from "../../../components/header/header-ui.component";
-import { Router } from '@angular/router';
+import {HeaderUiComponent, ThemeModule} from '../../../components/';
+import { Route, RouterModule } from '@angular/router';
+import { Component, NgModule } from '@angular/core';
+import {RouterTestingModule} from '@angular/router/testing';
+import {RouterLinkStubDirective} from '../../utils/test/router-stubs';
+import { MdlMenuComponent, MdlButtonComponent } from '@angular-mdl/core';
+
+@Component({
+  template: ''
+})
+export class DummyComponent {
+}
+
+const routes: Route[] = [
+  { path: '', component: DummyComponent },
+  { path: 'entities', component: DummyComponent },
+  { path: 'flows', component: DummyComponent },
+  { path: 'mappings', component: DummyComponent },
+  { path: 'browse', component: DummyComponent },
+  { path: 'jobs', component: DummyComponent },
+  { path: 'traces', component: DummyComponent },
+  { path: 'settings', component: DummyComponent },
+];
+
+@NgModule({
+  declarations: [DummyComponent]
+})
+export class DummyComponentModule {}
+
 
 storiesOf('Components|Header', module)
   .addDecorator(withKnobs)
   .addDecorator(
     moduleMetadata({
-      imports: [CommonModule, ThemeModule],
+      imports: [
+        CommonModule,
+        RouterModule,
+        ThemeModule,
+        RouterTestingModule.withRoutes(routes)
+      ],
       schemas: [],
       declarations: [
         HeaderUiComponent,
-        StoryCardComponent
+        StoryCardComponent,
+        DummyComponent,
+        RouterLinkStubDirective
       ],
       entryComponents: [],
-      providers: [Router]
+      providers: [MdlButtonComponent, MdlMenuComponent]
     })
   )
   .addDecorator(centered)
   .add('Header Component', () => ({
     template: `
            <mlui-dhf-theme>
-             <mlui-story-card [width]="'500px'" [height]="'250px'">
+             <mlui-story-card [width]="'1300px'">
                 <app-header-ui
                   [runningJobs]="runningJobs"
                   [percentageComplete]="percentageComplete"
-                  [routeToJobs]="routeToJobs"
+                  (gotoJobs)="gotoJobs($event)"
                   (logout)="logout($event)"
                 ></app-header-ui>
              </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
-      // startPath: text('startPath', '/start/path/here'),
-      // absoluteOnly: boolean('absoluteOnly', true),
-      // showFiles: boolean('showFiles', true),
-      // currentPath: text('currentPath', 'current/path'),
-      // isLoading: boolean('isLoading', false),
-      // folders: object('folders', [
-      //   {"name": "Folder1"},
-      //   {"name": "Folder2"},
-      //   {"name": "Folder3"},
-      //   {"name": "Folder4"}
-      // ]),
-      // files: object('files', [
-      //   {"name": "File 1"},
-      //   {"name": "File 2"}
-      // ]),
-      // inputPathChanged: action('inputPathChanged:'),
-      // entryClicked: action('entryClicked:'),
-      // fileClicked: action('fileClicked:'),
-      // folderChanged: action('folderChanged:')
+      runningJobs: number('runningJobs', 0),
+      percentageComplete: number('percentageComplete', 0),
+      gotoJobs: action('gotoJobs clicked'),
+      logout: action('logout clicked')
     }
   }));

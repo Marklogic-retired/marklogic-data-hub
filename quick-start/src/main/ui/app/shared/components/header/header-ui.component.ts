@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header-ui',
@@ -7,15 +8,27 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class HeaderUiComponent {
 
-  @Input() runningJobs: Function;
-  @Input() percentageComplete: Function;
-  @Input() routeToJobs: Function;
+  @Input() runningJobs: number;
+  @Input() percentageComplete: number;
+  @Input() activeCheck: Function;
+
+  @Output() gotoJobs = new EventEmitter();
   @Output() logout = new EventEmitter();
 
   constructor(
+    private router: Router
   ) {}
-
   logoutClicked() {
     this.logout.emit();
+  }
+  routeToJobs() {
+    this.gotoJobs.emit();
+  }
+  isActive(url: string): boolean {
+    if (url === '/') {
+      return this.router.url === url;
+    }
+
+    return this.router.url.startsWith(url);
   }
 }
