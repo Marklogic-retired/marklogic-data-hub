@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../projects';
 import { JobListenerService } from '../jobs/job-listener.service';
@@ -9,18 +9,15 @@ import { Router } from '@angular/router';
   selector: 'app-header',
   template: `
     <app-header-ui
-      [runningJobs]="runningJobs"
-      [percentageComplete]="percentageComplete"
-      [routeToJobs]="routeToJobs"
-      (logout)="logout()"
+      [runningJobs]="this.getRunningJobCount()"
+      [percentageComplete]="this.getPercentComplete()"
+      (gotoJobs)="this.gotoJobs()"
+      (logout)="this.logout()"
     ></app-header-ui>
   `
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
-  public runningJobs: Function;
-  public percentageComplete: Function;
-  public routeToJobs: Function;
   constructor(
     private projectService: ProjectService,
     private auth: AuthService,
@@ -30,12 +27,6 @@ export class HeaderComponent implements OnInit {
   ) {
 
   }
-  ngOnInit() {
-    this.runningJobs = this.getRunningJobCount.bind(this);
-    this.percentageComplete = this.getPercentComplete.bind(this);
-    this.routeToJobs = this.gotoJobs.bind(this);
-  }
-
   gotoJobs() {
     this.router.navigate(['jobs']);
   }
