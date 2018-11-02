@@ -24,6 +24,8 @@ export class HeaderUiComponent {
   routeToJobs() {
     this.gotoJobs.emit();
   }
+  // Left router in UI for this method.
+  // Should use RouterLinkActive property
   isActive(url: string): boolean {
     if (url === '/') {
       return this.router.url === url;

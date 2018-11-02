@@ -12,17 +12,18 @@ import {action} from '@storybook/addon-actions';
 import {StoryCardComponent} from '../../utils';
 import {HeaderUiComponent, ThemeModule} from '../../../components/';
 import { Route, RouterModule } from '@angular/router';
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, Directive, HostListener, Renderer2, ElementRef  } from '@angular/core';
 import {RouterTestingModule} from '@angular/router/testing';
-import {RouterLinkStubDirective} from '../../utils/test/router-stubs';
 import { MdlMenuComponent, MdlButtonComponent } from '@angular-mdl/core';
 
+// Dummy Component to give router a component to route to
 @Component({
   template: ''
 })
 export class DummyComponent {
 }
 
+// Routes within the header
 const routes: Route[] = [
   { path: '', component: DummyComponent },
   { path: 'entities', component: DummyComponent },
@@ -34,8 +35,30 @@ const routes: Route[] = [
   { path: 'settings', component: DummyComponent },
 ];
 
+// This adds and removes the active class when a link is clicked
+@Directive({
+  selector: '[routerLink]'
+})
+export class RouterLinkStubDirective {
+  constructor(
+    private rd: Renderer2,
+    private element: ElementRef
+  ) {}
+  @HostListener('click') onClick() {
+    // Clicked element is <a> tag, the elements variabel queries the parent node in order to find <a> tag sibling with active class
+    const elements = this.element.nativeElement.parentNode.querySelectorAll('.active');
+    // Loop through elements array and remove active class
+    elements.forEach(element => {
+        this.rd.removeClass(element, 'active');
+      });
+      // Add active class to clicked element
+    this.rd.addClass(this.element.nativeElement, 'active');
+
+  }
+}
+
 @NgModule({
-  declarations: [DummyComponent]
+  declarations: [DummyComponent, RouterLinkStubDirective]
 })
 export class DummyComponentModule {}
 
