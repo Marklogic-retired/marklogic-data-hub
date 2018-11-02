@@ -14,6 +14,8 @@ import { Component, Input, Output, EventEmitter, NgModule } from '@angular/core'
   template: '<button (click)="openModal()">Open Modal</button>'
 })
 export class EntityEditorButtonComponent {
+  @Input() entity: any;
+  @Input() dataTypes: Array<any>;
   @Output() saveClicked = new EventEmitter();
   @Output() cancelClicked = new EventEmitter();
   constructor(
@@ -35,11 +37,11 @@ export class EntityEditorButtonComponent {
         },
         {
           provide: 'entity',
-          useValue: {}
+          useValue: this.entity
         },
         {
           provide: 'dataTypes',
-          useValue: []
+          useValue: this.dataTypes
         }
       ],
       isModal: true
@@ -51,7 +53,7 @@ export class EntityEditorButtonComponent {
 })
 export class EntityEdtiorButtonModule {}
 
- storiesOf('Components|Choose Collation', module)
+ storiesOf('Components|Entity Editor', module)
     .addDecorator(withKnobs)
     .addDecorator(centered)
     .addDecorator(
@@ -59,24 +61,66 @@ export class EntityEdtiorButtonModule {}
             imports: [
                 ThemeModule
             ],
-            declarations: [EntityEditorComponent, StoryCardComponent, EntityEditorButtonComponent, MdlDialogReference],
+            declarations: [EntityEditorComponent, StoryCardComponent, EntityEditorButtonComponent],
             entryComponents: [EntityEditorComponent],
             providers: [MdlDialogService]
         })
     )
-    .add('Choose Collation Component', () => ({
+    .add('Entity Editor Component', () => ({
         template: `
             <mlui-dhf-theme>
               <mlui-story-card [width]="500" [height]="150">
-                <app-entity-editor
+                <app-entity-editor-button
+                  [entity]="entity"
+                  [dataTypes]="dataTypes"
                   (saveClicked)="saveClicked()"
                   (cancelClicked)="cancelClicked()"
-                ></app-entity-editor
+                ></app-entity-editor-button>
               </mlui-story-card>
               <dialog-outlet></dialog-outlet>
             </mlui-dhf-theme>
         `,
         props: {
+          entity: object('entity', {
+            definition: {
+              description: null,
+              name: null,
+              primaryKey: null,
+              properties: [],
+              elementRangeIndex: [],
+              rangeIndex: [],
+              required: [],
+              wordLexicon: [],
+              pii: []
+            },
+            filename: null,
+            hubUi: {
+              x: 10,
+              y: 115,
+              width: 350,
+              height: 100
+            },
+            info: {
+              baseUri: null,
+              description: 'Entity Description',
+              title: 'Entity Title',
+              version: '0.0.1'
+            },
+            inputFLows: [{
+              length: null
+            }],
+            harmonizeFlows: [{
+              length: null
+            }],
+            fromJSON: () => action('cancel/close clicked'),
+          }),
+          dataTypes: object('dataTypes', [
+            {
+              label: '',
+              value: '',
+              disabled: true
+            }
+          ]),
           saveClicked: action('save clicked'),
           cancelClicked: action('cancel clicked')
         },
