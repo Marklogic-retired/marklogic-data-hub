@@ -66,7 +66,8 @@ storiesOf('Components|Codemirror', module)
         indentWithTabs: true,
         lineWrapping: true,
         readOnly: false,
-        cursorBlinkRate: 0
+        cursorBlinkRate: 0,
+        mode: 'text/javascript'
       }),
       cmChange: action('cmChange:'),
       saveEvent: action('saveEvent:'),
