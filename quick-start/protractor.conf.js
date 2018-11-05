@@ -15,6 +15,7 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     chromeOptions: {
+      //
       args: ["--headless", "--disable-gpu", "--window-size=1920x1080"]
     }
   },
@@ -32,11 +33,11 @@ exports.config = {
   },
   plugins: [{
     package: 'protractor-screenshoter-plugin',
-    screenshotPath: './e2e/reports/screenshoter-plugin',
+    screenshotPath: './e2e/screenshoter-plugin',
     screenshotOnExpect: 'failure',
-    screenshotOnSpec: 'none',
+    screenshotOnSpec: 'failure+success',
     withLogs: true,
-    writeReportFreq: 'asap',
+    writeReportFreq: 'end', //use asap for debugging locally
     imageToAscii: 'none',
     clearFoldersBeforeTest: true
   }],
@@ -54,9 +55,9 @@ exports.config = {
 
     //HTML report
     jasmine.getEnv().addReporter(new Jasmine2HtmlReporter({
-      takeScreenshots: true,
-      takeScreenshotsOnlyOnFailures: true,
-      fixedScreenshotName: true,
+      //takeScreenshots: true,
+      //takeScreenshotsOnlyOnFailures: true,
+      //fixedScreenshotName: true,
       consolidateAll: true,
       savePath: './e2e/reports/',
       filePrefix: 'html-report'
@@ -84,11 +85,11 @@ exports.config = {
       testConfig = {
         reportTitle: 'DHF-Test Execution Report',
         outputPath: './e2e/reports/',
-        screenshotPath: 'screenshots',
+        //screenshotPath: 'screenshots',
         testBrowser: browserName,
         browserVersion: browserVersion,
         modifiedSuiteName: false,
-        screenshotsOnlyOnFailure: true
+        //screenshotsOnlyOnFailure: true
       };
       new HTMLReport().from('./e2e/reports/xmlresults.xml', testConfig);
     });
