@@ -100,10 +100,10 @@ public class DataHubImpl implements DataHub {
     private String stagingFile = "staging-database.json";
     private String jobsFile = "job-database.json";
 
-	@PostConstruct
+    @PostConstruct
     public void wireClient() {
-	    this._manageClient = hubConfig.getManageClient();
-	    this._adminManager = hubConfig.getAdminManager();
+        this._manageClient = hubConfig.getManageClient();
+        this._adminManager = hubConfig.getAdminManager();
         this._databaseManager = new DatabaseManager(_manageClient);
         this._serverManager = new ServerManager(_manageClient);
     }
@@ -123,7 +123,7 @@ public class DataHubImpl implements DataHub {
     }
 
     private ManageClient getManageClient() {
-	    return _manageClient;
+        return _manageClient;
     }
 
     private DatabaseManager getDatabaseManager() {
@@ -865,14 +865,12 @@ public class DataHubImpl implements DataHub {
     }
 
     // only used in test
-    public void setHubConfig(HubConfigImpl hubConfig)
-    {
+    public void setHubConfig(HubConfigImpl hubConfig) {
         this.hubConfig = hubConfig;
     }
 
     // only used in test
-    public void setVersions(Versions versions)
-    {
+    public void setVersions(Versions versions) {
         this.versions = versions;
     }
 }

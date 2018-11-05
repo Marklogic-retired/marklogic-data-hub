@@ -163,7 +163,7 @@ public class HubTestBase {
     private  AdminConfig adminConfig = null;
     private  ManageConfig manageConfig = null;
     private  ManageClient manageClient = null;
-	private  static boolean sslRun = false;
+    private  static boolean sslRun = false;
     private  static boolean certAuth = false;
     public static SSLContext certContext;
     static SSLContext datahubadmincertContext;
@@ -175,11 +175,11 @@ public class HubTestBase {
     public  JSONDocumentManager jobDocMgr;
     public  GenericDocumentManager modMgr;
     public  String bootStrapHost = null;
-	static TrustManagerFactory tmf;
-	
+    static TrustManagerFactory tmf;
+    
     static {
         try {
-            installCARootCertIntoStore();
+            installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
             datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-hub-admin-user.p12"));
             flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-user.p12"));
@@ -224,8 +224,8 @@ public class HubTestBase {
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
         boolean sslFinal = Boolean.parseBoolean(properties.getProperty("mlFinalSimpleSsl"));
         if(sslStaging && sslJob && sslFinal){
-	    	setSslRun(true);
-	    }
+            setSslRun(true);
+        }
 
         host = properties.getProperty("mlHost");
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
@@ -270,14 +270,14 @@ public class HubTestBase {
         }
         if(jobAuthMethod.equals(Authentication.CERTIFICATE)
         && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
-        	setCertAuth(true);
+            setCertAuth(true);
         }
         adminHubConfig.refreshProject();
         if(isSslRun() || isCertAuth()) {
-        	certInit();
+            certInit();
         }
         try {
-        	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+            stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
@@ -287,8 +287,8 @@ public class HubTestBase {
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
         catch(Exception e) {
-        	System.err.println("client objects not created.");
-        	e.printStackTrace();
+            System.err.println("client objects not created.");
+            e.printStackTrace();
         }
         stagingDocMgr = stagingClient.newDocumentManager();
         flowRunnerDocMgr = flowRunnerClient.newDocumentManager();
@@ -341,21 +341,21 @@ public class HubTestBase {
         return null;  // unreachable
     }
 
-	public static boolean isCertAuth() {
-		return certAuth;
-	}
+    public static boolean isCertAuth() {
+        return certAuth;
+    }
 
-	public void setCertAuth(boolean certAuth) {
-		this.certAuth = certAuth;
-	}
+    public void setCertAuth(boolean certAuth) {
+        this.certAuth = certAuth;
+    }
 
-	public static boolean isSslRun() {
-		return sslRun;
-	}
+    public static boolean isSslRun() {
+        return sslRun;
+    }
 
-	public void setSslRun(boolean sslRun) {
-		this.sslRun = sslRun;
-	}
+    public void setSslRun(boolean sslRun) {
+        this.sslRun = sslRun;
+    }
 
     protected void enableDebugging() {
         Debugging.create(stagingClient).enable();
@@ -374,18 +374,18 @@ public class HubTestBase {
     }
 
     protected HubConfig getHubAdminConfig(String projectDir) {
-    	if (isSslRun() || isCertAuth()) {
-    		certInit();
-    	}
-    	wireClients();
+        if (isSslRun() || isCertAuth()) {
+            certInit();
+        }
+        wireClients();
         return adminHubConfig;
     }
 
     protected HubConfig getHubAdminConfig() {
-    	if (isSslRun() || isCertAuth()) {
-    		certInit();
-    	}
-    	wireClients();
+        if (isSslRun() || isCertAuth()) {
+            certInit();
+        }
+        wireClients();
         return adminHubConfig;
     }
 
@@ -395,13 +395,13 @@ public class HubTestBase {
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
         if(isCertAuth()) {
-     		stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
-    		finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
-    		adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
-    		adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-user.p12");
-    		adminHubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
-           	manageConfig.setSslContext(flowRunnercertContext);
-           	adminConfig.setSslContext(flowRunnercertContext);           	           
+            stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
+            finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-user.p12");
+            adminHubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
+            manageConfig.setSslContext(flowRunnercertContext);
+            adminConfig.setSslContext(flowRunnercertContext);                          
         }
        // dataHub.setHubConfig(adminHubConfig);
         wireClients();
@@ -445,104 +445,104 @@ public class HubTestBase {
         // props reading should be in this directory...
     }
     private void certInit() {
-    	adminHubConfig.setMlUsername(user);
-    	adminHubConfig.setMlPassword(password);
-    	    	
-    	AppConfig stagingAppConfig = adminHubConfig.getStagingAppConfig();
-    	AppConfig finalAppConfig = adminHubConfig.getFinalAppConfig();
-    	manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
-    	manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
-    	adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
+        adminHubConfig.setMlUsername(user);
+        adminHubConfig.setMlPassword(password);
+                
+        AppConfig stagingAppConfig = adminHubConfig.getStagingAppConfig();
+        AppConfig finalAppConfig = adminHubConfig.getFinalAppConfig();
+        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
+        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
+        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
 
-	    adminHubConfig.setScheme(DatabaseKind.STAGING,"https");
-		adminHubConfig.setScheme(DatabaseKind.FINAL,"https");
-		adminHubConfig.setScheme(DatabaseKind.JOB,"https");
+        adminHubConfig.setScheme(DatabaseKind.STAGING,"https");
+        adminHubConfig.setScheme(DatabaseKind.FINAL,"https");
+        adminHubConfig.setScheme(DatabaseKind.JOB,"https");
 
-		adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
-		adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
-		adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
-		manageConfig.setScheme("https");
+        adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
+        adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
+        adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
+        manageConfig.setScheme("https");
         adminConfig.setScheme("https");
         manageConfig.setHost(host);
         manageConfig.setUsername(user);
         manageConfig.setSecurityUsername(secUser);
-    	
-    	if(isSslRun()) {
-    		stagingAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
-    		stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+        
+        if(isSslRun()) {
+            stagingAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
+            stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
 
-    		finalAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
-    		finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-    		
-    		adminHubConfig.setSimpleSsl(DatabaseKind.STAGING,true);
-    		adminHubConfig.setSimpleSsl(DatabaseKind.JOB,true);
-    		adminHubConfig.setSimpleSsl(DatabaseKind.FINAL,true);
-    		
-    		adminHubConfig.setSslContext(DatabaseKind.STAGING,SimpleX509TrustManager.newSSLContext());
-    		adminHubConfig.setSslContext(DatabaseKind.FINAL,SimpleX509TrustManager.newSSLContext());
-        	adminHubConfig.setSslContext(DatabaseKind.JOB,SimpleX509TrustManager.newSSLContext());
-  		
-    		manageConfig.setConfigureSimpleSsl(true);
-    		manageConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
+            finalAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
+            finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+            
+            adminHubConfig.setSimpleSsl(DatabaseKind.STAGING,true);
+            adminHubConfig.setSimpleSsl(DatabaseKind.JOB,true);
+            adminHubConfig.setSimpleSsl(DatabaseKind.FINAL,true);
+            
+            adminHubConfig.setSslContext(DatabaseKind.STAGING,SimpleX509TrustManager.newSSLContext());
+            adminHubConfig.setSslContext(DatabaseKind.FINAL,SimpleX509TrustManager.newSSLContext());
+            adminHubConfig.setSslContext(DatabaseKind.JOB,SimpleX509TrustManager.newSSLContext());
+        
+            manageConfig.setConfigureSimpleSsl(true);
+            manageConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
 
-    		adminConfig.setConfigureSimpleSsl(true);
-    		adminConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
-    	}
-    	if(isCertAuth()) {
-			stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
-			finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
-			adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
-			adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-hub-admin-user.p12");
-			adminHubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
-			manageConfig.setSslContext(datahubadmincertContext);
-			adminConfig.setSslContext(datahubadmincertContext);
-			
-    		stagingAppConfig.setAppServicesCertPassword("abcd");
-    		stagingAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
-    		stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-    		stagingAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-    		stagingAppConfig.setAppServicesPassword(null);
+            adminConfig.setConfigureSimpleSsl(true);
+            adminConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
+        }
+        if(isCertAuth()) {
+            stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
+            finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-hub-admin-user.p12");
+            adminHubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
+            manageConfig.setSslContext(datahubadmincertContext);
+            adminConfig.setSslContext(datahubadmincertContext);
+            
+            stagingAppConfig.setAppServicesCertPassword("abcd");
+            stagingAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+            stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+            stagingAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+            stagingAppConfig.setAppServicesPassword(null);
 
-    		finalAppConfig.setAppServicesCertPassword("abcd");
-    		finalAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
-    		finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-    		finalAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-    		finalAppConfig.setAppServicesPassword(null);
+            finalAppConfig.setAppServicesCertPassword("abcd");
+            finalAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+            finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+            finalAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+            finalAppConfig.setAppServicesPassword(null);
 
-    		adminHubConfig.setAuthMethod(DatabaseKind.STAGING,"certificate");
-    		adminHubConfig.setAuthMethod(DatabaseKind.JOB,"certificate");
-    		adminHubConfig.setAuthMethod(DatabaseKind.FINAL,"certificate");
+            adminHubConfig.setAuthMethod(DatabaseKind.STAGING,"certificate");
+            adminHubConfig.setAuthMethod(DatabaseKind.JOB,"certificate");
+            adminHubConfig.setAuthMethod(DatabaseKind.FINAL,"certificate");
 
-    		adminHubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
-    		adminHubConfig.setCertPass(DatabaseKind.STAGING, "abcd");
+            adminHubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
+            adminHubConfig.setCertPass(DatabaseKind.STAGING, "abcd");
 
-    		adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
-    		adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
+            adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
+            adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
 
-    		manageConfig.setConfigureSimpleSsl(false);
-    		manageConfig.setSecuritySslContext(certContext);
-    		manageConfig.setPassword(null);
-    		manageConfig.setSecurityPassword(null);
+            manageConfig.setConfigureSimpleSsl(false);
+            manageConfig.setSecuritySslContext(certContext);
+            manageConfig.setPassword(null);
+            manageConfig.setSecurityPassword(null);
 
-    		adminConfig.setConfigureSimpleSsl(false);
-    		adminConfig.setPassword(null);
+            adminConfig.setConfigureSimpleSsl(false);
+            adminConfig.setPassword(null);
 
-    	}
-    	adminHubConfig.setStagingAppConfig(stagingAppConfig);
-    	adminHubConfig.setFinalAppConfig(finalAppConfig);
-    	((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
-    	manageClient.setManageConfig(manageConfig);
-    	((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
+        }
+        adminHubConfig.setStagingAppConfig(stagingAppConfig);
+        adminHubConfig.setFinalAppConfig(finalAppConfig);
+        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
+        manageClient.setManageConfig(manageConfig);
+        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
 
-    	((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
-    	wireClients();
+        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
+        wireClients();
     }
     public void deleteProjectDir() {
         if (new File(PROJECT_PATH).exists()) {
             try {
                 FileUtils.forceDelete(new File(PROJECT_PATH));
             } catch (IOException e) {
-            	logger.warn("Unable to delete the project directory", e);
+                logger.warn("Unable to delete the project directory", e);
             }
         }
     }
@@ -888,50 +888,50 @@ public class HubTestBase {
     }
 
     public void clearUserModules() {
-    	getDataHub().clearUserModules();
+        getDataHub().clearUserModules();
     }
 
-	protected String dhfCert() {
-		return new String(
-				"<certificate-template-properties xmlns=\"http://marklogic.com/manage\"> <template-name>dhf-cert</template-name><template-description>System Cert</template-description> <key-type>rsa</key-type><key-options/><req><version>0</version><subject><countryName>US</countryName><stateOrProvinceName>CA</stateOrProvinceName><commonName>*.marklogic.com</commonName><emailAddress>fbermude@marklogic.com</emailAddress><localityName>San Carlos</localityName><organizationName>MarkLogic</organizationName><organizationalUnitName>Engineering</organizationalUnitName></subject></req> </certificate-template-properties>");
-	}
+    protected String dhfCert() {
+        return new String(
+                "<certificate-template-properties xmlns=\"http://marklogic.com/manage\"> <template-name>dhf-cert</template-name><template-description>System Cert</template-description> <key-type>rsa</key-type><key-options/><req><version>0</version><subject><countryName>US</countryName><stateOrProvinceName>CA</stateOrProvinceName><commonName>*.marklogic.com</commonName><emailAddress>fbermude@marklogic.com</emailAddress><localityName>San Carlos</localityName><organizationName>MarkLogic</organizationName><organizationalUnitName>Engineering</organizationalUnitName></subject></req> </certificate-template-properties>");
+    }
 
-	private static SSLContext createSSLContext(File certFile) {
-		String certPassword = "abcd";
-	    SSLContext sslContext = null;
-	    KeyStore keyStore = null;
-	    KeyManagerFactory keyManagerFactory = null;
-	    KeyManager[] keyMgr = null;
-	    try {
-	    	keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-	    }
-	    catch (NoSuchAlgorithmException e) {
-	    	throw new IllegalStateException("CertificateAuthContext requires KeyManagerFactory.getInstance(\"SunX509\")");
-	    }
-	    try {
-	    	keyStore = KeyStore.getInstance("PKCS12");
-	    }
-	    catch (KeyStoreException e) {
-		    throw new IllegalStateException("CertificateAuthContext requires KeyStore.getInstance(\"PKCS12\")");
-	    }
-	    try {
-	    	FileInputStream certFileStream = new FileInputStream(certFile);
-		    try {
-		    	keyStore.load(certFileStream, certPassword.toCharArray());
-		    }
-		    finally {
-		      if (certFileStream != null)
-		        certFileStream.close();
-		    }
-		    keyManagerFactory.init(keyStore, certPassword.toCharArray());
-		    keyMgr = keyManagerFactory.getKeyManagers();
-		    sslContext = SSLContext.getInstance("TLSv1.2");
-		  }
-	    catch (NoSuchAlgorithmException | KeyStoreException e) {
-		    throw new IllegalStateException("The certificate algorithm used or the Key store "
-		    + "Service provider Implementaion (SPI) is invalid. CertificateAuthContext "
-		    + "requires SunX509 algorithm and PKCS12 Key store SPI", e);
-		} catch (CertificateException e) {
+    private static SSLContext createSSLContext(File certFile) {
+        String certPassword = "abcd";
+        SSLContext sslContext = null;
+        KeyStore keyStore = null;
+        KeyManagerFactory keyManagerFactory = null;
+        KeyManager[] keyMgr = null;
+        try {
+            keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("CertificateAuthContext requires KeyManagerFactory.getInstance(\"SunX509\")");
+        }
+        try {
+            keyStore = KeyStore.getInstance("PKCS12");
+        }
+        catch (KeyStoreException e) {
+            throw new IllegalStateException("CertificateAuthContext requires KeyStore.getInstance(\"PKCS12\")");
+        }
+        try {
+            FileInputStream certFileStream = new FileInputStream(certFile);
+            try {
+                keyStore.load(certFileStream, certPassword.toCharArray());
+            }
+            finally {
+              if (certFileStream != null)
+                certFileStream.close();
+            }
+            keyManagerFactory.init(keyStore, certPassword.toCharArray());
+            keyMgr = keyManagerFactory.getKeyManagers();
+            sslContext = SSLContext.getInstance("TLSv1.2");
+          }
+        catch (NoSuchAlgorithmException | KeyStoreException e) {
+            throw new IllegalStateException("The certificate algorithm used or the Key store "
+            + "Service provider Implementaion (SPI) is invalid. CertificateAuthContext "
+            + "requires SunX509 algorithm and PKCS12 Key store SPI", e);
+        } catch (CertificateException e) {
             throw new IllegalStateException(e);
         } catch (UnrecoverableKeyException e) {
             throw new IllegalStateException(e);
@@ -947,21 +947,18 @@ public class HubTestBase {
         }
         return sslContext;
                 
-	}
-		
-	private static TrustManagerFactory installCARootCertIntoStore() {
-		File caRootCert = getResourceFile("ssl/ca-cert.crt");
-		//TrustManagerFactory tmf = null;
-		try (InputStream keyInputStream =  new ByteArrayInputStream(FileUtils.readFileToByteArray(caRootCert)))
-		{
-			X509Certificate caCert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new BufferedInputStream(keyInputStream));
-			tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-			ks.load(null);
-			ks.setCertificateEntry("caCert", caCert);
-			tmf.init(ks);
+    }
 
-		} catch (CertificateException e) {
+    private static void installCARootCertIntoStore(File caRootCert) {
+        try (InputStream keyInputStream =  new ByteArrayInputStream(FileUtils.readFileToByteArray(caRootCert)))
+        {
+            X509Certificate caCert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new BufferedInputStream(keyInputStream));
+            tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(null);
+            ks.setCertificateEntry("caCert", caCert);
+            tmf.init(ks);
+        } catch (CertificateException e) {
             throw new DataHubConfigurationException(e);
         } catch (NoSuchAlgorithmException e) {
             throw new DataHubConfigurationException(e);
@@ -970,7 +967,6 @@ public class HubTestBase {
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
         }
-		return tmf;
     }
 
     protected void debugOutput(Document xmldoc) {
@@ -978,7 +974,7 @@ public class HubTestBase {
     }
 
     protected void debugOutput(Document xmldoc, OutputStream os) {
-    	try {
+        try {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
