@@ -86,6 +86,9 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private DeployHubAmpsCommand deployHubAmpsCommand;
+    
+    @Autowired
+    private DeployHubPrivilegesCommand deployHubPrivilegesCommand;
 
     @Autowired
     private Versions versions;
@@ -623,7 +626,7 @@ public class DataHubImpl implements DataHub {
         // staging deploys amps.
         List<Command> securityCommand = new ArrayList<>();
         securityCommand.add(deployHubAmpsCommand);
-        securityCommand.add(new DeployHubPrivilegesCommand());
+        securityCommand.add(deployHubPrivilegesCommand);
         commandMap.put("mlSecurityCommand", securityCommand);
 
         // don't deploy rest api servers

@@ -841,6 +841,14 @@ public class HubConfigImpl implements HubConfig
     public String getMlPassword() {
         return mlPassword;
     }
+    
+    public void setMlUsername(String mlUsername) {
+		this.mlUsername = mlUsername;
+	}
+
+	public void setMlPassword(String mlPassword) {
+		this.mlPassword = mlPassword;
+	}
     @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
     }
