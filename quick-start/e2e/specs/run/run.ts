@@ -15,10 +15,10 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should run Load Products flow', function() {
-      flowPage.clickEntityDisclosure('Product');
+    it ('should run Load Products flow', async function() {
+      await flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
-      flowPage.runInputFlow('Product', 'Load Products', 'json', 'products',
+      await flowPage.runInputFlow('Product', 'Load Products', 'json', 'products',
         'delimited_text', '/product', '?doc=yes&type=foo');
     });
 
@@ -39,16 +39,16 @@ export default function(tmpDir) {
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('STAGING').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('STAGING').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('442403950907');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('442403950907');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       //verify on viewer page
-      browsePage.resultsUri().click();
+      await browsePage.resultsUri().click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       expect(viewerPage.verifyVariableName('sku').isPresent()).toBeTruthy();
@@ -93,8 +93,8 @@ export default function(tmpDir) {
       fs.copy(customWriterFilePath, tmpDir + '/plugins/entities/Product/harmonize/Harmonize\ Products/writer.sjs');
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
+    it ('should redeploy modules', async function() {
+      await flowPage.redeployButton.click();
       browser.sleep(5000);
     });
 
@@ -114,23 +114,23 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
+    it ('should redeploy modules', async function() {
+      await flowPage.redeployButton.click();
       browser.sleep(5000);
     });
 
     it('should run Harmonize Products flow', async function() {
       flowPage.isLoaded();
       console.log('clicking Product entity');
-      flowPage.clickEntityDisclosure('Product');
+      await flowPage.clickEntityDisclosure('Product');
       console.log('clicking Harmonize Products flow');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      await flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
       browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       console.log('found the button and clicking Run Harmonize button');
-      flowPage.runHarmonizeButton().click();
+      await flowPage.runHarmonizeButton().click();
       console.log('clicked the button');
       browser.sleep(10000);
       await appPage.jobsTab.click();
@@ -145,16 +145,16 @@ export default function(tmpDir) {
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('FINAL').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('442403950907');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('442403950907');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
-      browsePage.resultsUri().click();
+      await browsePage.resultsUri().click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
@@ -170,18 +170,18 @@ export default function(tmpDir) {
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('FINAL').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('159929577929');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('159929577929');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 3 of 3');
       expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/board_games.csv-0-10');
       expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-5').getText()).toContain('/board_games_accessories.csv-0-5');
       expect(browsePage.resultsSpecificUri('/board_games_extensions.csv-0-7').getText()).toContain('/board_games_extensions.csv-0-7');
-      browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
+      await browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
       expect(viewerPage.verifyHarmonizedProperty('sku', '159929577929').isPresent()).toBeTruthy();
@@ -206,42 +206,42 @@ export default function(tmpDir) {
       fs.copy(contentWithOptionsFilePath, tmpDir + '/plugins/entities/TestEntity/input/xqy\ json\ INPUT/content.xqy');
     });
 
-    it ('should redeploy modules', function() {
-      flowPage.redeployButton.click();
+    it ('should redeploy modules', async function() {
+      await flowPage.redeployButton.click();
       browser.sleep(5000);
     });
 
-    it ('should open the TestEntity disclosure', function() {
-      flowPage.clickEntityDisclosure('TestEntity');
+    it ('should open the TestEntity disclosure', async function() {
+      await flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
-    it('should run sjs xml input flow with ES', function() {
+    it('should run sjs xml input flow with ES', async function() {
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'xml', 'documents', '/testEntityXmlWithES', '');
+      await flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'xml', 'documents', '/testEntityXmlWithES', '');
     });
 
-    it('should run sjs json input flow', function() {
+    it('should run sjs json input flow', async function() {
       let codeFormat = 'sjs';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
+      await flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
     });
 
-    it('should run xqy xml input flow', function() {
+    it('should run xqy xml input flow', async function() {
       let codeFormat = 'xqy';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
+      await flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntity', '');
     });
 
-    it('should run xqy json input flow with ES', function() {
+    it('should run xqy json input flow with ES', async function() {
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
-      flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntityJsonWithES', '');
+      await flowPage.runInputFlow('TestEntity', flowName, dataFormat, 'products', 'delimited_text', '/testEntityJsonWithES', '');
     });
 
     it('should verify the ES json data with small sku', async function() {
@@ -249,20 +249,20 @@ export default function(tmpDir) {
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('STAGING').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('STAGING').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.facetName('xqyjsonINPUT').click();
+      await browsePage.facetName('xqyjsonINPUT').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('442403950907');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('442403950907');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').getText()).toContain('/testEntityJsonWithES');
       expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').getText()).toContain('/board_games_accessories.csv-0-1');
       //verify on viewer page
-      browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').click();
+      await browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
@@ -277,20 +277,20 @@ export default function(tmpDir) {
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('STAGING').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('STAGING').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.facetName('xqyjsonINPUT').click();
+      await browsePage.facetName('xqyjsonINPUT').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('159929577929');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('159929577929');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/testEntityJsonWithES');
       expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/board_games.csv-0-10');
       //verify on viewer page
-      browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
+      await browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
       expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
@@ -305,20 +305,20 @@ export default function(tmpDir) {
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('STAGING').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('STAGING').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.facetName('sjsxmlINPUT').click();
+      await browsePage.facetName('sjsxmlINPUT').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('harry');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('harry');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').getText()).toContain('/testEntityXmlWithES');
       expect(browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').getText()).toContain('/bookstore-no-formatting.xml');
       //verify on viewer page
-      browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').click();
+      await browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/bookstore-no-formatting.xml');
       expect(viewerPage.verifyTagName('sku').isPresent()).toBeTruthy();
@@ -348,18 +348,18 @@ export default function(tmpDir) {
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('FINAL').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.facetName('Product').click();
+      await browsePage.facetName('Product').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('442403950907');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('442403950907');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
-      browsePage.resultsUri().click();
+      await browsePage.resultsUri().click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeFalsy();
@@ -384,18 +384,18 @@ export default function(tmpDir) {
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browsePage.databaseDropDown().click();
-      browsePage.selectDatabase('FINAL').click();
+      await browsePage.databaseDropDown().click();
+      await browsePage.selectDatabase('FINAL').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.facetName('Product').click();
+      await browsePage.facetName('Product').click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
-      browsePage.searchBox().clear();
-      browsePage.searchBox().sendKeys('442403950907');
-      browsePage.searchButton().click();
+      await browsePage.searchBox().clear();
+      await browsePage.searchBox().sendKeys('442403950907');
+      await browsePage.searchButton().click();
       browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
-      browsePage.resultsUri().click();
+      await browsePage.resultsUri().click();
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeTruthy();

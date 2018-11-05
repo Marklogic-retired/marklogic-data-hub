@@ -25,8 +25,8 @@ export class EntityPage extends AppPage {
     return element(by.css('app-entity-editor'));
   }
 
-  selectEntity(entityName: string) {
-    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
+  async selectEntity(entityName: string) {
+    await element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
   }
 
   entityBox(entityName: string) {
