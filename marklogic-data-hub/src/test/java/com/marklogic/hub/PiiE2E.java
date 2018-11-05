@@ -27,6 +27,7 @@ import com.marklogic.bootstrap.Installer;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -81,6 +82,7 @@ public class PiiE2E extends HubTestBase {
 
     @BeforeAll
     public static void setupAll() throws Exception {
+        Assume.assumeTrue(!(isCertAuth()|| isSslRun()));
         XMLUnit.setIgnoreWhitespace(true);
         Path src = Paths.get(PiiE2E.class.getClassLoader().getResource("pii-test").toURI());
         Path dest = Paths.get(PROJECT_PATH).getFileName().toAbsolutePath();

@@ -394,6 +394,11 @@ public class HubTestBase {
     protected HubConfig getHubFlowRunnerConfig() {
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
+        stagingAppConfig = adminHubConfig.getStagingAppConfig();
+        finalAppConfig = adminHubConfig.getFinalAppConfig();
+        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
+        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
+        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
         if(isCertAuth()) {
             stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
             finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
@@ -403,7 +408,12 @@ public class HubTestBase {
             manageConfig.setSslContext(flowRunnercertContext);
             adminConfig.setSslContext(flowRunnercertContext);                          
         }
-       // dataHub.setHubConfig(adminHubConfig);
+        adminHubConfig.setStagingAppConfig(stagingAppConfig);
+        adminHubConfig.setFinalAppConfig(finalAppConfig);
+        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
+        manageClient.setManageConfig(manageConfig);
+        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
+        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
         wireClients();
         return adminHubConfig;
     }
@@ -448,8 +458,8 @@ public class HubTestBase {
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
                 
-        AppConfig stagingAppConfig = adminHubConfig.getStagingAppConfig();
-        AppConfig finalAppConfig = adminHubConfig.getFinalAppConfig();
+        stagingAppConfig = adminHubConfig.getStagingAppConfig();
+        finalAppConfig = adminHubConfig.getFinalAppConfig();
         manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
         manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
         adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
