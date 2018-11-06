@@ -122,8 +122,8 @@ export default function() {
         await mappingsPage.mapCreateButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
         //flicker bug, sleep will be removed once it's fixed
-        //browser.sleep(8000);
-        //browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
+        browser.sleep(8000);
+        browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapWorldBank')));
         await mappingsPage.entityMapping('MapWorldBank').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.editMapDescription()));
         expect(mappingsPage.mapTitle.getText()).toContain('MapWorldBank');
@@ -134,7 +134,7 @@ export default function() {
         await mappingsPage.inputSourceURI().sendKeys(sourceDocUri);
         await mappingsPage.editSourceURITick().click();
         // putting sleep right until the flickering bug is fixed
-        //browser.sleep(5000);
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('id')));
         // verify the typeahead on property name
         await mappingsPage.sourcePropertyDropDown('id').click();
@@ -182,8 +182,8 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
-        browser.wait(EC.presenceOf(entityPage.toast));
-        browser.wait(EC.stalenessOf(entityPage.toast));
+        //browser.wait(EC.presenceOf(entityPage.toast));
+        //browser.wait(EC.stalenessOf(entityPage.toast));
         expect(mappingsPage.verifySourcePropertyName('id').isDisplayed()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('boardapprovaldate').isDisplayed()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('lendprojectcost').isDisplayed()).toBeTruthy();

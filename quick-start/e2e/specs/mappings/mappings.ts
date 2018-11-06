@@ -75,8 +75,8 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
-        browser.wait(EC.presenceOf(entityPage.toast));
-        browser.wait(EC.stalenessOf(entityPage.toast));
+        //browser.wait(EC.presenceOf(entityPage.toast));
+        //browser.wait(EC.stalenessOf(entityPage.toast));
         expect(mappingsPage.verifySourcePropertyName('sku').isDisplayed()).toBeTruthy();
         expect(mappingsPage.verifySourcePropertyName('price').isDisplayed()).toBeTruthy();
       });
@@ -128,8 +128,8 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
-        browser.wait(EC.presenceOf(entityPage.toast));
-        browser.wait(EC.stalenessOf(entityPage.toast));
+        //browser.wait(EC.presenceOf(entityPage.toast));
+        //browser.wait(EC.stalenessOf(entityPage.toast));
       });
 
       it('should go to flows tab', async function() {
@@ -208,7 +208,7 @@ export default function() {
         expect(mappingsPage.docNotFoundMessage().getText()).toContain('Document URI not found: invalidURI');
         await mappingsPage.docNotFoundConfirmationOK().click();
         // putting sleep right until the flickering bug is fixed
-        //browser.sleep(5000);
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the old valid URI persists
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
