@@ -15,12 +15,12 @@
  */
 package com.marklogic.hub.collector;
 
-import com.google.common.io.Files;
 import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Iterator;
 import java.util.Queue;
@@ -72,7 +72,7 @@ public class DiskQueueTest extends HubTestBase {
     @Test
     public void testDiskQueue_tempDirDoesNotExist() throws IOException {
         assertThrows(InvalidParameterException.class, () -> {
-            File tmpFile = Files.createTempDir();
+            File tmpFile = Files.createTempDirectory("temp").toFile();
             tmpFile.delete();
             new DiskQueue<String>(0, tmpFile);
         });
