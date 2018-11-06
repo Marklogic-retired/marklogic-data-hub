@@ -16,7 +16,6 @@ import { CodemirrorComponent } from '../../../codemirror';
 import { Entity } from '../../../entities/entity.model';
 import { Flow } from '../../../entities/flow.model';
 import { Plugin } from '../../../entities/plugin.model';
-import { HarmonizeFlowOptionsComponent } from '../../../harmonize-flow-options/harmonize-flow-options.component';
 
 
 @Component({
@@ -45,7 +44,6 @@ export class FlowsUiComponent implements OnInit, OnDestroy {
   @Output() savePluginClicked = new EventEmitter<{plugin: Plugin}>();
 
   @ViewChildren(CodemirrorComponent) codemirrors: QueryList<CodemirrorComponent>;
-  @ViewChild(HarmonizeFlowOptionsComponent) harmonizeFlowOptions: HarmonizeFlowOptionsComponent;
 
   flowTypes = ['Input', 'Harmonize'];
 
@@ -57,7 +55,6 @@ export class FlowsUiComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
   }
 
   isActiveEntity(entity: Entity): boolean {
