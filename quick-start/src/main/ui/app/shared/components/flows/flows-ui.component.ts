@@ -12,7 +12,7 @@ import {
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { CodemirrorComponent } from '../../../codemirror';
+import { CodemirrorComponent } from '../codemirror';
 import { Entity } from '../../../entities/entity.model';
 import { Flow } from '../../../entities/flow.model';
 import { Plugin } from '../../../entities/plugin.model';
