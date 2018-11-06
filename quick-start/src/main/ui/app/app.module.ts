@@ -32,6 +32,7 @@ import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { JobsUiComponent, JobOutputUiComponent, JobExportUiComponent } from './shared/components/jobs';
 import { MlcpComponent } from './mlcp';
+import { MlcpUiComponent } from './shared/components/mlcp';
 import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
@@ -101,6 +102,7 @@ import {
     JobOutputUiComponent,
     LoginComponent,
     MlcpComponent,
+    MlcpUiComponent,
     MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,

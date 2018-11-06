@@ -520,7 +520,7 @@ export class MlcpComponent implements OnChanges {
     }
   }
 
-  updateSetting(setting: any, value: any): void {
+  updateSetting({setting, value}): void {
     setting.value = value;
     this.updateMlcpCommand();
   }
