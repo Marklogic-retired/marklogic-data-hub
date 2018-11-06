@@ -2,6 +2,7 @@
 
 ## [v4.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.2) (2018-11-05)
 
+```
 Bug
 
  [DHFPROD-1095] - #1152 ⁃ Trace content plugin on harmonized data is broken
@@ -17,7 +18,7 @@ Bug
  [DHFPROD-1495] - every mlcp job from quick start throws an error
  [DHFPROD-1502] - Unable to redeploy hub
  [DHFPROD-1302] - Issues in trace UI rendering in 4.0
- 
+``` 
 
 ## [v4.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.1) (2018-10-05)
 
