@@ -256,8 +256,9 @@ export default function(tmpDir) {
       await entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-
-    it ('should remove some properties on Order entity', async function() {
+    
+    // commenting out, there is another test on removing properties
+    /*it ('should remove some properties on Order entity', async function() {
       console.log('verify remove properties on Order entity');
       let lastProperty = entityPage.lastProperty;
       await entityPage.clickEditEntity('Order');
@@ -289,10 +290,8 @@ export default function(tmpDir) {
       await entityPage.getPropertyCheckBox(removeProp1).click();
       await entityPage.getPropertyCheckBox(removeProp2).click();
       await entityPage.deleteProperty.click();
-      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       await entityPage.confirmDialogYesButton.click();
-      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
@@ -309,7 +308,7 @@ export default function(tmpDir) {
       //entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(3)});
       await entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
-    });
+    });*/
 
     it ('should remove a created entity', async function() {
       //create removeEntity entity
