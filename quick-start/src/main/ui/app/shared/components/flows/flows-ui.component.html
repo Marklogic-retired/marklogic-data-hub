@@ -88,11 +88,11 @@
                 [flow]="flow"
                 [mlcpOptions]="mlcpOptions"
                 [hasErrors]="flowHasError(entity.name, flow.flowName)"
-                (onRun)="runInputFlow(flow, $event)"
+                (onRun)="importFlow(flow, $event)"
                 (onErrorRun)="showFlowErrorDialog(flow)"></app-mlcp>
               <app-harmonize-flow-options
                 [flow]="flow"
-                (onRun)="runHarmonizeFlow(flow, $event)"
+                (onRun)="harmonizeFlow(flow, $event)"
                 *ngIf="flowType === 'HARMONIZE'"></app-harmonize-flow-options>
             </mdl-tab-panel-content>
           </mdl-tab-panel>

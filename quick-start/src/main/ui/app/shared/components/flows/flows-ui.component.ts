@@ -24,7 +24,7 @@ import { HarmonizeFlowOptionsComponent } from '../../../harmonize-flow-options/h
   templateUrl: './flows-ui.component.html',
   styleUrls: [
     './flows-ui.component.scss'
-  ],
+  ]
 })
 export class FlowsUiComponent implements OnInit, OnDestroy {
   @Input() hasErrors = false;
@@ -40,6 +40,9 @@ export class FlowsUiComponent implements OnInit, OnDestroy {
   @Output() deleteFlowClicked = new EventEmitter<{flow: Flow, flowType: string}>();
   @Output() showNewFlowClicked = new EventEmitter<{entity: Entity, flowType: string}>();
   @Output() redeployClicked = new EventEmitter<{}>();
+  @Output() runImportClicked = new EventEmitter<{flow: Flow, options: any}>();
+  @Output() runHarmonizeClicked = new EventEmitter<{flow: Flow, options: any}>();
+  @Output() savePluginClicked = new EventEmitter<{plugin: Plugin}>();
 
   @ViewChildren(CodemirrorComponent) codemirrors: QueryList<CodemirrorComponent>;
   @ViewChild(HarmonizeFlowOptionsComponent) harmonizeFlowOptions: HarmonizeFlowOptionsComponent;
@@ -168,6 +171,18 @@ export class FlowsUiComponent implements OnInit, OnDestroy {
 
   showNewFlow(entity: Entity, flowType: string): void {
     this.showNewFlowClicked.emit({entity, flowType});
+  }
+
+  importFlow(flow: Flow, options: any): void {
+    this.runImportClicked.emit({flow, options});
+  }
+
+  harmonizeFlow(flow: Flow, options: any): void {
+    this.runHarmonizeClicked.emit({flow, options});
+  }
+
+  savePlugin(plugin: Plugin) {
+    this.savePluginClicked.emit({plugin});
   }
 
 }

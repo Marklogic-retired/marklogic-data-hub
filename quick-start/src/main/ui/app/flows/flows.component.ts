@@ -1,5 +1,5 @@
 import { MdlDialogService, MdlSnackbarService } from '@angular-mdl/core';
-import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { distanceInWords } from 'date-fns';
 import * as _ from 'lodash';
@@ -211,7 +211,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.setCollapsed(entity, !collapsed);
   }
 
-  deleteFlow( {flow, flowType}: {flow: Flow, flowType: string}): void {
+  deleteFlow({flow, flowType}: {flow: Flow, flowType: string}): void {
     this.dialogService.confirm(`Really delete ${flow.flowName}`, 'Cancel', 'Delete').subscribe(() => {
       this.entitiesService.deleteFlow(flow, flowType).subscribe(() => {
         this.harmonizeFlowOptions.deleteSettings(flow.flowName);
@@ -244,7 +244,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     }
   }
 
-  savePlugin(plugin: Plugin): void {
+  savePlugin({plugin}: {plugin: Plugin}): void {
     if (plugin.$dirty) {
       this.isSaving = true;
       this.entitiesService
@@ -342,7 +342,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     });
   }
 
-  runInputFlow(flow: Flow, options: any): void {
+  runInputFlow({flow, options}: {flow: Flow, options: any}): void {
     this.entitiesService.runInputFlow(flow, options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
@@ -350,7 +350,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     });
   }
 
-  runHarmonizeFlow(flow: Flow, options: any): void {
+  runHarmonizeFlow({flow, options}: {flow: Flow, options: any}): void {
     this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount, options.options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
