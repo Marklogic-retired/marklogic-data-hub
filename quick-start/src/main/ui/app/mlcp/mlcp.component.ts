@@ -22,10 +22,10 @@ interface MlcpOptions {
 
 @Component({
   selector: 'app-mlcp',
-  templateUrl: './mlcp-ui.component.html',
-  styleUrls: ['./mlcp-ui.component.scss']
+  templateUrl: './mlcp.component.html',
+  styleUrls: ['./mlcp.component.scss']
 })
-export class MlcpUiComponent implements OnChanges {
+export class MlcpComponent implements OnChanges {
   startPath: string;
   inputFilePath: string;
   mlcp = <MlcpOptions>{};

@@ -11,7 +11,6 @@ import { MdlSnackbarService } from '@angular-mdl/core';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
-import { MlcpUiComponent } from '../mlcp-ui';
 import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options/harmonize-flow-options.component';
 import { NewEntityComponent } from '../shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from '../new-flow/new-flow.component';
