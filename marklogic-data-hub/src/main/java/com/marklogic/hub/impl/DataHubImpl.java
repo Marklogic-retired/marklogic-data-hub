@@ -26,7 +26,6 @@ import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -48,7 +47,6 @@ import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -57,11 +55,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,9 +73,9 @@ public class DataHubImpl implements DataHub {
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-	private String finalFile = "final-database.json";
-	private String stagingFile = "staging-database.json";
-	private String jobsFile = "job-database.json";
+    private String finalFile = "final-database.json";
+    private String stagingFile = "staging-database.json";
+    private String jobsFile = "job-database.json";
 
     public DataHubImpl(HubConfig hubConfig) {
         if (hubConfig == null) {
@@ -135,10 +131,9 @@ public class DataHubImpl implements DataHub {
 
         InstallInfo installInfo = InstallInfo.create();
 
-        if (hubConfig.getIsProvisionedEnvironment()){
+        if (hubConfig.getIsProvisionedEnvironment()) {
             return assumedProvisionedInstallInfo(installInfo);
-        }
-        else {
+        } else {
             ResourcesFragment srf = null;
             try {
                 srf = getServerManager().getAsXml();
@@ -409,7 +404,6 @@ public class DataHubImpl implements DataHub {
         }
 
         Set<Integer> ports = portsInUse.keySet();
-
         String serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.STAGING));
         stagingPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.STAGING)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.STAGING));
         if (stagingPortInUse) {
@@ -423,7 +417,7 @@ public class DataHubImpl implements DataHub {
         }
 
         serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.JOB));
-        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.JOB));
+        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && !serverName.equalsIgnoreCase(hubConfig.getHttpName(DatabaseKind.JOB));
         if (jobPortInUse) {
             jobPortInUseBy = serverName;
         }
@@ -444,7 +438,9 @@ public class DataHubImpl implements DataHub {
         response.put("jobPortInUse", jobPortInUse);
         response.put("jobPortInUseBy", jobPortInUseBy);
         response.put("safeToInstall", isSafeToInstall());
-
+        if ((boolean) response.get("safeToInstall")) {
+            response.put("dhfVersion", versions.getHubVersion());
+        }
         return response;
     }
 
@@ -531,13 +527,13 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public void updateIndexes() {
-    	HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
-    	
-    	AppConfig finalConfig = hubConfig.getFinalAppConfig();
+        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+
+        AppConfig finalConfig = hubConfig.getFinalAppConfig();
         List<Command> finalDBCommand = new ArrayList<>();
         finalDBCommand.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
         deployer.setFinalCommandsList(finalDBCommand);
-        
+
         AppConfig stagingConfig = hubConfig.getStagingAppConfig();
         List<Command> stagingDBCommand = new ArrayList<>();
         stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
@@ -626,6 +622,7 @@ public class DataHubImpl implements DataHub {
         // staging deploys amps.
         List<Command> securityCommand = new ArrayList<>();
         securityCommand.add(new DeployHubAmpsCommand(hubConfig));
+        securityCommand.add(new DeployHubPrivilegesCommand());
         commandMap.put("mlSecurityCommand", securityCommand);
 
         // don't deploy rest api servers

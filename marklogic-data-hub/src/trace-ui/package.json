@@ -39,6 +39,7 @@
     "material-design-lite": "^1.3.0",
     "mdi": "2.0.46",
     "ng2-device-detector": "^1.0.1",
+    "ngx-bootstrap": "^3.0.1",
     "node-sass": "^4.9.3",
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",

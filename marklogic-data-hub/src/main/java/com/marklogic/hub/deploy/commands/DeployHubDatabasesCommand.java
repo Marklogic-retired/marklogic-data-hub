@@ -24,7 +24,6 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommandComparator;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;

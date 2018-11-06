@@ -43,7 +43,12 @@ public class LoadHubModulesCommand extends AbstractCommand {
     private Throwable caughtException;
 
     public LoadHubModulesCommand(HubConfig hubConfig) {
-        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES);
+        /**
+         * Hub modules should be loaded before any other modules - including those depended on via
+         * ml-gradle's mlRestApi dependency - to ensure that the DHF REST rewriter is available before any REST
+         * extensions are loaded via a /v1/config/* endpoint.
+         */
+        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES - 1);
         this.hubConfig = hubConfig;
     }
 

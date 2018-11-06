@@ -95,7 +95,7 @@ public class EntitiesControllerTest extends BaseTestController {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getHubFlowRunnerConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -138,7 +138,7 @@ public class EntitiesControllerTest extends BaseTestController {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getHubFlowRunnerConfig(), true);
+        installUserModules(getHubAdminConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);

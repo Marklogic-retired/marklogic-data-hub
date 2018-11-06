@@ -16,7 +16,7 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.util.Versions;
@@ -62,4 +62,13 @@ public class LoadHubModulesCommandTest extends HubTestBase {
 
     }
 
+    @Test
+    public void hubModulesShouldBeLoadedBeforeAllOtherModules() {
+        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
+        assertTrue(
+            loadHubModulesCommand.getExecuteSortOrder() < loadModulesCommand.getExecuteSortOrder(),
+            "Hub modules need to be loaded before all other modules so that the DHF-specific REST " +
+                "rewriter is guaranteed to be loaded before any calls are made to /v1/config/* for " +
+                "loading REST extensions");
+    }
 }

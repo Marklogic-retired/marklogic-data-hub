@@ -18,7 +18,6 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
@@ -181,7 +180,7 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
 
         // deploy the auto-generated ES search options
         EntityManager entityManager = EntityManager.create(hubConfig);
-        entityManager.deployStagingQueryOptions();
+        entityManager.deployQueryOptions();
 
         try {
             if (startPath.toFile().exists()) {

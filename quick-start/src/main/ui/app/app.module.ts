@@ -28,17 +28,18 @@ import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
 import { CodemirrorComponent } from './codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
+import { FolderBrowserUiComponent } from './shared/components/folder-browser/folder-browser-ui.component';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
 import { MlcpUiComponent } from './mlcp-ui';
-import { MlErrorComponent } from './ml-error';
+import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
 import { NoContentComponent } from './no-content';
-import { PaginationComponent } from './pagination';
-import { ResizableComponent } from './resizable/resizable.component';
-import { SelectComponent } from './select/select.component';
-import { SelectListComponent } from './select-list/select-list.component';
+import { PaginationComponent } from './shared/components/pagination';
+import { ResizableComponent } from './shared/components/resizable/resizable.component';
+import { SelectComponent } from './shared/components/select/select.component';
+import { SelectListComponent } from './shared/components/select-list/select-list.component';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
@@ -59,23 +60,26 @@ import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options/harmonize-flow-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitlecasePipe } from './titlecase.pipe';
-import { InlineEditComponent } from './inline-edit/inline-edit.component';
-import { FacetsComponent } from './facets/facets.component';
+import { InlineEditComponent } from './shared/components/inline-edit/inline-edit.component';
+import { FacetsComponent } from './shared/components/facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
-import { SelectKeyValuesComponent } from './select-key-values/select-key-values.component';
+import { SelectKeyValuesComponent } from './shared/components/select-key-values/select-key-values.component';
 import {JobExportDialogComponent} from "./jobs/job-export.component";
 
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
 import { NewMapComponent } from "./mappings/new-map.component";
+import { NewMapUiComponent } from "./shared/components/mappings/new-map-ui.component";
+import {ThemeModule} from "./shared/components/theme/theme.module";
 
 @NgModule({
   declarations: [
     AppComponent,
     CodemirrorComponent,
     FolderBrowserComponent,
+    FolderBrowserUiComponent,
     HeaderComponent,
     HasBugsDialogComponent,
     FlowsComponent,
@@ -93,6 +97,7 @@ import { NewMapComponent } from "./mappings/new-map.component";
     NewEntityComponent,
     NewFlowComponent,
     NewMapComponent,
+    NewMapUiComponent,
     PaginationComponent,
     ResizableComponent,
     SelectComponent,
@@ -139,7 +144,8 @@ import { NewMapComponent } from "./mappings/new-map.component";
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
     DatePipeModule,
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    ThemeModule
   ],
   providers: [
     AUTH_PROVIDERS,

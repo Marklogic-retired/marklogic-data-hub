@@ -4,7 +4,7 @@ declare namespace jasmine {
     endDateTime: Date
   }
 
-  export interface Matchers {
+  export interface Matchers<T> {
     toHaveAllElementsContainText(expected: string): boolean
     toHaveAllElementsEqualTo(expected: string): boolean
     toBeSubSetOf(expected: any[]): boolean

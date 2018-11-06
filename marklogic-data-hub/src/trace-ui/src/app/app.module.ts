@@ -23,6 +23,7 @@ import { TitlecasePipe } from './titlecase.pipe';
 import { FacetsComponent } from './facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
+import {ThemeModule} from "./theme/theme.module";
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { DatePipeModule } from './date-pipe/date-pipe.module';
     MdlModule,
     TooltipModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    DatePipeModule
+    DatePipeModule,
+    ThemeModule
   ],
   providers: [
     TraceService
