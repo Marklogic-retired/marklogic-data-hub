@@ -20,17 +20,27 @@ package com.marklogic.gradle
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
+import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DataHub
+import com.marklogic.hub.HubConfig
 import com.marklogic.hub.impl.DataHubImpl
+import com.marklogic.hub.impl.HubConfigImpl
 import com.marklogic.hub.impl.Versions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.WebApplicationType
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.ConfigurableApplicationContext
 
+@EnableAutoConfiguration
 class DataHubPlugin implements Plugin<Project> {
 
     private DataHub dataHub
+
+    private HubConfig hubConfig
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -50,9 +60,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.plugins.apply(MarkLogicPlugin.class)
 
         logger.info("\nInitializing data-hub-gradle")
-
-        initializeProjectExtensions(project)
-        configureAppDeployer(project)
+        setupHub(project)
 
         String deployGroup = "MarkLogic Data Hub Setup"
         project.task("hubEnableDebugging", group: deployGroup, type: EnableDebuggingTask,
@@ -84,7 +92,7 @@ class DataHubPlugin implements Plugin<Project> {
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
 
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
-			description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
+            description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
 
         project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
             description: "Installs user modules into the STAGING modules database for DHF extension.")
@@ -111,41 +119,53 @@ class DataHubPlugin implements Plugin<Project> {
 
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
-        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask )
-        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask )
+        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask)
+        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask)
         // This task is undocumented, so don't let it appear in the list
-        project.task("hubImportJobs", group: null, type: ImportJobsTask )
+        project.task("hubImportJobs", group: null, type: ImportJobsTask)
 
         logger.info("Finished initializing ml-data-hub\n")
     }
 
+    void setupHub(Project project) {
+        def app = new SpringApplication(ApplicationConfig.class)
+        app.setWebApplicationType(WebApplicationType.NONE)
+        ConfigurableApplicationContext ctx = app.run("--hubProjectDir=" + project.getProjectDir().getAbsolutePath())
+
+        hubConfig = ctx.getBean(HubConfigImpl.class)
+        dataHub = ctx.getBean(DataHubImpl.class)
+
+        initializeProjectExtensions(project)
+    }
+
     void initializeProjectExtensions(Project project) {
+
         def projectDir = project.getProjectDir().getAbsolutePath()
         def properties = new ProjectPropertySource(project).getProperties()
         def extensions = project.getExtensions()
 
-        def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
-            .withProperties(properties)
-            .withStagingAppConfig(extensions.getByName("mlAppConfig"))
-            .withAdminConfig(extensions.getByName("mlAdminConfig"))
-            .withAdminManager(extensions.getByName("mlAdminManager"))
-            .withManageConfig(extensions.getByName("mlManageConfig"))
-            .withManageClient(extensions.getByName("mlManageClient"))
-            .build()
+        hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
+        hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
+        hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
+        hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
+        hubConfig.setManageClient(extensions.getByName("mlManageClient"))
+
         project.extensions.add("hubConfig", hubConfig)
 
-        dataHub = DataHub.create(hubConfig)
         project.extensions.add("dataHub", dataHub)
+
+        configureAppDeployer(project)
     }
+
 
     void configureAppDeployer(Project project) {
         SimpleAppDeployer mlAppDeployer = project.extensions.getByName("mlAppDeployer")
         if (mlAppDeployer == null) {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
-        List <Command> allCommands = new ArrayList()
-        allCommands.addAll(((DataHubImpl)dataHub).getFinalCommandList())
-        allCommands.addAll(((DataHubImpl)dataHub).getStagingCommandList())
+        List<Command> allCommands = new ArrayList()
+        allCommands.addAll(((DataHubImpl) dataHub).getFinalCommandList())
+        allCommands.addAll(((DataHubImpl) dataHub).getStagingCommandList())
         mlAppDeployer.setCommands(allCommands)
     }
 }

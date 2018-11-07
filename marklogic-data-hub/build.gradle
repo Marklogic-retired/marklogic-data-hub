@@ -139,6 +139,10 @@ if (!(
 
 tasks.clean.dependsOn cleanUI
 
+jar{ 
+    enabled = true
+}
+
 javadoc {
    options.overview = 'src/main/resources/overview.html'
 }
