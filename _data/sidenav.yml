@@ -102,4 +102,5 @@ main:
       ]
     }
     - { url: '/faqs/', text: 'FAQs' }
+    - { url: '/glossary/', text: 'DHF Glossary' }
     - { absurl: 'https://github.com/marklogic/marklogic-data-hub', text: 'DHF on GitHub' }
