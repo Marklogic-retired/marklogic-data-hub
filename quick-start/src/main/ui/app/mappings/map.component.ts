@@ -41,7 +41,7 @@ export class MapComponent implements OnInit {
   private pageLength: number = 1;
   public sampleDocURI: string = null;
   private sampleDocSrc: any = null;
-  private sampleDocSrcProps: Array<any> = [];
+  public sampleDocSrcProps: Array<any> = [];
 
   // Connections
   public conns: object = {};
