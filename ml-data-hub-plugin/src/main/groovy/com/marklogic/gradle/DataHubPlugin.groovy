@@ -25,7 +25,9 @@ import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.impl.HubConfigImpl
+import com.marklogic.hub.impl.ScaffoldingImpl
 import com.marklogic.hub.impl.Versions
+import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
@@ -39,7 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext
 class DataHubPlugin implements Plugin<Project> {
 
     private DataHub dataHub
-
+    private Scaffolding scaffolding;
     private HubConfig hubConfig
 
     Logger logger = LoggerFactory.getLogger(getClass())
@@ -134,6 +136,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         hubConfig = ctx.getBean(HubConfigImpl.class)
         dataHub = ctx.getBean(DataHubImpl.class)
+        scaffolding  = ctx.getBean(ScaffoldingImpl.class)
 
         initializeProjectExtensions(project)
     }
@@ -151,8 +154,8 @@ class DataHubPlugin implements Plugin<Project> {
         hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
         project.extensions.add("hubConfig", hubConfig)
-
         project.extensions.add("dataHub", dataHub)
+        project.extensions.add("scaffolding", scaffolding)
 
         configureAppDeployer(project)
     }

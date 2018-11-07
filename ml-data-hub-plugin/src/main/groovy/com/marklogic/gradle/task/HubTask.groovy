@@ -22,9 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
-import com.marklogic.hub.deploy.HubAppDeployer
-import com.marklogic.hub.deploy.util.HubDeployStatusListener
-import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.job.JobManager
+import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 
@@ -38,6 +37,11 @@ abstract class HubTask extends DefaultTask {
     @Internal
     DataHub getDataHub() {
         getProject().property("dataHub")
+    }
+
+    @Internal
+    Scaffolding getScaffolding() {
+        getProject().property("scaffolding")
     }
 
     @Internal
@@ -89,13 +93,12 @@ abstract class HubTask extends DefaultTask {
             ObjectMapper mapper = new ObjectMapper()
             if (str instanceof JsonNode) {
                 jsonObject = str
-            }
-            else {
+            } else {
                 jsonObject = mapper.readValue(str, Object.class)
             }
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject)
         }
-        catch(Exception e) {
+        catch (Exception e) {
             return str
         }
     }
