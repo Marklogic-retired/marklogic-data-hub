@@ -1,6 +1,7 @@
 import {
   Component,
-  Inject
+  Inject,
+  Input
 } from '@angular/core';
 
 import { MdlDialogReference } from '@angular-mdl/core';
@@ -11,13 +12,12 @@ import { MdlDialogReference } from '@angular-mdl/core';
   styleUrls: ['./has-bugs-dialog.component.scss']
 })
 export class HasBugsDialogComponent {
-  public errors: any;
+  @Input() errors: any;
 
   constructor(
     public dialog: MdlDialogReference,
     @Inject('errors') errors: any)
   {
       this.errors = errors;
-      console.log(this.errors);
   }
 }

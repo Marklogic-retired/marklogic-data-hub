@@ -8,7 +8,7 @@ import { moduleMetadata, storiesOf } from '@storybook/angular';
 import { SearchViewerUiComponent } from '../../../../components/search/';
 import { ThemeModule } from '../../../../components/theme/';
 import { StoryCardComponent } from '../../../utils/story-card/story-card.component';
-import { CodemirrorComponent } from './../../../../../codemirror/';
+import { CodemirrorComponent } from '../../../../components/codemirror/';
 
 storiesOf('Components|Search', module)
   .addDecorator(withKnobs)

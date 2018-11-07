@@ -7,7 +7,7 @@ import { TruncateCharactersPipe } from './truncate';
 import { ListFilterPipe } from './listfilter';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
-import { HasBugsDialogComponent } from './has-bugs-dialog';
+import { HasBugsDialogComponent } from './shared/components';
 import {
   EntityModelerComponent,
   EntityEditorComponent,
@@ -26,12 +26,12 @@ import { BsDropdownModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
-import { CodemirrorComponent } from './codemirror';
+import { CodemirrorComponent } from './shared/components/codemirror';
 import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
 import { FolderBrowserUiComponent } from './shared/components';
 import { HeaderComponent } from './header/header.component';
 import { JobsComponent, JobOutputComponent } from './jobs';
-import { JobsUiComponent, JobOutputUiComponent } from './shared/components/jobs';
+import { JobsUiComponent, JobOutputUiComponent, JobExportUiComponent } from './shared/components/jobs';
 import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
@@ -96,6 +96,7 @@ import {
     ExternalDefDialogComponent,
     JobsComponent,
     JobsUiComponent,
+    JobExportUiComponent,
     JobExportDialogComponent,
     JobOutputComponent,
     JobOutputUiComponent,
