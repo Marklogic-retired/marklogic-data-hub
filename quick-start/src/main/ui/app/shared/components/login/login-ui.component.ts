@@ -11,11 +11,12 @@ import {HubSettings} from "../../../environment/hub-settings.model";
 export class LoginUIComponent {
   @Input() installationStatus: string;
   @Input() currentEnvironment: any;
+  @Input() currentEnvironmentString: string;
   @Input() uninstalling: boolean;
   @Input() installing: boolean;
   @Input() percentComplete: number;
   @Input() showInitAdvanced: boolean;
-  @Input() showFolderBrowser: boolean;
+  @Input() showFolderBrowser: boolean = true;
   @Input() projects: Array<any>;
   @Input() currentProject: any;
   @Input() loggingIn: boolean;
@@ -37,7 +38,11 @@ export class LoginUIComponent {
   @Output() onGotEnvironment: EventEmitter<any> = new EventEmitter<any>();
   @Output() onHubUpdateUrl: EventEmitter<any> = new EventEmitter<any>();
   @Output() onUpdateProject: EventEmitter<any> = new EventEmitter<any>();
-
+  @Output() onProjectSelected: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onRemoveProject: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onInitProject: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onRestoreInitDefaults: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onShowFolderBrowser: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private renderer: Renderer2) {
   }
@@ -87,5 +92,14 @@ export class LoginUIComponent {
     setTimeout(() => {
       this.renderer.selectRootElement('input#username').focus();
     }, 500);
+  }
+
+  clickShowFolderBrowser() {
+    this.showFolderBrowser = !this.showFolderBrowser;
+    this.onShowFolderBrowser.emit(this.showFolderBrowser);
+  }
+
+  getInstalledIcon(isTrue: boolean) {
+    return isTrue ? 'fa-check' : 'fa-close';
   }
 }

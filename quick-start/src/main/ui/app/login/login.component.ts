@@ -17,6 +17,7 @@ import * as SemVer from 'semver';
   template: `
     <app-login-ui
       [currentEnvironment]="this.currentEnvironment"
+      [currentEnvironmentString]="this.currentEnvironmentString"
       [installationStatus]="this.installationStatus"
       [installing]="this.installing"
       [percentComplete]="this.percentComplete"
@@ -29,6 +30,8 @@ import * as SemVer from 'semver';
       [loginError]="this.loginError"
       [loginInfo]="this.loginInfo"
       [initSettings]="this.initSettings"
+      [hubUpdateFailed]="this.hubUpdateFailed"
+      [hubUpdating]="this.hubUpdating"
       
       (onInstall)="this.install()"
       (onUninstall)="this.unInstall()"
@@ -37,9 +40,16 @@ import * as SemVer from 'semver';
       (onPostInitNext)="this.postInitNext()"
       (onLogin)="this.login()"
       (onHubNameChanged)="this.hubNameChanged()"
+      (onGotEnvironment)="this.gotEnvironment($event)"
+      (onHubUpdateUrl)="this.hubUpdateUrl()"
+      (onUpdateProject)="this.updateProject()"
+      (onProjectSelected)="this.project = $event"
+      (onRemoveProject)="this.removeProject($event)"
+      (onInitProject)="this.initProject()"
+      (onRestoreInitDefaults)="this.restoreInitDefaults()"
+      (onShowFolderBrowser)="this.showFolderBrowser = $event"
     >
       <app-folder-browser class="app-folder-browser"
-        *ngIf="showFolderBrowser"
         start-path='.'
         absoluteOnly="true"
         (folderChosen)="folderClicked($event)">
@@ -210,8 +220,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  removeProject($event: any) {
-    const project = $event.item;
+  removeProject(project: any) {
     this.projectService.removeProject(project).subscribe(() => {
       _.remove(this.projects, p => {
         return p.id === project.id;
@@ -238,7 +247,7 @@ export class LoginComponent implements OnInit {
     }
   };
 
-  restoreInitDefaults($evt: MouseEvent) {
+  restoreInitDefaults() {
     this.dialogService.confirm('Really restore the default settings?', 'Cancel', 'Restore').subscribe(() => {
         this.initSettings = _.clone(this.defaultSettings);
       },
@@ -373,9 +382,5 @@ export class LoginComponent implements OnInit {
       return `https://marklogic.github.io/marklogic-data-hub/understanding/updating/`;
     }
     return '';
-  }
-
-  getInstalledIcon(isTrue: boolean) {
-    return isTrue ? 'fa-check' : 'fa-close';
   }
 }

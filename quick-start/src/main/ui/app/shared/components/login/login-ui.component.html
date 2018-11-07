@@ -26,8 +26,8 @@
               [items]="projects"
               [initialSelectedItem]="lastProject"
               [allowRemove]="true"
-              (selectedItem)="project = $event"
-              (removedItem)="removeProject($event)"
+              (selectedItem)="this.onProjectSelected.emit($event)"
+              (removedItem)="this.onRemoveProject.emit($event.item)"
               label="path" identifier="id"
               md-whiteframe-2dp></app-select-list>
             <p>or</p>
@@ -36,10 +36,10 @@
           <div layout="column">
             <h3>Browse for a Project Folder</h3>
             <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
-              <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
+              <button type="button" mdl-button (click)="this.clickShowFolderBrowser()" class="shrink-me">Browse</button>
             </div>
 
-            <ng-content select=".app-folder-browser"></ng-content>
+            <ng-content select=".app-folder-browser" *ngIf="showFolderBrowser"></ng-content>
 
           </div>
 
@@ -56,7 +56,7 @@
             <h3>This project needs to be initialized</h3>
             <p>The project located at {{currentProject.path}} needs to be initialized.</p>
 
-            <form class="initForm" (submit)="initProject()">
+            <form class="initForm" (submit)="onInitProject.emit()">
               <div flex layout="column" class="scroller">
                 <div class="sub-section">
                   <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="onHubNameChanged.emit()"  required="required"></mdl-textfield>
@@ -120,7 +120,7 @@
                 <button
                   type="button"
                   mdl-button
-                  (click)="restoreInitDefaults($event)">Restore Defaults</button>
+                  (click)="this.onRestoreInitDefaults.emit()">Restore Defaults</button>
                 <button type="submit" mdl-button mdl-button-type="raised">Initialize</button>
               </div>
             </form>
