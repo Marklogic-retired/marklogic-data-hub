@@ -71,6 +71,7 @@ import {JobExportDialogComponent} from "./jobs";
 
 import { MapComponent } from './mappings';
 import { MappingsComponent } from "./mappings";
+import { MappingsUiComponent } from "./shared/components";
 import { NewMapComponent } from "./mappings/new-map.component";
 import { NewMapUiComponent } from "./shared/components";
 import {ThemeModule} from "./shared/components";
@@ -100,6 +101,9 @@ import {
     JobOutputComponent,
     JobOutputUiComponent,
     LoginComponent,
+    MapComponent,
+    MappingsComponent,
+    MappingsUiComponent,
     MlcpUiComponent,
     MlErrorComponent,
     NewEntityComponent,
@@ -129,8 +133,7 @@ import {
     ListFilterPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
-    MapComponent,
-    MappingsComponent
+    SettingsUiComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
