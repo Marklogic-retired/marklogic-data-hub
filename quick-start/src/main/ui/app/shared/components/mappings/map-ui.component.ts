@@ -12,7 +12,7 @@ import { Mapping } from "../../../mappings/mapping.model";
   templateUrl: './map-ui.component.html',
   styleUrls: ['./map-ui.component.scss']
 })
-export class MapUiComponent implements OnInit, OnChanges {
+export class MapUiComponent implements OnChanges {
 
   @Input() mapping: Mapping = new Mapping();
   @Input() chosenEntity: Entity = null;

@@ -226,7 +226,6 @@ export class MapComponent implements OnInit {
         this.mapping = map;
         this.sampleDocURI = map.sourceURI;
         this.editURIVal = this.sampleDocURI;
-        this.editDescVal = map.description;
       }
       // if source URI unset in mapping, load sample source doc based on entity
       if (this.mapping && !this.mapping.sourceURI) {
