@@ -146,17 +146,17 @@ More detailed information can be found in the [Introduction to Entity Services](
 ### Flows and Plugins
 Flows are the means by which you harmonize your data. There are two types of flows: **input** and **harmonize**. Flows belong to entities. Think of a flow as a way of creating an envelope that represents an entity. Flows are made up of plugins.
 
+[Learn more about plugins in flows.](./plugins.md)
+
 #### Input Flows
 
-Input flows are specialized flows that get invoked via MLCP, the Java Cleint API, or the REST Client API as transforms that process one incoming document before it gets written into MarkLogic. Because these flows run as transforms, they are not responsible for persisting data. They merely transform the given data into envelopes. It is MLCP, the Java Client API, or the REST Client API that will write the final, transformed document into MarkLogic.
+Input flows are specialized flows that get invoked via MLCP, the Java Client API, or the REST Client API as transforms that process one incoming document before it gets written into MarkLogic. Because these flows run as transforms, they are not responsible for persisting data. They merely transform the given data into envelopes. It is MLCP, the Java Client API, or the REST Client API that will write the final, transformed document into MarkLogic.
 
 Input flows are useful for tracking information about data in your Staging Database.
  - Which system did the data come from?
  - What date/time was the data loaded?
  - Who loaded the data?
  - Has the data been harmonized yet?
- 
-<!--- DHFPROD-646 TODO more clearly describe what a plugin is -->
 
 Input flows consist of four parts:
 - **Main Plugin**: Orchestrates the running of the other three plugins.
@@ -166,7 +166,7 @@ Input flows consist of four parts:
 
 #### Harmonize Flows
 
-Harmonization is the process of creating a canonical model of your data using only the parts you need and leaving the rest as-is. Harmonize flows harmonize your ingested data and are meant to run in batches. The primary purpose of the Data Hub Framework is to run harmonize flows.
+Harmonization is the process of creating a canonical model of your data using only the parts you need and leaving the rest as is. Harmonize flows harmonize your ingested data and are meant to run in batches. The primary purpose of the Data Hub Framework is to run harmonize flows.
 
 Harmonize flows have six plugins. There is one plugin for each piece of the envelope (headers, triples, and content):
 

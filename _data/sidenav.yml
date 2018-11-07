@@ -7,6 +7,7 @@ main:
         { url: '/understanding/concepts/', text: 'Concepts' },
         { url: '/understanding/architecture/', text: 'Organization' },
         { url: '/understanding/how-it-works/', text: 'How It Works'},
+        { url: '/understanding/plugins/', text: 'Plugins in Flows'},
         { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
         { url: '/understanding/project-structure/', text: 'Project Structure'},
         { url: '/understanding/upgrading/', text: 'Upgrading DHF'}
