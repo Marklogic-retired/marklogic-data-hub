@@ -28,13 +28,13 @@ export class TooltipContainerComponent implements AfterViewInit {
   public display:string = 'block';
   public content:string;
   public htmlContent:string | TemplateRef<any>;
+  public context:any;
   private placement:string;
   private popupClass:string;
   private animation:boolean;
   private isOpen:boolean;
   private appendToBody:boolean = true;
   private hostEl:ElementRef;
-  private context:any;
 
   private element:ElementRef;
   private cdr:ChangeDetectorRef;
