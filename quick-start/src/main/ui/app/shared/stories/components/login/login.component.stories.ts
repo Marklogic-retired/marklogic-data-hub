@@ -41,6 +41,7 @@ storiesOf('Components|Login', module)
                 [loginError]='loginError'
                 [loginInfo]='loginInfo'
                 [initSettings]="initSetting"
+                [currentEnvironmentString]="currentEnvironmentString"
                 
                 (onInstall)='onInstall'
                 (onUninstall)='onUninstall'
@@ -93,13 +94,14 @@ storiesOf('Components|Login', module)
         runningVersion: '1.0.0',
         dhfversion: '4.0.0'
       },
+      currentEnvironmentString: 'local',
       installationStatus: text('installationStatus', 'Installation Status Here'),
       installing: boolean('installing', true),
       percentComplete: number('percentComplete', 20),
       uninstalling: boolean('uninstalling', true),
       showInitAdvanced: boolean('showInitAdvanced', true),
       showFolderBrowser: boolean('showFolderBrowser', true),
-      projects: object('projects', []),
+      projects: object('projects', [{id:1,path:"/path/to/project1"}]),
       currentProject: {
         environments: [
           {"label": 'Item N1'},

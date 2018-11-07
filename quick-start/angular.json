@@ -18,7 +18,7 @@
             "polyfills": "src/main/ui/polyfills.ts",
             "assets": [
               { "glob": "**/*", "input": "src/main/ui/assets", "output": "/" },
-              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" },
+              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" }
             ],
             "styles": [
               "node_modules/mdi/css/materialdesignicons.css",
@@ -85,7 +85,7 @@
             ],
             "assets": [
               { "glob": "**/*", "input": "src/main/ui/assets", "output": "/" },
-              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" },
+              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" }
             ]
           }
         },
