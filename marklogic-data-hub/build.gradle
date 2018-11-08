@@ -72,11 +72,6 @@ configurations.all {
 }
 
 
-
-
-import com.marklogic.mgmt.ManageClient
-import com.marklogic.mgmt.resource.hosts.HostManager
-
 node {
   // Version of node to use.
   version = '8.9.4'
@@ -261,8 +256,7 @@ def props = new Properties()
 propFile.withInputStream { props.load(it) }
 
 task bootstrap(type: JavaExec) {
-	dependsOn 'setupSSL'
-    classpath = sourceSets.test.runtimeClasspath
+	classpath = sourceSets.test.runtimeClasspath
     main = 'com.marklogic.bootstrap.Installer'
 }
 
@@ -299,24 +293,21 @@ task testBootstrap(type: Test) {
     }
 }
 
-task cleanupTask{
-	dependsOn 'teardown'
-	doLast{
-    	if(sslRun || certAuth){
-    		propFile.write(fileContents)
-		}
-    }
-}
-
 task setupSSL{
 	doFirst{
+		com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
+		com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
+		def	bootStrapHost = hostManager.getHostNames().get(0)
+		if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
+			 throw new GradleException("The test with current options will run only in marklogic.com domain")
+		}
 		if(sslRun || certAuth){
-			com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
-			com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
-			def	bootStrapHost = hostManager.getHostNames().get(0)
-			if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
-				 throw new GradleException("The test with current options will run only in marklogic.com domain")
-			}
+			javaexec {
+				classpath = sourceSets.test.runtimeClasspath
+				main = 'com.marklogic.bootstrap.SSLsetup'
+				args = [mlHost, mlSecurityUsername, mlSecurityPassword, certAuth]
+				}
+		  	}
 			if(sslRun) {
 				//checking if one of the property is already set
 				if(props.getProperty('mlJobSimpleSsl')==null){
@@ -335,16 +326,19 @@ task setupSSL{
 							"mlFinalAuth=certificate\n" +
 							"mlHost="+bootStrapHost+"\n"+
 							"mlAdminScheme=https\n" +
-							"mlManageScheme=https\n" +
+							"mlFinalScheme=https\n" +
+							"mlStagingScheme=https\n" +
+							"mlJobScheme=https\n" +
 							"mlJobAuth=certificate")
-				}
 			}
 		}
 	}
 }
+
 setupSSL.dependsOn(testClasses)
+bootstrap.dependsOn(setupSSL)
 test.dependsOn(bootstrap)
 testIntegration.dependsOn(bootstrap)
 testAcceptance.dependsOn(bootstrap)
 //Uncomment this line if hub has to be uninstalled after test
-//test.finalizedBy(cleanupTask)
+//test.finalizedBy(teardown)

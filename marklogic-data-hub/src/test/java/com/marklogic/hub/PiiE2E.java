@@ -26,7 +26,8 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.bootstrap.Installer;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -98,6 +99,7 @@ public class PiiE2E extends HubTestBase {
 
     @BeforeEach
     public void setup() {
+        Assumptions.assumeTrue(!(isCertAuth()|| isSslRun()));
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
         installHubModules();
         installUserModules(getHubAdminConfig(), true);
@@ -153,7 +155,7 @@ public class PiiE2E extends HubTestBase {
             updateHarmonizedDocument(officerClient);
             fail("Officer client should be able to update");
         } catch (Exception e) {
-            Assert.assertTrue(e.getMessage().contains("Permission denied"));
+            Assertions.assertTrue(e.getMessage().contains("Permission denied"));
         }
         //verify that doc is not changed
         assertEquals("{\"fullName\":\"Morgan King\",\"worksFor\":\"Linger Company\",\"email\":\"morgan.king@lingercompany.com\",\"ssn\":\"136-70-5036\"}", getCustomerHistory(officerClient, "King"));
@@ -290,7 +292,7 @@ public class PiiE2E extends HubTestBase {
     private void installEntities() {
         Path employeeDir = project.getEntityDir("EmployeePii");
         employeeDir.toFile().mkdirs();
-        Assert.assertTrue(employeeDir.toFile().exists());
+        Assertions.assertTrue(employeeDir.toFile().exists());
         FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), employeeDir.resolve("EmployeePii.entity.json").toFile());
    }
 

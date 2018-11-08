@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,6 +32,7 @@ import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.resource.ResourceManager;
 
+@Component
 public class DeployHubPrivilegesCommand extends DeployPrivilegesCommand {
 	private List<String> payLoads;
 	
