@@ -182,7 +182,8 @@ export default function() {
         expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-5').getText()).toContain('/board_games_accessories.csv-0-5');
         expect(browsePage.resultsSpecificUri('/board_games_extensions.csv-0-7').getText()).toContain('/board_games_extensions.csv-0-7');
         browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
-        viewerPage.isLoaded();
+        //viewerPage.isLoaded();
+        browser.sleep(10000);
         expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
         // verify that SKU data is harmonized to sku on instance section
         expect(viewerPage.verifyHarmonizedProperty('sku', '159929577929').isPresent()).toBeTruthy();

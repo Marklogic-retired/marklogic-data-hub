@@ -237,7 +237,8 @@ export default function() {
         expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
         expect(browsePage.resultsUri().getText()).toContain('/world_bank.zip-0-100');
         browsePage.resultsUri().click();
-        viewerPage.isLoaded();
+        //viewerPage.isLoaded();
+        browser.sleep(10000);
         expect(viewerPage.searchResultUri().getText()).toContain('/world_bank.zip-0-100');
         expect(viewerPage.verifyHarmonizedProperty('id', 'P145160').isPresent()).toBeTruthy();
         expect(viewerPage.verifyHarmonizedProperty('approvalDate', '2013-06-28T00:00:00Z').isPresent()).toBeTruthy();
