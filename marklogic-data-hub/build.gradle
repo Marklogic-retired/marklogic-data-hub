@@ -57,6 +57,7 @@ dependencies {
     testCompile("com.marklogic:mlcp-util:0.3.0")
     testCompile("com.marklogic:mlcp:9.0.7") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
+      exclude group: 'org.apache.commons', module: 'commons-csv'
     }
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-web")

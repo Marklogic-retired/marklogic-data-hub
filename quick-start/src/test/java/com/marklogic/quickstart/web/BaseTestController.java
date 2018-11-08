@@ -33,6 +33,7 @@ public class BaseTestController extends HubTestBase {
 
     protected static final String PROJECT_PATH = "ye-olde-project";
 
+    @Autowired
     protected EnvironmentConfig envConfig;
 
     @Autowired
@@ -50,7 +51,9 @@ public class BaseTestController extends HubTestBase {
 
     @Before
     public void baseSetUp() throws IOException {
-        envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
+        //envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
+        envConfig.setProjectDir(PROJECT_PATH);
+        envConfig.setMlSettings(adminHubConfig);
         setEnvConfig(envConfig);
         dh.initProject();
         projectManagerService.addProject(PROJECT_PATH);

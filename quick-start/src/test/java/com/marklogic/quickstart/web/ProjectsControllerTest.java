@@ -18,7 +18,9 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
@@ -40,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = {ApplicationConfig.class, DataHubApiConfiguration.class } )
 @WebAppConfiguration
 public class ProjectsControllerTest extends BaseTestController {
 
