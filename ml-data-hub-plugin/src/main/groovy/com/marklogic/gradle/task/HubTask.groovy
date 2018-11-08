@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.job.JobManager
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.DefaultTask
@@ -42,6 +43,16 @@ abstract class HubTask extends DefaultTask {
     @Internal
     Scaffolding getScaffolding() {
         getProject().property("scaffolding")
+    }
+
+    @Internal
+    LoadHubModulesCommand getLoadHubModulesCommand() {
+        getProject().property("loadHubModulesCommand")
+    }
+
+    @Internal
+    MappingManager getMappingManager() {
+        getProject().property("mappingManager")
     }
 
     @Internal

@@ -72,8 +72,7 @@ abstract class CreateFlowTask extends HubTask {
             withMapping = " with mapping: " + mappingName
         }
 
-        def projectDir = getHubConfig().projectDir
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getStagingClient())
+        Scaffolding scaffolding = getScaffolding()
         println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName + withMapping
         scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES, mappingName)
     }

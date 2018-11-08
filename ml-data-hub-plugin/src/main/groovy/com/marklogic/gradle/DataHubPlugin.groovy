@@ -23,6 +23,8 @@ import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfig
+import com.marklogic.hub.MappingManager
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.impl.HubConfigImpl
 import com.marklogic.hub.impl.ScaffoldingImpl
@@ -43,6 +45,8 @@ class DataHubPlugin implements Plugin<Project> {
     private DataHub dataHub
     private Scaffolding scaffolding;
     private HubConfig hubConfig
+    private LoadHubModulesCommand loadHubModulesCommand
+    private MappingManager mappingManager
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -137,6 +141,8 @@ class DataHubPlugin implements Plugin<Project> {
         hubConfig = ctx.getBean(HubConfigImpl.class)
         dataHub = ctx.getBean(DataHubImpl.class)
         scaffolding  = ctx.getBean(ScaffoldingImpl.class)
+        loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
+        mappingManager = ctx.getBean(MappingManager.class)
 
         initializeProjectExtensions(project)
     }
@@ -156,6 +162,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.extensions.add("hubConfig", hubConfig)
         project.extensions.add("dataHub", dataHub)
         project.extensions.add("scaffolding", scaffolding)
+        project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
+        project.extensions.add("mappingManager", mappingManager)
 
         configureAppDeployer(project)
     }
