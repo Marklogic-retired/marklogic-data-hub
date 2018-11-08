@@ -34,23 +34,14 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 
 class TlsTest extends BaseTest {
-    @Ignore
-    def setupSpecSKIPTHIS() {
+    
+    def setupSpec() {
         createFullPropertiesFile()
         BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
         BaseTest.buildFile << '''
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
-
-            ext {
-                def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
-                command.setTemplateIdOrName("dhf-cert")
-                command.setCommonName("localhost")
-                command.setValidFor(365)
-                mlAppDeployer.commands.add(command)
-            }
-
 
             task enableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
                 doFirst {
@@ -67,12 +58,19 @@ class TlsTest extends BaseTest {
 
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(manageClient)
                     certManager.save(adminCert())
+                    certManager.save(dhfCert())
 
                     def gtcc = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand();
                     gtcc.setTemplateIdOrName("admin-cert");
                     gtcc.setCommonName("localhost");
-                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getStagingAppConfig(), manageClient, adminManager));
+                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
 
+                    def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
+                    command.setTemplateIdOrName("dhf-cert")
+                    command.setCommonName("localhost")
+                    command.setValidFor(365)
+                    command.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
+                    
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
                     adminConfig.setConfigureSimpleSsl(true)
@@ -107,6 +105,7 @@ class TlsTest extends BaseTest {
 
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
                     certManager.delete(adminCert())
+                    certManager.delete(dhfCert())
                 }
             }
 
@@ -137,6 +136,27 @@ class TlsTest extends BaseTest {
                       <organizationName>MarkLogic</organizationName>
                     </subject>
                   </req>
+                    </certificate-template-properties>
+                """
+            }
+            def dhfCert() {
+                   return """
+                   <certificate-template-properties xmlns="http://marklogic.com/manage">
+                    <template-name>dhf-cert</template-name>
+                    <template-description>Sample description</template-description>
+                    <key-type>rsa</key-type>
+                    <key-options />
+                    <req>
+                    <version>0</version>
+                    <subject>
+                    <countryName>US</countryName>
+                    <stateOrProvinceName>VA</stateOrProvinceName>
+                    <localityName>McLean</localityName>
+                    <organizationName>MarkLogic</organizationName>
+                    <organizationalUnitName>Consulting</organizationalUnitName>
+                    <emailAddress>nobody@marklogic.com</emailAddress>
+                    </subject>
+                    </req>
                     </certificate-template-properties>
                 """
             }
@@ -173,6 +193,9 @@ class TlsTest extends BaseTest {
                 hubConfig {
                     stagingSslContext = newSslContext
                     stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                     
+                    finalSslContext = newSslContext
+                    finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
 
                     jobSslContext = newSslContext
                     jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
@@ -182,22 +205,29 @@ class TlsTest extends BaseTest {
                 mlAdminManager.setAdminConfig(mlAdminConfig)
 
                 hubConfig.setStagingAppConfig(mlAppConfig, true)
+                hubConfig.setFinalAppConfig(mlAppConfig, true)
             }
         '''
 
         def result = runTask("hubInit")
         runTask("mlDeploySecurity")
-        copyResourceToFile("tls-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
+            new File("src/test/resources/tls-test/ssl-server.json"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"),
+            new File("src/test/resources/tls-test/ssl-server.json"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"),
+            new File("src/test/resources/tls-test/ssl-server.json"))
+        /*copyResourceToFile("tls-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
         copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
         copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
+        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))*/
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
     }
 
-    @Ignore
-    def cleanupSpecSKIPTHIS() {
+    
+    def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
         runTask("mlDeploySecurity")
         runTask("disableSSL")
@@ -220,7 +250,7 @@ class TlsTest extends BaseTest {
         """
     }
 
-    @Ignore
+    
     def "bootstrap a project with ssl out the wazoo"() {
         when:
         def result = runTask('mlDeploy', '-i')
@@ -228,6 +258,9 @@ class TlsTest extends BaseTest {
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+        
+        hubConfig().finalSslContext = newSslContext
+        hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         print(result.output)
 
         then:
@@ -237,7 +270,7 @@ class TlsTest extends BaseTest {
         result.task(":mlDeploy").outcome == SUCCESS
     }
 
-    @Ignore
+    
     def "runHarmonizeFlow with default src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
@@ -246,7 +279,9 @@ class TlsTest extends BaseTest {
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-
+        
+        hubConfig().finalSslContext = newSslContext
+        hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
 
         assert (getStagingDocCount() == 0)
@@ -272,7 +307,7 @@ class TlsTest extends BaseTest {
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
-    @Ignore
+    
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
@@ -281,7 +316,8 @@ class TlsTest extends BaseTest {
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-
+        hubConfig().finalSslContext = newSslContext
+        hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
         assert (getStagingDocCount() == 0)
         assert (getFinalDocCount() == 0)
