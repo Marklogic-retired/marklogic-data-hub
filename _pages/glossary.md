@@ -37,6 +37,7 @@ permalink: /glossary/
 :	The type of flow that processes each incoming document before it is written into MarkLogic. Input flows are invoked by the MarkLogic Content Pump (MLCP), the Java Client API, or the REST Client API.
 	*See also: [Envelope Pattern - Input Flows](/understanding/how-it-works/#input-flows)*
 
+<!-- BUGBUG: Uncomment after DHFPROD-1213 is resolved.
 ### Provenance and Lineage
 :	The DHF process that ensures that the data can be traced back to its origin and that the source data is preserved.
-
+-->
