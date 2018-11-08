@@ -49,9 +49,9 @@ export default function(tmpDir) {
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       //verify on viewer page
       browsePage.resultsUri().click();
-      // debugging
-      browser.sleep(5000);
-      viewerPage.isLoaded();
+      // debugging viewer page
+      browser.sleep(10000);
+      //viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       expect(viewerPage.verifyVariableName('sku').isPresent()).toBeTruthy();
       expect(viewerPage.verifyStringName('442403950907').isPresent()).toBeTruthy();
