@@ -11,6 +11,7 @@ const fs = require('fs-extra');
 export default function(tmpDir) {
   describe('Run Flows', () => {
     it ('should go to the flow page', function() {
+      browser.refresh();
       appPage.flowsTab.click();
       flowPage.isLoaded();
     });
