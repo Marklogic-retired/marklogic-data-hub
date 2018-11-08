@@ -11,7 +11,6 @@ const fs = require('fs-extra');
 export default function(tmpDir) {
   describe('Run Flows', () => {
     it ('should go to the flow page', function() {
-      browser.refresh();
       appPage.flowsTab.click();
       flowPage.isLoaded();
     });
@@ -50,6 +49,8 @@ export default function(tmpDir) {
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       //verify on viewer page
       browsePage.resultsUri().click();
+      // debugging
+      browser.sleep(5000);
       viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       expect(viewerPage.verifyVariableName('sku').isPresent()).toBeTruthy();
