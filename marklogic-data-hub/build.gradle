@@ -269,6 +269,7 @@ task teardown(type: JavaExec) {
 test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
+    exclude 'com/marklogic/bootstrap/**'
     classpath = project.sourceSets.test.runtimeClasspath
 }
 
@@ -289,7 +290,7 @@ task testIntegration(type: Test) {
 
 task testBootstrap(type: Test) {
     useJUnit {
-        exclude 'com/marklogic/bootstrap/**'
+        include 'com/marklogic/bootstrap/**'
     }
 }
 
