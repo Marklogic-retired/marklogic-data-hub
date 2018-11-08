@@ -19,13 +19,13 @@ export class FlowPage extends AppPage {
     return element(by.css(`div[data-entity="${entityName}"] .collapsed`)).isPresent();
   }
 
-  async clickEntityDisclosure(entityName: string) {
+  clickEntityDisclosure(entityName: string) {
     browser.wait(EC.elementToBeClickable(this.entityDisclosure("PIIEntity")));
-    await this.entityDisclosure("PIIEntity").click();
+    this.entityDisclosure("PIIEntity").click();
     browser.sleep(3000);
     browser.wait(EC.elementToBeClickable(this.inputFlowButton("PIIEntity")));
     browser.wait(EC.elementToBeClickable(this.entityDisclosure(entityName)));
-    await this.entityDisclosure(entityName).click();
+    this.entityDisclosure(entityName).click();
     browser.sleep(3000);
     browser.wait(EC.elementToBeClickable(this.inputFlowButton(entityName)));
   }
