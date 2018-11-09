@@ -71,7 +71,8 @@ export class TracesComponent implements OnDestroy, OnInit {
     }
   }
 
-  public doSearch(): void {
+  public doSearch(searchText: string): void {
+    this.searchText = searchText;
     this.currentPage = 1;
     this.runQuery();
   }
@@ -114,7 +115,8 @@ export class TracesComponent implements OnDestroy, OnInit {
     });
   }
 
-  updateFacets() {
-    this.doSearch();
+  updateFacets(facets) {
+    this.activeFacets = facets;
+    this.doSearch(this.searchText);
   }
 }

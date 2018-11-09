@@ -42,6 +42,7 @@ import { SelectComponent } from './shared/components';
 import { SelectListComponent } from './shared/components';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
+import { TracesUiComponent } from './shared/components/traces';
 import { SearchComponent, SearchViewerComponent } from './search';
 import { SearchViewerUiComponent } from './shared/components/search';
 
@@ -113,6 +114,7 @@ import {
     SettingsComponent,
     SettingsUiComponent,
     TracesComponent,
+    TracesUiComponent,
     TraceViewerComponent,
     SearchComponent,
     SearchViewerComponent,
