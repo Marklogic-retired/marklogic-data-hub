@@ -8,8 +8,18 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-traces',
-  templateUrl: './traces.component.html',
-  styleUrls: ['./traces.component.scss']
+  template: `
+    <app-traces-ui
+      [searchResponse]="searchResponse"
+      [traces]="traces"
+      [activeFacets]="activeFacets"
+      [searchText]="searchText"
+      (searchClicked)="doSearch($event)"
+      (activeFacetsChange)="updateFacets($event)"
+      (traceItemClicked)="showTrace($event)"
+      (pageChanged)="pageChanged($event)"
+    ></app-traces-ui>
+  `,
 })
 export class TracesComponent implements OnDestroy, OnInit {
 

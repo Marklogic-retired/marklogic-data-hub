@@ -1,19 +1,17 @@
-import {moduleMetadata, storiesOf} from '@storybook/angular';
-import {object, text, boolean, withKnobs} from '@storybook/addon-knobs';
-import {withNotes} from '@storybook/addon-notes';
-import {action} from '@storybook/addon-actions';
-import {linkTo} from '@storybook/addon-links';
-import {centered} from '@storybook/addon-centered/angular';
-import {StoryCardComponent} from '../../utils/story-card/story-card.component';
-import {SelectComponent} from '../../../components/select/select.component';
-import {ThemeModule} from '../../../components/theme/theme.module';
-import {Component, Input} from '@angular/core';
-import { TracesUiComponent } from '../../../components/traces';
-import { PaginationComponent } from '../../../components/pagination';
-import { FacetsComponent } from './../../../components/facets/facets.component';
+import { action } from '@storybook/addon-actions';
+import { centered } from '@storybook/addon-centered/angular';
+import { object, text, withKnobs } from '@storybook/addon-knobs';
+import { moduleMetadata, storiesOf } from '@storybook/angular';
+
+import { DatePipePipe } from '../../../../date-pipe/date-pipe.pipe';
 import { ObjectToArrayPipe } from '../../../../object-to-array.pipe';
 import { TruncateCharactersPipe } from '../../../../truncate/truncate.pipe';
-import { DatePipePipe } from '../../../../date-pipe/date-pipe.pipe';
+import { PaginationComponent } from '../../../components/pagination';
+import { SelectComponent } from '../../../components/select/select.component';
+import { ThemeModule } from '../../../components/theme/theme.module';
+import { TracesUiComponent } from '../../../components/traces';
+import { StoryCardComponent } from '../../utils/story-card/story-card.component';
+import { FacetsComponent } from './../../../components/facets/facets.component';
 
 storiesOf('Components|Traces', module)
     .addDecorator(withKnobs)
