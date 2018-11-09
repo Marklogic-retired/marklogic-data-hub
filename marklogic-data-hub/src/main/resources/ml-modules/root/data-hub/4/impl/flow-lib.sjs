@@ -626,7 +626,7 @@ function safeRun(func) {
   }
   catch(ex) {
     tracelib.errorTrace(rfc.getItemContext(), ex, xdmp.elapsedTime().subtract(before));
-    fn.error(null, "DATAHUB-PLUGIN-ERROR", Sequence.from(["error in a plugin", JSON.stringify(ex)]));
+    fn.error(null, "DATAHUB-PLUGIN-ERROR", ex);
   }
 };
 
