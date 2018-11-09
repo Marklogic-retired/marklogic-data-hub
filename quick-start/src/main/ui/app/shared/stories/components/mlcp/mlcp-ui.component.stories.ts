@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { centered } from '@storybook/addon-centered/angular';
 import { text, object, withKnobs, boolean } from '@storybook/addon-knobs';
 import { moduleMetadata, storiesOf } from '@storybook/angular';
+import {action} from '@storybook/addon-actions';
 
 import { MlcpUiComponent } from '../../../components/mlcp/mlcp-ui.component';
 import { ThemeModule } from '../../../components/theme/theme.module';
@@ -43,7 +44,7 @@ storiesOf('Components|MLCP', module)
   .add('mlcp-ui Component', () => ({
     template: `
             <mlui-dhf-theme>
-                <mlui-story-card [width]="'1500px'" [height]="'1300px'">
+                <mlui-story-card [width]="'1000px'" [height]="'1000px'">
                   <app-mlcp-ui width="100%" min-width="500px"
                     [startPath]="startPath"
                     [flow]="flow"
@@ -53,9 +54,9 @@ storiesOf('Components|MLCP', module)
                     [mlcpCommand]="mlcpCommand"
                     (folderClicked)="folderClicked($event)"
                     (fileClicked)="fileClicked($event)"
-                    (saveOptionsClicked)="saveOptions()"
-                    (switchChanged)="updateSetting($event)"
-                    (runImportClicked)="runImport()"
+                    (saveOptionsClicked)="saveOptionsClicked()"
+                    (switchChanged)="switchChanged($event)"
+                    (runImportClicked)="runImportClicked()"
                   >
                   </app-mlcp-ui>
                 </mlui-story-card>
@@ -66,7 +67,12 @@ storiesOf('Components|MLCP', module)
       mlcpOptions: object('mlcpOptions', sampleMlcpOptions),
       hasErrors: boolean('hasErrors', false),
       groups: object('groups', sampleGroups),
-      mlcpCommand: text('mlcpCommand', sampleMlcpCommand)
+      mlcpCommand: text('mlcpCommand', sampleMlcpCommand),
+      folderClicked: action('folderClicked'),
+      fileClicked: action('fileClicked'),
+      saveOptionsClicked: action('saveOptionsClicked'),
+      switchChanged: action('switchChanged'),
+      runImportClicked: action('runImportClicked')
     }
   })
 );
