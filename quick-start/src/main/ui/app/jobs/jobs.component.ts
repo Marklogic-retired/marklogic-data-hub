@@ -166,7 +166,8 @@ export class JobsComponent implements OnChanges, OnDestroy, OnInit {
     });
   }
 
-  updateFacets() {
+  updateFacets(facets: any) {
+    this.activeFacets = facets;
     this.doSearch();
   }
 
