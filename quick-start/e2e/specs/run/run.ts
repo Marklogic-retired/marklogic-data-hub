@@ -54,7 +54,8 @@ export default function(tmpDir) {
       expect(viewerPage.verifyVariableName('sku').isPresent()).toBeTruthy();
       expect(viewerPage.verifyStringName('442403950907').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('attachments').isPresent()).toBeTruthy();
-      expect(viewerPage.verifyVariableName('null').isPresent()).toBeTruthy();
+      //need to modify the verification as it's an atomic value now
+      //expect(viewerPage.verifyVariableName('null').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('opt1').isPresent()).toBeFalsy();
       expect(viewerPage.verifyStringName('world').isPresent()).toBeFalsy();
       //verfiy on dashboard page
