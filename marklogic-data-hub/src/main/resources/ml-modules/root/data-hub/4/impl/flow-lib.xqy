@@ -988,7 +988,7 @@ declare function flow:safe-run($func)
     catch($ex) {
       debug:log(xdmp:describe($ex, (), ())),
       trace:error-trace($rfc:item-context, $ex, xdmp:elapsed-time() - $before),
-      fn:error((), "DATAHUB-PLUGIN-ERROR", ("error in a plugin", $ex))
+      fn:error((), "DATAHUB-PLUGIN-ERROR", $ex)
     }
 };
 
