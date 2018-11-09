@@ -72,6 +72,10 @@ class BaseTest extends Specification {
     @Autowired
     private HubConfigImpl _hubConfig
 
+    HubConfig hubConfig(){
+        return _hubConfig
+    }
+
     static BuildResult runTask(String... task) {
         return GradleRunner.create()
             .withProjectDir(testProjectDir.root)

@@ -25,6 +25,7 @@ import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.MappingManager
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.impl.HubConfigImpl
 import com.marklogic.hub.impl.ScaffoldingImpl
@@ -34,18 +35,18 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import org.springframework.core.env.PropertiesPropertySource
 
 @EnableAutoConfiguration
 class DataHubPlugin implements Plugin<Project> {
 
     private DataHub dataHub
-    private Scaffolding scaffolding;
+    private Scaffolding scaffolding
     private HubConfig hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
+    private LoadUserStagingModulesCommand loadUserStagingModulesCommand
     private MappingManager mappingManager
 
     Logger logger = LoggerFactory.getLogger(getClass())
@@ -134,14 +135,21 @@ class DataHubPlugin implements Plugin<Project> {
     }
 
     void setupHub(Project project) {
-        def app = new SpringApplication(ApplicationConfig.class)
-        app.setWebApplicationType(WebApplicationType.NONE)
-        ConfigurableApplicationContext ctx = app.run("--hubProjectDir=" + project.getProjectDir().getAbsolutePath())
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext()
+        ctx.register(ApplicationConfig.class)
+        Properties properties = new Properties()
+        properties.setProperty("hubProjectDir", project.getProjectDir().getAbsolutePath())
+        ctx.getEnvironment().getPropertySources().addLast(new PropertiesPropertySource("projectDirPropertySource", properties))
+        ctx.refresh()
+//        def app = new SpringApplication(ApplicationConfig.class)
+//        app.setWebApplicationType(WebApplicationType.NONE)
+//        ConfigurableApplicationContext ctx = app.run("--hubProjectDir=" + project.getProjectDir().getAbsolutePath())
 
         hubConfig = ctx.getBean(HubConfigImpl.class)
         dataHub = ctx.getBean(DataHubImpl.class)
-        scaffolding  = ctx.getBean(ScaffoldingImpl.class)
+        scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
+        loadUserStagingModulesCommand = ctx.getBean(LoadUserStagingModulesCommand.class)
         mappingManager = ctx.getBean(MappingManager.class)
 
         initializeProjectExtensions(project)
@@ -153,6 +161,8 @@ class DataHubPlugin implements Plugin<Project> {
         def properties = new ProjectPropertySource(project).getProperties()
         def extensions = project.getExtensions()
 
+        hubConfig.refreshProject()
+
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
         hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
@@ -163,6 +173,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.extensions.add("dataHub", dataHub)
         project.extensions.add("scaffolding", scaffolding)
         project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
+        project.extensions.add("loadUserStagingModulesCommand", loadUserStagingModulesCommand)
         project.extensions.add("mappingManager", mappingManager)
 
         configureAppDeployer(project)
