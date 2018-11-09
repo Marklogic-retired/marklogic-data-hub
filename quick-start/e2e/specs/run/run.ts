@@ -49,9 +49,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       //verify on viewer page
       browsePage.resultsUri().click();
-      // debugging viewer page
-      browser.sleep(10000);
-      //viewerPage.isLoaded();
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1?doc=yes&type=foo');
       expect(viewerPage.verifyVariableName('sku').isPresent()).toBeTruthy();
       expect(viewerPage.verifyStringName('442403950907').isPresent()).toBeTruthy();
@@ -158,8 +156,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
       browsePage.resultsUri().click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyHarmonizedProperty('sku', '442403950907').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
@@ -186,8 +183,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-5').getText()).toContain('/board_games_accessories.csv-0-5');
       expect(browsePage.resultsSpecificUri('/board_games_extensions.csv-0-7').getText()).toContain('/board_games_extensions.csv-0-7');
       browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
       expect(viewerPage.verifyHarmonizedProperty('sku', '159929577929').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedProperty('opt1', 'world').isPresent()).toBeTruthy();
@@ -268,8 +264,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').getText()).toContain('/board_games_accessories.csv-0-1');
       //verify on viewer page
       browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1').click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
@@ -297,8 +292,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsSpecificUri('/board_games.csv-0-10').getText()).toContain('/board_games.csv-0-10');
       //verify on viewer page
       browsePage.resultsSpecificUri('/board_games.csv-0-10').click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games.csv-0-10');
       expect(viewerPage.verifyVariableName('instance').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('TestEntity').isPresent()).toBeTruthy();
@@ -326,8 +320,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').getText()).toContain('/bookstore-no-formatting.xml');
       //verify on viewer page
       browsePage.resultsSpecificUri('/bookstore-no-formatting.xml').click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/bookstore-no-formatting.xml');
       expect(viewerPage.verifyTagName('sku').isPresent()).toBeTruthy();
       expect(viewerPage.verifyHarmonizedPropertyXml('sku', '16384759').isPresent()).toBeTruthy();
@@ -368,8 +361,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
       browsePage.resultsUri().click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeFalsy();
       expect(viewerPage.verifyHarmonizedProperty('title', 'Cards').isPresent()).toBeFalsy();
@@ -405,8 +397,7 @@ export default function(tmpDir) {
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       expect(browsePage.resultsUri().getText()).toContain('/board_games_accessories.csv-0-1');
       browsePage.resultsUri().click();
-      //viewerPage.isLoaded();
-      browser.sleep(10000);
+      viewerPage.isLoaded();
       expect(viewerPage.searchResultUri().getText()).toContain('/board_games_accessories.csv-0-1');
       expect(viewerPage.verifyVariableName('titlePii').isPresent()).toBeTruthy();
       expect(viewerPage.verifyVariableName('title').isPresent()).toBeTruthy();
