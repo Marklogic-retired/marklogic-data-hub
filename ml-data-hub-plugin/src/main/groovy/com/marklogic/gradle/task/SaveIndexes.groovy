@@ -31,7 +31,7 @@ class SaveIndexes extends HubTask {
     @TaskAction
     public void saveIndexes() {
         println "Saving Indexes to src/main/entity-config/databases directory"
-        EntityManager em = new EntityManagerImpl(getHubConfig())
+        EntityManager em = getEntityManager()
         em.saveDbIndexes()
         println "Saving Indexes to src/main/entity-config/databases directory complete"
     }

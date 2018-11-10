@@ -29,7 +29,7 @@ class UpdateIndexes extends HubTask {
     @TaskAction
     public void updateIndexes() {
 		println "Deploying Indexes to database"
-		DataHub dh = new DataHubImpl(getHubConfig())
+		DataHub dh = getDataHub()
 		dh.updateIndexes()
 		println "Deploying Indexes to database complete"
     }

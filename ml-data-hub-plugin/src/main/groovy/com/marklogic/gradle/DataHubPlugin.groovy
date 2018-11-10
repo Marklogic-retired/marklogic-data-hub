@@ -29,6 +29,8 @@ import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.impl.HubConfigImpl
 import com.marklogic.hub.impl.ScaffoldingImpl
+import com.marklogic.hub.impl.FlowManagerImpl
+import com.marklogic.hub.impl.EntityManagerImpl
 import com.marklogic.hub.impl.Versions
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.Plugin
@@ -48,6 +50,8 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadHubModulesCommand loadHubModulesCommand
     private LoadUserStagingModulesCommand loadUserStagingModulesCommand
     private MappingManager mappingManager
+    private FlowManagerImpl flowManager
+    private EntityManagerImpl entityManager
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -151,6 +155,8 @@ class DataHubPlugin implements Plugin<Project> {
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
         loadUserStagingModulesCommand = ctx.getBean(LoadUserStagingModulesCommand.class)
         mappingManager = ctx.getBean(MappingManager.class)
+        flowManager = ctx.getBean(FlowManagerImpl.class)
+        entityManager = ctx.getBean(EntityManagerImpl.class)
 
         initializeProjectExtensions(project)
     }
@@ -175,6 +181,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
         project.extensions.add("loadUserStagingModulesCommand", loadUserStagingModulesCommand)
         project.extensions.add("mappingManager", mappingManager)
+        project.extensions.add("flowManager", flowManager)
+        project.extensions.add("entityManager", entityManager)
 
         configureAppDeployer(project)
     }

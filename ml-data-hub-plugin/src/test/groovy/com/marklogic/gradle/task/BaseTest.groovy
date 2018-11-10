@@ -32,6 +32,7 @@ import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.impl.HubConfigImpl
+import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.databases.DatabaseManager
 import com.marklogic.rest.util.Fragment
@@ -41,8 +42,11 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.rules.TemporaryFolder
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.core.env.PropertiesPropertySource
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
 import spock.lang.Specification
@@ -54,7 +58,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-@ContextConfiguration(classes = ApplicationConfig.class)
+@EnableAutoConfiguration
 class BaseTest extends Specification {
 
     // this value is for legacy purposes.  on dev should always be 5
@@ -65,13 +69,12 @@ class BaseTest extends Specification {
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
-
+    
     private ManageClient _manageClient;
     private DatabaseManager _databaseManager;
-
-    @Autowired
-    private HubConfigImpl _hubConfig
-
+    
+    static private HubConfigImpl _hubConfig
+    
     HubConfig hubConfig(){
         return _hubConfig
     }
@@ -196,7 +199,7 @@ class BaseTest extends Specification {
         return count
     }
 
-    EvalResultIterator runInDatabase(String query, String databaseName) {
+    static EvalResultIterator runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval
         switch (databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
@@ -230,10 +233,15 @@ class BaseTest extends Specification {
     }
 
     static void createFullPropertiesFile() {
-        def props = Paths.get(".").resolve("gradle.properties")
-        propertiesFile = testProjectDir.newFile("gradle.properties")
-        def dst = propertiesFile.toPath()
-        Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
+        try {
+            def props = Paths.get(".").resolve("gradle.properties")
+            propertiesFile = testProjectDir.newFile("gradle.properties")
+            def dst = propertiesFile.toPath()
+            Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
+        }
+        catch(IOException e) {
+           println("gradle.properties file already exists")
+        }
     }
 
     static void createGradleFiles() {
@@ -273,5 +281,14 @@ class BaseTest extends Specification {
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
         testProjectDir.create()
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext()
+        ctx.register(ApplicationConfig.class)
+        Properties properties = new Properties()
+        properties.setProperty("hubProjectDir", testProjectDir.root.getAbsolutePath())
+        ctx.getEnvironment().getPropertySources().addLast(new PropertiesPropertySource("projectDirPropertySource", properties))
+        ctx.refresh()
+        _hubConfig = ctx.getBean(HubConfigImpl.class)
+        createFullPropertiesFile() 
+        _hubConfig.refreshProject();               
     }
 }

@@ -60,6 +60,11 @@ abstract class HubTask extends DefaultTask {
     MappingManager getMappingManager() {
         getProject().property("mappingManager")
     }
+    
+    @Internal
+    EntityManager getEntityManager() {
+        getProject().property("entityManager")
+    }
 
     @Internal
     Tracing getTracing() {
@@ -73,7 +78,7 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     FlowManager getFlowManager() {
-        return FlowManager.create(getHubConfig())
+        getProject().property("flowManager")
     }
 
     @Internal
