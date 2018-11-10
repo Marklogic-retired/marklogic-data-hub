@@ -100,7 +100,7 @@ export class LoginPage extends AppPage {
   }
 
   get marklogicHostLabel() {
-    return element(by.name('host'));
+    return element(by.css('mdl-textfield[name="host"]'));
   }
 
   async clickAdvancedSettings() {
@@ -109,7 +109,7 @@ export class LoginPage extends AppPage {
   }
 
   get stagingAppserverNameLabel() {
-    return element(by.name('stagingHttpName'));
+    return element(by.css('mdl-textfield[name="stagingHttpName"]'));
   }
 
   advancedSettingsValue(labelName: string) {
@@ -155,7 +155,7 @@ export class LoginPage extends AppPage {
 
   //get password element
   get password(){
-    return element(by.name('password')).element(by.tagName('input'));
+    return element(by.css('[label="MarkLogic Password"]')).element(by.tagName('input'));
   }
 
   //to get the login box locater

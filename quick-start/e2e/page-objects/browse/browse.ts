@@ -42,7 +42,7 @@ export class BrowsePage extends AppPage {
   }
 
   resultsUri() {
-    return element(by.css('.results .result a'));
+    return element.all(by.css('.results .result a')).first();
   }
 
   resultsSpecificUri(uri: string) {

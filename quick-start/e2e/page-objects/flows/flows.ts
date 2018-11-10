@@ -188,11 +188,11 @@ export class FlowPage extends AppPage {
   }
 
   get toast() {
-    return element(by.css('mdl-snackbar-component'));
+    return element(by.id('demo-toast-example'));
   }
 
   get toastButton() {
-    return element(by.css('mdl-snackbar-component button'));
+    return element(by.css('#demo-toast-example button'));
   }
 
   get jobID() {
@@ -246,8 +246,8 @@ export class FlowPage extends AppPage {
   * @useInputCompressed: whether using input compressed file, default is false
   * @compressionCoded: zip | gzip
   */
-  async runInputFlow(entityName: string, flowName: string, dataFormat: string, 
-      dataFolderName: string, inputFileType: string, uriPrefix: string, 
+  async runInputFlow(entityName: string, flowName: string, dataFormat: string,
+      dataFolderName: string, inputFileType: string, uriPrefix: string,
       uriSuffix: string, useInputCompressed = false, compressionCodec = '') {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
     this.getFlow(entityName, flowName, 'INPUT').click();
@@ -278,28 +278,28 @@ export class FlowPage extends AppPage {
 
     // select document type
     browser.wait(EC.elementToBeClickable(this.menuItem(dataFormat)));
-    browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
+    await browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
     await this.menuItem(dataFormat).click();
 
     // set output uri prefix
     await this.mlcpInput('output_uri_prefix').clear();
     await this.mlcpInput('output_uri_prefix').sendKeys(uriPrefix);
-    
+
     // set output uri suffix
     await this.mlcpInput('output_uri_suffix').clear();
     await this.mlcpInput('output_uri_suffix').sendKeys(uriSuffix);
- 
+
     if(inputFileType === 'delimited_text') {
       // click delimited text options
       browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
       await this.mlcpSection(' Delimited Text Options').click();
       browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
-  
+
       // enable generate uri
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
       await this.mlcpSwitch('generate_uri').click();
     }
-    
+
     if(useInputCompressed) {
       // enable input_compressed
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('input_compressed')));
@@ -310,9 +310,11 @@ export class FlowPage extends AppPage {
       browser.wait(EC.elementToBeClickable(this.menuItem(compressionCodec)));
       await this.menuItem(compressionCodec).click();
     }
-    
+
     await this.mlcpSaveOptionsButton.click();
+    console.log("Clicked Save button");
     await this.mlcpRunButton.click();
+    console.log("Clicked Run button");
     browser.sleep(10000);
     await this.jobsTab.click();
     jobsPage.isLoaded();
@@ -321,7 +323,7 @@ export class FlowPage extends AppPage {
     await this.flowsTab.click();
     this.isLoaded();
   }
-  
+
   /*
   * Create input flow
   * @entityName: entity name
@@ -335,7 +337,7 @@ export class FlowPage extends AppPage {
     codeFormat: string, useEs: boolean)
   {
     await this.inputFlowButton(entityName).click();
-    
+
     browser.wait(EC.visibilityOf(this.newFlowDialog));
     expect(this.newFlowDialog.isDisplayed()).toBe(true);
 
@@ -379,7 +381,7 @@ export class FlowPage extends AppPage {
     codeFormat: string, useEs: boolean, mapName = 'None')
   {
     await this.harmonizeFlowButton(entityName).click();
-    
+
     browser.wait(EC.visibilityOf(this.newFlowDialog));
     expect(this.newFlowDialog.isDisplayed()).toBe(true);
 
@@ -409,7 +411,7 @@ export class FlowPage extends AppPage {
 
     browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
     expect(this.newFlowDialog.isPresent()).toBe(false);
-  }  
+  }
 }
 
 var flowPage = new FlowPage();

@@ -33,8 +33,8 @@ export class EntityPage extends AppPage {
     return element(by.id(`aeb-${entityName}`)).element(by.css('div.title'));
   }
 
-  clickEditEntity(entityName: string) {
-    browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
+  async clickEditEntity(entityName: string) {
+    await browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
   }
 
   deleteEntityButton(entityName: string) {
