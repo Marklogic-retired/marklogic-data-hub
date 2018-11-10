@@ -417,7 +417,7 @@ public class DataHubImpl implements DataHub {
         }
 
         serverName = portsInUse.get(hubConfig.getPort(DatabaseKind.JOB));
-        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && !serverName.equals(hubConfig.getHttpName(DatabaseKind.JOB));
+        jobPortInUse = ports.contains(hubConfig.getPort(DatabaseKind.JOB)) && serverName != null && !serverName.equalsIgnoreCase(hubConfig.getHttpName(DatabaseKind.JOB));
         if (jobPortInUse) {
             jobPortInUseBy = serverName;
         }
