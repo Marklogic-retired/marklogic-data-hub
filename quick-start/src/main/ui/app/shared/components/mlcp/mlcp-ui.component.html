@@ -57,7 +57,7 @@
         <button
           class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
           [appClipboard]="mlcpcmd"
-          (onSuccess)="cmdCopied()">
+          (onSuccess)="clipboardSuccess.emit()">
           <i class="fa fa-copy" aria-hidden="true">
           </i>
         </button>

@@ -19,6 +19,7 @@ export class MlcpUiComponent {
   @Output() saveOptionsClicked = new EventEmitter();
   @Output() valueChanged = new EventEmitter();
   @Output() runImportClicked = new EventEmitter();
+  @Output() clipboardSuccess = new EventEmitter();
 
 
   sections: any = {

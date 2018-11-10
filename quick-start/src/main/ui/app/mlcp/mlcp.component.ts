@@ -22,8 +22,23 @@ interface MlcpOptions {
 
 @Component({
   selector: 'app-mlcp',
-  templateUrl: './mlcp.component.html',
-  styleUrls: ['./mlcp.component.scss']
+  template: `
+    <app-mlcp-ui
+      [startPath]="startPath"
+      [flow]="flow"
+      [mlcpOptions]="mlcpOptions"
+      [hasErrors]="hasErrors"
+      [groups]="groups"
+      [mlcpCommand]="mlcpCommand"
+      (folderClicked)="folderClicked($event)"
+      (fileClicked)="fileClicked($event)"
+      (saveOptionsClicked)="saveOptions()"
+      (switchChanged)="updateSetting($event)"
+      (runImportClicked)="runImport()"
+      (clipboardSuccess)="cmdCopied()"
+      >
+    </app-mlcp-ui>
+  `,
 })
 export class MlcpComponent implements OnChanges {
   startPath: string;
