@@ -256,7 +256,7 @@ export default function(tmpDir) {
       await entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
-    
+
     // commenting out, there is another test on removing properties
     /*it ('should remove some properties on Order entity', async function() {
       console.log('verify remove properties on Order entity');
@@ -645,15 +645,6 @@ export default function(tmpDir) {
       flowPage.isLoaded();
     });
 
-    it ('should redeploy modules', async function() {
-      flowPage.redeployButton.click();
-      browser.sleep(5000);
-      await appPage.dashboardTab.click();
-      dashboardPage.isLoaded();
-      await appPage.flowsTab.click();
-      flowPage.isLoaded();
-    });
-
     it ('should open the Entity disclosure', async function() {
       await flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('TestEntity')));
@@ -769,6 +760,15 @@ export default function(tmpDir) {
       await flowPage.setKeyValueFlowOptionsByPosition(1, 'hello', 'world');
       await flowPage.setKeyValueFlowOptionsByPosition(2, 'myNumber', '250.456');
       await flowPage.setKeyValueFlowOptionsByPosition(3, 'myDate', '2017-03-07');
+    });
+
+    it ('should redeploy modules', async function() {
+      flowPage.redeployButton.click();
+      browser.sleep(5000);
+      await appPage.dashboardTab.click();
+      dashboardPage.isLoaded();
+      await appPage.flowsTab.click();
+      flowPage.isLoaded();
     });
 
     /*it ('should retain flow options when moving around', function() {

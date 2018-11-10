@@ -140,12 +140,12 @@ export default function() {
         await mappingsPage.sourcePropertyDropDown('id').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('id')));
         await mappingsPage.sourceTypeAheadInput('id').sendKeys('id');
-        expect(mappingsPage.verifySourcePropertyName('_id').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('id').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('idacommamt').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('id','_id').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('id','id').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('id','idacommamt').isDisplayed()).toBeTruthy();
         // verify the list to contain different data types
-        expect(mappingsPage.verifySourcePropertyType('string').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyType('number').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyType('id','string').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyType('id','number').isDisplayed()).toBeTruthy();
         // select the source property
         browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('id', 'id')));
         await mappingsPage.mapSourceProperty('id', 'id').click();
@@ -153,7 +153,7 @@ export default function() {
         await mappingsPage.sourcePropertyDropDown('approvalDate').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('approvalDate')));
         await mappingsPage.sourceTypeAheadInput('approvalDate').sendKeys('date');
-        expect(mappingsPage.verifySourcePropertyName('boardapprovaldate').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('approvalDate','boardapprovaldate').isDisplayed()).toBeTruthy();
         // select the source property
         browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('boardapprovaldate', 'approvalDate')));
         await mappingsPage.mapSourceProperty('boardapprovaldate', 'approvalDate').click();
@@ -161,11 +161,11 @@ export default function() {
         await mappingsPage.sourcePropertyDropDown('cost').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('cost')));
         await mappingsPage.sourceTypeAheadInput('cost').sendKeys('number');
-        expect(mappingsPage.verifySourcePropertyName('grantamt').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('totalamt').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('lendprojectcost').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyType('number').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyValue('60000000').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('cost','grantamt').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('cost','totalamt').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('cost','lendprojectcost').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyType('cost','number').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyValue('cost','60000000').isDisplayed()).toBeTruthy();
         // select the source property
         browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('lendprojectcost', 'cost')));
         await mappingsPage.mapSourceProperty('lendprojectcost', 'cost').click();
@@ -173,9 +173,9 @@ export default function() {
         await mappingsPage.sourcePropertyDropDown('title').click();
         browser.wait(EC.elementToBeClickable(mappingsPage.sourceTypeAheadInput('title')));
         await mappingsPage.sourceTypeAheadInput('title').sendKeys('instr');
-        expect(mappingsPage.verifySourcePropertyName('lendinginstr').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyName('lendinginstrtype').isDisplayed()).toBeTruthy();
-        expect(mappingsPage.verifySourcePropertyType('string').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('title','lendinginstr').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyName('title','lendinginstrtype').isDisplayed()).toBeTruthy();
+        expect(mappingsPage.verifyDropdownPropertyType('title','string').isDisplayed()).toBeTruthy();
         // select the source property
         browser.wait(EC.elementToBeClickable(mappingsPage.mapSourceProperty('lendinginstr', 'title')));
         await mappingsPage.mapSourceProperty('lendinginstr', 'title').click();

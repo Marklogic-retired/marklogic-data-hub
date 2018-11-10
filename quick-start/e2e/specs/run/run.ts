@@ -61,8 +61,6 @@ export default function(tmpDir) {
       await appPage.dashboardTab.click();
       dashboardPage.isLoaded();
       expect(dashboardPage.stagingCount().getText()).toEqual('456');
-      await appPage.flowsTab.click();
-      flowPage.isLoaded();
     });
 
     it ('should setup customized content on Harmonize Products flow', function() {
@@ -94,6 +92,8 @@ export default function(tmpDir) {
     });
 
     it ('should redeploy modules', async function() {
+      await appPage.flowsTab.click();
+      flowPage.isLoaded();
       await flowPage.redeployButton.click();
       browser.sleep(5000);
     });
@@ -207,6 +207,8 @@ export default function(tmpDir) {
     });
 
     it ('should redeploy modules', async function() {
+      await appPage.flowsTab.click();
+      flowPage.isLoaded();
       await flowPage.redeployButton.click();
       browser.sleep(5000);
     });
