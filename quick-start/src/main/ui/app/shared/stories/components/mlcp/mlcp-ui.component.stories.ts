@@ -1,5 +1,5 @@
 import { MdlModule } from '@angular-mdl/core';
-import { HttpModule } from '@angular/http';
+import { Http } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { centered } from '@storybook/addon-centered/angular';
 import { text, object, withKnobs, boolean } from '@storybook/addon-knobs';
@@ -14,7 +14,21 @@ import { FolderBrowserComponent } from '../../../../folder-browser/folder-browse
 import { TooltipModule } from '../../../../tooltip';
 import { SelectComponent } from '../../../components/select/select.component';
 import { ClipboardDirective } from '../../../../clipboard/clipboard.directive';
+import { Observable } from 'rxjs/Rx';
 
+class MockHttp {
+  get(uri: string) {
+    if (uri.startsWith('/api/utils/searchPath')) {
+      const mockJson = JSON.parse('{"currentAbsolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare","folders":[{"name":"..","relativePath":"../examples","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples"},{"name":"input","relativePath":"../examples/healthcare/input","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/input"},{"name":"plugins","relativePath":"../examples/healthcare/plugins","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/plugins"},{"name":"gradle","relativePath":"../examples/healthcare/gradle","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/gradle"},{"name":"src","relativePath":"../examples/healthcare/src","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/src"}],"files":[{"name":"README.md","relativePath":"../examples/healthcare/README.md","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/README.md"},{"name":"gradle-local.properties","relativePath":"../examples/healthcare/gradle-local.properties","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/gradle-local.properties"},{"name":"build.gradle","relativePath":"../examples/healthcare/build.gradle","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/build.gradle"},{"name":"gradle.properties","relativePath":"../examples/healthcare/gradle.properties","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/gradle.properties"}],"currentPath":"../examples/healthcare"}'
+      );
+      return Observable.of({
+        json: () => {
+          return mockJson;
+        }
+      });
+    }
+  }
+}
 
 storiesOf('Components|MLCP', module)
   .addDecorator(withKnobs)
@@ -24,7 +38,6 @@ storiesOf('Components|MLCP', module)
         CommonModule,
         ThemeModule,
         TooltipModule,
-        HttpModule,
         MdlModule
       ],
       schemas: [],
@@ -37,14 +50,16 @@ storiesOf('Components|MLCP', module)
         ClipboardDirective,
       ],
       entryComponents: [],
-      providers: []
+      providers: [
+        { provide: Http, useClass: MockHttp}
+      ]
     })
   )
   .addDecorator(centered)
   .add('mlcp-ui Component', () => ({
     template: `
             <mlui-dhf-theme>
-                <mlui-story-card [width]="'1000px'" [height]="'1000px'">
+                <mlui-story-card [width]="'1300px'" [height]="'800px'">
                   <app-mlcp-ui width="100%" min-width="500px"
                     [startPath]="startPath"
                     [flow]="flow"
@@ -57,6 +72,7 @@ storiesOf('Components|MLCP', module)
                     (saveOptionsClicked)="saveOptionsClicked()"
                     (switchChanged)="switchChanged($event)"
                     (runImportClicked)="runImportClicked()"
+                    (clipboardSuccess)="clipboardSuccess"
                   >
                   </app-mlcp-ui>
                 </mlui-story-card>
@@ -72,7 +88,8 @@ storiesOf('Components|MLCP', module)
       fileClicked: action('fileClicked'),
       saveOptionsClicked: action('saveOptionsClicked'),
       switchChanged: action('switchChanged'),
-      runImportClicked: action('runImportClicked')
+      runImportClicked: action('runImportClicked'),
+      clipboardSuccess: action('clipboardSuccess')
     }
   })
 );
