@@ -9,7 +9,13 @@ require('codemirror/mode/xquery/xquery');
 require('codemirror/mode/javascript/javascript');
 
 @Component({
-  templateUrl: './search-viewer.component.html',
+  template: `
+    <app-search-viewer
+      [doc]="doc"
+      [uri]="uri"
+    >
+    </app-search-viewer>
+  `,
 })
 export class SearchViewerComponent implements OnInit, OnDestroy {
 
