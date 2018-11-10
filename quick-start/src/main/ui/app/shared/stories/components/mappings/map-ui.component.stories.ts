@@ -52,7 +52,8 @@ storiesOf('Components|Mappings', module)
                   (resetMap)="resetMap()"
                 ></app-map-ui>
              </mlui-story-card>
-           </mlui-dhf-theme>`,
+           </mlui-dhf-theme>
+           <dialog-outlet></dialog-outlet>`,
     props: {
       mapping: object('mapping', {
         description: "A mapping description.",
