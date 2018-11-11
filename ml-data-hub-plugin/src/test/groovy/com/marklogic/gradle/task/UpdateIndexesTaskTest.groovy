@@ -71,7 +71,7 @@ class UpdateIndexesTaskTest extends BaseTest {
 		entityConfigStream = new File("src/test/resources/update-indexes/final-database.json").getAbsolutePath()
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
 		
-		dir = _hubConfig.getHubConfigDir()
+		dir = hubConfig().getHubConfigDir()
 		dstFile = Paths.get(dir.toString(), "databases", "job-database.json").toFile()
 		entityConfigStream = new File("src/test/resources/update-indexes/job-database.json").getAbsolutePath();
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

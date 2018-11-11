@@ -177,7 +177,7 @@ class InstalledTests extends BaseTest {
 
     def "install Legacy Modules should fail"() {
         given:
-        def entityDir = Paths.get(hubConfig().projectDir).resolve("plugins").resolve("entities").resolve("legacy-test")
+        def entityDir = BaseTest.testProjectDir.root.toPath().resolve("plugins").resolve("entities").resolve("legacy-test")
         def inputDir = entityDir.resolve("input")
         inputDir.toFile().mkdirs()
         FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
