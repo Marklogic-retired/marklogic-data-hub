@@ -66,7 +66,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         scaffolding.createEntity(ENTITY);
         clearUserModules();
-
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @Test

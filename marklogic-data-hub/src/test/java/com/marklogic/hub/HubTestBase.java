@@ -377,6 +377,8 @@ public class HubTestBase {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
+        adminHubConfig.setMlUsername(user);
+        adminHubConfig.setMlPassword(password);
         wireClients();
         return adminHubConfig;
     }
@@ -385,6 +387,8 @@ public class HubTestBase {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
+        adminHubConfig.setMlUsername(user);
+        adminHubConfig.setMlPassword(password);
         wireClients();
         return adminHubConfig;
     }
