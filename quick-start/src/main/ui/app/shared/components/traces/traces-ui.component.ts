@@ -14,6 +14,7 @@ export class TracesUiComponent {
   @Input() traces: Array<Trace>;
   @Input() activeFacets: any;
   @Input() searchText: string;
+  @Input() loadingTraces: boolean;
   @Output() searchClicked = new EventEmitter;
   @Output() activeFacetsChange = new EventEmitter;
   @Output() pageChanged = new EventEmitter;

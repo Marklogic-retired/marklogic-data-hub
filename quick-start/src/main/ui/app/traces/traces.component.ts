@@ -14,6 +14,7 @@ import * as _ from 'lodash';
       [traces]="traces"
       [activeFacets]="activeFacets"
       [searchText]="searchText"
+      [loadingTraces]="loadingTraces"
       (searchClicked)="doSearch($event)"
       (activeFacetsChange)="updateFacets($event)"
       (traceItemClicked)="showTrace($event)"
