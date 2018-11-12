@@ -85,6 +85,10 @@ public class ScaffoldingImpl implements Scaffolding {
     @Override public void createEntity(String entityName) {
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
+        if(entityDir.toFile().exists()){
+            String fileContents = getFileContent("scaffolding/Entity.json", entityName);
+            writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
+        }
     }
 
     @Override public void createMappingDir(String mappingName) {
