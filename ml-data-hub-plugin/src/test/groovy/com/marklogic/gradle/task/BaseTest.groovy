@@ -19,6 +19,7 @@ package com.marklogic.gradle.task
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.marklogic.client.FailedRequestException
 import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
@@ -32,20 +33,18 @@ import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
 import com.marklogic.hub.impl.HubConfigImpl
-import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.databases.DatabaseManager
 import com.marklogic.rest.util.Fragment
+import com.marklogic.rest.util.JsonNodeUtil
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.rules.TemporaryFolder
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.env.PropertiesPropertySource
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
@@ -65,17 +64,17 @@ class BaseTest extends Specification {
     static final int MOD_COUNT_WITH_TRACE_MODULES = 26
     static final int MOD_COUNT = 5
     // this value under good security conditions is 2 because hub-admin-user cannot read options files directly.
-    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 2
+    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 109
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
-    
+
     private ManageClient _manageClient;
     private DatabaseManager _databaseManager;
-    
+
     static private HubConfigImpl _hubConfig
-    
-    HubConfig hubConfig(){
+
+    HubConfig hubConfig() {
         return _hubConfig
     }
 
@@ -164,6 +163,14 @@ class BaseTest extends Specification {
         FileUtils.copyFile(file, dest)
     }
 
+    static void writeSSLFiles(File serverFile, File ssl) {
+        def files = []
+        files << ssl
+        files << serverFile
+        ObjectNode serverFiles = JsonNodeUtil.mergeJsonFiles(files);
+        FileUtils.writeStringToFile(serverFile, serverFiles.toString());
+    }
+
     static int getStagingDocCount() {
         return getStagingDocCount(null)
     }
@@ -239,8 +246,8 @@ class BaseTest extends Specification {
             def dst = propertiesFile.toPath()
             Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
         }
-        catch(IOException e) {
-           println("gradle.properties file already exists")
+        catch (IOException e) {
+            println("gradle.properties file already exists")
         }
     }
 
@@ -288,7 +295,7 @@ class BaseTest extends Specification {
         ctx.getEnvironment().getPropertySources().addLast(new PropertiesPropertySource("projectDirPropertySource", properties))
         ctx.refresh()
         _hubConfig = ctx.getBean(HubConfigImpl.class)
-        createFullPropertiesFile() 
-        _hubConfig.refreshProject();               
+        createFullPropertiesFile()
+        _hubConfig.refreshProject();
     }
 }

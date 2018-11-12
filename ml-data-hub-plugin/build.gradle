@@ -82,6 +82,12 @@ test {
     classpath = project.sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
 }
 
+task testFullCycle(type: Test) {
+    useJUnit {
+        include 'com/marklogic/gradle/fullcycle/**'
+    }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier 'sources'
     from sourceSets.main.allJava

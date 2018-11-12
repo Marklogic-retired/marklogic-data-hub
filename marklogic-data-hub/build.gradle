@@ -273,6 +273,7 @@ test {
 	useJUnitPlatform()
     minHeapSize = "128m"
     maxHeapSize = "256m"
+    exclude 'com/marklogic/bootstrap/**'
     classpath = project.sourceSets.test.runtimeClasspath
 }
 
@@ -344,5 +345,6 @@ bootstrap.dependsOn(setupSSL)
 test.dependsOn(bootstrap)
 testIntegration.dependsOn(bootstrap)
 testAcceptance.dependsOn(bootstrap)
+testBootstrap.dependsOn(bootstrap)
 //Uncomment this line if hub has to be uninstalled after test
 //test.finalizedBy(teardown)

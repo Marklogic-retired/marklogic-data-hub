@@ -35,7 +35,15 @@ storiesOf('Components|ML Error', module)
     props: {
       error: object('Error Object', {
         formatString: "Error Name",
+        stack: "SJS Error Name",
         stacks: [
+          {
+            "uri": "http://Aasd",
+            "line": "asd",
+            "column": 10
+          }
+        ],
+        stackFrames: [
           {
             "uri": "http://Aasd",
             "line": "asd",
