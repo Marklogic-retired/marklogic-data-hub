@@ -13,7 +13,7 @@ import {StoryCardComponent} from '../../utils';
 import {ThemeModule} from "../../../components";
 import {MapUiComponent} from "../../../components";
 import {FocusElementDirective} from '../../../directives/focus-element/focus-element.directive';
-import {ListFilterPipe} from '../../../../listfilter';
+import {ListFilterPipe} from '../../../components/mappings/listfilter.pipe';
 
 storiesOf('Components|Mappings', module)
   .addDecorator(withKnobs)
