@@ -10,9 +10,9 @@ export class ClipboardDirective implements OnInit, OnDestroy {
 
   @Input() cbContent: string;
 
-  @Output('onSuccess') onSuccess: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() onSuccess = new EventEmitter<boolean>();
 
-  @Output('onError') onError: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() onError = new EventEmitter<boolean>();
 
   constructor(private elmRef: ElementRef) { }
 
