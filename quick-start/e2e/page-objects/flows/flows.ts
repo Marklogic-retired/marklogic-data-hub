@@ -250,7 +250,7 @@ export class FlowPage extends AppPage {
       dataFolderName: string, inputFileType: string, uriPrefix: string,
       uriSuffix: string, useInputCompressed = false, compressionCodec = '') {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
-    this.getFlow(entityName, flowName, 'INPUT').click();
+    await this.getFlow(entityName, flowName, 'INPUT').click();
 
     browser.wait(EC.visibilityOf(this.tabs));
     browser.wait(EC.visibilityOf(this.mlcpTab(entityName, flowName)));
@@ -363,7 +363,7 @@ export class FlowPage extends AppPage {
 
     await this.createFlowButton.click();
 
-    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    browser.wait(EC.stalenessOf(this.newFlowDialog));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
 
@@ -409,7 +409,7 @@ export class FlowPage extends AppPage {
 
     await this.createFlowButton.click();
 
-    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    browser.wait(EC.stalenessOf(this.newFlowDialog));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
 }
