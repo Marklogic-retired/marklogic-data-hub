@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
-import { ListFilterPipe } from './listfilter';
+import { ListFilterPipe } from './shared/components/mappings/listfilter.pipe';
 import { AppComponent } from './app.component';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './shared/components';
