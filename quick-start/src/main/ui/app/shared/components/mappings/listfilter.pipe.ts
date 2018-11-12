@@ -21,8 +21,6 @@ export class ListFilterPipe implements PipeTransform {
         })
         return found;
       });
-
-      filteredInput = _.sortBy(filteredInput, options);
     }
 
     return filteredInput;
