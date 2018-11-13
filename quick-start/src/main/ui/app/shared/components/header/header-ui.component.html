@@ -4,10 +4,10 @@
     <span class="mdl-layout-title">Data Hub QuickStart</span>
     <!-- Add spacer, to align navigation to the right -->
     <div class="mdl-layout-spacer"></div>
-    <div *ngIf="getRunningJobCount() !== 0" layout="row" layout-align="center center" class="job-progress" (click)="gotoJobs()">
-      <span class="label">Running {{getRunningJobCount()}} jobs</span>
-      <mdl-progress mode="determinate" [progress]="getPercentComplete()"></mdl-progress>
-      <span class="percent">{{getPercentComplete()}}%</span>
+    <div *ngIf="runningJobs !== 0" layout="row" layout-align="center center" class="job-progress" (click)="routeToJobs()">
+      <span class="label">Running {{runningJobs}} jobs</span>
+      <mdl-progress mode="determinate" [progress]="percentageComplete"></mdl-progress>
+      <span class="percent">{{percentageComplete}}%</span>
     </div>
     <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
@@ -16,7 +16,7 @@
       <a id="flows-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/flows')}" [routerLink]="['flows']"><i class="mdi mdi-looks"></i> Flows</a>
       <a id="mappings-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/mappings')}" [routerLink]="['mappings']"><i class="fa fa-map"></i> Mappings</a>
       <a id="browser-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>
-      <a id="jobs-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="getRunningJobCount() !== 0" [mdl-badge]="getRunningJobCount()">Jobs</span><span *ngIf="getRunningJobCount() === 0">Jobs</span></a>
+      <a id="jobs-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="runningJobs !== 0" [mdl-badge]="runningJobs">Jobs</span><span *ngIf="runningJobs === 0">Jobs</span></a>
       <a id="traces-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/traces')}" [routerLink]="['traces']"><i class="fa fa-flash"></i> Traces</a>
       <a id="settings-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
     </nav>
@@ -25,7 +25,7 @@
     </mdl-button>
 
     <mdl-menu #headerMenu="mdlMenu" mdl-menu-position="bottom-right">
-      <mdl-menu-item id="login-button" mdl-ripple (click)="logout()">Logout</mdl-menu-item>
+      <mdl-menu-item id="login-button" mdl-ripple (click)="logoutClicked()">Logout</mdl-menu-item>
     </mdl-menu>
   </div>
 </header>
