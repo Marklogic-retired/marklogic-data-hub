@@ -223,4 +223,6 @@ public interface HubProject {
      * @return the project's directory as a Path
      */
     Path getProjectDir();
+
+    void createProject(String projectDirString);
 }

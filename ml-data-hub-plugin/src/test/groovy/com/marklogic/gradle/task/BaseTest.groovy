@@ -290,12 +290,9 @@ class BaseTest extends Specification {
         testProjectDir.create()
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext()
         ctx.register(ApplicationConfig.class)
-        Properties properties = new Properties()
-        properties.setProperty("hubProjectDir", testProjectDir.root.getAbsolutePath())
-        ctx.getEnvironment().getPropertySources().addLast(new PropertiesPropertySource("projectDirPropertySource", properties))
         ctx.refresh()
         _hubConfig = ctx.getBean(HubConfigImpl.class)
         createFullPropertiesFile()
-        _hubConfig.refreshProject();
+        _hubConfig.createProject(testProjectDir.root.getAbsolutePath())
     }
 }

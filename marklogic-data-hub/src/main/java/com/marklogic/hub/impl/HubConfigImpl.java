@@ -38,7 +38,6 @@ import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
@@ -223,6 +222,11 @@ public class HubConfigImpl implements HubConfig
         projectProperties = new Properties();
     }
 
+
+    public void createProject(String projectDirString) {
+        hubProject.createProject(projectDirString);
+        refreshProject();
+    }
 
     public String getHost() { return stagingAppConfig.getHost(); }
 
@@ -897,12 +901,6 @@ public class HubConfigImpl implements HubConfig
     }
 
 
-    @PostConstruct
-    /* this method takes care of setting app config and other non-injected dependencies */
-    public void initializeApplicationConfigurations() {
-        hydrateAppConfigs(environment);
-        hydrateConfigs();
-    }
 
     public void hydrateConfigs() {
         if (stagingSimpleSsl) {
