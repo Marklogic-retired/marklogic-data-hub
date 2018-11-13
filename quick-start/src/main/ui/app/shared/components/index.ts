@@ -1,3 +1,4 @@
+export * from './app-ui.component';
 export * from './folder-browser/folder-browser-ui.component';
 export * from './select-list/select-list.component';
 export * from './ml-error/ml-error.component';
