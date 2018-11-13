@@ -20,8 +20,26 @@ import { NewEntityComponent } from '../shared/components/new-entity/new-entity.c
 
 @Component({
   selector: 'app-flows',
-  templateUrl: './flows.component.html',
-  styleUrls: ['./flows.component.scss'],
+  template: `
+  <app-flows-ui
+    [hasErrors] = "hasErrorsInput"
+    [markLogicVersion] = "markLogicVersionInput"
+    [lastDeployed] = "lastDeployedInput"
+    [entities] = "entities"
+    [entity] = "entity"
+    [errors] = "errorsInput"
+    [flowType] = "flowType"
+    [flow] = "flow"
+    [mlcpOptions] = "mlcpOptions"
+    (deleteFlowClicked) = "deleteFlow($event)"
+    (showNewFlowClicked) = "showNewFlow($event)"
+    (redeployClicked) = "redeployModules()"
+    (runImportClicked) = "runInputFlow($event)"
+    (runHarmonizeClicked) = "runHarmonizeFlow($event)"
+    (savePluginClicked) = "savePlugin($event)"
+  >  
+  </app-flows-ui> 
+  `
 })
 export class FlowsComponent implements OnInit, OnDestroy {
   @ViewChildren(CodemirrorComponent) codemirrors: QueryList<CodemirrorComponent>;
