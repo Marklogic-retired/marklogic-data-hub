@@ -39,7 +39,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
-import org.springframework.core.env.PropertiesPropertySource
 
 @EnableAutoConfiguration
 class DataHubPlugin implements Plugin<Project> {
@@ -141,13 +140,7 @@ class DataHubPlugin implements Plugin<Project> {
     void setupHub(Project project) {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext()
         ctx.register(ApplicationConfig.class)
-        Properties properties = new Properties()
-        properties.setProperty("hubProjectDir", project.getProjectDir().getAbsolutePath())
-        ctx.getEnvironment().getPropertySources().addLast(new PropertiesPropertySource("projectDirPropertySource", properties))
         ctx.refresh()
-//        def app = new SpringApplication(ApplicationConfig.class)
-//        app.setWebApplicationType(WebApplicationType.NONE)
-//        ConfigurableApplicationContext ctx = app.run("--hubProjectDir=" + project.getProjectDir().getAbsolutePath())
 
         hubConfig = ctx.getBean(HubConfigImpl.class)
         dataHub = ctx.getBean(DataHubImpl.class)
@@ -163,11 +156,9 @@ class DataHubPlugin implements Plugin<Project> {
 
     void initializeProjectExtensions(Project project) {
 
-        def projectDir = project.getProjectDir().getAbsolutePath()
-        def properties = new ProjectPropertySource(project).getProperties()
         def extensions = project.getExtensions()
 
-        hubConfig.refreshProject()
+        hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))

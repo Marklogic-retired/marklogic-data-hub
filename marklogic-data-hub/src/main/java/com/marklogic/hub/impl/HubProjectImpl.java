@@ -43,6 +43,7 @@ import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERT
 /**
  * Class for creating a hub Project
  */
+@Component
 public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
@@ -55,14 +56,17 @@ public class HubProjectImpl implements HubProject {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public HubProjectImpl(String projectDirStr) {
-        this.projectDirString = projectDirStr;
-        this.projectDir = Paths.get(projectDirStr).toAbsolutePath();
-        this.pluginsDir = this.projectDir.resolve("plugins");
+    public HubProjectImpl(){
     }
 
     public String getProjectDirString() {
         return projectDirString;
+    }
+
+    public void createProject(String projectDirString) {
+        this.projectDirString = projectDirString;
+        this.projectDir = Paths.get(projectDirString).toAbsolutePath();
+        this.pluginsDir = this.projectDir.resolve("plugins");
     }
 
     @Override public Path getHubPluginsDir() {

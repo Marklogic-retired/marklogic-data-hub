@@ -562,4 +562,6 @@ public interface HubConfig {
     void refreshProject();
 
     void refreshProject(Properties properties);
+
+    void createProject(String projectDirString);
 }

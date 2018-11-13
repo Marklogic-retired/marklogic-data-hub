@@ -49,9 +49,9 @@ public class Installer extends HubTestBase {
     }
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(new Class[]{Installer.class, ApplicationConfig.class});
+        SpringApplication app = new SpringApplication(Installer.class, ApplicationConfig.class);
         app.setWebApplicationType(WebApplicationType.NONE);
-        ConfigurableApplicationContext ctx = app.run(new String[] { "--hubProjectDir=" + PROJECT_PATH });
+        ConfigurableApplicationContext ctx = app.run();
     }
 
 }

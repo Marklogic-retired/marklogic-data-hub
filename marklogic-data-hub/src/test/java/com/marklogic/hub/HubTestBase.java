@@ -272,7 +272,7 @@ public class HubTestBase {
         && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
             setCertAuth(true);
         }
-        adminHubConfig.refreshProject();
+        adminHubConfig.createProject(PROJECT_PATH);
         if(isSslRun() || isCertAuth()) {
             certInit();
         }
