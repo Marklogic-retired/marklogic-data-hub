@@ -1,7 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {HttpModule} from '@angular/http';
 import {storiesOf, moduleMetadata} from '@storybook/angular';
-import {centered} from '@storybook/addon-centered/angular';
+import {centered} from '@storybook/addon-centered/angular'; 
 import {
   text,
   boolean,
