@@ -42,7 +42,7 @@ import { ResizableComponent } from './shared/components';
 import { SelectComponent } from './shared/components';
 import { SelectListComponent } from './shared/components';
 import { TooltipModule } from './tooltip';
-import { TracesComponent, TraceViewerComponent } from './traces';
+import { TracesComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
 import { SearchViewerUiComponent } from './shared/components/search';
 
@@ -77,7 +77,8 @@ import { NewMapUiComponent } from "./shared/components";
 import {ThemeModule} from "./shared/components";
 import {
   ChooseCollationComponent,
-  EntityBoxComponent
+  EntityBoxComponent,
+  TraceViewerComponent
 } from "./shared/components";
 
 @NgModule({

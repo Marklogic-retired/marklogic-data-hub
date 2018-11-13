@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { TraceService } from './trace.service';
-import { Trace } from './trace.model';
+import { TraceService } from '../../../traces/trace.service';
+import { Trace } from '../../../traces/trace.model';
 
 import * as _ from 'lodash';
 

@@ -18,3 +18,4 @@ export * from './jobs/job-export-ui.component';
 export * from './has-bugs-dialog/has-bugs-dialog.component';
 export * from './header/header-ui.component';
 export * from './tooltip/tooltip-container-ui.component';
+export * from './trace-viewer/trace-viewer.component';
