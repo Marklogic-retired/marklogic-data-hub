@@ -521,7 +521,7 @@ function runMain(itemContext, func) {
       // this is an error in main.(sjs|xqy)
       // log the trace event for main
       tracelib.setPluginLabel("main", rfc.getTrace(itemContext));
-      tracelib.errorTrace(itemContext, ex, xdmp.elapsedTime().subtract(before));
+      tracelib.errorTrace(itemContext, {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
       throw(ex);
     }  else {
       throw(ex);
@@ -607,7 +607,7 @@ function runWriter(writerFunction, itemContext, identifier, envelope, options) {
       tracelib.writeTrace(itemContext);
   }
   catch(ex) {
-    tracelib.errorTrace(itemContext, ex, xdmp.elapsedTime().subtract(before));
+    tracelib.errorTrace(itemContext, {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
   }
 
   return resp;
@@ -625,8 +625,8 @@ function safeRun(func) {
     return resp;
   }
   catch(ex) {
-    tracelib.errorTrace(rfc.getItemContext(), ex, xdmp.elapsedTime().subtract(before));
-    fn.error(null, "DATAHUB-PLUGIN-ERROR", ex);
+    tracelib.errorTrace(rfc.getItemContext(), {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
+    fn.error(null, "DATAHUB-PLUGIN-ERROR",  JSON.stringify(ex, Object.getOwnPropertyNames(ex)));
   }
 };
 
