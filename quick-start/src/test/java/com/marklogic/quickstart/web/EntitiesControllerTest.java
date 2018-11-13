@@ -115,7 +115,7 @@ public class EntitiesControllerTest extends BaseTestController {
 
         Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
@@ -158,7 +158,7 @@ public class EntitiesControllerTest extends BaseTestController {
 
         Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
