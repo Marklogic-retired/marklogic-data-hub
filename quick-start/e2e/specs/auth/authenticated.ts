@@ -13,7 +13,7 @@ export default function(tmpDir) {
     //Verify  logo and product name along with text
     it('Starts off with the right stuff', function() {
 
-      expect(loginPage.browseButton.isDisplayed()).toBe(true);
+      expect(loginPage.browseButton.isPresent()).toBe(true);
       expect(loginPage.projectList.isPresent()).toBe(false);
       expect(loginPage.folderBrowser.isDisplayed()).toBe(true);
       expect(loginPage.nextButton('ProjectDirTab').isDisplayed()).toBe(true);
