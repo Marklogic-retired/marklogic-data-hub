@@ -11,7 +11,7 @@ import { PropertyType } from './property.model';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
-import { EntityEditorComponent } from '../entity-modeler/entity-editor.component';
+import { EntityEditorComponent } from '../shared/components/entity-editor/entity-editor.component';
 
 import { EntityConsts } from './entity-consts';
 
