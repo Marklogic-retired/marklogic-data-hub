@@ -35,7 +35,6 @@ export class MapUiComponent implements OnChanges {
 
   public editDescVal: string;
   public editingDesc: boolean = false;
-
   public editingURI: boolean = false;
 
   /**
