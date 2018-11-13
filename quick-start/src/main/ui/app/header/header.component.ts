@@ -8,8 +8,14 @@ import { EnvironmentService } from '../environment';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
+  template: `
+  <app-header-ui
+    [runningJobs]="this.getRunningJobCount()"
+    [percentageComplete]="this.getPercentComplete()"
+    (gotoJobs)="this.gotoJobs()"
+    (logout)="this.logout()"
+  ></app-header-ui>
+`
 })
 export class HeaderComponent {
 
@@ -43,13 +49,5 @@ export class HeaderComponent {
       this.auth.setAuthenticated(false);
       this.router.navigate(['login']);
     });
-  }
-
-  isActive(url: string): boolean {
-    if (url === '/') {
-      return this.router.url === url;
-    }
-
-    return this.router.url.startsWith(url);
   }
 }
