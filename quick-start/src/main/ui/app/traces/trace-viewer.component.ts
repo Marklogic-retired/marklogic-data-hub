@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 
+import { TraceService } from '../traces/trace.service';
+import { Trace } from '../traces/trace.model';
 @Component({
   selector: 'app-trace-viewer',
   template: `
@@ -10,10 +12,34 @@ import { Router } from '@angular/router';
   ></app-trace-viewer-ui>
 `
 })
-export class TraceViewerComponent {
+export class TraceViewerComponent implements OnInit, OnDestroy {
+  private sub: any;
+  public trace: Trace;
+
+  private currentPluginType: string;
+  public currentPlugin: Plugin;
 
   constructor(
-    private router: Router
+    private route: ActivatedRoute,
+    private traceService: TraceService
   ) {}
 
+  ngOnInit() {
+    this.sub = this.route.params.subscribe(params => {
+      let id = params['id'];
+      this.traceService.getTrace(id).subscribe(trace => {
+        this.trace = trace;
+        this.setCurrent(this.trace.steps[0]);
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  private setCurrent(plugin: any) {
+    this.currentPluginType = plugin.label;
+    this.currentPlugin = plugin;
+  }
 }
