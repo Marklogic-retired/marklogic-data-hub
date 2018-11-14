@@ -257,7 +257,8 @@ export default function(tmpDir) {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
-    it ('should remove some properties on Order entity', function() {
+    // commenting out, there is another test on removing properties
+    /*it ('should remove some properties on Order entity', function() {
       console.log('verify remove properties on Order entity');
       let lastProperty = entityPage.lastProperty;
       entityPage.clickEditEntity('Order');
@@ -309,7 +310,7 @@ export default function(tmpDir) {
       //entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(3)});
       entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
-    });
+    });*/
 
     it ('should remove a created entity', function() {
       //create removeEntity entity
