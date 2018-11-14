@@ -41,7 +41,7 @@ storiesOf('Components|Entity Box', module)
         `,
         styles: [`
         :host ::ng-deep .story-card {
-            overflow: overlay
+            overflow: overlay 
         }
         `],
         props: {
