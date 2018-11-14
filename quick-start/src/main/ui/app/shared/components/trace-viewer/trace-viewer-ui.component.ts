@@ -7,12 +7,12 @@ import { Trace } from '../../../traces/trace.model';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-trace-viewer',
+  selector: 'app-trace-viewer-ui',
   encapsulation: ViewEncapsulation.None,
-  templateUrl: './trace-viewer.component.html',
-  styleUrls: ['./trace-viewer.component.scss'],
+  templateUrl: './trace-viewer-ui.component.html',
+  styleUrls: ['./trace-viewer-ui.component.scss'],
 })
-export class TraceViewerComponent implements OnInit, OnDestroy {
+export class TraceViewerUiComponent implements OnInit, OnDestroy {
 
   collapsed = {};
   outputCollapsed = false;

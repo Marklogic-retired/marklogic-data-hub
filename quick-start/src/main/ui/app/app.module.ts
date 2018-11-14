@@ -10,7 +10,6 @@ import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './shared/components';
 import {
   EntityModelerComponent,
-  EntityEditorComponent,
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
@@ -42,7 +41,7 @@ import { ResizableComponent } from './shared/components';
 import { SelectComponent } from './shared/components';
 import { SelectListComponent } from './shared/components';
 import { TooltipModule } from './tooltip';
-import { TracesComponent } from './traces';
+import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
 import { SearchViewerUiComponent } from './shared/components/search';
 
@@ -78,7 +77,8 @@ import {ThemeModule} from "./shared/components";
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
-  TraceViewerComponent
+  TraceViewerUiComponent,
+  EntityEditorComponent
 } from "./shared/components";
 
 @NgModule({
@@ -117,6 +117,7 @@ import {
     SettingsUiComponent,
     TracesComponent,
     TraceViewerComponent,
+    TraceViewerUiComponent,
     SearchComponent,
     SearchViewerComponent,
     SearchViewerUiComponent,
