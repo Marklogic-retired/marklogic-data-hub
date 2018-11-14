@@ -35,6 +35,7 @@ import { MlcpUiComponent } from './mlcp-ui';
 import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
+import { NewFlowUiComponent } from './shared/components/new-flow/new-flow-ui.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './shared/components/pagination';
 import { ResizableComponent } from './shared/components';
@@ -109,6 +110,7 @@ import {
     MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,
+    NewFlowUiComponent,
     NewMapComponent,
     NewMapUiComponent,
     PaginationComponent,

@@ -15,21 +15,23 @@
             id="flowTypeInput"
             label="{{flowType}} Flow Name (required)"
             #flowTypeInput="ngModel"
-            [(ngModel)]="flow.flowName"></mdl-textfield>
-          <ng-template [ngIf]="getMarkLogicVersion() >= 9">
+            [(ngModel)]="flow.flowName"
+            (ngModelChange)="emitUpdatedFlow()"
+            ></mdl-textfield>
+          <ng-template [ngIf]="markLogicVersion >= 9">
             <label>Code Generation</label>
             <app-select-list
               [items]="scaffoldOptions"
               [initialSelectedItem]="startingScaffoldOption"
               label="label" identifier="value"
-              (selectedItem)="flow.useEsModel = $event"></app-select-list>
+              (selectedItem)="updateflow('useEsModel', $event);"></app-select-list>
             <div *ngIf="flow.useEsModel">
             <label>Mapping Generation</label>
               <app-select-list
                 [items]="mappingOptions"
                 [initialSelectedItem]="startingMappingOption"
                 label="label" identifier="value"
-                (selectedItem)="flow.mappingName = $event"></app-select-list>
+                (selectedItem)="updateflow('mappingName', $event);"></app-select-list>
             </div>
           </ng-template>
           <label>Plugin Type</label>
@@ -37,12 +39,12 @@
             [items]="codeFormats"
             [initialSelectedItem]="codeFormats[0]"
             label="label" identifier="value"
-            (selectedItem)="flow.codeFormat = $event"></app-select-list>
+            (selectedItem)="updateflow('codeFormat', $event);"></app-select-list>
           <label>Data Format</label>
           <app-select-list
             [items]="dataFormats"
             [initialSelectedItem]="dataFormats[0]"
-            (selectedItem)="flow.dataFormat = $event"
+            (selectedItem)="updateflow('dataFormat', $event);"
             label="label" identifier="value"></app-select-list>
         </div>
       </div>
