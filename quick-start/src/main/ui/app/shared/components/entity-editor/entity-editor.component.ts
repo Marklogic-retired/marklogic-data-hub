@@ -5,10 +5,10 @@ import {
 } from '@angular/core';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
-import { ChooseCollationComponent } from '../shared/components/choose-collation/choose-collation.component';
-import { ExternalDefDialogComponent } from './externaldef-dialog.component';
+import { ChooseCollationComponent } from '../choose-collation/choose-collation.component';
+import { ExternalDefDialogComponent } from '../../../entity-modeler/externaldef-dialog.component';
 
-import { Cardinality, Entity, PropertyType } from '../entities';
+import { Cardinality, Entity, PropertyType } from '../../../entities';
 
 import * as _ from 'lodash';
 
