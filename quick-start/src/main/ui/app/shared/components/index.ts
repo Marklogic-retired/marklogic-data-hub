@@ -19,3 +19,4 @@ export * from './has-bugs-dialog/has-bugs-dialog.component';
 export * from './harmonize-flow-options/harmonize-flow-options-ui.component';
 export * from './header/header-ui.component';
 export * from './tooltip/tooltip-container-ui.component';
+export * from './entity-editor/entity-editor.component';
