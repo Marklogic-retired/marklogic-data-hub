@@ -59,6 +59,7 @@ import { FocusElementDirective } from './shared/directives/focus-element/focus-e
 import { TraceService } from './traces/trace.service';
 import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options';
+import { HarmonizeFlowOptionsUiComponent } from './shared/components';
 import { DashboardComponent } from './dashboard';
 import { TitlecasePipe } from './titlecase.pipe';
 import { InlineEditComponent } from './shared/components';
@@ -123,6 +124,7 @@ import {
     ClipboardDirective,
     FocusElementDirective,
     HarmonizeFlowOptionsComponent,
+    HarmonizeFlowOptionsUiComponent,
     DashboardComponent,
     InlineEditComponent,
     FacetsComponent,
