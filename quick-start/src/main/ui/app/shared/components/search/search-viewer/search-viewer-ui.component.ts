@@ -6,7 +6,7 @@ require('codemirror/mode/xquery/xquery');
 require('codemirror/mode/javascript/javascript');
 
 @Component({
-  selector: 'app-search-viewer-ui',
+  selector: 'app-search-viewer',
   encapsulation: ViewEncapsulation.None,
   templateUrl: './search-viewer-ui.component.html',
   styleUrls: [
