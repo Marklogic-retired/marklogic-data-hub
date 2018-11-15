@@ -22,8 +22,8 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.service.ProjectManagerService;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -49,7 +49,7 @@ public class BaseTestController extends HubTestBase {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    @Before
+    @BeforeEach
     public void baseSetUp() throws IOException {
         //envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
         envConfig.setProjectDir(PROJECT_PATH);
@@ -57,9 +57,10 @@ public class BaseTestController extends HubTestBase {
         setEnvConfig(envConfig);
         dh.initProject();
         projectManagerService.addProject(PROJECT_PATH);
+        adminHubConfig.refreshProject();
     }
 
-    @After
+    @AfterEach
     public void baseTeardown() throws IOException {
         deleteProjectDir();
     }

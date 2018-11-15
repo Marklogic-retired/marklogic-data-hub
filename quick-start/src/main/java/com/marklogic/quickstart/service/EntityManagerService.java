@@ -92,10 +92,6 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public List<EntityModel> getEntities() throws IOException {
-        if (envConfig().getMarklogicVersion().startsWith("8")) {
-            return getLegacyEntities();
-        }
-
         String projectDir = envConfig().getProjectDir();
 
         Map<String, HubUIData> hubUiData = getUiData();

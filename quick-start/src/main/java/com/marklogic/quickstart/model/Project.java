@@ -50,11 +50,4 @@ public class Project {
         }
         return environments;
     }
-
-    public void initialize(HubConfig hubConfig) {
-        //FIXME  entry point
-        // hubConfig.setProjectDir(this.path);
-        //DataHub hub = DataHub.create(hubConfig);
-        // hub.initProject();
-    }
 }

@@ -5,22 +5,20 @@ import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.annotation.PostConstruct;
+
 
 public class AbstractServiceTest extends HubTestBase {
 
     @Autowired
     protected EnvironmentConfig envConfig;
 
-    /*
-    @PostConstruct
     protected void setupEnv() {
         createProjectDir();
-        EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
+        envConfig.setMlSettings(adminHubConfig);
         envConfig.checkIfInstalled();
         setEnvConfig(envConfig);
     }
-    */
 
     protected void setEnvConfig(EnvironmentConfig envConfig) {
 

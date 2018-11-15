@@ -25,9 +25,9 @@ import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
 import com.marklogic.quickstart.service.ProjectManagerService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,6 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {ApplicationConfig.class, DataHubApiConfiguration.class } )
 @WebAppConfiguration
 public class ProjectsControllerTest extends BaseTestController {
@@ -55,7 +54,7 @@ public class ProjectsControllerTest extends BaseTestController {
     private TemporaryFolder temporaryFolder;
 
     private String projectPath;
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         pms.reset();
         temporaryFolder = new TemporaryFolder();
@@ -63,7 +62,7 @@ public class ProjectsControllerTest extends BaseTestController {
         projectPath = temporaryFolder.newFolder("my-project").toString();
     }
 
-    @After
+    @AfterEach
     public void teardownDir() {
         temporaryFolder.delete();
     }

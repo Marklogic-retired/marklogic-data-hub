@@ -24,6 +24,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.quickstart.DataHubApiConfiguration;
@@ -50,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DataHubApiConfiguration.class, ApplicationConfig.class})
+@ContextConfiguration(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, EntityManagerServiceTest.class})
 public class EntityManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
@@ -63,9 +64,13 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
     @Autowired
     Scaffolding scaffolding;
 
+    @Autowired
+    HubConfigImpl hubConfig;
+
     @BeforeEach
     public void setUp() {
         createProjectDir();
+        hubConfig.refreshProject();
 
         scaffolding.createEntity(ENTITY);
 

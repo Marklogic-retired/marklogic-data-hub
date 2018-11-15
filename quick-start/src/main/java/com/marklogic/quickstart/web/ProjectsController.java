@@ -21,6 +21,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
@@ -40,6 +43,11 @@ public class ProjectsController {
 
     @Autowired
     private ProjectManagerService pm;
+
+
+    @Autowired
+    // this field wires quick-start to the main application context
+    private HubConfigImpl hubConfig;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
@@ -81,22 +89,19 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}/initialize", method = RequestMethod.POST)
     @ResponseBody
-    public Project initializeProject(@PathVariable int projectId, @RequestBody JsonNode hubConfig) {
+    public Project initializeProject(@PathVariable int projectId, @RequestBody JsonNode hubConfigDelta) {
         Project project = pm.getProject(projectId);
         ObjectMapper om = new ObjectMapper();
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
-            //HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path).build();
-            HubConfig config = null;
-            config = om.readerForUpdating(config).readValue(hubConfig);
-            AppConfig appConfig = config.getStagingAppConfig();
-            if (hubConfig.get("host") != null) {
-                appConfig.setHost(hubConfig.get("host").asText());
+            AppConfig appConfig = this.hubConfig.getStagingAppConfig();
+            if (hubConfigDelta.get("host") != null) {
+                appConfig.setHost(hubConfigDelta.get("host").asText());
             }
-            if (hubConfig.get("name") != null) {
-                appConfig.setName(hubConfig.get("name").asText());
+            if (hubConfigDelta.get("name") != null) {
+                appConfig.setName(hubConfigDelta.get("name").asText());
             }
-            project.initialize(config);
+            this.hubConfig.createProject(project.path);
             return project;
         }
         catch (Exception e) {
