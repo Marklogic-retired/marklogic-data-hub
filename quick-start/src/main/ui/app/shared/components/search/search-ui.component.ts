@@ -13,7 +13,6 @@ export class SearchUiComponent {
   @Input() loadingTraces: boolean;
   @Input() searchResponse: any;
   @Input() activeFacets: any;
-
   @Output() currentDatabaseChanged = new EventEmitter();
   @Output() entitiesOnlyChanged = new EventEmitter();
   @Output() searchTextChanged = new EventEmitter();
