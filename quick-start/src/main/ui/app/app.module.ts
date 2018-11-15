@@ -67,19 +67,20 @@ import { FacetsComponent } from './shared/components/facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
-import {SelectKeyValuesComponent} from './shared/components';
-import {JobExportDialogComponent} from "./jobs";
+import { SelectKeyValuesComponent } from './shared/components';
+import { JobExportDialogComponent } from './jobs';
 
 import { MapComponent } from './mappings';
-import { MappingsComponent } from "./mappings";
-import { NewMapComponent } from "./mappings/new-map.component";
-import { NewMapUiComponent } from "./shared/components";
-import {ThemeModule} from "./shared/components";
+import { MappingsComponent } from './mappings';
+import { NewMapComponent } from './mappings/new-map.component';
+import { NewMapUiComponent } from './shared/components';
+import { ThemeModule } from './shared/components';
+import { FlowsUiComponent } from './shared/components/flows';
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
   EntityEditorComponent
-} from "./shared/components";
+} from './shared/components';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import {
     HeaderUiComponent,
     HasBugsDialogComponent,
     FlowsComponent,
+    FlowsUiComponent,
     ChooseCollationComponent,
     EntityBoxComponent,
     EntityEditorComponent,
