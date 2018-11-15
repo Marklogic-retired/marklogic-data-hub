@@ -19,6 +19,14 @@ $easingFunc: ease-in-out;
   padding: 0px 24px 8px 24px;
 }
 
+.mdl-dialog__actions {
+  flex-direction: row;
+  padding-left: 16px;
+  .save-options {
+    margin-right: 8px;
+  }
+}
+
 .group-container {
   margin-bottom: 10px;
 
