@@ -2,9 +2,9 @@
   <div gm-row class="flex-100 flows-page">
     <div gm-col class="flex-0 entities-bar">
       <span class="mdl-layout-title">
-        <i class="fa fa-bug" *ngIf="hasErrors()"></i>
+        <i class="fa fa-bug" *ngIf="hasErrors"></i>
         Entities
-        <ng-template [ngIf]="getMarkLogicVersion().startsWith('8')">
+        <ng-template [ngIf]="markLogicVersion.startsWith('8')">
           <div class="mdl-layout-spacer"></div>
           <mdl-button mdl-button-type="icon" id="new-entity" (click)="showNewEntity($event)">
             <i class="fa fa-plus"></i>
@@ -58,11 +58,11 @@
         </li>
       </ul>
       <div class="footer" layout="column" layout-align="center center">
-        <p id="last-deployed-time">Last Deployed: {{getLastDeployed()}}</p>
+        <p id="last-deployed-time">Last Deployed: {{lastDeployed}}</p>
         <mdl-button
           id="redeploy-button"
           mdl-button-type="raised" mdl-colored="primary" mdl-ripple
-          (click)="redeployModules()"
+          (click)="redeployClicked.emit()"
           tooltip="This will clear our your modules database and reload the modules located in the plugins directory. You shouldn't need to do this since modules are automatically deployed."
           tooltipPlacement="top"
           >
@@ -88,11 +88,11 @@
                 [flow]="flow"
                 [mlcpOptions]="mlcpOptions"
                 [hasErrors]="flowHasError(entity.name, flow.flowName)"
-                (onRun)="runInputFlow(flow, $event)"
+                (onRun)="importFlow(flow, $event)"
                 (onErrorRun)="showFlowErrorDialog(flow)"></app-mlcp>
               <app-harmonize-flow-options
                 [flow]="flow"
-                (onRun)="runHarmonizeFlow(flow, $event)"
+                (onRun)="harmonizeFlow(flow, $event)"
                 *ngIf="flowType === 'HARMONIZE'"></app-harmonize-flow-options>
             </mdl-tab-panel-content>
           </mdl-tab-panel>

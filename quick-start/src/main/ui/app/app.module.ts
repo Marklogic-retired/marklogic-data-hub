@@ -36,6 +36,7 @@ import { MlcpUiComponent } from './shared/components/mlcp';
 import { MlErrorComponent } from './shared/components/ml-error';
 import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
 import { NewFlowComponent } from './new-flow/new-flow.component';
+import { NewFlowUiComponent } from './shared/components/new-flow/new-flow-ui.component';
 import { NoContentComponent } from './no-content';
 import { PaginationComponent } from './shared/components/pagination';
 import { ResizableComponent } from './shared/components';
@@ -60,6 +61,7 @@ import { FocusElementDirective } from './shared/directives/focus-element/focus-e
 import { TraceService } from './traces/trace.service';
 import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options';
+import { HarmonizeFlowOptionsUiComponent } from './shared/components';
 import { DashboardComponent } from './dashboard';
 import { TitlecasePipe } from './titlecase.pipe';
 import { InlineEditComponent } from './shared/components';
@@ -67,19 +69,20 @@ import { FacetsComponent } from './shared/components/facets/facets.component';
 import { ObjectToArrayPipe } from './object-to-array.pipe';
 import { DatePipeModule } from './date-pipe/date-pipe.module';
 
-import {SelectKeyValuesComponent} from './shared/components';
-import {JobExportDialogComponent} from "./jobs";
+import { SelectKeyValuesComponent } from './shared/components';
+import { JobExportDialogComponent } from './jobs';
 
 import { MapComponent } from './mappings';
-import { MappingsComponent } from "./mappings";
-import { NewMapComponent } from "./mappings/new-map.component";
-import { NewMapUiComponent } from "./shared/components";
-import {ThemeModule} from "./shared/components";
+import { MappingsComponent } from './mappings';
+import { NewMapComponent } from './mappings/new-map.component';
+import { NewMapUiComponent } from './shared/components';
+import { ThemeModule } from './shared/components';
+import { FlowsUiComponent } from './shared/components/flows';
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
   EntityEditorComponent
-} from "./shared/components";
+} from './shared/components';
 
 @NgModule({
   declarations: [
@@ -91,6 +94,7 @@ import {
     HeaderUiComponent,
     HasBugsDialogComponent,
     FlowsComponent,
+    FlowsUiComponent,
     ChooseCollationComponent,
     EntityBoxComponent,
     EntityEditorComponent,
@@ -108,6 +112,7 @@ import {
     MlErrorComponent,
     NewEntityComponent,
     NewFlowComponent,
+    NewFlowUiComponent,
     NewMapComponent,
     NewMapUiComponent,
     PaginationComponent,
@@ -125,6 +130,7 @@ import {
     ClipboardDirective,
     FocusElementDirective,
     HarmonizeFlowOptionsComponent,
+    HarmonizeFlowOptionsUiComponent,
     DashboardComponent,
     InlineEditComponent,
     FacetsComponent,
