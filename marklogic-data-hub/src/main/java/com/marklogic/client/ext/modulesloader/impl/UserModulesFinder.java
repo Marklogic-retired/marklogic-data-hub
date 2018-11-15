@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.com.marklogic.client.ext.modulesloader.impl;
+package com.marklogic.client.ext.modulesloader.impl;
 
 import com.marklogic.client.ext.modulesloader.Modules;
+import com.marklogic.client.ext.modulesloader.ModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.BaseModulesFinder;
+import org.springframework.core.io.UrlResource;
 
-public class EntityDefModulesFinder extends BaseModulesFinder {
+import java.net.MalformedURLException;
+import java.util.Arrays;
+
+public class UserModulesFinder extends BaseModulesFinder implements ModulesFinder {
 
     @Override
     protected Modules findModulesWithResolvedBaseDir(String baseDir) {
         Modules modules = new Modules();
-        modules.setAssets(findResources("Entity Def", baseDir, "*.entity.json"));
+        try {
+            modules.setAssetDirectories(Arrays.asList(new UrlResource(baseDir)));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         return modules;
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.com.marklogic.client.ext.file;
+package com.marklogic.client.ext.file;
 
 import com.marklogic.client.ext.file.DocumentFile;
 import com.marklogic.client.ext.file.DocumentFileProcessor;
