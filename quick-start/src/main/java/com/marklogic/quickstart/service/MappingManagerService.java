@@ -23,23 +23,25 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.MappingModel;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Service
-public class MappingManagerService extends EnvironmentAware {
+public class MappingManagerService {
 
     private static final String PLUGINS_DIR = "plugins";
     private static final String MAPPINGS_DIR = "mappings";
     public static final String MAPPING_FILE_EXTENSION = ".mapping.json";
+
+    private static Logger logger = LoggerFactory.getLogger(MappingManagerService.class);
 
     @Autowired
     private FileSystemWatcherService watcherService;
@@ -70,7 +72,7 @@ public class MappingManagerService extends EnvironmentAware {
 
     public MappingModel createMapping(MappingModel newMapping) throws IOException {
         scaffolding.createMappingDir(newMapping.getName());
-        Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
+        Path dir = hubConfig.getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
         mappingManager.saveMapping(mapping);
         if (dir.toFile().exists()) {
@@ -91,7 +93,7 @@ public class MappingManagerService extends EnvironmentAware {
             createMapping(mapping);
         }
         //let's push this out
-        dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
+        dataHubService.reinstallUserModules(hubConfig, null, null);
         return mapping;
     }
 

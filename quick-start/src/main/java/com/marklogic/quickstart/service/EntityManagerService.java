@@ -27,7 +27,6 @@ import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
-import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
@@ -50,7 +49,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
-public class EntityManagerService extends EnvironmentAware {
+public class EntityManagerService {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
@@ -80,7 +79,7 @@ public class EntityManagerService extends EnvironmentAware {
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesDir = envConfig().getMlSettings().getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
         for (String entityName : entityNames) {
             EntityModel entityModel = new EntityModel();
@@ -182,7 +181,7 @@ public class EntityManagerService extends EnvironmentAware {
                 entity.setFilename(fullpath);
 
                 // Redeploy the flows
-                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
+                dataHubService.reinstallUserModules(hubConfig, null, null);
             }
         }
 
@@ -201,16 +200,16 @@ public class EntityManagerService extends EnvironmentAware {
         }
     }
 
-    //TODO Autowire in an Entity Manager
-    public void deploySearchOptions(EnvironmentConfig environmentConfig) {
+    //TODO Remove these silly pass throughs
+    public void deploySearchOptions() {
         em.deployQueryOptions();
     }
 
-    public void saveDbIndexes(EnvironmentConfig environmentConfig) {
+    public void saveDbIndexes() {
         em.saveDbIndexes();
     }
 
-    public void savePii(EnvironmentConfig environmentConfig) {
+    public void savePii() {
         em.savePii();
     }
 

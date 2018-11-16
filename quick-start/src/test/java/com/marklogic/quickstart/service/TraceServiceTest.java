@@ -66,10 +66,8 @@ class TraceServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void setUp() throws IOException {
         deleteProjectDir();
-        EnvironmentConfig envConfig = new EnvironmentConfig(null, "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(".").withPropertiesFromEnvironment().build());
-        envConfig.checkIfInstalled();
-        setEnvConfig(envConfig);
+        //envConfig.checkIfInstalled();
+        setEnvConfig();
         createProjectDir();
         enableTracing();
 
@@ -89,9 +87,8 @@ class TraceServiceTest extends AbstractServiceTest {
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
     }
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
+    protected void setEnvConfig() {
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 

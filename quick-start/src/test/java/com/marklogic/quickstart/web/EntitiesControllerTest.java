@@ -22,14 +22,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.quickstart.service.EnvironmentConfig;
-import org.junit.Assert;
-import org.junit.Test;
+import com.marklogic.quickstart.DataHubApiConfiguration;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, EntitiesControllerTest.class})
 @WebAppConfiguration
-public class EntitiesControllerTest extends BaseTestController {
+class EntitiesControllerTest extends BaseTestController {
 
     private static String ENTITY = "test-entity";
 
@@ -61,7 +65,7 @@ public class EntitiesControllerTest extends BaseTestController {
     @Test
     public void getInputFlowOptions() throws Exception {
         String path = "/some/project/path";
-        envConfig.setInitialized(true);
+        //envConfig.setInitialized(true);
         //envConfig.setProjectDir(path);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
@@ -72,7 +76,7 @@ public class EntitiesControllerTest extends BaseTestController {
     public void getInputFlowOptionsWin() throws Exception {
         String path = "C:\\some\\crazy\\path\\to\\project";
 
-        envConfig.setInitialized(true);
+        //envConfig.setInitialized(true);
         //envConfig.setProjectDir(path);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
@@ -84,7 +88,7 @@ public class EntitiesControllerTest extends BaseTestController {
         deleteProjectDir();
         createProjectDir();
 
-        envConfig.setInitialized(true);
+        //envConfig.setInitialized(true);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
@@ -101,16 +105,15 @@ public class EntitiesControllerTest extends BaseTestController {
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
-        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode body = mapper.readTree("{\"batchSize\":1, \"threadCount\": 1}");
 
         ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
 
-        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
         Thread.sleep(3000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
@@ -118,7 +121,7 @@ public class EntitiesControllerTest extends BaseTestController {
         JsonNode env = root.path("envelope");
         JsonNode headers = env.path("headers");
         JsonNode optionNode = headers.path("test-option");
-        Assert.assertTrue(optionNode.isMissingNode());
+        assertTrue(optionNode.isMissingNode());
     }
 
     @Test
@@ -126,7 +129,7 @@ public class EntitiesControllerTest extends BaseTestController {
         deleteProjectDir();
         createProjectDir();
 
-        envConfig.setInitialized(true);
+        //envConfig.setInitialized(true);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         Path projectDir = Paths.get(".", PROJECT_PATH);
 
@@ -142,9 +145,7 @@ public class EntitiesControllerTest extends BaseTestController {
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
-        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         final String OPT_VALUE = "test-value";
         ObjectMapper mapper = new ObjectMapper();
@@ -152,7 +153,7 @@ public class EntitiesControllerTest extends BaseTestController {
 
         ResponseEntity<?> responseEntity = ec.runHarmonizeFlow(ENTITY, "sjs-json-harmonization-flow", body);
 
-        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
         Thread.sleep(3000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
@@ -160,8 +161,8 @@ public class EntitiesControllerTest extends BaseTestController {
         JsonNode env = root.path("envelope");
         JsonNode headers = env.path("headers");
         JsonNode optionNode = headers.path("test-option");
-        Assert.assertFalse(optionNode.isMissingNode());
-        Assert.assertEquals(OPT_VALUE, optionNode.asText());
+        assertFalse(optionNode.isMissingNode());
+        assertEquals(OPT_VALUE, optionNode.asText());
 
         //uninstallHub();
     }

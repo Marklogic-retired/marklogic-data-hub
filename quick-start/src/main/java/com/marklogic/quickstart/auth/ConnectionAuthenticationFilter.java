@@ -17,14 +17,17 @@
 package com.marklogic.quickstart.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +68,9 @@ public class ConnectionAuthenticationFilter extends
 
     public Authentication authAttempt = null;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     private ProjectManagerService pm;
 
     // ~ Constructors
@@ -101,11 +107,9 @@ public class ConnectionAuthenticationFilter extends
 
         Project project = pm.getProject(loginInfo.projectId);
         pm.setLastProject(loginInfo.projectId);
-        EnvironmentConfig environmentConfig = new EnvironmentConfig(loginInfo.environment, username, password);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
-                username, password, environmentConfig.getMlSettings().getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
-        authRequest.setEnvironmentConfig(environmentConfig);
+                username, password, hubConfig.getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
 
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);

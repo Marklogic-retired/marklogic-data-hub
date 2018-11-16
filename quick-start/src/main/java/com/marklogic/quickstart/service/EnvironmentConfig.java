@@ -93,6 +93,7 @@ public class EnvironmentConfig {
         return DHFVersion;
     }
 
+    /*
     public EnvironmentConfig() {
     }
 
@@ -113,9 +114,9 @@ public class EnvironmentConfig {
             mlSettings.getStagingAppConfig().setAppServicesPassword(password);
         }
         dataHub = DataHub.create(mlSettings);
-        */
 
     }
+    */
 
     @JsonIgnore
     public void checkIfInstalled() {

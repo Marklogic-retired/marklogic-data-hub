@@ -115,18 +115,14 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installUserModules(getHubAdminConfig(), true);
     }
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
-
+    protected void setEnvConfig() {
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @Test
     public void getFlowMlcpOptionsFromFileNix() throws Exception {
-        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
-        envConfig.setMlSettings(adminHubConfig);
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
         JSONAssert.assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", new ObjectMapper().writeValueAsString(options), true);
@@ -134,9 +130,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void getFlowMlcpOptionsFromFileWin() throws Exception {
-        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
-        envConfig.setMlSettings(adminHubConfig);
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
         JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
@@ -193,9 +187,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
-        envConfig.setMlSettings(adminHubConfig);
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         String flowName = "sjs-json-harmonization-flow";
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
@@ -235,9 +227,9 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
+        //EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         String flowName = "sjs-json-harmonization-flow";
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);

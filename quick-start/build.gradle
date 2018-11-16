@@ -199,6 +199,6 @@ bootRun {
 
 springBoot {
     // not in spring boot 2 executable = true
-    mainClassName = "com.marklogic.quickstart.Application"
+    mainClassName = "com.marklogic.quickstart.DataHubApiConfiguration"
     buildInfo()
 }

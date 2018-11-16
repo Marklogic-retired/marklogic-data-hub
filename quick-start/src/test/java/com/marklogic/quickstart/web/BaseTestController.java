@@ -32,28 +32,20 @@ import java.io.IOException;
 public class BaseTestController extends HubTestBase {
 
     protected static final String PROJECT_PATH = "ye-olde-project";
-
-    @Autowired
-    protected EnvironmentConfig envConfig;
-
     @Autowired
     private ProjectManagerService projectManagerService;
 
     @Autowired
     private DataHub dh;
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
-
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", envConfig.getMlSettings().getHost(), 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
+    protected void setEnvConfig() {
+        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", adminHubConfig.getHost(), 1, "local");
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @BeforeEach
     public void baseSetUp() throws IOException {
-        //envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
-        envConfig.setMlSettings(adminHubConfig);
-        setEnvConfig(envConfig);
+        setEnvConfig();
         dh.initProject();
         projectManagerService.addProject(PROJECT_PATH);
         adminHubConfig.refreshProject();

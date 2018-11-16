@@ -10,24 +10,12 @@ import javax.annotation.PostConstruct;
 
 public class AbstractServiceTest extends HubTestBase {
 
-    @Autowired
-    protected EnvironmentConfig envConfig;
-
     @PostConstruct
     protected void setupEnv() {
         createProjectDir();
         adminHubConfig.refreshProject();
-        envConfig.setMlSettings(adminHubConfig);
-        setEnvConfig(envConfig);
-    }
-
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
-
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
-
-
 
 }

@@ -35,11 +35,6 @@ public class Project {
         this.path = path;
     }
 
-    public boolean isInitialized() {
-        //return HubProject.create(this.path).isInitialized();
-        return true;
-    }
-
     public List<String> getEnvironments() {
         ArrayList<String> environments = new ArrayList<>();
         File dir = new File(this.path);

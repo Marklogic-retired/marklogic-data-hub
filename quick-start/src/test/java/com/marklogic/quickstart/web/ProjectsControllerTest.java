@@ -27,9 +27,11 @@ import com.marklogic.quickstart.service.ProjectManagerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
@@ -38,6 +40,7 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, ProjectsControllerTest.class})
 @WebAppConfiguration
 public class ProjectsControllerTest extends BaseTestController {
@@ -57,6 +60,8 @@ public class ProjectsControllerTest extends BaseTestController {
         temporaryFolder = new TemporaryFolder();
         temporaryFolder.create();
         projectPath = temporaryFolder.newFolder("my-project").toString();
+        createProjectDir(projectPath);
+        adminHubConfig.createProject(projectPath);
     }
 
     @AfterEach
@@ -81,7 +86,7 @@ public class ProjectsControllerTest extends BaseTestController {
         Project project = pc.addProject(projectPath);
         assertEquals(projectPath, project.path);
         assertEquals(1, project.id);
-        assertEquals(false, project.isInitialized());
+        assertEquals(false, adminHubConfig.getHubProject().isInitialized());
     }
 
     @Test
@@ -94,7 +99,7 @@ public class ProjectsControllerTest extends BaseTestController {
         Project project = pc.getProject(1);
         assertEquals(projectPath, project.path);
         assertEquals(1, project.id);
-        assertEquals(false, project.isInitialized());
+        assertEquals(false, adminHubConfig.getHubProject().isInitialized());
     }
 
     @Test
@@ -117,9 +122,10 @@ public class ProjectsControllerTest extends BaseTestController {
         assertEquals(1, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        pc.initializeProject(1, objectMapper.valueToTree(envConfig.getMlSettings()));
+        pc.initializeProject(1, objectMapper.valueToTree(adminHubConfig));
 
-        assertTrue(pc.getProject(1).isInitialized());
+        //  assertTrue(pc.getProject(1).isInitialized());
+        assertTrue(adminHubConfig.getHubProject().isInitialized());
     }
 
     @Test

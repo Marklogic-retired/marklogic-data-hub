@@ -27,7 +27,6 @@ import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.hub.util.FileUtil;
@@ -42,12 +41,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FlowManagerService extends EnvironmentAware {
+public class FlowManagerService {
 
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
@@ -178,7 +176,6 @@ public class FlowManagerService extends EnvironmentAware {
 
     public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
         String mlcpPath = json.get("mlcpPath").textValue();
-        HubConfig hubConfig = envConfig().getMlSettings();
         MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
         runner.start();
     }

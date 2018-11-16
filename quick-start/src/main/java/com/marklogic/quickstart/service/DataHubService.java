@@ -162,8 +162,9 @@ public class DataHubService {
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if (authenticationToken != null) {
-                EnvironmentConfig environmentConfig = authenticationToken.getEnvironmentConfig();
-                environmentConfig.checkIfInstalled();
+                // TODO do I care about checkIfInstalled
+                //EnvironmentConfig environmentConfig = authenticationToken.getEnvironmentConfig();
+                //environmentConfig.checkIfInstalled();
             }
         }
         return result;

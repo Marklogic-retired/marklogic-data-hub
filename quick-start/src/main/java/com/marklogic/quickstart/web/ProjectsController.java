@@ -114,9 +114,7 @@ public class ProjectsController {
     @ResponseBody
     public HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        //return HubSettings.fromHubConfig(HubConfigBuilder.newHubConfigBuilder(project.path)
-            //.withPropertiesFromEnvironment()
-            //.build());
-        return null;
+        hubConfig.createProject(project.path);
+        return HubSettings.fromHubConfig(hubConfig);
     }
 }
