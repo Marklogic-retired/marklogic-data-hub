@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TraceService } from '../../../traces/trace.service';
@@ -12,44 +12,21 @@ import * as _ from 'lodash';
   templateUrl: './trace-viewer-ui.component.html',
   styleUrls: ['./trace-viewer-ui.component.scss'],
 })
-export class TraceViewerUiComponent implements OnInit, OnDestroy {
+export class TraceViewerUiComponent {
 
-  collapsed = {};
-  outputCollapsed = false;
-  errorCollapsed = false;
-  codeMirrorConfig = {
-    lineNumbers: true,
-    indentWithTabs: true,
-    lineWrapping: true,
-    readOnly: true,
-    cursorBlinkRate: 0
-  };
+  @Input() trace: any;
+  @Input() sub: any;
+  @Input() collapsed: any;
+  @Input() outputCollapsed: boolean;
+  @Input() errorCollapsed: boolean;
+  @Input() codeMirrorConfig: any;
+  @Input() currentPluginType: string;
+  @Input() currentPlugin: Plugin;
 
-  private sub: any;
-  public trace: Trace;
-  private plugins: Array<string>;
-
-  private currentPluginType: string;
-  public currentPlugin: Plugin;
-
+  @Output() setCurrent = new EventEmitter();
   constructor(
-    private route: ActivatedRoute,
-    private traceService: TraceService
+
   ) {}
-
-  ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      let id = params['id'];
-      this.traceService.getTrace(id).subscribe(trace => {
-        this.trace = trace;
-        this.setCurrent(this.trace.steps[0]);
-      });
-    });
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
 
   getKeys(thing: any) {
     return _.keys(thing).sort();
@@ -76,10 +53,5 @@ export class TraceViewerUiComponent implements OnInit, OnDestroy {
       classes.push('error');
     }
     return classes.join(' ');
-  }
-
-  private setCurrent(plugin: any) {
-    this.currentPluginType = plugin.label;
-    this.currentPlugin = plugin;
   }
 }

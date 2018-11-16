@@ -8,7 +8,14 @@ import { Trace } from '../traces/trace.model';
   selector: 'app-trace-viewer',
   template: `
   <app-trace-viewer-ui
-
+    [trace]="trace"
+    [currentPluginType]="currentPluginType"
+    [currentPlugin]="currentPlugin"
+    [collapsed]="collapsed"
+    [outputCollapsed]="outputCollapsed"
+    [errorCollapsed]="errorCollapsed"
+    [codeMirrorConfig]="codeMirrorConfig"
+    (setCurrent)="this.setCurrent($event)"
   ></app-trace-viewer-ui>
 `
 })
@@ -16,8 +23,18 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
   private sub: any;
   public trace: Trace;
 
-  private currentPluginType: string;
+  public currentPluginType: string;
   public currentPlugin: Plugin;
+  collapsed = {};
+  outputCollapsed = false;
+  errorCollapsed = false;
+  codeMirrorConfig = {
+    lineNumbers: true,
+    indentWithTabs: true,
+    lineWrapping: true,
+    readOnly: true,
+    cursorBlinkRate: 0
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +55,7 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  private setCurrent(plugin: any) {
+  public setCurrent(plugin: any) {
     this.currentPluginType = plugin.label;
     this.currentPlugin = plugin;
   }
