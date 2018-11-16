@@ -13,7 +13,7 @@
       <i class="mdi mdi-arrow-right"></i>
       <ng-template ngFor let-plugin="$implicit" [ngForOf]="trace.steps" let-i="index">
         <mdl-button mdl-button-type="raised" mdl-colored="primary"
-          (click)="setCurrent(plugin)"
+          (click)="setCurrent.emit(plugin)"
           class="plugin"
           [ngClass]="getButtonClasses(plugin)">
           <div class="plugin-name">{{plugin.label}}</div>

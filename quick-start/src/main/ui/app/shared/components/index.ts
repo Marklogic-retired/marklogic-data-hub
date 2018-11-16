@@ -21,5 +21,6 @@ export * from './grid/grid.component';
 export * from './harmonize-flow-options/harmonize-flow-options-ui.component';
 export * from './header/header-ui.component';
 export * from './tooltip/tooltip-container-ui.component';
+export * from './trace-viewer/trace-viewer-ui.component';
 export * from './entity-editor/entity-editor.component';
 export * from './new-flow/new-flow-ui.component'; 

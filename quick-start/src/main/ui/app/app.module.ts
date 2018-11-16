@@ -81,6 +81,7 @@ import { FlowsUiComponent } from './shared/components/flows';
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
+  TraceViewerUiComponent,
   EntityEditorComponent
 } from './shared/components';
 
@@ -125,6 +126,7 @@ import {
     SettingsUiComponent,
     TracesComponent,
     TraceViewerComponent,
+    TraceViewerUiComponent,
     SearchComponent,
     SearchViewerComponent,
     SearchViewerUiComponent,
