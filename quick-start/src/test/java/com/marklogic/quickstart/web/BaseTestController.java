@@ -52,7 +52,6 @@ public class BaseTestController extends HubTestBase {
     @BeforeEach
     public void baseSetUp() throws IOException {
         //envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
-        envConfig.setProjectDir(PROJECT_PATH);
         envConfig.setMlSettings(adminHubConfig);
         setEnvConfig(envConfig);
         dh.initProject();

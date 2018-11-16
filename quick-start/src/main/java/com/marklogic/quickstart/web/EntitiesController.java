@@ -56,7 +56,7 @@ class EntitiesController extends EnvironmentAware {
     @RequestMapping(value = "/entities/create", method = RequestMethod.POST)
     @ResponseBody
     public EntityModel createEntity(@RequestBody EntityModel newEntity) throws ClassNotFoundException, IOException {
-        return entityManagerService.createEntity(envConfig().getProjectDir(), newEntity);
+        return entityManagerService.createEntity(newEntity);
     }
 
     @RequestMapping(value = "/entities/", method = RequestMethod.GET)
@@ -118,7 +118,7 @@ class EntitiesController extends EnvironmentAware {
             @PathVariable String entityName,
             @PathVariable FlowType flowType,
             @RequestBody FlowModel newFlow) throws ClassNotFoundException, IOException {
-        return entityManagerService.createFlow(envConfig().getProjectDir(), entityName, flowType, newFlow);
+        return entityManagerService.createFlow(entityName, flowType, newFlow);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowName}/{flowType}", method = RequestMethod.DELETE)
@@ -127,7 +127,7 @@ class EntitiesController extends EnvironmentAware {
         @PathVariable String entityName,
         @PathVariable String flowName,
         @PathVariable FlowType flowType) throws ClassNotFoundException, IOException {
-        entityManagerService.deleteFlow(envConfig().getProjectDir(), entityName, flowName, flowType);
+        entityManagerService.deleteFlow(entityName, flowName, flowType);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -25,6 +25,7 @@ import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
@@ -70,6 +71,9 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @Autowired
     private FileSystemWatcherService watcherService;
+
+    @Autowired
+    private HubConfigImpl hubConfig;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -230,7 +234,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     }
 
     private void startProjectWatcher() throws IOException {
-        String pluginDir = Paths.get(envConfig().getProjectDir(), "plugins").toString();
+        String pluginDir = hubConfig.getHubPluginsDir().toString();
         if (!watcherService.hasListener(this)) {
             watcherService.watch(pluginDir);
             watcherService.addListener(this);
@@ -290,7 +294,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
         EnvironmentConfig envConfig = authenticationToken.getEnvironmentConfig();
-        String pluginDir = Paths.get(envConfig.getProjectDir(), "plugins").toString();
+        String pluginDir = hubConfig.getHubPluginsDir().toString();
         watcherService.removeListener(this);
         watcherService.unwatch(pluginDir);
     }

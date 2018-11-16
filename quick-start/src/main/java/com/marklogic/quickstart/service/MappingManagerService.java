@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.EnvironmentAware;
@@ -52,6 +53,9 @@ public class MappingManagerService extends EnvironmentAware {
     @Autowired
     private Scaffolding scaffolding;
 
+    @Autowired
+    HubConfigImpl hubConfig;
+
     public ArrayList<Mapping> getMappings() {
         ArrayList<Mapping> mappings = mappingManager.getMappings();
 
@@ -64,7 +68,7 @@ public class MappingManagerService extends EnvironmentAware {
         return mappings;
     }
 
-    public MappingModel createMapping(String projectDir, MappingModel newMapping) throws IOException {
+    public MappingModel createMapping(MappingModel newMapping) throws IOException {
         scaffolding.createMappingDir(newMapping.getName());
         Path dir = envConfig().getMlSettings().getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
@@ -84,8 +88,7 @@ public class MappingManagerService extends EnvironmentAware {
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
         }
         else {
-            String projectDir = envConfig().getProjectDir();
-            createMapping(projectDir, mapping);
+            createMapping(mapping);
         }
         //let's push this out
         dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
@@ -93,7 +96,7 @@ public class MappingManagerService extends EnvironmentAware {
     }
 
     public void deleteMapping(String mapping) throws IOException {
-        Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, MAPPINGS_DIR, mapping);
+        Path dir = hubConfig.getHubMappingsDir().resolve(mapping);
         if (dir.toFile().exists()) {
             watcherService.unwatch(dir.getParent().toString());
             FileUtils.deleteDirectory(dir.toFile());

@@ -13,10 +13,11 @@ public class AbstractServiceTest extends HubTestBase {
     @Autowired
     protected EnvironmentConfig envConfig;
 
+    @PostConstruct
     protected void setupEnv() {
         createProjectDir();
+        adminHubConfig.refreshProject();
         envConfig.setMlSettings(adminHubConfig);
-        envConfig.checkIfInstalled();
         setEnvConfig(envConfig);
     }
 

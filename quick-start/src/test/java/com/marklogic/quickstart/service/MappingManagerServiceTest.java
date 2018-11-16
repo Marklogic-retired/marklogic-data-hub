@@ -20,6 +20,8 @@ package com.marklogic.quickstart.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcraft.jsch.IO;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.MappingModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest()
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, MappingManagerServiceTest.class})
 public class MappingManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";

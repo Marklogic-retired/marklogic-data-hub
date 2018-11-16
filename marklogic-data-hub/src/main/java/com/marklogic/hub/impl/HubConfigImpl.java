@@ -1213,6 +1213,9 @@ public class HubConfigImpl implements HubConfig
     }
 
     @JsonIgnore
+    public Path getHubProjectDir() { return hubProject.getProjectDir(); }
+
+    @JsonIgnore
     @Override public Path getHubPluginsDir() {
         return hubProject.getHubPluginsDir();
     }

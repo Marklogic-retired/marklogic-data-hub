@@ -25,6 +25,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
@@ -53,9 +54,12 @@ public class FlowManagerService extends EnvironmentAware {
     @Autowired
     private FlowManager flowManager;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
 
-    public List<FlowModel> getFlows(String projectDir, String entityName, FlowType flowType) {
-        Path entityPath = Paths.get(projectDir, "plugins", "entities", entityName);
+
+    public List<FlowModel> getFlows(String entityName, FlowType flowType) {
+        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entityName);
         return flowManager.getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
@@ -116,7 +120,7 @@ public class FlowManagerService extends EnvironmentAware {
     }
 
     public Map<String, Object> getHarmonizeFlowOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
         Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
@@ -124,12 +128,12 @@ public class FlowManagerService extends EnvironmentAware {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("harmonize_file_path", envConfig().getProjectDir());
+        result.put("harmonize_file_path", hubConfig.getHubConfigDir());
         return result;
     }
 
     public void saveOrUpdateHarmonizeFlowOptionsToFile(String entityName, String flowName, String harmonizeOptionsFileContent) throws IOException {
-        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
         File destFolderFile = destFolder.toFile();
         if (!destFolderFile.exists()) {
             FileUtils.forceMkdir(destFolderFile);
@@ -147,7 +151,7 @@ public class FlowManagerService extends EnvironmentAware {
     }
 
     public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
-        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
         File destFolderFile = destFolder.toFile();
         if (!destFolderFile.exists()) {
             FileUtils.forceMkdir(destFolderFile);
@@ -160,7 +164,7 @@ public class FlowManagerService extends EnvironmentAware {
     }
 
     public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = Paths.get(envConfig().getProjectDir(), PROJECT_TMP_FOLDER);
+        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         File file = filePath.toFile();
         if(file.exists()) {
@@ -168,7 +172,7 @@ public class FlowManagerService extends EnvironmentAware {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("input_file_path", envConfig().getProjectDir());
+        result.put("input_file_path", hubConfig.getHubProjectDir());
         return result;
     }
 

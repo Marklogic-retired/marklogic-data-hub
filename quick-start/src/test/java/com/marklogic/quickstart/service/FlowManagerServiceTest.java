@@ -24,12 +24,14 @@ import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +42,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -52,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest()
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, FlowManagerServiceTest.class})
 public class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
@@ -121,9 +124,8 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void getFlowMlcpOptionsFromFileNix() throws Exception {
-        String pdir = "/some/crazy/path/to/project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
+        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
+        envConfig.setMlSettings(adminHubConfig);
         setEnvConfig(envConfig);
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
@@ -132,9 +134,8 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void getFlowMlcpOptionsFromFileWin() throws Exception {
-        String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
+        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
+        envConfig.setMlSettings(adminHubConfig);
         setEnvConfig(envConfig);
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
@@ -192,8 +193,8 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
+        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
+        envConfig.setMlSettings(adminHubConfig);
         setEnvConfig(envConfig);
 
         String flowName = "sjs-json-harmonization-flow";
@@ -234,7 +235,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
+        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
         setEnvConfig(envConfig);
 

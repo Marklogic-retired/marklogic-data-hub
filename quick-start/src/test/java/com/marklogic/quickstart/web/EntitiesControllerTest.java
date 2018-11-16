@@ -62,7 +62,7 @@ public class EntitiesControllerTest extends BaseTestController {
     public void getInputFlowOptions() throws Exception {
         String path = "/some/project/path";
         envConfig.setInitialized(true);
-        envConfig.setProjectDir(path);
+        //envConfig.setProjectDir(path);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"/some/project/path\" }", new ObjectMapper().writeValueAsString(options), true);
@@ -73,7 +73,7 @@ public class EntitiesControllerTest extends BaseTestController {
         String path = "C:\\some\\crazy\\path\\to\\project";
 
         envConfig.setInitialized(true);
-        envConfig.setProjectDir(path);
+        //envConfig.setProjectDir(path);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
         JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
@@ -85,7 +85,6 @@ public class EntitiesControllerTest extends BaseTestController {
         createProjectDir();
 
         envConfig.setInitialized(true);
-        envConfig.setProjectDir(PROJECT_PATH);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
@@ -102,7 +101,7 @@ public class EntitiesControllerTest extends BaseTestController {
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
-        EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
+        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 
@@ -128,7 +127,6 @@ public class EntitiesControllerTest extends BaseTestController {
         createProjectDir();
 
         envConfig.setInitialized(true);
-        envConfig.setProjectDir(PROJECT_PATH);
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         Path projectDir = Paths.get(".", PROJECT_PATH);
 
@@ -144,7 +142,7 @@ public class EntitiesControllerTest extends BaseTestController {
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
-        EnvironmentConfig envConfig = new EnvironmentConfig(PROJECT_PATH, "local", "admin", "admin");
+        EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig(envConfig);
 

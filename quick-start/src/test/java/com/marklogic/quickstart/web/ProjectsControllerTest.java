@@ -19,7 +19,6 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
@@ -29,10 +28,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
@@ -41,7 +38,7 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {ApplicationConfig.class, DataHubApiConfiguration.class } )
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, ProjectsControllerTest.class})
 @WebAppConfiguration
 public class ProjectsControllerTest extends BaseTestController {
 

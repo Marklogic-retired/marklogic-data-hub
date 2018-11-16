@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EnvironmentConfig {
 
-    private String projectDir;
     private String environment;
 
     private InstallInfo installInfo;
@@ -70,14 +69,6 @@ public class EnvironmentConfig {
         this.environment = environment;
     }
 
-    public String getProjectDir() {
-        return projectDir;
-    }
-
-    public void setProjectDir(String projectDir) {
-        this.projectDir = projectDir;
-    }
-
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -103,11 +94,9 @@ public class EnvironmentConfig {
     }
 
     public EnvironmentConfig() {
-
     }
-    public EnvironmentConfig(String projectDir, String environment, String username, String password) {
-        //FIXME this will prevent project switching?
-        this.projectDir = projectDir;
+
+    public EnvironmentConfig(String environment, String username, String password) {
         this.environment = environment;
         hubConfig.refreshProject();
 

@@ -21,12 +21,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.TraceQuery;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest()
-public class TraceServiceTest extends AbstractServiceTest {
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, TraceServiceTest.class})
+class TraceServiceTest extends AbstractServiceTest {
 
     private DatabaseClient traceClient;
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
@@ -64,7 +66,7 @@ public class TraceServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void setUp() throws IOException {
         deleteProjectDir();
-        EnvironmentConfig envConfig = new EnvironmentConfig(".", null, "admin", "admin");
+        EnvironmentConfig envConfig = new EnvironmentConfig(null, "admin", "admin");
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(".").withPropertiesFromEnvironment().build());
         envConfig.checkIfInstalled();
         setEnvConfig(envConfig);

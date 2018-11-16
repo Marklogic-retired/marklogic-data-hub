@@ -101,7 +101,7 @@ public class ConnectionAuthenticationFilter extends
 
         Project project = pm.getProject(loginInfo.projectId);
         pm.setLastProject(loginInfo.projectId);
-        EnvironmentConfig environmentConfig = new EnvironmentConfig(project.path, loginInfo.environment, username, password);
+        EnvironmentConfig environmentConfig = new EnvironmentConfig(loginInfo.environment, username, password);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
                 username, password, environmentConfig.getMlSettings().getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
