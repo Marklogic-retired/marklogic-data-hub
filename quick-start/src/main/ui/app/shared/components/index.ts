@@ -18,6 +18,8 @@ export * from './jobs/job-output-ui.component';
 export * from './jobs/job-export-ui.component';
 export * from './has-bugs-dialog/has-bugs-dialog.component';
 export * from './grid/grid.component';
+export * from './harmonize-flow-options/harmonize-flow-options-ui.component';
 export * from './header/header-ui.component';
 export * from './tooltip/tooltip-container-ui.component';
 export * from './entity-editor/entity-editor.component';
+export * from './new-flow/new-flow-ui.component'; 
