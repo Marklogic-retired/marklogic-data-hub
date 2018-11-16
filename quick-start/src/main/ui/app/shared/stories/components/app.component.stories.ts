@@ -6,14 +6,12 @@ import {action} from '@storybook/addon-actions';
 import {linkTo} from '@storybook/addon-links';
 import {Route, RouterModule} from "@angular/router";
 import {RouterTestingModule} from "@angular/router/testing";
-import {ActivatedRoute, ActivatedRouteStub} from "../utils/router-stubs";
 import {centered} from '@storybook/addon-centered/angular';
 import {StoryCardComponent} from '../utils/story-card/story-card.component';
 import {ThemeModule} from "../../components";
 import {AppUiComponent} from "../../components";
 import {HeaderComponent} from './../../../header/header.component';
 import {HeaderUiComponent} from './../../../shared/components/header/header-ui.component';
-import { MdlMenuComponent, MdlButtonComponent } from '@angular-mdl/core';
 import {HttpModule} from '@angular/http';
 import { AuthService } from './../../../auth/auth.service';
 import { ProjectService } from './../../../projects';
@@ -82,7 +80,6 @@ storiesOf('Components|App', module)
               ...classDefs
             ],
             providers: [
-              // { provide: ActivatedRoute, useValue: activatedRouteInstance},
               { provide: AuthService, useValue: new MockAuthService() },
               { provide: ProjectService, useValue: new MockProjectService() },
               { provide: JobListenerService, useValue: new MockJobListenerService() },
