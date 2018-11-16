@@ -12,23 +12,21 @@ export class HeaderUiComponent {
   @Input() percentageComplete: number;
   @Input() activeCheck: Function;
 
-  @Output() gotoJobs = new EventEmitter();
   @Output() logout = new EventEmitter();
 
   constructor(
     private router: Router
   ) {}
+
   logoutClicked() {
     this.logout.emit();
   }
-  routeToJobs() {
-    this.gotoJobs.emit();
-  }
+
   isActive(url: string): boolean {
     if (url === '/') {
       return this.router.url === url;
     }
-
     return this.router.url.startsWith(url);
   }
+
 }
