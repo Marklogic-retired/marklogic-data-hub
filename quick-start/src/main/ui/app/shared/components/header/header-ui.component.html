@@ -4,7 +4,7 @@
     <span class="mdl-layout-title">Data Hub QuickStart</span>
     <!-- Add spacer, to align navigation to the right -->
     <div class="mdl-layout-spacer"></div>
-    <div *ngIf="runningJobs !== 0" layout="row" layout-align="center center" class="job-progress" (click)="routeToJobs()">
+    <div *ngIf="runningJobs !== 0" layout="row" layout-align="center center" class="job-progress" [routerLink]="['jobs']">
       <span class="label">Running {{runningJobs}} jobs</span>
       <mdl-progress mode="determinate" [progress]="percentageComplete"></mdl-progress>
       <span class="percent">{{percentageComplete}}%</span>

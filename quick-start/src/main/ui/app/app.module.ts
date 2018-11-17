@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
 import { ListFilterPipe } from './listfilter';
 import { AppComponent } from './app.component';
+import { AppUiComponent } from './shared/components';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './shared/components';
 import {
@@ -88,6 +89,7 @@ import {
 @NgModule({
   declarations: [
     AppComponent,
+    AppUiComponent,
     CodemirrorComponent,
     FolderBrowserComponent,
     FolderBrowserUiComponent,
