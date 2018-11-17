@@ -220,10 +220,18 @@ export class FlowsComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
     event.cancelBubble = true;
+    var resetView = (this.flow === undefined) || (
+      flow.flowName === this.flow.flowName &&
+      flowType === this.getFlowType(this.flow, this.flow.entityName)
+    );
     this.dialogService.confirm(`Really delete ${flow.flowName}`, 'Cancel', 'Delete').subscribe(() => {
       this.entitiesService.deleteFlow(flow, flowType).subscribe(() => {
-        this.harmonizeFlowOptions.deleteSettings(flow.flowName);
-        this.router.navigate(['/flows']);
+        if (flowType.toUpperCase() === 'HARMONIZE') {
+          this.deleteHarmonizeSettings(flow.flowName);
+        }
+        if (resetView) {
+          this.router.navigate(['/flows']);
+        }
       });
     },
     () => {});
@@ -307,6 +315,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
           } else if (flowType.toUpperCase() === 'HARMONIZE') {
             entity.harmonizeFlows.push(flow);
           }
+          this.setFlow(flow, flowType.toUpperCase());
         });
       }
     };
@@ -326,6 +335,19 @@ export class FlowsComponent implements OnInit, OnDestroy {
       return entity.inputFlows;
     }
     return entity.harmonizeFlows;
+  }
+
+  getFlowType(flow: object, entityName: string) {
+    var flowType = null;
+    var entity = this.entities.find(function(entity){
+      return (entity.name === entityName)
+    });
+    if (this.entity.inputFlows.indexOf(flow) > -1) {
+      flowType = 'INPUT';
+    } else if (this.entity.harmonizeFlows.indexOf(flow) > -1) {
+      flowType = 'HARMONIZE';
+    }
+    return flowType;
   }
 
   runFlow(flow: Flow, flowType: string) {
@@ -363,6 +385,16 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
     });
+  }
+
+  deleteHarmonizeSettings(flowName) {
+    let localString = localStorage.getItem("flowSettings");
+    let localObj = {};
+    if (localString) {
+      localObj = JSON.parse(localString);
+      delete localObj[flowName];
+    }
+    localStorage.setItem("flowSettings", JSON.stringify(localObj));
   }
 
   redeployModules() {
