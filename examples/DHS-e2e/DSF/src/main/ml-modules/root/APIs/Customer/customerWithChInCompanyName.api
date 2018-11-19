@@ -1,0 +1,10 @@
+{
+  "functionName" : "customerWithChInCompanyName",
+  "params" : [{
+                "name" : "keyword",
+                "datatype" : "string"
+  }],
+  "return" : {
+        "datatype" : "jsonDocument"
+  }
+}

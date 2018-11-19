@@ -874,14 +874,15 @@ public class HubConfigImpl implements HubConfig {
             finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
             finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
             finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
+            finalSimpleSsl = getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false);
             if (finalSimpleSsl) {
                 finalSslContext = SimpleX509TrustManager.newSSLContext();
                 finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
                 finalTrustManager = new SimpleX509TrustManager();
             }
-            finalCertFile = getEnvPropString(environmentProperties, "mlfinalCertFile", finalCertFile);
-            finalCertPassword = getEnvPropString(environmentProperties, "mlfinalCertPassword", finalCertPassword);
-            finalExternalName = getEnvPropString(environmentProperties, "mlfinalExternalName", finalExternalName);
+            finalCertFile = getEnvPropString(environmentProperties, "mlFinalCertFile", finalCertFile);
+            finalCertPassword = getEnvPropString(environmentProperties, "mlFinalCertPassword", finalCertPassword);
+            finalExternalName = getEnvPropString(environmentProperties, "mlFinalExternalName", finalExternalName);
 
 
             jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
@@ -1288,7 +1289,7 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "4.0.2";
+            version = "4.0.3";
         }
         return version;
     }
