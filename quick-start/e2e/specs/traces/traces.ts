@@ -5,57 +5,57 @@ import appPage from '../../page-objects/appPage';
 
 export default function() {
     describe('Run Traces', () => {
-      it ('should go to traces page', function() {
-        appPage.tracesTab.click();
+      it ('should go to traces page', async function() {
+        await appPage.tracesTab.click();
         tracesPage.isLoaded();
       });
-  
+
       it ('should verify the traces page', function() {
         tracesPage.isLoaded();
         browser.wait(EC.visibilityOf(tracesPage.tracesResults()));
-        expect(tracesPage.tracesResults().isPresent()).toBe(true);
+        expect(tracesPage.tracesResults().isDisplayed()).toBe(true);
       });
 
-      it ('should verify the traces viewer page', function() {
-        tracesPage.searchBox().clear();
-        tracesPage.searchBox().sendKeys('442403950907');
+      it ('should verify the traces viewer page', async function() {
+        await tracesPage.searchBox().clear();
+        await tracesPage.searchBox().sendKeys('442403950907');
         console.log('searching the specific harmonize trace');
-        tracesPage.searchButton().click();
+        await tracesPage.searchButton().click();
         browser.wait(EC.visibilityOf(tracesPage.tracesResults()));
         console.log('clicking the harmonize facet');
-        tracesPage.facetButton('harmonize').click();
+        await tracesPage.facetButton('harmonize').click();
         browser.wait(EC.visibilityOf(tracesPage.tracesResults()));
         console.log('verifying the harmonize trace result');
         expect(tracesPage.tracesResults().getText()).toContain('Showing Results 1 to 1 of 1');
         console.log('clicking the harmonize trace');
-        tracesPage.firstTrace().click();
+        await tracesPage.firstTrace().click();
         browser.wait(EC.visibilityOf(traceViewerPage.traceId()));
         console.log('verifying trace information');
         expect(traceViewerPage.traceId().getText()).toContain('/board_games_accessories.csv-0-1');
-        expect(traceViewerPage.pluginButton('content').isPresent()).toBe(true);
-        expect(traceViewerPage.pluginButton('headers').isPresent()).toBe(true);
+        expect(traceViewerPage.pluginButton('content').isDisplayed()).toBe(true);
+        expect(traceViewerPage.pluginButton('headers').isDisplayed()).toBe(true);
         console.log('clicking content plugin');
-        traceViewerPage.pluginButton('content').click();
+        await traceViewerPage.pluginButton('content').click();
         browser.wait(EC.visibilityOf(traceViewerPage.pluginSubheader('content')));
         console.log('verifying content output');
-        expect(element(by.cssContainingText('.cm-variable', 'opt1')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
+        expect(element(by.cssContainingText('.cm-variable', 'opt1')).isDisplayed()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'world')).isDisplayed()).toBe(true);
         console.log('clicking headers plugin');
-        traceViewerPage.pluginButton('headers').click();
+        await traceViewerPage.pluginButton('headers').click();
         browser.wait(EC.visibilityOf(traceViewerPage.pluginSubheader('headers')));
         console.log('verifying headers output');
-        expect(traceViewerPage.pluginSubheader('headers').isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-variable', 'key1')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-string', 'world')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-variable', 'user')).isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-string', 'admin')).isPresent()).toBe(true);
+        expect(traceViewerPage.pluginSubheader('headers').isDisplayed()).toBe(true);
+        expect(element(by.cssContainingText('.cm-variable', 'key1')).isDisplayed()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'world')).isDisplayed()).toBe(true);
+        expect(element(by.cssContainingText('.cm-variable', 'user')).isDisplayed()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'admin')).isDisplayed()).toBe(true);
         console.log('clicking triples plugin');
-        traceViewerPage.pluginButton('triples').click();
+        await traceViewerPage.pluginButton('triples').click();
         browser.wait(EC.visibilityOf(traceViewerPage.pluginSubheader('triples')));
         console.log('verifying triples output');
-        expect(traceViewerPage.pluginSubheader('triples').isPresent()).toBe(true);
-        expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/123')).isPresent()).toBe(true);
-        traceViewerPage.tracesTab.click();
+        expect(traceViewerPage.pluginSubheader('triples').isDisplayed()).toBe(true);
+        expect(element(by.cssContainingText('.cm-string', 'http://www.marklogic.com/foo/123')).isDisplayed()).toBe(true);
+        await traceViewerPage.tracesTab.click();
       });
     });
   }
