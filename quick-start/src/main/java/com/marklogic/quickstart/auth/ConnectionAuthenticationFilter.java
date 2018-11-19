@@ -33,6 +33,7 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Processes an authentication form submission. Called
@@ -107,6 +108,13 @@ public class ConnectionAuthenticationFilter extends
 
         Project project = pm.getProject(loginInfo.projectId);
         pm.setLastProject(loginInfo.projectId);
+
+        Properties overrides = new Properties();
+        overrides.put("mlUsername", username);
+        overrides.put("mlPassword", password);
+        hubConfig.refreshProject(overrides);
+        hubConfig.getStagingAppConfig().setAppServicesUsername(username);
+        hubConfig.getStagingAppConfig().setAppServicesPassword(password);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
                 username, password, hubConfig.getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);

@@ -53,6 +53,9 @@ public class DataHubService {
     @Autowired
     private DataHub dataHub;
 
+    @Autowired
+    private LoadUserStagingModulesCommand loadUserModulesCommand;
+
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
         try {
@@ -177,7 +180,6 @@ public class DataHubService {
 
     private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
         List<Command> commands = new ArrayList<>();
-        LoadUserStagingModulesCommand loadUserModulesCommand = new LoadUserStagingModulesCommand();
         loadUserModulesCommand.setHubConfig(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
         commands.add(loadUserModulesCommand);
