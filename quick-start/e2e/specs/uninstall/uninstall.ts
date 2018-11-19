@@ -6,15 +6,15 @@ const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('Uninstall', () => {
-    it ('should go to the settings page', function() {
-      appPage.settingsTab.click();
+    it ('should go to the settings page', async function() {
+      await appPage.settingsTab.click();
       settingsPage.isLoaded();
     });
 
-    it ('should click the uninstall button', function() {
-      settingsPage.uninstallButton.click();
+    it ('should click the uninstall button', async function() {
+      await settingsPage.uninstallButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.uninstallConfirmation));
-      settingsPage.uninstallConfirmation.click();
+      await settingsPage.uninstallConfirmation.click();
     });
 
     it ('should show the uninstall progress bar', function() {
