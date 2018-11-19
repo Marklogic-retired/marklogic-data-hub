@@ -20,10 +20,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
@@ -33,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +45,9 @@ public class ProjectsController {
     @Autowired
     // this field wires quick-start to the main application context
     private HubConfigImpl hubConfig;
+
+    @Autowired
+    private DataHub dataHub;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
@@ -94,6 +94,7 @@ public class ProjectsController {
         ObjectMapper om = new ObjectMapper();
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
+            hubConfig = om.readerForUpdating(hubConfig).readValue(hubConfigDelta);
             AppConfig appConfig = this.hubConfig.getStagingAppConfig();
             if (hubConfigDelta.get("host") != null) {
                 appConfig.setHost(hubConfigDelta.get("host").asText());
@@ -102,9 +103,9 @@ public class ProjectsController {
                 appConfig.setName(hubConfigDelta.get("name").asText());
             }
             this.hubConfig.createProject(project.path);
+            dataHub.initProject();
             return project;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }

@@ -564,4 +564,8 @@ public interface HubConfig {
     void refreshProject(Properties properties);
 
     void createProject(String projectDirString);
+
+    HubConfig withPropertiesFromEnvironment();
+
+    HubConfig withPropertiesFromEnvironment(String environment);
 }

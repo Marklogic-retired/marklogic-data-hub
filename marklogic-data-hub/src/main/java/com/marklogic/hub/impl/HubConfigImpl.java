@@ -47,14 +47,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.X509TrustManager;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -212,6 +212,9 @@ public class HubConfigImpl implements HubConfig
     private AppConfig stagingAppConfig;
     private AppConfig finalAppConfig;
 
+    private boolean usePropertiesFromEnvironment;
+    private String envString;
+
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
     private ObjectMapper objmapper;
@@ -224,7 +227,7 @@ public class HubConfigImpl implements HubConfig
 
     public void createProject(String projectDirString) {
         hubProject.createProject(projectDirString);
-        refreshProject();
+        initializeApplicationConfigurations();
     }
 
     public String getHost() { return stagingAppConfig.getHost(); }
@@ -897,6 +900,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override  public void initHubProject() {
         this.hubProject.init(getCustomTokens());
+        refreshProject();
     }
 
 
@@ -964,14 +968,12 @@ public class HubConfigImpl implements HubConfig
         }
         else {
             projectProperties = new Properties();
-            InputStream inputStream = null;
-            try {
-                inputStream = new FileSystemResource(hubProject.getProjectDir().resolve("gradle.properties").toFile()).getInputStream();
-                projectProperties.load(inputStream);
-                inputStream.close();
-            } catch (IOException e) {
-                throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
-            } finally {
+            File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
+            loadPropertiesFromFile(file, projectProperties);
+
+            if (usePropertiesFromEnvironment && envString != null){
+                File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + environment + ".properties").toFile();
+                loadPropertiesFromFile(envPropertiesFile, projectProperties);
             }
         }
 
@@ -1332,6 +1334,12 @@ public class HubConfigImpl implements HubConfig
     }
 
 
+    /* this method takes care of setting app config and other non-injected dependencies */
+    public void initializeApplicationConfigurations() {
+        hydrateAppConfigs(environment);
+        hydrateConfigs();
+    }
+
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getStagingAppConfig();
         return getCustomTokens(appConfig, appConfig.getCustomTokens());
@@ -1568,7 +1576,36 @@ public class HubConfigImpl implements HubConfig
 
     }
 
+    @Override
+    @JsonIgnore
+    public HubConfig withPropertiesFromEnvironment() {
+        return withPropertiesFromEnvironment(null);
+    }
+
+    @Override
+    @JsonIgnore
+    public HubConfig withPropertiesFromEnvironment(String environment) {
+        this.usePropertiesFromEnvironment = true;
+        this.envString = environment;
+        return this;
+    }
+
     public String toString() {
         return getInfo();
+    }
+
+    // loads properties from a .properties file
+    private void loadPropertiesFromFile(File propertiesFile, Properties loadedProperties) {
+        InputStream is;
+        try {
+            if (propertiesFile.exists()) {
+                is = new FileInputStream(propertiesFile);
+                loadedProperties.load(is);
+                is.close();
+            }
+        }
+        catch (IOException e) {
+            throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
+        }
     }
 }

@@ -71,6 +71,7 @@ public class ConnectionAuthenticationFilter extends
     @Autowired
     private HubConfigImpl hubConfig;
 
+    @Autowired
     private ProjectManagerService pm;
 
     // ~ Constructors
@@ -78,7 +79,6 @@ public class ConnectionAuthenticationFilter extends
 
     public ConnectionAuthenticationFilter() throws IOException, ClassNotFoundException {
         super(new AntPathRequestMatcher("/api/login", "POST"));
-        pm = new ProjectManagerService();
     }
 
     // ~ Methods
