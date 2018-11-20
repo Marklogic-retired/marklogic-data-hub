@@ -273,7 +273,7 @@ public class HubTestBase {
             setCertAuth(true);
         }
         adminHubConfig.createProject(PROJECT_PATH);
-        adminHubConfig.refreshProject();
+        dataHub.initProject();
         if(isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -296,7 +296,8 @@ public class HubTestBase {
         finalDocMgr = finalClient.newDocumentManager();
         jobDocMgr = jobClient.newJSONDocumentManager();
         modMgr = stagingModulesClient.newDocumentManager();
-        
+
+        adminHubConfig.refreshProject();
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
@@ -438,6 +439,9 @@ public class HubTestBase {
             File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
                 projectDir.mkdirs();
+                if (dataHub != null) {
+                    dataHub.initProject();
+                }
             }
 
             // force module loads for new test runs.
