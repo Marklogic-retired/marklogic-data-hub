@@ -19,6 +19,7 @@ package com.marklogic.gradle.task
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.marklogic.client.FailedRequestException
 import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
@@ -34,7 +35,7 @@ import com.marklogic.hub.HubConfigBuilder
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.databases.DatabaseManager
 import com.marklogic.rest.util.Fragment
-
+import com.marklogic.rest.util.JsonNodeUtil
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
@@ -61,7 +62,7 @@ class BaseTest extends Specification {
     static final int MOD_COUNT_WITH_TRACE_MODULES = 26
     static final int MOD_COUNT = 5
     // this value under good security conditions is 2 because hub-admin-user cannot read options files directly.
-    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 2
+    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 109
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
@@ -73,26 +74,26 @@ class BaseTest extends Specification {
 
     static BuildResult runTask(String... task) {
         return GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
-            .withArguments(task)
-            .withDebug(true)
-            .withPluginClasspath()
-            .build()
+                .withProjectDir(testProjectDir.root)
+                .withArguments(task)
+                .withDebug(true)
+                .withPluginClasspath()
+                .build()
     }
 
     BuildResult runFailTask(String... task) {
         return GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
-            .withArguments(task)
-            .withDebug(true)
-            .withPluginClasspath().buildAndFail()
+                .withProjectDir(testProjectDir.root)
+                .withArguments(task)
+                .withDebug(true)
+                .withPluginClasspath().buildAndFail()
     }
 
     static HubConfig hubConfig() {
         if (_hubConfig == null || !_hubConfig.projectDir.equals(testProjectDir.root.toString())) {
             _hubConfig = HubConfigBuilder.newHubConfigBuilder(testProjectDir.root.toString())
-                .withPropertiesFromEnvironment()
-                .build()
+                    .withPropertiesFromEnvironment()
+                    .build()
         }
         return _hubConfig
     }
@@ -163,6 +164,14 @@ class BaseTest extends Specification {
     static void copyResourceToFile(String resourceName, File dest) {
         def file = new File("src/test/resources/" + resourceName)
         FileUtils.copyFile(file, dest)
+    }
+    
+    static void writeSSLFiles(File serverFile, File ssl) {
+        def files = []
+        files << ssl
+        files << serverFile
+        ObjectNode serverFiles = JsonNodeUtil.mergeJsonFiles(files);
+        FileUtils.writeStringToFile(serverFile, serverFiles.toString());        
     }
 
     static int getStagingDocCount() {

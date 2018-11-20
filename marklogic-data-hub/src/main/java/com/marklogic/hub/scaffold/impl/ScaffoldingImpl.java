@@ -85,6 +85,10 @@ public class ScaffoldingImpl implements Scaffolding {
     @Override public void createEntity(String entityName) {
         Path entityDir = entitiesDir.resolve(entityName);
         entityDir.toFile().mkdirs();
+        if(entityDir.toFile().exists()){
+            String fileContents = getFileContent("scaffolding/Entity.json", entityName);
+            writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
+        }
     }
 
     @Override public void createMappingDir(String mappingName) {
@@ -406,14 +410,31 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     private void writeToFile(String fileContent, File dstFile) {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+
         try {
-            FileWriter fw = new FileWriter(dstFile);
-            BufferedWriter bw = new BufferedWriter(fw);
+            fw = new FileWriter(dstFile);
+            bw = new BufferedWriter(fw);
             bw.write(fileContent);
-            bw.close();
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if( fw != null) {
+                try {
+                    fw.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 

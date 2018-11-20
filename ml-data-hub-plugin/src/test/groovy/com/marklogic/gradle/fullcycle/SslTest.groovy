@@ -17,12 +17,17 @@
 
 package com.marklogic.gradle.fullcycle
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.gradle.task.BaseTest
+import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
+import com.marklogic.rest.util.JsonNodeUtil
+
+import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import spock.lang.Ignore
 
@@ -32,31 +37,19 @@ import javax.net.ssl.TrustManager
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
+import java.nio.file.Files
+import java.nio.file.Path
 
-/* this particular test requires bootstrap to run on a clean
-   and ssl-enabled database.
-   Note this test is diabled until we fix the blocking bug in ml-app-deployer
-   that inststalls amps via CMA
- */
 class SslTest extends BaseTest {
 
-    @Ignore
-    def setupSpecSKIPTHIS() {
+
+    def setupSpec() {
         createFullPropertiesFile()
         BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
         BaseTest.buildFile << '''
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
-
-            ext {
-                def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
-                command.setTemplateIdOrName("dhf-cert")
-                command.setCommonName("localhost")
-                command.setValidFor(365)
-                mlAppDeployer.commands.add(command)
-            }
-
 
             task enableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
                 doFirst {
@@ -73,12 +66,19 @@ class SslTest extends BaseTest {
 
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(manageClient)
                     certManager.save(adminCert())
+                    certManager.save(dhfCert())
 
                     def gtcc = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand();
                     gtcc.setTemplateIdOrName("admin-cert");
                     gtcc.setCommonName("localhost");
-                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getStagingAppConfig(), manageClient, adminManager));
-
+                    gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
+                    
+                    def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
+                    command.setTemplateIdOrName("dhf-cert")
+                    command.setCommonName("localhost")
+                    command.setValidFor(365)
+                    command.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
+                    
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
                     adminConfig.setConfigureSimpleSsl(true)
@@ -113,6 +113,7 @@ class SslTest extends BaseTest {
 
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
                     certManager.delete(adminCert())
+                    certManager.delete(dhfCert())
                 }
             }
 
@@ -133,14 +134,43 @@ class SslTest extends BaseTest {
                 """
             }
 
+             def dhfCert() {
+                return """
+                   <certificate-template-properties xmlns="http://marklogic.com/manage">
+                    <template-name>dhf-cert</template-name>
+                    <template-description>Sample description</template-description>
+                    <key-type>rsa</key-type>
+                    <key-options />
+                    <req>
+                    <version>0</version>
+                    <subject>
+                    <countryName>US</countryName>
+                    <stateOrProvinceName>VA</stateOrProvinceName>
+                    <localityName>McLean</localityName>
+                    <organizationName>MarkLogic</organizationName>
+                    <organizationalUnitName>Consulting</organizationalUnitName>
+                    <emailAddress>nobody@marklogic.com</emailAddress>
+                    </subject>
+                    </req>
+                    </certificate-template-properties>
+                """
+            }
+
         '''
 
         runTask("hubInit")
         runTask("mlDeploySecurity")
-        copyResourceToFile("ssl-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
+
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"), 
+            new File("src/test/resources/ssl-test/ssl-server.json"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"), 
+            new File("src/test/resources/ssl-test/ssl-server.json"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"), 
+            new File("src/test/resources/ssl-test/ssl-server.json"))
+        /*copyResourceToFile("ssl-test/my-template.xml", new File(BaseTest.testProjectDir.root, "src/main/ml-config/security/certificate-templates/my-template.xml"))
+         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"))
+         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"))
+         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"))*/
         createProperties()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
@@ -150,8 +180,7 @@ class SslTest extends BaseTest {
         runTask("enableSSL")
     }
 
-    @Ignore
-    def cleanupSpecSKIPTHIS() {
+    def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
         runTask("mlDeploySecurity")
         runTask("disableSSL", "--stacktrace")
@@ -174,7 +203,7 @@ class SslTest extends BaseTest {
         """
     }
 
-    @Ignore
+
     def "bootstrap a project with ssl out the wazoo"() {
         when:
         def result = runTask('mlDeploy')
@@ -191,7 +220,7 @@ class SslTest extends BaseTest {
         result.task(":mlDeploy").outcome == SUCCESS
     }
 
-    @Ignore
+
     def "runHarmonizeFlow with default src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
@@ -227,7 +256,7 @@ class SslTest extends BaseTest {
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
-    @Ignore
+
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
@@ -253,13 +282,13 @@ class SslTest extends BaseTest {
 
         when:
         println(runTask(
-            'hubRunFlow',
-            '-PentityName=my-new-entity',
-            '-PflowName=my-new-harmonize-flow',
-            '-PsourceDB=data-hub-FINAL',
-            '-PdestDB=data-hub-STAGING',
-            '-i'
-        ).getOutput())
+                'hubRunFlow',
+                '-PentityName=my-new-entity',
+                '-PflowName=my-new-harmonize-flow',
+                '-PsourceDB=data-hub-FINAL',
+                '-PdestDB=data-hub-STAGING',
+                '-i'
+                ).getOutput())
 
         then:
         notThrown(UnexpectedBuildFailure)

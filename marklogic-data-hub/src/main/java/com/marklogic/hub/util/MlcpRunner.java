@@ -194,6 +194,7 @@ public class MlcpRunner extends ProcessRunner {
                             .stream()
                             .filter(
                                 u -> (
+                                    u.contains(System.getProperty("user.dir")) ||
                                     u.contains("jdk") ||
                                     u.contains("jre") ||
                                     u.contains("log") ||

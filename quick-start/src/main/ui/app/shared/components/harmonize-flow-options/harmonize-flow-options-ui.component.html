@@ -54,7 +54,7 @@
         (onRemove)="saveSettings()"
       ></app-select-key-values>
 </div>
-    <div *ngIf="!validEntityCheck(); else noWhitespace">
+    <div *ngIf="!validEntityCheck else noWhitespace">
             <span class="has-whitespace">Whitespaces are not allowed in property names</span>
             <div>
               <button class="mdl-button mdl-js-button mdl-button--raised" disabled>Run Harmonize</button>

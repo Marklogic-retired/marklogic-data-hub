@@ -36,7 +36,7 @@ export class SelectListComponent implements OnInit, OnChanges {
   selectInitial() {
     if (this.initialSelectedItem && this.items && this.items.length > 0) {
       _.each(this.items, item => {
-        if (item === this.initialSelectedItem) {
+        if (this.areItemsEqual(item, this.initialSelectedItem)) {
           this.selectItem(item, true);
         }
       });
@@ -90,16 +90,18 @@ export class SelectListComponent implements OnInit, OnChanges {
   }
 
   getItemClass(item: any): string {
-    if (this.currentItem === item) {
-      return 'active';
-    }
-
-    return '';
+    return (this.isActive(item)) ? 'active' : '';
   }
 
   isActive(item: any): boolean {
-    return this.currentItem === item;
+    return this.areItemsEqual(this.currentItem, item);
   }
+
+  areItemsEqual(item1: any, item2: any): boolean {
+    return (this.label) ? 
+      (item1[this.label] === item2[this.label]) : 
+      (item1 === item2);
+  }  
 
   isReadOnly(): boolean {
     return this.readOnly;
