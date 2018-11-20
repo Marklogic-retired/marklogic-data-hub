@@ -881,7 +881,7 @@ public class HubTestBase {
     }
 
     //installHubModules(), installUserModules() and clearUserModules() must be run as 'hub-admin-user'.
-    public void installHubModules() {
+    protected void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
         commands.add(loadHubModulesCommand);
