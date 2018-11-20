@@ -251,7 +251,7 @@ public class HubProjectImpl implements HubProject {
 
         writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
         writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
-        writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local_properties"));
+        writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
     }
 
     private void makeExecutable(Path file) {

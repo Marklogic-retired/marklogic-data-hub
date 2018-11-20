@@ -61,6 +61,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CurrentProjectController currentProjectController;
 
+    private ConnectionAuthenticationFilter authFilter;
+
     /**
      * We seem to need this defined as a bean; otherwise, aspects of the default Spring Boot security will still remain.
      *
@@ -69,6 +71,18 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public MarkLogicAuthenticationManager markLogicAuthenticationManager() {
         return new MarkLogicAuthenticationManager();
+    }
+
+    @Bean
+    public ConnectionAuthenticationFilter getConnectionAuthenticationFilter() throws Exception{
+        ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
+        authFilter.setAuthenticationManager(markLogicAuthenticationManager());
+        authFilter.setAuthenticationSuccessHandler(currentProjectController);
+        authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
+
+        this.authFilter = authFilter;
+
+        return authFilter;
     }
 
     /**
@@ -94,10 +108,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
-        authFilter.setAuthenticationManager(markLogicAuthenticationManager());
-        authFilter.setAuthenticationSuccessHandler(currentProjectController);
-        authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
         http
             .headers().frameOptions().disable()
             .and()
