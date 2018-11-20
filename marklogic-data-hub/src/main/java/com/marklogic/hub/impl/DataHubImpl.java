@@ -88,9 +88,6 @@ public class DataHubImpl implements DataHub {
     private DeployHubAmpsCommand deployHubAmpsCommand;
     
     @Autowired
-    private DeployHubPrivilegesCommand deployHubPrivilegesCommand;
-
-    @Autowired
     private Versions versions;
     
     @Autowired
