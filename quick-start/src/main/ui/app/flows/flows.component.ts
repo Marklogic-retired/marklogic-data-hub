@@ -337,7 +337,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     return entity.harmonizeFlows;
   }
 
-  getFlowType(flow: object, entityName: string) {
+  getFlowType(flow: Flow, entityName: string) {
     var flowType = null;
     var entity = this.entities.find(function(entity){
       return (entity.name === entityName)
