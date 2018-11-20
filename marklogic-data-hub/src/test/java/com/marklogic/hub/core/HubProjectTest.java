@@ -140,7 +140,7 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
         assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));
 
-        File gradleLocalProperties = new File(projectPath, "gradle-local_properties");
+        File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
     }
 }

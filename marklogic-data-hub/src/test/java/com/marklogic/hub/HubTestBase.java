@@ -295,7 +295,8 @@ public class HubTestBase {
         finalDocMgr = finalClient.newDocumentManager();
         jobDocMgr = jobClient.newJSONDocumentManager();
         modMgr = stagingModulesClient.newDocumentManager();
-        
+
+        adminHubConfig.refreshProject();
     }
 
     protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
