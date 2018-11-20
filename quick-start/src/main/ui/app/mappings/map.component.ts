@@ -148,7 +148,9 @@ export class MapComponent implements OnInit {
    * Update the sample document based on a URI.
    */
   updateSampleDoc() {
-    if (Object.keys(this.conns).length > 0) {
+    if (this.sampleDocURI === this.editURIVal) {
+      this.editingURI = false;
+    } else if (Object.keys(this.conns).length > 0) {
       let result = this.dialogService.confirm(
           'Changing your source document will remove<br/>existing property selections. Proceed?',
           'Cancel', 'OK');
@@ -191,8 +193,10 @@ export class MapComponent implements OnInit {
   }
 
   updateDesc() {
-    this.mapping.description = this.editDescVal;
-    this.saveMap();
+    if (this.mapping.description !== this.editDescVal) {
+      this.mapping.description = this.editDescVal;
+      this.saveMap();
+    }
     this.editingDesc = false;
   }
 

@@ -92,6 +92,7 @@
     "protractor": "^5.4.0",
     "protractor-html-reporter": "^1.3.2",
     "protractor-jasmine2-html-reporter": "0.0.7",
+    "protractor-screenshoter-plugin": "^0.10.3",
     "rimraf": "^2.6.2",
     "sass-loader": "^7.1.0",
     "tmp": "0.0.33",
