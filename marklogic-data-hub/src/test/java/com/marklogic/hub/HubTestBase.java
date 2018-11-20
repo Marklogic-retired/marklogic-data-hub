@@ -273,7 +273,6 @@ public class HubTestBase {
             setCertAuth(true);
         }
         adminHubConfig.createProject(PROJECT_PATH);
-        dataHub.initProject();
         if(isSslRun() || isCertAuth()) {
             certInit();
         }

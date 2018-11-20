@@ -304,10 +304,11 @@ task setupSSL{
         com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
         com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
         def bootStrapHost = hostManager.getHostNames().get(0)
-        if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
-             throw new GradleException("The test with current options will run only in marklogic.com domain")
-        }
         if(sslRun || certAuth){
+            if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
+                throw new GradleException("The test with current options will run only in marklogic.com domain")
+            }
+
             javaexec {
                 classpath = sourceSets.test.runtimeClasspath
                 main = 'com.marklogic.bootstrap.SSLsetup'
