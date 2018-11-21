@@ -198,10 +198,14 @@ public class HubTestBase {
     protected void init() {
         //dataHub.initProject();
         createProjectDir();
+        adminHubConfig.createProject(PROJECT_PATH);
+        if(! project.isInitialized()) {
+            adminHubConfig.initHubProject();
+        }
         // note the app config loads dhf defaults from classpath
         try {
             Properties p = new Properties();
-            InputStream p2 = new FileInputStream(PROJECT_PATH + "/gradle.properties");
+            InputStream p2 = new FileInputStream("gradle.properties");
             p.load(p2);
             properties.putAll(p);
             p2.close();
@@ -213,7 +217,7 @@ public class HubTestBase {
         // try to load the local environment overrides file
         try {
             Properties p = new Properties();
-            InputStream is = new FileInputStream(PROJECT_PATH + "/gradle-local.properties");
+            InputStream is = new FileInputStream("gradle-local.properties");
             p.load(is);
             properties.putAll(p);
         }
@@ -272,7 +276,7 @@ public class HubTestBase {
         && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
             setCertAuth(true);
         }
-        adminHubConfig.createProject(PROJECT_PATH);
+        
         if(isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -437,12 +441,9 @@ public class HubTestBase {
         try {
             File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
-                projectDir.mkdirs();
-                if (dataHub != null) {
-                    dataHub.initProject();
-                }
+                projectDir.mkdirs();                
             }
-
+                    
             // force module loads for new test runs.
             File timestampDirectory = new File(projectDir + "/.tmp");
             if ( timestampDirectory.exists() ) {
@@ -455,6 +456,7 @@ public class HubTestBase {
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             Files.copy(devProperties, projectProperties, REPLACE_EXISTING);
+
         }
         catch (IOException e) {
             throw new RuntimeException(e);
