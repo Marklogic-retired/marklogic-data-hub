@@ -43,6 +43,8 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.rules.TemporaryFolder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
 import spock.lang.Specification
@@ -72,6 +74,7 @@ class BaseTest extends Specification {
     static DatabaseManager _databaseManager;
 
     static HubConfig _hubConfig = null
+    static final protected Logger logger = LoggerFactory.getLogger(BaseTest.class)
 
     static BuildResult runTask(String... task) {
         return GradleRunner.create()
@@ -166,13 +169,13 @@ class BaseTest extends Specification {
         def file = new File("src/test/resources/" + resourceName)
         FileUtils.copyFile(file, dest)
     }
-    
+
     static void writeSSLFiles(File serverFile, File ssl) {
         def files = []
         files << ssl
         files << serverFile
         ObjectNode serverFiles = JsonNodeUtil.mergeJsonFiles(files);
-        FileUtils.writeStringToFile(serverFile, serverFiles.toString());        
+        FileUtils.writeStringToFile(serverFile, serverFiles.toString());
     }
 
     static int getStagingDocCount() {
@@ -310,6 +313,103 @@ class BaseTest extends Specification {
     static int getJobsRangePathIndexSize() {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
         return databseFragment.getElementValues("//m:range-path-index").size()
+    }
+
+    void deleteRangePathIndexes(String databaseName) {
+        String databaseFragment = getDatabaseManager().getPropertiesAsJson(databaseName)
+        ObjectMapper mapper = new ObjectMapper()
+        JsonNode dbObject = mapper.readTree(databaseFragment)
+        JsonNode rangePathIndexes = dbObject.get("range-path-index")
+        for(JsonNode rangePathIndex : rangePathIndexes) {
+            String type = rangePathIndex.get("scalar-type").asText()
+            String collation = rangePathIndex.get("collation").asText()
+            String path = rangePathIndex.get("path-expression").asText()
+            String pos = rangePathIndex.get("range-value-positions").asText()
+            String val = rangePathIndex.get("invalid-values").asText()
+            deleteRangePathIndexes(databaseName, type, collation, path, pos, val)
+        }
+    }
+
+    void deleteRangePathIndexes(String databaseName, String type, String collation, String pathSeq,
+            String pos, String val) {
+        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval()
+
+        if(pos.equals("false")) {
+            pos = "fn:false()";
+        } else {
+            pos = "fn:true()";
+        }
+
+        String installer ='''
+                import module namespace admin = \"http://marklogic.com/xdmp/admin\" at \"/MarkLogic/admin.xqy\";
+                let $dbname := "''' + databaseName + '''"
+                let $type := "'''+ type + '''"
+                let $pathSeq := "''' + pathSeq + '''"
+                let $coll := "'''+ collation + '''"
+                let $pos := '''+ pos + '''
+                let $val := "'''+ val + '''"
+                let $config := admin:get-configuration()
+                let $dbid := xdmp:database($dbname)
+                let $rangespec := admin:database-range-path-index($dbid,$type,$pathSeq,$coll,$pos,$val)
+                let $applyConfig:= admin:database-delete-range-path-index($config, $dbid, $rangespec)
+                return admin:save-configuration($applyConfig)
+        '''
+        EvalResultIterator result = eval.xquery(installer).eval()
+        if (result.hasNext()) {
+            logger.error(result.next().getString())
+        }
+    }
+
+    void deleteElementRangeIndex (String databaseName) {
+        String databaseFragment = getDatabaseManager().getPropertiesAsJson(databaseName)
+        ObjectMapper mapper = new ObjectMapper()
+        JsonNode dbObject = mapper.readTree(databaseFragment)
+        JsonNode rangeElementIndexes = dbObject.get("range-element-index")
+        for(JsonNode rangeElementIndex : rangeElementIndexes) {
+            String type = rangeElementIndex.get("scalar-type").asText()
+            String namespaceUri = rangeElementIndex.get("namespace-uri").asText()
+            String localName = rangeElementIndex.get("localname").asText()
+            String collation = rangeElementIndex.get("collation").asText()
+            String pos = rangeElementIndex.get("range-value-positions").asText()
+            deleteElementRangeIndexes(databaseName, type, namespaceUri, localName, collation, pos)
+        }
+    }
+
+    void deleteElementRangeIndexes (String databaseName, String type, String namespaceUri, String localName, String collation,
+            String pos) {
+        ServerEvaluationCall eval = hubConfig().newStagingClient().newServerEval()
+
+        if(pos.equals("false")) {
+            pos = "fn:false()";
+        } else {
+            pos = "fn:true()";
+        }
+
+        String installer ='''
+                import module namespace admin = \"http://marklogic.com/xdmp/admin\" at \"/MarkLogic/admin.xqy\";
+                let $dbname := "''' + databaseName + '''"
+                let $type := "'''+ type + '''"
+                let $namespaceUri := "''' + namespaceUri + '''"
+                let $localName := "''' + localName + '''"
+                let $coll := "'''+ collation + '''"
+                let $pos := '''+ pos + '''
+                let $config := admin:get-configuration()
+                let $dbid := xdmp:database($dbname)
+                let $rangespec := admin:database-range-element-index($type,$namespaceUri,$localName,$coll,$pos)
+                let $applyConfig:= admin:database-delete-range-element-index($config, $dbid, $rangespec)
+                return admin:save-configuration($applyConfig)
+        '''
+        EvalResultIterator result = eval.xquery(installer).eval()
+        if (result.hasNext()) {
+            logger.error(result.next().getString())
+        }
+    }
+
+    void deleteElementWordLexicon (String databaseName) {
+        String databaseFragment = getDatabaseManager().getPropertiesAsJson(databaseName)
+        ObjectMapper mapper = new ObjectMapper()
+        JsonNode dbObject = mapper.readTree(databaseFragment)
+        JsonNode rangePathIndexes = dbObject.get("element-word-lexicon")
     }
 
     def setupSpec() {

@@ -70,18 +70,12 @@ class UpdateIndexesTaskTest extends BaseTest {
 		dstFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
 		entityConfigStream = new File("src/test/resources/update-indexes/final-database.json").getAbsolutePath()
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-		
-		dir = _hubConfig.getHubConfigDir()
-		dstFile = Paths.get(dir.toString(), "databases", "job-database.json").toFile()
-		entityConfigStream = new File("src/test/resources/update-indexes/job-database.json").getAbsolutePath();
-		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	}
 	
 	def "test to deploy indexes to STAGING/FINAL/JOBS Database"() {
 		given:
 		int stagingIndexCount = getStagingRangePathIndexSize()
 		int finalIndexCount = getFinalRangePathIndexSize()
-		int jobIndexCount = getJobsRangePathIndexSize()
 		
 		when:
 		def result = runTask('mlUpdateIndexes')
@@ -92,6 +86,10 @@ class UpdateIndexesTaskTest extends BaseTest {
 		
 		assert (getStagingRangePathIndexSize() == stagingIndexCount+1)
 		assert (getFinalRangePathIndexSize() == finalIndexCount+1)
-		assert (getJobsRangePathIndexSize() == jobIndexCount+1)
+        
+        deleteRangePathIndexes("data-hub-STAGING")
+        deleteRangePathIndexes("data-hub-FINAL")
+        deleteElementRangeIndex("data-hub-STAGING")
+        deleteRangePathIndexes("data-hub-FINAL")
 	}
 }
