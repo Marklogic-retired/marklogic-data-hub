@@ -84,6 +84,7 @@ export default function(tmpDir) {
     });
 
     it ('should create a new Order entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       //create Order entity
       console.log('create Order entity');
       await entityPage.toolsButton.click();
@@ -105,6 +106,7 @@ export default function(tmpDir) {
     });
 
     it ('should create a new Product entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       //create Product entity
       console.log('create Product entity');
       await entityPage.toolsButton.click();
@@ -126,6 +128,7 @@ export default function(tmpDir) {
     });
 
     it ('should add properties to Product entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       //add properties
       console.log('add properties to Product entity');
       console.log('edit Product entity');
@@ -165,6 +168,7 @@ export default function(tmpDir) {
     });
 
     it ('should add properties to Order entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       //add properties
       console.log('add properties to Order entity');
       console.log('edit Order entity');
@@ -205,6 +209,7 @@ export default function(tmpDir) {
     });
 
     it ('should verify properties to Product entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       console.log('verify properties to Product entity');
       await entityPage.clickEditEntity('Product');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -229,6 +234,7 @@ export default function(tmpDir) {
     });
 
     it ('should verify properties to Order entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       console.log('verify properties to Order entity');
       await entityPage.clickEditEntity('Order');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -311,6 +317,7 @@ export default function(tmpDir) {
     });*/
 
     it ('should remove a created entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       //create removeEntity entity
       console.log('create removeEntity entity');
       await entityPage.toolsButton.click();
@@ -340,6 +347,7 @@ export default function(tmpDir) {
     });
 
     it ('should create a new entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -362,6 +370,7 @@ export default function(tmpDir) {
     // after the general create script and before the general tear down scripts
 
     it('should create a new property', async function(){
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.clickEditEntity('TestEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -401,6 +410,7 @@ export default function(tmpDir) {
     });
 
     it('should remove a property', async function(){
+      browser.get('http://localhost:8080/#/entities');
       //now time to delete, let's reopen the editor
       await entityPage.clickEditEntity('TestEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -425,6 +435,7 @@ export default function(tmpDir) {
     });
 
     it('should retain settings on remaining property', async function() {
+      browser.get('http://localhost:8080/#/entities');
       //now let's confirm we didn't lose any settings, reopen editor
       await entityPage.clickEditEntity('TestEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -449,6 +460,7 @@ export default function(tmpDir) {
     });
 
     it ('should create a new entity for PII', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -466,6 +478,7 @@ export default function(tmpDir) {
     });
 
     it('should create a pii property', async function(){
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -504,6 +517,7 @@ export default function(tmpDir) {
     });
 
     it ('should verify pii property to PII entity', async function() {
+      browser.get('http://localhost:8080/#/entities');
       console.log('verify pii property to PII entity');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -535,6 +549,7 @@ export default function(tmpDir) {
     });
 
     it ('should verify naming conventions on properties', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -553,6 +568,7 @@ export default function(tmpDir) {
     });
 
     it ('should not be able to create duplicate properties', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -587,6 +603,7 @@ export default function(tmpDir) {
     });
 
     it ('should verify pii property is retained after logout', async function() {
+      browser.get('http://localhost:8080/#/entities');
       console.log('verify pii property is retained after logout');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -605,6 +622,7 @@ export default function(tmpDir) {
     });
 
     it ('should create a new entity for WorldBank', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -646,12 +664,14 @@ export default function(tmpDir) {
     });
 
     it ('should open the Entity disclosure', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('TestEntity')));
       browser.sleep(5000);
     });
 
     it('should create sjs xml input flow with ES', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -662,6 +682,7 @@ export default function(tmpDir) {
     });
 
     it('should create sjs json input flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'sjs';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -672,6 +693,7 @@ export default function(tmpDir) {
     });
 
     it('should create xqy xml input flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'xqy';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -682,6 +704,7 @@ export default function(tmpDir) {
     });
 
     it('should create xqy json input flow with ES', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -692,6 +715,7 @@ export default function(tmpDir) {
     });
 
     it('should create sjs xml harmonize flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
@@ -702,6 +726,7 @@ export default function(tmpDir) {
     });
 
     it('should create sjs json harmonize flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'sjs';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
@@ -712,6 +737,7 @@ export default function(tmpDir) {
     });
 
     it('should create xqy xml harmonize flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'xqy';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
@@ -722,6 +748,7 @@ export default function(tmpDir) {
     });
 
     it('should create xqy json harmonize flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} HARMONIZE`;
@@ -732,11 +759,13 @@ export default function(tmpDir) {
     });
 
     it ('should open Product entity disclosure', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('Product')));
     });
 
     it ('should create input flow on Product entity', async function() {
+      browser.get('http://localhost:8080/#/flows');
       //create Product input flow
       await flowPage.createInputFlow('Product', 'Load Products', 'json', 'sjs', false);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
@@ -745,6 +774,7 @@ export default function(tmpDir) {
     });
 
     it ('should create harmonize flow on Product entity', async function() {
+      browser.get('http://localhost:8080/#/flows');
       //create Product harmonize flow
       await flowPage.createHarmonizeFlow('Product', 'Harmonize Products', 'json', 'sjs', true);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
@@ -763,6 +793,7 @@ export default function(tmpDir) {
     });
 
     it ('should redeploy modules', async function() {
+      browser.get('http://localhost:8080/#/flows');
       flowPage.redeployButton.click();
       browser.sleep(5000);
       await appPage.dashboardTab.click();
