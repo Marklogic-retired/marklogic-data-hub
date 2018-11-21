@@ -14,6 +14,7 @@ import {
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
+import { LoginUIComponent } from './shared/components'
 import { SettingsComponent } from './settings';
 import { SettingsUiComponent } from './shared/components';
 
@@ -113,6 +114,7 @@ import {
     MapComponent,
     MappingsComponent,
     MappingsUiComponent,
+    LoginUIComponent,
     MlcpUiComponent,
     MlErrorComponent,
     NewEntityComponent,

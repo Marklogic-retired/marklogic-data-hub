@@ -1,11 +1,11 @@
 <div class="credentials-prompt">
   <div class="marklogic-logo" id="mla-marklogic-logo">
-    <img src="/main/ui/assets/img/logo.svg">
+    <img src="/img/logo.svg">
   </div>
   <div class="login-wrapper" layout="row" layout-align="center start">
     <section layout="column" layout-align="center center" class="left-pane">
       <h1 id="mla-loginPage-Text">Data Hub QuickStart</h1>
-      <img class="odh-icon" src="/main/ui/assets/img/odh.svg">
+      <img class="odh-icon" src="/img/odh.svg">
       <section flex layout-padding class="install-status" *ngIf="installationStatus">
         <pre>{{installationStatus}}</pre>
       </section>
@@ -26,8 +26,8 @@
               [items]="projects"
               [initialSelectedItem]="lastProject"
               [allowRemove]="true"
-              (selectedItem)="project = $event"
-              (removedItem)="removeProject($event)"
+              (selectedItem)="this.onProjectSelected.emit($event)"
+              (removedItem)="this.onRemoveProject.emit($event.item)"
               label="path" identifier="id"
               md-whiteframe-2dp></app-select-list>
             <p>or</p>
@@ -36,19 +36,15 @@
           <div layout="column">
             <h3>Browse for a Project Folder</h3>
             <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
-              <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser" class="shrink-me">Browse</button>
+              <button type="button" mdl-button (click)="this.clickShowFolderBrowser()" class="shrink-me">Browse</button>
             </div>
 
-            <app-folder-browser
-              *ngIf="showFolderBrowser"
-              start-path='.'
-              absoluteOnly="true"
-              (folderChosen)="folderClicked($event)">
-            </app-folder-browser>
+            <ng-content select=".app-folder-browser" *ngIf="showFolderBrowser"></ng-content>
+
           </div>
 
           <div layout="row" layout-align="end center" class="init-buttons">
-            <button type="button" mdl-button mdl-button-type="raised" (click)="chooseProject()" >Next</button>
+            <button type="button" mdl-button mdl-button-type="raised" (click)="onChooseProject.emit()" >Next</button>
           </div>
         </section>
       </div>
@@ -60,10 +56,10 @@
             <h3>This project needs to be initialized</h3>
             <p>The project located at {{currentProject.path}} needs to be initialized.</p>
 
-            <form class="initForm" (submit)="initProject()">
+            <form class="initForm" (submit)="onInitProject.emit()">
               <div flex layout="column" class="scroller">
                 <div class="sub-section">
-                  <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="hubNameChanged()"  required="required"></mdl-textfield>
+                  <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="onHubNameChanged.emit()"  required="required"></mdl-textfield>
                   <mdl-textfield floating-label label="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></mdl-textfield>
                 </div>
                 <div class="sub-section advanced-section">
@@ -124,7 +120,7 @@
                 <button
                   type="button"
                   mdl-button
-                  (click)="restoreInitDefaults($event)">Restore Defaults</button>
+                  (click)="this.onRestoreInitDefaults.emit()">Restore Defaults</button>
                 <button type="submit" mdl-button mdl-button-type="raised">Initialize</button>
               </div>
             </form>
@@ -142,7 +138,7 @@
         </section>
         <div layout="row" layout-align="end center" class="init-buttons">
           <button type="button" mdl-button (click)="back()">&lt; Back</button>
-          <button type="button" mdl-button mdl-button-type="raised" (click)="postInitNext()">Next</button>
+          <button type="button" mdl-button mdl-button-type="raised" (click)="onPostInitNext.emit()">Next</button>
         </div>
       </div>
 
@@ -162,7 +158,7 @@
             <app-select-list
               [items]="currentProject.environments"
               [initialSelectedItem]="currentProject.environments[0]"
-              (selectedItem)="gotEnvironment($event)"
+              (selectedItem)="onGotEnvironment.emit($event)"
               md-whiteframe-2dp
               class="shrink-me"></app-select-list>
 
@@ -178,7 +174,7 @@
         <section layout="row" layout-align="center center">
           <section class="login-box" flex layout="column" layout-align="center center">
             <h3>Login to the Data Hub</h3>
-            <form class="loginForm" (submit)="login()">
+            <form class="loginForm" (submit)="onLogin.emit()">
               <div flex layout-fill layout-padding layout="column">
                 <div class="center-text" [hidden]="!loggingIn">
                   <mdl-spinner single-color active></mdl-spinner>
@@ -219,14 +215,14 @@
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
               <p>But...your project doesn't seem to match this version of DHF!</p>
-              <p>Please update your project before proceeding onward! <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a></p>
+              <p>Please update your project before proceeding onward! <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a></p>
             </span>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
-              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="updateProject()">Update It</button>
+              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="onUpdateProject.emit()">Update It</button>
               <div class="manual">
                 <p>Curious about what that button does? Prefer to do it yourself?</p>
                 <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
-                <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+                <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a>
               </div>
             </span>
           </section>
@@ -237,7 +233,7 @@
               <span>{{hubUpdateError}}.</span>
             </p>
             <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
-            <a target="_blank" [href]="hubUpdateUrl()">How to update a Hub Project</a>
+            <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a>
           </section>
         </section>
       </div>
@@ -291,7 +287,7 @@
               MarkLogic server.
               </p>
               <div class="center-text">
-                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
               </div>
             </div>
             <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
@@ -352,10 +348,10 @@
                 </tbody>
               </table>
               <div class="action-button center-text">
-                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="install()">Install</button>
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
               </div>
               <div class="action-button center-text">
-                <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="unInstall()">UnInstall</button>
+                <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="onUninstall.emit()">UnInstall</button>
               </div>
             </div>
           </div>
@@ -378,7 +374,7 @@
 
           <div layout="row" layout-align="end center" class="init-buttons">
             <button type="button" mdl-button (click)="back()">&lt; Back</button>
-            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installInfo.installed" (click)="installNext()">Finished</button>
+            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installInfo.installed" (click)="onInstallNext.emit()">Finished</button>
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ export * from './pagination';
 export * from './select/select.component';
 export * from './mappings/mappings-ui.component';
 export * from './mappings/new-map-ui.component';
+export * from './login'
 export * from './search';
 export * from './choose-collation/choose-collation.component';
 export * from './entity-box/entity-box.component';
