@@ -68,6 +68,11 @@ dependencies {
     }
 }
 
+springBoot {
+    mainClassName = 'com.marklogic.hub.ApplicationConfig'
+}
+
+
 test {
     testLogging {
         // Make sure output from
