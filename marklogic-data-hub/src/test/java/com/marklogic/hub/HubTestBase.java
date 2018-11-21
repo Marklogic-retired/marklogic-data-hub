@@ -194,7 +194,9 @@ public class HubTestBase {
         // try to load the local environment overrides file
         try {
             Properties p = new Properties();
-            p.load(new FileInputStream("gradle-"+ environmentName +".properties"));
+            if(environmentName != null) {
+                p.load(new FileInputStream("gradle-"+ environmentName +".properties"));
+            }
             properties.putAll(p);
         }
         catch (IOException e) {
@@ -380,6 +382,10 @@ public class HubTestBase {
     public DataHub getDataHub() {
         return DataHub.create(getHubAdminConfig());
     }
+    
+    public DataHub getDataHub(String projectDir) {
+        return DataHub.create(getHubAdminConfig(projectDir));
+    }
 
     private HubConfig getHubConfig(String projectDir, boolean requireAdmin) {
     	HubConfigBuilder builder = HubConfigBuilder.newHubConfigBuilder(projectDir)
@@ -505,7 +511,7 @@ public class HubTestBase {
         try {
             File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
-                getDataHub().initProject();
+                getDataHub(projectDir.toString()).initProject();
             }
 
             // force module loads for new test runs.
@@ -518,7 +524,7 @@ public class HubTestBase {
                 FileUtils.forceDelete(finalTimestampDirectory);
             }
             File projectProperties = projectDir.toPath().resolve("gradle.properties").toFile();
-            if(!projectProperties.isFile()) {
+            if(!projectProperties.exists()) {
                 projectProperties.createNewFile();
             }
             properties.store(new FileOutputStream(projectProperties), "");
