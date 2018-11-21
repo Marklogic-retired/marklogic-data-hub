@@ -10,7 +10,7 @@ plugins {
 repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
-    maven { url 'https://developer.marklogic.com/maven2/' }
+    maven { url 'http://developer.marklogic.com/maven2/' }
 }
 
 group = 'com.marklogic'
@@ -252,6 +252,7 @@ def propFile = file("gradle.properties")
 String fileContents = propFile.text
 boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
 boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
+String env = environmentName
 def props = new Properties()
 propFile.withInputStream { props.load(it) }
 
@@ -276,6 +277,7 @@ test {
 task testAcceptance(type: Test) {
     useJUnit {
         include 'com/marklogic/hub/**'
+        systemProperty "environmentName", env
         if (!(certAuth || sslRun)){
             include 'com/marklogic/hub/PiiE2E.class'
         }
@@ -285,6 +287,7 @@ task testAcceptance(type: Test) {
 task testIntegration(type: Test) {
     useJUnit {
         include 'com/marklogic/hub_integration/**'
+        systemProperty "environmentName", env
     }
 }
 

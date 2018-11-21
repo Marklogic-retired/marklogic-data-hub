@@ -104,6 +104,7 @@ public class HubTestBase {
 
     public static final String PROJECT_PATH = "ye-olde-project";
 
+    public  String environmentName;
     public  String host;
     public  int stagingPort;
     public int finalPort;
@@ -180,6 +181,7 @@ public class HubTestBase {
     }
 
     protected void init() {
+        environmentName = System.getProperty("environmentName");
         try {
             Properties p = new Properties();
             p.load(new FileInputStream("gradle.properties"));
@@ -192,11 +194,11 @@ public class HubTestBase {
         // try to load the local environment overrides file
         try {
             Properties p = new Properties();
-            p.load(new FileInputStream("gradle-local.properties"));
+            p.load(new FileInputStream("gradle-"+ environmentName +".properties"));
             properties.putAll(p);
         }
         catch (IOException e) {
-            System.err.println("gradle-local.properties file not loaded.");
+            System.err.println("gradle-" + environmentName + ".properties file not loaded.");
         }
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
@@ -258,7 +260,7 @@ public class HubTestBase {
         }
 
         try {
-        	stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
+            stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
@@ -515,9 +517,11 @@ public class HubTestBase {
             if ( finalTimestampDirectory.exists() ) {
                 FileUtils.forceDelete(finalTimestampDirectory);
             }
-            Path devProperties = Paths.get(".").resolve("gradle.properties");
-            Path projectProperties = projectDir.toPath().resolve("gradle.properties");
-            FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
+            File projectProperties = projectDir.toPath().resolve("gradle.properties").toFile();
+            if(!projectProperties.isFile()) {
+                projectProperties.createNewFile();
+            }
+            properties.store(new FileOutputStream(projectProperties), "");
         }
         catch (IOException e) {
             throw new RuntimeException(e);
