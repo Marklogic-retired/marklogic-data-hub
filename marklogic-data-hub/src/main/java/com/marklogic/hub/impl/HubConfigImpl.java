@@ -227,7 +227,8 @@ public class HubConfigImpl implements HubConfig
 
     public void createProject(String projectDirString) {
         hubProject.createProject(projectDirString);
-        initializeApplicationConfigurations();
+        refreshProject();
+        //initializeApplicationConfigurations();
     }
 
     public String getHost() { return stagingAppConfig.getHost(); }
