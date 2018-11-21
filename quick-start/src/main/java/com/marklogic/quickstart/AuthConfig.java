@@ -28,6 +28,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -61,6 +62,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CurrentProjectController currentProjectController;
 
+    @Lazy
     @Autowired
     private ConnectionAuthenticationFilter authFilter;
 
@@ -80,8 +82,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         authFilter.setAuthenticationManager(markLogicAuthenticationManager());
         authFilter.setAuthenticationSuccessHandler(currentProjectController);
         authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
-
-        this.authFilter = authFilter;
 
         return authFilter;
     }

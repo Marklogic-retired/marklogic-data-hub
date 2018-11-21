@@ -157,6 +157,7 @@ class DataHubPlugin implements Plugin<Project> {
         def extensions = project.getExtensions()
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
+        hubConfig.refreshProject()
 
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
