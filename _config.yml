@@ -47,6 +47,7 @@ whitelist: []
 plugins:
   - jekyll-assets
   - jekyll-relative-links
+  - jekyll-redirect-from
 
 # Conversion
 markdown:    rouge
