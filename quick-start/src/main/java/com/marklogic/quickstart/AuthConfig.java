@@ -61,6 +61,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CurrentProjectController currentProjectController;
 
+    @Autowired
     private ConnectionAuthenticationFilter authFilter;
 
     /**
