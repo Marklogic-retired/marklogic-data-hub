@@ -70,6 +70,8 @@ public class PiiE2E extends HubTestBase {
     @BeforeAll
     public static void setupAll() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
+        new Installer().teardownProject();
+        new Installer().setupProject();
         Path src = Paths.get(PiiE2E.class.getClassLoader().getResource("pii-test").toURI());
         Path dest = Paths.get(HubTestBase.PROJECT_PATH).getFileName().toAbsolutePath();
         Stream<Path> stream = Files.walk(src);
@@ -81,8 +83,6 @@ public class PiiE2E extends HubTestBase {
                 throw new RuntimeException(e);
             }
         });
-
-        new Installer().setupProject();
     }
 
     @BeforeEach
