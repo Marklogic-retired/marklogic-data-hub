@@ -71,6 +71,7 @@ test {
     // TODO put fullcycle tests in another project?
     //include 'com/marklogic/gradle/fullcycle/**'
     include 'com/marklogic/gradle/task/**'
+    systemProperty "environmentName", environmentName
     classpath = project.sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
 }
 

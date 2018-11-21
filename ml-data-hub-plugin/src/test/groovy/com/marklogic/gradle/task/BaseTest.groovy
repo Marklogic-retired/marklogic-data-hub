@@ -66,6 +66,7 @@ class BaseTest extends Specification {
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
+    static String environmentName
 
     static ManageClient _manageClient;
     static DatabaseManager _databaseManager;
@@ -243,10 +244,38 @@ class BaseTest extends Specification {
     }
 
     static void createFullPropertiesFile() {
-        def props = Paths.get(".").resolve("gradle.properties")
+        def props = getPropertiesFromEnvironment()
         propertiesFile = testProjectDir.newFile("gradle.properties")
-        def dst = propertiesFile.toPath()
-        Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
+        props.store(new FileOutputStream(propertiesFile), "")
+    }
+
+    private static Properties getPropertiesFromEnvironment() {
+        Properties environmentProperties = new Properties();
+        environmentName = System.getProperty("environmentName")
+
+        File file = new File(Paths.get(".").resolve("gradle.properties").toString());
+        loadPropertiesFromFile(file, environmentProperties);
+        if (environmentName != null) {
+            File envPropertiesFile = new File(Paths.get(".").resolve("gradle-" + environmentName + ".properties").toString());
+            loadPropertiesFromFile(envPropertiesFile, environmentProperties);
+        }
+
+        return environmentProperties;
+    }
+
+    // loads properties from a .properties file
+    private static void loadPropertiesFromFile(File propertiesFile, Properties loadedProperties) {
+        InputStream is;
+        try {
+            if(propertiesFile.exists()) {
+                is = new FileInputStream( propertiesFile );
+                loadedProperties.load( is );
+                is.close();
+            }
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+        }
     }
 
     static void createGradleFiles() {
