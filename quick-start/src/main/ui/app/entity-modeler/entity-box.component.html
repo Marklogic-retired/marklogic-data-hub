@@ -7,6 +7,10 @@
     <div class="title" (mousedown)="handleStartDrag($event)">
       <span>{{entity.info.title}}</span>
       <span class="version">v{{entity.info.version}}</span>
+      <!-- TODO link help icon to docs DHFPROD-1534 -->
+      <span class="help-icon">
+        <i class="fa fa-question-circle fa-lg"></i>
+      </span>
       <span class="edit-area">
         <span *ngIf="entity.inputFlowCount > 0">
           <i class="mdi mdi-import"></i>
@@ -37,12 +41,12 @@
       <table #properties class="properties">
         <thead>
           <tr>
-            <th class="icons" title="Primary Key"><i class="fa fa-key"></i></th>
-            <th class="icons" title="Element Range Index"><i class="fa fa-bolt"></i></th>
-            <th class="icons" title="Path Range Index"><i class="fa fa-code"></i></th>
-            <th class="icons" title="Word Lexicon"><i class="fa fa-won"></i></th>
-            <th class="icons" title="Required Field"><i class="fa fa-exclamation"></i></th>
-            <th class="icons" title="Personally Identifiable Information"><i class="fa fa-lock"></i></th>
+            <th class="icons"><i class="fa fa-key" tooltip="Primary Key" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-bolt" tooltip="Element Range Index" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-code" tooltip="Path Range Index" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-won" tooltip="Word Lexicon" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-exclamation" tooltip="Required Field" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top" container="body"></i></th>
             <th>Name</th>
             <th>Type</th>
           </tr>
@@ -56,22 +60,22 @@
             [ngClass]="{ 'primary' : isPrimaryKey(property.name) }"
             *ngFor="let property of entity.definition.properties" class="property">
             <td class="icons">
-              <i [hidden]="!isPrimaryKey(property.name)" class="fa fa-key"></i>
+              <i [hidden]="!isPrimaryKey(property.name)" class="fa fa-key" tooltip="Primary Key" placement="top" container="body"></i>
             </td>
             <td class="icons">
-              <i [hidden]="!isRangeIndex(property.name)" class="fa fa-bolt"></i>
+              <i [hidden]="!isRangeIndex(property.name)" class="fa fa-bolt" tooltip="Element Range Index" placement="top" container="body"></i>
             </td>
             <td class="icons">
-              <i [hidden]="!isPathRangeIndex(property.name)" class="fa fa-code"></i>
+              <i [hidden]="!isPathRangeIndex(property.name)" class="fa fa-code" tooltip="Path Range Index" placement="top" container="body"></i>
             </td>
             <td class="icons">
-              <i [hidden]="!isWordLexicon(property.name)" class="fa fa-won"></i>
+              <i [hidden]="!isWordLexicon(property.name)" class="fa fa-won" tooltip="Word Lexicon" placement="top" container="body"></i>
             </td>
             <td class="icons">
-              <i [hidden]="!isRequired(property.name)" class="fa fa-exclamation"></i>
+              <i [hidden]="!isRequired(property.name)" class="fa fa-exclamation" tooltip="Required Field" placement="top" container="body"></i>
             </td>
             <td class="icons">
-              <i [hidden]="!isPii(property.name)" class="fa fa-lock"></i>
+              <i [hidden]="!isPii(property.name)" class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top" container="body"></i>
             </td>
             <td class="key-cell">
               <span class="property-name" [ngClass]="{'invalid':!property.validString}">{{property.name}}</span>
