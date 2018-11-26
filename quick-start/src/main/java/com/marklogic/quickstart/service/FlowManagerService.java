@@ -170,7 +170,7 @@ public class FlowManagerService {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("input_file_path", hubConfig.getHubProjectDir());
+        result.put("input_file_path", hubConfig.getHubProject().getProjectDirString());
         return result;
     }
 

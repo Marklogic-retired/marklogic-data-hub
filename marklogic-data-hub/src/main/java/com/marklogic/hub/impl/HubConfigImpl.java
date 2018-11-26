@@ -900,7 +900,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override  public void initHubProject() {
         this.hubProject.init(getCustomTokens());
-        refreshProject();
+//        refreshProject();
     }
 
 
@@ -963,18 +963,16 @@ public class HubConfigImpl implements HubConfig
     }
 
     public void loadConfigurationFromProperties(Properties properties) {
+        projectProperties = new Properties();
+        File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
+        loadPropertiesFromFile(file, projectProperties);
+        if (usePropertiesFromEnvironment && envString != null) {
+            File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + environment + ".properties").toFile();
+            loadPropertiesFromFile(envPropertiesFile, projectProperties);
+        }
+
         if (properties != null){
             properties.forEach(projectProperties::put);
-        }
-        else {
-            projectProperties = new Properties();
-            File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
-            loadPropertiesFromFile(file, projectProperties);
-
-            if (usePropertiesFromEnvironment && envString != null){
-                File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + environment + ".properties").toFile();
-                loadPropertiesFromFile(envPropertiesFile, projectProperties);
-            }
         }
 
         host = getEnvPropString(projectProperties, "mlHost", host);

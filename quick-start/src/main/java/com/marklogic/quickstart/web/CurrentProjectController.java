@@ -29,7 +29,6 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
-import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.model.StatusMessage;
 import com.marklogic.quickstart.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,12 +75,13 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     @Autowired
     private SimpMessagingTemplate template;
 
+    @Autowired
+    private EnvironmentConfig envConfig;
+
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getEnvironment() throws JsonProcessingException {
-        // FIXME this is not going to match the previous implementation
-        // but it might not matter
-        return hubConfig.toString();
+        return envConfig.toJson();
     }
 
     @RequestMapping(value = "/install", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -99,22 +99,20 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             public void onError() {}
         });
 
-        // TODO remove these?
-        //envConfig().checkIfInstalled();
-        //boolean installed = envConfig().getInstallInfo().isInstalled();
+        envConfig.checkIfInstalled();
+        boolean installed = envConfig.getInstallInfo().isInstalled();
 
-        //envConfig().setInitialized(installed);
-        //if (installed) {
-            //if (envConfig().getEnvironment().equals("local")) {
-                //Tracing tracing = Tracing.create(envConfig().getStagingClient());
-                //tracing.enable();
-            //}
-            //logger.info("OnFinished: installing user modules");
+        envConfig.setInitialized(installed);
+        if (installed) {
+            if (envConfig.getEnvironment().equals("local")) {
+                Tracing tracing = Tracing.create(envConfig.getStagingClient());
+                tracing.enable();
+            }
             installUserModules(hubConfig, true);
             startProjectWatcher();
-        //}
+        }
 
-        return new ResponseEntity<>(hubConfig.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/uninstall", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -271,8 +269,13 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
         //InstallInfo installInfo = envConfig.getInstallInfo();
         //if (installInfo.isInstalled() && envConfig.getRunningVersion().equals(envConfig.getInstalledVersion())) {
+
+        envConfig.checkIfInstalled();
+        InstallInfo installInfo = envConfig.getInstallInfo();
+        if (installInfo.isInstalled() && envConfig.getRunningVersion().equals(envConfig.getInstalledVersion())) {
             installUserModules(hubConfig, false);
             startProjectWatcher();
+        }
         //}
 
         clearAuthenticationAttributes(request);
