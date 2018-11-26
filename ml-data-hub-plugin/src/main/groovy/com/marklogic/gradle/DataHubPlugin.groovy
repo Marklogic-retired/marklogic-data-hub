@@ -17,6 +17,8 @@
 
 package com.marklogic.gradle
 
+import com.marklogic.appdeployer.AppConfig
+import com.marklogic.appdeployer.ConfigDir
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
@@ -123,9 +125,11 @@ class DataHubPlugin implements Plugin<Project> {
         def properties = new ProjectPropertySource(project).getProperties()
         def extensions = project.getExtensions()
 
+        AppConfig appConfig = extensions.getByName("mlAppConfig")
+
         def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
             .withProperties(properties)
-            .withStagingAppConfig(extensions.getByName("mlAppConfig"))
+            .withStagingAppConfig(appConfig)
             .withAdminConfig(extensions.getByName("mlAdminConfig"))
             .withAdminManager(extensions.getByName("mlAdminManager"))
             .withManageConfig(extensions.getByName("mlManageConfig"))
@@ -135,6 +139,18 @@ class DataHubPlugin implements Plugin<Project> {
 
         dataHub = DataHub.create(hubConfig)
         project.extensions.add("dataHub", dataHub)
+
+        // DHF never needs the default REST server provided by ml-gradle
+        appConfig.setNoRestServer(true)
+
+        // DHF defaults to a single config dir of the hub config dir (hub-internal-config)
+        // Add the user config dir as well
+        appConfig.getConfigDirs().add(new ConfigDir(hubConfig.getUserConfigDir().toFile()))
+
+        println "Will look for resource configuration files in the following directories:"
+        for (ConfigDir configDir : appConfig.getConfigDirs()) {
+            println "Configuration directory: " + configDir.getBaseDir()
+        }
     }
 
     void configureAppDeployer(Project project) {

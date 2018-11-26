@@ -99,10 +99,6 @@ public interface DataHub {
      */
     void install(HubDeployStatusListener listener);
 
-    void installFinal(HubDeployStatusListener listener);
-
-    void installStaging(HubDeployStatusListener listener);
-
     /**
      * Updates the indexes in the database based on the project
      * Must be run as a user with hub-admin-role or equivalent
@@ -121,10 +117,6 @@ public interface DataHub {
      * @param listener - the callback method to receive status updates
      */
     void uninstall(HubDeployStatusListener listener);
-
-    void uninstallStaging(HubDeployStatusListener listener);
-
-    void uninstallFinal(HubDeployStatusListener listener);
 
     /**
      * Checks to make sure all the versions and database in a valid configuration with version check
