@@ -26,6 +26,7 @@ import * as SemVer from 'semver';
       [showFolderBrowser]="this.showFolderBrowser"
       [projects]="this.projects"
       [currentProject]="this.currentProject"
+      [lastProject]="this.lastProject"
       [loggingIn]="this.loggingIn"
       [loginError]="this.loginError"
       [loginInfo]="this.loginInfo"

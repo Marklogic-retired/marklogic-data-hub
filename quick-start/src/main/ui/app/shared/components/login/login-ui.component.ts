@@ -19,6 +19,7 @@ export class LoginUIComponent {
   @Input() showFolderBrowser: boolean = true;
   @Input() projects: Array<any>;
   @Input() currentProject: any;
+  @Input() lastProject: any;
   @Input() loggingIn: boolean;
   @Input() loginError: string;
   @Input() loginInfo: LoginInfo;

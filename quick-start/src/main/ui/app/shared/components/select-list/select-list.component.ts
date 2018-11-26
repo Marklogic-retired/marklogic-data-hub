@@ -94,14 +94,16 @@ export class SelectListComponent implements OnInit, OnChanges {
   }
 
   isActive(item: any): boolean {
+    if (!this.currentItem)
+      return false;
     return this.areItemsEqual(this.currentItem, item);
   }
 
   areItemsEqual(item1: any, item2: any): boolean {
-    return (this.label) ? 
-      (item1[this.label] === item2[this.label]) : 
+    return (this.label) ?
+      (item1[this.label] === item2[this.label]) :
       (item1 === item2);
-  }  
+  }
 
   isReadOnly(): boolean {
     return this.readOnly;
