@@ -11,12 +11,14 @@ export default function() {
       });
 
       it ('should verify the traces page', function() {
+        browser.get('http://localhost:8080/#/traces');
         tracesPage.isLoaded();
         browser.wait(EC.visibilityOf(tracesPage.tracesResults()));
         expect(tracesPage.tracesResults().isDisplayed()).toBe(true);
       });
 
       it ('should verify the traces viewer page', async function() {
+        browser.get('http://localhost:8080/#/traces');
         await tracesPage.searchBox().clear();
         await tracesPage.searchBox().sendKeys('442403950907');
         console.log('searching the specific harmonize trace');

@@ -12,6 +12,7 @@ export default function(tmpDir) {
     });
 
     it ('should click the uninstall button', async function() {
+      browser.get('http://localhost:8080/#/settings');
       await settingsPage.uninstallButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.uninstallConfirmation));
       await settingsPage.uninstallConfirmation.click();

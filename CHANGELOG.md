@@ -1,5 +1,33 @@
 # Change Log
 
+## [v4.0.3](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.3) (2018-11-19)
+
+Bug
+
+    [DHFPROD-1512] - #1462 ⁃ SSL with mlRedeploy/mlReloadModules doesn't work
+    
+   
+
+## [v4.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.2) (2018-11-05)
+
+Bug
+
+    [DHFPROD-1095] - #1152 ⁃ Trace content plugin on harmonized data is broken
+    [DHFPROD-1246] - 'data-hub-user' able to deploy flows
+    [DHFPROD-1306] - HubInit command does not generate mlSecurityUserName and mlSecurityPassword place holders
+    [DHFPROD-1401] - Unable to save and update indexes using gradle tasks
+    [DHFPROD-978] - Verify fix: #1062 ⁃ Online shopping tutorial repository code missing an element index in Order entity
+    [DHFPROD-1307] - hubPreInstallCheck command displays object hashcode
+    [DHFPROD-1418] - DHS documentation has incorrect values for 'mUsername' and 'mlManageUSername'
+    [DHFPROD-1420] - Bad link to upgrade instructions.
+    [DHFPROD-1448] - data-hub-MODULES is hard-coded somewhere
+    [DHFPROD-1483] - hubPreInstallCheck returning incorrect result
+    [DHFPROD-1495] - every mlcp job from quick start throws an error
+    [DHFPROD-1502] - Unable to redeploy hub
+    [DHFPROD-1302] - Issues in trace UI rendering in 4.0
+ 
+
+
 ## [v4.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.1) (2018-10-05)
 
 Bug
