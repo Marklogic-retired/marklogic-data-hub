@@ -22,10 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.InstallInfo;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,21 +30,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class EnvironmentConfig {
 
+    private String projectDir;
     private String environment;
 
     private InstallInfo installInfo;
     private boolean isInitialized = false;
 
-    private HubConfig mlSettings;
-
     @Autowired
     private DataHub dataHub;
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    private HubConfig mlSettings;
 
+    @JsonIgnore
     @Autowired
-    private HubProjectImpl project;
+    private Versions versions;
 
     private String installedVersion;
 
@@ -93,36 +90,10 @@ public class EnvironmentConfig {
         return DHFVersion;
     }
 
-    /*
-    public EnvironmentConfig() {
-    }
-
-    public EnvironmentConfig(String environment, String username, String password) {
-        this.environment = environment;
-        hubConfig.refreshProject();
-
-        /*
-        Properties overrides = new Properties();
-        overrides.put("mlUsername", username);
-        overrides.put("mlPassword", password);
-        mlSettings = HubConfigBuilder.newHubConfigBuilder(this.projectDir)
-            .withPropertiesFromEnvironment(environment)
-            .withProperties(overrides)
-            .build();
-        if (username != null) {
-            mlSettings.getStagingAppConfig().setAppServicesUsername(username);
-            mlSettings.getStagingAppConfig().setAppServicesPassword(password);
-        }
-        dataHub = DataHub.create(mlSettings);
-
-    }
-    */
-
     @JsonIgnore
     public void checkIfInstalled() {
+        projectDir = mlSettings.getHubProject().getProjectDirString();
         this.installInfo = dataHub.isInstalled();
-        //FIXME
-        Versions versions = new Versions();
         this.installedVersion = versions.getHubVersion();
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
@@ -159,6 +130,7 @@ public class EnvironmentConfig {
     }
 
     private DatabaseClient _jobClient = null;
+
     @JsonIgnore
     public DatabaseClient getJobClient() {
         if (_jobClient == null) {
