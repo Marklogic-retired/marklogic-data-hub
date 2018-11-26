@@ -11,7 +11,9 @@ import { ClipboardDirective } from '../../../../clipboard';
 import { CodemirrorComponent } from '../../../components/codemirror';
 import { FolderBrowserComponent } from '../../../../folder-browser';
 import { HarmonizeFlowOptionsComponent } from '../../../../harmonize-flow-options';
-import { MlcpUiComponent } from '../../../../mlcp-ui';
+import { HarmonizeFlowOptionsUiComponent } from '../../../components/harmonize-flow-options';
+import { MlcpComponent } from '../../../../mlcp';
+import { MlcpUiComponent } from '../../../components/mlcp/';
 import { ObjectToArrayPipe } from '../../../../object-to-array.pipe';
 import { TooltipModule } from '../../../../tooltip';
 import { TruncateCharactersPipe } from '../../../../truncate';
@@ -47,8 +49,10 @@ storiesOf('Components|Flows', module)
                 StoryCardComponent,
                 ObjectToArrayPipe,
                 TruncateCharactersPipe,
+                MlcpComponent,
                 MlcpUiComponent,
                 HarmonizeFlowOptionsComponent,
+                HarmonizeFlowOptionsUiComponent,
                 CodemirrorComponent,
                 FolderBrowserComponent,
                 SelectComponent,

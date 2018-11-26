@@ -22,10 +22,25 @@ interface MlcpOptions {
 
 @Component({
   selector: 'app-mlcp',
-  templateUrl: './mlcp-ui.component.html',
-  styleUrls: ['./mlcp-ui.component.scss']
+  template: `
+    <app-mlcp-ui
+      [startPath]="startPath"
+      [flow]="flow"
+      [mlcpOptions]="mlcpOptions"
+      [hasErrors]="hasErrors"
+      [groups]="groups"
+      [mlcpCommand]="mlcpCommand"
+      (folderClicked)="folderClicked($event)"
+      (fileClicked)="fileClicked($event)"
+      (saveOptionsClicked)="saveOptions()"
+      (switchChanged)="updateSetting($event)"
+      (runImportClicked)="runImport()"
+      (clipboardSuccess)="cmdCopied()"
+      >
+    </app-mlcp-ui>
+  `,
 })
-export class MlcpUiComponent implements OnChanges {
+export class MlcpComponent implements OnChanges {
   startPath: string;
   inputFilePath: string;
   mlcp = <MlcpOptions>{};
@@ -520,7 +535,7 @@ export class MlcpUiComponent implements OnChanges {
     }
   }
 
-  updateSetting(setting: any, value: any): void {
+  updateSetting({setting, value}): void {
     setting.value = value;
     this.updateMlcpCommand();
   }

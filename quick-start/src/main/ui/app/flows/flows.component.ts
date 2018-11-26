@@ -1,5 +1,5 @@
 import { MdlDialogService, MdlSnackbarService } from '@angular-mdl/core';
-import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { distanceInWords } from 'date-fns';
 import * as _ from 'lodash';
@@ -37,8 +37,8 @@ import { NewEntityComponent } from '../shared/components/new-entity/new-entity.c
     (runImportClicked) = "runInputFlow($event)"
     (runHarmonizeClicked) = "runHarmonizeFlow($event)"
     (savePluginClicked) = "savePlugin($event)"
-  >  
-  </app-flows-ui> 
+  >
+  </app-flows-ui>
   `
 })
 export class FlowsComponent implements OnInit, OnDestroy {

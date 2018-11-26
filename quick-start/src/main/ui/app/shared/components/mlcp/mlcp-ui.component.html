@@ -7,8 +7,8 @@
         <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
           <app-folder-browser
             [startPath]="startPath"
-            (folderChosen)="folderClicked($event)"
-            (fileChosen)="fileClicked($event)"
+            (folderChosen)="folderClicked.emit($event)"
+            (fileChosen)="fileClicked.emit($event)"
             showFiles="true">
           </app-folder-browser>
         </div>
@@ -26,7 +26,7 @@
               tooltipPlacement="right"
               *ngIf="setting.type === 'boolean'"
               [ngModel]="setting.value"
-              (change)="updateSetting(setting, $event)">
+              (change)="handleValueChanged(setting, $event)">
               {{setting.label}}
             </mdl-switch>
             <mdl-textfield floating-label type="text"
@@ -35,14 +35,14 @@
               [label]="setting.label"
               name="{{setting.field}}" *ngIf="isText(setting.type)"
               [ngModel]="setting.value"
-              (input)="updateSetting(setting, $event.target.value)"
+              (input)="handleValueChanged(setting, $event.target.value)"
               [disabled]="setting.readOnly"></mdl-textfield>
             <app-custom-select
               [attr.id]="setting.field"
               [labelText]="setting.label"
               [items]="setting.options"
               [initialSelectedItem]="setting.value"
-              (selectedItem)="updateSetting(setting, $event)"
+              (selectedItem)="handleValueChanged(setting, $event)"
               *ngIf="setting.type === 'type'"
               [tooltip]="setting.description"
               label="label"
@@ -57,7 +57,7 @@
         <button
           class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
           [appClipboard]="mlcpcmd"
-          (onSuccess)="cmdCopied()">
+          (onSuccess)="clipboardSuccess.emit()">
           <i class="fa fa-copy" aria-hidden="true">
           </i>
         </button>
@@ -71,10 +71,8 @@
       </div>
     </div>
     <div class="mdl-dialog__actions">
-      <div class="save-options">
-        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="saveOptions()">Save Options</mdl-button>
-      </div>
-      <mdl-button mdl-button-type="raised" mdl-colored="primary" [ngClass]="{'error-button': hasErrors}" mdl-ripple (click)="runImport()">Run Import</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="saveOptionsClicked.emit()">Save Options</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-colored="primary" [ngClass]="{'error-button': hasErrors}" mdl-ripple (click)="runImportClicked.emit()">Run Import</mdl-button>
     </div>
   </div>
 </div>
