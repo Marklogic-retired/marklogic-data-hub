@@ -900,7 +900,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override  public void initHubProject() {
         this.hubProject.init(getCustomTokens());
-        refreshProject();
+//        refreshProject();
     }
 
 

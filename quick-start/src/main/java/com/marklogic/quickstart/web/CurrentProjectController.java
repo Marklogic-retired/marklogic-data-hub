@@ -104,15 +104,16 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
         envConfig.setInitialized(installed);
         if (installed) {
-            if (envConfig.getEnvironment().equals("local")) {
-                Tracing tracing = Tracing.create(envConfig.getStagingClient());
-                tracing.enable();
-            }
+            // TODO Required?
+//            if (envConfig.getEnvironment().equals("local")) {
+//                Tracing tracing = Tracing.create(envConfig.getStagingClient());
+//                tracing.enable();
+//            }
             installUserModules(hubConfig, true);
             startProjectWatcher();
         }
 
-        return new ResponseEntity<>(hubConfig.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/uninstall", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
