@@ -75,6 +75,9 @@ public class ConnectionAuthenticationFilter extends
     @Autowired
     private ProjectManagerService pm;
 
+    @Autowired
+    private EnvironmentConfig environmentConfig;
+
     // ~ Constructors
     // ===================================================================================================
 
@@ -115,6 +118,8 @@ public class ConnectionAuthenticationFilter extends
         hubConfig.refreshProject(overrides);
         hubConfig.getStagingAppConfig().setAppServicesUsername(username);
         hubConfig.getStagingAppConfig().setAppServicesPassword(password);
+
+        environmentConfig.setEnvironment(loginInfo.environment);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
                 username, password, hubConfig.getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
