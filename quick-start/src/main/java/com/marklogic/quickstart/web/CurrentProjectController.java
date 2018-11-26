@@ -129,10 +129,10 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             @Override
             public void onError() {}
         });
-        //envConfig().checkIfInstalled();
-        //envConfig().getInstallInfo().isInstalled();
+        envConfig.checkIfInstalled();
+        envConfig.getInstallInfo().isInstalled();
 
-        return new ResponseEntity<>(hubConfig, HttpStatus.OK);
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update-indexes", method = RequestMethod.GET)
