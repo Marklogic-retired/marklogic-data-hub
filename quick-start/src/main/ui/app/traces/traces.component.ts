@@ -8,8 +8,19 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-traces',
-  templateUrl: './traces.component.html',
-  styleUrls: ['./traces.component.scss']
+  template: `
+    <app-traces-ui
+      [searchResponse]="searchResponse"
+      [traces]="traces"
+      [activeFacets]="activeFacets"
+      [searchText]="searchText"
+      [loadingTraces]="loadingTraces"
+      (searchClicked)="doSearch($event)"
+      (activeFacetsChange)="updateFacets($event)"
+      (traceItemClicked)="showTrace($event)"
+      (pageChanged)="pageChanged($event)"
+    ></app-traces-ui>
+  `,
 })
 export class TracesComponent implements OnDestroy, OnInit {
 
@@ -71,7 +82,8 @@ export class TracesComponent implements OnDestroy, OnInit {
     }
   }
 
-  public doSearch(): void {
+  public doSearch(searchText: string): void {
+    this.searchText = searchText;
     this.currentPage = 1;
     this.runQuery();
   }
@@ -114,7 +126,8 @@ export class TracesComponent implements OnDestroy, OnInit {
     });
   }
 
-  updateFacets() {
-    this.doSearch();
+  updateFacets(facets) {
+    this.activeFacets = facets;
+    this.doSearch(this.searchText);
   }
 }

@@ -1,4 +1,4 @@
-@import '../shared/components/theme/styles/variables';
+@import '../theme/styles/variables';
 
 $bg-color: unquote("rgb(#{$palette-datahub-500})");
 $warning-color: unquote("rgb(#{$palette-datahub-pale-yellow})");
