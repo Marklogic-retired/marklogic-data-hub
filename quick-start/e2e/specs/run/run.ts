@@ -16,6 +16,7 @@ export default function(tmpDir) {
     });
 
     it ('should run Load Products flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await flowPage.clickEntityDisclosure('Product');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       await flowPage.runInputFlow('Product', 'Load Products', 'json', 'products',
@@ -93,6 +94,7 @@ export default function(tmpDir) {
     });
 
     it ('should redeploy modules', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await appPage.flowsTab.click();
       flowPage.isLoaded();
       await flowPage.redeployButton.click();
@@ -116,11 +118,13 @@ export default function(tmpDir) {
     });
 
     it ('should redeploy modules', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await flowPage.redeployButton.click();
       browser.sleep(5000);
     });
 
     it('should run Harmonize Products flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       flowPage.isLoaded();
       console.log('clicking Product entity');
       await flowPage.clickEntityDisclosure('Product');
@@ -142,6 +146,7 @@ export default function(tmpDir) {
     });
 
     it('should verify the harmonized data with sku as original property', async function() {
+      browser.get('http://localhost:8080/#/browse');
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
@@ -167,6 +172,7 @@ export default function(tmpDir) {
     });
 
     it('should verify the harmonized data with SKU as original property', async function() {
+      browser.get('http://localhost:8080/#/browse');
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
@@ -208,6 +214,7 @@ export default function(tmpDir) {
     });
 
     it ('should redeploy modules', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await appPage.flowsTab.click();
       flowPage.isLoaded();
       await flowPage.redeployButton.click();
@@ -215,11 +222,13 @@ export default function(tmpDir) {
     });
 
     it ('should open the TestEntity disclosure', async function() {
+      browser.get('http://localhost:8080/#/flows');
       await flowPage.clickEntityDisclosure('TestEntity');
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 
     it('should run sjs xml input flow with ES', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'sjs';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -227,6 +236,7 @@ export default function(tmpDir) {
     });
 
     it('should run sjs json input flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'sjs';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -234,6 +244,7 @@ export default function(tmpDir) {
     });
 
     it('should run xqy xml input flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'xqy';
       let dataFormat = 'xml';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -241,6 +252,7 @@ export default function(tmpDir) {
     });
 
     it('should run xqy json input flow with ES', async function() {
+      browser.get('http://localhost:8080/#/flows');
       let codeFormat = 'xqy';
       let dataFormat = 'json';
       let flowName = `${codeFormat} ${dataFormat} INPUT`;
@@ -248,6 +260,7 @@ export default function(tmpDir) {
     });
 
     it('should verify the ES json data with small sku', async function() {
+      browser.get('http://localhost:8080/#/browse');
       //verify on browse data page
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
@@ -276,6 +289,7 @@ export default function(tmpDir) {
     });
 
     it('should verify the ES json data with big SKU', async function() {
+      browser.get('http://localhost:8080/#/browse');
       //verify on browse data page
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
@@ -304,6 +318,7 @@ export default function(tmpDir) {
     });
 
     it('should verify the ES xml data', async function() {
+      browser.get('http://localhost:8080/#/browse');
       //verify on browse data page
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
@@ -348,6 +363,7 @@ export default function(tmpDir) {
     });
 
     it('should verify that no-pii-user cannot see titlePii and attachment title on harmonized data', async function() {
+      browser.get('http://localhost:8080/#/browse');
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
@@ -384,6 +400,7 @@ export default function(tmpDir) {
     });
 
     it('should verify that pii-user can see titlePii and attachment title on harmonized data', async function() {
+      browser.get('http://localhost:8080/#/browse');
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));

@@ -6,23 +6,12 @@ require('codemirror/mode/xquery/xquery');
 require('codemirror/mode/javascript/javascript');
 
 @Component({
-  selector: 'app-search-viewer',
-  encapsulation: ViewEncapsulation.None,
+  selector: 'app-search-viewer-ui',
   templateUrl: './search-viewer-ui.component.html',
-  styleUrls: [
-    './search-viewer-ui.component.scss'
-  ],
+  styleUrls: ['./search-viewer-ui.component.scss']
 })
-export class SearchViewerUiComponent implements OnInit, OnDestroy {
+export class SearchViewerUiComponent {
   @Input() doc: string;
   @Input() uri: string;
-
-
-  ngOnInit() {
-
-  }
-
-  ngOnDestroy() {
-
-  }
+  @Input() codeMirrorConfig: any;
 }

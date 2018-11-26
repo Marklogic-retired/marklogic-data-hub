@@ -155,7 +155,7 @@ export class FlowsUiComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteFlow(event: MouseEvent, flow: Flow, flowType: string): void {
+  deleteFlow(flow: Flow, flowType: string): void {
     if (event.stopPropagation) {
       event.stopPropagation();
     }

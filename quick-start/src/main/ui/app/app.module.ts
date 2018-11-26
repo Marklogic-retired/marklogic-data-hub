@@ -47,6 +47,7 @@ import { SelectListComponent } from './shared/components';
 import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
+import { SearchUiComponent } from './shared/components/search';
 import { SearchViewerUiComponent } from './shared/components/search';
 
 import { DeployService } from './deploy/deploy.service';
@@ -134,6 +135,7 @@ import {
     TraceViewerComponent,
     TraceViewerUiComponent,
     SearchComponent,
+    SearchUiComponent,
     SearchViewerComponent,
     SearchViewerUiComponent,
     NoContentComponent,

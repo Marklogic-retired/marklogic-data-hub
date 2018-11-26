@@ -9,8 +9,25 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  template: `
+    <app-search-ui
+      [databases]="databases"
+      [currentDatabase]="currentDatabase"
+      [entitiesOnly]="entitiesOnly"
+      [searchText]="searchText"
+      [loadingTraces]="loadingTraces"
+      [searchResponse]="searchResponse"
+      [activeFacets]="activeFacets"
+      (currentDatabaseChanged)="currentDatabaseChanged($event)"
+      (entitiesOnlyChanged)="entitiesOnlyChanged($event)"
+      (searchTextChanged)="searchTextChanged($event)"
+      (pageChanged)="pageChanged($event)"
+      (onActiveFacetsChange)="activeFacetsChange($event)"
+      (doSearch)="doSearch()"
+      (showDoc)="showDoc($event)"
+      (uriCopied)="uriCopied()"
+    ></app-search-ui>
+  `
 })
 export class SearchComponent implements OnDestroy, OnInit {
 
@@ -61,12 +78,28 @@ export class SearchComponent implements OnDestroy, OnInit {
     this.runQuery();
   }
 
-  showDoc(database: string, docUri: string) {
+  currentDatabaseChanged(db: string) {
+    this.currentDatabase = db;
+    this.doSearch();
+  }
+
+  entitiesOnlyChanged(val: boolean) {
+    this.entitiesOnly = val;
+    this.doSearch();
+  }
+
+  searchTextChanged(val: string) {
+    this.searchText = val;
+  }
+
+  activeFacetsChange(facets: any) {
+    this.activeFacets = facets;
+    this.doSearch();
+  }
+
+  showDoc(doc: any) {
     this.router.navigate(['/view'], {
-      queryParams: {
-        database: database,
-        docUri: docUri
-      }
+      queryParams: doc
     });
   }
 
@@ -116,10 +149,6 @@ export class SearchComponent implements OnDestroy, OnInit {
     () => {
       this.loadingTraces = false;
     });
-  }
-
-  updateFacets() {
-    this.doSearch();
   }
 
   setDatabase(database) {

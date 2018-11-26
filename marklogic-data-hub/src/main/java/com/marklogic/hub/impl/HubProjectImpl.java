@@ -208,6 +208,10 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
         writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
 
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-mappings.json", privilegesDir.resolve("dhf-internal-mappings.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-trace-ui.json", privilegesDir.resolve("dhf-internal-trace-ui.json"), true);
         
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();

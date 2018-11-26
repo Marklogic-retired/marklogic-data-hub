@@ -8,7 +8,7 @@ This example loads relational data from an [Invoice Database](./invoices-sql-dia
 
 ## How do I run this example?
 
-1. [Deploy the MarkLogic Job Repository](https://github.com/marklogic/marklogic-spring-batch/wiki/MarkLogicJobRepository). When the application starts it needs to persist the job metadata into MarkLogic.  Note that this metadata is different than datahub job metadata.  
+1. [Deploy the MarkLogic Job Repository](https://github.com/marklogic-community/marklogic-spring-batch/wiki/SetupMarkLogicJobRepository). When the application starts it needs to persist the job metadata into MarkLogic.  Note that this metadata is different than datahub job metadata.  
 1. Start up the Data Hub Quick Start, deploy the project from the examples/spring-batch directory.  Verify that the Customer entity and customer-flow exist.  
 1. Verify the property values in src/test/resources/job.properties for your environment.  
    1. Verify the hosts for the STAGING database and mlJobRepo
