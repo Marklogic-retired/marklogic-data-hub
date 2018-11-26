@@ -17,7 +17,7 @@ export class LoginPage extends AppPage {
   }
 
   get folderBrowser() {
-    return element(by.tagName('app-folder-browser'));
+    return element(by.tagName('app-login app-folder-browser'));
   }
 
   get currentFolder() {
@@ -28,22 +28,22 @@ export class LoginPage extends AppPage {
     return element(by.css('.current-folder input')).getAttribute('value');
   }
 
-  setCurrentFolder(path) {
-    this.currentFolder.clear();
-    this.currentFolder.sendKeys(path);
-    this.currentFolder.sendKeys(protractor.Key.ENTER);
+  async setCurrentFolder(path) {
+    await this.currentFolder.clear();
+    await this.currentFolder.sendKeys(path);
+    await this.currentFolder.sendKeys(protractor.Key.ENTER);
   }
 
   get projectDirTab() {
-    return element(by.css('#ProjectDirTab'));
+    return element(by.css('app-login #ProjectDirTab'));
   }
 
   get initIfNeededTab() {
-    return element(by.css('#InitIfNeededTab'));
+    return element(by.css('app-login #InitIfNeededTab'));
   }
 
   get postInitTab() {
-    return element(by.css('#PostInit'));
+    return element(by.css('app-login #PostInit'));
   }
 
   get environmentTab() {
@@ -51,7 +51,7 @@ export class LoginPage extends AppPage {
   }
 
   get loginTab() {
-    return element(by.css('#LoginTab'));
+    return element(by.css('app-login #LoginTab'));
   }
 
   get installedCheckTab() {
@@ -71,7 +71,7 @@ export class LoginPage extends AppPage {
   }
 
   get odhIcon() {
-    return element(by.css('.odh-icon'));
+    return element(by.css('app-login .odh-icon'));
   }
 
   get installProgress() {
@@ -94,55 +94,58 @@ export class LoginPage extends AppPage {
     return element(by.css('mdl-textfield[label="DataHub Name"] input'));
   }
 
-  setDataHubName(dataHubName) {
-    this.dataHubName.clear();
-    return this.dataHubName.sendKeys(dataHubName);
+  async setDataHubName(dataHubName) {
+    await this.dataHubName.clear();
+    await this.dataHubName.sendKeys(dataHubName);
   }
 
   get marklogicHostLabel() {
-    return element(by.name('host'));
+    return element(by.css('mdl-textfield[name="host"]'));
   }
 
-  clickAdvancedSettings() {
-    return element(by.buttonText('Advanced Settings')).click();
+  async clickAdvancedSettings() {
+    console.log('clicking advanced settings');
+    await element(by.buttonText('Advanced Settings')).click();
   }
 
   get stagingAppserverNameLabel() {
-    return element(by.name('stagingHttpName'));
+    return element(by.css('mdl-textfield[name="stagingHttpName"]'));
   }
 
   advancedSettingsValue(labelName: string) {
     return element(by.css(`mdl-textfield[label="${labelName}"] input`));
   }
 
-  clickRestoreDefaults() {
-    return element(by.buttonText('Restore Defaults')).click();
+  async clickRestoreDefaults() {
+    console.log('restore default settings');
+    await element(by.buttonText('Restore Defaults')).click();
   }
 
   get restoreButton() {
     return element(by.buttonText('Restore'));
   }
 
-  clickRestore() {
-    return element(by.buttonText('Restore')).click();
+  async clickRestore() {
+    await element(by.buttonText('Restore')).click();
   }
 
-  selectOnlineStore() {
-    element(by.cssContainingText('div.entry p', '..')).click();
-    element(by.cssContainingText('div.entry p', 'examples')).click();
-    return element(by.cssContainingText('div.entry p', 'online-store')).click();
+  async selectOnlineStore() {
+    await element(by.cssContainingText('div.entry p', '..')).click();
+    await element(by.cssContainingText('div.entry p', 'examples')).click();
+    await element(by.cssContainingText('div.entry p', 'online-store')).click();
   }
 
-  clickInitialize() {
-    return element(by.buttonText('Initialize')).click();
+  async clickInitialize() {
+    await element(by.buttonText('Initialize')).click();
   }
 
-  clickNext(id) {
-    return this.nextButton(id).click();
+  async clickNext(id) {
+    console.log('clicking next in '+id);
+    await this.nextButton(id).click();
   }
 
-  clickInstall() {
-    return element(by.css('#installer-button')).click();
+  async clickInstall() {
+    await element(by.css('#installer-button')).click();
   }
 
   //get userName element
@@ -152,7 +155,7 @@ export class LoginPage extends AppPage {
 
   //get password element
   get password(){
-    return element(by.name('password')).element(by.tagName('input'));
+    return element(by.css('[label="MarkLogic Password"]')).element(by.tagName('input'));
   }
 
   //to get the login box locater
@@ -161,40 +164,40 @@ export class LoginPage extends AppPage {
   }
 
   //To enter user and password
-  enterCredentials(user: string, password: string) {
-    this.userName.clear()
-    this.password.clear()
-    this.enterUserName(user);
-    this.enterPassword(password);
+  async enterCredentials(user: string, password: string) {
+    await this.userName.clear()
+    await this.password.clear()
+    await this.enterUserName(user);
+    await this.enterPassword(password);
   }
 
   //enter username text
-  enterUserName(userName: string){
-    this.userName.clear()
-    return this.userName.sendKeys(userName)
+  async enterUserName(userName: string){
+    await this.userName.clear()
+    await this.userName.sendKeys(userName)
   }
 
   //enter password text
-  enterPassword(password: string){
-    this.password.clear()
-    return this.password.sendKeys(password)
+  async enterPassword(password: string){
+    await this.password.clear()
+    await this.password.sendKeys(password)
   }
 
   //click on login button
-  clickLogin() {
-    return element(by.buttonText('Login')).click();
+  async clickLogin() {
+    await element(by.buttonText('Login')).click();
   }
 
   //Login successful
-  login() {
-    this.enterCredentials('admin', 'admin');
-    return this.clickLogin();
+  async login() {
+    await this.enterCredentials('admin', 'admin');
+    await this.clickLogin();
   }
 
   //Login successful
-  loginUsingCredentials(user:string, pass:string) {
-    this.enterCredentials(user, pass);
-    return this.clickLogin();
+  async loginUsingCredentials(user:string, pass:string) {
+    await this.enterCredentials(user, pass);
+    await this.clickLogin();
   }
 
   //to get the login button locator
@@ -203,9 +206,9 @@ export class LoginPage extends AppPage {
   }
 
   //login into application
-  loginAs(username: string, password: string) {
-    this.enterCredentials(username, password)
-    return this.clickLogin()
+  async loginAs(username: string, password: string) {
+    await this.enterCredentials(username, password)
+    await this.clickLogin()
   }
 
   //login invalid credential error message

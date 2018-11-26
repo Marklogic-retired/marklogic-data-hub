@@ -27,13 +27,17 @@ declare var window: CustomWindow;
 @Component({
   selector: 'app-root',
   encapsulation: ViewEncapsulation.None,
-  styleUrls: [
-    './app.component.scss'
-  ],
-  templateUrl: './app.component.html'
+  template: `
+    <app-ui
+      [canShowHeader]="flagCanShowHeader"
+      [headerOffset]="flagheaderOffset"
+    ></app-ui>
+  `
 })
 export class AppComponent implements OnInit {
   authenticated: boolean = false;
+  flagCanShowHeader: boolean = false;
+  flagheaderOffset: string = '0px';
 
   constructor(
     private auth: AuthService,
@@ -62,8 +66,14 @@ export class AppComponent implements OnInit {
     }
   }
 
-  canShowHeader() {
-    return this.authenticated && this.router.url !== '/login' && this.envService.settings;
+  ngAfterContentChecked() {
+    this.flagCanShowHeader = this.canShowHeader();
+    this.flagheaderOffset = this.headerOffset();
+  }
+
+
+  canShowHeader(): boolean {
+    return (this.authenticated && this.router.url !== '/login' && this.envService.settings !== undefined);
   }
 
   headerOffset(): string {

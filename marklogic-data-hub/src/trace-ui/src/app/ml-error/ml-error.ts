@@ -13,9 +13,11 @@ export class MlError {
   xqueryVersion: string;
   message: string;
   formatString: string;
+  stack: string;
   retryable: boolean;
   expr: string;
   data: Array<string>;
+  stackFrames: Array<MlErrorStack>;
   stacks: Array<MlErrorStack>;
 
   constructor() {}

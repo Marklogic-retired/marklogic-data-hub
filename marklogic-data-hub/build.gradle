@@ -26,7 +26,7 @@ ext.junitJupiterVersion  = '5.0.0-RC3'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.1.1'
-    compile 'com.marklogic:ml-app-deployer:3.9.1'
+    compile 'com.marklogic:ml-app-deployer:3.10.0'
 
     compile 'com.marklogic:mlcp-util:0.9.0'
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
@@ -269,6 +269,7 @@ task teardown(type: JavaExec) {
 test {
     minHeapSize = "128m"
     maxHeapSize = "256m"
+    exclude 'com/marklogic/bootstrap/**'
     classpath = project.sourceSets.test.runtimeClasspath
 }
 
@@ -289,7 +290,7 @@ task testIntegration(type: Test) {
 
 task testBootstrap(type: Test) {
     useJUnit {
-        exclude 'com/marklogic/bootstrap/**'
+        include 'com/marklogic/bootstrap/**'
     }
 }
 

@@ -1,5 +1,5 @@
 {
   "privilege-name": "dhf-internal-data-hub",
-  "action": "/data-hub",
+  "action": "/data-hub/",
   "kind": "uri"
 }
