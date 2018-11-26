@@ -104,11 +104,10 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
         envConfig.setInitialized(installed);
         if (installed) {
-            // TODO Required?
-//            if (envConfig.getEnvironment().equals("local")) {
-//                Tracing tracing = Tracing.create(envConfig.getStagingClient());
-//                tracing.enable();
-//            }
+            if (envConfig.getEnvironment().equals("local")) {
+                Tracing tracing = Tracing.create(envConfig.getStagingClient());
+                tracing.enable();
+            }
             installUserModules(hubConfig, true);
             startProjectWatcher();
         }
