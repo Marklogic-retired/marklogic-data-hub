@@ -198,15 +198,27 @@ export class MappingsPage extends AppPage {
   }
 
   verifySourcePropertyName(propertyName: string) {
-    return element(by.cssContainingText('.prop-name', propertyName));
+    return element(by.cssContainingText('.prop-select-content .prop-name', propertyName));
+  }
+
+  verifyDropdownPropertyName(entityProperty: string, propertyName: string) {
+    return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-name`, propertyName));
   }
 
   verifySourcePropertyType(propertyType: string) {
-    return element(by.cssContainingText('.prop-type', propertyType));
+    return element(by.cssContainingText('.prop-select-content .prop-type', propertyType));
+  }
+
+  verifyDropdownPropertyType(entityProperty: string, propertyType: string) {
+    return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-type`, propertyType));
   }
 
   verifySourcePropertyValue(propertyValue: string) {
-    return element(by.cssContainingText('.prop-val', propertyValue));
+    return element(by.cssContainingText('.prop-select-content .prop-val', propertyValue));
+  }
+
+  verifyDropdownPropertyValue(entityProperty: string, propertyValue: string) {
+    return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-val`, propertyValue));
   }
 }
 

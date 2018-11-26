@@ -11,11 +11,25 @@ import {Entity} from "../entities";
 
 @Component({
   selector: 'app-new-flow',
-  templateUrl: './new-flow.component.html',
-  styleUrls: ['./new-flow.component.scss']
+  template: `
+    <app-new-flow-ui 
+      [markLogicVersion]="markLogicVersion"
+      [flowType]="flowType"
+      [scaffoldOptions]="scaffoldOptions"
+      [mappingOptions]="mappingOptions"
+      [codeFormats]="codeFormats"
+      [dataFormats]="dataFormats"
+      [startingScaffoldOption]="startingScaffoldOption"
+      [startingMappingOption]="startingMappingOption"
+      [flow]="flow"
+      (flowChanged)="flowChanged($event)"
+      (createClicked)="create()"
+    ></app-new-flow-ui>
+  `
 })
 export class NewFlowComponent implements OnDestroy {
   flowType: string;
+  markLogicVersion: number;
   actions: any;
   entity: Entity;
 
@@ -54,7 +68,6 @@ export class NewFlowComponent implements OnDestroy {
   mapSub: any;
 
   constructor(
-    private dialog: MdlDialogReference,
     private envService: EnvironmentService,
     private mapService: MapService,
     @Inject('flowType') flowType: string,
@@ -67,6 +80,7 @@ export class NewFlowComponent implements OnDestroy {
     this.entity = entity;
     this.startingMappingOption = this.mappingOptions[0];
     this.mapService.getMappings();
+    this.markLogicVersion = this.getMarkLogicVersion();
     if (this.getMarkLogicVersion() === 8) {
       this.flow.useEsModel = false;
     } else {
@@ -93,26 +107,16 @@ export class NewFlowComponent implements OnDestroy {
     this.mapSub.unsubscribe();
   }
 
-  hide() {
-    this.dialog.hide();
-  }
-
-  @HostListener('keydown.esc')
-  public onEsc(): void {
-    this.cancel();
+  flowChanged(flow: any) {
+    this.flow = flow;
   }
 
   create() {
     if (this.flow.flowName && this.flow.flowName.length > 0) {
-      this.hide();
       if (this.actions && this.actions.save) {
         this.actions.save(this.flow);
       }
     }
-  }
-
-  cancel() {
-    this.hide();
   }
 
   getMarkLogicVersion(): number {

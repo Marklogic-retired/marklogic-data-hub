@@ -133,7 +133,33 @@ export class MapComponent implements OnInit {
         this.conns = connsOrig;
         self.mapUI.uriNotFound(uri);
         }
-    );
+      );
+  }
+
+  /**
+   * Update the sample document based on a URI.
+   */
+  updateSampleDoc() {
+    if (this.sampleDocURI === this.editURIVal) {
+      this.editingURI = false;
+    } else if (Object.keys(this.conns).length > 0) {
+      let result = this.dialogService.confirm(
+          'Changing your source document will remove<br/>existing property selections. Proceed?',
+          'Cancel', 'OK');
+      result.subscribe( () => {
+          let connsOrig = _.cloneDeep(this.conns);
+          this.conns = {};
+          // provide connsOrig for rollback purposes if needed
+          this.loadSampleDocByURI(this.editURIVal, connsOrig, true);
+        },(err: any) => {
+          console.log('source change aborted');
+          this.editingURI = false;
+        },
+        () => {}
+      );
+    } else {
+     this.loadSampleDocByURI(this.editURIVal, {}, true);
+    }
   }
 
   /**

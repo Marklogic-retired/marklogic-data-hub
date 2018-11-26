@@ -5,7 +5,7 @@
   "projects": {
     "data-hub-quickstart": {
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src/main/ui",
       "projectType": "application",
       "architect": {
         "build": {
@@ -17,8 +17,8 @@
             "tsConfig": "src/main/ui/tsconfig.app.json",
             "polyfills": "src/main/ui/polyfills.ts",
             "assets": [
-              "src/main/ui/assets",
-              "src/main/ui/favicon.ico"
+              { "glob": "**/*", "input": "src/main/ui/assets", "output": "/" },
+              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" }
             ],
             "styles": [
               "node_modules/mdi/css/materialdesignicons.css",
@@ -84,8 +84,8 @@
               "src/main/ui/styles.scss"
             ],
             "assets": [
-              "src/main/ui/assets",
-              "src/main/ui/favicon.ico"
+              { "glob": "**/*", "input": "src/main/ui/assets", "output": "/" },
+              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" }
             ]
           }
         },

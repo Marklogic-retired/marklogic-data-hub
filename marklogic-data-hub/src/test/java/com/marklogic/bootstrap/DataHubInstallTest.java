@@ -22,6 +22,7 @@ import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
@@ -29,6 +30,7 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.util.Versions;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -57,7 +59,7 @@ public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
 
     static boolean setupDone=false;
-
+    static String projectDir = PROJECT_PATH;
     @BeforeEach
     public void setup() {
         // special case do-one setup.
@@ -102,16 +104,22 @@ public class DataHubInstallTest extends HubTestBase {
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
+    
+    @AfterAll
+    public static void cleanUp() {
+        HubConfigBuilder builder = HubConfigBuilder.newHubConfigBuilder(projectDir)
+                .withPropertiesFromEnvironment();
+        DataHub.create(builder.build()).uninstall();
+        setupDone = false;
+    }
 
 
     @Test
-    @Disabled
     public void testTelemetryInstallCount() throws IOException {
         assertTrue(afterTelemetryInstallCount > 0, "Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount);
     }
 
     @Test
-    @Disabled
     public void testProjectScaffolding() throws IOException {
     	DatabaseClient stagingTriggersClient = null;
     	DatabaseClient finalTriggersClient = null;
@@ -144,7 +152,6 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
     public void testInstallHubModules() throws IOException {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
@@ -157,14 +164,12 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
     }
 
     @Test
-    @Disabled
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
@@ -291,7 +296,6 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
     public void testClearUserModules() throws URISyntaxException {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
@@ -311,7 +315,6 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    @Disabled
     public void testAmpLoading() {
         HubConfig config = getHubAdminConfig();
         LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand(config);
