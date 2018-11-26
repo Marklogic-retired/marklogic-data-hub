@@ -229,14 +229,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.setCollapsed(entity, !collapsed);
   }
 
-  deleteFlow({event, flow, flowType}: {event: MouseEvent, flow: Flow, flowType: string}): void {
-    if (event.stopPropagation) {
-      event.stopPropagation();
-    }
-    if (event.preventDefault) {
-      event.preventDefault();
-    }
-    event.cancelBubble = true;
+  deleteFlow({flow, flowType}: {flow: Flow, flowType: string}): void {
     var resetView = (this.flow === undefined) || (
       flow.flowName === this.flow.flowName &&
       flowType === this.getFlowType(this.flow, this.flow.entityName)
