@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import Clipboard from 'clipboard';
+import * as Clipboard from 'clipboard';
+const _Clipboard: any = Clipboard;
 
 @Directive({
   selector: '[appClipboard]'
@@ -20,7 +21,7 @@ export class ClipboardDirective implements OnInit, OnDestroy {
   ngOnInit() {
     let option: ClipboardOptions;
     option = !!this.appClipboard ? { target: () => <any>this.appClipboard } : { text: () => this.cbContent };
-    this.clipboard = new Clipboard(this.elmRef.nativeElement, option);
+    this.clipboard = new _Clipboard(this.elmRef.nativeElement, option);
     this.clipboard.on('success', (e) => this.onSuccess.emit(true));
     this.clipboard.on('error', (e) => this.onError.emit(true));
   }

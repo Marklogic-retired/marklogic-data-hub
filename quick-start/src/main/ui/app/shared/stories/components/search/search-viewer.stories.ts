@@ -2,13 +2,18 @@ import 'rxjs/add/observable/of';
 
 import { CommonModule } from '@angular/common';
 import { centered } from '@storybook/addon-centered/angular';
-import { withKnobs } from '@storybook/addon-knobs';
 import { moduleMetadata, storiesOf } from '@storybook/angular';
-
-import { SearchViewerUiComponent } from '../../../../components/search/';
-import { ThemeModule } from '../../../../components/theme/';
-import { StoryCardComponent } from '../../../utils/story-card/story-card.component';
-import { CodemirrorComponent } from '../../../../components/codemirror/';
+import {
+  object,
+  text,
+  boolean,
+  number,
+  withKnobs
+} from '@storybook/addon-knobs';
+import { SearchViewerUiComponent } from '../../../components/search';
+import { ThemeModule } from '../../../components/theme';
+import { StoryCardComponent } from '../../utils/story-card/story-card.component';
+import { CodemirrorComponent } from '../../../components/codemirror';
 
 storiesOf('Components|Search', module)
   .addDecorator(withKnobs)
@@ -31,32 +36,39 @@ storiesOf('Components|Search', module)
                     <app-search-viewer-ui
                       [uri]="sampleUri"
                       [doc]="sampleDoc"
+                      [codeMirrorConfig]="codeMirrorConfig"
                     ></app-search-viewer-ui>
               </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
-      sampleUri: 'doc/sample.json',
+      codeMirrorConfig: object('codemirrorConfig', {
+        lineNumbers: true,
+        indentWithTabs: true,
+        lineWrapping: true,
+        readOnly: true,
+        cursorBlinkRate: 0
+      }),
+      sampleUri: text('sampleUri', 'doc/sample.json'),
       sampleDoc: `
       {
         "envelope": {
           "headers": {},
           "triples": [],
           "instance": {
-            "id": "741",
-            "customer": "204",
-            "order_date": "08/20/2017",
-            "ship_date": "08/29/2017",
-            "product_id": "1000249",
-            "sku": "298337297722",
-            "price": "5.0",
+            "id": "800",
+            "customer": "294",
+            "order_date": "08/27/2017",
+            "ship_date": "09/04/2017",
+            "product_id": "1000200",
+            "sku": "267154901716",
+            "price": "19.99",
             "quantity": "1.0",
-            "discounted_price": "5.0",
-            "title": "varied slope Extension 1",
+            "discounted_price": "19.99",
+            "title": "gothic cuckoo Extension 2",
             "description": ""
           },
           "attachments": null
         }
-      }
-    `
+      }`
     }
   }));
