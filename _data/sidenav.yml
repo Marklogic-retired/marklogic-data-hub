@@ -75,9 +75,9 @@ main:
         },
         {
           url: '/deploy/',
-          text: 'Deploy'
+          text: 'Deploy',
           childPages: [
-            { url: '/deploy/deploy-to-dhs/', text: 'Deploy to DHS' }
+            { url: '/deploy/deploy-to-dhs/', text: 'Deploy to DHS' },
           ]
         },
         {

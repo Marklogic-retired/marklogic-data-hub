@@ -20,7 +20,7 @@ To learn more about DHS, see [MarkLogic Data Hub Service](http://www.marklogic.c
 
 After you create and test your project locally (your development environment) using Data Hub Framework, you can deploy your project to a DHS cluster (your production environment).
 
-The project properties in DHF and in DHS have the following differences.
+DHF projects and DHS projects have different default configurations:
 
 - mlFinalAppserverName
     |                      | DHF            | DHS            |
@@ -44,9 +44,7 @@ The project properties in DHF and in DHS have the following differences.
     {:.note-note} *NOTE:* The DHS roles are automatically created as part of provisioning your DHS environment.
     See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 - Database names, if customized in the DHF environment
-- Some DHS-only settings in the `gradle.properties` file, including:
-    - `mlIsHostLoadBalancer` <!-- - If *true*, ???. -->
-    - `mlIsProvisionedEnvironment` <!-- - If *true*, ???. -->
+- Some DHS-only settings in the `gradle.properties` file, including `mlIsHostLoadBalancer` and `mlIsProvisionedEnvironment`, which are set to `true` to enable DNF to work correctly in DNS.
 
 If your endpoints are private, you need a bastion host inside a virtual private cloud (VPC) that can access the MarkLogic VPC. The bastion host securely relays:
     - the requests from the outside world to MarkLogic
@@ -68,10 +66,10 @@ If your endpoints are publicly available, you can use any machine that is set up
     - REST curation endpoint URL (including port number) for testing
     - The username and password of the user account associated with each of the following roles:
       - `endpointDeveloper`
-      - `endpointUser`    
+      - `endpointUser`
       - `flowDeveloper`
       - `flowOperator`
-      See [Creating a User](https://cloudservices.marklogic.com/help?type=datahub&subtype=admin#manageusers). 
+      See [Creating a User](https://cloudservices.marklogic.com/help?type=datahub&subtype=admin#manageusers).
       <!-- What security permissions/roles do they need to be able to create user accounts and assign them to these roles? -->
 - [Gradle 4.x+](https://docs.gradle.org/current/userguide/installation.html#installing_gradle)
 - [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp/install)
@@ -79,9 +77,8 @@ If your endpoints are publicly available, you can use any machine that is set up
 
 ## Steps
 
-{:.note-note} *NOTE:* 
-    - If using a bastion host, copy your entire DHF project folder to the bastion host, where you will perform the steps.
-    - If not using a bastion host, perform the steps in the local environment.
+1. Copy your entire DHF project folder to the machine from which you will access the endpoints, and perform the following steps on that machine.
+    {:.note-important} *IMPORTANT:* If your endpoints are private, this machine must be a bastion host.
 
 1. In the root of your DHF project folder, edit the `gradle.properties` file.
     a. Replace the entire contents of `gradle.properties` with the following:
@@ -95,8 +92,6 @@ If your endpoints are publicly available, you can use any machine that is set up
         mlPassword=YOUR_FLOW_OPERATOR_PASSWORD
         mlManageUsername=YOUR_FLOW_DEVELOPER_USER
         mlManagePassword=YOUR_FLOW_DEVELOPER_PASSWORD
-        mlSecurityUsername=YOUR_FLOW_DEVELOPER_USER
-        mlSecurityPassword=YOUR_FLOW_DEVELOPER_PASSWORD
 
         mlStagingAppserverName=data-hub-STAGING
         mlStagingPort=8006
@@ -130,7 +125,7 @@ If your endpoints are publicly available, you can use any machine that is set up
         | mlDHFVersion | The [DHF version](https://github.com/marklogic/marklogic-data-hub/releases) to use in your production environment. |
         | mlHost | The name of your DHS host. |
         | mlUsername<br>mlPassword | The username and password of the user account assigned to the `flowOperator` role. |
-        | mlManageUsername<br>mlManagePassword<br>mlSecurityUsername<br>mlSecurityPassword | The username and password of the user account assigned to the `flowDeveloper` role. |
+        | mlManageUsername<br>mlManagePassword | The username and password of the user account assigned to the `flowDeveloper` role. |
         | ml*DbName | The names of the databases, if customized. |
         | ml*AppserverName | The names of the DHS app servers, if customized. |
         | ml*Port | The ports that your DHS project is configured with, if not the defaults. |
@@ -143,6 +138,10 @@ If your endpoints are publicly available, you can use any machine that is set up
     gradle mlLoadModules
     ```
 1. [Run the input flows using MarkLogic Content Pump (MLCP).](https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/)
+    {:.note-note} *NOTE:* You can also use any of the following:
+        - the [Java Client API](https://marklogic.github.io/marklogic-data-hub/ingest/marklogic-client-api/)
+        - the [REST Client API](https://marklogic.github.io/marklogic-data-hub/ingest/rest/)
+        - [Apache NiFi](https://developer.marklogic.com/code/apache-nifi) <!-- TODO: After DHFPROD-1542, replace this link. -->
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
     {% include ostabs.html
         linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\""
@@ -154,8 +153,11 @@ If your endpoints are publicly available, you can use any machine that is set up
     | Staging database | `http://CURATION-ENDPOINT-URL:8004/v1/search?database=data-hub-STAGING` |
     *Example:* `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8004/v1/search?database=data-hub-FINAL`
     b. In a web browser, navigate to one of the URLs.
-    The result is a list of all your documents in the database. Each item in the list includes the document name and other metadata.
-    <!-- TODO: What else is returned about each item? -->
+    The result is an XML list of all your documents in the database. Each item in the list includes the document's URI, path, and other metadata, as well as a preview of the content.
+
+
+## Remarks
+If you update your flows after the initial project upload, you can redeploy your flow updates by running `gradle mlLoadModules` again and then running the flows.
 
 
 ## See Also
