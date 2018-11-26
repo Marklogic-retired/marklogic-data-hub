@@ -10,25 +10,27 @@ import { EnvironmentService } from '../environment';
   selector: 'app-header',
   template: `
   <app-header-ui
-    [runningJobs]="this.getRunningJobCount()"
-    [percentageComplete]="this.getPercentComplete()"
-    (gotoJobs)="this.gotoJobs()"
+    [runningJobs]="runningJobs"
+    [percentageComplete]="percentageComplete"
     (logout)="this.logout()"
   ></app-header-ui>
 `
 })
 export class HeaderComponent {
-
+  runningJobs: number = 0;
+  percentageComplete: number = null;
+  
   constructor(
     private projectService: ProjectService,
     private auth: AuthService,
     private jobListener: JobListenerService,
     private envService: EnvironmentService,
     private router: Router
-  ) {}
+  ) { }
 
-  gotoJobs() {
-    this.router.navigate(['jobs']);
+  ngOnChange() {
+    this.runningJobs = this.getRunningJobCount();
+    this.percentageComplete = this.getPercentComplete();
   }
 
   getRunningJobCount(): number {
@@ -37,11 +39,6 @@ export class HeaderComponent {
 
   getPercentComplete(): number {
     return this.jobListener.totalPercentComplete();
-  }
-
-  getMarkLogicVersion(): number {
-    let version = this.envService.marklogicVersion.substr(0, this.envService.marklogicVersion.indexOf('.'));
-    return parseInt(version);
   }
 
   logout() {

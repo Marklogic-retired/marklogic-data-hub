@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
 import { ListFilterPipe } from './listfilter';
 import { AppComponent } from './app.component';
+import { AppUiComponent } from './shared/components';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './shared/components';
 import {
@@ -13,6 +14,7 @@ import {
   ExternalDefDialogComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
+import { LoginUIComponent } from './shared/components'
 import { SettingsComponent } from './settings';
 import { SettingsUiComponent } from './shared/components';
 
@@ -73,20 +75,23 @@ import { SelectKeyValuesComponent } from './shared/components';
 import { JobExportDialogComponent } from './jobs';
 
 import { MapComponent } from './mappings';
-import { MappingsComponent } from './mappings';
-import { NewMapComponent } from './mappings/new-map.component';
-import { NewMapUiComponent } from './shared/components';
-import { ThemeModule } from './shared/components';
+import { MappingsComponent } from "./mappings";
+import { MappingsUiComponent } from "./shared/components";
+import { NewMapComponent } from "./mappings/new-map.component";
+import { NewMapUiComponent } from "./shared/components";
+import { ThemeModule } from "./shared/components";
 import { FlowsUiComponent } from './shared/components/flows';
 import {
   ChooseCollationComponent,
   EntityBoxComponent,
+  TraceViewerUiComponent,
   EntityEditorComponent
 } from './shared/components';
 
 @NgModule({
   declarations: [
     AppComponent,
+    AppUiComponent,
     CodemirrorComponent,
     FolderBrowserComponent,
     FolderBrowserUiComponent,
@@ -108,6 +113,10 @@ import {
     JobOutputUiComponent,
     LoginComponent,
     MlcpComponent,
+    MapComponent,
+    MappingsComponent,
+    MappingsUiComponent,
+    LoginUIComponent,
     MlcpUiComponent,
     MlErrorComponent,
     NewEntityComponent,
@@ -123,6 +132,7 @@ import {
     SettingsUiComponent,
     TracesComponent,
     TraceViewerComponent,
+    TraceViewerUiComponent,
     SearchComponent,
     SearchViewerComponent,
     SearchViewerUiComponent,
@@ -139,8 +149,7 @@ import {
     ListFilterPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
-    MapComponent,
-    MappingsComponent
+    SettingsUiComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,

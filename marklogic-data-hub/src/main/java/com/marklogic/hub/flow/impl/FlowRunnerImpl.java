@@ -206,11 +206,15 @@ public class FlowRunnerImpl implements FlowRunner {
 
         DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
 
+        int uriCount = uris.size();
+
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
+
+
 
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
@@ -292,8 +296,6 @@ public class FlowRunnerImpl implements FlowRunner {
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
         ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
-
-        int uriCount = uris.size();
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();

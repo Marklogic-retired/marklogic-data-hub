@@ -91,7 +91,6 @@ storiesOf('Components|Header', module)
                 <app-header-ui
                   [runningJobs]="runningJobs"
                   [percentageComplete]="percentageComplete"
-                  (gotoJobs)="gotoJobs($event)"
                   (logout)="logout($event)"
                 ></app-header-ui>
              </mlui-story-card>
@@ -99,7 +98,6 @@ storiesOf('Components|Header', module)
     props: {
       runningJobs: number('runningJobs', 0),
       percentageComplete: number('percentageComplete', 0),
-      gotoJobs: action('gotoJobs clicked'),
       logout: action('logout clicked')
     }
   }));
