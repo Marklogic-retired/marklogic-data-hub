@@ -258,6 +258,7 @@ propFile.withInputStream { props.load(it) }
 
 task bootstrap(type: JavaExec) {
 	dependsOn 'setupSSL'
+    systemProperty "environmentName", env
     classpath = sourceSets.test.runtimeClasspath
     main = 'com.marklogic.hub.util.Installer'
 }

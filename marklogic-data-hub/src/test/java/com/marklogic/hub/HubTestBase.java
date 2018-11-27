@@ -389,7 +389,7 @@ public class HubTestBase {
 
     private HubConfig getHubConfig(String projectDir, boolean requireAdmin) {
     	HubConfigBuilder builder = HubConfigBuilder.newHubConfigBuilder(projectDir)
-                .withPropertiesFromEnvironment();
+                .withPropertiesFromEnvironment(environmentName);
 
     	//override 'mlUsername' and 'mlPassword' with flowRunneruser/password if requireAdmin is false
     	//use 'hub-admin-user' else
@@ -523,11 +523,15 @@ public class HubTestBase {
             if ( finalTimestampDirectory.exists() ) {
                 FileUtils.forceDelete(finalTimestampDirectory);
             }
-            File projectProperties = projectDir.toPath().resolve("gradle.properties").toFile();
-            if(!projectProperties.exists()) {
-                projectProperties.createNewFile();
+            Path devProperties = Paths.get(".").resolve("gradle.properties");
+            Path projectProperties = projectDir.toPath().resolve("gradle.properties");
+            FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
+
+            if(environmentName != null) {
+                Path envProperties = Paths.get(".").resolve("gradle-" + environmentName + ".properties");
+                Path projectEnvProperties = projectDir.toPath().resolve("gradle-" + environmentName + ".properties");
+                FileUtils.copyFile(envProperties.toFile(), projectEnvProperties.toFile());
             }
-            properties.store(new FileOutputStream(projectProperties), "");
         }
         catch (IOException e) {
             throw new RuntimeException(e);
