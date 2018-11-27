@@ -35,6 +35,11 @@ abstract class HubTask extends DefaultTask {
     HubConfig getHubConfig() {
         getProject().property("hubConfig")
     }
+    
+    @Internal
+    HubProject getHubProject() {
+        getProject().property("hubProject")
+    }
 
     @Internal
     DataHub getDataHub() {

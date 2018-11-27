@@ -173,6 +173,7 @@ class DataHubPlugin implements Plugin<Project> {
         hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
         project.extensions.add("hubConfig", hubConfig)
+        project.extensions.add("hubProject", hubProject)
         project.extensions.add("dataHub", dataHub)
         project.extensions.add("scaffolding", scaffolding)
         project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
