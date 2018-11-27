@@ -9,6 +9,9 @@ import com.marklogic.client.DatabaseClient.ConnectionType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Properties;
+import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,31 +20,38 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class testCustomer {
 	public static void main(String [] argv) throws IOException {
 
-	String username = "apiuser";
-	String password = "M@rkl0gic";
-	String operationsEndPoint = "internal-mlaas-oalb-9whto2c1y3h3-430551021.us-east-1.elb.amazonaws.com";
-	int port = 8009;
+	    Properties prop = new Properties();
+	    InputStream input = null;
 
-	StringBuilder b = new StringBuilder();
-	String line = null;
+	    input = new FileInputStream("gradle.properties");
 
-	DatabaseClient dbClient = DatabaseClientFactory.newClient(operationsEndPoint, port, new DatabaseClientFactory.DigestAuthContext(username, password), ConnectionType.GATEWAY);
+	    prop.load(input);
+
+	    String username = prop.getProperty("mlAppServicesUsername");
+	    String password = prop.getProperty("mlAppServicesPassword");
+	    String operationsEndPoint = prop.getProperty("operationsEndpoint");
+	    int port = 8009;
+
+	    StringBuilder b = new StringBuilder();
+	    String line = null;
+
+	    DatabaseClient dbClient = DatabaseClientFactory.newClient(operationsEndPoint, port, new DatabaseClientFactory.DigestAuthContext(username, password), ConnectionType.GATEWAY);
 
 
-	//Reader output = Customer.on(dbClient).customerWithChInCompanyName("Ch");
-	//BufferedReader output = new BufferedReader(Customer.on(dbClient).customerWithChInCompanyName("Ch"));
-	try {
-	BufferedReader output = new BufferedReader(Customer.on(dbClient).customerWithSalesAsTitle("Sales"));
-	while ((line = output.readLine()) != null) {
-		b.append(line);
-		}
-        System.out.println(b);
-	output.close();
-	//System.out.println(Customer.on(dbClient).customerDocsCount("Customer"));//output.readLine());
-	} catch (Exception e) {
-	e.printStackTrace();
-	}
+	    //Reader output = Customer.on(dbClient).customerWithChInCompanyName("Ch");
+	    //BufferedReader output = new BufferedReader(Customer.on(dbClient).customerWithChInCompanyName("Ch"));
+	    try {
+	        BufferedReader output = new BufferedReader(Customer.on(dbClient).customerWithSalesAsTitle("Sales"));
+	        while ((line = output.readLine()) != null) {
+	            b.append(line+"\n\n");
+		    }
+		    System.out.println(b);
+	        output.close();
+	        //System.out.println(Customer.on(dbClient).customerDocsCount("Customer"));//output.readLine());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	      }
 
-	finally{dbClient.release();}
+	    finally{dbClient.release();}
 	}
 }
