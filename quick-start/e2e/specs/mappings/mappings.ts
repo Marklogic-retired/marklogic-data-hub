@@ -14,11 +14,13 @@ export default function() {
       });
 
       it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();
         browser.sleep(5000);
       });
 
       it('should create a mapping for Product entity with sku source', async function() {
+        browser.get('http://localhost:8080/#/browse');
         // get the document uri with sku - board_games_accessories.csv-0-1
         await appPage.browseDataTab.click()
         browsePage.isLoaded();
@@ -29,6 +31,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         let sourceDocUriWithSmallSku =
           browsePage.resultsSpecificUri('/board_games_accessories.csv-0-1?doc=yes&type=foo').getText();
+        browser.get('http://localhost:8080/#/mappings');
         // create the map with specific sku doc uri
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
@@ -82,6 +85,7 @@ export default function() {
       });
 
       it('should update MapProduct with SKU source', async function() {
+        browser.get('http://localhost:8080/#/browse');
         // get the document uri with SKU - board_games.csv-0-10
         await appPage.browseDataTab.click()
         browsePage.isLoaded();
@@ -92,6 +96,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         let sourceDocUriWithBigSku =
           browsePage.resultsSpecificUri('/board_games.csv-0-10?doc=yes&type=foo').getText();
+        browser.get('http://localhost:8080/#/mappings');  
         // update the map with specific SKU doc uri
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
@@ -104,6 +109,7 @@ export default function() {
         await mappingsPage.inputSourceURI().clear();
         await mappingsPage.inputSourceURI().sendKeys(sourceDocUriWithBigSku);
         await mappingsPage.editSourceURITick().click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
         await mappingsPage.editSourceURIConfirmationOK().click();
         // putting sleep right until the flickering bug is fixed
@@ -133,11 +139,13 @@ export default function() {
       });
 
       it('should go to flows tab', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await appPage.flowsTab.click();
         flowPage.isLoaded();
       });
 
       it('should create Harmonize SKU flow on Product', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('Product');
         //browser.sleep(5000);
         await flowPage.createHarmonizeFlow('Product', 'Harmonize SKU', 'json', 'sjs', true, 'MapProduct');
@@ -147,11 +155,13 @@ export default function() {
       });
 
       it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();
         browser.sleep(5000);
       });
 
       it('should run Harmonize SKU flow with mapping', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('Product');
         //browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
@@ -164,6 +174,7 @@ export default function() {
       });
 
       it('should verify the harmonized SKU data with mappings', async function() {
+        browser.get('http://localhost:8080/#/browse');
         await appPage.browseDataTab.click()
         browsePage.isLoaded();
         browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
@@ -188,6 +199,7 @@ export default function() {
       });
 
       it('should rollback to current URI when providing invalid URI', async function() {
+        browser.get('http://localhost:8080/#/mappings');
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
@@ -201,6 +213,7 @@ export default function() {
         await mappingsPage.inputSourceURI().clear();
         await mappingsPage.inputSourceURI().sendKeys('invalidURI');
         await mappingsPage.editSourceURITick().click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.editSourceURIConfirmationOK()));
         await mappingsPage.editSourceURIConfirmationOK().click();
         //browser.sleep(3000);
@@ -219,6 +232,7 @@ export default function() {
       });
 
       it('should verify the behavior on reset cancel', async function() {
+        browser.get('http://localhost:8080/#/mappings');
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));
@@ -245,6 +259,7 @@ export default function() {
       });
 
       it('should verify the behavior on reset ok', async function() {
+        browser.get('http://localhost:8080/#/mappings');
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
         browser.wait(EC.elementToBeClickable(mappingsPage.entityMapping('MapProduct')));

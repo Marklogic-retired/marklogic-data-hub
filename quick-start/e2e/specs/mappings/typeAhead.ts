@@ -14,11 +14,13 @@ export default function() {
       });
 
       it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();
         browser.sleep(5000);
       });
 
       it ('should create input flow on WorldBank entity', async function() {
+        browser.get('http://localhost:8080/#/flows');
         //create WorldBank input flow
         await flowPage.clickEntityDisclosure('WorldBank');
         await flowPage.createInputFlow('WorldBank', 'Load WorldBank', 'json', 'sjs', false);
@@ -28,11 +30,13 @@ export default function() {
       });
 
       it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();
         browser.sleep(5000);
       });
 
       it ('should run Load WorldBank flow', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
         await flowPage.runInputFlow('WorldBank', 'Load WorldBank', 'json', 'worldbank', 'delimited_json',
@@ -40,6 +44,7 @@ export default function() {
       });
 
       it('should verify the loaded data', async function() {
+        browser.get('http://localhost:8080/#/browse');
         //verify on browse data page
         await appPage.browseDataTab.click();
         browsePage.isLoaded();
@@ -55,6 +60,7 @@ export default function() {
       });
 
       it ('should add properties to WorldBank entity', async function() {
+        browser.get('http://localhost:8080/#/entities');
         await appPage.entitiesTab.click();
         entityPage.isLoaded();
         //add properties
@@ -101,6 +107,7 @@ export default function() {
       });
 
       it('should create a mapping for WorldBank entity', async function() {
+        browser.get('http://localhost:8080/#/browse');
         // get the document uri - /worldbank/world_bank.zip-0-100
         await appPage.browseDataTab.click()
         browsePage.isLoaded();
@@ -111,6 +118,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         let sourceDocUri =
           browsePage.resultsSpecificUri('/world_bank.zip-0-100?doc=yes&type=foo').getText();
+          browser.get('http://localhost:8080/#/mappings');
         // create the map with specific worldbank doc uri
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
@@ -193,11 +201,13 @@ export default function() {
       });
 
       it('should go to flows tab', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await appPage.flowsTab.click();
         flowPage.isLoaded();
       });
 
       it('should create Harmonize WorldBank flow', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
         await flowPage.createHarmonizeFlow('WorldBank', 'Harmonize WorldBank', 'json', 'sjs', true, 'MapWorldBank');
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
@@ -206,11 +216,13 @@ export default function() {
       });
 
       it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();
         browser.sleep(5000);
       });
 
       it('should run Harmonize WorldBank flow with mapping', async function() {
+        browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isPresent()).toBe(true);
@@ -222,6 +234,7 @@ export default function() {
       });
 
       it('should verify the harmonized data with mappings', async function() {
+        browser.get('http://localhost:8080/#/browse');
         await appPage.browseDataTab.click()
         browsePage.isLoaded();
         browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
