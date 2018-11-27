@@ -17,41 +17,53 @@
       <div class="group-container" *ngFor="let group of groups" [hidden]="!isGroupVisible(group.category)">
         <h3 (click)="toggleSection(group.category)"><i class="fa fa-caret-right" [ngClass]="getSectionClass(group.category)"></i> {{group.category}}</h3>
         <div class="group-section slideDown" [ngClass]="getSectionClass(group.category)">
-          <p class="hint"><strong>Hint:</strong> Hover over the labels to view the description</p>
           <div class="setting" *ngFor="let setting of group.settings">
-            <mdl-switch
-              [attr.id]="setting.field"
-              class="primary-color"
-              [tooltip]="setting.description"
-              tooltipPlacement="right"
+            <span
               *ngIf="setting.type === 'boolean'"
-              [ngModel]="setting.value"
-              (change)="updateSetting(setting, $event)">
-              {{setting.label}}
-            </mdl-switch>
-            <mdl-textfield floating-label type="text"
               [tooltip]="setting.description"
-              tooltipPlacement="innerRight"
-              [label]="setting.label"
-              name="{{setting.field}}" *ngIf="isText(setting.type)"
-              [ngModel]="setting.value"
-              (input)="updateSetting(setting, $event.target.value)"
-              [disabled]="setting.readOnly"></mdl-textfield>
-            <app-custom-select
-              [attr.id]="setting.field"
-              [labelText]="setting.label"
-              [items]="setting.options"
-              [initialSelectedItem]="setting.value"
-              (selectedItem)="updateSetting(setting, $event)"
+              placement="left"
+              container="body">
+              <mdl-switch
+                [attr.id]="setting.field"
+                class="primary-color"
+                [ngModel]="setting.value"
+                (change)="updateSetting(setting, $event)">
+                {{setting.label}}
+              </mdl-switch>
+            </span>
+            <span
+              [tooltip]="setting.description"
+              placement="left"
+              container="body">
+              <mdl-textfield floating-label type="text"
+                [label]="setting.label"
+                name="{{setting.field}}" *ngIf="isText(setting.type)"
+                [ngModel]="setting.value"
+                (input)="updateSetting(setting, $event.target.value)"
+                [disabled]="setting.readOnly"></mdl-textfield>
+            </span>
+            <span
               *ngIf="setting.type === 'type'"
               [tooltip]="setting.description"
-              label="label"
-              value="value"></app-custom-select>
+              placement="left"
+              container="body">
+              <app-custom-select
+                [attr.id]="setting.field"
+                [labelText]="setting.label"
+                [items]="setting.options"
+                [initialSelectedItem]="setting.value"
+                (selectedItem)="updateSetting(setting, $event)"
+                label="label"
+                value="value"></app-custom-select>
+              </span>
           </div>
         </div>
       </div>
       <h4>
-        <span tooltip="This is the MLCP Command line that we generated from the options you chose.">
+        <span
+          tooltip="This is the MLCP Command line that we generated from the options you chose."
+          placement="left"
+          container="body">
           MLCP Command
         </span>
         <button
