@@ -23,11 +23,13 @@ import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DataHub
 import com.marklogic.hub.HubConfig
+import com.marklogic.hub.HubProject
 import com.marklogic.hub.MappingManager
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import com.marklogic.hub.impl.DataHubImpl
 import com.marklogic.hub.impl.HubConfigImpl
+import com.marklogic.hub.impl.HubProjectImpl
 import com.marklogic.hub.impl.ScaffoldingImpl
 import com.marklogic.hub.impl.FlowManagerImpl
 import com.marklogic.hub.impl.EntityManagerImpl
@@ -45,6 +47,7 @@ class DataHubPlugin implements Plugin<Project> {
 
     private DataHub dataHub
     private Scaffolding scaffolding
+    private HubProject hubProject
     private HubConfig hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
     private LoadUserStagingModulesCommand loadUserStagingModulesCommand
@@ -141,6 +144,7 @@ class DataHubPlugin implements Plugin<Project> {
         ctx.refresh()
 
         hubConfig = ctx.getBean(HubConfigImpl.class)
+        hubProject = ctx.getBean(HubProjectImpl.class)
         dataHub = ctx.getBean(DataHubImpl.class)
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
@@ -157,6 +161,9 @@ class DataHubPlugin implements Plugin<Project> {
         def extensions = project.getExtensions()
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
+        if(! hubProject.isInitialized()) {
+            hubConfig.initHubProject()
+        }
         hubConfig.refreshProject()
 
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
@@ -166,6 +173,7 @@ class DataHubPlugin implements Plugin<Project> {
         hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
         project.extensions.add("hubConfig", hubConfig)
+        project.extensions.add("hubProject", hubProject)
         project.extensions.add("dataHub", dataHub)
         project.extensions.add("scaffolding", scaffolding)
         project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
