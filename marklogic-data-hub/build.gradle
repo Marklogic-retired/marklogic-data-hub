@@ -295,7 +295,7 @@ task testIntegration(type: Test) {
 
 task testBootstrap(type: Test) {
     useJUnitPlatform  {
-        exclude 'com/marklogic/bootstrap/**'
+        include 'com/marklogic/bootstrap/**'
     }
 }
 

@@ -23,6 +23,7 @@ import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
@@ -44,9 +45,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, EntitiesControllerTest.class})
@@ -61,26 +60,13 @@ class EntitiesControllerTest extends BaseTestController {
     @Autowired
     Scaffolding scaffolding;
 
+    @Autowired
+    HubConfig hubConfig;
 
     @Test
     public void getInputFlowOptions() throws Exception {
-        String path = "/some/project/path";
-        //envConfig.setInitialized(true);
-        //envConfig.setProjectDir(path);
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"/some/project/path\" }", new ObjectMapper().writeValueAsString(options), true);
-    }
-
-    @Test
-    public void getInputFlowOptionsWin() throws Exception {
-        String path = "C:\\some\\crazy\\path\\to\\project";
-
-        //envConfig.setInitialized(true);
-        //envConfig.setProjectDir(path);
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(path).withPropertiesFromEnvironment().build());
-        Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
+        JSONAssert.assertEquals("{ \"input_file_path\": " + hubConfig.getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
