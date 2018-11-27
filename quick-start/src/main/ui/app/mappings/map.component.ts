@@ -139,6 +139,7 @@ export class MapComponent implements OnInit {
   /**
    * Update the sample document based on a URI.
    */
+  /*
   updateSampleDoc() {
     if (this.sampleDocURI === this.editURIVal) {
       this.editingURI = false;
@@ -161,7 +162,7 @@ export class MapComponent implements OnInit {
      this.loadSampleDocByURI(this.editURIVal, {}, true);
     }
   }
-
+ */
   /**
    * Update the mapping description by saving the mapping.
    */

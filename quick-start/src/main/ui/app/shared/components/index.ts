@@ -6,8 +6,7 @@ export * from './theme';
 export * from './inline-edit/inline-edit.component';
 export * from './pagination';
 export * from './select/select.component';
-export * from './mappings/map-ui.component';
-export * from './mappings/new-map-ui.component';
+export * from './mappings';
 export * from './login'
 export * from './search';
 export * from './choose-collation/choose-collation.component';
@@ -25,4 +24,4 @@ export * from './header/header-ui.component';
 export * from './tooltip/tooltip-container-ui.component';
 export * from './trace-viewer/trace-viewer-ui.component';
 export * from './entity-editor/entity-editor.component';
-export * from './new-flow/new-flow-ui.component'; 
+export * from './new-flow/new-flow-ui.component';
