@@ -14,7 +14,6 @@ public class CertificateTemplateManagerPlus extends CertificateTemplateManager{
 
 	public CertificateTemplateManagerPlus(ManageClient client) {
 		super(client);
-		// TODO Auto-generated constructor stub
 	}
 
     public ResponseEntity<String> setCertificatesForTemplate(String templateIdOrName) throws IOException{
@@ -23,16 +22,16 @@ public class CertificateTemplateManagerPlus extends CertificateTemplateManager{
         String cert = FileUtils.readFileToString(ResourceUtils.getFile("classpath:ssl/dhf-server.crt"));
         String pkey = FileUtils.readFileToString(ResourceUtils.getFile("classpath:ssl/pkey.pem"));
 
-        ObjectNode certNode = node.objectNode();
+        node.put("operation", "insert-host-certificates");
+
+        ObjectNode certsNode = node.putObject("certificates");
+        ObjectNode certNode = certsNode.putObject("certificate");
         certNode.put("cert", cert );
         certNode.put("pkey", pkey);
 
-        ObjectNode certsNode = node.objectNode();
-        certsNode.put("certificate", certNode);
+        // was this intentional?  It didn't look like it does anything
+        //node.arrayNode().add(certNode);
 
-        node.put("operation", "insert-host-certificates");
-        node.arrayNode().add(certNode);
-        node.put("certificates", certsNode);
 
         String json = node.toString();
         return postPayload(getManageClient(), getResourcePath(templateIdOrName), json);

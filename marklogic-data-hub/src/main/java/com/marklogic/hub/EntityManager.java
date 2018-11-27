@@ -24,15 +24,6 @@ import java.util.HashMap;
  * Manages existing entities' MarkLogic Server database index settings and query options.
  */
 public interface EntityManager {
-    /**
-     * Creates and returns the EntityManager object
-     *
-     * @param hubConfig - the hubConfig for the EntityManager to use
-     * @return an EntityManager object with a set hubConfig
-     */
-    //static EntityManager create(HubConfig hubConfig) {
-       //return new EntityManagerImpl(hubConfig);
-    //}
 
     /**
      * Updates the query options to the file system

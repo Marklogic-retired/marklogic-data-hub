@@ -34,16 +34,6 @@ public interface HubProject {
     String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
 
     /**
-     * Creates a HubProject object and returns it in the base project directory
-     * @param projectDirStr - the base project directory
-     * @return the HubProject object for the newly created project
-     */
-    //FIXME make static method that returns from application context?
-    //static HubProject create(String projectDirStr) {
-    //return new HubProjectImpl(projectDirStr);
-    //}
-
-    /**
      * Gets the string used to originally make the project
      *
      * @return The directory string.

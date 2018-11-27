@@ -84,15 +84,6 @@ public interface HubConfig {
     String getHost();
 
     /**
-     * Creates and returns a hubconfig object for a project directory
-     * @param project - A HubProject, which is a directory that contains DHF state.
-     * @return HubConfig based in the project directory
-     */
-    ///static HubConfig create(HubProject project) {
-        ///return new HubConfigImpl(project);
-    ///}
-
-    /**
      * Returns the database name for the DatabaseKind set in the config
      * @param kind - DatabaseKind enum, eg: STAGING or JOB
      * @return The name of the database
@@ -334,13 +325,13 @@ public interface HubConfig {
      * Obtains the project directory as a string
      * @return project directory
      */
-    //String getProjectDir();
+    String getProjectDir();
 
     /**
      * Sets the directory for the current project
      * @param projectDir - a string that represents the path to the project directory
      */
-    //void setProjectDir(String projectDir);
+    void setProjectDir(String projectDir);
 
     /**
      * Returns the HubProject associated with the HubConfig
@@ -357,15 +348,13 @@ public interface HubConfig {
      * Returns the last deployed timestamp file for the hub config and modules
      * @return string of what's located in the timestamp file
      */
-    // FIXME make passthrough to project
-    //String getHubModulesDeployTimestampFile();
+    String getHubModulesDeployTimestampFile();
 
     /**
      * Returns the last deployed timestamp file for the user modules
      * @return string of what's located in the timestamp file
      */
-    // FIXME make passthrough to project
-    //String getUserModulesDeployTimestampFile();
+    String getUserModulesDeployTimestampFile();
 
     /**
      * Creates a new DatabaseClient for accessing the AppServices app
@@ -556,16 +545,9 @@ public interface HubConfig {
 
 
     /**
-     * Forces a re-read of properties from the gradle.properties file in the project.
-     * TODO what about the gradle-env.properties files?
+     * Initializes the java application state to a specific location.  A properties file
+     * is expected to be found in this directory.
+     * @param projectDirString The directory in which to find properties for a project.
      */
-    void refreshProject();
-
-    void refreshProject(Properties properties);
-
     void createProject(String projectDirString);
-
-    HubConfig withPropertiesFromEnvironment();
-
-    HubConfig withPropertiesFromEnvironment(String environment);
 }

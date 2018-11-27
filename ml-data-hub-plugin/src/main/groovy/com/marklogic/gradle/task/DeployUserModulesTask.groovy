@@ -30,7 +30,6 @@ class DeployUserModulesTask extends HubTask {
             return
         }
         def cmd = getLoadUserStagingModulesCommand()
-        // TODO: make this user configurable
         cmd.setForceLoad(true);
 
         cmd.execute(getCommandContext())

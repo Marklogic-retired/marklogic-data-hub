@@ -105,7 +105,6 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
 
         ConnectionAuthenticationToken authenticationToken =new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
                 token.getHostname(), projectId, environment, token.getAuthorities());
-        // TODO remove ? authenticationToken.setEnvironmentConfig(token.getEnvironmentConfig());
         return authenticationToken;
     }
 

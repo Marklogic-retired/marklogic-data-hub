@@ -78,7 +78,6 @@ public class HubConfigImpl implements HubConfig
     // a set of properties to use for legacy token replacement.
     Properties projectProperties = null;
 
-    // TODO fix this. hooks into every singleton for refresh :(
     @Autowired FlowManagerImpl flowManager;
     @Autowired DataHubImpl dataHub;
     @Autowired Versions versions;
@@ -889,6 +888,19 @@ public class HubConfigImpl implements HubConfig
     @Override public String getModulePermissions() {
         return modulePermissions;
     }
+
+    @Override
+    @Deprecated
+    public String getProjectDir() {
+        return hubProject.getProjectDirString();
+    }
+
+    @Override
+    @Deprecated
+    public void setProjectDir(String projectDir) {
+        createProject(projectDir);
+    }
+
     public void setModulePermissions(String modulePermissions) {
         this.modulePermissions = modulePermissions;
     }
@@ -900,9 +912,19 @@ public class HubConfigImpl implements HubConfig
 
     @Override  public void initHubProject() {
         this.hubProject.init(getCustomTokens());
-//        refreshProject();
     }
 
+    @Override
+    @Deprecated
+    public String getHubModulesDeployTimestampFile() {
+        return hubProject.getHubModulesDeployTimestampFile();
+    }
+
+    @Override
+    @Deprecated
+    public String getUserModulesDeployTimestampFile() {
+        return hubProject.getUserModulesDeployTimestampFile();
+    }
 
 
     public void hydrateConfigs() {
@@ -1486,19 +1508,6 @@ public class HubConfigImpl implements HubConfig
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
-        // spring has custom tokens handling FIXME
-        /*  use an itertion over custom tokens rather than properties?
-        Enumeration keyEnum = environmentProperties.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
-        */
-
-
         String version = getJarVersion();
         customTokens.put("%%mlHubVersion%%", version);
 
@@ -1552,7 +1561,6 @@ public class HubConfigImpl implements HubConfig
 
     }
 
-    @Override
     @JsonIgnore
     public void refreshProject() {
         loadConfigurationFromProperties();
@@ -1563,7 +1571,6 @@ public class HubConfigImpl implements HubConfig
 
     }
 
-    @Override
     @JsonIgnore
     public void refreshProject(Properties properties) {
         loadConfigurationFromProperties(properties);
@@ -1574,13 +1581,11 @@ public class HubConfigImpl implements HubConfig
 
     }
 
-    @Override
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment() {
         return withPropertiesFromEnvironment(null);
     }
 
-    @Override
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
         this.usePropertiesFromEnvironment = true;

@@ -200,7 +200,6 @@ public class EntityManagerService {
         }
     }
 
-    //TODO Remove these silly pass throughs
     public void deploySearchOptions() {
         em.deployQueryOptions();
     }
