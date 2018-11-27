@@ -42,12 +42,27 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       color: #333;
     }
 
+    .help-icon {
+      padding-left: 15px;
+      i.fa-question-circle {
+        cursor: pointer;
+      }
+    }
+
     .edit-area {
-      cursor: pointer;
       float: right;
 
       .fa-remove {
         color: $red-color;
+      }
+
+      .edit-start {
+        cursor: pointer;
+      }
+
+      .delete-entity {
+        padding-left: 5px;
+        cursor: pointer;
       }
 
       .mdi {
@@ -175,4 +190,14 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
 
 /deep/ app-resizable {
   min-width: $entity-model-min-width;
+}
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}
+
+/* Widen tooltip container for long phrases */
+/deep/ .tooltip .tooltip-inner {
+  max-width: 250px;
 }
