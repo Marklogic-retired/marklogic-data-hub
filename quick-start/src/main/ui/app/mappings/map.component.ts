@@ -1,21 +1,33 @@
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Entity } from '../entities';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
 import { MapService } from './map.service';
-import { MdlDialogService } from '@angular-mdl/core';
-import { MdlSnackbarService } from '@angular-mdl/core';
+import { MapUiComponent } from '../shared/components';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import {Mapping} from "./mapping.model";
+import { Mapping } from "./mapping.model";
 
 @Component({
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss'],
+  template: `
+    <app-map-ui
+      [mapping]="this.mapping"
+      [chosenEntity]="this.chosenEntity"
+      [conns]="this.conns"
+      [sampleDocSrcProps]="this.sampleDocSrcProps"
+      [editURIVal]="this.editURIVal"
+      (updateDesc)="this.updateDesc($event)"
+      (updateURI)="this.updateURI($event)"
+      (updateMap)="this.updateMap($event)"
+      (resetMap)="this.resetMap()"
+    ></app-map-ui>
+  `
 })
 export class MapComponent implements OnInit {
+  @ViewChild(MapUiComponent) private mapUI: MapUiComponent;
+
   // Entity Model
   public chosenEntity: Entity;
   private entityPrimaryKey: string = '';
@@ -29,12 +41,11 @@ export class MapComponent implements OnInit {
   private pageLength: number = 1;
   public sampleDocURI: string = null;
   private sampleDocSrc: any = null;
-  private sampleDocSrcProps: Array<any> = [];
-  public valMaxLen: number = 17;
+  public sampleDocSrcProps: Array<any> = [];
 
   // Connections
-  public conns: Object = {};
-  public connsOrig: Object = {};
+  public conns: object = {};
+  public connsOrig: object = {};
   private mapPrefix: string = 'dhf-map-';
 
   private entityName: string;
@@ -43,19 +54,8 @@ export class MapComponent implements OnInit {
 
   public mapping: Mapping = new Mapping();
 
-  public filterFocus = {};
-  public filterText = {};
+  public editURIVal: string;
 
-  // Edit source URI
-  public editURIVal;
-  public editingURI = false;
-
-  //edit source Context
-  public editingSourceContext = false;
-
-  //edit description
-  public editDescVal;
-  public editingDesc = false;
   /**
    * Load chosen entity to use as harmonized model.
    */
@@ -68,6 +68,11 @@ export class MapComponent implements OnInit {
       this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
     });
     this.entitiesService.getEntities();
+  }
+
+  updateURI(event) {
+    this.conns = event.conns;
+    this.loadSampleDocByURI(event.uri, event.uriOrig, event.connsOrig, event.save);
   }
 
   /**
@@ -90,7 +95,7 @@ export class MapComponent implements OnInit {
     ).subscribe(response => {
       this.sampleDocURI = response.results[0].uri;
       this.editURIVal = this.sampleDocURI;
-      this.loadSampleDocByURI(this.sampleDocURI, {}, false)
+      this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
     },
       () => {},
       () => {}
@@ -100,11 +105,13 @@ export class MapComponent implements OnInit {
   /**
    * Load a sample document by its URI.
    * @param uri A document URI
-   * @param conns A connections object in case rollback is required
-   * @param save {boolean} Save map after successful load (when updating URI)
+   * @param uriOrig Original URI in case none is found
+   * @param connsOrig A connections object in case rollback is required
+   * @param save {boolean} Save map after successful load.
    */
-  loadSampleDocByURI(uri: string, conns: Object, save: boolean): void {
+  loadSampleDocByURI(uri: string, uriOrig: string, connsOrig: Object, save: boolean): void {
     let self = this;
+    this.editURIVal = uri;
     this.searchService.getDoc(this.currentDatabase, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
       this.sampleDocSrc = doc;
@@ -116,30 +123,15 @@ export class MapComponent implements OnInit {
         };
         self.sampleDocSrcProps.push(prop);
       });
-      this.sampleDocURI = this.editURIVal;
-      this.editingURI = false;
+      this.sampleDocURI = uri;
       if (save) {
         this.saveMap();
-        console.log('map saved with updated URI');
+        console.log('map saved');
       }
     },
       (err) => {
-        // URI not found; this can only occur when editing the URI
-        let result = this.dialogService.alert(
-          'Document URI not found: ' + uri,
-          'OK'
-        );
-        result.subscribe( () => {
-            this.editURIVal = this.sampleDocURI;
-            this.editingURI = false;
-            // rollback to conns from previous URI
-            if (!_.isEmpty(conns)) {
-              this.conns = conns;
-            }
-          },
-          () => {},
-          () => {}
-          )
+        this.conns = connsOrig;
+        self.mapUI.uriNotFound(uri);
         }
       );
   }
@@ -147,6 +139,7 @@ export class MapComponent implements OnInit {
   /**
    * Update the sample document based on a URI.
    */
+  /*
   updateSampleDoc() {
     if (this.sampleDocURI === this.editURIVal) {
       this.editingURI = false;
@@ -169,41 +162,21 @@ export class MapComponent implements OnInit {
      this.loadSampleDocByURI(this.editURIVal, {}, true);
     }
   }
+ */
+  /**
+   * Update the mapping description by saving the mapping.
+   */
+  updateDesc(mapping) {
+    this.mapping = mapping;
+    this.saveMap();
+  }
 
   /**
-   * Cancel the editing of the source document URI.
+   * Update the mapping based on new connections submitted.
    */
-  cancelEditURI() {
-    this.editURIVal = this.sampleDocURI;
-    this.editingURI = false;
-  }
-
-  /**
-   * Cancel the editing of the source document URI.
-   */
-  cancelEditDesc() {
-    this.editDescVal = this.mapping.description;
-    this.editingDesc = false;
-  }
-
-  keyPressURI(event) {
-    if (event.key === 'Enter') {
-      this.updateSampleDoc();
-    }
-  }
-
-  updateDesc() {
-    if (this.mapping.description !== this.editDescVal) {
-      this.mapping.description = this.editDescVal;
-      this.saveMap();
-    }
-    this.editingDesc = false;
-  }
-
-  keyPressDesc(event) {
-    if (event.key === 'Enter') {
-      this.updateDesc();
-    }
+  updateMap(conns) {
+    this.conns = conns;
+    this.saveMap();
   }
 
   constructor(
@@ -211,9 +184,7 @@ export class MapComponent implements OnInit {
     private mapService: MapService,
     private entitiesService: EntitiesService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private dialogService: MdlDialogService,
-    private snackbar: MdlSnackbarService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   /**
@@ -230,47 +201,8 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Handle property selection from source menu
-   * @param prop Property object
-   * @param proptype 'src' or 'harm'
-   * @param index Index of menu (not item)
-   */
-  handleSelection(entityPropName, srcPropName): void {
-    this.conns[entityPropName] = srcPropName;
-  }
-
-  /**
-   * Clear a property selection from source menu
-   * @param event Event object, used to stop propagation
-   * @param entityPropName Entity property name mapping to clear
-   */
-  clearSelection(event, entityPropName): void {
-    if (this.conns[entityPropName])
-      delete this.conns[entityPropName];
-    this.editingURI = false; // close edit box if open
-    event.stopPropagation();
-  }
-
-  /**
-   * Get property objects of source document
-   * @param entityPropName Entity property name mapping to lookup
-   * @param srcKey 'key', 'val' or 'type'
-   * @returns {String} Value of the src data requested
-   */
-  getConnSrcData(entityPropName, srcKey): string {
-    let data;
-    let propertyKey = this.conns[entityPropName];
-
-    if (this.sampleDocSrcProps.length > 0 && this.conns[entityPropName]) {
-      let obj = _.find(this.sampleDocSrcProps, function(o) { return o && (o.key === propertyKey); });
-      data = obj[srcKey];
-    }
-
-    return String(data);
-  }
-
-  /**
-   * Save the mapping artifact
+   * Save the mapping artifact and then show a confirmation popup
+   * and navigate to the view for that mapping.
    */
   saveMap(): void {
     let formattedConns = {};
@@ -295,9 +227,7 @@ export class MapComponent implements OnInit {
     let tmpMapName = this.mapName;
 
     this.mapService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe((res: any) => {
-      this.snackbar.showSnackbar({
-        message: 'Mapping "' + tmpMapName + '" saved'
-      });
+      this.mapUI.showSnackbar('Mapping "' + tmpMapName + '" saved');
       this.loadMap();
       this.router.navigate(['/mappings', tmpEntityName, tmpMapName]);
     });
@@ -308,20 +238,12 @@ export class MapComponent implements OnInit {
    * Handle reset button event
    */
   resetMap(): void {
-    let result = this.dialogService.confirm(
-      'Reset map to previously saved version?',
-      'Cancel', 'OK');
-    result.subscribe( () => {
-        this.loadMap();
-      },(err: any) => {
-        console.log('reset map aborted');
-      },
-      () => {}
-    );
+    this.loadMap();
   }
 
   /**
-   * Retrieve the mapping artifact
+   * Retrieve the mapping artifact and then get the sample document
+   * and build the connection object.
    */
   loadMap() {
     let self = this;
@@ -331,10 +253,6 @@ export class MapComponent implements OnInit {
         this.mapping = map;
         this.sampleDocURI = map.sourceURI;
         this.editURIVal = this.sampleDocURI;
-        this.editDescVal = map.description;
-        // close any open edit inputs when changing mappings
-        this.editingDesc = false;
-        this.editingURI = false;
       }
       // if source URI unset in mapping, load sample source doc based on entity
       if (this.mapping && !this.mapping.sourceURI) {
@@ -342,7 +260,7 @@ export class MapComponent implements OnInit {
       }
       // else load source doc based on source URI in mapping
       else {
-        this.loadSampleDocByURI(this.sampleDocURI, {}, false);
+        this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
       }
       if (map && map.properties) {
         self.conns = {};
@@ -352,10 +270,6 @@ export class MapComponent implements OnInit {
         self.connsOrig = _.clone(self.conns);
       }
     });
-  }
-
-  mapChanged() {
-    return !_.isEqual(this.conns, this.connsOrig);
   }
 
   /**
@@ -388,77 +302,6 @@ export class MapComponent implements OnInit {
       result = 'string';
     }
     return result;
-  }
-
-  /**
-   * Should datatype be displayed with quotes?
-   * @param property datatype
-   * @returns {boolean}
-   */
-  isQuoted(type) {
-    let typesToQuote = ['string', 'date'];
-    return _.indexOf(typesToQuote, type) > -1;
-  }
-
-  /**
-   * Trim start of long string and add prefix ('...trimmed-string'
-   * @param str String to trim
-   * @param num Character threshold
-   * @param prefix Prefix to add
-   * @returns {any} Trimmed string
-   */
-  getLastChars(str, num, prefix) {
-    prefix = prefix ? prefix : '...';
-    let result = str;
-    if (typeof str === 'string' && str.length > num) {
-      result = prefix + str.substr(str.length - num);
-    }
-    return result;
-  }
-
-  /**
-   * Does entity property have an element range index set?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  hasElementRangeIndex(name) {
-    return _.includes(this.chosenEntity.definition.elementRangeIndex, name);
-  }
-
-  /**
-   * Does entity property have a path range index set?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  hasRangeIndex(name) {
-    return _.includes(this.chosenEntity.definition.rangeIndex, name);
-  }
-
-  /**
-   * Does entity property have a word lexicon set?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  hasWordLexicon(name) {
-    return _.includes(this.chosenEntity.definition.wordLexicon, name);
-  }
-
-  /**
-   * Is an entity property required?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  isRequired(name) {
-    return _.includes(this.chosenEntity.definition.required, name);
-  }
-
-  /**
-   * Is an entity property personally identifiable information?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  isPII(name) {
-    return _.includes(this.chosenEntity.definition.pii, name);
   }
 
 }

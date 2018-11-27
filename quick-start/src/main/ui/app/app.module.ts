@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { TruncateCharactersPipe } from './truncate';
-import { ListFilterPipe } from './listfilter';
+import { ListFilterPipe } from './shared/components/mappings/listfilter.pipe';
 import { AppComponent } from './app.component';
 import { AppUiComponent } from './shared/components';
 import { FlowsComponent } from './flows';
@@ -77,6 +77,7 @@ import { SelectKeyValuesComponent } from './shared/components';
 import { JobExportDialogComponent } from './jobs';
 
 import { MapComponent } from './mappings';
+import { MapUiComponent } from "./shared/components";
 import { MappingsComponent } from "./mappings";
 import { MappingsUiComponent } from "./shared/components";
 import { NewMapComponent } from "./mappings/new-map.component";
@@ -153,6 +154,9 @@ import {
     ListFilterPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
+    MapComponent,
+    MapUiComponent,
+    MappingsComponent,
     SettingsUiComponent
   ],
   entryComponents: [
