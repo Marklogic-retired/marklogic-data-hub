@@ -527,8 +527,10 @@ public class HubTestBase {
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             FileUtils.copyFile(devProperties.toFile(), projectProperties.toFile());
 
-            if(environmentName != null) {
-                Path envProperties = Paths.get(".").resolve("gradle-" + environmentName + ".properties");
+            File envFile = Paths.get(".").resolve("gradle-" + environmentName + ".properties").toFile();
+
+            if(environmentName != null && envFile.exists()) {
+                Path envProperties = envFile.toPath();
                 Path projectEnvProperties = projectDir.toPath().resolve("gradle-" + environmentName + ".properties");
                 FileUtils.copyFile(envProperties.toFile(), projectEnvProperties.toFile());
             }

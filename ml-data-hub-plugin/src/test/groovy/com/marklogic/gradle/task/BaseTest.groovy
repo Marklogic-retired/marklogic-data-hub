@@ -258,8 +258,8 @@ class BaseTest extends Specification {
 
         File file = new File(Paths.get(".").resolve("gradle.properties").toString());
         loadPropertiesFromFile(file, environmentProperties);
-        if (environmentName != null) {
-            File envPropertiesFile = new File(Paths.get(".").resolve("gradle-" + environmentName + ".properties").toString());
+        File envPropertiesFile = new File(Paths.get(".").resolve("gradle-" + environmentName + ".properties").toString());
+        if (environmentName != null && envPropertiesFile.exists()) {
             loadPropertiesFromFile(envPropertiesFile, environmentProperties);
         }
 
