@@ -41,83 +41,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 public class HubConfigJsonTest {
 
-    protected static final String PROJECT_PATH = "ye-old-project";
+    protected static final String PROJECT_PATH = "ye-olde-project";
 
     @Autowired
     private JacksonTester<HubConfig> jsonSerializer;
 
     @Autowired
-    private JacksonTester<HubConfig> jsonDeserializer;
-
-    @Autowired
     private HubConfig hubConfig;
 
     @Test
-    public void testDeserialize() throws IOException {
-        // need to escape the backslashes on Windows. On Linux, there won't be any, so the replace will have no effect
-        String projectPath = new File(PROJECT_PATH).getAbsolutePath().replace("\\", "\\\\");
-        String expected = "{\n" +
-            "  \"host\": null,\n" +
-            "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
-            "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
-            "  \"stagingForestsPerHost\": 4,\n" +
-            "  \"stagingPort\": 8010,\n" +
-            "  \"stagingAuthMethod\": \"digest\",\n" +
-            "  \"finalDbName\": \"data-hub-FINAL\",\n" +
-            "  \"finalHttpName\": \"data-hub-FINAL\",\n" +
-            "  \"finalForestsPerHost\": 4,\n" +
-            "  \"finalPort\": 8011,\n" +
-            "  \"finalAuthMethod\": \"digest\",\n" +
-            "  \"traceDbName\": \"data-hub-TRACING\",\n" +
-            "  \"traceHttpName\": \"data-hub-TRACING\",\n" +
-            "  \"traceForestsPerHost\": 1,\n" +
-            "  \"tracePort\": 8012,\n" +
-            "  \"traceAuthMethod\": \"digest\",\n" +
-            "  \"jobDbName\": \"data-hub-JOBS\",\n" +
-            "  \"jobHttpName\": \"data-hub-JOBS\",\n" +
-            "  \"jobForestsPerHost\": 1,\n" +
-            "  \"jobPort\": 8013,\n" +
-            "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
-            "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
-            "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
-            "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
-            "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
-            "  \"modulesForestsPerHost\": 1,\n" +
-            "  \"stagingTriggersForestsPerHost\": 1,\n" +
-            "  \"stagingSchemasForestsPerHost\": 1,\n" +
-            "  \"finalTriggersForestsPerHost\": 1,\n" +
-            "  \"finalSchemasForestsPerHost\": 1,\n" +
-            "  \"hubRoleName\": \"data-hub-role\",\n" +
-            "  \"hubUserName\": \"data-hub-user\",\n" +
-            "  \"customForestPath\": \"forests\",\n" +
-            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute\",\n" +
-            "  \"projectDir\": \"" + projectPath + "\",\n" +
-            "  \"jarVersion\": \"0.1.2\"\n" +
-            "}";
-        //HubConfig actual = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
-        //assertThat(this.jsonDeserializer.parseObject(expected).getHubPluginsDir()).isEqualTo(actual.getHubPluginsDir());
-    }
-
-    @Test
     public void testSerialize() throws IOException {
-        // need to escape the backslashes on Windows. On Linux, there won't be any, so the replace will have no effect
-        String projectPath = new File(PROJECT_PATH).getAbsolutePath().replace("\\", "\\\\");
-        //HubConfig hubConfig = HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build();
+        hubConfig.createProject(PROJECT_PATH);
+        hubConfig.initHubProject();
+        hubConfig.refreshProject();
+
         String expected = "{\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
             "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
-            "  \"stagingForestsPerHost\": 4,\n" +
+            "  \"stagingForestsPerHost\": 3,\n" +
             "  \"stagingPort\": 8010,\n" +
             "  \"stagingAuthMethod\": \"digest\",\n" +
             "  \"finalDbName\": \"data-hub-FINAL\",\n" +
             "  \"finalHttpName\": \"data-hub-FINAL\",\n" +
-            "  \"finalForestsPerHost\": 4,\n" +
+            "  \"finalForestsPerHost\": 3,\n" +
             "  \"finalPort\": 8011,\n" +
             "  \"finalAuthMethod\": \"digest\",\n" +
             "  \"jobDbName\": \"data-hub-JOBS\",\n" +
             "  \"jobHttpName\": \"data-hub-JOBS\",\n" +
-            "  \"jobForestsPerHost\": 1,\n" +
+            "  \"jobForestsPerHost\": 4,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
             "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
@@ -133,11 +84,9 @@ public class HubConfigJsonTest {
             "  \"hubRoleName\": \"data-hub-role\",\n" +
             "  \"hubUserName\": \"data-hub-user\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
-            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute\",\n" +
-            "  \"projectDir\": \"" + projectPath + "\",\n" +
+            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,data-hub-role,read,data-hub-role,execute\",\n" +
             "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
             "}";
-        System.out.println(jsonSerializer.write(hubConfig).getJson());
         assertThat(jsonSerializer.write(hubConfig)).isEqualToJson(expected);
     }
 }

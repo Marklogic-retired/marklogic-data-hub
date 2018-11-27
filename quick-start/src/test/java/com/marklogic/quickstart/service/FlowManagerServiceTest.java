@@ -70,6 +70,9 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     Scaffolding scaffolding;
 
+    @Autowired
+    HubConfig hubConfig;
+
     @BeforeEach
     public void setup() {
         createProjectDir();
@@ -121,19 +124,11 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void getFlowMlcpOptionsFromFileNix() throws Exception {
+    public void getFlowMlcpOptionsFromFile() throws Exception {
         setEnvConfig();
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", new ObjectMapper().writeValueAsString(options), true);
-    }
-
-    @Test
-    public void getFlowMlcpOptionsFromFileWin() throws Exception {
-        setEnvConfig();
-
-        Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
+        JSONAssert.assertEquals("{ \"input_file_path\": " + hubConfig.getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
