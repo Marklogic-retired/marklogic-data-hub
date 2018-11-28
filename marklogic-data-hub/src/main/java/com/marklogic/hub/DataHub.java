@@ -30,10 +30,6 @@ import java.util.List;
  */
 public interface DataHub {
 
-    //static DataHub create(HubConfig hubConfig) {
-        //return new DataHubImpl(hubConfig);
-    //}
-
     /**
      * Clears the database of all documents
      * @param database - the name of the database in string form

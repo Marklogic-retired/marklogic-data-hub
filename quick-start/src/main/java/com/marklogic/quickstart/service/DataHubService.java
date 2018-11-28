@@ -164,11 +164,6 @@ public class DataHubService {
         boolean result = dataHub.upgradeHub();
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-            if (authenticationToken != null) {
-                // TODO do I care about checkIfInstalled
-                //EnvironmentConfig environmentConfig = authenticationToken.getEnvironmentConfig();
-                //environmentConfig.checkIfInstalled();
-            }
         }
         return result;
 

@@ -124,7 +124,6 @@ public class EntityManagerTest extends HubTestBase {
 
     @Test
     @Disabled
-    // FIXME ignore, reading the options from modules db is not working right now.
     public void testDeploySearchOptions() throws IOException, SAXException {
     	getDataHub().clearUserModules();
         installEntities();

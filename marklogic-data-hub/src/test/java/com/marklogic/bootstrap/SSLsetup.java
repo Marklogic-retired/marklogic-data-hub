@@ -20,6 +20,8 @@ import com.marklogic.mgmt.resource.hosts.HostManager;
 import com.marklogic.mgmt.resource.security.CertificateAuthorityManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
+import org.apache.hadoop.conf.Configuration;
+import org.springframework.boot.test.context.SpringBootTest;
 
 public class SSLsetup {
 
@@ -57,8 +59,8 @@ public class SSLsetup {
         try {
             cacert = FileUtils.readFileToString(getResourceFile("ssl/ca-cert.crt"));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            // ignore IOException
         }
 
         CertificateAuthorityManager cam = new CertificateAuthorityManager(manageClient);
@@ -71,25 +73,24 @@ public class SSLsetup {
         }
 
         ObjectNode node = ObjectMapperFactory.getObjectMapper().createObjectNode();
-        ArrayNode certnode = node.arrayNode();
-        certnode.add(cacert);
-        node.put("ssl-certificate-template", "dhf-cert");
-        node.put("ssl-allow-sslv3", "true");
-        node.put("ssl-allow-tls", "true");
-        node.put("ssl-disable-sslv3", "false");
-        node.put("ssl-disable-tlsv1", "false");
-        node.put("ssl-disable-tlsv1-1", "false");
-        node.put("ssl-disable-tlsv1-2", "false");
         if (certAuth) {
             node.put("authentication", "certificate");
-            node.put("ssl-client-certificate-pem", certnode);
+            ArrayNode certnode = node.putArray("ssl-client-certificate-pem");
+            certnode.add(cacert);
+            node.put("ssl-certificate-template", "dhf-cert");
+            node.put("ssl-allow-sslv3", "true");
+            node.put("ssl-allow-tls", "true");
+            node.put("ssl-disable-sslv3", "false");
+            node.put("ssl-disable-tlsv1", "false");
+            node.put("ssl-disable-tlsv1-1", "false");
+            node.put("ssl-disable-tlsv1-2", "false");
         }
         try {
             FileUtils.writeStringToFile(new File(System.getProperty("java.io.tmpdir") + "/ssl-server.json"),
                     node.toString());
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
+            // ignore
         }
 
         File finalServerFile = getResourceFile("ml-config/servers");

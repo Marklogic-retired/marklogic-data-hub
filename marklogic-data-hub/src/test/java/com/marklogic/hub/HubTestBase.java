@@ -388,7 +388,7 @@ public class HubTestBase {
         return adminHubConfig;
     }
 
-    protected HubConfig getHubAdminConfig() {
+    protected HubConfigImpl getHubAdminConfig() {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -398,9 +398,7 @@ public class HubTestBase {
         return adminHubConfig;
     }
 
-    //getHubFlowRunnerConfig is used for running flows
-    // FIXME get hubConfig working too
-    protected HubConfig getHubFlowRunnerConfig() {
+    protected HubConfigImpl getHubFlowRunnerConfig() {
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
         stagingAppConfig = adminHubConfig.getStagingAppConfig();

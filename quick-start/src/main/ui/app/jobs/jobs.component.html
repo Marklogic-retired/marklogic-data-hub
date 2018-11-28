@@ -61,12 +61,15 @@
                   (click)="showConsole(job)"><i class="fa fa-terminal"></i></mdl-button>
               </td>
               <td>
-                <mdl-button
-                  mdl-tooltip="Show the Traces for this job."
-                  mdl-button-type="icon" mdl-colored="primary" mdl-ripple
-                  (click)="showTraces(job.jobId)">
-                  <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i>
-                </mdl-button>
+                <span
+                  tooltip="Show the Traces for this job."
+                  container="body">
+                  <mdl-button
+                    mdl-button-type="icon" mdl-colored="primary" mdl-ripple
+                    (click)="showTraces(job.jobId)">
+                    <i (click)="showTraces(job.jobId)" class="fa fa-flash"></i>
+                  </mdl-button>
+                </span>
               </td>
               <td class="job-delete-checkbox">
                 <mdl-checkbox
