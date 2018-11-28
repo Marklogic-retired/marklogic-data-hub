@@ -21,10 +21,6 @@ import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
-import com.marklogic.hub.DataHub
-import com.marklogic.hub.HubConfig
-import com.marklogic.hub.HubProject
-import com.marklogic.hub.MappingManager
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
 import com.marklogic.hub.impl.DataHubImpl
@@ -33,8 +29,8 @@ import com.marklogic.hub.impl.HubProjectImpl
 import com.marklogic.hub.impl.ScaffoldingImpl
 import com.marklogic.hub.impl.FlowManagerImpl
 import com.marklogic.hub.impl.EntityManagerImpl
+import com.marklogic.hub.impl.MappingManagerImpl
 import com.marklogic.hub.impl.Versions
-import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
@@ -45,13 +41,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 @EnableAutoConfiguration
 class DataHubPlugin implements Plugin<Project> {
 
-    private DataHub dataHub
-    private Scaffolding scaffolding
-    private HubProject hubProject
-    private HubConfig hubConfig
+    private DataHubImpl dataHub
+    private ScaffoldingImpl scaffolding
+    private HubProjectImpl hubProject
+    private HubConfigImpl hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
     private LoadUserStagingModulesCommand loadUserStagingModulesCommand
-    private MappingManager mappingManager
+    private MappingManagerImpl mappingManager
     private FlowManagerImpl flowManager
     private EntityManagerImpl entityManager
 
@@ -149,7 +145,7 @@ class DataHubPlugin implements Plugin<Project> {
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
         loadUserStagingModulesCommand = ctx.getBean(LoadUserStagingModulesCommand.class)
-        mappingManager = ctx.getBean(MappingManager.class)
+        mappingManager = ctx.getBean(MappingManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
 

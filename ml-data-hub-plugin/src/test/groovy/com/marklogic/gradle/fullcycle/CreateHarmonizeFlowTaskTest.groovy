@@ -111,7 +111,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
     def "createHarmonizeFlow with valid mappingName"() {
 		given:
-		def pluginDir = Paths.get(hubConfig().projectDir).resolve("plugins")
+		def pluginDir = Paths.get(hubConfig().hubProject.projectDirString).resolve("plugins")
 		def mappingDir = pluginDir.resolve("mappings").resolve("my-new-mapping")
 		def entitiesDir = pluginDir.resolve("entities").resolve("Employee");
 		mappingDir.toFile().mkdirs()
