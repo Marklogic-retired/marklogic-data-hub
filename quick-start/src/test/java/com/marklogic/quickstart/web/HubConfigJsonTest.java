@@ -47,7 +47,7 @@ public class HubConfigJsonTest {
     private JacksonTester<HubConfig> jsonSerializer;
 
     @Autowired
-    private HubConfig hubConfig;
+    private HubConfigImpl hubConfig;
 
     @Test
     public void testSerialize() throws IOException {
