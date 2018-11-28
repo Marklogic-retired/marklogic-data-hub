@@ -987,8 +987,10 @@ public class HubConfigImpl implements HubConfig
         File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
         loadPropertiesFromFile(file, projectProperties);
         if (usePropertiesFromEnvironment && envString != null) {
-            File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + environment + ".properties").toFile();
-            loadPropertiesFromFile(envPropertiesFile, projectProperties);
+            File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + envString + ".properties").toFile();
+            if (envPropertiesFile != null && envPropertiesFile.exists()) {
+                loadPropertiesFromFile(envPropertiesFile, projectProperties);
+            }
         }
 
         if (properties != null){

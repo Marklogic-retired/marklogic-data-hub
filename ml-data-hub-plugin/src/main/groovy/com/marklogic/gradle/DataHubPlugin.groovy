@@ -160,7 +160,17 @@ class DataHubPlugin implements Plugin<Project> {
         if(! hubProject.isInitialized()) {
             hubConfig.initHubProject()
         }
-        hubConfig.refreshProject()
+
+        def environmentNameProperty = "environmentName"
+        if (project.hasProperty("propertiesPluginEnvironmentNameProperty")) {
+            environmentNameProperty = project.property("propertiesPluginEnvironmentNameProperty")
+        }
+        def environmentName = "local"
+        if (project.hasProperty(environmentNameProperty)) {
+            environmentName = project.property(environmentNameProperty)
+        }
+
+        hubConfig.withPropertiesFromEnvironment(environmentName).refreshProject()
 
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
