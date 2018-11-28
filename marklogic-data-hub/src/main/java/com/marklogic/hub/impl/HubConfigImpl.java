@@ -975,8 +975,6 @@ public class HubConfigImpl implements HubConfig
                 isHostLoadBalancer = false;
             }
         }
-
-
     }
 
 
@@ -1016,9 +1014,10 @@ public class HubConfigImpl implements HubConfig
         finalPort = getEnvPropInteger(projectProperties, "mlFinalPort", finalPort);
         finalAuthMethod = getEnvPropString(projectProperties, "mlFinalAuth", finalAuthMethod);
         finalScheme = getEnvPropString(projectProperties, "mlFinalScheme", finalScheme);
-        finalCertFile = getEnvPropString(projectProperties, "mlfinalCertFile", finalCertFile);
-        finalCertPassword = getEnvPropString(projectProperties, "mlfinalCertPassword", finalCertPassword);
-        finalExternalName = getEnvPropString(projectProperties, "mlfinalExternalName", finalExternalName);
+        finalSimpleSsl = getEnvPropBoolean(projectProperties, "mlFinalSimpleSsl", false);
+        finalCertFile = getEnvPropString(projectProperties, "mlFinalCertFile", finalCertFile);
+        finalCertPassword = getEnvPropString(projectProperties, "mlFinalCertPassword", finalCertPassword);
+        finalExternalName = getEnvPropString(projectProperties, "mlFinalExternalName", finalExternalName);
 
 
         jobDbName = getEnvPropString(projectProperties, "mlJobDbName", jobDbName);
