@@ -11,7 +11,6 @@ import {HubSettings} from "../../../environment/hub-settings.model";
 export class LoginUIComponent {
   @Input() installationStatus: string;
   @Input() currentEnvironment: any;
-  @Input() currentEnvironmentString: string;
   @Input() uninstalling: boolean;
   @Input() installing: boolean;
   @Input() percentComplete: number;
@@ -44,6 +43,8 @@ export class LoginUIComponent {
   @Output() onInitProject: EventEmitter<any> = new EventEmitter<any>();
   @Output() onRestoreInitDefaults: EventEmitter<any> = new EventEmitter<any>();
   @Output() onShowFolderBrowser: EventEmitter<any> = new EventEmitter<any>();
+
+  currentEnvironmentString: string;
 
   constructor(private renderer: Renderer2) {
   }
@@ -102,5 +103,10 @@ export class LoginUIComponent {
 
   getInstalledIcon(isTrue: boolean) {
     return isTrue ? 'fa-check' : 'fa-close';
+  }
+
+  setCurrentEvironmentString(str: string) {
+    this.currentEnvironmentString = str;
+    this.onGotEnvironment.emit(str);
   }
 }
