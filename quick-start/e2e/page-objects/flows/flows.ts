@@ -291,9 +291,9 @@ export class FlowPage extends AppPage {
 
     if(inputFileType === 'delimited_text') {
       // click delimited text options
-      browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
+      browser.wait(EC.presenceOf(this.mlcpSection(' Delimited Text Options')));
       await this.mlcpSection(' Delimited Text Options').click();
-      browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
+      browser.wait(EC.presenceOf(this.mlcpSection(' Delimited Text Options')));
 
       // enable generate uri
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
