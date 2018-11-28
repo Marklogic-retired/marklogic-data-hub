@@ -158,7 +158,7 @@
             <app-select-list
               [items]="currentProject.environments"
               [initialSelectedItem]="currentProject.environments[0]"
-              (selectedItem)="onGotEnvironment.emit($event)"
+              (selectedItem)="setCurrentEvironmentString($event);"
               md-whiteframe-2dp
               class="shrink-me"></app-select-list>
 

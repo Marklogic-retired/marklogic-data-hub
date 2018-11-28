@@ -17,7 +17,6 @@ import * as SemVer from 'semver';
   template: `
     <app-login-ui
       [currentEnvironment]="this.currentEnvironment"
-      [currentEnvironmentString]="this.currentEnvironmentString"
       [installationStatus]="this.installationStatus"
       [installing]="this.installing"
       [percentComplete]="this.percentComplete"
