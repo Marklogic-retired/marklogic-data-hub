@@ -3,7 +3,8 @@ import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewC
 import { ActivatedRoute, Router } from '@angular/router';
 import { distanceInWords } from 'date-fns';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
+import 'rxjs/operators/takeUntil';
 
 import { DeployService } from '../deploy/deploy.service';
 import { EntitiesService } from '../entities/entities.service';
@@ -61,6 +62,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
 
 
   private paramListener: any;
+  private destroyed$ = new Subject();
 
   baseCodemirrorConfig(mode: string) {
     return {
@@ -130,13 +132,17 @@ export class FlowsComponent implements OnInit, OnDestroy {
     }
     this.hasErrorsInput = this.hasErrors();
     this.markLogicVersionInput = this.getMarkLogicVersion();
-    Observable.timer(300).subscribe(() => {
+    Observable.interval(1000)
+    .takeUntil(this.destroyed$)
+    .subscribe(() => {
       this.lastDeployedInput = this.getLastDeployed();
     });
   }
 
   ngOnDestroy() {
     this.paramListener.unsubscribe();
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 
   private jobFinished = (jobId) => {
