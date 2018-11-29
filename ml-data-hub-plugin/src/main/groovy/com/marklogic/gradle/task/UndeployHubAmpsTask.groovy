@@ -1,12 +1,13 @@
 package com.marklogic.gradle.task
 
-import com.marklogic.gradle.task.MarkLogicTask
+
+import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand
 import org.gradle.api.tasks.TaskAction
 
-class UndeployHubAmpsTask extends MarkLogicTask {
+class UndeployHubAmpsTask extends HubTask {
 
     @TaskAction
-    void undeployRoles() {
-        undeployWithCommandWithClassName("DeployHubAmpsCommand")
+    void undeployHubAmps() {
+        new DeployHubAmpsCommand(getHubConfig()).undo(getCommandContext())
     }
 }

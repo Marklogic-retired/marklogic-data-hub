@@ -41,6 +41,15 @@ public class Versions extends ResourceManager {
         super();
     }
 
+    /**
+     * Needed for the Gradle tasks.
+     *
+     * @param hubConfig
+     */
+    public Versions(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
     public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
