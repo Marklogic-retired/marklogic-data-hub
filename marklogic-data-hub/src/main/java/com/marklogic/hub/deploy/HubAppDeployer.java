@@ -303,12 +303,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
         }
     }
 
-    private void onError() {
-        if (this.listener != null) {
-            this.listener.onError();
-        }
-    }
-
     public void setStagingCommandsList(List<Command> stagingCommandsList)
     {
         this.stagingCommandsList = stagingCommandsList;

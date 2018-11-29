@@ -209,6 +209,9 @@ class DataHubPlugin implements Plugin<Project> {
          * This ensures that ml-gradle tasks use the same list of commands as DHF does.
          */
         project.extensions.getByName("mlDatabaseCommands").clear()
-        project.extensions.getByName("mlDatabaseCommands").addAll(hubImpl.getCommandsMap().get("mlDatabaseCommands"))
+        project.extensions.getByName("mlDatabaseCommands").addAll(hubImpl.getFinalCommands().get("mlDatabaseCommands"))
+
+        project.extensions.getByName("mlServerCommands").clear()
+        project.extensions.getByName("mlServerCommands").addAll(hubImpl.getStagingCommands().get("mlServerCommands"))
     }
 }
