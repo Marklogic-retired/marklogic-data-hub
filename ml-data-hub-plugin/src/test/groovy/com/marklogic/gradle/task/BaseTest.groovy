@@ -74,7 +74,7 @@ class BaseTest extends Specification {
 
     static private HubConfigImpl _hubConfig
 
-    HubConfig hubConfig() {
+    public HubConfigImpl hubConfig() {
         return _hubConfig
     }
 
@@ -98,7 +98,6 @@ class BaseTest extends Specification {
     void installStagingDoc(String uri, DocumentMetadataHandle meta, String doc) {
         _hubConfig.newStagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
-
 
     void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
         _hubConfig.newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))

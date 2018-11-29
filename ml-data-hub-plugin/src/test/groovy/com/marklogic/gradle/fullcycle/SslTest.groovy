@@ -167,11 +167,9 @@ class SslTest extends BaseTest {
             new File("src/test/resources/ssl-test/ssl-server.json"))
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"), 
             new File("src/test/resources/ssl-test/ssl-server.json"))
-        /*copyResourceToFile("ssl-test/my-template.xml", new File(BaseTest.testProjectDir.root, "src/main/ml-config/security/certificate-templates/my-template.xml"))
-         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"))
-         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"))
-         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"))*/
+
         createProperties()
+        hubConfig().refreshProject()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
         } catch (e) {
