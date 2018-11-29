@@ -161,16 +161,8 @@ class DataHubPlugin implements Plugin<Project> {
             hubConfig.initHubProject()
         }
 
-        def environmentNameProperty = "environmentName"
-        if (project.hasProperty("propertiesPluginEnvironmentNameProperty")) {
-            environmentNameProperty = project.property("propertiesPluginEnvironmentNameProperty")
-        }
-        def environmentName = "local"
-        if (project.hasProperty(environmentNameProperty)) {
-            environmentName = project.property(environmentNameProperty)
-        }
-
-        hubConfig.withPropertiesFromEnvironment(environmentName).refreshProject()
+        // The Gradle set of properties is passed in as they've already been loaded and processed by the Gradle properties plugin.
+        hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
 
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
