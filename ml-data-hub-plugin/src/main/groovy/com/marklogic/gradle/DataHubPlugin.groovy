@@ -154,8 +154,7 @@ class DataHubPlugin implements Plugin<Project> {
         // The Gradle set of properties is passed in as they've already been loaded and processed by the Gradle properties plugin.
         hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
 
-        hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
-        hubConfig.setFinalAppConfig(extensions.getByName("mlAppConfig"))
+        hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
         hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
         hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
@@ -174,7 +173,7 @@ class DataHubPlugin implements Plugin<Project> {
         configureAppDeployer(project)
 
         println "Will look for resource configuration files in the following directories:"
-        for (ConfigDir configDir : hubConfig.getFinalAppConfig().getConfigDirs()) {
+        for (ConfigDir configDir : hubConfig.getAppConfig().getConfigDirs()) {
             println "Configuration directory: " + configDir.getBaseDir()
         }
     }
@@ -187,20 +186,26 @@ class DataHubPlugin implements Plugin<Project> {
         }
 
         DataHubImpl hubImpl = (DataHubImpl)dataHub;
-
-        List<Command> allCommands = new ArrayList()
-        allCommands.addAll(hubImpl.getFinalCommandList())
-        allCommands.addAll(hubImpl.getStagingCommandList())
-        mlAppDeployer.setCommands(allCommands)
+        Map<String, List<Command>> commandsMap = hubImpl.buildCommandMap()
 
         /**
-         * This will eventually expand so that all ml* lists are replaced, but just doing databases for now.
-         * This ensures that ml-gradle tasks use the same list of commands as DHF does.
+         * Need to update each ml(resource type)Commands extension that was added by ml-gradle. This accounts for
+         * changes made by DataHubImpl to the command map.
          */
-        project.extensions.getByName("mlDatabaseCommands").clear()
-        project.extensions.getByName("mlDatabaseCommands").addAll(hubImpl.getFinalCommands().get("mlDatabaseCommands"))
+        List<Command> newSetOfCommands = new ArrayList()
+        for (String key : commandsMap.keySet()) {
+            List<Command> commands = commandsMap.get(key)
+            newSetOfCommands.addAll(commands)
+            if (project.extensions.findByName(key) != null) {
+                List<Command> existingCommands = project.extensions.findByName(key)
+                existingCommands.clear()
+                existingCommands.addAll(commands)
+            } else {
+                project.extensions.add(key, commands);
+            }
+        }
 
-        project.extensions.getByName("mlServerCommands").clear()
-        project.extensions.getByName("mlServerCommands").addAll(hubImpl.getStagingCommands().get("mlServerCommands"))
+        mlAppDeployer.setCommands(newSetOfCommands)
+
     }
 }

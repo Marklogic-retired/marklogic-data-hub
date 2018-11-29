@@ -16,7 +16,6 @@
 package com.marklogic.hub.collector.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.MarkLogicIOException;
@@ -114,7 +113,6 @@ public class CollectorImpl implements Collector {
             // https://github.com/marklogic/marklogic-data-hub/issues/632
             // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
-            AppConfig appConfig = hubConfig.getStagingAppConfig();
 
             RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(

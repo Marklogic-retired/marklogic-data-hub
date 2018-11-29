@@ -27,7 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,13 +115,13 @@ public class ConnectionAuthenticationFilter extends
         overrides.put("mlUsername", username);
         overrides.put("mlPassword", password);
         hubConfig.refreshProject(overrides, true);
-        hubConfig.getStagingAppConfig().setAppServicesUsername(username);
-        hubConfig.getStagingAppConfig().setAppServicesPassword(password);
+        hubConfig.getAppConfig().setAppServicesUsername(username);
+        hubConfig.getAppConfig().setAppServicesPassword(password);
 
         environmentConfig.setEnvironment(loginInfo.environment);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
-                username, password, hubConfig.getStagingAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
+                username, password, hubConfig.getAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
 
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);

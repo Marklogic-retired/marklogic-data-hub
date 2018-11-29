@@ -95,7 +95,7 @@ public class ProjectsController {
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             hubConfig = om.readerForUpdating(hubConfig).readValue(hubConfigDelta);
-            AppConfig appConfig = this.hubConfig.getStagingAppConfig();
+            AppConfig appConfig = this.hubConfig.getAppConfig();
             if (hubConfigDelta.get("host") != null) {
                 appConfig.setHost(hubConfigDelta.get("host").asText());
             }

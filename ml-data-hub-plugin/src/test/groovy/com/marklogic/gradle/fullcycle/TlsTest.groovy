@@ -110,8 +110,8 @@ class TlsTest extends BaseTest {
             }
 
             // there is a bug in ML 8 that won't unset the ssl
-            def disableSSL(stagingAppConfig, serverName) {
-                def eval = stagingAppConfig.newAppServicesDatabaseClient().newServerEval()
+            def disableSSL(appConfig, serverName) {
+                def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
                 def xqy = """
                     import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
                     let \\$config := admin:get-configuration()
@@ -203,9 +203,7 @@ class TlsTest extends BaseTest {
 
                 mlManageClient.setManageConfig(mlManageConfig)
                 mlAdminManager.setAdminConfig(mlAdminConfig)
-
-                hubConfig.setStagingAppConfig(mlAppConfig, true)
-                hubConfig.setFinalAppConfig(mlAppConfig, true)
+                hubConfig.setAppConfig(mlAppConfig, true)
             }
         '''
 

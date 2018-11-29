@@ -76,7 +76,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         }
         if (serverVersion.startsWith("9.0-5")) {
             logger.info("Using non-SSL-compatible method for 9.0-5 servers, for demos only");
-            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();
             String securityPassword = manageConfig.getSecurityPassword();
@@ -99,7 +99,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             }
         } else {
             logger.info("Using CMA for servers starting with 9.0-6");
-            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getAppConfig().getModulesDatabaseName();
             ManageClient manageClient = context.getManageClient();
 
             try (InputStream is = new ClassPathResource("hub-internal-config/configurations/amps.json").getInputStream()) {
@@ -121,7 +121,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
         if (serverVersion.startsWith("9.0-5")) {
             logger.info("Using non-SSL-compatable method for 9.0-5 servers");
-            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();
             String securityPassword = manageConfig.getSecurityPassword();
