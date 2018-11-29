@@ -17,6 +17,7 @@ import { MdlDialogService } from '@angular-mdl/core';
       [installStatus]="installStatus"
       [uninstallStatus]="uninstallStatus"
       [isPerformingInstallUninstall]="isPerformingInstallUninstall"
+      [percentComplete]="percentComplete"
       (mlcpPathChanged)="mlcpPathChanged($event)"
       (toggleTrace)="toggleTrace($event)"
       (toggleDebug)="toggleDebug($event)"
