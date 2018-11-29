@@ -211,9 +211,6 @@ public class HubConfigImpl implements HubConfig
     private AppConfig stagingAppConfig;
     private AppConfig finalAppConfig;
 
-    private boolean usePropertiesFromEnvironment;
-    private String envString;
-
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
     private ObjectMapper objmapper;
@@ -979,18 +976,24 @@ public class HubConfigImpl implements HubConfig
 
 
     public void loadConfigurationFromProperties(){
-        loadConfigurationFromProperties(null);
+        loadConfigurationFromProperties(null, true);
     }
 
-    public void loadConfigurationFromProperties(Properties properties) {
+    public void loadConfigurationFromProperties(Properties properties, boolean loadGradleProperties) {
         projectProperties = new Properties();
-        File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
-        loadPropertiesFromFile(file, projectProperties);
-        if (usePropertiesFromEnvironment && envString != null) {
-            File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + envString + ".properties").toFile();
-            if (envPropertiesFile != null && envPropertiesFile.exists()) {
-                loadPropertiesFromFile(envPropertiesFile, projectProperties);
+
+        /**
+         * Not sure if this code should still be here. We don't want to do this in a Gradle environment because the
+         * properties have already been loaded and processed by the Gradle properties plugin, and they should be in
+         * the incoming Properties object. So the use case for this would be when there's a gradle.properties file
+         * available but Gradle isn't being used.
+         */
+        if (loadGradleProperties) {
+            if (logger.isInfoEnabled()) {
+                logger.info("Loading properties from gradle.properties");
             }
+            File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
+            loadPropertiesFromFile(file, projectProperties);
         }
 
         if (properties != null){
@@ -1564,34 +1567,16 @@ public class HubConfigImpl implements HubConfig
 
     @JsonIgnore
     public void refreshProject() {
-        loadConfigurationFromProperties();
+        refreshProject(null, true);
+    }
+
+    @JsonIgnore
+    public void refreshProject(Properties properties, boolean loadGradleProperties) {
+        loadConfigurationFromProperties(properties, loadGradleProperties);
 
         flowManager.setupClient();
         dataHub.wireClient();
         versions.setupClient();
-
-    }
-
-    @JsonIgnore
-    public void refreshProject(Properties properties) {
-        loadConfigurationFromProperties(properties);
-
-        flowManager.setupClient();
-        dataHub.wireClient();
-        versions.setupClient();
-
-    }
-
-    @JsonIgnore
-    public HubConfig withPropertiesFromEnvironment() {
-        return withPropertiesFromEnvironment(null);
-    }
-
-    @JsonIgnore
-    public HubConfig withPropertiesFromEnvironment(String environment) {
-        this.usePropertiesFromEnvironment = true;
-        this.envString = environment;
-        return this;
     }
 
     public String toString() {

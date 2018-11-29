@@ -115,7 +115,7 @@ public class ConnectionAuthenticationFilter extends
         Properties overrides = new Properties();
         overrides.put("mlUsername", username);
         overrides.put("mlPassword", password);
-        hubConfig.refreshProject(overrides);
+        hubConfig.refreshProject(overrides, true);
         hubConfig.getStagingAppConfig().setAppServicesUsername(username);
         hubConfig.getStagingAppConfig().setAppServicesPassword(password);
 
