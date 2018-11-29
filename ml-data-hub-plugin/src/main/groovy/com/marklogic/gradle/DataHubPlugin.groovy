@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle
 
+import com.marklogic.appdeployer.ConfigDir
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
@@ -165,6 +166,7 @@ class DataHubPlugin implements Plugin<Project> {
         hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
 
         hubConfig.setStagingAppConfig(extensions.getByName("mlAppConfig"))
+        hubConfig.setFinalAppConfig(extensions.getByName("mlAppConfig"))
         hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
         hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
         hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
@@ -181,6 +183,11 @@ class DataHubPlugin implements Plugin<Project> {
         project.extensions.add("entityManager", entityManager)
 
         configureAppDeployer(project)
+
+        println "Will look for resource configuration files in the following directories:"
+        for (ConfigDir configDir : hubConfig.getFinalAppConfig().getConfigDirs()) {
+            println "Configuration directory: " + configDir.getBaseDir()
+        }
     }
 
 
@@ -189,9 +196,19 @@ class DataHubPlugin implements Plugin<Project> {
         if (mlAppDeployer == null) {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
+
+        DataHubImpl hubImpl = (DataHubImpl)dataHub;
+
         List<Command> allCommands = new ArrayList()
-        allCommands.addAll(((DataHubImpl) dataHub).getFinalCommandList())
-        allCommands.addAll(((DataHubImpl) dataHub).getStagingCommandList())
+        allCommands.addAll(hubImpl.getFinalCommandList())
+        allCommands.addAll(hubImpl.getStagingCommandList())
         mlAppDeployer.setCommands(allCommands)
+
+        /**
+         * This will eventually expand so that all ml* lists are replaced, but just doing databases for now.
+         * This ensures that ml-gradle tasks use the same list of commands as DHF does.
+         */
+        project.extensions.getByName("mlDatabaseCommands").clear()
+        project.extensions.getByName("mlDatabaseCommands").addAll(hubImpl.getCommandsMap().get("mlDatabaseCommands"))
     }
 }

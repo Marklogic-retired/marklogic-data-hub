@@ -21,6 +21,10 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
+import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
+import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
@@ -511,25 +515,6 @@ public class DataHubImpl implements DataHub {
     }
 
     @Override
-    public void installFinal(HubDeployStatusListener listener) {
-
-        logger.warn("Installing the Data Hub into MarkLogic");
-        AppConfig finalConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
-        finalDeployer.setCommands(getFinalCommandList());
-        finalDeployer.deploy(finalConfig);
-    }
-
-    @Override
-    public void installStaging(HubDeployStatusListener listener) {
-        // i know it's weird that the final client installs staging, but it's needed
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
-        stagingDeployer.setCommands(getStagingCommandList());
-        stagingDeployer.deploy(stagingConfig);
-    }
-
-    @Override
     public void updateIndexes() {
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
 
@@ -579,25 +564,6 @@ public class DataHubImpl implements DataHub {
         roleDeployer.undeploy(roleConfig);
     }
 
-    @Override
-    public void uninstallStaging(HubDeployStatusListener listener) {
-
-        AppConfig config = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        stagingDeployer.setCommands(getStagingCommandList());
-        stagingDeployer.undeploy(config);
-    }
-
-    @Override
-    public void uninstallFinal(HubDeployStatusListener listener) {
-
-        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
-        finalDeployer.setCommands(getFinalCommandList());
-        finalDeployer.undeploy(finalAppConfig);
-    }
-
-
     private void runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
         String xqy =
@@ -611,15 +577,15 @@ public class DataHubImpl implements DataHub {
         eval.xquery(xqy).eval();
     }
 
-
     private Map<String, List<Command>> getStagingCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
-        List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubStagingTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
-        commandMap.put("mlDatabaseCommands", dbCommands);
+        /**
+         * Eventually we'll have a single set of commands. But for now, since the list of database commands in
+         * "finalCommands" accounts for both staging and final databases, then this list of commands does not need to
+         * do anything with databases.
+         */
+        commandMap.remove("mlDatabaseCommands");
 
         commandMap.remove("mlSecurityCommands");
 
@@ -650,6 +616,13 @@ public class DataHubImpl implements DataHub {
         return commandMap;
     }
 
+    /**
+     * @return This will soon replace getFinalCommands and getStagingCommands.
+     */
+    public Map<String, List<Command>> getCommandsMap() {
+        return getFinalCommands();
+    }
+
     private Map<String, List<Command>> getFinalCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
@@ -660,11 +633,7 @@ public class DataHubImpl implements DataHub {
 
         commandMap.put("mlSecurityCommands", securityCommands);
 
-        List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubFinalTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubFinalSchemasDatabaseCommand(hubConfig));
-        commandMap.put("mlDatabaseCommands", dbCommands);
+        updateDatabaseCommandList(commandMap);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
@@ -687,6 +656,26 @@ public class DataHubImpl implements DataHub {
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
 
         return commandMap;
+    }
+
+    /**
+     * DHF doesn't need the default commands for deploying a specific content/triggers/schemas database. It does want to
+     * preserve any other commands, with the one addition being that it needs to modify DeployOtherDatabaseCommand so
+     * that a custom DeployDatabaseCommand implementation is used.
+     *
+     * @param commandMap
+     */
+    private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
+        List<Command> dbCommands = new ArrayList<>();
+        for (Command c : commandMap.get("mlDatabaseCommands")) {
+            if (!(c instanceof DeployContentDatabasesCommand || c instanceof DeployTriggersDatabaseCommand || c instanceof DeploySchemasDatabaseCommand)) {
+                dbCommands.add(c);
+                if (c instanceof DeployOtherDatabasesCommand) {
+                    ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
+                }
+            }
+        }
+        commandMap.put("mlDatabaseCommands", dbCommands);
     }
 
     private Map<Integer, String> getServerPortsInUse() {

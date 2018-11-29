@@ -1071,7 +1071,6 @@ public class HubConfigImpl implements HubConfig
 
         hydrateAppConfigs(projectProperties);
         hydrateConfigs();
-        logger.info("Hub Project: " + hubProject);
     }
 
     private void hydrateAppConfigs(Properties properties) {
@@ -1444,6 +1443,11 @@ public class HubConfigImpl implements HubConfig
         return customTokens;
     }
 
+    /**
+     * This will go away soon, once the two AppConfig objects can be combined.
+     *
+     * @param config
+     */
     private void updateStagingAppConfig(AppConfig config) {
         config.setRestPort(stagingPort);
 
@@ -1454,14 +1458,6 @@ public class HubConfigImpl implements HubConfig
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(modulePermissions);
-
-        HashMap<String, Integer> forestCounts = new HashMap<>();
-        forestCounts.put(stagingDbName, stagingForestsPerHost);
-        forestCounts.put(jobDbName, jobForestsPerHost);
-        forestCounts.put(modulesDbName, modulesForestsPerHost);
-        forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
-        forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
-        config.setForestCounts(forestCounts);
 
         ConfigDir configDir = new ConfigDir(getHubConfigDir().toFile());
         config.setConfigDir(configDir);
@@ -1485,7 +1481,19 @@ public class HubConfigImpl implements HubConfig
         stagingAppConfig = config;
     }
 
+    /**
+     * TODO This will soon be the single AppConfig to rule them all. Keeping both this and stagingAppConfig in
+     * place for now.
+     *
+     * @param config
+     */
     private void updateFinalAppConfig(AppConfig config) {
+        // This shouldn't be used for any resource names, but it does appear in logging, and DHF is a better choice than "my-app"
+        config.setName("DHF");
+
+        // DHF never needs the default REST server provided by ml-gradle
+        config.setNoRestServer(true);
+
         config.setRestPort(finalPort);
 
         config.setTriggersDatabaseName(finalTriggersDbName);
@@ -1496,16 +1504,28 @@ public class HubConfigImpl implements HubConfig
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(modulePermissions);
 
-        HashMap<String, Integer> forestCounts = new HashMap<>();
-        forestCounts.put(finalDbName, finalForestsPerHost);
+        Map<String, Integer> forestCounts = config.getForestCounts();
+        forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
+        forestCounts.put(stagingDbName, stagingForestsPerHost);
+        forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
+        forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
+        forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(finalTriggersDbName, finalTriggersForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
-        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
-        config.setConfigDir(configDir);
+
+        /**
+         * Initializing this to use both config dirs.
+         */
+        config.getConfigDirs().clear();
+        config.getConfigDirs().add(new ConfigDir(getHubConfigDir().toFile()));
+
+        ConfigDir userConfigDir = new ConfigDir(getUserConfigDir().toFile());
         config.setSchemasPath(getUserSchemasDir().toString());
+        config.getConfigDirs().add(userConfigDir);
+
         List<String> modulesPathList = new ArrayList<>();
         modulesPathList.add(getModulesDir().normalize().toAbsolutePath().toString());
         config.setModulePaths(modulesPathList);
