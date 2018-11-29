@@ -20,7 +20,28 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     private String databaseFilename;
 
     public DeployHubDatabaseCommand(HubConfig hubConfig, String databaseFilename) {
+        this(hubConfig, null, databaseFilename);
+    }
+
+    /**
+     * In order for sorting to work correctly via DeployDatabaseCommandComparator, must call setDatabaseFile so that
+     * the parent getPayload method is able to find the correct File to read from.
+     *
+     * Otherwise, if this class only has a filename, the parent getPayload method will check every ConfigDir to find a
+     * match, with the last one winning. In the case of DHF, that means the user config directory. This can be a problem,
+     * as a user is not likely to define schema-database/triggers-database in e.g. a staging-database.json file in the
+     * user config directory. That will then cause the ordering of database commands to be incorrect, which will
+     * likely cause an error when databases are deployed and they don't yet exist.
+     *
+     * @param hubConfig
+     * @param databaseFile
+     * @param databaseFilename
+     */
+    public DeployHubDatabaseCommand(HubConfig hubConfig, File databaseFile, String databaseFilename) {
         super(databaseFilename);
+        if (databaseFile != null) {
+            super.setDatabaseFile(databaseFile);
+        }
         this.hubConfig = hubConfig;
         this.databaseFilename = databaseFilename;
         this.setForestFilename(databaseFilename.replace("-database", "-forest"));

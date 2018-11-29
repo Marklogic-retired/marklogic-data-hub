@@ -20,7 +20,7 @@ public class HubDeployDatabaseCommandFactory implements DeployDatabaseCommandFac
     @Override
     public DeployDatabaseCommand newDeployDatabaseCommand(File databaseFile) {
         final String filename = databaseFile != null ? databaseFile.getName() : null;
-        DeployHubDatabaseCommand c = new DeployHubDatabaseCommand(hubConfig, filename);
+        DeployHubDatabaseCommand c = new DeployHubDatabaseCommand(hubConfig, databaseFile, filename);
         c.setDeployDatabaseCommandFactory(this);
         return c;
     }
