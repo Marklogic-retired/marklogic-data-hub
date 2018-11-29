@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
 import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
@@ -577,7 +578,7 @@ public class DataHubImpl implements DataHub {
         eval.xquery(xqy).eval();
     }
 
-    private Map<String, List<Command>> getStagingCommands() {
+    public Map<String, List<Command>> getStagingCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
         /**
@@ -586,6 +587,13 @@ public class DataHubImpl implements DataHub {
          * do anything with databases.
          */
         commandMap.remove("mlDatabaseCommands");
+
+        /**
+         * Again, we'll soon have a single list of commands, but for now, putting these in staging commands since
+         * HubAppDeployer runs the final commands first, and we need all the databases to exist before servers can be
+         * created.
+         */
+        updateServerCommandList(commandMap);
 
         commandMap.remove("mlSecurityCommands");
 
@@ -596,13 +604,6 @@ public class DataHubImpl implements DataHub {
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
-
-        List<Command> serverCommands = new ArrayList<>();
-        serverCommands.add(new DeployHubServersCommand(hubConfig));
-        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        serverCommands.add(otherServersCommand);
-        commandMap.put("mlServerCommands", serverCommands);
 
         List<Command> moduleCommands = new ArrayList<>();
         moduleCommands.add(loadHubModulesCommand);
@@ -616,14 +617,7 @@ public class DataHubImpl implements DataHub {
         return commandMap;
     }
 
-    /**
-     * @return This will soon replace getFinalCommands and getStagingCommands.
-     */
-    public Map<String, List<Command>> getCommandsMap() {
-        return getFinalCommands();
-    }
-
-    private Map<String, List<Command>> getFinalCommands() {
+    public Map<String, List<Command>> getFinalCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
         // final bootstraps users and roles for the hub
@@ -635,15 +629,11 @@ public class DataHubImpl implements DataHub {
 
         updateDatabaseCommandList(commandMap);
 
+        // These are handled by the list of staging commands
+        commandMap.remove("mlServerCommands");
+
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
-
-        List<Command> serverCommands = new ArrayList<>();
-        serverCommands.add(new DeployUserServersCommand(hubConfig));
-        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        serverCommands.add(otherServersCommand);
-        commandMap.put("mlServerCommands", serverCommands);
 
         // this is the vanilla load-modules command from ml-gradle, to be included in this
         // command list for install
@@ -676,6 +666,30 @@ public class DataHubImpl implements DataHub {
             }
         }
         commandMap.put("mlDatabaseCommands", dbCommands);
+    }
+
+    private void updateServerCommandList(Map<String, List<Command>> commandMap) {
+        final String key = "mlServerCommands";
+        List<Command> newCommands = new ArrayList<>();
+        for (Command c : commandMap.get(key)) {
+            /**
+             * DHF doesn't need the "Update REST API" command that ml-gradle includes because DHF isn't using ml-gradle's support
+             * for a default REST API server.
+             */
+            if (c instanceof UpdateRestApiServersCommand) {
+                continue;
+            }
+            /**
+             * Replace ml-gradle's DeployOtherServersCommand with a subclass that has DHF-specific functionality
+             */
+            if (c instanceof DeployOtherServersCommand) {
+                newCommands.add(new DeployHubOtherServersCommand());
+            }
+            else {
+                newCommands.add(c);
+            }
+        }
+        commandMap.put(key, newCommands);
     }
 
     private Map<Integer, String> getServerPortsInUse() {
