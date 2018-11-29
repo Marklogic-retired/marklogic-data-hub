@@ -13,6 +13,7 @@ export class SettingsUiComponent {
   @Input() installStatus: string;
   @Input() uninstallStatus: string;
   @Input() isPerformingInstallUninstall: boolean;   // isUninstalling || isInstalling
+  @Input() percentComplete: number;
 
   @Output() mlcpPathChanged = new EventEmitter();
   @Output() toggleTrace = new EventEmitter();
