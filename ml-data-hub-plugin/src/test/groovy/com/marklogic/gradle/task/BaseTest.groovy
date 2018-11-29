@@ -99,7 +99,6 @@ class BaseTest extends Specification {
         _hubConfig.newStagingClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
-
     void installFinalDoc(String uri, DocumentMetadataHandle meta, String doc) {
         _hubConfig.newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }

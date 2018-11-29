@@ -212,9 +212,9 @@ public class CollectorImpl implements Collector {
     }
 
     static private class HostnameVerifierAdapter implements X509HostnameVerifier {
-        private SSLHostnameVerifier verifier;
+        private DatabaseClientFactory.SSLHostnameVerifier verifier;
 
-        protected HostnameVerifierAdapter(SSLHostnameVerifier verifier) {
+        protected HostnameVerifierAdapter(DatabaseClientFactory.SSLHostnameVerifier verifier) {
           this.verifier = verifier;
         }
         
