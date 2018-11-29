@@ -74,7 +74,7 @@ class BaseTest extends Specification {
 
     static private HubConfigImpl _hubConfig
 
-    HubConfig hubConfig() {
+    public HubConfigImpl hubConfig() {
         return _hubConfig
     }
 

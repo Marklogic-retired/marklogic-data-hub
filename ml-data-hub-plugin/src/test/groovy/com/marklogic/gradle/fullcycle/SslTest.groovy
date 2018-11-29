@@ -172,6 +172,8 @@ class SslTest extends BaseTest {
          copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"))
          copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"))*/
         createProperties()
+        hubConfig().initializeApplicationConfigurations()
+        hubConfig().refreshProject()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
         } catch (e) {
