@@ -33,7 +33,7 @@ interface MlcpOptions {
       (folderClicked)="folderClicked($event)"
       (fileClicked)="fileClicked($event)"
       (saveOptionsClicked)="saveOptions()"
-      (switchChanged)="updateSetting($event)"
+      (valueChanged)="updateSetting()"
       (runImportClicked)="runImport()"
       (clipboardSuccess)="cmdCopied()"
       >
@@ -53,7 +53,7 @@ export class MlcpComponent implements OnChanges {
 
   finishedEvent: EventEmitter<any>;
 
-  _isVisible: boolean = false;
+  _isVisible = false;
 
   groups: Array<any>;
 
@@ -99,7 +99,7 @@ export class MlcpComponent implements OnChanges {
 
     this.flow = flow;
 
-    //TODO: we need to make this more consistent than just enforcing it everytime quickstart loads up the flow
+    // TODO: we need to make this more consistent than just enforcing it everytime quickstart loads up the flow
     mlcpOptions['transform_module'] = this.flow.transformModulePath();
 
     this.inputFilePath = this.startPath = mlcpOptions.input_file_path || '.';
@@ -487,15 +487,15 @@ export class MlcpComponent implements OnChanges {
   }
 
   buildMlcpOptions(): Array<any> {
-    let options: Array<any> = [];
+    const options: Array<any> = [];
 
     this.mlcp = {};
     this.addMlcpOption(options, 'import', null, false, false);
     this.addMlcpOption(options, 'mode', 'local', false, true);
 
-    let host = this.envService.settings.host;
-    let port = this.envService.settings.stagingPort;
-    let username = this.envService.settings.username;
+    const host = this.envService.settings.host;
+    const port = this.envService.settings.stagingPort;
+    const username = this.envService.settings.username;
 
 
     this.addMlcpOption(options, 'host', host, false, true);
@@ -508,7 +508,7 @@ export class MlcpComponent implements OnChanges {
         _.each(group.settings, (setting: any) => {
           if (setting.value) {
             const key = setting.field;
-            let value = setting.value;
+            const value = setting.value;
             this.addMlcpOption(options, key, value, true, true);
           }
         });
@@ -528,16 +528,16 @@ export class MlcpComponent implements OnChanges {
       if (isOtherOption) {
         this.mlcp[key] = value;
       }
-      if (value.type !== 'boolean' && value.type !== 'number'){
-        value = '"'+value+'"';
+      if (value.type !== 'boolean' && value.type !== 'number') {
+        value = '"' + value + '"';
       }
       options.push(value);
     }
   }
 
-  updateSetting({setting, value}): void {
-    setting.value = value;
-    this.updateMlcpCommand();
+  updateSetting(): void {
+    // use setTimeout to solve ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(this.updateMlcpCommand(), 0);
   }
 
   updateMlcpCommand(): string {
@@ -546,6 +546,7 @@ export class MlcpComponent implements OnChanges {
     mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
 
     this.mlcpCommand = mlcpCommand;
+
     return mlcpCommand;
   }
 
@@ -555,18 +556,18 @@ export class MlcpComponent implements OnChanges {
 
   folderClicked(folders: any): void {
     if (this.inputFilePath !== folders.absolutePath) {
-      //Update Input File Path
-      let generalGroup = _.find(this.groups, (group: any) => {
+      // Update Input File Path
+      const generalGroup = _.find(this.groups, (group: any) => {
         return group.category === 'General Options';
       });
-      let inputFilePath = _.find(generalGroup.settings, (setting: any) => {
+      const inputFilePath = _.find(generalGroup.settings, (setting: any) => {
         return setting.field === 'input_file_path';
       });
       inputFilePath.value = folders.absolutePath;
       this.inputFilePath = inputFilePath.value;
 
       // update the outputUriReplace options
-      let outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
+      const outputUriReplace = _.find(generalGroup.settings, (setting: any) => {
         return setting.field === 'output_uri_replace';
       });
       outputUriReplace.value = this.outputUriReplaceValue();
@@ -576,7 +577,7 @@ export class MlcpComponent implements OnChanges {
   }
 
   fileClicked(file: any): void {
-    if (this.inputFilePath != file.absolutePath) {
+    if (this.inputFilePath !== file.absolutePath) {
       this.inputFilePath = file.absolutePath;
       this.updateMlcpCommand();
     }

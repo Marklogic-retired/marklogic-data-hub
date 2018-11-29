@@ -74,7 +74,8 @@ export class MlcpUiComponent {
   }
 
   handleValueChanged(setting, event) {
-    this.valueChanged.emit({setting, event});
+    setting.value = event;
+    this.valueChanged.emit();
   }
 
 }
