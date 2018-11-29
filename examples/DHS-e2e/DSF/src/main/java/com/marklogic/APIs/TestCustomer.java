@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-public class testCustomer {
+public class TestCustomer {
 	public static void main(String [] argv) throws IOException {
 
 	    Properties prop = new Properties();

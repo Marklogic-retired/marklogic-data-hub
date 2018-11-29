@@ -9,7 +9,7 @@ group 'com.marklogic.APIs.Customer'
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "testCustomer"
+mainClassName = "TestCustomer"
 sourceCompatibility = 1.8
 
 repositories {
@@ -21,7 +21,7 @@ task generateCustomerSearcher(type: com.marklogic.client.tools.gradle.EndpointPr
 }
 
 task (runMain, dependsOn: 'classes', type: JavaExec) {
-    main = 'com.marklogic.APIs.testCustomer'
+    main = 'com.marklogic.APIs.TestCustomer'
     classpath = sourceSets.main.runtimeClasspath
 }
 
