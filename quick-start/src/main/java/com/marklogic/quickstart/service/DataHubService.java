@@ -181,8 +181,7 @@ public class DataHubService {
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getStagingAppConfig());
-        deployer.deploy(hubConfig.getFinalAppConfig());
+        deployer.deploy(hubConfig.getAppConfig());
         if(deployListener != null) {
             deployListener.onDeploy(getLastDeployed(hubConfig));
         }

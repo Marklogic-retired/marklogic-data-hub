@@ -336,7 +336,7 @@ public class DataHubInstallTest extends HubTestBase
         LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand();
         loadHubModulesCommand.setHubConfig(config);
         ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
-        CommandContext commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
+        CommandContext commandContext = new CommandContext(config.getAppConfig(), manageClient, null);
         deployHubAmpsCommand.setHubConfig(config);
         deployHubAmpsCommand.execute(commandContext);
     }

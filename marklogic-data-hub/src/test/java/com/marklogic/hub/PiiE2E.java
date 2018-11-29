@@ -135,7 +135,7 @@ public class PiiE2E extends HubTestBase
         // deploy just these users now...
         deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(securityCommands);
-        secAppConfig = hubConfig.getStagingAppConfig();
+        secAppConfig = hubConfig.getAppConfig();
         secAppConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
 
         deployer.deploy(secAppConfig);

@@ -81,7 +81,6 @@ public class HubConfigImpl implements HubConfig
     @Autowired FlowManagerImpl flowManager;
     @Autowired DataHubImpl dataHub;
     @Autowired Versions versions;
-    @Autowired ScaffoldingImpl scaffolding;
 
     @Value("${mlHost}")
     protected String host;
@@ -208,8 +207,7 @@ public class HubConfigImpl implements HubConfig
     private AdminConfig adminConfig;
     private AdminManager adminManager;
 
-    private AppConfig stagingAppConfig;
-    private AppConfig finalAppConfig;
+    private AppConfig appConfig;
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
@@ -226,7 +224,7 @@ public class HubConfigImpl implements HubConfig
         initializeApplicationConfigurations();
     }
 
-    public String getHost() { return stagingAppConfig.getHost(); }
+    public String getHost() { return appConfig.getHost(); }
 
     @Override public String getDbName(DatabaseKind kind){
         String name;
@@ -1077,17 +1075,15 @@ public class HubConfigImpl implements HubConfig
         com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
         hydrateAppConfigs(propertySource);
     }
+
     private void hydrateAppConfigs(Environment environment) {
         com.marklogic.mgmt.util.PropertySource propertySource = environment::getProperty;
         hydrateAppConfigs(propertySource);
     }
+
     private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
-
-        setStagingAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
-        getStagingAppConfig().setSortOtherDatabaseByDependencies(false);
-
-        setFinalAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
-        getFinalAppConfig().setSortOtherDatabaseByDependencies(false);
+        setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        getAppConfig().setSortOtherDatabaseByDependencies(false);
 
         setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
         setAdminManager(new AdminManager(getAdminConfig()));
@@ -1142,7 +1138,7 @@ public class HubConfigImpl implements HubConfig
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
     public DatabaseClient newAppServicesClient() {
-        return getStagingAppConfig().newAppServicesDatabaseClient(stagingDbName);
+        return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
     @Override
@@ -1151,7 +1147,7 @@ public class HubConfigImpl implements HubConfig
     }
 
     private DatabaseClient newStagingClient(String dbName) {
-        AppConfig appConfig = getStagingAppConfig();
+        AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
         config.setDatabase(dbName);
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
@@ -1176,7 +1172,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override
     public DatabaseClient newFinalClient() {
-        AppConfig appConfig = getFinalAppConfig();
+        AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
         config.setDatabase(finalDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
@@ -1193,7 +1189,7 @@ public class HubConfigImpl implements HubConfig
     }
 
     public DatabaseClient newJobDbClient() {
-        AppConfig appConfig = getStagingAppConfig();
+        AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
         config.setDatabase(jobDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
@@ -1214,7 +1210,7 @@ public class HubConfigImpl implements HubConfig
     }
 
     public DatabaseClient newModulesDbClient() {
-        AppConfig appConfig = getStagingAppConfig();
+        AppConfig appConfig = getAppConfig();
         // this has to be finalPort because final is a stock REST API.
         // staging will not be; but its rewriter isn't loaded yet.
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, mlUsername, mlPassword);
@@ -1300,36 +1296,19 @@ public class HubConfigImpl implements HubConfig
     }
 
     @JsonIgnore
-    @Override public AppConfig getStagingAppConfig() {
-        return stagingAppConfig;
+    @Override public AppConfig getAppConfig() {
+        return appConfig;
     }
 
 
-    @Override public void setStagingAppConfig(AppConfig config) {
-        setStagingAppConfig(config, false);
+    @Override public void setAppConfig(AppConfig config) {
+        setAppConfig(config, false);
     }
 
-    @Override public void setStagingAppConfig(AppConfig config, boolean skipUpdate) {
-        this.stagingAppConfig = config;
+    @Override public void setAppConfig(AppConfig config, boolean skipUpdate) {
+        this.appConfig = config;
         if (!skipUpdate) {
-            updateStagingAppConfig(this.stagingAppConfig);
-        }
-    }
-
-    @JsonIgnore
-    @Override public AppConfig getFinalAppConfig() {
-        return finalAppConfig;
-    }
-
-
-    @Override public void setFinalAppConfig(AppConfig config) {
-        setFinalAppConfig(config, false);
-    }
-
-    @Override public void setFinalAppConfig(AppConfig config, boolean skipUpdate) {
-        this.finalAppConfig = config;
-        if (!skipUpdate) {
-            updateFinalAppConfig(this.finalAppConfig);
+            updateAppConfig(this.appConfig);
         }
     }
 
@@ -1364,7 +1343,7 @@ public class HubConfigImpl implements HubConfig
     }
 
     private Map<String, String> getCustomTokens() {
-        AppConfig appConfig = getStagingAppConfig();
+        AppConfig appConfig = getAppConfig();
         return getCustomTokens(appConfig, appConfig.getCustomTokens());
     }
 
@@ -1444,50 +1423,11 @@ public class HubConfigImpl implements HubConfig
     }
 
     /**
-     * This will go away soon, once the two AppConfig objects can be combined.
+     * Makes DHF-specific updates to the AppConfig, after it's been constructed by ml-gradle.
      *
      * @param config
      */
-    private void updateStagingAppConfig(AppConfig config) {
-        config.setRestPort(stagingPort);
-
-        config.setTriggersDatabaseName(stagingTriggersDbName);
-        config.setSchemasDatabaseName(stagingSchemasDbName);
-        config.setModulesDatabaseName(modulesDbName);
-
-        config.setReplaceTokensInModules(true);
-        config.setUseRoxyTokenPrefix(false);
-        config.setModulePermissions(modulePermissions);
-
-        ConfigDir configDir = new ConfigDir(getHubConfigDir().toFile());
-        config.setConfigDir(configDir);
-        config.setSchemasPath(getHubConfigDir().resolve("schemas").toString());
-
-        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
-        if (projectProperties != null) {
-            Enumeration keyEnum = projectProperties.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) projectProperties.get(key));
-                }
-            }
-        }
-
-
-        String version = getJarVersion();
-        customTokens.put("%%mlHubVersion%%", version);
-
-        stagingAppConfig = config;
-    }
-
-    /**
-     * TODO This will soon be the single AppConfig to rule them all. Keeping both this and stagingAppConfig in
-     * place for now.
-     *
-     * @param config
-     */
-    private void updateFinalAppConfig(AppConfig config) {
+    private void updateAppConfig(AppConfig config) {
         // This shouldn't be used for any resource names, but it does appear in logging, and DHF is a better choice than "my-app"
         config.setName("DHF");
 
@@ -1535,7 +1475,7 @@ public class HubConfigImpl implements HubConfig
         String version = getJarVersion();
         customTokens.put("%%mlHubVersion%%", version);
 
-        finalAppConfig = config;
+        appConfig = config;
     }
 
     private String getEnvPropString(Properties properties, String key, String fallback) {
@@ -1616,5 +1556,10 @@ public class HubConfigImpl implements HubConfig
         catch (IOException e) {
             throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
         }
+    }
+
+    @Override
+    public String getStagingSchemasDbName() {
+        return this.stagingSchemasDbName;
     }
 }

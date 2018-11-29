@@ -158,8 +158,7 @@ public class HubTestBase {
     public  DatabaseClient jobClient = null;
     public  DatabaseClient jobModulesClient = null;
     public Boolean isHostLoadBalancer = false;
-    private AppConfig stagingAppConfig = null;
-    private AppConfig finalAppConfig = null;
+    private AppConfig appConfig = null;
     private  AdminConfig adminConfig = null;
     private  ManageConfig manageConfig = null;
     private  ManageClient manageClient = null;
@@ -401,22 +400,19 @@ public class HubTestBase {
     protected HubConfigImpl getHubFlowRunnerConfig() {
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
-        stagingAppConfig = adminHubConfig.getStagingAppConfig();
-        finalAppConfig = adminHubConfig.getFinalAppConfig();
+        appConfig = adminHubConfig.getAppConfig();
         manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
         manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
         adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
         if(isCertAuth()) {
-            stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
-            finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-user.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-user.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-user.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
             manageConfig.setSslContext(flowRunnercertContext);
             adminConfig.setSslContext(flowRunnercertContext);                          
         }
-        adminHubConfig.setStagingAppConfig(stagingAppConfig);
-        adminHubConfig.setFinalAppConfig(finalAppConfig);
+        adminHubConfig.setAppConfig(appConfig);
         ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
         manageClient.setManageConfig(manageConfig);
         ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
@@ -466,8 +462,7 @@ public class HubTestBase {
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
                 
-        stagingAppConfig = adminHubConfig.getStagingAppConfig();
-        finalAppConfig = adminHubConfig.getFinalAppConfig();
+        appConfig = adminHubConfig.getAppConfig();
         manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
         manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
         adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
@@ -486,11 +481,8 @@ public class HubTestBase {
         manageConfig.setSecurityUsername(secUser);
         
         if(isSslRun()) {
-            stagingAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
-            stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-
-            finalAppConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
-            finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+            appConfig.setAppServicesSslContext(SimpleX509TrustManager.newSSLContext());
+            appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
             
             adminHubConfig.setSimpleSsl(DatabaseKind.STAGING,true);
             adminHubConfig.setSimpleSsl(DatabaseKind.JOB,true);
@@ -507,25 +499,18 @@ public class HubTestBase {
             adminConfig.setSslContext(SimpleX509TrustManager.newSSLContext());
         }
         if(isCertAuth()) {
-            stagingAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
-            finalAppConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-hub-admin-user.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-hub-admin-user.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-hub-admin-user.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
             manageConfig.setSslContext(datahubadmincertContext);
             adminConfig.setSslContext(datahubadmincertContext);
             
-            stagingAppConfig.setAppServicesCertPassword("abcd");
-            stagingAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
-            stagingAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-            stagingAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-            stagingAppConfig.setAppServicesPassword(null);
-
-            finalAppConfig.setAppServicesCertPassword("abcd");
-            finalAppConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
-            finalAppConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-            finalAppConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-            finalAppConfig.setAppServicesPassword(null);
+            appConfig.setAppServicesCertPassword("abcd");
+            appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+            appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+            appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+            appConfig.setAppServicesPassword(null);
 
             adminHubConfig.setAuthMethod(DatabaseKind.STAGING,"certificate");
             adminHubConfig.setAuthMethod(DatabaseKind.JOB,"certificate");
@@ -546,8 +531,7 @@ public class HubTestBase {
             adminConfig.setPassword(null);
 
         }
-        adminHubConfig.setStagingAppConfig(stagingAppConfig);
-        adminHubConfig.setFinalAppConfig(finalAppConfig);
+        adminHubConfig.setAppConfig(appConfig);
         ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
         manageClient.setManageConfig(manageConfig);
         ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
@@ -887,7 +871,7 @@ public class HubTestBase {
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(adminHubConfig.getManageClient(), adminHubConfig.getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(adminHubConfig.getStagingAppConfig());
+        deployer.deploy(adminHubConfig.getAppConfig());
     }
 
     protected void installUserModules(HubConfig hubConfig, boolean force) {
@@ -902,7 +886,7 @@ public class HubTestBase {
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getStagingAppConfig());
+        deployer.deploy(hubConfig.getAppConfig());
     }
 
     public void clearUserModules() {

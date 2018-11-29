@@ -98,7 +98,7 @@ public class HubProjectTest extends HubTestBase {
         props.load(updatedStream);
         propsStream.close();
 
-        assertEquals(config.getStagingAppConfig().getHost(), props.getProperty("mlHost"));
+        assertEquals(config.getAppConfig().getHost(), props.getProperty("mlHost"));
 
         assertEquals("twituser", props.getProperty("mlUsername"));
         assertEquals("twitpassword", props.getProperty("mlPassword"));
