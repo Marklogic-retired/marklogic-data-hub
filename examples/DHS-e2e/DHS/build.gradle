@@ -50,6 +50,7 @@ dependencies {
     mlcp files("lib")
 }
 
+/*
 task importAllCustomers(type: com.marklogic.gradle.task.MlcpTask) {
 	doFirst {
 		classpath = configurations.mlcp
@@ -71,3 +72,4 @@ task importAllCustomers(type: com.marklogic.gradle.task.MlcpTask) {
 		restrict_hosts = true
 		}
 }
+*/
