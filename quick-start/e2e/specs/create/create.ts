@@ -338,6 +338,7 @@ export default function(tmpDir) {
       await entityPage.toolsButton.click();
       //remove removeEntity entity
       await entityPage.deleteEntityButton('removeEntity').click();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
