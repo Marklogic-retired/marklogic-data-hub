@@ -5,6 +5,7 @@ import {centered} from '@storybook/addon-centered/angular';
 import {
   text,
   boolean,
+  number,
   withKnobs
 } from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
@@ -38,6 +39,7 @@ storiesOf('Components|Settings', module)
                   [isTraceEnabled]="isTraceEnabled"
                   [isDebugEnabled]="isDebugEnabled"
                   [isPerformingInstallUninstall]="isPerformingInstallUninstall"
+                  [percentComplete]="percentComplete"
                   (mlcpPathChanged)="mlcpPathChanged($event)"
                   (toggleTrace)="toggleTrace($event)"
                   (toggleDebug)="toggleDebug($event)"
@@ -51,6 +53,7 @@ storiesOf('Components|Settings', module)
       isMlcpPathValid: boolean('isMlcpPathValid', undefined),
       isTraceEnabled: boolean('isTraceEnabled', true),
       isDebugEnabled: boolean('isDebugEnabled', true),
+      percentComplete: number('percentComplete', 0),
       isMlcpPaisPerformingInstallUninstallthValid: boolean('isPerformingInstallUninstall', false),
       mlcpPathChanged: action('mlcpPathChanged'),
       toggleTrace: action('toggleTrace'),
