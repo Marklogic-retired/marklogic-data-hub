@@ -595,12 +595,8 @@ public class DataHubImpl implements DataHub {
          */
         updateServerCommandList(commandMap);
 
+        // The final commands, which are run first, have the security commands in them
         commandMap.remove("mlSecurityCommands");
-
-        // staging deploys amps.
-        List<Command> securityCommand = new ArrayList<>();
-        securityCommand.add(deployHubAmpsCommand);
-        commandMap.put("mlSecurityCommand", securityCommand);
 
         // don't deploy rest api servers
         commandMap.remove("mlRestApiCommands");
@@ -620,19 +616,20 @@ public class DataHubImpl implements DataHub {
     public Map<String, List<Command>> getFinalCommands() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
-        // final bootstraps users and roles for the hub
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployUserRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployUserUsersCommand(hubConfig));
-
-        commandMap.put("mlSecurityCommands", securityCommands);
+        /**
+         * This kept separate from mlSecurityCommands because hub amps are stored in the DHF jar, while the commands
+         * in the mlSecurityCommands list deploy resources defined by users.
+         */
+        List<Command> hubAmpsCommands = new ArrayList<>();
+        hubAmpsCommands.add(deployHubAmpsCommand);
+        commandMap.put("mlHubAmpsCommand", hubAmpsCommands);
 
         updateDatabaseCommandList(commandMap);
 
         // These are handled by the list of staging commands
         commandMap.remove("mlServerCommands");
 
-        // don't deploy rest api servers
+        // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
         commandMap.remove("mlRestApiCommands");
 
         // this is the vanilla load-modules command from ml-gradle, to be included in this

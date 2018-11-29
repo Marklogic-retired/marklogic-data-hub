@@ -48,6 +48,16 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
     }
 
     /**
+     * This is still needed by the Gradle tasks.
+     *
+     * @param hubConfig
+     */
+    public DeployHubAmpsCommand(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.versions = new Versions(hubConfig);
+    }
+
+    /**
      * Installs the amps for DHF via CMA endpoint
      * @param context The command context for execution.
      */

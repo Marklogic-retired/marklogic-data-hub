@@ -24,7 +24,6 @@ class DeployHubAmpsTask extends HubTask {
 
     @TaskAction
     void deployHubAmps() {
-        def cmd = new DeployHubAmpsCommand(getHubConfig())
-        cmd.execute(getCommandContext())
+        new DeployHubAmpsCommand(getHubConfig()).execute(getCommandContext())
     }
 }

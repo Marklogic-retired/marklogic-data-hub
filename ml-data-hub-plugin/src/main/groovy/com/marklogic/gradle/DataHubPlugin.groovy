@@ -24,14 +24,7 @@ import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
-import com.marklogic.hub.impl.DataHubImpl
-import com.marklogic.hub.impl.HubConfigImpl
-import com.marklogic.hub.impl.HubProjectImpl
-import com.marklogic.hub.impl.ScaffoldingImpl
-import com.marklogic.hub.impl.FlowManagerImpl
-import com.marklogic.hub.impl.EntityManagerImpl
-import com.marklogic.hub.impl.MappingManagerImpl
-import com.marklogic.hub.impl.Versions
+import com.marklogic.hub.impl.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
@@ -109,18 +102,14 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.mlLoadModules.getDependsOn().add("hubDeployUserModules")
         project.tasks.replace("mlWatch", HubWatchTask)
         project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
-        project.tasks.replace("mlDeployRoles", DeployHubRolesTask);
-        project.tasks.replace("mlDeployUsers", DeployHubUsersTask);
-        project.tasks.replace("mlDeployAmps", DeployHubAmpsTask);
-        project.tasks.replace("mlUndeployRoles", UndeployHubRolesTask);
-        project.tasks.replace("mlUndeployUsers", UndeployHubUsersTask);
-        project.tasks.replace("mlUndeployAmps", UndeployHubAmpsTask);
+
+        // Tasks for deploying/undeploying the amps included in the DHF jar
+        project.tasks.replace("hubDeployAmps", DeployHubAmpsTask);
+        project.tasks.replace("hubUndeployAmps", UndeployHubAmpsTask);
+
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
         project.tasks.replace("mlUpdateIndexes", UpdateIndexes)
-        project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployRoles");
-        project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployUsers");
-        project.tasks.mlUndeploySecurity.getDependsOn().add("mlUndeployRoles");
-        project.tasks.mlUndeploySecurity.getDependsOn().add("mlUndeployUsers");
+
         project.tasks.hubPreInstallCheck.getDependsOn().add("mlDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
         project.tasks.mlReloadModules.setDependsOn(["mlClearModulesDatabase", "hubInstallModules", "mlLoadModules"])
