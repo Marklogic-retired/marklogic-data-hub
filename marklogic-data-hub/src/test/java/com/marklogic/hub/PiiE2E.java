@@ -9,6 +9,8 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
@@ -19,8 +21,6 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.deploy.commands.DeployUserRolesCommand;
-import com.marklogic.hub.deploy.commands.DeployUserUsersCommand;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
@@ -130,8 +130,8 @@ public class PiiE2E extends HubTestBase
         // these two should already be there... we don't want to remove them
         // securityCommands.add(new DeployHubRolesCommand(hubConfig));
         // securityCommands.add(new DeployHubUsersCommand(hubConfig));
-        securityCommands.add(new DeployUserRolesCommand(hubConfig));
-        securityCommands.add(new DeployUserUsersCommand(hubConfig));
+        securityCommands.add(new DeployRolesCommand());
+        securityCommands.add(new DeployUsersCommand());
         // deploy just these users now...
         deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(securityCommands);
