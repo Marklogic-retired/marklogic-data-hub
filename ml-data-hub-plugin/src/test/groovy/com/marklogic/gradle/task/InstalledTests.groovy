@@ -183,14 +183,12 @@ class InstalledTests extends BaseTest {
         FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
 
         when:
-        def result = runFailTask('mlLoadModules', '-i')
+        def result = runFailTask('hubDeployUserModules', '-i')
 
         then:
         notThrown(UnexpectedBuildSuccess)
         result.getOutput().contains('The following Flows are legacy flows:')
         result.getOutput().contains('legacy-test => legacy-input-flow')
-        // it's the hubDeployUserModules task which fails, not mlLoadModules itself
-        result.task(":hubDeployUserModules").getOutcome() == FAILED
     }
 
     def "createHarmonizeFlow with useES flag"() {
