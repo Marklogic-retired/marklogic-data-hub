@@ -311,7 +311,9 @@ public class HubTestBase {
                     DatabaseClient.ConnectionType.GATEWAY);
             } else if (isSslRun()) {
                 switch (authMethod) {
-                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
+                            .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
+                            .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()),
                         DatabaseClient.ConnectionType.GATEWAY);
                     case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
                         DatabaseClient.ConnectionType.GATEWAY);
@@ -332,8 +334,12 @@ public class HubTestBase {
                     new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY));
             } else if (isSslRun()) {
                 switch (authMethod) {
-                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY));
-                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY));
+                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
+                            .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
+                            .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()));
+                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password)
+                            .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
+                            .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()));
                 }
             } else {
                 switch (authMethod) {

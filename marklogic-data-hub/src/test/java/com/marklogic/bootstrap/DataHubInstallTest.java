@@ -26,6 +26,7 @@ import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,6 +70,11 @@ public class DataHubInstallTest extends HubTestBase
     public void setDataHub(DataHub dataHub){
         DataHubInstallTest.dataHub = dataHub;
     }
+    
+    @BeforeAll
+    public static void setupOnce() {
+        new Installer().deleteProjectDir();
+    }
 
     @BeforeEach
     public void setup()
@@ -84,29 +90,36 @@ public class DataHubInstallTest extends HubTestBase
             //creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
             Path userModulesDir = project.getUserFinalModulesDir();
-            Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
+            Path finalTriggersDir = project.getUserDatabaseDir()
+                    .resolve(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME)
+                    .resolve("triggers");
+            Path stagingTriggersDir = project.getUserDatabaseDir()
+            .resolve(HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME)
+            .resolve("triggers");
 
             userSchemasDir.resolve("tde").toFile().mkdirs();
             userModulesDir.resolve("ext").toFile().mkdirs();
-            userTriggersDir.toFile().mkdirs();
+            finalTriggersDir.toFile().mkdirs();
+            stagingTriggersDir.toFile().mkdirs();
+            //userTriggersDir.toFile().mkdirs();
 
             //creating directories for adding staging schemas/ modules and trigger files
             Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
             Path hubModulesDir = project.getHubStagingModulesDir();
-            Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
+            //Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
 
             hubSchemasDir.resolve("tde").toFile().mkdirs();
             hubModulesDir.resolve("ext").toFile().mkdirs();
-            hubTriggersDir.toFile().mkdirs();
+            //hubTriggersDir.toFile().mkdirs();
             //Copying files to their locations
             try {
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), userSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), userModulesDir.resolve("ext").toFile());
-                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"), userTriggersDir.toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"), finalTriggersDir.toFile());
 
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), hubSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), hubModulesDir.resolve("ext").toFile());
-                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"), hubTriggersDir.toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"), stagingTriggersDir.toFile());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -147,21 +160,22 @@ public class DataHubInstallTest extends HubTestBase
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        //checking if triggers are written
-        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
-        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
-
         //checking if modules are written to correct db
         assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
         assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
-        ////checking if tdes are written to correct db
+        //checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
         Document actualXml = stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
         actualXml = finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
+        
+        //checking if triggers are written
+        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        
     }
 
     @Test
