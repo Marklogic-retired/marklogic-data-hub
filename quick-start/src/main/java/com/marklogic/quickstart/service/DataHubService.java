@@ -20,7 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -54,7 +54,7 @@ public class DataHubService {
     private DataHub dataHub;
 
     @Autowired
-    private LoadUserStagingModulesCommand loadUserModulesCommand;
+    private LoadUserModulesCommand loadUserModulesCommand;
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");

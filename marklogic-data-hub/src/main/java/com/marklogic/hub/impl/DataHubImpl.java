@@ -27,6 +27,7 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
 import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
@@ -87,7 +88,7 @@ public class DataHubImpl implements DataHub {
     private LoadHubModulesCommand loadHubModulesCommand;
 
     @Autowired
-    private LoadUserStagingModulesCommand loadUserModulesCommand;
+    private LoadUserModulesCommand loadUserModulesCommand;
 
     @Autowired
     private DeployHubAmpsCommand deployHubAmpsCommand;
@@ -569,18 +570,12 @@ public class DataHubImpl implements DataHub {
 
         updateSchemaCommandList(commandMap);
 
+        updateModuleCommandList(commandMap);
+
         // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
         commandMap.remove("mlRestApiCommands");
 
-        /**
-         * TODO These will change soon.
-         */
-        List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(loadHubModulesCommand);
-        moduleCommands.add(loadUserModulesCommand);
-        moduleCommands.add(new LoadModulesCommand());
-        commandMap.put("mlModuleCommands", moduleCommands);
-
+        // TODO I don't think there's a need for this
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
@@ -643,6 +638,32 @@ public class DataHubImpl implements DataHub {
         List<Command> commands = commandMap.get("mlSchemaCommands");
         final String hubSchemasPath = hubConfig.getHubConfigDir().resolve("schemas").toString();
         commands.add(new LoadHubSchemasCommand(hubSchemasPath, hubConfig.getStagingSchemasDbName()));
+    }
+
+    /**
+     * This affects what mlLoadModules does. We want it to load all modules, including hub modules. This supports a
+     * scenario where a user may clear her modules database; mlLoadModules should then load everything in.
+     *
+     * @param commandsMap
+     */
+    private void updateModuleCommandList(Map<String, List<Command>> commandsMap) {
+        List<Command> commands = new ArrayList();
+        commands.add(loadHubModulesCommand);
+        commands.add(loadUserModulesCommand);
+
+        for (Command c : commandsMap.get("mlModuleCommands")) {
+            if (c instanceof LoadModulesCommand) {
+                // Don't want this, since our custom command above extends LoadModulesCommand
+                continue;
+            }
+            if (c instanceof DeleteTestModulesCommand) {
+                // Make sure this runs after our custom command for loading modules
+                ((DeleteTestModulesCommand) c).setExecuteSortOrder(loadUserModulesCommand.getExecuteSortOrder() + 1);
+            }
+            commands.add(c);
+        }
+
+        commandsMap.put("mlModuleCommands", commands);
     }
 
     private Map<Integer, String> getServerPortsInUse() {

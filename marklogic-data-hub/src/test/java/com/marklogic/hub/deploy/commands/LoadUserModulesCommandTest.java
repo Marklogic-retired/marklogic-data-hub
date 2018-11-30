@@ -34,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class LoadUserModulesCommandTest extends HubTestBase {
 
-    public LoadUserStagingModulesCommand loadUserModulesCommand;
+    public LoadUserModulesCommand loadUserModulesCommand;
 
     @BeforeEach
     public void setup() {
-        loadUserModulesCommand = new LoadUserStagingModulesCommand();
+        loadUserModulesCommand = new LoadUserModulesCommand();
         loadUserModulesCommand.setHubConfig(getHubAdminConfig());
     }
 

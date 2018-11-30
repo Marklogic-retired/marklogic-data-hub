@@ -39,6 +39,9 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Handles loading modules that are contained within the DHF jar.
+ */
 @Component
 public class LoadHubModulesCommand extends AbstractCommand {
 

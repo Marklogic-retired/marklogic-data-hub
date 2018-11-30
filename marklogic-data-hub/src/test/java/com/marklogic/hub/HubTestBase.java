@@ -37,7 +37,7 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
@@ -115,7 +115,7 @@ public class HubTestBase {
     protected LoadHubModulesCommand loadHubModulesCommand;
 
     @Autowired
-    protected LoadUserStagingModulesCommand loadUserModulesCommand;
+    protected LoadUserModulesCommand loadUserModulesCommand;
 
     @Autowired
     protected Scaffolding scaffolding;

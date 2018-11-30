@@ -23,7 +23,7 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.impl.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -40,7 +40,7 @@ class DataHubPlugin implements Plugin<Project> {
     private HubProjectImpl hubProject
     private HubConfigImpl hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
-    private LoadUserStagingModulesCommand loadUserStagingModulesCommand
+    private LoadUserModulesCommand loadUserModulesCommand
     private MappingManagerImpl mappingManager
     private FlowManagerImpl flowManager
     private EntityManagerImpl entityManager
@@ -74,9 +74,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Enables tracing on the running DHF server. Requires hub-admin-role or equivalent.")
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask,
             description: "Disables tracing on the running DHF server. Requires hub-admin-role or equivalent.")
-        project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
-            description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
-            .mustRunAfter(["mlClearModulesDatabase"])
         project.task("hubPreInstallCheck", group: deployGroup, type: PreinstallCheckTask,
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
@@ -97,12 +94,6 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
 
-        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
-            description: "Installs user modules into the STAGING modules database for DHF extension.")
-        project.tasks.mlLoadModules.getDependsOn().add("hubDeployUserModules")
-        project.tasks.replace("mlWatch", HubWatchTask)
-        project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
-
         // Tasks for deploying/undeploying the amps included in the DHF jar
         project.tasks.replace("hubDeployAmps", DeployHubAmpsTask);
         project.tasks.replace("hubUndeployAmps", UndeployHubAmpsTask);
@@ -115,11 +106,26 @@ class DataHubPlugin implements Plugin<Project> {
          */
         project.tasks.replace("mlUpdateIndexes", HubUpdateIndexesTask);
 
+        // DHF has custom logic for clearing the modules database
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
+        project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
+
+        project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
+            description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
+            .mustRunAfter(["mlClearModulesDatabase"])
+
+        // This isn't likely to be used, but it's being kept for regression purposes for now
+        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask, description: "Installs user modules from the plugins and src/main/entity-config directories.")
+
+        // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
+        project.tasks.replace("mlWatch", HubWatchTask)
+
+        // DHF uses an additional timestamps file needs to be deleted when the ml-gradle one is deleted
+        project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
+        project.tasks.mlDeleteModuleTimestampsFile.getDependsOn().add("hubDeleteModuleTimestampsFile")
 
         project.tasks.hubPreInstallCheck.getDependsOn().add("mlDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
-        project.tasks.mlReloadModules.setDependsOn(["mlClearModulesDatabase", "hubInstallModules", "mlLoadModules"])
 
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
@@ -141,7 +147,7 @@ class DataHubPlugin implements Plugin<Project> {
         dataHub = ctx.getBean(DataHubImpl.class)
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
-        loadUserStagingModulesCommand = ctx.getBean(LoadUserStagingModulesCommand.class)
+        loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
@@ -172,7 +178,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.extensions.add("dataHub", dataHub)
         project.extensions.add("scaffolding", scaffolding)
         project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
-        project.extensions.add("loadUserStagingModulesCommand", loadUserStagingModulesCommand)
+        project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
         project.extensions.add("mappingManager", mappingManager)
         project.extensions.add("flowManager", flowManager)
         project.extensions.add("entityManager", entityManager)
