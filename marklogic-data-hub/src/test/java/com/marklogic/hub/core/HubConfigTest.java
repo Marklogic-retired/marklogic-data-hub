@@ -9,6 +9,8 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
+
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +35,8 @@ public class HubConfigTest extends HubTestBase {
         createProjectDir();
         dataHub.initProject();
     }
-
+    
+    
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
         AppConfig config = adminHubConfig.getAppConfig();
@@ -55,6 +58,8 @@ public class HubConfigTest extends HubTestBase {
         adminHubConfig.refreshProject(props, false);
 
         config = adminHubConfig.getAppConfig();
+        //Reverting the config to default settings
+        adminHubConfig.refreshProject();
         assertEquals(SecurityContextType.BASIC, config.getRestSecurityContextType());
         assertEquals(new Integer(8123), config.getRestPort());
         assertEquals("/path/to/file", config.getRestCertFile());
@@ -63,6 +68,7 @@ public class HubConfigTest extends HubTestBase {
         assertNotNull(config.getRestSslContext(), "Should have been set because mlFinalSimpleSsl=true");
         assertNotNull(config.getRestSslHostnameVerifier(), "Should have been set because mlFinalSimpleSsl=true");
         assertNotNull(config.getRestTrustManager(), "Should have been set because mlFinalSimpleSsl=true");
+        
     }
 
     @Test
