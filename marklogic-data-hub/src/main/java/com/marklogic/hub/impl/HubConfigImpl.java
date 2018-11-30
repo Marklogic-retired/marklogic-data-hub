@@ -1067,8 +1067,10 @@ public class HubConfigImpl implements HubConfig
 
         isProvisionedEnvironment = getEnvPropBoolean(projectProperties, "mlIsProvisionedEnvironment", false);
 
-        hydrateAppConfigs(projectProperties);
+        // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
         hydrateConfigs();
+
+        hydrateAppConfigs(projectProperties);
     }
 
     private void hydrateAppConfigs(Properties properties) {
@@ -1433,7 +1435,7 @@ public class HubConfigImpl implements HubConfig
         // DHF never needs the default REST server provided by ml-gradle
         config.setNoRestServer(true);
 
-        config.setRestPort(finalPort);
+        applyFinalConnectionSettingsToMlGradleDefaultRestSettings(config);
 
         config.setTriggersDatabaseName(finalTriggersDbName);
         config.setSchemasDatabaseName(finalSchemasDbName);
@@ -1475,6 +1477,27 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlHubVersion%%", version);
 
         appConfig = config;
+    }
+
+    /**
+     * This is needed so that mlFinal* properties that configure the connection to the final REST server are also used
+     * for any feature in ml-gradle that expects to use the same mlRest* properties. For example, LoadModulesCommand
+     * uses those properties to construct a DatabaseClient for loading modules; we want to ensure that the properties
+     * mirror the mlFinal* properties.
+     *
+     * @param config
+     */
+    private void applyFinalConnectionSettingsToMlGradleDefaultRestSettings(AppConfig config) {
+        if (finalAuthMethod != null) {
+            config.setRestSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        }
+        config.setRestPort(finalPort);
+        config.setRestCertFile(finalCertFile);
+        config.setRestCertPassword(finalCertPassword);
+        config.setRestExternalName(finalExternalName);
+        config.setRestSslContext(finalSslContext);
+        config.setRestSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setRestTrustManager(finalTrustManager);
     }
 
     private String getEnvPropString(Properties properties, String key, String fallback) {
