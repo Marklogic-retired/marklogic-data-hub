@@ -21,10 +21,9 @@
     </div>
     <div class="properties-heading">
       <div class="properties-title">Properties</div>
-      <!-- TODO link help icon to docs DHFPROD-1534 -->
-      <!-- <span class="help-icon">
-        <i class="fa fa-question-circle fa-lg"></i>
-      </span> -->
+      <span class="help-icon">
+        <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+      </span>
     </div>
     <div class="toolbar">
       <button id="add-property" mdl-button mdl-button-type="mini-fab" mdl-colored="primary" (click)="addProperty()">
@@ -40,7 +39,7 @@
         <th class="col-toggler"><i class="fa fa-key" tooltip="Primary Key" placement="top"></i></th>
         <th (click)="toggleRangeIndexSelection()" class="col-toggler"><i class="fa fa-bolt" tooltip="Element Range Index" placement="top"></i></th>
         <th (click)="togglePathRangeIndexSelection()" class="col-toggler"><i class="fa fa-code" tooltip="Path Range Index" placement="top"></i></th>
-        <th (click)="toggleWordLexiconSelection()" class="col-toggler"><i class="fa fa-won" tooltip="Word Lexicon" placement="top"></i></th>
+        <th (click)="toggleWordLexiconSelection()" class="col-toggler"><i class="fa fa-krw" tooltip="Word Lexicon" placement="top"></i></th>
         <th (click)="toggleRequiredSelection()" class="col-toggler"><i class="fa fa-exclamation" tooltip="Required Field" placement="top"></i></th>
         <th (click)="togglePiiSelection()" class="col-toggler"><i class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top"></i></th>
         <th>Name</th>
@@ -54,7 +53,7 @@
           <td class="col-toggler" (click)="togglePrimaryKey(property)"><i [ngClass]="{'active': property.isPrimaryKey}" class="fa fa-key" tooltip="Primary Key" placement="top"></i></td>
           <td class="col-toggler" (click)="property.hasElementRangeIndex = !property.hasElementRangeIndex"><i [ngClass]="{'active': property.hasElementRangeIndex}" class="fa fa-bolt" tooltip="Element Range Index" placement="top"></i></td>
           <td class="col-toggler" (click)="property.hasRangeIndex = !property.hasRangeIndex"><i [ngClass]="{'active': property.hasRangeIndex}" class="fa fa-code" tooltip="Path Range Index" placement="top"></i></td>
-          <td class="col-toggler" (click)="property.hasWordLexicon = !property.hasWordLexicon"><i [ngClass]="{'active': property.hasWordLexicon}" class="fa fa-won" tooltip="Word Lexicon" placement="top"></i></td>
+          <td class="col-toggler" (click)="property.hasWordLexicon = !property.hasWordLexicon"><i [ngClass]="{'active': property.hasWordLexicon}" class="fa fa-krw" tooltip="Word Lexicon" placement="top"></i></td>
           <td class="col-toggler" (click)="property.required = !property.required"><i [ngClass]="{'active': property.required}" class="fa fa-exclamation" tooltip="Required Field" placement="top"></i></td>
           <td class="col-toggler" (click)="property.pii = !property.pii"><i [ngClass]="{'active': property.pii}" class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top"></i></td>
           <td><input type="text" name="name" [ngClass]="{'invalid':!isPropertyValid(property)}" [(ngModel)]="property.name" required></td>
