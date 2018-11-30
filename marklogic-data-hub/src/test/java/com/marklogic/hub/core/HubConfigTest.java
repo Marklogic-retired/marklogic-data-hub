@@ -2,10 +2,12 @@ package com.marklogic.hub.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,10 +28,41 @@ public class HubConfigTest extends HubTestBase {
 
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         deleteProjectDir();
         createProjectDir();
         dataHub.initProject();
+    }
+
+    @Test
+    public void applyFinalConnectionPropsToDefaultRestConnection() {
+        AppConfig config = adminHubConfig.getAppConfig();
+
+        assertEquals(new Integer(8011), config.getRestPort(),
+            "The final port should be used as restPort so that any ml-gradle feature that depends on mlRestPost " +
+                "ends up talking to the final app server");
+        assertNull(config.getRestSslContext(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+        assertNull(config.getRestSslHostnameVerifier(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+        assertNull(config.getRestTrustManager(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+
+        Properties props = new Properties();
+        props.put("mlFinalAuth", "basic");
+        props.put("mlFinalPort", "8123");
+        props.put("mlFinalCertFile", "/path/to/file");
+        props.put("mlFinalCertPassword", "changeme");
+        props.put("mlFinalExternalName", "somename");
+        props.put("mlFinalSimpleSsl", "true");
+        adminHubConfig.refreshProject(props, false);
+
+        config = adminHubConfig.getAppConfig();
+        assertEquals(SecurityContextType.BASIC, config.getRestSecurityContextType());
+        assertEquals(new Integer(8123), config.getRestPort());
+        assertEquals("/path/to/file", config.getRestCertFile());
+        assertEquals("changeme", config.getRestCertPassword());
+        assertEquals("somename", config.getRestExternalName());
+        assertNotNull(config.getRestSslContext(), "Should have been set because mlFinalSimpleSsl=true");
+        assertNotNull(config.getRestSslHostnameVerifier(), "Should have been set because mlFinalSimpleSsl=true");
+        assertNotNull(config.getRestTrustManager(), "Should have been set because mlFinalSimpleSsl=true");
     }
 
     @Test
