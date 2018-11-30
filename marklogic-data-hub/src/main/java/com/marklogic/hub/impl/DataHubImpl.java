@@ -101,9 +101,6 @@ public class DataHubImpl implements DataHub {
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private String finalFile = "final-database.json";
-    private String stagingFile = "staging-database.json";
-    private String jobsFile = "job-database.json";
 
     @PostConstruct
     public void wireClient() {
@@ -497,16 +494,14 @@ public class DataHubImpl implements DataHub {
         finalDeployer.deploy(hubConfig.getAppConfig());
     }
 
+    /**
+     * Note that this differs from how "mlUpdateIndexes" works in ml-gradle. This is not stripping out any "non-index"
+     * properties from each payload - it's just updating every database.
+     */
     @Override
     public void updateIndexes() {
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
-
-        List<Command> commands = new ArrayList<>();
-        commands.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
-        commands.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
-        commands.add(new DeployHubDatabaseCommand(hubConfig, jobsFile));
-        deployer.setCommands(commands);
-
+        deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
         deployer.deploy(hubConfig.getAppConfig());
     }
 

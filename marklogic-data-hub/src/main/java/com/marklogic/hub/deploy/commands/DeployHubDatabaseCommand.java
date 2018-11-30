@@ -18,10 +18,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     private HubConfig hubConfig;
     private String databaseFilename;
-
-    public DeployHubDatabaseCommand(HubConfig hubConfig, String databaseFilename) {
-        this(hubConfig, null, databaseFilename);
-    }
+    private File databaseFile;
 
     /**
      * In order for sorting to work correctly via DeployDatabaseCommandComparator, must call setDatabaseFile so that
@@ -42,9 +39,18 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         if (databaseFile != null) {
             super.setDatabaseFile(databaseFile);
         }
+        this.databaseFile = databaseFile;
         this.hubConfig = hubConfig;
         this.databaseFilename = databaseFilename;
         this.setForestFilename(databaseFilename.replace("-database", "-forest"));
+    }
+
+    @Override
+    public void execute(CommandContext context) {
+        if (this.databaseFile != null && logger.isInfoEnabled()) {
+            logger.info("Processing file: " + databaseFile);
+        }
+        super.execute(context);
     }
 
     @Override
@@ -81,8 +87,8 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
             if (entityDatabaseDir != null) {
                 File entityDatabaseFile = new File(entityDatabaseDir, this.databaseFilename);
                 if (entityDatabaseFile != null && entityDatabaseFile.exists()) {
-                    if (logger.isInfoEnabled()) {
-                        logger.info("Merging in file: " + entityDatabaseFile.getAbsolutePath());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Merging in file: " + entityDatabaseFile.getAbsolutePath());
                     }
                     ObjectNode entityConfigNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(entityDatabaseFile);
                     return JsonNodeUtil.mergeObjectNodes(payloadNode, entityConfigNode);
