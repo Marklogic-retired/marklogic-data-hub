@@ -107,8 +107,15 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.replace("hubDeployAmps", DeployHubAmpsTask);
         project.tasks.replace("hubUndeployAmps", UndeployHubAmpsTask);
 
+        /**
+         * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
+         * overridden so that it can call DataHub.updateIndexes. It doesn't behave the same as in ml-gradle, which
+         * strips out all "non-index" properties from the payload. But it's not certain that that behavior is desirable
+         * here - within the context of DHF, this is really used as a way to say "I need to update each of the databases".
+         */
+        project.tasks.replace("mlUpdateIndexes", HubUpdateIndexesTask);
+
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
-        project.tasks.replace("mlUpdateIndexes", UpdateIndexes)
 
         project.tasks.hubPreInstallCheck.getDependsOn().add("mlDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
