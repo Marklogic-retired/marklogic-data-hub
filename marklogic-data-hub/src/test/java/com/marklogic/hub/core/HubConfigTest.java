@@ -9,6 +9,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ public class HubConfigTest extends HubTestBase {
         createProjectDir();
         dataHub.initProject();
     }
-
+    
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
         AppConfig config = adminHubConfig.getAppConfig();
@@ -44,7 +45,14 @@ public class HubConfigTest extends HubTestBase {
         assertNull(config.getRestSslContext(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
         assertNull(config.getRestSslHostnameVerifier(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
         assertNull(config.getRestTrustManager(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
-
+        //get the old values
+        String port = adminHubConfig.getPort(DatabaseKind.FINAL).toString();
+        String authMethod = adminHubConfig.getAuthMethod(DatabaseKind.FINAL);
+        String certFile = adminHubConfig.getCertFile(DatabaseKind.FINAL);
+        String certPassword = adminHubConfig.getCertPassword(DatabaseKind.FINAL);
+        String extName = adminHubConfig.getExternalName(DatabaseKind.FINAL);
+        Boolean sslMethod = adminHubConfig.getSimpleSsl(DatabaseKind.FINAL);
+   
         Properties props = new Properties();
         props.put("mlFinalAuth", "basic");
         props.put("mlFinalPort", "8123");
@@ -54,7 +62,8 @@ public class HubConfigTest extends HubTestBase {
         props.put("mlFinalSimpleSsl", "true");
         adminHubConfig.refreshProject(props, false);
 
-        config = adminHubConfig.getAppConfig();
+        config = adminHubConfig.getAppConfig();        
+        
         assertEquals(SecurityContextType.BASIC, config.getRestSecurityContextType());
         assertEquals(new Integer(8123), config.getRestPort());
         assertEquals("/path/to/file", config.getRestCertFile());
@@ -62,7 +71,28 @@ public class HubConfigTest extends HubTestBase {
         assertEquals("somename", config.getRestExternalName());
         assertNotNull(config.getRestSslContext(), "Should have been set because mlFinalSimpleSsl=true");
         assertNotNull(config.getRestSslHostnameVerifier(), "Should have been set because mlFinalSimpleSsl=true");
-        assertNotNull(config.getRestTrustManager(), "Should have been set because mlFinalSimpleSsl=true");
+        assertNotNull(config.getRestTrustManager(), "Should have been set because mlFinalSimpleSsl=true"); 
+        
+        props = new Properties();
+        //reset them
+        props.put("mlFinalAuth", authMethod);
+        props.put("mlFinalPort", port);
+        
+        //these values not set by dhf-default, so checking for null
+        if(certFile != null)
+            props.put("mlFinalCertFile", certFile);
+        if(certPassword !=null)
+            props.put("mlFinalCertPassword", certPassword);
+        if(extName != null)
+            props.put("mlFinalExternalName", extName);
+        props.put("mlFinalSimpleSsl", sslMethod);
+        //if sslContext is set , it is assumed that it is a secure connection, hence unsetting them
+        if(! sslMethod) {
+            adminHubConfig.setSslContext(DatabaseKind.FINAL, null);
+            adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, null);
+            adminHubConfig.setTrustManager(DatabaseKind.FINAL, null);
+        }
+        adminHubConfig.refreshProject(props, false);
     }
 
     @Test
@@ -118,6 +148,4 @@ public class HubConfigTest extends HubTestBase {
             throw new DataHubConfigurationException("Your datahub configuration could not serialize");
         }
     }
-
-
 }
