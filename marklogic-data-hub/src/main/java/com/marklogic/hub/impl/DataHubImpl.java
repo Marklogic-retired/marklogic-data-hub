@@ -497,12 +497,24 @@ public class DataHubImpl implements DataHub {
     /**
      * Note that this differs from how "mlUpdateIndexes" works in ml-gradle. This is not stripping out any "non-index"
      * properties from each payload - it's just updating every database.
+     *
+     * This does however disable forest creation which speeds up the process so that the only calls made are to
+     * update the databases.
      */
     @Override
     public void updateIndexes() {
         HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
-        deployer.deploy(hubConfig.getAppConfig());
+        DeployOtherDatabasesCommand c = null;
+
+        AppConfig appConfig = hubConfig.getAppConfig();
+        final boolean originalCreateForests = appConfig.isCreateForests();
+        try {
+            appConfig.setCreateForests(false);
+            deployer.deploy(hubConfig.getAppConfig());
+        } finally {
+            appConfig.setCreateForests(originalCreateForests);
+        }
     }
 
     /**
