@@ -131,9 +131,7 @@ class RunFlowTask extends HubTask {
                 println("\t\t" + key + " = " + value)
             }
         }
-
-        Vector<String> completed = new Vector<>()
-        Vector<String> failed = new Vector<>()
+        
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
