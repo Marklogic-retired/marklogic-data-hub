@@ -1083,7 +1083,6 @@ public class HubConfigImpl implements HubConfig
 
     private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
         setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
-        getAppConfig().setSortOtherDatabaseByDependencies(false);
 
         setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
         setAdminManager(new AdminManager(getAdminConfig()));
