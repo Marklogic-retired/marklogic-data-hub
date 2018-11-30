@@ -655,7 +655,7 @@ export default function(tmpDir) {
       await settingsPage.redeployConfirmation.click();
       browser.wait(EC.visibilityOf(settingsPage.redeployStatus));
       expect(settingsPage.redeployStatus.isDisplayed()).toBe(true);
-      browser.sleep(120000);
+      browser.sleep(150000);
       browser.wait(EC.invisibilityOf(settingsPage.redeployStatus));
     });
 
