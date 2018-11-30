@@ -116,10 +116,10 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 		def entitiesDir = pluginDir.resolve("entities").resolve("Employee");
 		mappingDir.toFile().mkdirs()
 		FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), mappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
-		runTask("mlLoadModules")
+		runTask("hubDeployUserModules")
 		entitiesDir.toFile().mkdirs();
 		FileUtils.copyFile(new File("src/test/resources/employee.entity.json"), entitiesDir.resolve('Employee.entity.json').toFile())
-		runTask("mlLoadModules")
+		runTask("hubDeployUserModules")
 
 		when:
 		def result = runTask('hubCreateHarmonizeFlow', '-PentityName=Employee', '-PflowName=mapping-harmonize-flow', '-PmappingName=my-new-mapping-1', '-PuseES=true')
@@ -127,8 +127,5 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 		then:
 		notThrown(UnexpectedBuildFailure)
 		result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
-
-		File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
-		entityDir.isDirectory() == true
 	}
 }
