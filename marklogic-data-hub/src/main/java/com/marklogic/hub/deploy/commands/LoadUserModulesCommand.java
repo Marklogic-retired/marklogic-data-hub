@@ -19,6 +19,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
@@ -58,8 +59,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Extends ml-app-deployer's LoadModulesCommand, which expects to load from every path defined by "mlModulePaths", so
+ * that it can also load from two DHF-specific locations - "./plugins" and "src/main/entity-config". Unfortunately,
+ * those directories don't conform to the structure expected by ml-app-deployer (technically by DefaultModulesLoader
+ * in ml-javaclient-util), so they require special handling, which this class provides.
+ */
 @Component
-public class LoadUserStagingModulesCommand extends AbstractCommand {
+public class LoadUserModulesCommand extends LoadModulesCommand {
 
     @Autowired
     private HubConfig hubConfig;
@@ -74,13 +81,17 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
+    private boolean watchingModules = false;
+    private boolean loadAllModules = true;
+
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
     }
 
     private boolean forceLoad = false;
 
-    public LoadUserStagingModulesCommand() {
+    public LoadUserModulesCommand() {
+        super();
         setExecuteSortOrder(460);
     }
 
@@ -150,11 +161,31 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
             dir.getFileName().toString().equals(parent.getFileName().toString() + ".properties");
     }
 
+    /**
+     * Ask the parent class to load modules first, which should consist of reading from every path defined by
+     * mlModulePaths / appConfig.getModulePaths. By default, that's just src/main/ml-modules. If any mlRestApi
+     * dependencies are included, those will be in the set of module paths as well.
+     *
+     * The one catch here is that if any REST extensions under ./plugins have dependencies on mlRestApi libraries or
+     * library modules in ml-modules, those extensions will fail to load. However, REST extensions under ./plugins
+     * aren't technically supported anymore, so this should not be an issue.
+     *
+     * The loadAllModules bit is included solely to preserve the functionality of the DeployUserModulesTask - i.e.
+     * only load from the hub-specific module locations.
+     */
+    private void loadModulesFromStandardMlGradleLocations(CommandContext context) {
+        super.execute(context);
+    }
+
     @Override
     public void execute(CommandContext context) {
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
             throw new LegacyFlowsException(legacyFlows);
+        }
+
+        if (loadAllModules) {
+            loadModulesFromStandardMlGradleLocations(context);
         }
 
         AppConfig config = context.getAppConfig();
@@ -171,7 +202,11 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
-        modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
+
+        // Don't load these while "watching" modules (i.e. mlWatch is being run), as users can't change these
+        if (!watchingModules) {
+            modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
+        }
 
         //for now we'll use two different document managers
         JSONDocumentManager finalEntityDocMgr = finalClient.newJSONDocumentManager();
@@ -314,6 +349,14 @@ public class LoadUserStagingModulesCommand extends AbstractCommand {
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+    }
+
+    public void setWatchingModules(boolean watchingModules) {
+        this.watchingModules = watchingModules;
+    }
+
+    public void setLoadAllModules(boolean loadAllModules) {
+        this.loadAllModules = loadAllModules;
     }
 }
 

@@ -17,12 +17,7 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.DataHub
 import com.marklogic.hub.EntityManager
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
-import com.marklogic.hub.impl.DataHubImpl
-import com.marklogic.hub.impl.EntityManagerImpl
-import com.marklogic.rest.util.ResourcesFragment
 
 import org.gradle.api.tasks.TaskAction
 
