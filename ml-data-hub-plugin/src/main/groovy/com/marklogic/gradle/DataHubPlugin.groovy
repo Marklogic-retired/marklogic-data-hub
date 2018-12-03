@@ -95,8 +95,8 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
 
         // Tasks for deploying/undeploying the amps included in the DHF jar
-        project.tasks.replace("hubDeployAmps", DeployHubAmpsTask);
-        project.tasks.replace("hubUndeployAmps", UndeployHubAmpsTask);
+        project.task("hubDeployAmps", group: deployGroup, type: DeployHubAmpsTask, "Deploy the hub-specific amps contained in DHF")
+        project.task("hubUndeployAmps", group: deployGroup, type: UndeployHubAmpsTask, "Undeploy the hub-specific amps container in DHF; currently only supported for MarkLogic version 9.0-5")
 
         /**
          * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
