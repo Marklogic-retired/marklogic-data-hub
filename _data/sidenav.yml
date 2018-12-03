@@ -43,7 +43,6 @@ main:
           childPages: [
             { url: '/project/quickstart/', text: 'QuickStart' },
             { url: '/project/gradle/', text: 'Gradle Plugin' },
-            { url: '/project/dhsdeploy/', text: 'Deploying to a Data Hub Service' }
           ]
         },
         {
@@ -75,8 +74,15 @@ main:
           ]
         },
         {
+          url: '/deploy/',
+          text: 'Deploy',
+          childPages: [
+            { url: '/deploy/deploy-to-dhs/', text: 'Deploy to DHS' },
+          ]
+        },
+        {
           url: '/serve/',
-          text: 'Serve (REST, ODBC)'
+          text: 'Serve'
         }
       ]
     }
