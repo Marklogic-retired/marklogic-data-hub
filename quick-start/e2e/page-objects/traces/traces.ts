@@ -6,7 +6,7 @@ export class TracesPage extends AppPage {
 
   //to get the login box locater
   locator() {
-    return by.css('app-traces > div');
+    return by.css('app-traces > app-traces-ui > div');
   }
   
   tracesPageTitle() {
