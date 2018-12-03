@@ -103,10 +103,9 @@
       <div id="harm-heading">
         <div class="item-title">
           <div class="item-type">Entity</div>
-          <!-- TODO link help icon to docs DHFPROD-1534 -->
-          <!-- <span class="help-icon">
-            <i class="fa fa-question-circle fa-lg"></i>
-          </span> -->
+          <span class="help-icon">
+            <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+          </span>
         </div>
         <p class="item-identifying-info"ng-class="title-entity-model">{{ chosenEntity?.info.title }}
         </p>
@@ -126,7 +125,7 @@
             <span class="entity-icon" tooltip="Primary Key" container="body"><i class="fa fa-key fa-fw" [ngClass]="prop.name === entityPrimaryKey ? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Element Range Index" container="body"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Path Range Index" container="body"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" tooltip="Word Lexicon" container="body"><i class="fa fa-won fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Word Lexicon" container="body"><i class="fa fa-krw fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Required Field" container="body"><i class="fa fa-exclamation fa-fw" [ngClass]="isRequired(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Personally Identifiable Information" container="body"><i class="fa fa-lock fa-fw" [ngClass]="isPII(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
           </span>

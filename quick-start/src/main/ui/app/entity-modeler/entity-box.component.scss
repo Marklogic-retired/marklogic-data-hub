@@ -47,6 +47,9 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       i.fa-question-circle {
         cursor: pointer;
       }
+      a, a:hover {
+        color: #333;
+      }
     }
 
     .edit-area {

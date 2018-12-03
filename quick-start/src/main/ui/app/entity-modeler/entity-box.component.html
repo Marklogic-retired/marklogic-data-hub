@@ -7,10 +7,9 @@
     <div class="title" (mousedown)="handleStartDrag($event)">
       <span>{{entity.info.title}}</span>
       <span class="version">v{{entity.info.version}}</span>
-      <!-- TODO link help icon to docs DHFPROD-1534 -->
-      <!-- <span class="help-icon">
-        <i class="fa fa-question-circle fa-lg"></i>
-      </span> -->
+      <span class="help-icon">
+        <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+      </span>
       <span class="edit-area">
         <span *ngIf="entity.inputFlowCount > 0">
           <i class="mdi mdi-import"></i>
@@ -44,7 +43,7 @@
             <th class="icons"><i class="fa fa-key" tooltip="Primary Key" placement="top" container="body"></i></th>
             <th class="icons"><i class="fa fa-bolt" tooltip="Element Range Index" placement="top" container="body"></i></th>
             <th class="icons"><i class="fa fa-code" tooltip="Path Range Index" placement="top" container="body"></i></th>
-            <th class="icons"><i class="fa fa-won" tooltip="Word Lexicon" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-krw" tooltip="Word Lexicon" placement="top" container="body"></i></th>
             <th class="icons"><i class="fa fa-exclamation" tooltip="Required Field" placement="top" container="body"></i></th>
             <th class="icons"><i class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top" container="body"></i></th>
             <th>Name</th>
@@ -69,7 +68,7 @@
               <i [hidden]="!isPathRangeIndex(property.name)" class="fa fa-code" tooltip="Path Range Index" placement="top" container="body"></i>
             </td>
             <td class="icons">
-              <i [hidden]="!isWordLexicon(property.name)" class="fa fa-won" tooltip="Word Lexicon" placement="top" container="body"></i>
+              <i [hidden]="!isWordLexicon(property.name)" class="fa fa-krw" tooltip="Word Lexicon" placement="top" container="body"></i>
             </td>
             <td class="icons">
               <i [hidden]="!isRequired(property.name)" class="fa fa-exclamation" tooltip="Required Field" placement="top" container="body"></i>
