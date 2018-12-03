@@ -78,6 +78,9 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
         project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
+        // Tasks for deploying/undeploying the amps included in the DHF jar
+        project.task("hubDeployAmps", group: deployGroup, type: DeployHubAmpsTask, description: "Deploy the hub-specific amps contained in DHF")
+        project.task("hubUndeployAmps", group: deployGroup, type: UndeployHubAmpsTask, description: "Undeploy the hub-specific amps container in DHF; currently only supported for MarkLogic version 9.0-5")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
@@ -90,13 +93,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
             description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
-
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
-
-        // Tasks for deploying/undeploying the amps included in the DHF jar
-        project.task("hubDeployAmps", group: deployGroup, type: DeployHubAmpsTask, "Deploy the hub-specific amps contained in DHF")
-        project.task("hubUndeployAmps", group: deployGroup, type: UndeployHubAmpsTask, "Undeploy the hub-specific amps container in DHF; currently only supported for MarkLogic version 9.0-5")
 
         /**
          * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
