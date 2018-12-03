@@ -201,6 +201,17 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+          if(project.hasProperty("mavenUser")) {
+            credentials {
+            username mavenUser
+            password mavenPassword
+            }
+          }
+          url publishUrl
+        }
+    }
 }
 
 bintray {
