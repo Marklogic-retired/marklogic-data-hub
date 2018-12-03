@@ -575,7 +575,7 @@ public class DataHubImpl implements DataHub {
         // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
         commandMap.remove("mlRestApiCommands");
 
-        // TODO I don't think there's a need for this
+        // DHF has a custom property named "mlCustomForestPath" that has to be set on this command.
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
