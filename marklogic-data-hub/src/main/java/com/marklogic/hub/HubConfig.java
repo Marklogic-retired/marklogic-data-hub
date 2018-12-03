@@ -26,6 +26,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
+import java.util.Properties;
 
 /**
  * An interface to set, manage and recall the Data Hub's Configuration
@@ -81,15 +82,6 @@ public interface HubConfig {
      * @return name of host
      */
     String getHost();
-
-    /**
-     * Creates and returns a hubconfig object for a project directory
-     * @param projectDir - string path to the project directory
-     * @return HubConfig based in the project directory
-     */
-    static HubConfig create(String projectDir) {
-        return new HubConfigImpl(projectDir);
-    }
 
     /**
      * Returns the database name for the DatabaseKind set in the config
@@ -475,44 +467,24 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current staging appconfig object attached to the HubConfig
-     * @return Returns current staging AppConfig object set for HubConfig
-     */
-    @JsonIgnore
-    AppConfig getStagingAppConfig();
-
-    /**
-     * Sets the staging App Config for the current HubConfig
-     * @param config staging AppConfig to associate with the HubConfig
-     */
-    void setStagingAppConfig(AppConfig config);
-
-    /**
-     * Sets the staging App Config for the current HubConfig, with skipUpdate option
-     * @param config - staging AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of staging AppConfig, true to skip it
-     */
-    void setStagingAppConfig(AppConfig config, boolean skipUpdate);
-
-    /**
      * Returns the current final appconfig object attached to the HubConfig
      * @return Returns current final AppConfig object set for HubConfig
      */
     @JsonIgnore
-    AppConfig getFinalAppConfig();
+    AppConfig getAppConfig();
 
     /**
      * Sets the final App Config for the current HubConfig
      * @param config final AppConfig to associate with the HubConfig
      */
-    void setFinalAppConfig(AppConfig config);
+    void setAppConfig(AppConfig config);
 
     /**
      * Sets the final App Config for the current HubConfig, with skipUpdate option
      * @param config - final AppConfig to associate with the HubConfig
      * @param skipUpdate false to force update of final AppConfig, true to skip it
      */
-    void setFinalAppConfig(AppConfig config, boolean skipUpdate);
+    void setAppConfig(AppConfig config, boolean skipUpdate);
 
     /**
      * Gets the current version of the DHF Jar
@@ -552,4 +524,12 @@ public interface HubConfig {
     String getInfo();
 
 
+    /**
+     * Initializes the java application state to a specific location.  A properties file
+     * is expected to be found in this directory.
+     * @param projectDirString The directory in which to find properties for a project.
+     */
+    void createProject(String projectDirString);
+
+    String getStagingSchemasDbName();
 }

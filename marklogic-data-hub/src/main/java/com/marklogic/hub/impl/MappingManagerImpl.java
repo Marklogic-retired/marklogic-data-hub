@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
@@ -29,6 +30,8 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,22 +45,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@Component
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
-    private static MappingManagerImpl mappingManager = new MappingManagerImpl(null);
+
+    @Autowired
     private HubConfig hubConfig;
 
+    @Autowired
+    private HubProject hubProject;
 
-    private MappingManagerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-    }
+    @Autowired
+    private Scaffolding scaffolding;
 
-    static public MappingManager getInstance(HubConfig hubConfig){
-        if(mappingManager == null || mappingManager.hubConfig == null){
-            mappingManager = new MappingManagerImpl(hubConfig);
-        }
-        return (MappingManager)mappingManager;
-    }
 
     @Override public Mapping createMapping(String mappingName) {
         try {
@@ -97,8 +97,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public void saveMapping(Mapping mapping, boolean autoIncrement) {
-        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingClient());
-        scaffold.createMappingDir(mapping.getName());
+        scaffolding.createMappingDir(mapping.getName());
 
         try {
             if(autoIncrement){
@@ -231,7 +230,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }

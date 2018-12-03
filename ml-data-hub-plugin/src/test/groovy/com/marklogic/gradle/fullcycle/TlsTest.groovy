@@ -110,8 +110,8 @@ class TlsTest extends BaseTest {
             }
 
             // there is a bug in ML 8 that won't unset the ssl
-            def disableSSL(stagingAppConfig, serverName) {
-                def eval = stagingAppConfig.newAppServicesDatabaseClient().newServerEval()
+            def disableSSL(appConfig, serverName) {
+                def eval = appConfig.newAppServicesDatabaseClient().newServerEval()
                 def xqy = """
                     import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
                     let \\$config := admin:get-configuration()
@@ -203,9 +203,10 @@ class TlsTest extends BaseTest {
 
                 mlManageClient.setManageConfig(mlManageConfig)
                 mlAdminManager.setAdminConfig(mlAdminConfig)
-
-                hubConfig.setStagingAppConfig(mlAppConfig, true)
-                hubConfig.setFinalAppConfig(mlAppConfig, true)
+                hubConfig.setAppConfig(mlAppConfig, true)
+                //To reset the clients with modified hub and app configs
+                flowManager.setupClient();
+                dataHub.wireClient();
             }
         '''
 
@@ -217,13 +218,11 @@ class TlsTest extends BaseTest {
             new File("src/test/resources/tls-test/ssl-server.json"))
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
-        /*copyResourceToFile("tls-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("tls-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))*/
+       
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
+        hubConfig().refreshProject()
     }
 
     

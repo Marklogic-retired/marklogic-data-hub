@@ -16,10 +16,10 @@
 package com.marklogic.hub.collector.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
@@ -32,6 +32,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -60,6 +62,8 @@ public class CollectorImpl implements Collector {
     private DatabaseClient client = null;
     private HubConfig hubConfig = null;
     private CodeFormat codeFormat;
+
+    private static Logger logger = LoggerFactory.getLogger(CollectorImpl.class);
 
     private String module;
 
@@ -109,7 +113,6 @@ public class CollectorImpl implements Collector {
             // https://github.com/marklogic/marklogic-data-hub/issues/632
             // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
-            AppConfig appConfig = hubConfig.getStagingAppConfig();
 
             RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
@@ -129,6 +132,7 @@ public class CollectorImpl implements Collector {
                 uriString += "&options=" + URLEncoder.encode(objectMapper.writeValueAsString(options), "UTF-8");
             }
             URI uri = new URI(uriString);
+
             RequestCallback requestCallback = request -> request.getHeaders()
                 .setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
 
@@ -169,10 +173,33 @@ public class CollectorImpl implements Collector {
                 httpClientBuilder.setSslcontext(sslContext);
             }
 
-            DatabaseClientFactory.SSLHostnameVerifier hostnameVerifier = securityContext.getSSLHostnameVerifier();
-            if (hostnameVerifier != null) {
-                httpClientBuilder.setHostnameVerifier(new HostnameVerifierAdapter(hostnameVerifier));
+            DatabaseClientFactory.SSLHostnameVerifier verifier = securityContext.getSSLHostnameVerifier();
+            X509HostnameVerifier hostnameVerifier = null;
+            if (verifier == SSLHostnameVerifier.ANY) {
+                hostnameVerifier = new X509HostnameVerifier() {
+                    @Override
+                    public boolean verify(String paramString, SSLSession paramSSLSession) {
+                        return true;
+                    }
+
+                    @Override
+                    public void verify(String host, SSLSocket ssl) throws IOException {}
+
+                    @Override
+                    public void verify(String host, X509Certificate cert) throws SSLException {}
+
+                    @Override
+                    public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
+                };
+                
+            } else if (verifier == SSLHostnameVerifier.COMMON) {
+                hostnameVerifier = null;
+            } else if (verifier == SSLHostnameVerifier.STRICT) {
+                hostnameVerifier = null;
+            } else if (verifier != null) {
+                hostnameVerifier = new HostnameVerifierAdapter(verifier);
             }
+            httpClientBuilder.setHostnameVerifier(hostnameVerifier);
         }
 
         HttpClient client = httpClientBuilder.build();
@@ -185,60 +212,65 @@ public class CollectorImpl implements Collector {
     static private class HostnameVerifierAdapter implements X509HostnameVerifier {
         private DatabaseClientFactory.SSLHostnameVerifier verifier;
 
-        HostnameVerifierAdapter(DatabaseClientFactory.SSLHostnameVerifier verifier) {
-            this.verifier = verifier;
+        protected HostnameVerifierAdapter(DatabaseClientFactory.SSLHostnameVerifier verifier) {
+          this.verifier = verifier;
+        }
+        
+        public void verify(String hostname, X509Certificate cert) throws SSLException {
+          ArrayList<String> cnArray = new ArrayList<>();
+          try {
+            LdapName ldapDN = new LdapName(cert.getSubjectX500Principal().getName());
+            for(Rdn rdn: ldapDN.getRdns()) {
+              Object value = rdn.getValue();
+              if ( "CN".equalsIgnoreCase(rdn.getType()) && value instanceof String ) {
+                cnArray.add((String) value);
+              }
+            }
+            int type_dnsName = 2;
+            int type_ipAddress = 7;
+            ArrayList<String> subjectAltArray = new ArrayList<>();
+            Collection<List<?>> alts = cert.getSubjectAlternativeNames();
+            if ( alts != null ) {
+              for ( List<?> alt : alts ) {
+                if ( alt != null && alt.size() == 2 && alt.get(1) instanceof String ) {
+                  Integer type = (Integer) alt.get(0);
+                  if ( type == type_dnsName || type == type_ipAddress ) {
+                    subjectAltArray.add((String) alt.get(1));
+                  }
+                }
+              }
+            }
+            String[] cns = cnArray.toArray(new String[cnArray.size()]);
+            String[] subjectAlts = subjectAltArray.toArray(new String[subjectAltArray.size()]);
+            verifier.verify(hostname, cns, subjectAlts);
+          } catch(CertificateParsingException e) {
+            throw new MarkLogicIOException(e);
+          } catch(InvalidNameException e) {
+            throw new MarkLogicIOException(e);
+          }
+        }
+
+        @Override
+        public void verify(String hostname, SSLSocket ssl) throws IOException {
+            Certificate[] certificates = ssl.getSession().getPeerCertificates();
+            verify(hostname, (X509Certificate) certificates[0]);             
+        }
+
+        @Override
+        public void verify(String hostname, String[] cns, String[] subjectAlts) throws SSLException {
+            verifier.verify(hostname, cns, subjectAlts);            
         }
 
         @Override
         public boolean verify(String hostname, SSLSession session) {
             try {
-                Certificate[] certificates = session.getPeerCertificates();
-                verify(hostname, (X509Certificate) certificates[0]);
-                return true;
-            } catch(SSLException e) {
-                return false;
+              Certificate[] certificates = session.getPeerCertificates();
+              verify(hostname, (X509Certificate) certificates[0]);
+              return true;
+              } 
+            catch(SSLException e) {
+              return false;
             }
         }
-
-        @Override
-        public void verify(String s, SSLSocket sslSocket) throws IOException {}
-
-        public void verify(String hostname, X509Certificate cert) throws SSLException {
-            ArrayList<String> cnArray = new ArrayList<>();
-            try {
-                LdapName ldapDN = new LdapName(cert.getSubjectX500Principal().getName());
-                for(Rdn rdn: ldapDN.getRdns()) {
-                    Object value = rdn.getValue();
-                    if ( "CN".equalsIgnoreCase(rdn.getType()) && value instanceof String ) {
-                        cnArray.add((String) value);
-                    }
-                }
-
-                int type_dnsName = 2;
-                int type_ipAddress = 7;
-                ArrayList<String> subjectAltArray = new ArrayList<>();
-                Collection<List<?>> alts = cert.getSubjectAlternativeNames();
-                if ( alts != null ) {
-                    for ( List<?> alt : alts ) {
-                        if ( alt != null && alt.size() == 2 && alt.get(1) instanceof String ) {
-                            Integer type = (Integer) alt.get(0);
-                            if ( type == type_dnsName || type == type_ipAddress ) {
-                                subjectAltArray.add((String) alt.get(1));
-                            }
-                        }
-                    }
-                }
-                String[] cns = cnArray.toArray(new String[cnArray.size()]);
-                String[] subjectAlts = subjectAltArray.toArray(new String[subjectAltArray.size()]);
-                verifier.verify(hostname, cns, subjectAlts);
-            } catch(CertificateParsingException e) {
-                throw new MarkLogicIOException(e);
-            } catch(InvalidNameException e) {
-                throw new MarkLogicIOException(e);
-            }
-        }
-
-        @Override
-        public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
     }
 }

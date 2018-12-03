@@ -32,11 +32,14 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,14 +49,19 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
+    @Autowired
     private HubConfig hubConfig;
+
+    @Autowired
+    private HubProject hubProject;
+
     private ObjectMapper mapper;
 
-    public EntityManagerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
+    public EntityManagerImpl() {
         mapper = new ObjectMapper();
     }
 
@@ -61,7 +69,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     public boolean saveQueryOptions() {
         QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
         try {
-            Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+            Path dir = hubProject.getEntityConfigDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -113,7 +121,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
-        Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        Path dir = hubProject.getEntityConfigDir();
         File stagingFile = Paths.get(dir.toString(), filename).toFile();
         if (stagingFile.exists()) {
             modulesLoader.setDatabaseClient(client);
@@ -161,7 +169,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }

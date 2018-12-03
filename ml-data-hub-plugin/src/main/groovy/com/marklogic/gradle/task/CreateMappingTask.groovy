@@ -31,12 +31,12 @@ class CreateMappingTask extends HubTask {
         if (mappingName == null) {
             throw new MappingNameRequiredException()
         }
-        def projectDir = getHubConfig().projectDir
+        def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "mappingName: " + mappingName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getStagingClient())
+        Scaffolding scaffolding = getScaffolding()
         scaffolding.createMappingDir(mappingName)
-        MappingManager mappingManager = MappingManager.getMappingManager(hubConfig)
+        MappingManager mappingManager = getMappingManager()
         def mapping = mappingManager.createMapping(mappingName)
         mappingManager.saveMapping(mapping)
     }

@@ -17,12 +17,7 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.DataHub
 import com.marklogic.hub.EntityManager
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
-import com.marklogic.hub.impl.DataHubImpl
-import com.marklogic.hub.impl.EntityManagerImpl
-import com.marklogic.rest.util.ResourcesFragment
 
 import org.gradle.api.tasks.TaskAction
 
@@ -31,7 +26,7 @@ class SaveIndexes extends HubTask {
     @TaskAction
     public void saveIndexes() {
         println "Saving Indexes to src/main/entity-config/databases directory"
-        EntityManager em = new EntityManagerImpl(getHubConfig())
+        EntityManager em = getEntityManager()
         em.saveDbIndexes()
         println "Saving Indexes to src/main/entity-config/databases directory complete"
     }

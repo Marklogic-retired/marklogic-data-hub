@@ -30,14 +30,6 @@ import java.util.List;
  * Manages existing flows and creates flow runners to execute flows.
  */
 public interface FlowManager {
-    /**
-     * Creates and returns the FlowManager object
-     * @param hubConfig - the hubConfig for the FlowManager to use
-     * @return a FlowManager object with a set hubConfig
-     */
-    static FlowManager create(HubConfig hubConfig){
-        return new FlowManagerImpl(hubConfig);
-    }
 
     /**
      * Turns an XML document into a flow
@@ -47,6 +39,12 @@ public interface FlowManager {
     static Flow flowFromXml(Element doc) {
         return FlowImpl.fromXml(doc);
     }
+
+    /**
+     * initializes the FlowManager with a new DatabaseClient.  Needed
+     * when the project is refreshed.
+     */
+    void setupClient();
 
     /**
      * retrieves a list of all the flows on the local files systems

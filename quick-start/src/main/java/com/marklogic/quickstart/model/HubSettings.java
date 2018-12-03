@@ -36,7 +36,7 @@ public class HubSettings {
         settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
 
         settings.username = config.getHubUserName();
-        settings.projectDir = config.getProjectDir();
+        settings.projectDir = config.getHubProject().getProjectDirString();
         return settings;
     }
 

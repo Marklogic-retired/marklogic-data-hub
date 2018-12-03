@@ -16,9 +16,10 @@
  */
 package com.marklogic.quickstart.web;
 
-import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.SearchPathModel;
 import com.marklogic.hub.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,7 +36,9 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/api/utils")
-public class UtilController extends EnvironmentAware {
+public class UtilController {
+
+    private static Logger logger = LoggerFactory.getLogger(UtilController.class);
 
 	@RequestMapping(value = "/searchPath", method = RequestMethod.GET)
 	@ResponseBody
