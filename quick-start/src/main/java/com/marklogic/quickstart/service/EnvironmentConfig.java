@@ -98,6 +98,11 @@ public class EnvironmentConfig {
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
         this.DHFVersion = versions.getDHFVersion();
+
+        // Replace "SNAPSHOT" in version with 0 as QS compares versions and fails if version number contains text
+        installedVersion = installedVersion.replace("SNAPSHOT", "0");
+        runningVersion = runningVersion.replace("SNAPSHOT", "0");
+        DHFVersion = DHFVersion.replace("SNAPSHOT", "0");
     }
 
     private DatabaseClient _stagingClient = null;
