@@ -422,6 +422,7 @@ export default function(tmpDir) {
       expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       await entityPage.getPropertyCheckBox(lastProperty).click();
       await entityPage.deleteProperty.click();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
