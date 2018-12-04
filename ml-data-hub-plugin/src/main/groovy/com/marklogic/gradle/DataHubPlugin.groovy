@@ -25,8 +25,10 @@ import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.impl.*
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -158,37 +160,52 @@ class DataHubPlugin implements Plugin<Project> {
         def extensions = project.getExtensions()
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
-        if(! hubProject.isInitialized()) {
-            hubConfig.initHubProject()
+
+        boolean userCalledHubInit = userCalledHubInit(project)
+
+        if (!userCalledHubInit && !hubProject.isInitialized()) {
+            throw new GradleException("Please initialize your project first by running the 'hubInit' Gradle task")
         }
 
-        // The Gradle set of properties is passed in as they've already been loaded and processed by the Gradle properties plugin.
-        hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
+        else {
 
-        hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
-        hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
-        hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
-        hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
-        hubConfig.setManageClient(extensions.getByName("mlManageClient"))
+            // If the user called hubInit, only load the configuration. Refreshing the project will fail because
+            // gradle.properties doesn't exist yet. 
+            if (userCalledHubInit) {
+                hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
+            }
+             else {
+                hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
+            }
 
-        project.extensions.add("hubConfig", hubConfig)
-        project.extensions.add("hubProject", hubProject)
-        project.extensions.add("dataHub", dataHub)
-        project.extensions.add("scaffolding", scaffolding)
-        project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
-        project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
-        project.extensions.add("mappingManager", mappingManager)
-        project.extensions.add("flowManager", flowManager)
-        project.extensions.add("entityManager", entityManager)
+            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
+            hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
+            hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
+            hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
+            hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
-        configureAppDeployer(project)
+            project.extensions.add("hubConfig", hubConfig)
+            project.extensions.add("hubProject", hubProject)
+            project.extensions.add("dataHub", dataHub)
+            project.extensions.add("scaffolding", scaffolding)
+            project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
+            project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
+            project.extensions.add("mappingManager", mappingManager)
+            project.extensions.add("flowManager", flowManager)
+            project.extensions.add("entityManager", entityManager)
 
-        println "Will look for resource configuration files in the following directories:"
-        for (ConfigDir configDir : hubConfig.getAppConfig().getConfigDirs()) {
-            println "Configuration directory: " + configDir.getBaseDir()
+            configureAppDeployer(project)
         }
     }
 
+    boolean userCalledHubInit(Project project) {
+        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
+            if (taskName.toLowerCase().equals("hubinit")) {
+                return true
+            }
+        }
+        return false
+    }
 
     void configureAppDeployer(Project project) {
         SimpleAppDeployer mlAppDeployer = project.extensions.getByName("mlAppDeployer")

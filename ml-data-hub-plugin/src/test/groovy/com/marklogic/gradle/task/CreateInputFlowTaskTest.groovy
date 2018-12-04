@@ -29,6 +29,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class CreateInputFlowTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
+        runTask('hubInit')
     }
 
     def "createInputFlow with no entityName"() {
