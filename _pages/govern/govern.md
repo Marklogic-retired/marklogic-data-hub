@@ -4,6 +4,8 @@ title: Govern Your Data
 permalink: /govern/
 ---
 
+# Govern Your Data
+
 Good data governance enables you to trust and manage your data better. Data governance enables you to answer questions about your data such as:
 
 * Where did this data come from?

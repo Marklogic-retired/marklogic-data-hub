@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/modeling-order-entity/
 ---
 
+# Getting Started Tutorial<br>Model the Order Entity
+
 ## Determine What to Model
 
 If we were developing a production application, we would now explore the order data to understand it better before making entity modeling decisions. Let's skip ahead and pretend that we have spoken to our company's data guru again and have learned the following about the order data:

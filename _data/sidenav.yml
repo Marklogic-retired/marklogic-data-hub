@@ -1,113 +1,168 @@
 main:
-    - { url: '/', text: 'Getting Started' }
     - {
-      url: '/understanding/',
-      text: 'Understanding DHF',
-      childPages: [
-        { url: '/understanding/concepts/', text: 'Concepts' },
-        { url: '/understanding/architecture/', text: 'Organization' },
-        { url: '/understanding/how-it-works/', text: 'How It Works'},
-        { url: '/understanding/plugins/', text: 'Plugins in Flows'},
-        { url: '/understanding/flowtracing/', text: 'Flow Tracing'},
-        { url: '/understanding/project-structure/', text: 'Project Structure'},
-        { url: '/understanding/upgrading/', text: 'Upgrading DHF'}
-      ]
-    }
+        url: '/',
+        text: 'Data Hub Framework',
+        childPages: [
+          { url: '/whats-new/', text: 'What''s New' },
+          { url: '/release-notes/', text: 'Release Notes' },
+          { absurl: 'https://github.com/marklogic/marklogic-data-hub/releases/', text: 'Download' },
+        ]
+      }
     - {
-      url: '/tutorial/',
-      text: 'Tutorial'
-      # childPages: [
-      #   { url: 'tutorial/install.md', text: 'Install the Data Hub Framework' },
-      #   { url: 'tutorial/create-product-entity.md', text: 'Create the Product Entity' },
-      #   { url: 'tutorial/create-product-input-flow.md', text: 'Create the Product Input Flow' },
-      #   { url: 'tutorial/load-products-as-is.md', text: 'Load the Product Data As-Is' },
-      #   { url: 'tutorial/browse-understand-product-data.md', text: 'Browse and Understand the Product Data' },
-      #   { url: 'tutorial/modeling-product-entity.md', text: 'Modeling the Product Entity' },
-      #   { url: 'tutorial/harmonizing-product-data.md', text: 'Harmonizing the Product Data' },
-      #   { url: 'tutorial/create-order-entity.md', text: 'Create the Order Entity' },
-      #   { url: 'tutorial/create-order-input-flow.md', text: 'Create the Order Input Flow' },
-      #   { url: 'tutorial/load-orders-as-is.md', text: 'Load the Orders As-Is' },
-      #   { url: 'tutorial/modeling-order-entity.md', text: 'Modeling the Order Entity' },
-      #   { url: 'tutorial/harmonizing-order-data.md', text: 'Harmonizing the Order Data' },
-      #   { url: 'tutorial/serve-data.md', text: 'Serve the Data Out of MarkLogic' },
-      #   { url: 'tutorial/wrapping-up.md', text: 'Wrapping Up' }
-      # ]
-    }
+        url: '/learndhf/',
+        text: 'Learning DHF',
+        childPages: [
+          { url: '/tutorial/', text: 'QuickStart Tutorial' },
+          { absurl: 'https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22', text: 'MarkLogic University' },
+        ]
+      }
     - {
-      url: '/using/',
-      text: 'Using DHF',
-      childPages: [
-        {
-          url: '/project/',
-          text: 'Create a Project',
-          childPages: [
-            { url: '/project/quickstart/', text: 'QuickStart' },
-            { url: '/project/gradle/', text: 'Gradle Plugin' },
-          ]
-        },
-        {
-          url: '/ingest/',
-          text: 'Ingest',
-          childPages: [
-            { url: '/ingest/quickstart/', text: 'QuickStart' },
-            { url: '/ingest/mlcp/', text: 'MLCP' },
-            { url: '/ingest/marklogic-client-api/', text: 'Java Client API' },
-            { url: '/ingest/rest/', text: 'REST Client API' }
-          ]
-        },
-        {
-          url: '/govern/',
-          text: 'Govern',
-          childPages: [
-            { url: '/govern/pii/', text: 'Managing PII' },
-          ]
-        },
-        {
-          url: '/harmonize/',
-          text: 'Harmonize',
-          childPages: [
-            { url: '/harmonize/quickstart/', text: 'QuickStart'},
-            { url: '/harmonize/gradle/', text: 'Gradle'},
-            { url: '/harmonize/java/', text: 'Java Library'},
-            { url: '/harmonize/rest/', text: 'REST'},
-            { url: '/harmonize/mapping/', text: 'Using Model-to-Model Mapping'},
-          ]
-        },
-        {
-          url: '/deploy/',
-          text: 'Deploy',
-          childPages: [
-            { url: '/deploy/deploy-to-dhs/', text: 'Deploy to DHS' },
-          ]
-        },
-        {
-          url: '/serve/',
-          text: 'Serve'
-        }
-      ]
-    }
-#    - {
-#      url: '/admin/',
-#      text: 'Administering DHF',
-#      childPages: [
-#        # { url: '/admin/install/', text: 'Installing Data Hub Framework' },
-#        { url: '/admin/upgrade/', text: 'Upgrading Data Hub Framework' }
-#        #, { url: '/admin/uninstall/', text: 'Uninstalling Data Hub Framework' }
-#      ]
-#    }
+        url: '/understanding/',
+        text: 'Understanding DHF',
+        childPages: [
+          {
+            url: '/understanding/concepts/',
+            text: 'DHF as an Operational Data Hub',
+            childPages: [
+              # { url: '/understanding/odh-functions/', text: 'Key Functions of an ODH' },
+              { url: '/understanding/entities/', text: 'Entities' },
+              { url: '/understanding/flows/', text: 'Flows' },
+              { url: '/understanding/plugins/', text: 'Plugins' },
+              { url: '/understanding/envelope-pattern/', text: 'Envelope Pattern' },
+            ]
+          },
+          {
+            url: '/tools/',
+            text: 'DHF Tools',
+            childPages: [
+              { url: '/tools/quickstart/', text: 'DHF QuickStart' },
+              { url: '/tools/gradle-plugin/', text: 'DHF Gradle Plugin' },
+              { url: '/javadocs/', text: 'DHF Java Library' },
+              { absurl: 'https://docs.marklogic.com/guide/mlcp/', text: 'MarkLogic Content Pump' },
+              { absurl: 'https://docs.marklogic.com/REST/client/', text: 'REST Client API' },
+              { absurl: 'https://docs.marklogic.com/javadoc/client/', text: 'Java Client API' },
+            ]
+          },
+          # {
+          #   # url: '/govern/',
+          #   text: 'DHF Governance',
+          #   childPages: [
+          #     {
+          #       url: '/security/',
+          #       text: 'Security' ,
+          #       childPages: [
+          #         { url: '//', text: 'Security Policies' },
+          #         { url: '//', text: 'Users and Roles' },
+          #           { url: '//', text: 'PII Data Management' }
+          #       ]
+          #     },
+          #     { url: '//', text: 'Provenance and Lineage' }
+          #   ]
+          # }
+        ]
+      }
     - {
-      url: '/docs/',
-      text: 'Docs',
-      childPages: [
-        { url: '/docs/server-side/', text: 'Server Side (xqy, sjs)' },
-        { url: '/docs/gradle-tasks/', text: 'Gradle Tasks' },
-        { url: '/javadocs/', text: 'Javadocs' },
-        { url: '/docs/architecture/', text: 'Architecture' },
-        { url: '/docs/security/', text: 'Security' },
-        { url: '/docs/gradleproperties/', text: 'Property Reference' },
-        { url: '/docs/release-notes/', text: 'Release Notes' }
-      ]
-    }
-    - { url: '/faqs/', text: 'FAQs' }
-    - { url: '/glossary/', text: 'DHF Glossary' }
+        url: '/using/',
+        text: 'Using DHF',
+        childPages: [
+          {
+            # url: '/project/',
+            text: '1 - Prepare' ,
+            childPages: [
+              {
+                url: '/project/create-project/',
+                text: 'Create Project',
+                childPages: [
+                  { url: '/project/quickstart/', text: 'Using QuickStart' },
+                  { url: '/project/gradle/', text: 'Using Gradle' },
+                ]
+              },
+              {
+                url: '/project/flow-tracing/',
+                text: 'Flow Tracing',
+                # childPages: [
+                #   { url: '/project/set-flow-tracing/', text: 'Set Up Flow Tracing' },
+                #   { url: '/project/view-traces/', text: 'View Traces' },
+                #   { url: '/project/export-traces/', text: 'Export Traces' },
+                #   { url: '/project/delete-traces/', text: 'Delete Traces' },
+                # ]
+              }
+            ]
+          },
+          {
+            url: '/ingest/',
+            text: '2 - Ingest' ,
+            childPages: [
+              { url: '/ingest/quickstart/', text: 'Using QuickStart' },
+              { url: '/ingest/mlcp/', text: 'Using MLCP' },
+              { url: '/ingest/rest/', text: 'Using the REST Client API' },
+              { url: '/ingest/marklogic-client-api/', text: 'Using the Java Client API' },
+              # { url: '/ingest/nifi/', text: 'Using NiFi' },
+              {
+                url: '/govern/pii/',
+                text: 'Protect PII',
+                # childPages: [
+                #   { url: '/govern/pii/designate-property-pii/', text: 'Designate Property as PII' },
+                #   { url: '/govern/pii/generate-pii-config/', text: 'Generate PII Security Config' },
+                #   { url: '/govern/pii/deploy-pii-config/', text: 'Deploy PII Security Config' },
+                # ]
+              }
+            ]
+          },
+          {
+            url: '/harmonize/',
+            text: '3 - Harmonize' ,
+            childPages: [
+              { url: '/harmonize/quickstart/', text: 'Using QuickStart' },
+              { url: '/harmonize/gradle/', text: 'Using Gradle' },
+              { url: '/harmonize/rest/', text: 'Using the REST Client API' },
+              { url: '/harmonize/java/', text: 'Using the Java Client API' },
+              { url: '/harmonize/mapping/', text: 'Using Model-to-Model Mapping' },
+            ]
+          },
+          {
+            url: '/deploy/',
+            text: '4 - Deploy',
+            childPages: [
+              # { url: '/deploy/deploy-to-prod/', text: 'Deploy to Production' },
+              { url: '/deploy/deploy-to-dhs/', text: 'Deploy to DHS' },
+            ]
+          },
+          {
+            url: '/serve/',
+            text: '5 - Serve',
+            childPages: [
+              { url: '/serve/rest/', text: 'Using the REST Client API' },
+              { url: '/serve/odbc/', text: 'Using ODBC' },
+            ]
+          },
+          {
+            url: '/upgrade/',
+            text: 'Upgrading DHF',
+            childPages: [
+              { url: '/upgrade/upgrade-notes-custom-hub-names/', text: 'Custom Hub Names' },
+              # { url: '/upgrade/upgrade-to-4_1_x/', text: 'Upgrade to DHF 4.1.x' },
+              { url: '/upgrade/upgrade-to-4_0_x/', text: 'Upgrade to DHF 4.0.x' },
+              # { url: '/upgrade/upgrade-to-3_0_x/', text: 'Upgrade to DHF 3.0.x' },
+            ]
+          }
+        ]
+      }
+    - {
+        url: '/refs/',
+        text: 'References',
+        childPages: [
+          { url: '/javadocs/', text: 'DHF API Library' },
+          { url: '/refs/servers-databases/', text: 'Servers and Databases' },
+          { url: '/refs/project-structure/', text: 'Project Directory Structure' },
+          { url: '/refs/rest-extensions/', text: 'REST Extensions' },
+          { url: '/refs/gradle-properties/', text: 'DHF Gradle Properties' },
+          { url: '/refs/gradle-tasks/', text: 'DHF Gradle Tasks' },
+          { url: '/refs/server-side-library/', text: 'Server Side API Library' },
+          { url: '/refs/security/', text: 'Security' },
+          # { url: '/refs/index-settings/', text: 'Index Settings' },
+        ]
+      }
+    - { url: '/refs/faqs/', text: 'FAQs' }
+    - { url: '/refs/glossary/', text: 'DHF Glossary' }
     - { absurl: 'https://github.com/marklogic/marklogic-data-hub', text: 'DHF on GitHub' }

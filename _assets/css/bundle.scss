@@ -14,10 +14,12 @@ section, header, footer, main, article, nav, aside { position: relative; }
 
 article {
   margin-top: 20px;
+  font-family: Verdana, Geneva, sans-serif;
 }
 
 main {
   margin-top: 20px;
+
 }
 a {
   outline: none !important;
@@ -56,6 +58,11 @@ nav.navbar {
   .navbar-brand {
     text-transform: none;
     padding-top: 15px !important;
+  }
+
+  .global-title {
+    padding-top: 10px !important;
+    font-size: 30px;
   }
 }
 
@@ -475,6 +482,7 @@ h2 {
 
 .side-nav {
   padding: 0px;
+  font-size: 85%;
 }
 
 .list-group-item.active, .list-group-item.active:hover,
@@ -527,4 +535,15 @@ h2 {
 
 .screenshot-border {
   border: solid 1px #CCC;
+}
+
+.table-b1gray {
+  border-collapse: collapse;
+  > table, td, th {
+      border: 1px solid gray;
+      padding: 5px;
+  }
+  > table {
+      margin-bottom: 20px;
+  }
 }

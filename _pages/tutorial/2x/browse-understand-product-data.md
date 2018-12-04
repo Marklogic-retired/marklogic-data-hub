@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/browse-understand-product-data/
 ---
 
+# Getting Started Tutorial 2.x<br>Browse and Understand the Product Data
+
 <i class="fa fa-hand-pointer-o"></i> Click on the **Browse** tab in the top navigation bar.
 
 ![Click Browse Tab]({{site.baseurl}}/images/2x/click-browse-tab-1.png)

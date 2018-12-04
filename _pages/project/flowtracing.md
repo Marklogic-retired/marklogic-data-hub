@@ -1,11 +1,13 @@
 ---
 layout: inner
 title: Flow Tracing
-lead_text: ''
-permalink: /understanding/flowtracing/
+permalink: /project/flow-tracing/
+redirect_from: "/understanding/flowtracing/"
 ---
 
 <!--- DHFPROD-646 TODO since this is primarily a debugging thing, does it make more sense under Using the DHF than under Concepts? -->
+
+# Flow Tracing
 
 Flow tracing produces a detailed view of the flows as they happened. For each plugin in a flow, the inputs and outputs to that plugin are recorded into the JOBS database. Flow tracing is great for debugging your flows because you can see exactly what came in and went out of each step. You can use flow tracing to track down bugs in your flows as well as performance issues.
 

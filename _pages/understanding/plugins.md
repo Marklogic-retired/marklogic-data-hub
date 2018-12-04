@@ -5,24 +5,24 @@ lead_text: ''
 permalink: /understanding/plugins/
 ---
 
+# Plugins in Flows
+
 MarkLogic DHF uses different plugin modules within flows to generate parts of the envelope (content, headers, and triples) and to perform other tasks.
 
 An input flow is comprised of four plugins; a harmonize flow is comprised of six plugins.
 
 | input flow | harmonize flow | mode |
-| --- | --- | --- |
+|------------|----------------|------|
 | Main Plugin | Main Plugin | n/a |
-|  | Collector Plugin | query mode |
+| n/a | Collector Plugin | query mode |
 | Content Plugin | Content Plugin | query mode |
 | Headers Plugin | Headers Plugin | query mode |
 | Triples Plugin | Triples Plugin | query mode |
-|  | Writer Plugin | update mode |
-
+| n/a | Writer Plugin | update mode |
 
 
 ## Main Plugin
 The main plugin orchestrates the running of other plugins within the flow.
-
 
 
 ## Collector Plugin
@@ -71,7 +71,6 @@ module.exports = {
 };
 
 ```
-
 
 
 ## Content Plugin
@@ -147,7 +146,6 @@ module.exports = {
 ```
 
 
-
 ## Headers Plugin
 A headers plugin extracts header information from the content to copy to the **headers** section of the envelope. This is useful for normalizing common fields (hire-date, last-updated, etc), which can be indexed for faster search operations. **NOTE: This plugin runs in query mode.**
 
@@ -200,7 +198,6 @@ module.exports = {
   createHeaders: createHeaders
 };
 ```
-
 
 
 ## Triples Plugin
@@ -260,7 +257,6 @@ module.exports = {
 ```
 
 
-
 ## Writer Plugin
 A writer plugin saves the final envelope to the database. **NOTE: This plugin runs in update mode.**
 
@@ -312,3 +308,8 @@ module.exports = {
 };
 ```
 
+
+## See Also
+- [Entities](/understanding/entities/)
+- [Plugins](/understanding/plugins/)
+- [Envelope Pattern](/understanding/envelope-pattern/)

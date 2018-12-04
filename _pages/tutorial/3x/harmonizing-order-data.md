@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/harmonizing-order-data/
 ---
 
+# Getting Started Tutorial<br>Harmonize the Order Data
+
 Now that we have modeled the Order entity we can use the Data Hub Framework's code scaffolding to generate harmonization code and then customize it for our application.
 
 Recall that you can either generate customized harmonization code based on a model-to-model mapping, as we did with Product, or you can generate default harmonization code and customize it. In this exercise, we will generate and customize the default code since the **price** property of an Order is a computed value.

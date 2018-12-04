@@ -1,12 +1,12 @@
 ---
 layout: inner
-title: Harmonize from Gradle
+title: Harmonize Using the Gradle Plugin
 permalink: /harmonize/gradle/
 ---
 
-### Harmonizing with the Gradle Plugin
+# Harmonize Using the Gradle Plugin
 
-#### Creating Entities
+## Creating Entities
 
 Entities are the high-level business objects in your enterprise. They can be things like Employee, Product, Purchase Order, Department, etc. With DHF, you have a choice between using abstract entities or [Entity Services](https://docs.marklogic.com/guide/entity-services/intro).
 
@@ -16,8 +16,8 @@ To create an entity, you simply issue this gradle command:
 
 The command will generate an empty directory: `$project-dir/plugins/entities/My Awesome Entity`
 
-#### Creating a Harmonize Flow
+## Creating a Harmonize Flow
 {% include ostabs.html linux="./gradlew hubCreateHarmonizeFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\"" windows="gradlew.bat hubCreateHarmonizeFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\"" %}
 
-#### Running your Harmonize Flow
+## Running your Harmonize Flow
 {% include ostabs.html linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"" windows="gradlew.bat hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"" %}

@@ -4,7 +4,9 @@ title: Using Model-to-Model Mapping
 permalink: /harmonize/mapping/
 ---
 
-Use a model-to-model mapping to quickly and easily define how to harmonize source data to produce entity instances, without writing any code. See the following topics for details:
+# Using Model-to-Model Mapping
+
+Use a model-to-model mapping to quickly and easily define how to harmonize source data to produce entity instances without writing any code.
 * [What is Model-to-Model Mapping?](#what-is-model-to-model-mapping?)
 * [Creating a Mapping](#creating-a-mapping)
 * [Changing the Mapping Source Document](#changing-the-mapping-source-document)
@@ -12,6 +14,7 @@ Use a model-to-model mapping to quickly and easily define how to harmonize sourc
 * [Modifying an Existing Mapping](#modifying-an-existing-mapping)
 * [Understanding the Harmonization Code](#understanding-the-harmonization-code)
 * [Model-to-Model Mapping Limitations](#model-to-model-mapping-limitations)
+
 
 ## What is Model-to-Model Mapping?
 

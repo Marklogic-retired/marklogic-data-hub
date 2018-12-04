@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/install/
 ---
 
+# Getting Started Tutorial 2.x<br>Install the Framework
+
 ## 1 - Download and Install MarkLogic
 
 - Follow the [official instructions](https://docs.marklogic.com/guide/installation){:target="_blank"} for installing MarkLogic.

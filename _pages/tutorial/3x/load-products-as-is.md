@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/load-products-as-is/
 ---
 
+# Getting Started Tutorial<br>Load the Product Data As-Is
+
 ## Ingest Product Data As-Is
 
 In this exercise, you will configure and execute an input flow to load product data.

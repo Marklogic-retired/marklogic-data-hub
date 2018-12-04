@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/create-product-entity/
 ---
 
+# Getting Started Tutorial<br>Create the Product Entity
+
 Entities are the business objects that you will be working with in the hub. The steps in this tutorial will make use of MarkLogic's [Entity Services feature](https://docs.marklogic.com/guide/entity-services). Entity Services allows you to model your business entities as JSON. Using these data models, you can then generate code scaffolding, database configurations, index settings, and validations. The Data Hub Framework handles many of these for you. Later in this tutorial we will use the index and scaffolding generation.
 
 To begin creating a Product entity, click on **Entities** in the top navigation bar:

@@ -1,20 +1,20 @@
 ---
 layout: inner
-title: Creating a DHF Project using the Gradle Plugin
+title: Create a DHF Project Using the DHF Gradle Plugin
 permalink: /project/gradle/
 ---
 
-### Creating a Project with the ml-data-hub Gradle Plugin
-In order to get started with the ml-data-hub Gradle plugin, you will need to perform a few steps.
+# Create a DHF Project Using the DHF Gradle Plugin
 
-1. [Install Prerequisites](#install-prerequisites)
-1. [Create a DHF Project](#create-a-dhf-project)
-1. [Set Username and Password](#set-username-and-password)
+- [Install Prerequisites](#install-prerequisites)
+- [Create a DHF Project](#create-a-dhf-project)
+- [Set Username and Password](#set-username-and-password)
 
-### Install Prerequisites
-You will need the following items to use the ml-data-hub Gradle plugin:
-1. [Gradle 3.4](https://gradle.org/) or newer (see below if you have an older version)
-1. MarkLogic 9.0-1.1 or newer
+
+## Install Prerequisites
+
+- [Gradle 3.4](https://gradle.org/) or newer (see below if you have an older version)
+- MarkLogic 9.0-1.1 or newer
 
 If you already have gradle installed, you can use the following command to check the version:
 
@@ -37,7 +37,7 @@ Once the wrapper is installed, you must run gradle on your DHF project using the
 
 {% include ostabs.html linux="./gradlew ..." windows="gradlew.bat ..." %}
 
-### Create a DHF Project
+## Create a DHF Project
 The first step in using ml-data-hub is to create your DHF project. Start by creating a project directory (henceforth referred to as $project-dir).
 
 Next create a `build.gradle` file in that directory ($project-dir/build.gradle) that looks like the following. Adjust the version value of com.marklogic.ml-data-hub as needed to match the version of DHF you are using.
@@ -66,9 +66,9 @@ You can then initialize your DHF project.
 You should see output like this:
 
 ```
-############################################
+##############################
 # Your Data Hub Framework Project is ready.
-############################################
+##############################
 
  - Set username and password
      There are several ways to do this. The easiest is to set mlUsername and mlPassword in gradle.properties.
@@ -91,12 +91,10 @@ Total time: 1.932 secs
 
 Your DHF project has been initialized and you are ready to get down to business.
 
-### Set Username and Password
-Note that in the output above, you are instructed to set your username and password in order for the ml-data-hub Gradle plugin to communicate with MarkLogic.
+## Set Username and Password
+You must set your username and password for the ml-data-hub Gradle plugin to communicate with MarkLogic. You can do so in any of the following ways:
 
-There are three ways of doing this.
-
-#### In your properties file
+- In your properties file
 Open `$project-dir/gradle.properties` and supply your MarkLogic username and password.
 
 **$project-dir/gradle.properties**
@@ -105,7 +103,7 @@ mlUsername=admin
 mlPassword=admin
 ```
 
-#### In your environment-specific properties file
+- In your environment-specific properties file
 Open `$project-dir/gradle-$env.properties`, where `$env` is the environment you wish to setup. By default, the project has the `local` environment. Supply your MarkLogic username and password.
 
 **$project-dir/gradle-local.properties**
@@ -114,7 +112,7 @@ mlUsername=admin
 mlPassword=admin
 ```
 
-#### On the command line
+- On the command line
 If you don't want to store your username and password in files, you can supply them on the command line.
 
 {% include ostabs.html linux="./gradlew someTask -PmlUsername=admin -PmlPassword=admin" windows="gradlew.bat someTask -PmlUsername=admin -PmlPassword=admin" %}

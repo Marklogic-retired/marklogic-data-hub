@@ -1,8 +1,11 @@
 ---
 layout: inner
-title: Upgrading DHF
-permalink: /understanding/upgrading/
+title: Upgrade to DHF 4.0.x
+permalink: /upgrade/upgrade-to-4_0_x/
+redirect_from: "/understanding/upgrading/"
 ---
+
+# Upgrade to DHF 4.0.x
 
 This page contains the following topics related to upgrading Data Hub Framework and your DHF project.
 * [Required Software](#required-software)
@@ -28,6 +31,7 @@ The following table lists the minimum version of MarkLogic required by supported
 | 2.0.4+ | 9.0-5 |
 | 3.0.0 | 9.0-5 |
 | 4.0.x | 9.0-5* |
+{:.table-b1gray}
 
 Deploying a DHF project or application into a MarkLogic Data Hub Service environment requires DHF 4.0.1 or later and MarkLogic 9.0-7 or later. For details, refer to the Data Hub Service documentation and https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/.
 
@@ -39,6 +43,7 @@ DHF supports the following upgrade paths:
 |--------------|------------|
 | 3.0.0 | 4.x |
 | 2.0.4+ | 4.x |
+{:.table-b1gray}
 
 You must be running at least DHF 2.0.4 before upgrading to version 4.0.0 or later. If you are running an earlier version of DHF, first upgrade to the latest 2.0.x version.
 
@@ -87,7 +92,7 @@ Note that there a several new gradle properties related to your hub databases an
 
 For example, where previously your `gradle.properties` or `gradle-local.properties` file contained a setting for `mlTriggersDbName`, now it must contain a setting for `mlStagingTriggersDbName` and `mlFinalTriggersDbName`. This requirement is a side-effect of the following change described in the release notes:
 
-* [Independent **STAGING** and **FINAL** App Server Stacks Stacks]({{site.baseurl}}/docs/release-notes/#independent-staging-and-final-app-server-stacks)  
+* [Independent **STAGING** and **FINAL** App Server Stacks Stacks]({{site.baseurl}}/docs/release-notes/#independent-staging-and-final-app-server-stacks)
 
 ### Upgrading from 3.0.0 to 4.0.x
 The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0 and later. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.

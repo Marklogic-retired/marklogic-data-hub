@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/modeling-product-entity/
 ---
 
+# Getting Started Tutorial 2.x<br>Modeling the Product Entity
+
 ## Modeling the Product Entity
 
 After browsing the data and speaking to our Data Guru we now know that we want to harmonize two very specific fields: **sku** and **price**.
