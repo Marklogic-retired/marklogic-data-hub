@@ -235,10 +235,6 @@ public class HubProjectImpl implements HubProject {
         getHubSchemasDir().toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
 
-        //scaffold triggers
-        getHubConfigDir().resolve("triggers").toFile().mkdirs();
-        getUserConfigDir().resolve("triggers").toFile().mkdirs();
-
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
         makeExecutable(gradlew);
