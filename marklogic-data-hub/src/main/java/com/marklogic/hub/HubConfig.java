@@ -532,4 +532,13 @@ public interface HubConfig {
     void createProject(String projectDirString);
 
     String getStagingSchemasDbName();
+
+    /**
+     * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
+     * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
+     * 
+     * @param environment
+     * @return
+     */
+    HubConfig withPropertiesFromEnvironment(String environment);
 }

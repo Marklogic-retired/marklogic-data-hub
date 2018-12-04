@@ -213,6 +213,8 @@ public class HubConfigImpl implements HubConfig
 
     private ObjectMapper objmapper;
 
+    private String envString;
+
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
         projectProperties = new Properties();
@@ -992,6 +994,16 @@ public class HubConfigImpl implements HubConfig
             }
             File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
             loadPropertiesFromFile(file, projectProperties);
+
+            if (envString != null) {
+                File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + envString + ".properties").toFile();
+                if (envPropertiesFile != null && envPropertiesFile.exists()) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
+                    }
+                    loadPropertiesFromFile(envPropertiesFile, projectProperties);
+                }
+            }
         }
 
         if (properties != null){
@@ -1559,6 +1571,20 @@ public class HubConfigImpl implements HubConfig
         flowManager.setupClient();
         dataHub.wireClient();
         versions.setupClient();
+    }
+
+    /**
+     * It is not expected that a client would use this, as it would be partially re-inventing what the Gradle
+     * properties plugin does. But it is being preserved for backwards compatibility in case any clients prior to
+     * 4.1 were using HubConfigBuilder.withPropertiesFromEnvironment.
+     *
+     * @param environment
+     * @return
+     */
+    @JsonIgnore
+    public HubConfig withPropertiesFromEnvironment(String environment) {
+        this.envString = environment;
+        return this;
     }
 
     public String toString() {
