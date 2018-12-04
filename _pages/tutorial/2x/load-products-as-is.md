@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/load-products-as-is/
 ---
 
+# Getting Started Tutorial 2.x<br>Load the Product data As-Is
+
 Now you will use the QuickStart Input Flow wizard to load the product data into MarkLogic. The QuickStart application will use the settings you are about to specify to run [MarkLogic Content Pump MLCP](https://docs.marklogic.com/guide/mlcp){:target="_blank"} for you. MLCP is a command line tool for loading large amounts of data into MarkLogic. This Input Flow Wizard is quite awesome because you don't have to learn the intricacies of the MLCP command line to get started.
 
 1. <i class="fa fa-hand-pointer-o"></i> Click on **Load Products** under **Input Flows**.

@@ -1,7 +1,8 @@
 ---
 layout: inner
-title: Using Gradle
-permalink: /docs/server-side/
+title: DHF Server-Side Library
+permalink: /refs/server-side-library/
+redirect_from: "/docs/server-side/"
 ---
 
 # DHF Server-Side Library

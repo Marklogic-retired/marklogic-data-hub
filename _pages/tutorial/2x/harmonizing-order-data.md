@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/harmonizing-order-data/
 ---
 
+# Getting Started Tutorial 2.x<br>Harmonizing Order Data
+
 ## Harmonizing the Order Data
 
 Now that we have modeled the Order entity we can use the Data Hub Framework's code scaffolding to create a boilerplate for Harmonizing our data.

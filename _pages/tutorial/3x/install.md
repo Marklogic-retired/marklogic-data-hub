@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/install/
 ---
 
+# Getting Started Tutorial<br>Install the Data Hub Framework
+
 ## 1. Download the QuickStart .war
 
 Create a folder for this hub project and open a command line window into it. You can create the folder however you like. Here's an example of creating it from the command line.

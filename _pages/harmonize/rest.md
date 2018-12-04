@@ -1,18 +1,19 @@
 ---
 layout: inner
-title: Harmonize with the REST API
+title: Harmonize Using the REST API
 permalink: /harmonize/rest/
 ---
 
-### Harmonizing via REST
+# Harmonize Using the REST API
 
-There are cases where you don't want to run harmonize flows in batches. Perhaps you already know the id or uri to pass to the flow and want to skip the collector.
+When the DHF library runs a flow, it first calls the collector to get the list of strings to operate on. Then it splits the strings into batches and calls a custom REST extension that invokes the main.(xqy\|sjs) for your flow.
 
-When the DHF library runs a flow, it first calls the collector to get a list of strings to operate on. Once it has the list, it then splits the strings into batches and calls a custom REST extension that invokes the main.(xqy\|sjs) for your flow.
+If you already know the specific ID or URI of a specific item to pass to the flow, you can skip the collector phase and go to the harmonize phase by invoking one of the two REST Client API "flow" extensions that is installed when you set up DHF.
+- To use an XQuery extension, send a POST HTTP request to /LATEST/resources/ml:flow.
+- If your extension is implemented in JavaScript, use the `ml:sjsFlow` extension.
 
-You can skip the collector phase and go to the harmonize phase by invoking one of the two REST Client API "flow" extensions that gets installed when you set up DHF. To use an XQuery extension, send a POST HTTP request to /LATEST/resources/ml:flow.  If your extension is implemented in JavaScript, use the `ml:sjsFlow` extension.
 
-#### Via HTTP
+## Using HTTP
 
 ```
 POST /v1/resources/ml:flow?rs:identifiers=someIdentifier&rs:entity-name=EntityName&rs:flow-name=FlowName&rs:target-database=Documents&rs:options={"some":"json"}&rs:job-id=SomeJobID
@@ -30,7 +31,8 @@ The parameters are the following:
 - **rs:options** -  additional JSON options you can pass to the flow. Must be a JSON object.
 - **rs:job-id** - a job id, any string is OK.
 
-### Via Java Client API
+
+## Using the Java Client API
 
 **FlowResource.java**
 

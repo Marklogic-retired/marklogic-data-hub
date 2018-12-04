@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/serve-data/
 ---
 
+# Getting Started Tutorial 2.x<br>Serve the Data
+
 You have just successfully loaded two data sources and harmonized them both.
 
 Now you can access your data via several REST endpoints. Your harmonized data is available on the Final HTTP server on port 8011 by default. A full list of REST endpoints is available here: [https://docs.marklogic.com/REST/client](https://docs.marklogic.com/REST/client){:target="_blank"}

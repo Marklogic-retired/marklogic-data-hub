@@ -1,8 +1,11 @@
 ---
 layout: inner
-title: Property Reference
-permalink: /docs/gradleproperties/
+title: Gradle Properties
+permalink: /refs/gradle-properties/
+redirect_from: "/docs/gradleproperties/"
 ---
+
+# Gradle Properties
 
 This page provides information about the gradle properties that are
 needed by the hub to install and run properly.
@@ -11,15 +14,15 @@ needed by the hub to install and run properly.
 
 | Property  | Description |
 | --- | --- |
-| mlStagingAppserverName | The Application Server name used for the Staging Database. | 
+| mlStagingAppserverName | The Application Server name used for the Staging Database. |
 | mlStagingPort | Specifies the port to be used by the Staging App Server. |
 | mlStagingDbName | Specifies the name for the Staging Database. |
 | mlStagingForestsPerHost | Specifies the number of forests per host for the Staging Database. |
-| mlFinalAppserverName | The Application Server name used for the Final Database. | 
+| mlFinalAppserverName | The Application Server name used for the Final Database. |
 | mlFinalPort | Specifies the port to be used by the Final App Server. |
 | mlFinalDbName | Specifies the name for the Final Database. |
 | mlFinalForestsPerHost | Specifies the number of forests per host for the Final Database. |
-| mlJobAppserverName | The Application Server name used for the Jobs Database. | 
+| mlJobAppserverName | The Application Server name used for the Jobs Database. |
 | mlJobPort | Specifies the port to be used by the Jobs App Server. |
 | mlJobDbName | Specifies the name for the Jobs Database. |
 | mlJobForestsPerHost | Specifies the number of forests per host for the Jobs Database. |
@@ -31,4 +34,4 @@ needed by the hub to install and run properly.
 | mlModulePermissions | Comma-delimited string of role/capability/role/capability/etc that defines permissions for deployed Modules. |
 | mlIsHostLoadBalancer | Indicates if the value specified for "mlHost" should be treated as a load balancer or not. |
 
-Note: Any other properties are conformant to the `ml-gradle` properties and can be referenced via `ml-gradle` [Property Reference](https://github.com/marklogic-community/ml-gradle/wiki/Property-reference)
+{% include note.html type="NOTE" content="Other properties conform to the `ml-gradle` properties and can be referenced via `ml-gradle` [Property Reference](https://github.com/marklogic-community/ml-gradle/wiki/Property-reference)" %}

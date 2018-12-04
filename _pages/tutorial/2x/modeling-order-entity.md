@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/modeling-order-entity/
 ---
 
+# Getting Started Tutorial 2.x<br>Modeling the Order Entity
+
 In real life we would browse the loaded data to try and better understand it. Let's skip ahead and pretend that we have spoken to our Data Guru again.
 
 The Order data we loaded is different than the Product data. Each order can have more than one Product. And for each product there can be a variable quantity.

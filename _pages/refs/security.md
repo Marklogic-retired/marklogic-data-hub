@@ -1,21 +1,21 @@
 ---
 layout: inner
 title: Security
-permalink: /docs/security/
+permalink: /refs/security/
+redirect_from: "/docs/security/"
 ---
 
-This page provides information about the roles, privileges and users that are
-involved in a data hub.
-
+# Security
 
 1. [Privileges, users, roles, permissions](#overview)
 1. [Runtimes](#runtimes)
 1. [Roles](#roles)
 1. [Users](#users)
 
-## Privileges, roles, perimssions
 
-MarkLogic has a three-part security model, which is described in-depth in the 
+## Overview
+
+MarkLogic has a three-part security model, which is described in-depth in the
 [Security Guide](https://docs.marklogic.com/guide/security)
 
 Privileges are named capabilities.  When a user is or is not allowed to DO something with MarkLogic server, a privilege is involved.
@@ -23,7 +23,6 @@ Privileges are named capabilities.  When a user is or is not allowed to DO somet
 Roles are structures for grouping security concerns.  A role contains a set of privileges that the role allows, and also may contain names of other roles from which it inherits sets of privileges.  Roles also have "default permissions."  A document, whose write is secured by a role, will be written with this set of default permissions.
 
 Users correspond to people or to accounts that access MarkLogic.  They have credentials, and a set of roles and/or privileges that they possess.  Therefore when a user logs in, they can or cannot accomplish certain tasks within the system, they have access to some documents and not others, and when they write documents, certain default permissions are ascribed to that document.
-
 
 
 ## Runtimes
@@ -51,7 +50,3 @@ So that the hub admin can run flows and administer a DHF, it ships with both the
 When you configure your application to access DHF, use these two users to develop and test flows, and then to test running them in a production environment.
 
 A third user account is required if you are bootstrapping or installing a DHF from scratch.  Whomever installs DHF must have the privilege to create the DHF roles and users, so a special property in gradle.properties, `mlSecurityUsername` and `mlSecurityPasswrod` is used for the very first step of installation, during which the two roles and users are created.  Subsequent steps in the deployment process use `mlUsername` or `mlManageUsername`.
-
-
-
-

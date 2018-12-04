@@ -1,9 +1,11 @@
 ---
 layout: inner
-title: Project Structure
-lead_text: ''
-permalink: /understanding/project-structure/
+title: Project Directory Structure
+permalink: /refs/project-structure/
+redirect_from: "/understanding/project-structure/"
 ---
+
+# Project Directory Structure
 
 When you initialize a Data Hub Framework project using QuickStart or the `hubInit` gradle task, it sets up the following directory hierarchy. The diagram includes some placeholder entries so you can see, for example, how creation of entities, flows, and mappings interacts with the layout. An explanation of the sub-directories and files follows the diagram.
 
@@ -73,7 +75,7 @@ For example: gradle-dev.properties, gradle-qa.properties, gradle-prod.properties
 These are the \*nix and Windows executable files to run the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.
 
 ## plugins folder
-This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like, but the recommended location for custom modules and transforms is src/main/ml-modules; see the [ml-gradle documentation](https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded) for details.  
+This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like, but the recommended location for custom modules and transforms is src/main/ml-modules; see the [ml-gradle documentation](https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded) for details.
 
 When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`.
 
@@ -132,7 +134,7 @@ This folder contains all versions of a given model-to-model mapping. The name of
 A model to model mapping configuration files. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 ### src/main/hub-internal-config folder
-Note: As of DHF 4.0.0, the internal structure of all configuration directories aligns with that of `ml-gradle` and should work as documented in that project.
+{% include note.html type="NOTE" content="As of DHF 4.0.0, the internal structure of all configuration directories aligns with that of `ml-gradle` and should work as documented in that project." %}
 
 This folder contains sub-folders and JSON files used to configure your MarkLogic server. These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the [ml-config folder](#ml-config) and add any properties you'd like to override.
 

@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/create-order-entity/
 ---
 
+# Getting Started Tutorial<br>Create the Order Entity
+
 Next, we will create an Order entity, following the same procedure we used to create the Product entity.
 
 Click **Entities** on the top navigation bar.
@@ -20,7 +22,7 @@ Follow these steps:
 
 You have just created your second entity, the Order entity.
 
-Note: If you do not see your Order entity, it might be hidden behind the Product entity. Click and drag the Product entity to uncover the Order entity.
+{% include note.html type="NOTE" content="The Order entity might be hidden behind the Product entity. Click and drag the Product entity to uncover the Order entity." %}
 
 The following picture summarizes the steps for creating the Order entity.
 ![New Entity]({{site.baseurl}}/images/3x/create-order-entity/create-order-entity.png)
