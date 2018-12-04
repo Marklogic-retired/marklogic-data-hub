@@ -521,7 +521,7 @@ h2 {
       .list-group {
         .list-group-item {
           a {
-            padding: 5px 10px 5px 50px;
+            padding: 0px 10px 5px 50px;
           }
         }
       }
@@ -546,4 +546,9 @@ h2 {
   > table {
       margin-bottom: 20px;
   }
+}
+
+dt {
+  padding-top: 20px;
+  font-size: 110%;
 }

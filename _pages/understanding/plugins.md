@@ -19,6 +19,7 @@ An input flow is comprised of four plugins; a harmonize flow is comprised of six
 | Headers Plugin | Headers Plugin | query mode |
 | Triples Plugin | Triples Plugin | query mode |
 | n/a | Writer Plugin | update mode |
+{:.table-b1gray}
 
 
 ## Main Plugin
