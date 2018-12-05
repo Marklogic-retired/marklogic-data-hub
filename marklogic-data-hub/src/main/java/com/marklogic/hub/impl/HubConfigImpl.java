@@ -1473,7 +1473,7 @@ public class HubConfigImpl implements HubConfig
          * Initializing this to use both config dirs.
          */
 
-        if(config.getConfigDirs().size() == 1 && config.getConfigDirs().get(0).getBaseDir().getName().equalsIgnoreCase("ml-config")) {
+        if(config.getConfigDirs().size() == 1 && (config.getConfigDirs().get(0).getBaseDir().toString().equalsIgnoreCase("src/main/ml-config") || config.getConfigDirs().get(0).getBaseDir().toString().equalsIgnoreCase("src\\main\\ml-config"))) {
             List<ConfigDir> configDirs = new ArrayList<>();
             configDirs.addAll(config.getConfigDirs());
             config.getConfigDirs().clear();
@@ -1495,7 +1495,7 @@ public class HubConfigImpl implements HubConfig
             config.getModulePaths().add(getHubProject().getProjectDir().resolve(modulePath).normalize().toAbsolutePath().toString());
         }
 
-        if(config.getModulePaths().size() == 1 && (config.getModulePaths().get(0).equalsIgnoreCase("src/main/ml-modules") && config.getModulePaths().get(0).equalsIgnoreCase("src\\main\\ml-modules"))){
+        if(config.getModulePaths().size() == 1 && (config.getModulePaths().get(0).equalsIgnoreCase("src/main/ml-modules") || config.getModulePaths().get(0).equalsIgnoreCase("src\\main\\ml-modules"))){
             config.getModulePaths().add(getModulesDir().normalize().toAbsolutePath().toString());
         }
 
