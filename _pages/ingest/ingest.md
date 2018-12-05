@@ -6,7 +6,7 @@ permalink: /ingest/
 
 # Ingest Content into MarkLogic
 
-The Data Hub Framework ensures best practices are followed when building data hubs with MarkLogic. MarkLogic recommends that you create [input flows](/understanding/flows/#input-flows) to load content into MarkLogic. Input flows wrap your incoming data in [envelopes](/understanding/envelope-pattern/), allowing you to enrich the content with additional information.
+The Data Hub Framework ensures best practices are followed when building data hubs with MarkLogic. MarkLogic recommends that you create [input flows]({{site.baseurl}}/understanding/flows/#input-flows) to load content into MarkLogic. Input flows wrap your incoming data in [envelopes]({{site.baseurl}}/understanding/envelope-pattern/), allowing you to enrich the content with additional information.
 
 You can run input flows using any of the following:
 

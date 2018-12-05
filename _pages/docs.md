@@ -6,13 +6,13 @@ permalink: /docs/
 
 # DHF Documentation
 
-- [Understanding DHF](/understanding/)
-- [Requirements](/refs/requirements/)
-- [Create Project](/admin/create-project/)
-- [Ingest](/ingest/)
-- [Harmonize](/harmonize/)
-- [Deploy](/deploy/)
-- [Serve](/serve/)
-- [References](/refs/)
-- [FAQs](/refs/faqs/)
-- [Glossary](/refs/glossary/)
+- [Understanding DHF]({{site.baseurl}}/understanding/)
+- [Requirements]({{site.baseurl}}/refs/requirements/)
+- [Create Project]({{site.baseurl}}/admin/create-project/)
+- [Ingest]({{site.baseurl}}/ingest/)
+- [Harmonize]({{site.baseurl}}/harmonize/)
+- [Deploy]({{site.baseurl}}/deploy/)
+- [Serve]({{site.baseurl}}/serve/)
+- [References]({{site.baseurl}}/refs/)
+- [FAQs]({{site.baseurl}}/refs/faqs/)
+- [Glossary]({{site.baseurl}}/refs/glossary/)

@@ -15,6 +15,6 @@ With DHF, you can choose use abstract entities or MarkLogic 9's Entity Services.
 
 ## See Also
 - [Introduction to Entity Services](https://docs.marklogic.com/guide/entity-services/intro)
-- [Flows](/understanding/flows/)
-- [Plugins](/understanding/plugins/)
-- [Envelope Pattern](/understanding/envelope-pattern/)
+- [Flows]({{site.baseurl}}/understanding/flows/)
+- [Plugins]({{site.baseurl}}/understanding/plugins/)
+- [Envelope Pattern]({{site.baseurl}}/understanding/envelope-pattern/)

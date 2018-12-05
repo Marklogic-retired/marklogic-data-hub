@@ -26,7 +26,7 @@ An ODH performs four key functions:
 
 Load all your data into MarkLogic. Upon ingestion, the data is stored in a staging area. During the Ingest phase, you can enhance your data with additional metadata, such as provenance. _Where did this data come from and when did it get ingested?_
 
-See [Ingest](/ingest/).
+See [Ingest]({{site.baseurl}}/ingest/).
 
 
 ## Govern
@@ -38,7 +38,7 @@ Specifically, an operational data hub:
 - Secures all the data and operations at the entity or attribute level.
 - Traces data lineage. _Where did it come from? Who loaded it? When?_
 
-See [DHF Governance](/govern/).
+See [DHF Governance]({{site.baseurl}}/govern/).
 
 
 ## Harmonize
@@ -53,11 +53,11 @@ Harmonization is the process of creating a canonical model of your data using on
 
 While not all of these are explicitly "harmonization" tasks, they do tend to happen during this phase.
 
-See [Harmonize](/harmonize/).
+See [Harmonize]({{site.baseurl}}/harmonize/).
 
 
 ## Serve
 The data stored in your data hub is available through HTTP, REST, and ODBC.
 
-See [Serve](/serve/).
+See [Serve]({{site.baseurl}}/serve/).
 

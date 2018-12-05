@@ -10,9 +10,9 @@ DHF Gradle Plugin is a layer over the DHF Java Library that allows you to set up
 
 To use DHF Gradle Plugin,
 1. Download [Gradle 3.4](https://gradle.org/) or a later version.
-1. [Create a project using Gradle.](/project/gradle/)
-1. [Ingest using MLCP.](/ingest/mlcp/)
-1. [Harmonize using Gradle.](/harmonize/gradle/)
+1. [Create a project using Gradle.]({{site.baseurl}}/project/gradle/)
+1. [Ingest using MLCP.]({{site.baseurl}}/ingest/mlcp/)
+1. [Harmonize using Gradle.]({{site.baseurl}}/harmonize/gradle/)
 
 
 ## See Also
