@@ -67,7 +67,7 @@ main:
         childPages: [
           {
             # url: '/project/',
-            text: '1 - Prepare' ,
+            text: 'Prepare' ,
             childPages: [
               {
                 url: '/project/create-project/',
@@ -91,7 +91,7 @@ main:
           },
           {
             url: '/ingest/',
-            text: '2 - Ingest' ,
+            text: 'Ingest' ,
             childPages: [
               { url: '/ingest/quickstart/', text: 'Using QuickStart' },
               { url: '/ingest/mlcp/', text: 'Using MLCP' },
@@ -111,7 +111,7 @@ main:
           },
           {
             url: '/harmonize/',
-            text: '3 - Harmonize' ,
+            text: 'Harmonize' ,
             childPages: [
               { url: '/harmonize/quickstart/', text: 'Using QuickStart' },
               { url: '/harmonize/gradle/', text: 'Using Gradle' },
@@ -122,7 +122,7 @@ main:
           },
           {
             url: '/deploy/',
-            text: '4 - Deploy',
+            text: 'Deploy',
             childPages: [
               # { url: '/deploy/deploy-to-prod/', text: 'Deploy to Production' },
               { url: '/deploy/deploy-to-dhs/', text: 'Deploy to DHS' },
@@ -130,7 +130,7 @@ main:
           },
           {
             url: '/serve/',
-            text: '5 - Serve',
+            text: 'Serve',
             childPages: [
               { url: '/serve/rest/', text: 'Using the REST Client API' },
               { url: '/serve/odbc/', text: 'Using ODBC' },

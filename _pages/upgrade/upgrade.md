@@ -9,4 +9,4 @@ permalink: /upgrade/
 <!-- - [DHF 4.1.x]({{site.baseurl}}/upgrade/upgrade-to-4_1_x/) -->
 - [DHF 4.0.x]({{site.baseurl}}/upgrade/upgrade-to-4_0_x/)
 
-{% include note.html type="NOTE" content="If you have customized hub names, see [Upgrade Notes for Custom Hub Names]({{site.baseurl}}/upgrade/upgrade-notes-custom-hub-names)." %}
+If you have customized hub names, see [Upgrade Notes for Custom Hub Names]({{site.baseurl}}/upgrade/upgrade-notes-custom-hub-names).

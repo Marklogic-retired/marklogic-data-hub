@@ -21,10 +21,11 @@ To use DHF QuickStart,
 1. [Ingest your data using QuickStart.]({{site.baseurl}}/ingest/quickstart/)
 1. [Harmonize your data using QuickStart.]({{site.baseurl}}/harmonize/quickstart/)
 
-{% include note.html type="NOTE" content="QuickStart is intended for the development environment only. For production, use the [DHF Gradle Plugin]({{site.baseurl}}/tools/gradle-plugin/) or the [DHF Java Library]({{site.baseurl}}/javadocs/)." %}
+QuickStart is intended for the development environment only. For production, use the DHF Gradle Plugin or the DHF Java Library.
 
 
 ## See Also
 - [DHF Gradle Plugin]({{site.baseurl}}/tools/gradle-plugin/)
+- [DHF Java Library]({{site.baseurl}}/javadocs/)
 - [Tutorial on QuickStart]({{site.baseurl}}/tutorial/)
 - [MarkLogic University courses using QuickStart](https://www.marklogic.com/?s=quickstart)
