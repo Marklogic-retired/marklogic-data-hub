@@ -1,16 +1,16 @@
 ---
 layout: inner
-title: Release Notes
-permalink: /docs/release-notes/
+title: DHF 4.0.x Release Notes
+permalink: /release-notes/release-notes-4_0_x/
 ---
-The page provides detailed information about changes in the latest release of the Data Hub Framework (DHF). See the following topics for details:
 
-* [New Features](#new-features)
+# DHF 4.0.x Release Notes
+
+* [New Features in DHF 4.0.0](#new-features-in-dhf-4.0.0)
 * [Changes and Incompatibilities](#changes-and-incompatibilities)
 
-## New Features
 
-DHF 4.0.0 includes the following new features and capabilities:
+## New Features in DHF 4.0.0
 
 * [Declarative Mapping of Harmonization Flows](#declarative-mapping-of-harmonization-flows)
 * [Support for Securing Personally Identifiable Information](#support-for-securing-personally-identifiable-information)
@@ -30,6 +30,7 @@ As of DHF 4.0.0, you can easily restrict access to Personally Identifiable Infor
 This feature requires MarkLogic 9.0-6 or later.
 
 For details, see [Managing Personally Identifiable Information (PII)]({{site.baseurl}}/govern/pii).
+
 
 ## Changes and Incompatibilities
 

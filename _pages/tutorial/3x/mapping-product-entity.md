@@ -4,6 +4,9 @@ title: Getting Started Tutorial<br>Create a Model-to-Model Mapping for Product
 lead_text: ''
 permalink: /tutorial/mapping-product-entity/
 ---
+
+# Getting Started Tutorial<br>Create a Model-to-Model Mapping for Product
+
 This exercise walks you through creating a mapping for the Product entity.
 
 ### Model to Model Mapping Introduction

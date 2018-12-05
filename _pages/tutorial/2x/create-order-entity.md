@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/create-order-entity/
 ---
 
+# Getting Started Tutorial 2.x<br>Create the Order Entity
+
 Just like we did for the Product data, we model an empty Order then load the raw data.
 
 <i class="fa fa-hand-pointer-o"></i> Click on the Entities tab in the top navigation bar.

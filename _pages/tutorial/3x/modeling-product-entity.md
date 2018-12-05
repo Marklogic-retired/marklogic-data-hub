@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/modeling-product-entity/
 ---
 
+# Getting Started Tutorial<br>Model the Product Entity
+
 After browsing the data and speaking to our company's data guru, we now know that we want to harmonize two fields: **sku** and **price**.
 
 An sku value uniquely identifies a product, so we will model **sku** as the primary key for a Product entity. We want to be able to perform arithmetic on the price, so we will model price as a decimal value.

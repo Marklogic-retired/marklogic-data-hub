@@ -1,12 +1,14 @@
 ---
 layout: inner
-title: Harmonize from Java
+title: Harmonize Using the DHF Java Library
 permalink: /harmonize/java/
 ---
 
-### Using the DHF from Java
+# Harmonize Using the DHF Java Library
 
-The core of the Data Hub Framework ships as a library .jar file. Calling the DHF Java library directly from your custom Java code is the most powerful way to use the DHF. Before you embark down this path, consider whether you can get by using the [ml-data-hub Gradle Plugin](gradle.md) instead.
+## DHF Java Library
+
+The DHF Java Library is the core of the Data Hub Framework and ships as a library .jar file. Calling the DHF Java library directly from your custom Java code is the most powerful way to use the DHF. Before you embark down this path, consider whether you can get by using the [ml-data-hub Gradle Plugin](gradle.md) instead.
 
 The DHF Java library is distributed via bintray so that you can include it easily with your favorite Java build tool. The following snippets illustrate how to include it. Adjust the `marklogic-data-hub` version as needed to match your environment.
 
@@ -35,7 +37,7 @@ compile('com.marklogic:marklogic-data-hub:4.0.1')
 </dependency>
 ```
 
-### Running a Harmonize Flow from Java
+## Running a Harmonize Flow from Java
 
 By running a harmonize flow from Java, you get finer control over the process.
 

@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/load-orders-as-is/
 ---
 
+# Getting Started Tutorial<br>Load the Orders As-Is
+
 ## Ingest Order Data As-Is
 
 In this exercise, you will configure and run an input flow to load order data. We use the same procedure that we used to load product data.

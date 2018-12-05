@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/harmonizing-product-data/
 ---
 
+# Getting Started Tutorial 2.x<br>Browse and Understand the Product Data
+
 ## Harmonizing the Product Data
 
 Now that we have modeled the Product entity we can use the Data Hub Framework's code scaffolding to create a boilerplate for Harmonizing our data. Recall from earlier that the Data Hub Framework can use the Entity Services model definition to create code.

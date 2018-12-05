@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/wrapping-up/
 ---
 
+# Getting Started Tutorial 2.x<br>Wrapping Up
+
 ## Congratulations!
 You just created a Data Hub.
 

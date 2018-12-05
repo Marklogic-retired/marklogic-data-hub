@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/load-orders-as-is/
 ---
 
+# Getting Started Tutorial 2.x<br>Load the Orders As-Is
+
 ## Ingest Order Data As-Is
 
 Use the QuickStart Input Flow wizard to ingest the order data into MarkLogic.

@@ -2,5 +2,6 @@
 title: 'Data Hub Framework'
 description: 'A data hub framework for MarkLogic'
 odh_icon: '/images/odh.svg'
-hub_version: '3.0.0'    # latest
+hub_version: '4.0.3'    # latest
+hub_version: '3.0.0'    # for 3.x documentation
 hub_version_2x: '2.0.4' # for 2.x documentation

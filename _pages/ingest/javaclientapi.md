@@ -1,16 +1,17 @@
 ---
 layout: inner
-title: Ingest with the MarkLogic Client API
+title: Ingest Using the MarkLogic Java Client API
 permalink: /ingest/marklogic-client-api/
 ---
 
-### Ingest with the MarkLogic Java Client API
+# Ingest Using the MarkLogic Java Client API
 
 The [MarkLogic Java Client API](https://developer.marklogic.com/products/java) is a Java library that facilitates communicating with MarkLogic Server from Java applications.
 
 Before you can ingest, make sure you created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md). MarkLogic ships with two transforms **ml:inputFlow** and **ml:sjsInputFlow**, which you can invoke using the Java Client API.  Use **ml:inputFlow** for XQuery flows and **ml:sjsInputFlow** for JavaScript flows.
 
-#### Java Client API Example
+
+## Java Client API Example
 
 The following example shows how you can use the [DocumentManager Interface](https://docs.marklogic.com/javadoc/client/com/marklogic/client/document/DocumentManager.html) to ingest data into MarkLogic and run input flows against the data. The code uses the [ServerTransform class](https://docs.marklogic.com/javadoc/client/com/marklogic/client/document/ServerTransform.html) to execute the **ml:inputFlow** transform and pass parameters to it.
 

@@ -1,8 +1,11 @@
 ---
 layout: inner
 title: Gradle Tasks
-permalink: /docs/gradle-tasks/
+permalink: /refs/gradle-tasks/
+redirect_from: "/docs/gradle-tasks/"
 ---
+
+# Gradle Tasks
 
 This page provides a complete list of all of the Gradle tasks available from the ml-data-hub plugin.
 

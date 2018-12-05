@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/browse-understand-product-data/
 ---
 
+# Getting Started Tutorial<br>Browse and Understand the Product Data
+
 Click **Browse Data** in the top navigation bar to bring up the data browser:
 
 ![Click Browse Tab]({{site.baseurl}}/images/3x/browse-understand-product-data/select-browse.png)

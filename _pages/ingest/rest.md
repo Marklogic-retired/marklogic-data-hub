@@ -1,16 +1,17 @@
 ---
 layout: inner
-title: Ingest with the REST API
+title: Ingest Using MarkLogic REST Client API
 permalink: /ingest/rest/
 ---
 
-### Ingest with the MarkLogic REST Client API
+# Ingest Using MarkLogic REST Client API
 
 The [MarkLogic REST Client API](https://docs.marklogic.com/REST/client) is a set of REST endpoints that allow you to interact with MarkLogic.
 
 Before you can ingest, make sure you have created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md). When you set up a DHF project, a transform is installed on MarkLogic with the name **run-flow**, which you can invoke using the REST Client API.
 
-#### REST Client API Example
+
+## REST Client API Example
 
 This example shows how to use the [v1/documents endpoint](https://docs.marklogic.com/REST/PUT/v1/documents) to insert a document and run an Input Flow against it. The parameters are the following:
 
@@ -20,7 +21,8 @@ This example shows how to use the [v1/documents endpoint](https://docs.marklogic
 1. **trans:options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object.
 1. **trans:job-id** - [_Optional_] a job id, any string is OK. If none is provided then a UUID is generated for you.
 
-##### XQuery:
+
+### XQuery:
 
 <pre class="cmdline">
 curl --anyauth --user admin:admin -T ./my-content -i \
@@ -28,7 +30,8 @@ curl --anyauth --user admin:admin -T ./my-content -i \
   http://localhost:8010/v1/documents?uri=/shakespeare/plays/a_and_c.xml&transform=ml:inputFlow&trans:entity-name=YourEntityName&trans:flow-name=YourFlowName&trans:options={"your":"options"}&trans:job-id=someString
 </pre>
 
-##### JavaScript:
+
+### JavaScript:
 
 <pre class="cmdline">
 curl --anyauth --user admin:admin -T ./my-content -i \

@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/create-order-input-flow/
 ---
 
+# Getting Started Tutorial 2.x<br>Create the Order Input Flow
+
 Let's create an input flow for Orders so that we can load data as-is.
 
 <i class="fa fa-hand-pointer-o"></i> Click on the **Flows** tab in the top navigation bar.

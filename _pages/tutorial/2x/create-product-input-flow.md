@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/2x/create-product-input-flow/
 ---
 
+# Getting Started Tutorial 2.x<br>Create the Product Input Flow
+
 > **Input Flows** are responsible for getting data into the Hub staging area. These flows wrap incoming data in Envelopes. It's useful to wrap incoming data in Envelopes to track lineage and provenance. _Who loaded this data? When was it loaded? Where did it come from?_{:.smaller}
 
 > **Harmonize Flows** are responsible for batch harmonization of data from staging to final. Harmonization is the **main purpose** of using the Data Hub Framework.

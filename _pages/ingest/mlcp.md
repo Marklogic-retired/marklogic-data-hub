@@ -1,12 +1,12 @@
 ---
 layout: inner
-title: Ingest with MLCP
+title: Ingest Using MLCP
 permalink: /ingest/mlcp/
 ---
 
-### Ingest with MLCP (MarkLogic Content Pump)
+# Ingest Using MLCP
 
-[MLCP](https://docs.marklogic.com/guide/ingestion/content-pump) is a standalone Java utility provided by MarkLogic. It provides a rich command-line interface for loading content into MarkLogic. You can read more in the [MLCP User Guide](https://docs.marklogic.com/guide/mlcp).
+[MarkLogic Content Pump (MLCP)](https://docs.marklogic.com/guide/ingestion/content-pump) is a standalone Java utility provided by MarkLogic. It provides a rich command-line interface for loading content into MarkLogic. You can read more in the [MLCP User Guide](https://docs.marklogic.com/guide/mlcp).
 
 Before you can ingest, make sure you have created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
 
@@ -16,9 +16,10 @@ You can have MLCP invoke your input flow by including three parameters with your
 - `-transform_namespace`
 - `-transform_param`
 
-_Note: If you are loading content with QuickStart, it will generate the appropriate MLCP command for you._
+{% include note.html type="NOTE" content="QuickStart generates the appropriate MLCP commands for loading content." %}
 
-#### Input Flow Parameters
+
+## Input Flow Parameters
 
 The `-transform_module` and `-transform_namespace` parameters must be set to the following:
 
@@ -39,14 +40,16 @@ The `-transform_param` parameter will contain a comma-delimited list of key=valu
  - **flow-name** - the URL-encoded name of the flow.
  - **job-id** - [_Optional_] a job id, any string is OK. If none is provided then a UUID is generated for you.
  - **options** - [_Optional_] additional JSON options you can pass to the flow. Must be a JSON object
- 
-#### Spaces in Flow Names
+
+
+## Spaces in Flow Names
 
 MLCP does not allow spaces in the command line options for **-output_collections** and **-transform_param**. Prior to Data Hub Framework 2.0.0 there is no way to run a flow with a space in the name from standalone MLCP.
 
 Since 2.0.0 you can [URL encode](https://en.wikipedia.org/wiki/Percent-encoding) the name and it will run (as in the example below).
 
-#### MLCP Example
+
+## MLCP Example
 
 This is how you would run a flow named "My Awesome Flow" for the entity named "YourEntityName".
 
@@ -59,7 +62,6 @@ This is how you would run a flow named "My Awesome Flow" for the entity named "Y
 </pre>
 
 If your flow is implemented with JavaScript, use this module:
-
 
 <pre class="cmdline">
 /path/to/mlcp import \

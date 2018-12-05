@@ -5,6 +5,8 @@ lead_text: ''
 permalink: /tutorial/serve-data/
 ---
 
+# Getting Started Tutorial<br>Serve the Data Out of MarkLogic
+
 <!--- DHFPROD-646 https://github.com/marklogic/marklogic-data-hub/issues/790#issuecomment-373201418 -->
 
 You have just successfully loaded two data sources and harmonized them both.
