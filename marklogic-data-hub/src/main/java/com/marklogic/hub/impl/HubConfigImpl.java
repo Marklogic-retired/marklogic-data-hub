@@ -1472,14 +1472,32 @@ public class HubConfigImpl implements HubConfig
         /**
          * Initializing this to use both config dirs.
          */
-        //config.getConfigDirs().clear();
-        config.getConfigDirs().add(new ConfigDir(getHubConfigDir().toFile()));
 
-        ConfigDir userConfigDir = new ConfigDir(getUserConfigDir().toFile());
+        if(config.getConfigDirs().size() == 1 && config.getConfigDirs().get(0).getBaseDir().getName().equalsIgnoreCase("ml-config")) {
+            List<ConfigDir> configDirs = new ArrayList<>();
+            configDirs.addAll(config.getConfigDirs());
+            config.getConfigDirs().clear();
+            config.getConfigDirs().add(new ConfigDir(getHubConfigDir().toFile()));
+            ConfigDir userConfigDir = new ConfigDir(getUserConfigDir().toFile());
+
+            config.getConfigDirs().add(userConfigDir);
+            for (ConfigDir configDir : configDirs) {
+                config.getConfigDirs().add(new ConfigDir(getHubProject().getProjectDir().resolve(configDir.getBaseDir().toString()).normalize().toAbsolutePath().toFile()));
+            }
+        }
+
         config.setSchemasPath(getUserSchemasDir().toString());
-        config.getConfigDirs().add(userConfigDir);
 
-        config.getModulePaths().add(getModulesDir().normalize().toAbsolutePath().toString());
+        List<String> modulePaths = new ArrayList<>();
+        modulePaths.addAll(config.getModulePaths());
+        config.getModulePaths().clear();
+        for (String modulePath : modulePaths) {
+            config.getModulePaths().add(getHubProject().getProjectDir().resolve(modulePath).normalize().toAbsolutePath().toString());
+        }
+
+        if(config.getModulePaths().size() == 1 && (config.getModulePaths().get(0).equalsIgnoreCase("src/main/ml-modules") && config.getModulePaths().get(0).equalsIgnoreCase("src\\main\\ml-modules"))){
+            config.getModulePaths().add(getModulesDir().normalize().toAbsolutePath().toString());
+        }
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
