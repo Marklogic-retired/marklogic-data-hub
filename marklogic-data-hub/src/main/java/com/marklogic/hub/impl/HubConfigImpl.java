@@ -186,6 +186,7 @@ public class HubConfigImpl implements HubConfig
     private String DHFVersion = "2.0.0";
 
     // these hold runtime credentials for flows.
+    
     private String mlUsername = null;
     private String mlPassword = null;
 
@@ -214,6 +215,7 @@ public class HubConfigImpl implements HubConfig
     private ObjectMapper objmapper;
 
     private String envString;
+    
 
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
@@ -274,36 +276,47 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 stagingDbName = dbName;
+                setupClients();
                 break;
             case FINAL:
                 finalDbName = dbName;
+                setupClients();
                 break;
             case JOB:
                 jobDbName = dbName;
+                setupClients();
                 break;
             case TRACE:
                 jobDbName = dbName;
+                setupClients();
                 break;
             case MODULES:
                 modulesDbName = dbName;
+                setupClients();
                 break;
             case STAGING_MODULES:
                 modulesDbName = dbName;
+                setupClients();
                 break;
             case FINAL_MODULES:
                 modulesDbName = dbName;
+                setupClients();
                 break;
             case STAGING_TRIGGERS:
                 stagingTriggersDbName = dbName;
+                setupClients();
                 break;
             case FINAL_TRIGGERS:
                 finalTriggersDbName = dbName;
+                setupClients();
                 break;
             case STAGING_SCHEMAS:
                 stagingSchemasDbName = dbName;
+                setupClients();
                 break;
             case FINAL_SCHEMAS:
                 finalSchemasDbName = dbName;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set database name");
@@ -335,15 +348,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 stagingHttpName = httpName;
+                setupClients();
                 break;
             case FINAL:
                 finalHttpName = httpName;
+                setupClients();
                 break;
             case JOB:
                 jobHttpName = httpName;
+                setupClients();
                 break;
             case TRACE:
                 jobHttpName = httpName;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set http name");
@@ -396,36 +413,47 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 stagingForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case FINAL:
                 finalForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case JOB:
                 jobForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case TRACE:
                 jobForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case MODULES:
                 modulesForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case STAGING_MODULES:
                 modulesForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case FINAL_MODULES:
                 modulesForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case STAGING_TRIGGERS:
                 stagingTriggersForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case FINAL_TRIGGERS:
                 finalTriggersForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case STAGING_SCHEMAS:
                 stagingSchemasForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             case FINAL_SCHEMAS:
                 finalSchemasForestsPerHost = forestsPerHost;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set count of forests per host");
@@ -457,15 +485,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 stagingPort = port;
+                setupClients();
                 break;
             case FINAL:
                 finalPort = port;
+                setupClients();
                 break;
             case JOB:
                 jobPort = port;
+                setupClients();
                 break;
             case TRACE:
                 jobPort = port;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set app port");
@@ -498,15 +530,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingSslContext = sslContext;
+                setupClients();
                 break;
             case JOB:
                 this.jobSslContext = sslContext;
+                setupClients();
                 break;
             case TRACE:
                 this.jobSslContext = sslContext;
+                setupClients();
                 break;
             case FINAL:
                 this.finalSslContext = sslContext;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl context");
@@ -538,15 +574,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingSslHostnameVerifier = sslHostnameVerifier;
+                setupClients();
                 break;
             case JOB:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
+                setupClients();
                 break;
             case TRACE:
                 this.jobSslHostnameVerifier = sslHostnameVerifier;
+                setupClients();
                 break;
             case FINAL:
                 this.finalSslHostnameVerifier = sslHostnameVerifier;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set ssl hostname verifier");
@@ -578,15 +618,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingAuthMethod = authMethod;
+                setupClients();
                 break;
             case FINAL:
                 this.finalAuthMethod = authMethod;
+                setupClients();
                 break;
             case JOB:
                 this.jobAuthMethod = authMethod;
+                setupClients();
                 break;
             case TRACE:
                 this.jobAuthMethod = authMethod;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -611,12 +655,15 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingTrustManager = trustManager;
+                setupClients();
                 break;
             case JOB:
                 this.jobTrustManager = trustManager;
+                setupClients();
                 break;
             case FINAL:
                 this.finalTrustManager = trustManager;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -648,15 +695,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingScheme = scheme;
+                setupClients();
                 break;
             case FINAL:
                 this.finalScheme = scheme;
+                setupClients();
                 break;
             case JOB:
                 this.jobScheme = scheme;
+                setupClients();
                 break;
             case TRACE:
                 this.jobScheme = scheme;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -688,15 +739,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingSimpleSsl = simpleSsl;
+                setupClients();
                 break;
             case JOB:
                 this.jobSimpleSsl = simpleSsl;
+                setupClients();
                 break;
             case TRACE:
                 this.jobSimpleSsl = simpleSsl;
+                setupClients();
                 break;
             case FINAL:
                 this.finalSimpleSsl = simpleSsl;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set simple ssl");
@@ -728,15 +783,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingCertFile = certFile;
+                setupClients();
                 break;
             case JOB:
                 this.jobCertFile = certFile;
+                setupClients();
                 break;
             case TRACE:
                 this.jobCertFile = certFile;
+                setupClients();
                 break;
             case FINAL:
                 this.finalCertFile = certFile;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate file");
@@ -768,15 +827,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingCertPassword = certPassword;
+                setupClients();
                 break;
             case JOB:
                 this.jobCertPassword = certPassword;
+                setupClients();
                 break;
             case TRACE:
                 this.jobCertPassword = certPassword;
+                setupClients();
                 break;
             case FINAL:
                 this.finalCertPassword = certPassword;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set certificate password");
@@ -808,15 +871,19 @@ public class HubConfigImpl implements HubConfig
         switch (kind) {
             case STAGING:
                 this.stagingExternalName = externalName;
+                setupClients();
                 break;
             case JOB:
                 this.jobExternalName = externalName;
+                setupClients();
                 break;
             case TRACE:
                 this.jobExternalName = externalName;
+                setupClients();
                 break;
             case FINAL:
                 this.finalExternalName = externalName;
+                setupClients();
                 break;
             default:
                 throw new InvalidDBOperationError(kind, "set auth method");
@@ -829,6 +896,7 @@ public class HubConfigImpl implements HubConfig
     }
     @Override public void setHubRoleName(String hubRoleName) {
         this.hubRoleName = hubRoleName;
+        setupClients();
     }
 
     @Override public String getHubUserName() {
@@ -846,13 +914,16 @@ public class HubConfigImpl implements HubConfig
     
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
+        //setupClients();
     }
 
     public void setMlPassword(String mlPassword) {
         this.mlPassword = mlPassword;
+        //setupClients();
     }
     @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
+        setupClients();
     }
 
 
@@ -872,14 +943,14 @@ public class HubConfigImpl implements HubConfig
     }
 
     public void setLoadBalancerHost(String loadBalancerHost) {
-        this.loadBalancerHost = loadBalancerHost;
+        this.loadBalancerHost = loadBalancerHost;        
     }
 
     @Override public String getCustomForestPath() {
         return customForestPath;
     }
     public void setCustomForestPath(String customForestPath) {
-        this.customForestPath = customForestPath;
+        this.customForestPath = customForestPath;        
     }
 
     @Override public String getModulePermissions() {
@@ -896,10 +967,11 @@ public class HubConfigImpl implements HubConfig
     @Deprecated
     public void setProjectDir(String projectDir) {
         createProject(projectDir);
+        setupClients();
     }
 
     public void setModulePermissions(String modulePermissions) {
-        this.modulePermissions = modulePermissions;
+        this.modulePermissions = modulePermissions;        
     }
 
     @JsonIgnore
@@ -1130,6 +1202,7 @@ public class HubConfigImpl implements HubConfig
     }
     public void setManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
+        setupClients();
     }
 
     @JsonIgnore
@@ -1138,17 +1211,25 @@ public class HubConfigImpl implements HubConfig
     }
     public void setManageClient(ManageClient manageClient) {
         this.manageClient = manageClient;
+        setupClients();
     }
 
     @JsonIgnore
     public AdminConfig getAdminConfig() { return adminConfig; }
-    public void setAdminConfig(AdminConfig adminConfig) { this.adminConfig = adminConfig; }
+    
+    public void setAdminConfig(AdminConfig adminConfig) { 
+        this.adminConfig = adminConfig;
+        setupClients();
+    }
 
     @JsonIgnore
     public AdminManager getAdminManager() {
         return adminManager;
     }
-    public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
+    public void setAdminManager(AdminManager adminManager) { 
+        this.adminManager = adminManager; 
+        setupClients();
+    }
 
     public DatabaseClient newAppServicesClient() {
         return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
@@ -1323,6 +1404,7 @@ public class HubConfigImpl implements HubConfig
         if (!skipUpdate) {
             updateAppConfig(this.appConfig);
         }
+        setupClients();
     }
 
     @Override public String getJarVersion() {
@@ -1351,8 +1433,20 @@ public class HubConfigImpl implements HubConfig
 
     /* this method takes care of setting app config and other non-injected dependencies */
     public void initializeApplicationConfigurations() {
+        boolean isUserNull = false;
+        if(this.getMlUsername() == null || this.getMlPassword() == null) {
+            isUserNull = true;
+            this.setMlUsername("admin");
+            this.setMlPassword("admin");
+        }
         hydrateAppConfigs(environment);
         hydrateConfigs();
+        if(isUserNull) {
+            this.setMlUsername("");
+            this.setMlPassword("");
+            this.getAppConfig().setAppServicesUsername("");
+            this.getAppConfig().setAppServicesPassword("");
+        }
     }
 
     private Map<String, String> getCustomTokens() {
@@ -1567,10 +1661,14 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public void refreshProject(Properties properties, boolean loadGradleProperties) {
         loadConfigurationFromProperties(properties, loadGradleProperties);
-
+        setupClients();        
+    }
+    
+    public void setupClients() {
         flowManager.setupClient();
         dataHub.wireClient();
         versions.setupClient();
+        
     }
 
     /**
