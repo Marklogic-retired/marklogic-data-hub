@@ -3,11 +3,14 @@ package com.marklogic.quickstart.integrationtests;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
+import com.marklogic.quickstart.service.EntityManagerServiceTest;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -35,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // extendwith is the junit 5 way to run spring tests
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class})
 public class EndToEndAPITest {
 
 	@LocalServerPort

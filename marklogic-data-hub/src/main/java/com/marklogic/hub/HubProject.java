@@ -17,6 +17,7 @@
 package com.marklogic.hub;
 
 import com.marklogic.hub.impl.HubProjectImpl;
+import org.springframework.core.io.ProtocolResolver;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,106 +34,121 @@ public interface HubProject {
     String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
 
     /**
-     * Creates a HubProject object and returns it in the base project directory
-     * @param projectDirStr - the base project directory
-     * @return the HubProject object for the newly created project
+     * Gets the string used to originally make the project
+     *
+     * @return The directory string.
      */
-    static HubProject create(String projectDirStr) {
-        return new HubProjectImpl(projectDirStr);
-    }
+    String getProjectDirString();
+
 
     /**
      * Gets the path for the hub plugins directory
+     *
      * @return the path for the hub plugins directory
      */
     Path getHubPluginsDir();
 
     /**
      * Gets the path for the hub entities directory
+     *
      * @return the path for the hub entities directory
      */
     Path getHubEntitiesDir();
 
     /**
      * Gets the path for the hub mappings directory
+     *
      * @return the path for the hub mappings directory
      */
     Path getHubMappingsDir();
 
     /**
      * Gets the path for the hub's config directory
+     *
      * @return the path for the hub's config directory
      */
     Path getHubConfigDir();
 
     /**
      * Gets the path for the hub's database directory
+     *
      * @return the path for the hub's database directory
      */
     Path getHubDatabaseDir();
 
     /**
      * Gets the path for the hub/staging schemas directory
+     *
      * @return the path for the hub/staging schemas directory
      */
     Path getHubSchemasDir();
 
     /**
      * Gets the path for the hub servers directory
+     *
      * @return the path for the hub servers database directory
      */
     Path getHubServersDir();
 
     /**
      * Gets the path for the hub's security directory
+     *
      * @return the path for the hub's security directory
      */
     Path getHubSecurityDir();
 
     /**
      * Gets the path for the user config directory
+     *
      * @return the path for the user config directory
      */
     Path getUserConfigDir();
 
     /**
      * Gets the path for the user security directory
+     *
      * @return the path for the user security directory
      */
     Path getUserSecurityDir();
 
     /**
      * Gets the path for the user database directory
+     *
      * @return the path for the user database directory
      */
     Path getUserDatabaseDir();
 
     /**
      * Gets the path for the user schemas directory
+     *
      * @return the path for the user schemas directory
      */
     Path getUserSchemasDir();
 
     /**
      * Gets the path for the user servers directory
+     *
      * @return the path for the user servers database directory
      */
     Path getUserServersDir();
 
     /**
      * Gets the path for the entity's config directory
+     *
      * @return the path for the entity's config directory
      */
     Path getEntityConfigDir();
 
     /**
      * Gets the path for the entity database directory
+     *
      * @return the path for the entity's database directory
      */
     Path getEntityDatabaseDir();
 
     /**
      * Gets the path for the hub staging modules
+     *
      * @return the path for the hub staging modules
      */
     @Deprecated
@@ -140,6 +156,7 @@ public interface HubProject {
 
     /**
      * Gets the path for the user staging modules
+     *
      * @return the path for the user staging modules
      */
     @Deprecated
@@ -147,12 +164,14 @@ public interface HubProject {
 
     /**
      * Gets the path for the modules directory
+     *
      * @return the path for the modules directory
      */
     Path getModulesDir();
 
     /**
      * Gets the path for the user final modules
+     *
      * @return the path for the user final modules
      */
     @Deprecated
@@ -160,6 +179,7 @@ public interface HubProject {
 
     /**
      * Checks if the project has been initialized or not
+     *
      * @return true if initialized, false if not
      */
     boolean isInitialized();
@@ -167,6 +187,7 @@ public interface HubProject {
     /**
      * Initializes a directory as a hub project directory.
      * This means putting certain files and folders in place.
+     *
      * @param customTokens - some custom tokens to start with
      */
     void init(Map<String, String> customTokens);
@@ -174,7 +195,24 @@ public interface HubProject {
     /**
      * Performs an upgrade to a pre-4.0 project by copying folders
      * to their new positions as defined in hubproject.
+     *
      * @throws IOException if problem happens with the on-disk project.
      */
     void upgradeProject() throws IOException;
+
+    String getHubModulesDeployTimestampFile();
+
+    String getUserModulesDeployTimestampFile();
+
+    Path getEntityDir(String entityName);
+
+    Path getMappingDir(String mappingName);
+
+    /**
+     * Returns the base directory for this project
+     * @return the project's directory as a Path
+     */
+    Path getProjectDir();
+
+    void createProject(String projectDirString);
 }

@@ -17,16 +17,24 @@
 package com.marklogic.hub.scaffolding;
 
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.scaffold.ScaffoldingValidator;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.impl.ScaffoldingValidator;
+import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,29 +44,36 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class ScaffoldingValidatorTest extends HubTestBase {
 
-   private static final String projectPath = "./test-project";
+   private static final String projectPath = PROJECT_PATH;
    private static final String TEST_ENTITY_NAME = "test-entity";
-   private Scaffolding scaffolding = Scaffolding.create(projectPath, stagingClient);
-   private ScaffoldingValidator validator = new ScaffoldingValidator(projectPath);
 
-   @BeforeClass
+   @Autowired
+   private Scaffolding scaffolding;
+
+   @Autowired
+   private ScaffoldingValidator validator;
+
+   @BeforeAll
    public static void setupClass() throws IOException {
        XMLUnit.setIgnoreWhitespace(true);
    }
 
-   @Before
+   @BeforeEach
    public void setup() throws IOException {
        deleteProjectDir();
        createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, CodeFormat.XQUERY);
        createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, CodeFormat.XQUERY);
    }
 
-   @After
+   @AfterEach
    public void teardownDir() throws IOException {
        FileUtils.deleteDirectory(new File(projectPath));
    }
@@ -131,27 +146,27 @@ public class ScaffoldingValidatorTest extends HubTestBase {
    public void testIsUniqueRestServiceExtension() throws IOException {
        String restServiceExtensionName = "test-rest-service";
        boolean isUnique = validator.isUniqueRestServiceExtension(restServiceExtensionName);
-       assertTrue("The rest service extension "+ restServiceExtensionName + " is not yet existing so it should be unique.", isUnique);
+       assertTrue(isUnique, "The rest service extension "+ restServiceExtensionName + " is not yet existing so it should be unique.");
        try {
            scaffolding.createRestExtension(TEST_ENTITY_NAME, restServiceExtensionName, FlowType.HARMONIZE, CodeFormat.XQUERY);
        } catch (ScaffoldingValidationException e) {
-           Assert.fail(e.getMessage());
+           fail(e.getMessage());
        }
        isUnique = validator.isUniqueRestServiceExtension(restServiceExtensionName);
-       assertFalse("At this point, the rest service extension "+ restServiceExtensionName + " is already existing so it should not be unique.", isUnique);
+       assertFalse(isUnique, "At this point, the rest service extension "+ restServiceExtensionName + " is already existing so it should not be unique.");
    }
 
    @Test
    public void testIsUniqueRestTransform() throws IOException {
        String restTransformName = "test-rest-transform";
        boolean isUnique = validator.isUniqueRestTransform(restTransformName);
-       assertTrue("The rest transform "+ restTransformName + " is not yet existing so it should be unique.", isUnique);
+       assertTrue(isUnique, "The rest transform "+ restTransformName + " is not yet existing so it should be unique.");
        try {
            scaffolding.createRestTransform(TEST_ENTITY_NAME, restTransformName, FlowType.HARMONIZE, CodeFormat.XQUERY);
        } catch (ScaffoldingValidationException e) {
-           Assert.fail(e.getMessage());
+           fail(e.getMessage());
        }
        isUnique = validator.isUniqueRestTransform(restTransformName);
-       assertFalse("At this point, the rest service extension "+ restTransformName + " is already existing so it should not be unique.", isUnique);
+       assertFalse(isUnique, "At this point, the rest service extension "+ restTransformName + " is already existing so it should not be unique.");
    }
 }

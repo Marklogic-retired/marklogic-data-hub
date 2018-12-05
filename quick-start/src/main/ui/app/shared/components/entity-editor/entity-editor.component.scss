@@ -93,3 +93,27 @@ table.properties {
   border: 2px solid #a94442 !important;
   outline-width: 0;
 }
+
+.toolbar button {
+  margin-right: 5px;
+}
+
+.properties-heading {
+  padding-bottom: 20px;
+  .properties-title {
+    display: inline-block;
+    margin: 5px 10px 10px 0;
+    font-size: 24px;
+  }
+  .help-icon {
+    position: relative;
+    top: -3px;
+    i.fa-question-circle {
+      cursor: pointer;
+    }
+    a, a:hover {
+      color: rgba(0,0,0, 0.54);
+    }
+  }
+}
+

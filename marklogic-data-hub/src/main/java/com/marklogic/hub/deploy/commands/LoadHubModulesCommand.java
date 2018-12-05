@@ -30,26 +30,34 @@ import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
-import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
-import com.marklogic.com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
+import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
+import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.hub.HubConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Handles loading modules that are contained within the DHF jar.
+ */
+@Component
 public class LoadHubModulesCommand extends AbstractCommand {
+
+
+    @Autowired
     private HubConfig hubConfig;
 
     private Throwable caughtException;
 
-    public LoadHubModulesCommand(HubConfig hubConfig) {
+    public LoadHubModulesCommand() {
         /**
          * Hub modules should be loaded before any other modules - including those depended on via
          * ml-gradle's mlRestApi dependency - to ensure that the DHF REST rewriter is available before any REST
          * extensions are loaded via a /v1/config/* endpoint.
          */
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES - 1);
-        this.hubConfig = hubConfig;
     }
 
     private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
@@ -68,7 +76,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        String timestampFile = hubConfig.getHubModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.deletePropertiesFile();
 
@@ -106,5 +114,9 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (caughtException != null) {
             throw new RuntimeException(caughtException);
         }
+    }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
     }
 }

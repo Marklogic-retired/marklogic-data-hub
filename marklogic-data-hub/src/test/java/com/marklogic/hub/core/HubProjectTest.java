@@ -3,9 +3,14 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.ApplicationConfig;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,16 +18,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class HubProjectTest extends HubTestBase {
 
     private static File projectPath = new File(PROJECT_PATH);
 
-    @Before
+    @BeforeEach
     public void setupDir() {
         deleteProjectDir();
+    }
+
+    @AfterEach
+    public void resetProperties() {
+        adminHubConfig.loadConfigurationFromProperties();
     }
 
     @Test
@@ -86,7 +98,7 @@ public class HubProjectTest extends HubTestBase {
         props.load(updatedStream);
         propsStream.close();
 
-        assertEquals(config.getStagingAppConfig().getHost(), props.getProperty("mlHost"));
+        assertEquals(config.getAppConfig().getHost(), props.getProperty("mlHost"));
 
         assertEquals("twituser", props.getProperty("mlUsername"));
         assertEquals("twitpassword", props.getProperty("mlPassword"));

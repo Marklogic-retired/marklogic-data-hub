@@ -119,7 +119,7 @@ export class EntityPage extends AppPage {
   }
 
   getPropertyWordLexicon(property: ElementFinder){
-    return property.element(by.css('app-entity-editor table.properties > tbody .fa-won'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-krw'));
   }
 
   getPropertyRequired(property: ElementFinder){

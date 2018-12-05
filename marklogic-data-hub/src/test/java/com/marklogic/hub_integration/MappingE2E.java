@@ -28,6 +28,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -36,11 +37,13 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.Installer;
+import com.marklogic.bootstrap.Installer;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
@@ -56,20 +59,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class MappingE2E extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 20;
     private static final int BATCH_SIZE = 10;
+    @Autowired
     private FlowManager flowManager;
     private DataMovementManager stagingDataMovementManager;
-    private MappingManager mappingManager;
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
     private List<String> modelProperties;
+    @Autowired
     private Scaffolding scaffolding;
+
+    @Autowired
+    private MappingManager mappingManager;
 
     @BeforeAll
     public static void setup() {
@@ -83,16 +91,15 @@ public class MappingE2E extends HubTestBase {
     }
 
     private static boolean isSetup = false;
+
     @BeforeEach
     public void setupEach() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         createProjectDir();
-        mappingManager = MappingManager.getMappingManager(getHubAdminConfig());
         enableTracing();
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
-            scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
             scaffolding.createEntity(ENTITY);
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
@@ -131,7 +138,6 @@ public class MappingE2E extends HubTestBase {
             //Flows with xml docs having processing instructions/comments
             createFlow("extranodes", CodeFormat.XQUERY, DataFormat.XML, FlowType.HARMONIZE, true,"validPath1-threeProp", 1, (CreateFlowListener)null);
             createFlow("extranodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.HARMONIZE, true, "validPath1-threeProp", 1, (CreateFlowListener)null);
-            flowManager = FlowManager.create(getHubFlowRunnerConfig());
             installUserModules(getHubAdminConfig(), true);
             stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
         }

@@ -30,10 +30,10 @@ class CreateEntityTask extends HubTask {
         if (entityName == null) {
             throw new EntityNameRequiredException()
         }
-        def projectDir = getHubConfig().projectDir
+        def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "entityName: " + entityName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getStagingClient())
-        scaffolding.createEntity(entityName)
+
+        getScaffolding().createEntity(entityName)
     }
 }

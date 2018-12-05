@@ -20,43 +20,38 @@ package com.marklogic.quickstart.web;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.service.ProjectManagerService;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.io.File;
 import java.io.IOException;
 
 public class BaseTestController extends HubTestBase {
 
     protected static final String PROJECT_PATH = "ye-olde-project";
-
-    protected EnvironmentConfig envConfig;
-
     @Autowired
     private ProjectManagerService projectManagerService;
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
+    @Autowired
+    private DataHub dh;
 
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", envConfig.getMlSettings().getHost(), 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
+    protected void setEnvConfig() {
+        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", adminHubConfig.getHost(), 1, "local");
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    @Before
+    @BeforeEach
     public void baseSetUp() throws IOException {
-        envConfig = new EnvironmentConfig(PROJECT_PATH, null, "admin", "admin");
-        setEnvConfig(envConfig);
-        DataHub dh = DataHub.create(envConfig.getMlSettings());
+        setEnvConfig();
         dh.initProject();
         projectManagerService.addProject(PROJECT_PATH);
+        adminHubConfig.refreshProject();
     }
 
-    @After
+    @AfterEach
     public void baseTeardown() throws IOException {
         deleteProjectDir();
     }

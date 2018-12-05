@@ -31,7 +31,13 @@
 
     <div id="source">
       <div id="src-heading" #srcheading>
-        <div class="item-type">Source</div>
+        <div class="item-title">
+          <div class="item-type">Source</div>
+          <!-- TODO help icon for when docs are avail -->
+          <!-- <span class="help-icon">
+            <i class="fa fa-question-circle fa-lg"></i>
+          </span> -->
+        </div>
         <p *ngIf="!editingURI" class="item-identifying-info">
           <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" title="{{ mapping.sourceURI }}">{{ getLastChars(mapping.sourceURI, 40, '...') }}</span>
           <span class="fa fa-pencil edit-item" (click)="editingURI=true"></span>
@@ -95,9 +101,13 @@
 
     <div id="harmonized">
       <div id="harm-heading">
-        <div class="item-type">Entity</div>
-        <p class="item-identifying-info">
-          <span ng-class="title-entity-model">{{ chosenEntity?.info.title }}</span>
+        <div class="item-title">
+          <div class="item-type">Entity</div>
+          <span class="help-icon">
+            <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+          </span>
+        </div>
+        <p class="item-identifying-info"ng-class="title-entity-model">{{ chosenEntity?.info.title }}
         </p>
       </div>
 
@@ -112,12 +122,12 @@
           <span class="prop-name">{{prop.name}}</span>
           <span class="prop-type">{{prop.datatype}}</span>
           <span class="entity-icons">
-            <span class="entity-icon" title="Primary Key"><i class="fa fa-key fa-fw" [ngClass]="prop.name === entityPrimaryKey ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" title="Element Range Index"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" title="Path Range Index"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" title="Word Lexicon"><i class="fa fa-won fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" title="Required"><i class="fa fa-exclamation fa-fw" [ngClass]="isRequired(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" title="Personally Identifiable Information"><i class="fa fa-lock fa-fw" [ngClass]="isPII(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Primary Key" container="body"><i class="fa fa-key fa-fw" [ngClass]="prop.name === entityPrimaryKey ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Element Range Index" container="body"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Path Range Index" container="body"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Word Lexicon" container="body"><i class="fa fa-krw fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Required Field" container="body"><i class="fa fa-exclamation fa-fw" [ngClass]="isRequired(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Personally Identifiable Information" container="body"><i class="fa fa-lock fa-fw" [ngClass]="isPII(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
           </span>
         </div>
 

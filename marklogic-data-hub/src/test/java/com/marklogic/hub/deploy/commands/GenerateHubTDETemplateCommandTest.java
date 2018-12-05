@@ -15,11 +15,16 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -30,30 +35,28 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
     private static final String RESOURCES_DIR = "scaffolding-test/generate-tde-template/";
 
+    @Autowired
+    HubProject project;
+
     GenerateHubTDETemplateCommand GenerateHubTDETemplateCommand;
 
-    @Before
+    @BeforeEach
     public void setup() {
+        deleteProjectDir();
         GenerateHubTDETemplateCommand = new GenerateHubTDETemplateCommand(getHubAdminConfig());
-        deleteProjectDir();
-    }
-
-
-    @Before
-    public void clearDirs() {
-        deleteProjectDir();
         createProjectDir();
     }
 
 
     private void installEntity(String entityName) {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), stagingClient);
-        Path entityDir = scaffolding.getEntityDir(entityName);
+        Path entityDir = project.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
         assertTrue(entityDir.toFile().exists());
         FileUtil.copy(getResourceStream(RESOURCES_DIR + entityName + ".entity.json"), entityDir.resolve(entityName + ".entity.json").toFile());

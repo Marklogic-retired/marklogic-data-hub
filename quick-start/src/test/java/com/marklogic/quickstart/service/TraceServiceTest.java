@@ -21,28 +21,36 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.TraceQuery;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest()
-public class TraceServiceTest extends AbstractServiceTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, TraceServiceTest.class})
+class TraceServiceTest extends AbstractServiceTest {
 
     private DatabaseClient traceClient;
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
@@ -51,18 +59,18 @@ public class TraceServiceTest extends AbstractServiceTest {
     @Autowired
     private FlowManagerService flowMgrService;
 
+    @Autowired
+    Scaffolding scaffolding;
 
-    @Before
+
+    @BeforeEach
     public void setUp() throws IOException {
         deleteProjectDir();
-        EnvironmentConfig envConfig = new EnvironmentConfig(".", null, "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(".").withPropertiesFromEnvironment().build());
-        envConfig.checkIfInstalled();
-        setEnvConfig(envConfig);
+        //envConfig.checkIfInstalled();
+        setEnvConfig();
         createProjectDir();
         enableTracing();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -79,9 +87,8 @@ public class TraceServiceTest extends AbstractServiceTest {
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
     }
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
+    protected void setEnvConfig() {
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
@@ -109,7 +116,7 @@ public class TraceServiceTest extends AbstractServiceTest {
         String traceId = results.get(0).findValue("content").findValue("traceId").asText();
 
         JsonNode trace = tm.getTrace(traceId);
-        Assert.assertNotNull(trace);
-        Assert.assertEquals(traceId, trace.findValue("traceId").asText());
+        assertNotNull(trace);
+        assertEquals(traceId, trace.findValue("traceId").asText());
     }
 }

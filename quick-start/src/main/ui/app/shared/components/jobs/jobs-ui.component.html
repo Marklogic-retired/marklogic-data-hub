@@ -3,10 +3,10 @@
 
   <div class="search-box" flex layout-align="center center" layout="row">
     <form (submit)="searchClicked.emit($event)" flex layout-align="center center" layout="row">
-      <input 
-        type="search" 
-        name="searchText" 
-        [(ngModel)]="searchText" 
+      <input
+        type="search"
+        name="searchText"
+        [(ngModel)]="searchText"
         (ngModelChange)="searchTextChanged.emit($event)"
         placeholder="Enter you search query here..." />
       <button type="submit" mdl-colored="primary" mdl-button mdl-button-type="raised">Search</button>
@@ -66,12 +66,15 @@
                   (click)="showConsoleClicked.emit(job)"><i class="fa fa-terminal"></i></mdl-button>
               </td>
               <td>
-                <mdl-button
-                  mdl-tooltip="Show the Traces for this job."
-                  mdl-button-type="icon" mdl-colored="primary" mdl-ripple
-                  (click)="showTracesClicked.emit(job.jobId)">
-                  <i (click)="showTracesClicked.emit(job.jobId)" class="fa fa-flash"></i>
-                </mdl-button>
+                <span
+                  tooltip="Show the Traces for this job."
+                  container="body">
+                  <mdl-button
+                    mdl-button-type="icon" mdl-colored="primary" mdl-ripple
+                    (click)="showTracesClicked.emit(job.jobId)">
+                    <i (click)="showTracesClicked.emit(job.jobId)" class="fa fa-flash"></i>
+                  </mdl-button>
+                </span>
               </td>
               <td class="job-delete-checkbox">
                 <mdl-checkbox

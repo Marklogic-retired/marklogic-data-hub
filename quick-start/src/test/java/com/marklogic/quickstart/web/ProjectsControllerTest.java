@@ -18,19 +18,20 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
 import com.marklogic.quickstart.service.ProjectManagerService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
@@ -39,8 +40,8 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, ProjectsControllerTest.class})
 @WebAppConfiguration
 public class ProjectsControllerTest extends BaseTestController {
 
@@ -53,15 +54,17 @@ public class ProjectsControllerTest extends BaseTestController {
     private TemporaryFolder temporaryFolder;
 
     private String projectPath;
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         pms.reset();
         temporaryFolder = new TemporaryFolder();
         temporaryFolder.create();
         projectPath = temporaryFolder.newFolder("my-project").toString();
+        createProjectDir(projectPath);
+        adminHubConfig.createProject(projectPath);
     }
 
-    @After
+    @AfterEach
     public void teardownDir() {
         temporaryFolder.delete();
     }
@@ -83,7 +86,7 @@ public class ProjectsControllerTest extends BaseTestController {
         Project project = pc.addProject(projectPath);
         assertEquals(projectPath, project.path);
         assertEquals(1, project.id);
-        assertEquals(false, project.isInitialized());
+        assertEquals(false, adminHubConfig.getHubProject().isInitialized());
     }
 
     @Test
@@ -96,7 +99,7 @@ public class ProjectsControllerTest extends BaseTestController {
         Project project = pc.getProject(1);
         assertEquals(projectPath, project.path);
         assertEquals(1, project.id);
-        assertEquals(false, project.isInitialized());
+        assertEquals(false, adminHubConfig.getHubProject().isInitialized());
     }
 
     @Test
@@ -119,9 +122,10 @@ public class ProjectsControllerTest extends BaseTestController {
         assertEquals(1, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        pc.initializeProject(1, objectMapper.valueToTree(envConfig.getMlSettings()));
+        pc.initializeProject(1, objectMapper.valueToTree(adminHubConfig));
 
-        assertTrue(pc.getProject(1).isInitialized());
+        //  assertTrue(pc.getProject(1).isInitialized());
+        assertTrue(adminHubConfig.getHubProject().isInitialized());
     }
 
     @Test

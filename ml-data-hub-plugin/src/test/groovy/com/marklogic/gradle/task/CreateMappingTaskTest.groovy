@@ -28,6 +28,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class CreateMappingTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
+        runTask('hubInit')
     }
 
     def "create mapping with no name"() {

@@ -24,15 +24,15 @@ import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest()
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, FlowManagerServiceTest.class})
 public class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
@@ -64,10 +64,18 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     FlowManagerService fm;
 
+    @Autowired
+    FlowManager flowManager;
+
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    HubConfig hubConfig;
+
     @BeforeEach
     public void setup() {
         createProjectDir();
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -110,33 +118,17 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installUserModules(getHubAdminConfig(), true);
     }
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
-
+    protected void setEnvConfig() {
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @Test
-    public void getFlowMlcpOptionsFromFileNix() throws Exception {
-        String pdir = "/some/crazy/path/to/project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
-        setEnvConfig(envConfig);
+    public void getFlowMlcpOptionsFromFile() throws Exception {
+        setEnvConfig();
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", new ObjectMapper().writeValueAsString(options), true);
-    }
-
-    @Test
-    public void getFlowMlcpOptionsFromFileWin() throws Exception {
-        String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
-        setEnvConfig(envConfig);
-
-        Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
+        JSONAssert.assertEquals("{ \"input_file_path\": " + hubConfig.getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
@@ -148,7 +140,6 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -191,12 +182,9 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();
@@ -234,12 +222,11 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
-        setEnvConfig(envConfig);
+        //EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
+        setEnvConfig();
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();

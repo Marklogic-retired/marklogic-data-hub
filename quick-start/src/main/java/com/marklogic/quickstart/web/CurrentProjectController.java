@@ -25,11 +25,10 @@ import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.Tracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
-import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.StatusMessage;
 import com.marklogic.quickstart.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +53,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
 @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
-public class CurrentProjectController extends EnvironmentAware implements FileSystemEventListener, ValidateListener, DeployUserModulesListener, AuthenticationSuccessHandler, LogoutSuccessHandler {
+public class CurrentProjectController implements FileSystemEventListener, ValidateListener, DeployUserModulesListener, AuthenticationSuccessHandler, LogoutSuccessHandler {
 
     @Autowired
     private DataHubService dataHubService;
@@ -72,22 +70,26 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     private FileSystemWatcherService watcherService;
 
     @Autowired
+    private HubConfigImpl hubConfig;
+
+    @Autowired
     private SimpMessagingTemplate template;
+
+    @Autowired
+    private EnvironmentConfig envConfig;
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getEnvironment() throws JsonProcessingException {
-        return envConfig().toJson();
+        return envConfig.toJson();
     }
 
     @RequestMapping(value = "/install", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public ResponseEntity<?> install() throws IOException {
 
-        final EnvironmentConfig cachedConfig = envConfig();
-
         // install the hub
-        dataHubService.install(envConfig().getMlSettings(), new HubDeployStatusListener() {
+        dataHubService.install(hubConfig, new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
@@ -97,21 +99,20 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
             public void onError() {}
         });
 
-        envConfig().checkIfInstalled();
-        boolean installed = envConfig().getInstallInfo().isInstalled();
+        envConfig.checkIfInstalled();
+        boolean installed = envConfig.getInstallInfo().isInstalled();
 
-        envConfig().setInitialized(installed);
+        envConfig.setInitialized(installed);
         if (installed) {
-            if (envConfig().getEnvironment().equals("local")) {
-                Tracing tracing = Tracing.create(envConfig().getStagingClient());
+            if (envConfig.getEnvironment().equals("local")) {
+                Tracing tracing = Tracing.create(envConfig.getStagingClient());
                 tracing.enable();
             }
-            logger.info("OnFinished: installing user modules");
-            installUserModules(cachedConfig.getMlSettings(), true);
+            installUserModules(hubConfig, true);
             startProjectWatcher();
         }
 
-        return new ResponseEntity<>(envConfig().toJson(), HttpStatus.OK);
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/uninstall", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -119,7 +120,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public ResponseEntity<?> unInstall() throws IOException {
 
         // uninstall the hub
-        dataHubService.uninstall(envConfig().getMlSettings(), new HubDeployStatusListener() {
+        dataHubService.uninstall(hubConfig, new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
                 template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
@@ -128,10 +129,10 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
             @Override
             public void onError() {}
         });
-        envConfig().checkIfInstalled();
-        envConfig().getInstallInfo().isInstalled();
+        envConfig.checkIfInstalled();
+        envConfig.getInstallInfo().isInstalled();
 
-        return new ResponseEntity<>(envConfig().toJson(), HttpStatus.OK);
+        return new ResponseEntity<>(envConfig.toJson(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update-indexes", method = RequestMethod.GET)
@@ -139,7 +140,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public ResponseEntity<?> updateIndexes() throws IOException {
 
         // reinstall the user modules
-        dataHubService.updateIndexes(envConfig().getMlSettings());
+        dataHubService.updateIndexes(hubConfig);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -148,13 +149,13 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     public String getLastDeployed() throws IOException {
 
         // reinstall the user modules
-        return dataHubService.getLastDeployed(envConfig().getMlSettings());
+        return dataHubService.getLastDeployed(hubConfig);
     }
 
     @RequestMapping(value = "/reinstall-user-modules", method = RequestMethod.POST)
     public ResponseEntity<?> reinstallUserModules() throws IOException {
         // reinstall the user modules
-        dataHubService.reinstallUserModules(envConfig().getMlSettings(), this, this);
+        dataHubService.reinstallUserModules(hubConfig, this, this);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -162,7 +163,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @ResponseBody
     public String validateUserModules() throws IOException {
         // start the module validation
-        dataHubService.validateUserModules(envConfig().getMlSettings(), this);
+        dataHubService.validateUserModules(hubConfig, this);
 
         return "{}";
     }
@@ -171,7 +172,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @ResponseBody
     public ResponseEntity<?> unInstallUserModules() {
         // uninstall the hub
-        dataHubService.uninstallUserModules(envConfig().getMlSettings());
+        dataHubService.uninstallUserModules(hubConfig);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -179,24 +180,23 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getProjectStats() {
-        HubStatsService hs = new HubStatsService(envConfig().getStagingClient());
+        HubStatsService hs = new HubStatsService(hubConfig.newStagingClient());
         return hs.getStats();
     }
 
     @RequestMapping(value = "/clear/{database}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> clearDatabase(@PathVariable String database) {
-        dataHubService.clearContent(envConfig().getMlSettings(), database);
+        dataHubService.clearContent(hubConfig, database);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/clear-all", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> clearDatabase() {
-        HubConfig config = envConfig().getMlSettings();
-        String[] databases = { config.getDbName(DatabaseKind.STAGING), config.getDbName(DatabaseKind.FINAL), config.getDbName(DatabaseKind.JOB) };
+        String[] databases = { hubConfig.getDbName(DatabaseKind.STAGING), hubConfig.getDbName(DatabaseKind.FINAL), hubConfig.getDbName(DatabaseKind.JOB) };
         for (String database: databases) {
-            dataHubService.clearContent(envConfig().getMlSettings(), database);
+            dataHubService.clearContent(hubConfig, database);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -205,8 +205,8 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
     public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
         try {
-            if (dataHubService.updateHub(envConfig().getMlSettings())) {
-                installUserModules(envConfig().getMlSettings(), true);
+            if (dataHubService.updateHub(hubConfig)) {
+                installUserModules(hubConfig, true);
                 startProjectWatcher();
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -219,7 +219,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String preInstallCheck() {
-        HashMap response = dataHubService.preInstallCheck(envConfig().getMlSettings());
+        HashMap response = dataHubService.preInstallCheck(hubConfig);
         String jsonResponse = null;
         try {
             jsonResponse = new ObjectMapper().writeValueAsString(response);
@@ -230,7 +230,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     }
 
     private void startProjectWatcher() throws IOException {
-        String pluginDir = Paths.get(envConfig().getProjectDir(), "plugins").toString();
+        String pluginDir = hubConfig.getHubPluginsDir().toString();
         if (!watcherService.hasListener(this)) {
             watcherService.watch(pluginDir);
             watcherService.addListener(this);
@@ -264,14 +264,19 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
-        EnvironmentConfig envConfig = authenticationToken.getEnvironmentConfig();
-        envConfig.checkIfInstalled();
+        //EnvironmentConfig envConfig = authenticationToken.getEnvironmentConfig();
+        //envConfig.checkIfInstalled();
 
+        //InstallInfo installInfo = envConfig.getInstallInfo();
+        //if (installInfo.isInstalled() && envConfig.getRunningVersion().equals(envConfig.getInstalledVersion())) {
+
+        envConfig.checkIfInstalled();
         InstallInfo installInfo = envConfig.getInstallInfo();
         if (installInfo.isInstalled() && envConfig.getRunningVersion().equals(envConfig.getInstalledVersion())) {
-            installUserModules(envConfig.getMlSettings(), false);
+            installUserModules(hubConfig, false);
             startProjectWatcher();
         }
+        //}
 
         clearAuthenticationAttributes(request);
     }
@@ -288,9 +293,7 @@ public class CurrentProjectController extends EnvironmentAware implements FileSy
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
-        EnvironmentConfig envConfig = authenticationToken.getEnvironmentConfig();
-        String pluginDir = Paths.get(envConfig.getProjectDir(), "plugins").toString();
+        String pluginDir = hubConfig.getHubPluginsDir().toString();
         watcherService.removeListener(this);
         watcherService.unwatch(pluginDir);
     }

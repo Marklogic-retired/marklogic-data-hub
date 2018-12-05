@@ -177,11 +177,11 @@ import {
     MdlModule,
     MdlPopoverModule,
     MdlSelectModule,
-    TooltipModule,
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
     DatePipeModule,
     BsDropdownModule.forRoot(),
+    TooltipModule,
     ThemeModule
   ],
   providers: [

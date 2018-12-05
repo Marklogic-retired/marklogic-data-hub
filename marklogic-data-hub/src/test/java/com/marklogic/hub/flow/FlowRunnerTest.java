@@ -22,20 +22,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,31 +46,27 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class FlowRunnerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
-    private Scaffolding scaffolding;
 
-
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
         createProjectDir();
         enableDebugging();
         enableTracing();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
-        scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
-        scaffolding.createEntity(ENTITY);       
-    }
-    
-    @After
-    public void tearDown() {
-    	clearUserModules();
-    	deleteProjectDir();
+
+        scaffolding.createEntity(ENTITY);
+        clearUserModules();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @Test
@@ -88,7 +83,6 @@ public class FlowRunnerTest extends HubTestBase {
         installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
@@ -147,7 +141,6 @@ public class FlowRunnerTest extends HubTestBase {
         installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
             FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -186,7 +179,6 @@ public class FlowRunnerTest extends HubTestBase {
 
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
             FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -223,7 +215,6 @@ public class FlowRunnerTest extends HubTestBase {
         installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
             FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
@@ -262,8 +253,6 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), flowRunnerClient);
-
         scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
@@ -293,7 +282,6 @@ public class FlowRunnerTest extends HubTestBase {
         //deploys the entity to final db
         installUserModules(getHubAdminConfig(), false);
 
-        MappingManager mappingManager = MappingManager.getMappingManager(getHubAdminConfig());
         ObjectMapper mapper = new ObjectMapper();
 		Mapping testMap = Mapping.create("test");
 		testMap.setDescription("This is a test.");
@@ -312,7 +300,7 @@ public class FlowRunnerTest extends HubTestBase {
         	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
 		// Mapping should not be deployed
-        Assert.assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
+        assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
         installUserModules(getHubAdminConfig(), true);
 

@@ -22,6 +22,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,22 +37,35 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.marklogic.hub.HubConfig.HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
+import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
+
 /**
  * Class for creating a hub Project
  */
+@Component
 public class HubProjectImpl implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     public static final String MODULES_DIR = PATH_PREFIX + "ml-modules";
     public static final String USER_SCHEMAS_DIR = PATH_PREFIX + "ml-schemas";
 
+    private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public HubProjectImpl(String projectDirStr) {
-        this.projectDir = Paths.get(projectDirStr).toAbsolutePath();
+    public HubProjectImpl(){
+    }
+
+    public String getProjectDirString() {
+        return projectDirString;
+    }
+
+    public void createProject(String projectDirString) {
+        this.projectDirString = projectDirString;
+        this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
     }
 
@@ -220,10 +235,6 @@ public class HubProjectImpl implements HubProject {
         getHubSchemasDir().toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
 
-        //scaffold triggers
-        getHubConfigDir().resolve("triggers").toFile().mkdirs();
-        getUserConfigDir().resolve("triggers").toFile().mkdirs();
-
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
         makeExecutable(gradlew);
@@ -325,11 +336,34 @@ public class HubProjectImpl implements HubProject {
 
     }
 
+    @Override  public String getHubModulesDeployTimestampFile() {
+        return Paths.get(projectDirString, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+    }
+
+    @Override public String getUserModulesDeployTimestampFile() {
+        return Paths.get(projectDirString, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+    }
+
     private void upgradeProjectDir(Path sourceDir, Path destDir, Path renamedSourceDir) throws IOException {
         if (Files.exists(sourceDir)) {
             FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }
+    }
+
+    @Override
+    public Path getEntityDir(String entityName) {
+        return getHubEntitiesDir().resolve(entityName);
+    }
+
+    @Override
+    public Path getMappingDir(String mappingName) {
+        return getHubMappingsDir().resolve(mappingName);
+    }
+
+    @Override
+    public Path getProjectDir() {
+        return projectDir;
     }
 }

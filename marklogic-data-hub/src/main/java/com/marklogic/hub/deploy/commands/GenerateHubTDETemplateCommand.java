@@ -67,7 +67,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
             if (!entityNameFileMap.isEmpty()) {
                 logger.warn("About to generate a template for the following entities: {} into directory {} ",
-                    entityNameFileMap.keySet(), hubConfig.getStagingAppConfig().getSchemasPath());
+                    entityNameFileMap.keySet(), hubConfig.getAppConfig().getSchemasPath());
 
                 for (File f : entityNameFileMap.values()) {
                     GeneratedCode code = loadModelDefinition(request, f, mgr);
