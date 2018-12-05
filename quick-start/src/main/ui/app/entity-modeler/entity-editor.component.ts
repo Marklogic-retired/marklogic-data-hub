@@ -3,7 +3,8 @@ import {
   HostListener,
   Inject,
   ElementRef,
-  ViewChild
+  ViewChild,
+  AfterViewChecked
 } from '@angular/core';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
@@ -348,7 +349,7 @@ export class EntityEditorComponent implements AfterViewChecked {
   isPropertyValid(property: PropertyType) {
     let properties = this.entity.definition.properties;
     /**
-     * A valid property must not: 
+     * A valid property must not:
      *  - be a duplicate
      *  - have spaces in the name
      *  - must not be empty
