@@ -1472,7 +1472,7 @@ public class HubConfigImpl implements HubConfig
         /**
          * Initializing this to use both config dirs.
          */
-        config.getConfigDirs().clear();
+        //config.getConfigDirs().clear();
         config.getConfigDirs().add(new ConfigDir(getHubConfigDir().toFile()));
 
         ConfigDir userConfigDir = new ConfigDir(getUserConfigDir().toFile());
