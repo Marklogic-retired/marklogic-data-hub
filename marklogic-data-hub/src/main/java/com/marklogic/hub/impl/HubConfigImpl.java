@@ -1479,9 +1479,7 @@ public class HubConfigImpl implements HubConfig
         config.setSchemasPath(getUserSchemasDir().toString());
         config.getConfigDirs().add(userConfigDir);
 
-        List<String> modulesPathList = new ArrayList<>();
-        modulesPathList.add(getModulesDir().normalize().toAbsolutePath().toString());
-        config.setModulePaths(modulesPathList);
+        config.getModulePaths().add(getModulesDir().normalize().toAbsolutePath().toString());
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
