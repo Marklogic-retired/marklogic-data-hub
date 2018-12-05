@@ -10,6 +10,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,11 @@ public class HubConfigTest extends HubTestBase {
         deleteProjectDir();
         createProjectDir();
         dataHub.initProject();
+    }
+    
+    @AfterEach
+    public void cleanUp() {
+        getHubAdminConfig();
     }
     
     @Test

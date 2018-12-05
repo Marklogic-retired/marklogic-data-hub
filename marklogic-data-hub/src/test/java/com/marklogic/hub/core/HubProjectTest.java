@@ -142,5 +142,6 @@ public class HubProjectTest extends HubTestBase {
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
+        getHubAdminConfig();
     }
 }

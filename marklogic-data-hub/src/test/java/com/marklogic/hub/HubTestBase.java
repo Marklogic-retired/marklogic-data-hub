@@ -124,7 +124,7 @@ public class HubTestBase {
     protected MappingManager mappingManager;
 
     @Autowired
-    protected FlowManager fm;
+    protected FlowManagerImpl fm;
 
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'

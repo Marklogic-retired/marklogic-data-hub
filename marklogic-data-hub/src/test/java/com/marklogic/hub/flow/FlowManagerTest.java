@@ -283,7 +283,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig().refreshProject();
+        getHubFlowRunnerConfig();
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -299,6 +299,7 @@ public class FlowManagerTest extends HubTestBase {
         DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
         assertEquals( permissions.get("harmonized-reader").toString(),     "[READ]", "Default permissions on harmonized documents should contain harmonized-reader/read");
         assertEquals(permissions.get("harmonized-updater").toString(), "[UPDATE]", "Default permissions on harmonized documents should contain harmonized-updater/update");
+        getHubAdminConfig();
     }
 
     @Test

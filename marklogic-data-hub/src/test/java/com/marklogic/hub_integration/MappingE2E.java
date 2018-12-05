@@ -368,7 +368,7 @@ public class MappingE2E extends HubTestBase {
         assertEquals(0, getJobDocCount());
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
-
+        getHubFlowRunnerConfig();
         Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         FlowRunner flowRunner = flowManager.newFlowRunner()
@@ -396,6 +396,7 @@ public class MappingE2E extends HubTestBase {
                 throw new RuntimeException(e);
             }
         }
+        getHubAdminConfig();
         return new Tuple<>(flowRunner, jobTicket);
     }
 

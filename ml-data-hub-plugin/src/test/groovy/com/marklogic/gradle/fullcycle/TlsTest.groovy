@@ -205,8 +205,8 @@ class TlsTest extends BaseTest {
                 mlAdminManager.setAdminConfig(mlAdminConfig)
                 hubConfig.setAppConfig(mlAppConfig, true)
                 //To reset the clients with modified hub and app configs
-                flowManager.setupClient();
-                dataHub.wireClient();
+                //flowManager.setupClient();
+                //dataHub.wireClient();
             }
         '''
 

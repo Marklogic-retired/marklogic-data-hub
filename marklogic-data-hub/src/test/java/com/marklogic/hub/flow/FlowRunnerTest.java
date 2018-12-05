@@ -312,6 +312,7 @@ public class FlowRunnerTest extends HubTestBase {
         	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
         assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/MappingFlowWithHubUser/MappingFlowWithHubUser.xml"));
+        getHubAdminConfig();
     }
 
     private void copyFile(String srcDir, Path dstDir) {
