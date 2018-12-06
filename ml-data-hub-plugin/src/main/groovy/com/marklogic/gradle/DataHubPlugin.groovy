@@ -17,7 +17,7 @@
 
 package com.marklogic.gradle
 
-import com.marklogic.appdeployer.ConfigDir
+
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
@@ -28,7 +28,6 @@ import com.marklogic.hub.impl.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -161,20 +160,24 @@ class DataHubPlugin implements Plugin<Project> {
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
-        boolean userCalledHubInit = userCalledHubInit(project)
+        boolean calledHubInit = this.userCalledHubInit(project)
+        boolean calledHubUpdate = this.userCalledHubUpdate(project)
+        boolean calledHubInitOrUpdate = calledHubInit || calledHubUpdate
 
-        if (!userCalledHubInit && !hubProject.isInitialized()) {
-            throw new GradleException("Please initialize your project first by running the 'hubInit' Gradle task")
+        if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {
+            throw new GradleException("Please initialize your project first by running the 'hubInit' Gradle task, or update it by running the 'hubUpdate' Gradle task")
         }
 
         else {
 
             // If the user called hubInit, only load the configuration. Refreshing the project will fail because
             // gradle.properties doesn't exist yet. 
-            if (userCalledHubInit) {
+            if (calledHubInit) {
                 hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
             }
              else {
+                // If the user called hubUpdate, it should be fine to do this because they have a gradle.properties file
+                // with the properties necessary to construct a DatabaseClient
                 hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
             }
 
@@ -201,6 +204,15 @@ class DataHubPlugin implements Plugin<Project> {
     boolean userCalledHubInit(Project project) {
         for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
             if (taskName.toLowerCase().equals("hubinit")) {
+                return true
+            }
+        }
+        return false
+    }
+
+    boolean userCalledHubUpdate(Project project) {
+        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
+            if (taskName.toLowerCase().equals("hubupdate")) {
                 return true
             }
         }
