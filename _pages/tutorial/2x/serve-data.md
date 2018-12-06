@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Serve the Data
-lead_text: ''
 permalink: /tutorial/2x/serve-data/
 ---
 
@@ -21,4 +20,4 @@ Open the [Final Search Endpoint](http://localhost:8011/v1/search?format=json){:t
 
 ## Up Next
 
-[Wrapping Up](../wrapping-up/)
+[Wrapping Up]({{site.baseurl}}/tutorial/2x/wrapping-up/)

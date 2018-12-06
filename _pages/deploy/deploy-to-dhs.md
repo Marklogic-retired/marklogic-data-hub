@@ -13,7 +13,7 @@ You can deploy your DHF project in the cloud instead of setting up your own. The
 
 In a DHS environment, the databases, app servers, and security roles are automatically set up. Admins can create user accounts.
 
-To learn more about DHS, see [MarkLogic Data Hub Service](http://www.marklogic.com/product/marklogic-database-overview/data-hub-service/) and [the DHS documentation](https://cloudservices.marklogic.com/help?type=datahub).
+{% include learn-about-dhs.html %}
 
 {% include note.html type="TIP" content="Use DHF to develop your project locally then deploy it to DHS. You can have multiple DHS services that use the same DHF project files. For example, you can set up a DHS project as a testing environment and another as your production environment." %}
 

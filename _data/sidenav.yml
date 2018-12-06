@@ -132,18 +132,16 @@ main:
             url: '/serve/',
             text: 'Serve',
             childPages: [
-              { url: '/serve/rest/', text: 'Using the REST Client API' },
-              { url: '/serve/odbc/', text: 'Using ODBC' },
+              { absurl: 'https://docs.marklogic.com/REST/client', text: 'Using the REST Client API' },
+              { absurl: 'https://docs.marklogic.com/guide/admin/odbc', text: 'Using ODBC' },
             ]
           },
           {
             url: '/upgrade/',
             text: 'Upgrading DHF',
             childPages: [
-              { url: '/upgrade/upgrade-notes-custom-hub-names/', text: 'Custom Hub Names' },
               # { url: '/upgrade/upgrade-to-4_1_x/', text: 'Upgrade to DHF 4.1.x' },
               { url: '/upgrade/upgrade-to-4_0_x/', text: 'Upgrade to DHF 4.0.x' },
-              # { url: '/upgrade/upgrade-to-3_0_x/', text: 'Upgrade to DHF 3.0.x' },
             ]
           }
         ]

@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Browse and Understand the Product Data
-lead_text: ''
 permalink: /tutorial/2x/browse-understand-product-data/
 ---
 
@@ -25,6 +24,7 @@ You will be shown the raw data.
 
 ![Detail View]({{site.baseurl}}/images/2x/search-result-detail.png)
 
+
 ## Up Next
 
-[Modeling the Product Entity](../modeling-product-entity/)
+[Modeling the Product Entity]({{site.baseurl}}/tutorial/2x/modeling-product-entity/)

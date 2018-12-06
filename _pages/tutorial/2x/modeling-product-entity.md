@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Modeling the Product Entity
-lead_text: ''
 permalink: /tutorial/2x/modeling-product-entity/
 ---
 
@@ -46,4 +45,4 @@ One of the benefits of modeling your data with Entity Services is that you can u
 
 ## Up Next
 
-[Harmonizing the Product Data](../harmonizing-product-data/)
+[Harmonizing the Product Data]({{site.baseurl}}/tutorial/2x/harmonizing-product-data/)

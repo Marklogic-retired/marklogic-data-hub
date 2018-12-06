@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Load the Orders As-Is
-lead_text: ''
 permalink: /tutorial/2x/load-orders-as-is/
 ---
 
@@ -41,4 +40,4 @@ On the Jobs tab you will see a list of previously run jobs. This interface is se
 
 ## Up Next
 
-[Harmonizing Orders > Modeling the Order Entity](../modeling-order-entity/)
+[Harmonizing Orders > Modeling the Order Entity]({{site.baseurl}}/tutorial/2x/modeling-order-entity/)

@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Browse and Understand the Product Data
-lead_text: ''
-permalink: /tutorial/browse-understand-product-data/
+permalink: /tutorial/3x/browse-understand-product-data/
 ---
 
 # Getting Started Tutorial<br>Browse and Understand the Product Data
@@ -27,4 +26,4 @@ You are shown the raw data.
 
 ## Up Next
 
-[Modeling the Product Entity](../modeling-product-entity/)
+[Modeling the Product Entity]({{site.baseurl}}/tutorial/3x/modeling-product-entity/)

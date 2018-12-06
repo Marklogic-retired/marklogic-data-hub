@@ -8,7 +8,9 @@ permalink: /ingest/rest/
 
 The [MarkLogic REST Client API](https://docs.marklogic.com/REST/client) is a set of REST endpoints that allow you to interact with MarkLogic.
 
-Before you can ingest, make sure you have created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md). When you set up a DHF project, a transform is installed on MarkLogic with the name **run-flow**, which you can invoke using the REST Client API.
+{% include_relative prereq-createproject.html %}
+
+When you set up a DHF project, a transform is installed on MarkLogic with the name **run-flow**, which you can invoke using the REST Client API.
 
 
 ## REST Client API Example

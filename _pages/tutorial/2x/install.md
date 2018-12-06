@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Install the Framework
-lead_text: ''
 permalink: /tutorial/2x/install/
 ---
 
@@ -107,4 +106,4 @@ The four databases are:
 
 ## Up Next
 
-[Loading Products > Create the Product Entity](../create-product-entity/)
+[Loading Products > Create the Product Entity]({{site.baseurl}}/tutorial/2x/create-product-entity/)

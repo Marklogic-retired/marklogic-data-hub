@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Serve the Data Out of MarkLogic
-lead_text: ''
-permalink: /tutorial/serve-data/
+permalink: /tutorial/3x/serve-data/
 ---
 
 # Getting Started Tutorial<br>Serve the Data Out of MarkLogic
@@ -22,4 +21,4 @@ Pictured here is the Final search endpoint:
 
 ## Up Next
 
-[Wrapping Up](../wrapping-up/)
+[Wrapping Up]({{site.baseurl}}/tutorial/3x/wrapping-up/)

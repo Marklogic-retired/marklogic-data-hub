@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Create the Product Entity
-lead_text: ''
-permalink: /tutorial/create-product-entity/
+permalink: /tutorial/3x/create-product-entity/
 ---
 
 # Getting Started Tutorial<br>Create the Product Entity
@@ -27,4 +26,4 @@ When you are done, you should see a representation of the Product entity similar
 ![Product Entity]({{site.baseurl}}/images/3x/create-product-entity/first-entity.png)
 
 ## Next Up
-[Create the Product Input Flow](../create-product-input-flow/)
+[Create the Product Input Flow]({{site.baseurl}}/tutorial/3x/create-product-input-flow/)

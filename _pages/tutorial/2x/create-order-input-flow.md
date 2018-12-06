@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Create the Order Input Flow
-lead_text: ''
 permalink: /tutorial/2x/create-order-input-flow/
 ---
 
@@ -22,4 +21,4 @@ Let's create an input flow for Orders so that we can load data as-is.
 
 ## Up Next
 
-[Load the Order Data As-Is](../load-orders-as-is/)
+[Load the Order Data As-Is]({{site.baseurl}}/tutorial/2x/load-orders-as-is/)

@@ -21,7 +21,7 @@ You can now generate harmonization flows from a declarative source-to-entity-mod
 
 DHF 4.0.0 also includes a new Mapping interface in QuickStart for defining model-to-model mappings.
 
-For details, see [Create a Model-to-Model Mapping for Product](../../tutorial/mapping-product-entity/) in the DHF tutorial, and [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping).
+For details, see [Create a Model-to-Model Mapping for Product]({{site.baseurl}}/tutorial/3x/mapping-product-entity/) in the DHF tutorial, and [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping).
 
 ### Support for Securing Personally Identifiable Information
 

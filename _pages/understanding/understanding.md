@@ -6,18 +6,14 @@ permalink: /understanding/
 
 # Understanding DHF
 
-## Get Smart, Fast
+- [Understand the concepts behind DHF](concepts.md)
+- Understand the components of DHF:
+    - [Entities]({{site.baseurl}}/understanding/entities/)
+    - [Flows]({{site.baseurl}}/understanding/flows/)
+    - [Plugins]({{site.baseurl}}/understanding/plugins/)
+    - [Envelope Pattern]({{site.baseurl}}/understanding/envelope-pattern/)
 
-Let's get you smart on DHF quickly.
 
-1. [Understand the concepts behind DHF](concepts.md)
-1. [Understand how DHF is organized](architecture.md)
-1. [Understand the project structure](projectstructure.md)
-1. [Upgrading a data hub project](upgrading.md)
-
-## I'm ready to test it out
-1. Work through the [Tutorial](../tutorial/) to get your hands on the tool. <i class="fa fa-clock-o"></i> _2 hours_
-
-## Play time is over, I'm ready to use this for real
-
-Head over to our [Using the DHF](../using/using.md) section to get started.
+## See Also
+- [DHF QuickStart Tutorial]({{site.baseurl}}/tutorial/)
+- [Using DHF]({{site.baseurl}}/using/)

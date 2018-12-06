@@ -8,7 +8,7 @@ permalink: /ingest/mlcp/
 
 [MarkLogic Content Pump (MLCP)](https://docs.marklogic.com/guide/ingestion/content-pump) is a standalone Java utility provided by MarkLogic. It provides a rich command-line interface for loading content into MarkLogic. You can read more in the [MLCP User Guide](https://docs.marklogic.com/guide/mlcp).
 
-Before you can ingest, make sure you have created a DHF project with [QuickStart](../project/quickstart.md) or with the [Gradle Plugin](../project/gradle.md).
+{% include_relative prereq-createproject.html %}
 
 You can have MLCP invoke your input flow by including three parameters with your MLCP command:
 
@@ -68,3 +68,7 @@ If your flow is implemented with JavaScript, use this module:
 ... \
 -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" \
 -transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
+
+
+## See Also
+- [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"}

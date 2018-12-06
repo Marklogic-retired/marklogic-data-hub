@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Create a Model-to-Model Mapping for Product
-lead_text: ''
-permalink: /tutorial/mapping-product-entity/
+permalink: /tutorial/3x/mapping-product-entity/
 ---
 
 # Getting Started Tutorial<br>Create a Model-to-Model Mapping for Product
@@ -69,4 +68,4 @@ Next, we will create a harmonization flow that uses the mapping, and then run it
 
 ## Up Next
 
-[Harmonizing the Product Data](../harmonizing-product-data/)
+[Harmonizing the Product Data]({{site.baseurl}}/tutorial/3x/harmonizing-product-data/)

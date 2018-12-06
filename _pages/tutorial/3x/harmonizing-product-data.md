@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Harmonize the Product Data
-lead_text: ''
-permalink: /tutorial/harmonizing-product-data/
+permalink: /tutorial/3x/harmonizing-product-data/
 ---
 
 # Getting Started Tutorial<br>Harmonize the Product Data
@@ -74,4 +73,4 @@ To explore the harmonized data:
 
 Congratulations! You just loaded and harmonized your product data. Up next is doing the same thing for the order data.
 
-[Create the Order Entity](../create-order-entity/)
+[Create the Order Entity]({{site.baseurl}}/tutorial/3x/create-order-entity/)
