@@ -1473,18 +1473,19 @@ public class HubConfigImpl implements HubConfig
          * Initializing this to use both config dirs.
          */
 
-        List<ConfigDir> configDirs = new ArrayList<>();
-        configDirs.addAll(config.getConfigDirs());
-        config.getConfigDirs().clear();
         if(config.getConfigDirs().size() == 1 && (config.getConfigDirs().get(0).getBaseDir().toString().equalsIgnoreCase("src/main/ml-config") || config.getConfigDirs().get(0).getBaseDir().toString().equalsIgnoreCase("src\\main\\ml-config"))) {
-
+            List<ConfigDir> configDirs = new ArrayList<>();
+            configDirs.addAll(config.getConfigDirs());
+            config.getConfigDirs().clear();
             config.getConfigDirs().add(new ConfigDir(getHubConfigDir().toFile()));
             ConfigDir userConfigDir = new ConfigDir(getUserConfigDir().toFile());
+
             config.getConfigDirs().add(userConfigDir);
+            for (ConfigDir configDir : configDirs) {
+                config.getConfigDirs().add(new ConfigDir(getHubProject().getProjectDir().resolve(configDir.getBaseDir().toString()).normalize().toAbsolutePath().toFile()));
+            }
         }
-        for (ConfigDir configDir : configDirs) {
-            config.getConfigDirs().add(new ConfigDir(getHubProject().getProjectDir().resolve(configDir.getBaseDir().toString()).normalize().toAbsolutePath().toFile()));
-        }
+
         config.setSchemasPath(getUserSchemasDir().toString());
 
         List<String> modulePaths = new ArrayList<>();

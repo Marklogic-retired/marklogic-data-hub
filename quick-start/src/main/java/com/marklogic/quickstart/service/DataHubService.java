@@ -105,7 +105,7 @@ public class DataHubService {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
         try {
-            dataHub.clearUserModules();
+            //dataHub.clearUserModules();
             installUserModules(config, true, deployListener);
             if(validateListener != null) {
                 validateUserModules(config, validateListener);
