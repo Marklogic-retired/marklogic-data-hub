@@ -14,4 +14,4 @@ import { ComponentsHelper } from './components-helper.service';
   providers: [ComponentsHelper],
   entryComponents: [TooltipContainerComponent]
 })
-export class TooltipModule {}
+export class AppTooltipModule {}

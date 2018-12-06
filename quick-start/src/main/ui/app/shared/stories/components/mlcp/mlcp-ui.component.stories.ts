@@ -11,7 +11,7 @@ import { ThemeModule } from '../../../components/theme/theme.module';
 import { StoryCardComponent } from '../../utils/story-card/story-card.component';
 import { FolderBrowserUiComponent } from '../../../components/folder-browser/folder-browser-ui.component';
 import { FolderBrowserComponent } from '../../../../folder-browser/folder-browser.component';
-import { TooltipModule } from '../../../../tooltip';
+import { AppTooltipModule } from '../../../../tooltip';
 import { SelectComponent } from '../../../components/select/select.component';
 import { ClipboardDirective } from '../../../../clipboard/clipboard.directive';
 import { Observable } from 'rxjs/Rx';
@@ -37,7 +37,7 @@ storiesOf('Components|MLCP', module)
       imports: [
         CommonModule,
         ThemeModule,
-        TooltipModule,
+        AppTooltipModule,
         MdlModule
       ],
       schemas: [],

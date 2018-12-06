@@ -56,7 +56,7 @@ export class EntityEditorComponent {
     this.dataTypes = dataTypes;
     this.entityBackup = JSON.stringify(this.entity);
     // Set property ui flags based on entity state
-    this.entity.definition.properties.forEach(function(property) {
+    this.entity.definition.properties.forEach((property) => {
       property.isPrimaryKey = this.entity.definition.primaryKey === property.name;
       property.hasElementRangeIndex = this.entity.definition.elementRangeIndex.indexOf(property.name) >= 0;
       property.hasRangeIndex = this.entity.definition.rangeIndex.indexOf(property.name) >= 0;
@@ -216,7 +216,7 @@ export class EntityEditorComponent {
       this.entity.definition.wordLexicon = [];
       this.entity.definition.required = [];
       this.entity.definition.pii = [];
-      this.entity.definition.properties.forEach(function(property) {
+      this.entity.definition.properties.forEach((property) => {
         if (property.isPrimaryKey) {
           this.entity.definition.primaryKey = property.name;
         }
@@ -333,7 +333,7 @@ export class EntityEditorComponent {
   isPropertyValid(property: PropertyType) {
     let properties = this.entity.definition.properties;
     /**
-     * A valid property must not: 
+     * A valid property must not:
      *  - be a duplicate
      *  - have spaces in the name
      *  - must not be empty
