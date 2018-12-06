@@ -36,6 +36,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.marklogic.hub.HubConfig.HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
@@ -324,15 +326,27 @@ public class HubProjectImpl implements HubProject {
         Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
         Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
         Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
+        
+        //can be changed to traverse the old hub-internal-config and build the set 
+        //hardcoding for now
+        Set<String> hubConfigFiles = Stream.of("job-database.json", "staging-database.json", 
+                "modules-database.json", "final-database.json", "trace-database.json", "triggers-database.json", 
+                "schemas-database.json", "job-server.json", "staging-server.json",
+                "final-server.json", "trace-server.json").collect(Collectors.toSet());
 
         //if the entity-config directory exists, we'll copy it to the src/main/entity-config
         upgradeProjectDir(entityConfigDir, newEntityConfigDir, oldEntityConfigDir);
+        
+        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, hubConfigFiles );
+        
+        upgradeUserConfig(userConfigDir, oldUserConfigDir, hubConfigFiles);
+        
 
-        //if the hub-internal-config directory exists, we'll copy it to the src/main/hub-internal-config
+       /* //if the hub-internal-config directory exists, we'll copy it to the src/main/hub-internal-config
         upgradeProjectDir(hubInternalConfigDir, newHubInternalConfigDir, oldHubInternalConfigDir);
 
         //if the user-config directory exists, we'll copy it to src/main/ml-config and rename this folder.old
-        upgradeProjectDir(userConfigDir, mlConfigDir, oldUserConfigDir);
+        upgradeProjectDir(userConfigDir, mlConfigDir, oldUserConfigDir);*/
 
     }
 
@@ -343,7 +357,97 @@ public class HubProjectImpl implements HubProject {
     @Override public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDirString, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
-
+    
+    //copying only the required old hub-internal-config db and server files to new locations
+    //the security files (users, roles, privileges etc are not copied from old hub-internal-config)
+    private void upgradeHubInternalConfig(Path sourceDir, Path renamedSourceDir, Set<String> hubConfigFiles) throws IOException {
+        if (Files.exists(sourceDir)) {
+            Files.walk(Paths.get(sourceDir.toUri()))
+            .filter( f -> !Files.isDirectory(f))
+            .forEach(f -> {
+                String path = f.toFile().getName();
+                //copy jobs,staging db to hub-internal-config
+                if(path.toLowerCase().equals("job-database.json")
+                || path.toLowerCase().equals("staging-database.json")) {
+                    try {
+                        FileUtils.copyFile(f.toFile(), getHubDatabaseDir().resolve(f.getFileName()).toFile());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+              //copy modules,final db to ml-config
+                if(path.toLowerCase().equals("modules-database.json")
+                || path.toLowerCase().equals("final-database.json")) {
+                    try {
+                        FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+              //copy jobs,staging server to hub-internal-config
+                if(path.toLowerCase().equals("job-server.json")
+                || path.toLowerCase().equals("staging-server.json")) {
+                    try {
+                        FileUtils.copyFile(f.toFile(), getHubServersDir().resolve(f.getFileName()).toFile());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+              //copy final server to ml-config
+                if(path.toLowerCase().equals("final-server.json")) {
+                    try {
+                        FileUtils.copyFile(f.toFile(), getUserServersDir().resolve(f.getFileName()).toFile());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                //move the rest of the payloads that are not part of the set to 
+                // hub-internal-config
+                if(! hubConfigFiles.contains(path.toLowerCase())) {
+                    try {
+                        FileUtils.copyInputStreamToFile(
+                                Files.newInputStream(f),
+                                getHubConfigDir().resolve(sourceDir.relativize(f)).toFile());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });                        
+           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+            FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
+        }       
+    }
+    
+    /*  "user-config" is the other config dir, it can contain "final-server.json", 
+     *  "staging-server.json" etc. In 3.0 ,they are deployed after hub-internal-config. But we don't
+     *  want to blindly copy all these files to ml-config as they can  cause issues during deployment.
+     *  So only copying all files that are not "hub-internal-config" files to ml-config. For 
+     *  changing configuration of hub related dbs and servers, users will have to manually 
+     *  update the hub-internal-config files     
+    */
+    private void upgradeUserConfig(Path sourceDir, Path renamedSourceDir, Set<String> hubConfigFiles) throws IOException {
+        if (Files.exists(sourceDir)) {
+           Files.walk(Paths.get(sourceDir.toUri()))
+            .filter( f -> !Files.isDirectory(f))
+            .forEach(f -> {
+                String path = f.toFile().getName();
+                //copy all files in user-config to ml-config except the db,server files
+                // that share the same name as hub-internal-config db/server files
+                if(! hubConfigFiles.contains(path.toLowerCase())) {
+                    try {
+                        FileUtils.copyInputStreamToFile(
+                                Files.newInputStream(f),
+                                getUserConfigDir().resolve(sourceDir.relativize(f)).toFile());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                               
+            });                        
+           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+            FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
+        }       
+    }
     private void upgradeProjectDir(Path sourceDir, Path destDir, Path renamedSourceDir) throws IOException {
         if (Files.exists(sourceDir)) {
             FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
