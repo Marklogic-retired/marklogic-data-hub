@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Install the Data Hub Framework
-lead_text: ''
-permalink: /tutorial/install/
+permalink: /tutorial/3x/install/
 ---
 
 # Getting Started Tutorial<br>Install the Data Hub Framework
@@ -20,7 +19,7 @@ Download the latest [QuickStart .war](https://github.com/marklogic/marklogic-dat
 
 ## 2. Download the Sample Data
 
-Create a folder to hold your input data  
+Create a folder to hold your input data
 
 <pre class="cmdline">
 mkdir input
@@ -34,7 +33,7 @@ Your project folder should look like this:
 
 <pre class="cmdline">
 data-hub
- +-- input  
+ +-- input
  +-- quick-start-{{ site.data.global.hub_version }}.war
 </pre>
 
@@ -101,4 +100,4 @@ The following are the three databases and what they store:
 
 ## Up Next
 
-[Create the Product Entity](../create-product-entity/)
+[Create the Product Entity]({{site.baseurl}}/tutorial/3x/create-product-entity/)

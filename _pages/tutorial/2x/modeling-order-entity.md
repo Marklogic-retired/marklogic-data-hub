@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Modeling the Order Entity
-lead_text: ''
 permalink: /tutorial/2x/modeling-order-entity/
 ---
 
@@ -69,4 +68,4 @@ One of the benefits of modeling your data with Entity Services is that you can u
 
 ## Up Next
 
-[Harmonizing the Order Data](../harmonizing-order-data/)
+[Harmonizing the Order Data]({{site.baseurl}}/tutorial/2x/harmonizing-order-data/)

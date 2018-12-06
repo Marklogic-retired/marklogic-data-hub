@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Create the Product Input Flow
-lead_text: ''
 permalink: /tutorial/2x/create-product-input-flow/
 ---
 
@@ -25,4 +24,4 @@ We start by creating an input flow so that we can load data as-is. This gives us
 ![New Load Products Flows]({{site.baseurl}}/images/2x/create-load-product-flow.png)
 
 ## Next Up
-[Load the Product Data As-Is](../load-products-as-is/)
+[Load the Product Data As-Is]({{site.baseurl}}/tutorial/2x/load-products-as-is/)

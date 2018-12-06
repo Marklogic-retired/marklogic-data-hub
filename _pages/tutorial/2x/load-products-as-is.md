@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Load the Product data As-Is
-lead_text: ''
 permalink: /tutorial/2x/load-products-as-is/
 ---
 
@@ -75,4 +74,4 @@ The Trace details view allows you to click on each plugin in the Flow to see the
 
 ## Up Next
 
-[Harmonizing Products > Browse and Understand the Product Data](../browse-understand-product-data/)
+[Harmonizing Products > Browse and Understand the Product Data]({{site.baseurl}}/tutorial/2x/browse-understand-product-data/)

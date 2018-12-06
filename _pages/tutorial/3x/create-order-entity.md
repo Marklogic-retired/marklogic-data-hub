@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Create the Order Entity
-lead_text: ''
-permalink: /tutorial/create-order-entity/
+permalink: /tutorial/3x/create-order-entity/
 ---
 
 # Getting Started Tutorial<br>Create the Order Entity
@@ -29,4 +28,4 @@ The following picture summarizes the steps for creating the Order entity.
 
 ## Up Next
 
-[Create the Order Input Flow](../create-order-input-flow/)
+[Create the Order Input Flow]({{site.baseurl}}/tutorial/3x/create-order-input-flow/)

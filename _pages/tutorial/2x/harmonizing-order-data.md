@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Harmonizing Order Data
-lead_text: ''
 permalink: /tutorial/2x/harmonizing-order-data/
 ---
 
@@ -107,4 +106,4 @@ You should see harmonized documents in the search results.
 
 ## Up Next
 
-[Serve the Data Out of MarkLogic](../serve-data/)
+[Serve the Data Out of MarkLogic]({{site.baseurl}}/tutorial/2x/serve-data/)

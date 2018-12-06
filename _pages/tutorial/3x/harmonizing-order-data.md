@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Harmonize the Order Data
-lead_text: ''
-permalink: /tutorial/harmonizing-order-data/
+permalink: /tutorial/3x/harmonizing-order-data/
 ---
 
 # Getting Started Tutorial<br>Harmonize the Order Data
@@ -30,7 +29,7 @@ Since we used the default option of **Create Structure from Entity Definition** 
 
 Harmonize flows are designed to operate on your data in batches. A set of plugins on MarkLogic orchestrate the processing and provide hooks for domain-specific code. When you create a flow, the Data Hub Framework generates harmonization code that the plugins call into when you run the flow.
 
-(The framework also [provide ways](../../faqs/#how-can-i-run-a-harmonize-flow-immediately-for-1-document) to run a harmonize flow on-demand for single items.)
+The framework also [provides ways]({{site.baseurl}}/refs/faqs/#how-can-i-run-a-harmonize-flow-immediately-for-1-document) to run a harmonize flow on-demand for single items.
 
 A harmonization flow uses the following plugins:
 
@@ -182,4 +181,4 @@ Click a result to see the raw data.
 
 ## Up Next
 
-[Serve the Data Out of MarkLogic](../serve-data/)
+[Serve the Data Out of MarkLogic]({{site.baseurl}}/tutorial/3x/serve-data/)

@@ -538,13 +538,17 @@ h2 {
 }
 
 .table-b1gray {
+  margin-bottom: 10px;
   border-collapse: collapse;
   > table, td, th {
       border: 1px solid gray;
       padding: 5px;
   }
-  > table {
-      margin-bottom: 20px;
+}
+
+.ol-steps {
+  > li {
+      padding-bottom: 10px;
   }
 }
 
