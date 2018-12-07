@@ -337,7 +337,10 @@ public class HubProjectImpl implements HubProject {
         upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles );
         
         upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
-        
+
+        deleteObsoleteDatabaseFilesFromHubInternalConfig();
+
+        deleteObsoleteServerFilesFromHubInternalConfig();
 
        /* //if the hub-internal-config directory exists, we'll copy it to the src/main/hub-internal-config
         upgradeProjectDir(hubInternalConfigDir, newHubInternalConfigDir, oldHubInternalConfigDir);
@@ -354,7 +357,7 @@ public class HubProjectImpl implements HubProject {
     @Override public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDirString, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
-    
+
     //copying only the required old hub-internal-config db and server files to new locations
     //the security files (users, roles, privileges etc are not copied from old hub-internal-config)
     private void upgradeHubInternalConfig(Path sourceDir, Path renamedSourceDir, Set<String> obsoleteFiles) throws IOException {
@@ -397,10 +400,14 @@ public class HubProjectImpl implements HubProject {
                     File jsonFile = f.toFile();
                     try {
                         rootNode = mapper.readTree(jsonFile);
-                        ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");
+
                         if(path.toLowerCase().equals("staging-server.json")) {
+                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/rest-api/rewriter.xml");
                             ((ObjectNode) rootNode).put("error-handler", "/data-hub/4/rest-api/error-handler.xqy");
+                        } else {
+                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");
                         }
+
                         String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
                         FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
                     } catch (IOException e) {
@@ -501,6 +508,40 @@ public class HubProjectImpl implements HubProject {
             FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
+        }
+    }
+
+    /**
+     * When upgrading to 4.1.0 or later, obsolete files may need to be delete from hub internal config
+     * directory because they were left there by the 3.0 to 4.0.x upgrade.
+     */
+    private void deleteObsoleteDatabaseFilesFromHubInternalConfig() {
+        File dir = getHubDatabaseDir().toFile();
+        Set<String> filenames = Stream.of("final-database.json", "modules-database.json",
+            "schemas-database.json", "trace-database.json", "triggers-database.json"
+        ).collect(Collectors.toSet());
+        for (String filename : filenames) {
+            File f = new File(dir, filename);
+            if (f.exists()) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Deleting file because it should no longer be in hub-internal-config: " + f.getAbsolutePath());
+                }
+                f.delete();
+            }
+        }
+    }
+
+    private void deleteObsoleteServerFilesFromHubInternalConfig() {
+        File dir = getHubServersDir().toFile();
+        Set<String> filenames = Stream.of("final-server.json", "trace-server.json").collect(Collectors.toSet());
+        for (String filename : filenames) {
+            File f = new File(dir, filename);
+            if (f.exists()) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Deleting file because it should no longer be in hub-internal-config: " + f.getAbsolutePath());
+                }
+                f.delete();
+            }
         }
     }
 
