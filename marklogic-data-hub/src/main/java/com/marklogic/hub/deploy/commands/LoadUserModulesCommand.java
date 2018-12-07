@@ -16,7 +16,6 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -51,6 +50,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -98,8 +98,17 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private PropertiesModuleManager getModulesManager() {
         String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
+
+        // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
+        // loaded by the modules loader in the parent class which adds these entries to the ml-javaclient-utils timestamp file
+        String filePath = hubConfig.getAppConfig().getModuleTimestampsPath();
+        File defaultTimestampFile = new File(filePath);
+
         if (forceLoad) {
             pmm.deletePropertiesFile();
+            if (defaultTimestampFile.exists()){
+                defaultTimestampFile.delete();
+            }
         }
         return pmm;
     }
