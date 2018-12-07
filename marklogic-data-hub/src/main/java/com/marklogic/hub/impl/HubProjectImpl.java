@@ -397,9 +397,13 @@ public class HubProjectImpl implements HubProject {
                     File jsonFile = f.toFile();
                     try {
                         rootNode = mapper.readTree(jsonFile);
-                        ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");
+                        //set the url-rewriter and error-handler
                         if(path.toLowerCase().equals("staging-server.json")) {
+                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/rest-api/rewriter.xml");
                             ((ObjectNode) rootNode).put("error-handler", "/data-hub/4/rest-api/error-handler.xqy");
+                        }
+                        else {
+                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");                            
                         }
                         String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
                         FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
