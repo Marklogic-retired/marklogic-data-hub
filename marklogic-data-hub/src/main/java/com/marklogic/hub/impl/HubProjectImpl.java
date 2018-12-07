@@ -15,14 +15,17 @@
  */
 package com.marklogic.hub.impl;
 
-import com.marklogic.hub.HubConfig;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.rest.util.JsonNodeUtil;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -33,7 +36,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -317,29 +322,21 @@ public class HubProjectImpl implements HubProject {
         Path hubInternalConfigDir = this.projectDir.resolve("hub-internal-config");
         Path userConfigDir = this.projectDir.resolve("user-config");
 
-        //let's set paths for dest directories
-        Path newEntityConfigDir = Paths.get(HubConfig.ENTITY_CONFIG_DIR);
-        Path newHubInternalConfigDir = Paths.get(HUB_CONFIG_DIR);
-        Path mlConfigDir = Paths.get(USER_CONFIG_DIR);
-
         //and now what we want to name the old directories so they're not copied over again in another update
         Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
         Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
         Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
         
-        //can be changed to traverse the old hub-internal-config and build the set 
-        //hardcoding for now
-        Set<String> hubConfigFiles = Stream.of("job-database.json", "staging-database.json", 
-                "modules-database.json", "final-database.json", "trace-database.json", "triggers-database.json", 
-                "schemas-database.json", "job-server.json", "staging-server.json",
-                "final-server.json", "trace-server.json").collect(Collectors.toSet());
-
+        //obsolete database/server/role names in hub-internal-config from 3.0
+        Set<String> obsoleteFiles = Stream.of("trace-database.json", "triggers-database.json", 
+                "schemas-database.json", "trace-server.json", "data-hub-role.json").collect(Collectors.toSet());
+                
         //if the entity-config directory exists, we'll copy it to the src/main/entity-config
-        upgradeProjectDir(entityConfigDir, newEntityConfigDir, oldEntityConfigDir);
+        upgradeProjectDir(entityConfigDir, getEntityConfigDir(), oldEntityConfigDir);
         
-        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, hubConfigFiles );
+        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles );
         
-        upgradeUserConfig(userConfigDir, oldUserConfigDir, hubConfigFiles);
+        upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
         
 
        /* //if the hub-internal-config directory exists, we'll copy it to the src/main/hub-internal-config
@@ -360,7 +357,7 @@ public class HubProjectImpl implements HubProject {
     
     //copying only the required old hub-internal-config db and server files to new locations
     //the security files (users, roles, privileges etc are not copied from old hub-internal-config)
-    private void upgradeHubInternalConfig(Path sourceDir, Path renamedSourceDir, Set<String> hubConfigFiles) throws IOException {
+    private void upgradeHubInternalConfig(Path sourceDir, Path renamedSourceDir, Set<String> obsoleteFiles) throws IOException {
         if (Files.exists(sourceDir)) {
             Files.walk(Paths.get(sourceDir.toUri()))
             .filter( f -> !Files.isDirectory(f))
@@ -369,14 +366,22 @@ public class HubProjectImpl implements HubProject {
                 //copy jobs,staging db to hub-internal-config
                 if(path.toLowerCase().equals("job-database.json")
                 || path.toLowerCase().equals("staging-database.json")) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode rootNode = null;
+                    File jsonFile = f.toFile();
                     try {
-                        FileUtils.copyFile(f.toFile(), getHubDatabaseDir().resolve(f.getFileName()).toFile());
+                        rootNode = mapper.readTree(jsonFile);
+                        ((ObjectNode) rootNode).put("schema-database", "%%mlStagingSchemasDbName%%");
+                        ((ObjectNode) rootNode).put("triggers-database", "%%mlStagingTriggersDbName%%");
+                        String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                        FileUtils.writeStringToFile(getHubDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+    
                 }
-              //copy modules,final db to ml-config
-                if(path.toLowerCase().equals("modules-database.json")
+                //copy modules,final db to ml-config
+                else if(path.toLowerCase().equals("modules-database.json")
                 || path.toLowerCase().equals("final-database.json")) {
                     try {
                         FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
@@ -384,17 +389,23 @@ public class HubProjectImpl implements HubProject {
                         throw new RuntimeException(e);
                     }
                 }
-              //copy jobs,staging server to hub-internal-config
-                if(path.toLowerCase().equals("job-server.json")
+                //copy jobs,staging server to hub-internal-config
+                else if(path.toLowerCase().equals("job-server.json")
                 || path.toLowerCase().equals("staging-server.json")) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode rootNode = null;
+                    File jsonFile = f.toFile();
                     try {
-                        FileUtils.copyFile(f.toFile(), getHubServersDir().resolve(f.getFileName()).toFile());
+                        rootNode = mapper.readTree(jsonFile);
+                        ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");
+                        String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                        FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
-                    }
+                    }        
                 }
-              //copy final server to ml-config
-                if(path.toLowerCase().equals("final-server.json")) {
+                //copy final server to ml-config
+                else if(path.toLowerCase().equals("final-server.json")) {
                     try {
                         FileUtils.copyFile(f.toFile(), getUserServersDir().resolve(f.getFileName()).toFile());
                     } catch (IOException e) {
@@ -403,7 +414,7 @@ public class HubProjectImpl implements HubProject {
                 }
                 //move the rest of the payloads that are not part of the set to 
                 // hub-internal-config
-                if(! hubConfigFiles.contains(path.toLowerCase())) {
+                else if(! obsoleteFiles.contains(path.toLowerCase())) {
                     try {
                         FileUtils.copyInputStreamToFile(
                                 Files.newInputStream(f),
@@ -418,22 +429,56 @@ public class HubProjectImpl implements HubProject {
         }       
     }
     
-    /*  "user-config" is the other config dir, it can contain "final-server.json", 
-     *  "staging-server.json" etc. In 3.0 ,they are deployed after hub-internal-config. But we don't
-     *  want to blindly copy all these files to ml-config as they can  cause issues during deployment.
-     *  So only copying all files that are not "hub-internal-config" files to ml-config. For 
-     *  changing configuration of hub related dbs and servers, users will have to manually 
-     *  update the hub-internal-config files     
+    /*  "user-config" is the other config dir, it can contain "final-server.json". In 3.0 ,they are
+     *  deployed after hub-internal-config. But we don't want to blindly copy all these files to ml-config
+     *  as they would overwrite existing "final-server.json" (or database file)
+     *  So merging the user-config files with the one copied to ml-config already and copying rest
+     *  ml-config      
     */
-    private void upgradeUserConfig(Path sourceDir, Path renamedSourceDir, Set<String> hubConfigFiles) throws IOException {
+    private void upgradeUserConfig(Path sourceDir, Path renamedSourceDir, Set<String> obsoleteFiles) throws IOException {
         if (Files.exists(sourceDir)) {
            Files.walk(Paths.get(sourceDir.toUri()))
             .filter( f -> !Files.isDirectory(f))
             .forEach(f -> {
                 String path = f.toFile().getName();
-                //copy all files in user-config to ml-config except the db,server files
-                // that share the same name as hub-internal-config db/server files
-                if(! hubConfigFiles.contains(path.toLowerCase())) {
+                List<File> filesToMerge = new ArrayList<>();             
+                //copy modules,final db to ml-config
+                if(path.toLowerCase().equals("modules-database.json")
+                || path.toLowerCase().equals("final-database.json")) {
+                    try {
+                        ObjectMapper mapper = new ObjectMapper();
+                        //File copied to src/main/ml-config/databases earlier
+                        filesToMerge.add(getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                        //File from user-config/databases
+                        filesToMerge.add(f.toFile());
+                        // write merged file back
+                        String dbFile = mapper.writerWithDefaultPrettyPrinter().
+                                writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
+                        FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+                       
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                //copy final server to ml-config
+                else if(path.toLowerCase().equals("final-server.json")) {
+                    try {
+                        ObjectMapper mapper = new ObjectMapper();
+                        //File copied to src/main/hub-internal-config/servers earlier
+                        filesToMerge.add(getUserServersDir().resolve(f.getFileName()).toFile());
+                        //File from user-config/servers
+                        filesToMerge.add(f.toFile());
+                        // write merged file back
+                        String serverFile = mapper.writerWithDefaultPrettyPrinter().
+                                writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
+                        FileUtils.writeStringToFile(getUserServersDir().resolve(f.getFileName()).toFile(),
+                                serverFile);                       
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                //copy all other files in user-config to ml-config except the obsolete ones 
+                else if(! obsoleteFiles.contains(path.toLowerCase())) {
                     try {
                         FileUtils.copyInputStreamToFile(
                                 Files.newInputStream(f),
