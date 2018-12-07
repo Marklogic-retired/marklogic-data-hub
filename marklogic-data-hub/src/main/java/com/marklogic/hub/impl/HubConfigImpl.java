@@ -1050,7 +1050,6 @@ public class HubConfigImpl implements HubConfig
 
         modulesDbName = getEnvPropString(projectProperties, "mlModulesDbName", modulesDbName);
         modulesForestsPerHost = getEnvPropInteger(projectProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-        modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", modulePermissions);
 
         stagingTriggersDbName = getEnvPropString(projectProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
         stagingTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
@@ -1066,6 +1065,16 @@ public class HubConfigImpl implements HubConfig
 
         hubRoleName = getEnvPropString(projectProperties, "mlHubUserRole", hubRoleName);
         hubUserName = getEnvPropString(projectProperties, "mlHubUserName", hubUserName);
+
+        modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", modulePermissions);
+        /**
+         * If gradle.properties does not have mlModulePermissions in it (projects upgraded from 3.0 likely do not),
+         * then this default value will not work because it has the below token in it. Replacing the token ensures that
+         * the set of permissions is valid.
+         */
+        if (modulePermissions != null) {
+            modulePermissions = modulePermissions.replaceAll("%%mlHubUserRole%%", hubRoleName);
+        }
 
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", DHFVersion);
 
