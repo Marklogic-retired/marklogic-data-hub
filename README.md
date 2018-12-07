@@ -1,68 +1,110 @@
 # Data Hub Framework Website
-This branch contains the code that generates the github.io website for the DHF.
 
-Before you can get going you must have Ruby installed. This project has .ruby-version and .ruby-gem files if you are using [RVM](https://rvm.io/).
+The [Data Hub Framework website](https://marklogic.github.io/marklogic-data-hub/) is published as [GitHub Pages](https://pages.github.com/).
 
-This process has been tested successfully on Ruby version 2.4.2.
+The DHF website contains two types of docs:
+- API docs
+    - In the `develop` branch. Docs are embedded in the development source code.
+    - Built with JavaDocs. The resulting static pages must be checked into the `docs` branch to be combined with the standard pages during the Jekyll build.
+    - Different versions of the API docs appear in [the Javadocs page](https://marklogic.github.io/marklogic-data-hub/javadocs/).
+- Standard files
+    - In the `docs` branch. Topic files are in the `_pages` folder. Images are in the `images` folder.
+    - Formatted with [Markdown](https://guides.github.com/features/mastering-markdown/).
+    - Built with [Jekyll](https://jekyllrb.com/).
 
-```
-$ ruby --version
-ruby 2.4.2...
-```
+Changes pulled into the `docs` branch automatically trigger a Jekyll build.
 
-# Setup
+The following instructions are for building on a local machine.
 
-### Ensure necessary tools are installed
-```bash
-gem install bundler
-gem install jekyll
-```
 
-### Install the necessary Ruby gems
-```bash
-bundle install
-```
+# Running the APIdocs Build
 
-# Viewing the Website
+## Tools
 
-This website is written using [Jekyll](https://jekyllrb.com/) and Markdown. You can read about creating github pages websites [here](https://pages.github.com/).
+- [Gradle 4.x+](https://docs.gradle.org/current/userguide/installation.html#installing_gradle)
 
-### Run the Jekyll Server
-```bash
-jekyll serve
-```
 
-Open the docs website at the server address displayed in the terminal, e.g.: 
+## Steps
 
-`http://127.0.0.1:4000/marklogic-data-hub/`
+1. In your build machine, download the `develop` branch from GitHub.
 
-### Making Content Changes
+1. In a Bash console, go to the root of the `develop` branch.
 
-Most of the content is located in `_pages` with screenshots in `images`. Making changes to files in the site prompts Jekyll to regenerate the website.
+1. Run:
+    ```
+    ./gradlew javadoc
+    ```
 
+1. Copy the generated Javadoc files from `marklogic-data-hub/build/docs/javadoc` to a temporary location.
+
+1. In GitHub,
+
+    a. Create a new branch based on the `docs` branch. Example: `myjavadocs`.
+    a. Switch to the `myjavadocs` branch.
+
+1. Copy the Javadoc files from the temporary location to the appropriate version folder in the `javadocs` folder of the `myjavadocs` branch. Example: `javadocs/3.0.0`.
+
+1. Check in and create a pull request for changes to be copied from the `myjavadocs` branch to the `docs` branch.
+
+
+# Running the Jekyll Build
+
+## Tools
+
+- [Git](https://git-scm.com/downloads) (for commandline use)
+
+- [Ruby v2.4.2 or greater](https://rubyinstaller.org/downloads/)
+
+    - If you are using [RVM](https://rvm.io/), this project already includes `.ruby-version` and `.ruby-gem` files.
+
+    - *IMPORTANT:* Run `ruby -v` to determine your Ruby version, and update the `.ruby-version` file with your current version.
+
+- [Jekyll](https://jekyllrb.com/docs/installation/windows/)
+
+    ```bash
+    gem install jekyll bundler
+    ```
+
+- Ruby gems required by the build
+
+    - To install,
+
+        ```bash
+        bundle install
+        ```
+
+
+## Steps
+
+1. In your build machine, download the `docs` branch from GitHub. Then overwrite with locally updated files, including the newly built API docs pages.
+
+1. In a Bash console, go to the root of the `docs` branch.
+
+1. Run:
+
+    ```bash
+    jekyll serve
+    ```
+
+1. Wait until it says `Server running... press ctrl-c to stop.`
+
+1. To view the built site, go to the specified `Server address". Example: `http://127.0.0.1:4000/marklogic-data-hub/`
+
+
+### Future builds
+In subsequent builds, get the latest versions of the gems first before running the build.
+    ```bash
+    bundle update
+    jekyll serve
+    ```
+
+
+### Troubleshooting the Build
+***Q:*** `C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/bundler-1.17.1/lib/bundler/runtime.rb:319:in `check_for_activated_spec!': You have already activated public_suffix 3.0.3, but your Gemfile requires public_suffix 2.0.5. Prepending `bundle exec` to your command may solve this. (Gem::LoadError)`
+***A:*** Use this command instead: `bundle exec jekyll serve`
+
+
+<!-- TODO: Verify if still true.
 ### Updating the Live website
 There is a travis job that builds and deploys the website every time a push is made to the **dhf-website** branch.
-
-# Building DHF Javadocs
-
-You can run a Gradle task to build [Javadoc](https://en.wikipedia.org/wiki/Javadoc) pages for the Data Hub Framework. From the project root of, for example, the develop branch (_not_ the docs branch) run the following:
-  
-```
-./gradlew javadoc
-```
-  
-The static Javadoc files are generated in the following folder:
-
-```
-marklogic-data-hub/build/docs/javadoc
-```
-
-## Adding to the Documentation
-
-You can commit those files to a version folder on the docs branch to display them in the DHF documentation, e.g.:
-  
-```
-javadocs/3.0.0
-```
-  
-Links to the different versions are dynamically displayed on the Docs > Javadocs documentation page.
+-->
