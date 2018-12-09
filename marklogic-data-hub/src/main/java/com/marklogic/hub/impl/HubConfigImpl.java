@@ -82,23 +82,23 @@ public class HubConfigImpl implements HubConfig
     @Autowired DataHubImpl dataHub;
     @Autowired Versions versions;
 
-    @Value("${mlHost}")
+
     protected String host;
 
-    @Value("${mlStagingDbName}")
+
     protected String stagingDbName;
-    @Value("${mlStagingAppserverName}")
+
     protected String stagingHttpName;
-    @Value("${mlStagingForestsPerHost}")
+
     protected Integer stagingForestsPerHost;
-    @Value("${mlStagingPort}")
+
     protected Integer stagingPort;
-    @Value("${mlStagingAuth}")
+
     protected String stagingAuthMethod;
-    @Value("${mlStagingScheme}")
+
     private String stagingScheme;
-    @Value("${mlStagingSimpleSsl}")
-    private boolean stagingSimpleSsl;
+
+    private Boolean stagingSimpleSsl;
 
 
     private SSLContext stagingSslContext;
@@ -108,20 +108,20 @@ public class HubConfigImpl implements HubConfig
     private String stagingExternalName;
     private X509TrustManager stagingTrustManager;
 
-    @Value("${mlFinalDbName}")
+
     protected String finalDbName;
-    @Value("${mlFinalAppserverName}")
+
     protected String finalHttpName;
-    @Value("${mlFinalForestsPerHost}")
+
     protected Integer finalForestsPerHost;
-    @Value("${mlFinalPort}")
+
     protected Integer finalPort;
-    @Value("${mlFinalAuth}")
+
     protected String finalAuthMethod;
-    @Value("${mlFinalScheme}")
+
     private String finalScheme;
-    @Value("${mlFinalSimpleSsl}")
-    private boolean finalSimpleSsl;
+
+    private Boolean finalSimpleSsl;
     private SSLContext finalSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
     private String finalCertFile;
@@ -129,20 +129,20 @@ public class HubConfigImpl implements HubConfig
     private String finalExternalName;
     private X509TrustManager finalTrustManager;
 
-    @Value("${mlJobDbName}")
+
     protected String jobDbName;
-    @Value("${mlJobAppserverName}")
+
     protected String jobHttpName;
-    @Value("${mlJobForestsPerHost}")
+
     protected Integer jobForestsPerHost;
-    @Value("${mlJobPort}")
+
     protected Integer jobPort;
-    @Value("${mlJobAuth}")
+
     protected String jobAuthMethod;
-    @Value("${mlJobScheme}")
+
     private String jobScheme;
-    @Value("${mlJobSimpleSsl}")
-    private boolean jobSimpleSsl;
+
+    private Boolean jobSimpleSsl;
     private SSLContext jobSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier;
     private String jobCertFile;
@@ -150,36 +150,36 @@ public class HubConfigImpl implements HubConfig
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-    @Value("${mlModulesDbName}")
+
     protected String modulesDbName;
-    @Value("${mlModulesForestsPerHost}")
+
     protected Integer modulesForestsPerHost = 1;
 
-    @Value("${mlStagingTriggersDbName}")
+
     protected String stagingTriggersDbName;
-    @Value("${mlStagingTriggersForestsPerHost}")
+
     protected Integer stagingTriggersForestsPerHost;
-    @Value("${mlFinalTriggersDbName}")
+
     protected String finalTriggersDbName;
-    @Value("${mlFinalTriggersForestsPerHost}")
+
     protected Integer finalTriggersForestsPerHost;
 
-    @Value("${mlStagingSchemasDbName}")
+
     protected String stagingSchemasDbName;
-    @Value("${mlStagingSchemasForestsPerHost}")
+
     protected Integer stagingSchemasForestsPerHost;
-    @Value("${mlFinalSchemasDbName}")
+
     protected String finalSchemasDbName;
-    @Value("${mlFinalSchemasForestsPerHost}")
+
     protected Integer finalSchemasForestsPerHost;
 
-    @Value("${mlHubUserRole}")
+
     private String hubRoleName;
-    @Value("${mlHubUserName}")
+
     private String hubUserName;
-    @Value("${mlHubAdminRole}")
+
     private String hubAdminRoleName;
-    @Value("${mlHubAdminUserName}")
+
     private String hubAdminUserName;
 
     //we assume DHF 2.x unless otherwise told, our earliest 'from' version
@@ -191,15 +191,15 @@ public class HubConfigImpl implements HubConfig
 
     private String loadBalancerHost;
 
-    @Value("${mlIsHostLoadBalancer}")
+
     private Boolean isHostLoadBalancer;
 
-    @Value("${mlIsProvisionedEnvironment}")
+
     private Boolean isProvisionedEnvironment;
 
-    @Value("${mlCustomForestPath}")
+
     protected String customForestPath;
-    @Value("${mlModulePermissions}")
+
     protected String modulePermissions;
 
     private ManageConfig manageConfig;
@@ -925,17 +925,17 @@ public class HubConfigImpl implements HubConfig
 
 
     public void hydrateConfigs() {
-        if (stagingSimpleSsl) {
+        if (stagingSimpleSsl != null && stagingSimpleSsl) {
             stagingSslContext = SimpleX509TrustManager.newSSLContext();
             stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             stagingTrustManager = new SimpleX509TrustManager();
         }
-        if (finalSimpleSsl) {
+        if (finalSimpleSsl != null && finalSimpleSsl) {
             finalSslContext = SimpleX509TrustManager.newSSLContext();
             finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             finalTrustManager = new SimpleX509TrustManager();
         }
-        if (jobSimpleSsl) {
+        if (jobSimpleSsl != null && jobSimpleSsl) {
             jobSslContext = SimpleX509TrustManager.newSSLContext();
             jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             jobTrustManager = new SimpleX509TrustManager();
@@ -1010,63 +1010,63 @@ public class HubConfigImpl implements HubConfig
             properties.forEach(projectProperties::put);
         }
 
-        host = getEnvPropString(projectProperties, "mlHost", host);
-        stagingDbName = getEnvPropString(projectProperties, "mlStagingDbName", stagingDbName);
-        stagingHttpName = getEnvPropString(projectProperties, "mlStagingAppserverName", stagingHttpName);
-        stagingForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
-        stagingPort = getEnvPropInteger(projectProperties, "mlStagingPort", stagingPort);
-        stagingAuthMethod = getEnvPropString(projectProperties, "mlStagingAuth", stagingAuthMethod);
-        stagingScheme = getEnvPropString(projectProperties, "mlStagingScheme", stagingScheme);
-        stagingSimpleSsl = getEnvPropBoolean(projectProperties, "mlStagingSimpleSsl", false);
-        stagingCertFile = getEnvPropString(projectProperties, "mlStagingCertFile", stagingCertFile);
-        stagingCertPassword = getEnvPropString(projectProperties, "mlStagingCertPassword", stagingCertPassword);
-        stagingExternalName = getEnvPropString(projectProperties, "mlStagingExternalName", stagingExternalName);
+        host = (host == null) ? getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost")) : host;
+        stagingDbName = (stagingDbName == null) ? getEnvPropString(projectProperties, "mlStagingDbName", environment.getProperty("mlStagingDbName")) : stagingDbName;
+        stagingHttpName = stagingHttpName == null ? getEnvPropString(projectProperties, "mlStagingAppserverName", environment.getProperty("mlStagingAppserverName")) : stagingHttpName;
+        stagingForestsPerHost = stagingForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlStagingForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingForestsPerHost"))) : stagingForestsPerHost;
+        stagingPort = stagingPort == null ? getEnvPropInteger(projectProperties, "mlStagingPort", Integer.parseInt(environment.getProperty("mlStagingPort"))) : stagingPort;
+        stagingAuthMethod = stagingAuthMethod == null ? getEnvPropString(projectProperties, "mlStagingAuth", environment.getProperty("mlStagingAuth")) : stagingAuthMethod;
+        stagingScheme = stagingScheme == null ? getEnvPropString(projectProperties, "mlStagingScheme", environment.getProperty("mlStagingScheme")) : stagingScheme;
+        stagingSimpleSsl = stagingSimpleSsl == null ? getEnvPropBoolean(projectProperties, "mlStagingSimpleSsl", false) : stagingSimpleSsl;
+        stagingCertFile = stagingCertFile == null ? getEnvPropString(projectProperties, "mlStagingCertFile", stagingCertFile) : stagingCertFile;
+        stagingCertPassword = stagingCertPassword == null ? getEnvPropString(projectProperties, "mlStagingCertPassword", stagingCertPassword) : stagingCertPassword;
+        stagingExternalName = stagingExternalName == null ? getEnvPropString(projectProperties, "mlStagingExternalName", stagingExternalName) : stagingExternalName;
 
 
-        finalDbName = getEnvPropString(projectProperties, "mlFinalDbName", finalDbName);
-        finalHttpName = getEnvPropString(projectProperties, "mlFinalAppserverName", finalHttpName);
-        finalForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalForestsPerHost", finalForestsPerHost);
-        finalPort = getEnvPropInteger(projectProperties, "mlFinalPort", finalPort);
-        finalAuthMethod = getEnvPropString(projectProperties, "mlFinalAuth", finalAuthMethod);
-        finalScheme = getEnvPropString(projectProperties, "mlFinalScheme", finalScheme);
-        finalSimpleSsl = getEnvPropBoolean(projectProperties, "mlFinalSimpleSsl", false);
-        finalCertFile = getEnvPropString(projectProperties, "mlFinalCertFile", finalCertFile);
-        finalCertPassword = getEnvPropString(projectProperties, "mlFinalCertPassword", finalCertPassword);
-        finalExternalName = getEnvPropString(projectProperties, "mlFinalExternalName", finalExternalName);
+        finalDbName = finalDbName == null ? getEnvPropString(projectProperties, "mlFinalDbName", environment.getProperty("mlFinalDbName")) : finalDbName;
+        finalHttpName = finalHttpName == null ? getEnvPropString(projectProperties, "mlFinalAppserverName", environment.getProperty("mlFinalAppserverName")) : finalHttpName;
+        finalForestsPerHost = finalForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlFinalForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalForestsPerHost"))) : finalForestsPerHost;
+        finalPort = finalPort == null ? getEnvPropInteger(projectProperties, "mlFinalPort", Integer.parseInt(environment.getProperty("mlFinalPort"))) : finalPort;
+        finalAuthMethod = finalAuthMethod == null ? getEnvPropString(projectProperties, "mlFinalAuth", environment.getProperty("mlFinalAuth")) : finalAuthMethod;
+        finalScheme = finalScheme == null ? getEnvPropString(projectProperties, "mlFinalScheme", environment.getProperty("mlFinalScheme")) : finalScheme;
+        finalSimpleSsl = finalSimpleSsl == null ? getEnvPropBoolean(projectProperties, "mlFinalSimpleSsl", false) : finalSimpleSsl;
+        finalCertFile = finalCertFile == null ? getEnvPropString(projectProperties, "mlFinalCertFile", finalCertFile) : finalCertFile;
+        finalCertPassword = finalCertPassword == null ? getEnvPropString(projectProperties, "mlFinalCertPassword", finalCertPassword) : finalCertPassword;
+        finalExternalName = finalExternalName == null ? getEnvPropString(projectProperties, "mlFinalExternalName", finalExternalName) : finalExternalName;
 
 
-        jobDbName = getEnvPropString(projectProperties, "mlJobDbName", jobDbName);
-        jobHttpName = getEnvPropString(projectProperties, "mlJobAppserverName", jobHttpName);
-        jobForestsPerHost = getEnvPropInteger(projectProperties, "mlJobForestsPerHost", jobForestsPerHost);
-        jobPort = getEnvPropInteger(projectProperties, "mlJobPort", jobPort);
-        jobAuthMethod = getEnvPropString(projectProperties, "mlJobAuth", jobAuthMethod);
-        jobScheme = getEnvPropString(projectProperties, "mlJobScheme", jobScheme);
-        jobSimpleSsl = getEnvPropBoolean(projectProperties, "mlJobSimpleSsl", false);
-        jobCertFile = getEnvPropString(projectProperties, "mlJobCertFile", jobCertFile);
-        jobCertPassword = getEnvPropString(projectProperties, "mlJobCertPassword", jobCertPassword);
-        jobExternalName = getEnvPropString(projectProperties, "mlJobExternalName", jobExternalName);
+        jobDbName = jobDbName == null ? getEnvPropString(projectProperties, "mlJobDbName", environment.getProperty("mlJobDbName")) : jobDbName;
+        jobHttpName = jobHttpName == null ? getEnvPropString(projectProperties, "mlJobAppserverName", environment.getProperty("mlJobAppserverName")) : jobHttpName;
+        jobForestsPerHost = jobForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlJobForestsPerHost", Integer.parseInt(environment.getProperty("mlJobForestsPerHost"))) : jobForestsPerHost;
+        jobPort = jobPort == null ? getEnvPropInteger(projectProperties, "mlJobPort", Integer.parseInt(environment.getProperty("mlJobPort"))) : jobPort;
+        jobAuthMethod = jobAuthMethod == null ? getEnvPropString(projectProperties, "mlJobAuth", environment.getProperty("mlJobAuth")) : jobAuthMethod;
+        jobScheme = jobScheme == null ? getEnvPropString(projectProperties, "mlJobScheme", environment.getProperty("mlJobScheme")) : jobScheme;
+        jobSimpleSsl = jobSimpleSsl == null ? getEnvPropBoolean(projectProperties, "mlJobSimpleSsl", false) : jobSimpleSsl;
+        jobCertFile = jobCertFile == null ? getEnvPropString(projectProperties, "mlJobCertFile", jobCertFile) : jobCertFile;
+        jobCertPassword = jobCertPassword == null ? getEnvPropString(projectProperties, "mlJobCertPassword", jobCertPassword) : jobCertPassword;
+        jobExternalName = jobExternalName == null ? getEnvPropString(projectProperties, "mlJobExternalName", jobExternalName) : jobExternalName;
 
-        customForestPath = getEnvPropString(projectProperties, "mlCustomForestPath", customForestPath);
+        customForestPath = customForestPath == null ? getEnvPropString(projectProperties, "mlCustomForestPath", environment.getProperty("mlCustomForestPath")) : customForestPath;
 
-        modulesDbName = getEnvPropString(projectProperties, "mlModulesDbName", modulesDbName);
-        modulesForestsPerHost = getEnvPropInteger(projectProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
+        modulesDbName = modulesDbName == null ? getEnvPropString(projectProperties, "mlModulesDbName", environment.getProperty("mlModulesDbName")) : modulesDbName;
+        modulesForestsPerHost = modulesForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlModulesForestsPerHost", Integer.parseInt(environment.getProperty("mlModulesForestsPerHost"))) : modulesForestsPerHost;
 
-        stagingTriggersDbName = getEnvPropString(projectProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
-        stagingTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
+        stagingTriggersDbName = stagingTriggersDbName == null ? getEnvPropString(projectProperties, "mlStagingTriggersDbName", environment.getProperty("mlStagingTriggersDbName")) : stagingTriggersDbName;
+        stagingTriggersForestsPerHost = stagingTriggersForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlStagingTriggersForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingTriggersForestsPerHost"))) : stagingTriggersForestsPerHost;
 
-        finalTriggersDbName = getEnvPropString(projectProperties, "mlFinalTriggersDbName", finalTriggersDbName);
-        finalTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost);
+        finalTriggersDbName = finalTriggersDbName == null ? getEnvPropString(projectProperties, "mlFinalTriggersDbName", environment.getProperty("mlFinalTriggersDbName")) : finalTriggersDbName;
+        finalTriggersForestsPerHost = finalTriggersForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlFinalTriggersForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalTriggersForestsPerHost"))) : finalTriggersForestsPerHost;
 
-        stagingSchemasDbName = getEnvPropString(projectProperties, "mlStagingSchemasDbName", stagingSchemasDbName);
-        stagingSchemasForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
+        stagingSchemasDbName = stagingSchemasDbName == null ? getEnvPropString(projectProperties, "mlStagingSchemasDbName", environment.getProperty("mlStagingSchemasDbName")) : stagingSchemasDbName;
+        stagingSchemasForestsPerHost = stagingSchemasForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlStagingSchemasForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingSchemasForestsPerHost"))) : stagingSchemasForestsPerHost;
 
-        finalSchemasDbName = getEnvPropString(projectProperties, "mlFinalSchemasDbName", finalSchemasDbName);
-        finalSchemasForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost);
+        finalSchemasDbName = finalSchemasDbName == null ? getEnvPropString(projectProperties, "mlFinalSchemasDbName", environment.getProperty("mlFinalSchemasDbName")) : finalSchemasDbName;
+        finalSchemasForestsPerHost = finalSchemasForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlFinalSchemasForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalSchemasForestsPerHost"))) : finalSchemasForestsPerHost;
 
-        hubRoleName = getEnvPropString(projectProperties, "mlHubUserRole", hubRoleName);
-        hubUserName = getEnvPropString(projectProperties, "mlHubUserName", hubUserName);
+        hubRoleName = hubRoleName == null ? getEnvPropString(projectProperties, "mlHubUserRole", environment.getProperty("mlHubUserRole")) : hubRoleName;
+        hubUserName = hubUserName == null ? getEnvPropString(projectProperties, "mlHubUserName", environment.getProperty("mlHubUserName")) : hubUserName;
 
-        modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", modulePermissions);
+        modulePermissions = modulePermissions == null ? getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions")) : modulePermissions;
         /**
          * If gradle.properties does not have mlModulePermissions in it (projects upgraded from 3.0 likely do not),
          * then this default value will not work because it has the below token in it. Replacing the token ensures that
@@ -1080,13 +1080,13 @@ public class HubConfigImpl implements HubConfig
 
         // this is a runtime username/password for running flows
         // could be factored away with FlowRunner
-        mlUsername = getEnvPropString(projectProperties, "mlUsername", mlUsername);
-        mlPassword = getEnvPropString(projectProperties, "mlPassword", mlPassword);
+        mlUsername = mlUsername == null ? getEnvPropString(projectProperties, "mlUsername", mlUsername) : mlUsername;
+        mlPassword = mlPassword == null ? getEnvPropString(projectProperties, "mlPassword", mlPassword) : mlPassword;
 
-        loadBalancerHost = getEnvPropString(projectProperties, "mlLoadBalancerHosts", null);
-        isHostLoadBalancer = getEnvPropBoolean(projectProperties, "mlIsHostLoadBalancer", false);
+        loadBalancerHost = loadBalancerHost == null ? getEnvPropString(projectProperties, "mlLoadBalancerHosts", null) : loadBalancerHost;
+        isHostLoadBalancer = isHostLoadBalancer == null ? getEnvPropBoolean(projectProperties, "mlIsHostLoadBalancer", Boolean.parseBoolean(environment.getProperty("mlIsHostLoadBalancer"))) : isHostLoadBalancer;
 
-        isProvisionedEnvironment = getEnvPropBoolean(projectProperties, "mlIsProvisionedEnvironment", false);
+        isProvisionedEnvironment = isProvisionedEnvironment == null ? getEnvPropBoolean(projectProperties, "mlIsProvisionedEnvironment", false) : isProvisionedEnvironment;
 
         // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
         hydrateConfigs();
@@ -1371,45 +1371,45 @@ public class HubConfigImpl implements HubConfig
 
     private Map<String, String> getCustomTokens(AppConfig appConfig, Map<String, String> customTokens) {
         customTokens.put("%%mlHost%%", appConfig.getHost());
-        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
-        customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
-        customTokens.put("%%mlStagingDbName%%", stagingDbName);
-        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
-        customTokens.put("%%mlStagingAuth%%", stagingAuthMethod);
+        customTokens.put("%%mlStagingAppserverName%%", environment.getProperty("mlStagingAppserverName"));
+        customTokens.put("\"%%mlStagingPort%%\"", environment.getProperty("mlStagingPort"));
+        customTokens.put("%%mlStagingDbName%%", environment.getProperty("mlStagingDbName"));
+        customTokens.put("%%mlStagingForestsPerHost%%", environment.getProperty("mlStagingForestsPerHost"));
+        customTokens.put("%%mlStagingAuth%%", environment.getProperty("mlStagingAuth"));
 
-        customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
-        customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
-        customTokens.put("%%mlFinalDbName%%", finalDbName);
-        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
-        customTokens.put("%%mlFinalAuth%%", finalAuthMethod);
+        customTokens.put("%%mlFinalAppserverName%%", environment.getProperty("mlFinalAppserverName"));
+        customTokens.put("\"%%mlFinalPort%%\"", environment.getProperty("mlFinalPort"));
+        customTokens.put("%%mlFinalDbName%%", environment.getProperty("mlFinalDbName"));
+        customTokens.put("%%mlFinalForestsPerHost%%", environment.getProperty("mlFinalForestsPerHost"));
+        customTokens.put("%%mlFinalAuth%%", environment.getProperty("mlFinalAuth"));
 
 
-        customTokens.put("%%mlJobAppserverName%%", jobHttpName);
-        customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
-        customTokens.put("%%mlJobDbName%%", jobDbName);
-        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
-        customTokens.put("%%mlJobAuth%%", jobAuthMethod);
+        customTokens.put("%%mlJobAppserverName%%", environment.getProperty("mlJobAppserverName"));
+        customTokens.put("\"%%mlJobPort%%\"", environment.getProperty("mlJobPort"));
+        customTokens.put("%%mlJobDbName%%", environment.getProperty("mlJobDbName"));
+        customTokens.put("%%mlJobForestsPerHost%%", environment.getProperty("mlJobForestsPerHost"));
+        customTokens.put("%%mlJobAuth%%", environment.getProperty("mlJobAuth"));
 
-        customTokens.put("%%mlModulesDbName%%", modulesDbName);
-        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
+        customTokens.put("%%mlModulesDbName%%", environment.getProperty("mlModulesDbName"));
+        customTokens.put("%%mlModulesForestsPerHost%%", environment.getProperty("mlModulesForestsPerHost"));
 
-        customTokens.put("%%mlStagingTriggersDbName%%", stagingTriggersDbName);
-        customTokens.put("%%mlStagingTriggersForestsPerHost%%", stagingTriggersForestsPerHost.toString());
+        customTokens.put("%%mlStagingTriggersDbName%%", environment.getProperty("mlStagingTriggersDbName"));
+        customTokens.put("%%mlStagingTriggersForestsPerHost%%", environment.getProperty("mlStagingTriggersForestsPerHost"));
 
-        customTokens.put("%%mlFinalTriggersDbName%%", finalTriggersDbName);
-        customTokens.put("%%mlFinalTriggersForestsPerHost%%", finalTriggersForestsPerHost.toString());
+        customTokens.put("%%mlFinalTriggersDbName%%", environment.getProperty("mlFinalTriggersDbName"));
+        customTokens.put("%%mlFinalTriggersForestsPerHost%%", environment.getProperty("mlFinalTriggersForestsPerHost"));
 
-        customTokens.put("%%mlStagingSchemasDbName%%", stagingSchemasDbName);
-        customTokens.put("%%mlStagingSchemasForestsPerHost%%", stagingSchemasForestsPerHost.toString());
+        customTokens.put("%%mlStagingSchemasDbName%%", environment.getProperty("mlStagingSchemasDbName"));
+        customTokens.put("%%mlStagingSchemasForestsPerHost%%", environment.getProperty("mlStagingSchemasForestsPerHost"));
 
-        customTokens.put("%%mlFinalSchemasDbName%%", finalSchemasDbName);
-        customTokens.put("%%mlFinalSchemasForestsPerHost%%", finalSchemasForestsPerHost.toString());
+        customTokens.put("%%mlFinalSchemasDbName%%", environment.getProperty("mlFinalSchemasDbName"));
+        customTokens.put("%%mlFinalSchemasForestsPerHost%%", environment.getProperty("mlFinalSchemasForestsPerHost"));
 
-        customTokens.put("%%mlHubUserRole%%", hubRoleName);
-        customTokens.put("%%mlHubUserName%%", hubUserName);
+        customTokens.put("%%mlHubUserRole%%", environment.getProperty("mlHubUserRole"));
+        customTokens.put("%%mlHubUserName%%", environment.getProperty("mlHubUserName"));
 
-        customTokens.put("%%mlHubAdminRole%%", hubAdminRoleName);
-        customTokens.put("%%mlHubAdminUserName%%", hubAdminUserName);
+        customTokens.put("%%mlHubAdminRole%%", environment.getProperty("mlHubAdminRole"));
+        customTokens.put("%%mlHubAdminUserName%%", environment.getProperty("mlHubAdminUserName"));
 
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
@@ -1417,7 +1417,7 @@ public class HubConfigImpl implements HubConfig
         // and another random password for hub Admin User
         customTokens.put("%%mlHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
-        customTokens.put("%%mlCustomForestPath%%", customForestPath);
+        customTokens.put("%%mlCustomForestPath%%", environment.getProperty("mlCustomForestPath"));
 
         //version of DHF the user INTENDS to use
         customTokens.put("%%mlDHFVersion%%", getJarVersion());
