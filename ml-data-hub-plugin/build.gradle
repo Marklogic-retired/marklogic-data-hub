@@ -102,6 +102,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allGroovy
 }
 
+bootRun {
+    enabled = false
+}
+
 publishing {
     publications {
         main(MavenPublication) {
