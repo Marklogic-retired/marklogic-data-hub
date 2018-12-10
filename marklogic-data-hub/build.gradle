@@ -144,6 +144,10 @@ jar{
     enabled = true
 }
 
+bootRun {
+    enabled = false
+}
+
 javadoc {
    options.overview = 'src/main/resources/overview.html'
 }
