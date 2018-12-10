@@ -1624,7 +1624,6 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override
     public String getStagingSchemasDbName() {
         return this.stagingSchemasDbName;
     }
