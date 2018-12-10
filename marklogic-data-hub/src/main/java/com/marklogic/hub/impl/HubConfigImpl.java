@@ -40,26 +40,24 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
@@ -78,28 +76,23 @@ public class HubConfigImpl implements HubConfig
     // a set of properties to use for legacy token replacement.
     Properties projectProperties = null;
 
-    @Autowired FlowManagerImpl flowManager;
-    @Autowired DataHubImpl dataHub;
-    @Autowired Versions versions;
+    @Autowired
+    FlowManagerImpl flowManager;
+    @Autowired
+    DataHubImpl dataHub;
+    @Autowired
+    Versions versions;
 
 
     protected String host;
 
-
     protected String stagingDbName;
-
     protected String stagingHttpName;
-
     protected Integer stagingForestsPerHost;
-
     protected Integer stagingPort;
-
     protected String stagingAuthMethod;
-
     private String stagingScheme;
-
     private Boolean stagingSimpleSsl;
-
 
     private SSLContext stagingSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier;
@@ -110,15 +103,10 @@ public class HubConfigImpl implements HubConfig
 
 
     protected String finalDbName;
-
     protected String finalHttpName;
-
     protected Integer finalForestsPerHost;
-
     protected Integer finalPort;
-
     protected String finalAuthMethod;
-
     private String finalScheme;
 
     private Boolean finalSimpleSsl;
@@ -131,15 +119,10 @@ public class HubConfigImpl implements HubConfig
 
 
     protected String jobDbName;
-
     protected String jobHttpName;
-
     protected Integer jobForestsPerHost;
-
     protected Integer jobPort;
-
     protected String jobAuthMethod;
-
     private String jobScheme;
 
     private Boolean jobSimpleSsl;
@@ -152,51 +135,33 @@ public class HubConfigImpl implements HubConfig
 
 
     protected String modulesDbName;
-
     protected Integer modulesForestsPerHost = 1;
-
-
     protected String stagingTriggersDbName;
-
     protected Integer stagingTriggersForestsPerHost;
-
     protected String finalTriggersDbName;
-
     protected Integer finalTriggersForestsPerHost;
-
-
     protected String stagingSchemasDbName;
-
     protected Integer stagingSchemasForestsPerHost;
-
     protected String finalSchemasDbName;
-
     protected Integer finalSchemasForestsPerHost;
 
 
     private String hubRoleName;
-
     private String hubUserName;
 
     private String hubAdminRoleName;
-
     private String hubAdminUserName;
 
-    //we assume DHF 2.x unless otherwise told, our earliest 'from' version
-    private String DHFVersion = "2.0.0";
+    private String DHFVersion;
 
     // these hold runtime credentials for flows.
     private String mlUsername = null;
     private String mlPassword = null;
 
     private String loadBalancerHost;
-
-
     private Boolean isHostLoadBalancer;
 
-
     private Boolean isProvisionedEnvironment;
-
 
     protected String customForestPath;
 
@@ -982,7 +947,7 @@ public class HubConfigImpl implements HubConfig
     public void loadConfigurationFromProperties(Properties properties, boolean loadGradleProperties) {
         projectProperties = new Properties();
 
-        /**
+        /*
          * Not sure if this code should still be here. We don't want to do this in a Gradle environment because the
          * properties have already been loaded and processed by the Gradle properties plugin, and they should be in
          * the incoming Properties object. So the use case for this would be when there's a gradle.properties file
@@ -1010,8 +975,8 @@ public class HubConfigImpl implements HubConfig
             properties.forEach(projectProperties::put);
         }
 
-        host = (host == null) ? getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost")) : host;
-        stagingDbName = (stagingDbName == null) ? getEnvPropString(projectProperties, "mlStagingDbName", environment.getProperty("mlStagingDbName")) : stagingDbName;
+        host = host == null ? getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost")) : host;
+        stagingDbName = stagingDbName == null ? getEnvPropString(projectProperties, "mlStagingDbName", environment.getProperty("mlStagingDbName")) : stagingDbName;
         stagingHttpName = stagingHttpName == null ? getEnvPropString(projectProperties, "mlStagingAppserverName", environment.getProperty("mlStagingAppserverName")) : stagingHttpName;
         stagingForestsPerHost = stagingForestsPerHost == null ? getEnvPropInteger(projectProperties, "mlStagingForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingForestsPerHost"))) : stagingForestsPerHost;
         stagingPort = stagingPort == null ? getEnvPropInteger(projectProperties, "mlStagingPort", Integer.parseInt(environment.getProperty("mlStagingPort"))) : stagingPort;
@@ -1067,16 +1032,8 @@ public class HubConfigImpl implements HubConfig
         hubUserName = hubUserName == null ? getEnvPropString(projectProperties, "mlHubUserName", environment.getProperty("mlHubUserName")) : hubUserName;
 
         modulePermissions = modulePermissions == null ? getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions")) : modulePermissions;
-        /**
-         * If gradle.properties does not have mlModulePermissions in it (projects upgraded from 3.0 likely do not),
-         * then this default value will not work because it has the below token in it. Replacing the token ensures that
-         * the set of permissions is valid.
-         */
-        if (modulePermissions != null) {
-            modulePermissions = modulePermissions.replaceAll("%%mlHubUserRole%%", hubRoleName);
-        }
 
-        DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", DHFVersion);
+        DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
 
         // this is a runtime username/password for running flows
         // could be factored away with FlowRunner
@@ -1105,32 +1062,40 @@ public class HubConfigImpl implements HubConfig
     }
 
     private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
-        setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        if (appConfig != null) {
+            setAppConfig(appConfig);
+        }
+        else {
+            setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        }
 
-        setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
-        setAdminManager(new AdminManager(getAdminConfig()));
+        if (adminConfig != null) {
+            setAdminConfig(adminConfig);
+        }
+        else {
+            setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
+        }
 
-        ManageConfig manageConfig = new DefaultManageConfigFactory(propertySource).newManageConfig();
-        manageConfig.setHostnameVerifier(new X509HostnameVerifier() {
-            @Override
-            public void verify(String s, SSLSocket sslSocket) {
-            }
+        if (adminManager != null) {
+            setAdminManager(adminManager);
+        }
+        else {
+            setAdminManager(new AdminManager(getAdminConfig()));
+        }
 
-            @Override
-            public void verify(String s, X509Certificate x509Certificate) {
-            }
+        if (manageConfig != null) {
+            setManageConfig(manageConfig);
+        }
+        else {
+            setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
+        }
 
-            @Override
-            public void verify(String s, String[] strings, String[] strings1) {
-            }
-
-            @Override
-            public boolean verify(String s, SSLSession sslSession) {
-                return true;
-            }
-        });
-        setManageConfig(manageConfig);
-        setManageClient(new ManageClient(getManageConfig()));
+        if (manageClient != null) {
+            setManageClient(manageClient);
+        }
+        else {
+            setManageClient(new ManageClient(getManageConfig()));
+        }
     }
 
     @JsonIgnore
