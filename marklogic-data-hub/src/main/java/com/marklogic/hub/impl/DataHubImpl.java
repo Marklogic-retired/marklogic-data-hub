@@ -471,7 +471,9 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void install(HubDeployStatusListener listener) {
-        initProject();
+        if (!hubConfig.getHubProject().isInitialized()) {
+            initProject();
+        }
 
         logger.warn("Installing the Data Hub into MarkLogic");
 

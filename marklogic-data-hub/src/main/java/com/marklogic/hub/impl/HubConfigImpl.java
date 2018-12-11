@@ -1050,7 +1050,6 @@ public class HubConfigImpl implements HubConfig
 
         modulesDbName = getEnvPropString(projectProperties, "mlModulesDbName", modulesDbName);
         modulesForestsPerHost = getEnvPropInteger(projectProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-        modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", modulePermissions);
 
         stagingTriggersDbName = getEnvPropString(projectProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
         stagingTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
@@ -1066,6 +1065,16 @@ public class HubConfigImpl implements HubConfig
 
         hubRoleName = getEnvPropString(projectProperties, "mlHubUserRole", hubRoleName);
         hubUserName = getEnvPropString(projectProperties, "mlHubUserName", hubUserName);
+
+        modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", modulePermissions);
+        /**
+         * If gradle.properties does not have mlModulePermissions in it (projects upgraded from 3.0 likely do not),
+         * then this default value will not work because it has the below token in it. Replacing the token ensures that
+         * the set of permissions is valid.
+         */
+        if (modulePermissions != null) {
+            modulePermissions = modulePermissions.replaceAll("%%mlHubUserRole%%", hubRoleName);
+        }
 
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", DHFVersion);
 
@@ -1468,20 +1477,11 @@ public class HubConfigImpl implements HubConfig
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
+        initializeConfigDirs(config);
 
-        /**
-         * Initializing this to use both config dirs.
-         */
-        config.getConfigDirs().clear();
-        config.getConfigDirs().add(new ConfigDir(getHubConfigDir().toFile()));
+        initializeModulePaths(config);
 
-        ConfigDir userConfigDir = new ConfigDir(getUserConfigDir().toFile());
         config.setSchemasPath(getUserSchemasDir().toString());
-        config.getConfigDirs().add(userConfigDir);
-
-        List<String> modulesPathList = new ArrayList<>();
-        modulesPathList.add(getModulesDir().normalize().toAbsolutePath().toString());
-        config.setModulePaths(modulesPathList);
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
@@ -1489,6 +1489,59 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlHubVersion%%", version);
 
         appConfig = config;
+    }
+
+    /**
+     * ml-app-deployer defaults to a single config path of src/main/ml-config. If that's still the only path present,
+     * it's overridden with the DHF defaults - src/main/hub-internal-config first, then src/main/ml-config second, with
+     * both of those being relative to the DHF project directory.
+     *
+     * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
+     * method just ensures that they're relative to the DHF project directory.
+     * 
+     * @param config
+     */
+    protected void initializeConfigDirs(AppConfig config) {
+        final String defaultConfigPath = String.join(File.separator, "src", "main", "ml-config");
+
+        boolean configDirsIsSetToTheMlAppDeployerDefault = config.getConfigDirs().size() == 1 && config.getConfigDirs().get(0).getBaseDir().toString().endsWith(defaultConfigPath);
+
+        if (configDirsIsSetToTheMlAppDeployerDefault) {
+            List<ConfigDir> configDirs = new ArrayList<>();
+            configDirs.add(new ConfigDir(getHubConfigDir().toFile()));
+            configDirs.add(new ConfigDir(getUserConfigDir().toFile()));
+            config.setConfigDirs(configDirs);
+        }
+        else {
+            // Need to make each custom config dir relative to the project dir
+            List<ConfigDir> configDirs = new ArrayList<>();
+            for (ConfigDir configDir : config.getConfigDirs()) {
+                File f = getHubProject().getProjectDir().resolve(configDir.getBaseDir().toString()).normalize().toAbsolutePath().toFile();
+                configDirs.add(new ConfigDir(f));
+            }
+            config.setConfigDirs(configDirs);
+        }
+
+        if (logger.isInfoEnabled()) {
+            config.getConfigDirs().forEach(configDir -> logger.info("Config path: " + configDir.getBaseDir().getAbsolutePath()));
+        }
+    }
+
+    /**
+     * Need to initialize every module path as being relative to the current project directory.
+     *
+     * @param config
+     */
+    protected void initializeModulePaths(AppConfig config) {
+        List<String> modulePaths = new ArrayList<>();
+        Path projectDir = getHubProject().getProjectDir();
+        for (String modulePath : config.getModulePaths()) {
+            modulePaths.add(projectDir.resolve(modulePath).normalize().toAbsolutePath().toString());
+        }
+        config.setModulePaths(modulePaths);
+        if (logger.isInfoEnabled()) {
+            logger.info("Module paths: " + modulePaths);
+        }
     }
 
     /**
