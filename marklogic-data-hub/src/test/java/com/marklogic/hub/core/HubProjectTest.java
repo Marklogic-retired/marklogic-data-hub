@@ -4,8 +4,11 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.ApplicationConfig;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +38,7 @@ public class HubProjectTest extends HubTestBase {
 
     @AfterEach
     public void resetProperties() {
+        adminHubConfig.createProject(PROJECT_PATH);
         adminHubConfig.loadConfigurationFromProperties();
     }
 
@@ -142,5 +147,28 @@ public class HubProjectTest extends HubTestBase {
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
+    }
+    
+    @Test
+    public void upgrade300To403ToCurrentVersion() throws Exception {
+        final String projectPath = "build/tmp/upgrade-projects/dhf403from300";
+        final File projectDir = Paths.get(projectPath).toFile();
+
+        FileUtils.deleteDirectory(projectDir);
+        FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf403from300").toFile(), projectDir);
+        adminHubConfig.createProject(projectDir.getAbsolutePath());
+        adminHubConfig.refreshProject();
+
+        dataHub.upgradeHub();
+        
+        // Confirm that the directories have been backed up
+        Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
+                .resolve("src/main/hub-internal-config-4.0.3").toFile().exists());
+        //This file should be present in backed up location
+        Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
+                .resolve("src/main/hub-internal-config-4.0.3/databases/final-database.json").toFile().exists());
+        Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
+                .resolve("src/main/ml-config-4.0.3").toFile().exists());
+        
     }
 }
