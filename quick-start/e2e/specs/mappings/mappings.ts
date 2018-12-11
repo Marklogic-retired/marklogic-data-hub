@@ -149,8 +149,9 @@ export default function() {
       it('should create Harmonize SKU flow on Product', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('Product');
-        //browser.sleep(5000);
+        browser.sleep(5000);
         await flowPage.createHarmonizeFlow('Product', 'Harmonize SKU', 'json', 'sjs', true, 'MapProduct');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isDisplayed()).
           toBe(true, 'Harmonize Product' + ' is not present');
@@ -165,10 +166,11 @@ export default function() {
       it('should run Harmonize SKU flow with mapping', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('Product');
-        //browser.sleep(5000);
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
         await flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()), 10000);
         expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         await flowPage.runHarmonizeButton().click();
