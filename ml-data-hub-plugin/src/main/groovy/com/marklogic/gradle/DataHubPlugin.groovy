@@ -123,7 +123,12 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
         project.tasks.mlDeleteModuleTimestampsFile.getDependsOn().add("hubDeleteModuleTimestampsFile")
 
-        project.tasks.hubPreInstallCheck.getDependsOn().add("mlDeploySecurity")
+        /**
+         * mlDeploySecurity can't be used here because it will deploy amps under src/main/ml-config, and those will fail
+         * to deploy since the modules database hasn't been created yet.
+         */
+        project.task("hubDeploySecurity", type: HubDeploySecurityTask)
+        project.tasks.hubPreInstallCheck.getDependsOn().add("hubDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
 
         String flowGroup = "MarkLogic Data Hub Flow Management"
