@@ -387,9 +387,10 @@ public class HubTestBase {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
+        adminHubConfig.resetProperties();
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-        wireClients();
+        adminHubConfig.refreshProject();
         return adminHubConfig;
     }
 
@@ -397,13 +398,16 @@ public class HubTestBase {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
+        adminHubConfig.resetProperties();
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-        wireClients();
+        adminHubConfig.refreshProject();
         return adminHubConfig;
     }
 
     protected HubConfigImpl getHubFlowRunnerConfig() {
+        adminHubConfig.resetProperties();
+
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
         appConfig = adminHubConfig.getAppConfig();
@@ -423,7 +427,7 @@ public class HubTestBase {
         manageClient.setManageConfig(manageConfig);
         ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
         ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
-        wireClients();
+        adminHubConfig.refreshProject();
         return adminHubConfig;
     }
 

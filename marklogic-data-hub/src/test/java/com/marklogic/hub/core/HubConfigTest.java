@@ -60,6 +60,8 @@ public class HubConfigTest extends HubTestBase {
         props.put("mlFinalCertPassword", "changeme");
         props.put("mlFinalExternalName", "somename");
         props.put("mlFinalSimpleSsl", "true");
+
+        getHubAdminConfig();
         adminHubConfig.refreshProject(props, false);
 
         config = adminHubConfig.getAppConfig();        
@@ -98,20 +100,20 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        adminHubConfig.refreshProject();
+        getHubAdminConfig();
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
 
         writeProp("mlIsHostLoadBalancer", "true");
-        adminHubConfig.refreshProject();
+        getHubAdminConfig();
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
 
         writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
-        adminHubConfig.refreshProject();
+        getHubAdminConfig();
         assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
 
         try {
             writeProp("mlLoadBalancerHosts", "host1");
-            adminHubConfig.refreshProject();
+            getHubAdminConfig();
         }
         catch (DataHubConfigurationException e){
             assertEquals( "\"mlLoadBalancerHosts\" must be the same as \"mlHost\"", e.getMessage());
@@ -119,7 +121,7 @@ public class HubConfigTest extends HubTestBase {
 
         deleteProp("mlLoadBalancerHosts");
         deleteProp("mlIsHostLoadBalancer");
-        adminHubConfig.refreshProject();
+        getHubAdminConfig();
         assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 
