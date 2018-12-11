@@ -1,6 +1,7 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,8 @@ public class UpgradeProjectTest {
         assertEquals("%%mlStagingSchemasDbName%%", jobDatabase.get("schema-database").asText());
         assertEquals("%%mlStagingTriggersDbName%%", jobDatabase.get("triggers-database").asText());
 
+        verifyJobDatabaseHasPathRangeIndexes(jobDatabase);
+
         File stagingFile = new File(databasesDir, "staging-database.json");
         assertTrue(stagingFile.exists());
         ObjectNode stagingDatabase = readFile(stagingFile);
@@ -98,6 +101,29 @@ public class UpgradeProjectTest {
         assertFalse(new File(databasesDir, "final-database.json").exists());
         assertFalse(new File(databasesDir, "modules-database.json").exists());
         verifyObsoleteDatabaseFilesDontExist(databasesDir);
+    }
+
+    private void verifyJobDatabaseHasPathRangeIndexes(ObjectNode jobDatabase) {
+        ArrayNode indexes = (ArrayNode)jobDatabase.get("range-path-index");
+        assertEquals(6, indexes.size());
+        assertEquals("/trace/hasError", indexes.get(0).get("path-expression").asText());
+        assertEquals("/trace/flowType", indexes.get(1).get("path-expression").asText());
+        assertEquals("/trace/jobId", indexes.get(2).get("path-expression").asText());
+        assertEquals("/trace/traceId", indexes.get(3).get("path-expression").asText());
+        assertEquals("/trace/identifier", indexes.get(4).get("path-expression").asText());
+        assertEquals("/trace/created", indexes.get(5).get("path-expression").asText());
+
+        for (int i = 0; i < 5; i++) {
+            assertEquals("string", indexes.get(i).get("scalar-type").asText());
+            assertEquals("http://marklogic.com/collation/codepoint", indexes.get(i).get("collation").asText());
+            assertEquals(false, indexes.get(i).get("range-value-positions").asBoolean());
+            assertEquals("reject", indexes.get(i).get("invalid-values").asText());
+        }
+
+        assertEquals("dateTime", indexes.get(5).get("scalar-type").asText());
+        assertEquals("", indexes.get(5).get("collation").asText());
+        assertEquals(false, indexes.get(5).get("range-value-positions").asBoolean());
+        assertEquals("reject", indexes.get(5).get("invalid-values").asText());
     }
 
     private void verifyUserDatabases(File configDir) {
