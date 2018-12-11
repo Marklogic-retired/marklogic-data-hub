@@ -210,7 +210,9 @@ export default function() {
       it('should create Harmonize WorldBank flow', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
+        browser.sleep(5000);
         await flowPage.createHarmonizeFlow('WorldBank', 'Harmonize WorldBank', 'json', 'sjs', true, 'MapWorldBank');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isDisplayed()).
           toBe(true, 'Harmonize WorldBank' + ' is not present');
@@ -225,9 +227,11 @@ export default function() {
       it('should run Harmonize WorldBank flow with mapping', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isPresent()).toBe(true);
         flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
         expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
         await flowPage.runHarmonizeButton().click();
