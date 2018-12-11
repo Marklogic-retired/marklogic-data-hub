@@ -338,7 +338,7 @@ public class HubProjectImpl implements HubProject {
         upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles );
         
         upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
-        
+       
         //If the upgrade path is 3.0 -> 4.0.x -> 4.1.0, the obsolete files have to be removed, else, they will cause deployment to fail
         deleteObsoleteDatabaseFilesFromHubInternalConfig();
         deleteObsoleteServerFilesFromHubInternalConfig();
@@ -352,7 +352,7 @@ public class HubProjectImpl implements HubProject {
     @Override public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDirString, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
-    
+
     /* copying only the required old hub-internal-config db and server files to new locations
      *  the security files (users, roles, privileges etc are not copied from old hub-internal-config)
      */
