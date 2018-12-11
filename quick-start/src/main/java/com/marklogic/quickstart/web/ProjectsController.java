@@ -49,6 +49,9 @@ public class ProjectsController {
     @Autowired
     private DataHub dataHub;
 
+    @Autowired
+    private HubSettings hubSettings;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> getProjects() {
@@ -95,13 +98,16 @@ public class ProjectsController {
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             hubConfig = om.readerForUpdating(hubConfig).readValue(hubConfigDelta);
-            AppConfig appConfig = this.hubConfig.getAppConfig();
-            if (hubConfigDelta.get("host") != null) {
-                appConfig.setHost(hubConfigDelta.get("host").asText());
-            }
-            if (hubConfigDelta.get("name") != null) {
-                appConfig.setName(hubConfigDelta.get("name").asText());
-            }
+
+            // TODO: Is this needed anymore?
+//            AppConfig appConfig = this.hubConfig.getAppConfig();
+//            if (hubConfigDelta.get("host") != null) {
+//                appConfig.setHost(hubConfigDelta.get("host").asText());
+//            }
+//            if (hubConfigDelta.get("name") != null) {
+//                appConfig.setName(hubConfigDelta.get("name").asText());
+//            }
+
             this.hubConfig.createProject(project.path);
             dataHub.initProject();
             return project;
@@ -115,7 +121,8 @@ public class ProjectsController {
     @ResponseBody
     public HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        hubConfig.createProject(project.path);
-        return HubSettings.fromHubConfig(hubConfig);
+        hubSettings.setProjectDir(project.path);
+
+        return hubSettings;
     }
 }
