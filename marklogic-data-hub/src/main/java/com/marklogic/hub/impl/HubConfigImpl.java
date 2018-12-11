@@ -1634,92 +1634,92 @@ public class HubConfigImpl implements HubConfig
     }
 
     public void resetProperties() {
-        String host = null;
+        host = null;
 
-        String stagingDbName = null;
-        String stagingHttpName = null;
-        Integer stagingForestsPerHost = null;
-        Integer stagingPort = null;
-        String stagingAuthMethod = null;
-        String stagingScheme = null;
-        Boolean stagingSimpleSsl = null;
+        stagingDbName = null;
+        stagingHttpName = null;
+        stagingForestsPerHost = null;
+        stagingPort = null;
+        stagingAuthMethod = null;
+        stagingScheme = null;
+        stagingSimpleSsl = null;
 
-        SSLContext stagingSslContext = null;
-        DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier = null;
-        String stagingCertFile = null;
-        String stagingCertPassword = null;
-        String stagingExternalName = null;
-        X509TrustManager stagingTrustManager = null;
-
-
-        String finalDbName = null;
-        String finalHttpName = null;
-        Integer finalForestsPerHost = null;
-        Integer finalPort = null;
-        String finalAuthMethod = null;
-        String finalScheme = null;
-
-        Boolean finalSimpleSsl = null;
-        SSLContext finalSslContext = null;
-        DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier = null;
-        String finalCertFile = null;
-        String finalCertPassword = null;
-        String finalExternalName = null;
-        X509TrustManager finalTrustManager = null;
+        stagingSslContext = null;
+        stagingSslHostnameVerifier = null;
+        stagingCertFile = null;
+        stagingCertPassword = null;
+        stagingExternalName = null;
+        stagingTrustManager = null;
 
 
-        String jobDbName = null;
-        String jobHttpName = null;
-        Integer jobForestsPerHost = null;
-        Integer jobPort = null;
-        String jobAuthMethod = null;
-        String jobScheme = null;
+        finalDbName = null;
+        finalHttpName = null;
+        finalForestsPerHost = null;
+        finalPort = null;
+        finalAuthMethod = null;
+        finalScheme = null;
 
-        Boolean jobSimpleSsl = null;
-        SSLContext jobSslContext = null;
-        DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier = null;
-        String jobCertFile = null;
-        String jobCertPassword = null;
-        String jobExternalName = null;
-        X509TrustManager jobTrustManager = null;
+        finalSimpleSsl = null;
+        finalSslContext = null;
+        finalSslHostnameVerifier = null;
+        finalCertFile = null;
+        finalCertPassword = null;
+        finalExternalName = null;
+        finalTrustManager = null;
 
 
-        String modulesDbName = null;
-        Integer modulesForestsPerHost = null;
-        String stagingTriggersDbName = null;
-        Integer stagingTriggersForestsPerHost = null;
-        String finalTriggersDbName = null;
-        Integer finalTriggersForestsPerHost = null;
-        String stagingSchemasDbName = null;
-        Integer stagingSchemasForestsPerHost = null;
-        String finalSchemasDbName = null;
-        Integer finalSchemasForestsPerHost = null;
+        jobDbName = null;
+        jobHttpName = null;
+        jobForestsPerHost = null;
+        jobPort = null;
+        jobAuthMethod = null;
+        jobScheme = null;
 
-        String hubRoleName = null;
-        String hubUserName = null;
+        jobSimpleSsl = null;
+        jobSslContext = null;
+        jobSslHostnameVerifier = null;
+        jobCertFile = null;
+        jobCertPassword = null;
+        jobExternalName = null;
+        jobTrustManager = null;
 
-        String hubAdminRoleName = null;
-        String hubAdminUserName = null;
 
-        String DHFVersion = null;
+        modulesDbName = null;
+        modulesForestsPerHost = null;
+        stagingTriggersDbName = null;
+        stagingTriggersForestsPerHost = null;
+        finalTriggersDbName = null;
+        finalTriggersForestsPerHost = null;
+        stagingSchemasDbName = null;
+        stagingSchemasForestsPerHost = null;
+        finalSchemasDbName = null;
+        finalSchemasForestsPerHost = null;
 
-        String mlUsername = null;
-        String mlPassword = null;
+        hubRoleName = null;
+        hubUserName = null;
 
-        String loadBalancerHost = null;
-        Boolean isHostLoadBalancer = null;
+        hubAdminRoleName = null;
+        hubAdminUserName = null;
 
-        Boolean isProvisionedEnvironment = null;
+        DHFVersion = null;
 
-        String customForestPath = null;
+        mlUsername = null;
+        mlPassword = null;
 
-        String modulePermissions = null;
+        loadBalancerHost = null;
+        isHostLoadBalancer = null;
 
-        ManageConfig manageConfig = null;
-        ManageClient manageClient = null;
-        AdminConfig adminConfig = null;
-        AdminManager adminManager = null;
+        isProvisionedEnvironment = null;
 
-        AppConfig appConfig = null;
+        customForestPath = null;
+
+        modulePermissions = null;
+
+        manageConfig = null;
+        manageClient = null;
+        adminConfig = null;
+        adminManager = null;
+
+        appConfig = null;
     }
 }
