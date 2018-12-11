@@ -69,7 +69,7 @@ export default function(tmpDir) {
     it ('should go to the dashboard', async function() {
       dashboardPage.isLoaded();
       await dashboardPage.clearDatabases.click();
-      //browser.driver.sleep(3000);
+      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
       await dashboardPage.clearButton.click();
       //wait for all three to be 0
@@ -79,6 +79,7 @@ export default function(tmpDir) {
     });
 
     it ('should go to the entities page', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
