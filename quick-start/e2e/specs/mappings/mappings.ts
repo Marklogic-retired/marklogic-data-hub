@@ -78,6 +78,7 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
+        browser.sleep(5000);
         //browser.wait(EC.presenceOf(entityPage.toast));
         //browser.wait(EC.stalenessOf(entityPage.toast));
         expect(mappingsPage.verifySourcePropertyName('sku').isDisplayed()).toBeTruthy();
@@ -134,6 +135,7 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
+        browser.sleep(5000);
         //browser.wait(EC.presenceOf(entityPage.toast));
         //browser.wait(EC.stalenessOf(entityPage.toast));
       });
