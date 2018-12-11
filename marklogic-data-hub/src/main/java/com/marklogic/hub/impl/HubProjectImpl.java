@@ -339,9 +339,12 @@ public class HubProjectImpl implements HubProject {
         
         upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
        
-        //If the upgrade path is 3.0 -> 4.0.x -> 4.1.0, the obsolete files have to be removed, else, they will cause deployment to fail
+        /*If the upgrade path is 3.0 -> 4.0.x -> 4.1.0 or 4.0.0 -> 4.1.0, the obsolete files have to be removed, 
+         * else, they will cause deployment to fail
+         */
         deleteObsoleteDatabaseFilesFromHubInternalConfig();
         deleteObsoleteServerFilesFromHubInternalConfig();
+        deleteObsoleteDatabaseFilesFromMlConfig();
 
     }
 
@@ -605,12 +608,13 @@ public class HubProjectImpl implements HubProject {
     
     /**
      * When upgrading to 4.1.0 or later, obsolete files may need to be delete from hub internal config
-     * directory because they were left there by the 3.0 to 4.0.x upgrade.
+     * directory because they were left there by the 3.0 to 4.0.x upgrade. "staging-modules-database.json"
+     * is an obsolete file from 4.0.0 
      */
     private void deleteObsoleteDatabaseFilesFromHubInternalConfig() {
         File dir = getHubDatabaseDir().toFile();
         Set<String> filenames = Stream.of("final-database.json", "modules-database.json",
-            "schemas-database.json", "trace-database.json", "triggers-database.json"
+            "schemas-database.json", "trace-database.json", "triggers-database.json", "staging-modules-database.json"
         ).collect(Collectors.toSet());
         for (String filename : filenames) {
             File f = new File(dir, filename);
@@ -622,6 +626,21 @@ public class HubProjectImpl implements HubProject {
             }
         }
     }
+    
+    private void deleteObsoleteDatabaseFilesFromMlConfig() {
+        File dir = getUserDatabaseDir().toFile();
+        Set<String> filenames = Stream.of("final-modules-database.json").collect(Collectors.toSet());
+        for (String filename : filenames) {
+            File f = new File(dir, filename);
+            if (f.exists()) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Deleting file because it should no longer be in ml-config: " + f.getAbsolutePath());
+                }
+                f.delete();
+            }
+        }
+    }
+    
      private void deleteObsoleteServerFilesFromHubInternalConfig() {
         File dir = getHubServersDir().toFile();
         Set<String> filenames = Stream.of("final-server.json", "trace-server.json").collect(Collectors.toSet());

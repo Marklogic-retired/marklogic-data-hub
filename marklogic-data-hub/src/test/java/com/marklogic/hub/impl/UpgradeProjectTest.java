@@ -133,7 +133,10 @@ public class UpgradeProjectTest {
         assertTrue(finalFile.exists());
         ObjectNode finalDatabase = readFile(finalFile);
         assertEquals("%%mlFinalDbName%%", finalDatabase.get("database-name").asText());
-
+        
+        /*These schema and triggers db values should be equal to 
+         * %%mlFinalSchemasDbName%% and  %%mlFinalTriggersDbName%%
+         */
         String schemasValue = finalDatabase.get("schema-database").asText();
         assertTrue(schemasValue.equals("%%mlFinalSchemasDbName%%"));
 
