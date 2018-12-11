@@ -17,6 +17,7 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.util.FileUtil;
@@ -367,14 +368,19 @@ public class HubProjectImpl implements HubProject {
                 || path.toLowerCase().equals("staging-database.json")) {
                     logger.info("Processing "+ f.toFile().getAbsolutePath());
                     ObjectMapper mapper = new ObjectMapper();
-                    JsonNode rootNode = null;
+                    ObjectNode rootNode;
                     File jsonFile = f.toFile();
                     try {
-                        rootNode = mapper.readTree(jsonFile);
-                        ((ObjectNode) rootNode).put("schema-database", "%%mlStagingSchemasDbName%%");
+                        rootNode = (ObjectNode)mapper.readTree(jsonFile);
+                        rootNode.put("schema-database", "%%mlStagingSchemasDbName%%");
                         logger.info("Setting \"schema-database\" to \"%%mlStagingSchemasDbName%%\"");
-                        ((ObjectNode) rootNode).put("triggers-database", "%%mlStagingTriggersDbName%%");
+                        rootNode.put("triggers-database", "%%mlStagingTriggersDbName%%");
                         logger.info("Setting \"triggers-database\" to \"%%mlStagingTriggersDbName%%\"");
+
+                        if (path.toLowerCase().equals("job-database.json")) {
+                            addPathRangeIndexesToJobDatabase(rootNode);
+                        }
+
                         String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
                         logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
                         +getHubDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
@@ -454,7 +460,44 @@ public class HubProjectImpl implements HubProject {
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }       
     }
-    
+
+    /**
+     * In the upgrade from 3.x to 4.x, the job-database.json file is copied to its new location, but it also needs
+     * several indexes added to it.
+     *
+     * @param rootNode
+     */
+    private void addPathRangeIndexesToJobDatabase(ObjectNode rootNode) {
+        if (rootNode.get("range-path-index") == null) {
+            if (logger.isInfoEnabled()) {
+                logger.info("Adding path range indexes to job-database.json");
+            }
+            
+            ArrayNode indexes = rootNode.putArray("range-path-index");
+            addStringPathRangeIndex(indexes, "/trace/hasError");
+            addStringPathRangeIndex(indexes, "/trace/flowType");
+            addStringPathRangeIndex(indexes, "/trace/jobId");
+            addStringPathRangeIndex(indexes, "/trace/traceId");
+            addStringPathRangeIndex(indexes, "/trace/identifier");
+
+            ObjectNode node = indexes.addObject();
+            node.put("scalar-type", "dateTime");
+            node.put("path-expression", "/trace/created");
+            node.put("collation", "");
+            node.put("range-value-positions", false);
+            node.put("invalid-values", "reject");
+        }
+    }
+
+    private void addStringPathRangeIndex(ArrayNode indexes, String path) {
+        ObjectNode node = indexes.addObject();
+        node.put("scalar-type", "string");
+        node.put("path-expression", path);
+        node.put("collation", "http://marklogic.com/collation/codepoint");
+        node.put("range-value-positions", false);
+        node.put("invalid-values", "reject");
+    }
+
     /*  "user-config" is the other config dir, it can contain "final-server.json". In 3.0 ,they are
      *  deployed after hub-internal-config. But we don't want to blindly copy all these files to ml-config
      *  as they would overwrite existing "final-server.json" (or database file)
