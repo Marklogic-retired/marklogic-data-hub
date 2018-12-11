@@ -39,6 +39,7 @@ public class HubProjectTest extends HubTestBase {
     @AfterEach
     public void resetProperties() {
         adminHubConfig.createProject(PROJECT_PATH);
+        adminHubConfig.resetProperties();
         adminHubConfig.loadConfigurationFromProperties();
     }
 
