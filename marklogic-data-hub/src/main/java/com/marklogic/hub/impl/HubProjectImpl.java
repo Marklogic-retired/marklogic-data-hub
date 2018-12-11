@@ -395,9 +395,32 @@ public class HubProjectImpl implements HubProject {
                 else if(path.toLowerCase().equals("modules-database.json")
                 || path.toLowerCase().equals("final-database.json")) {
                     try {
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
+                        if (path.toLowerCase().equals("modules-database.json")) {
+                            logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
+                                    +getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                            FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                        }
+                        else {
+                            logger.info("Processing "+ f.toFile().getAbsolutePath());
+                            ObjectMapper mapper = new ObjectMapper();
+                            ObjectNode rootNode;
+                            File jsonFile = f.toFile();
+                            try {
+                                rootNode = (ObjectNode)mapper.readTree(jsonFile);
+                                rootNode.put("schema-database", "%%mlFinalSchemasDbName%%");
+                                logger.info("Setting \"schema-database\" to \"%%mlFinalSchemasDbName%%\"");
+                                rootNode.put("triggers-database", "%%mlFinalTriggersDbName%%");
+                                logger.info("Setting \"triggers-database\" to \"%%mlFinalTriggersDbName%%\"");                              
+                                String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                                logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
                                 +getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                                FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+                            } catch (IOException e) {
+                                logger.error("Unable to update "+f.getFileName());
+                                throw new RuntimeException(e);
+                            }
+                            
+                        }
                     } catch (IOException e) {
                         logger.error("Unable to update "+f.getFileName());
                         throw new RuntimeException(e);
