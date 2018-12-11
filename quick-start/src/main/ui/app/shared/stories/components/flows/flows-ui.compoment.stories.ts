@@ -15,7 +15,6 @@ import { HarmonizeFlowOptionsUiComponent } from '../../../components/harmonize-f
 import { MlcpComponent } from '../../../../mlcp';
 import { MlcpUiComponent } from '../../../components/mlcp/';
 import { ObjectToArrayPipe } from '../../../../object-to-array.pipe';
-import { AppTooltipModule } from '../../../../tooltip';
 import { TruncateCharactersPipe } from '../../../../truncate';
 import { FlowsUiComponent } from '../../../components/flows';
 import { GridManiaModule } from '../../../components/grid';
@@ -40,7 +39,6 @@ storiesOf('Components|Flows', module)
                 GridManiaModule,
                 MdlModule,
                 CommonModule,
-                AppTooltipModule,
                 RouterTestingModule,
                 HttpModule
             ],

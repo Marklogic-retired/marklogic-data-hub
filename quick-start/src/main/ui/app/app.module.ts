@@ -44,7 +44,6 @@ import { PaginationComponent } from './shared/components/pagination';
 import { ResizableComponent } from './shared/components';
 import { SelectComponent } from './shared/components';
 import { SelectListComponent } from './shared/components';
-import { AppTooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { TracesUiComponent } from './shared/components/traces';
 import { SearchComponent, SearchViewerComponent } from './search';
@@ -182,7 +181,6 @@ import {
     DatePipeModule,
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
-    AppTooltipModule,
     ThemeModule
   ],
   providers: [
