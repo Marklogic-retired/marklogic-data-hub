@@ -135,12 +135,10 @@ public class UpgradeProjectTest {
         assertEquals("%%mlFinalDbName%%", finalDatabase.get("database-name").asText());
 
         String schemasValue = finalDatabase.get("schema-database").asText();
-        assertTrue(schemasValue.equals("%%mlFinalSchemasDbName%%") || schemasValue.equals("%%SCHEMAS_DATABASE%%"),
-            "Either token is okay, as they will have the same value");
+        assertTrue(schemasValue.equals("%%mlFinalSchemasDbName%%"));
 
         String triggersValue = finalDatabase.get("triggers-database").asText();
-        assertTrue(triggersValue.equals("%%mlFinalTriggersDbName%%") || triggersValue.equals("%%TRIGGERS_DATABASE%%"),
-            "Either token is okay, as they will have the same value");
+        assertTrue(triggersValue.equals("%%mlFinalTriggersDbName%%"));
 
         File schemasFile = new File(databasesDir, "final-schemas-database.json");
         assertTrue(schemasFile.exists());
