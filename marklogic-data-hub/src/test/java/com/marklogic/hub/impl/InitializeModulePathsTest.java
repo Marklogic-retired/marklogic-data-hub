@@ -20,7 +20,7 @@ public class InitializeModulePathsTest extends HubTestBase {
 
     private final static String DEFAULT_MODULES_PATH = String.join(File.separator, "src", "main", "ml-modules");
     private final static String PROJECT_MODULES_PATH = String.join(File.separator, PROJECT_PATH, DEFAULT_MODULES_PATH);
-
+    private static String OS = System.getProperty("os.name").toLowerCase();
     // Uses a "fresh" AppConfig object so no other test class is impacted
     private AppConfig appConfig = new AppConfig();
 
@@ -28,9 +28,13 @@ public class InitializeModulePathsTest extends HubTestBase {
     public void defaultModulePaths() {
         List<String> modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(), "ml-app-deployer defaults to a single modules path");
-        assertEquals(DEFAULT_MODULES_PATH, modulePaths.get(0));
+        /*Default modules path seems to be "src/main/ml-modules" and doesn't seem to change with
+         * OS. Once modules path is initialized, it picks the OS specific file separator. 
+         */
+        assertEquals("src/main/ml-modules", modulePaths.get(0));
 
         adminHubConfig.initializeModulePaths(appConfig);
+        
         modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(), "Should still just have a single modules path");
         assertTrue(modulePaths.get(0).endsWith(PROJECT_MODULES_PATH),
@@ -68,7 +72,13 @@ public class InitializeModulePathsTest extends HubTestBase {
         List<String> modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(),
             "If a user overrides module paths, e.g. via mlModulePaths, the default modules path is not added by default");
-        assertEquals("/some/absolute/path", modulePaths.get(0),
-            "If the user for some reason specifies an absolute path (not likely), it will be kept as-is");
+        if (OS.indexOf("win") >= 0) {
+            assertEquals("C:\\some\\absolute\\path", modulePaths.get(0),
+                    "If the user for some reason specifies an absolute path (not likely), it will be kept as-is");
+        }
+        else {
+            assertEquals("/some/absolute/path", modulePaths.get(0),
+                "If the user for some reason specifies an absolute path (not likely), it will be kept as-is");
+        }
     }
 }
