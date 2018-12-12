@@ -7,6 +7,7 @@ const fs = require('fs-extra');
 export default function(tmpDir) {
   describe('Uninstall', () => {
     it ('should go to the settings page', async function() {
+      browser.get('http://localhost:8080/#/settings');
       await appPage.settingsTab.click();
       settingsPage.isLoaded();
     });
