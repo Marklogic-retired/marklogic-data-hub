@@ -64,7 +64,7 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         super();
     }
 
-    @Override
+    
     public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
