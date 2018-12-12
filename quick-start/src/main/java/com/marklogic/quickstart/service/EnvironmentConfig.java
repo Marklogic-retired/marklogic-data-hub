@@ -100,9 +100,9 @@ public class EnvironmentConfig {
         this.DHFVersion = versions.getDHFVersion();
 
         // Replace "SNAPSHOT" in version with 0 as QS compares versions and fails if version number contains text
-        installedVersion = installedVersion.replace("SNAPSHOT", "0");
-        runningVersion = runningVersion.replace("SNAPSHOT", "0");
-        DHFVersion = DHFVersion.replace("SNAPSHOT", "0");
+        installedVersion = installedVersion.replace("-rc2", "");
+        runningVersion = runningVersion.replace("-rc2", "");
+        DHFVersion = DHFVersion.replace("-rc2", "");
     }
 
     private DatabaseClient _stagingClient = null;
