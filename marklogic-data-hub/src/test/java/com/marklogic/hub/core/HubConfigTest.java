@@ -10,6 +10,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,12 @@ public class HubConfigTest extends HubTestBase {
         deleteProjectDir();
         createProjectDir();
         dataHub.initProject();
+    }
+    
+    @AfterEach
+    public void cleanup() {
+        resetProperties();
+        adminHubConfig.refreshProject();
     }
     
     @Test
@@ -61,8 +68,8 @@ public class HubConfigTest extends HubTestBase {
         props.put("mlFinalExternalName", "somename");
         props.put("mlFinalSimpleSsl", "true");
 
-        getHubAdminConfig();
-        adminHubConfig.refreshProject(props, false);
+        resetProperties();
+        adminHubConfig.refreshProject(props, true);
 
         config = adminHubConfig.getAppConfig();        
         
@@ -94,34 +101,39 @@ public class HubConfigTest extends HubTestBase {
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, null);
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, null);
         }
-        adminHubConfig.refreshProject(props, false);
+        
     }
 
     @Test
     public void testLoadBalancerProps() {
         deleteProp("mlLoadBalancerHosts");
-        getHubAdminConfig();
+        resetProperties();
+        adminHubConfig.refreshProject();
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
-
+    
         writeProp("mlIsHostLoadBalancer", "true");
-        getHubAdminConfig();
+        resetProperties();
+        adminHubConfig.refreshProject();
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
-
+    
         writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
-        getHubAdminConfig();
+        resetProperties();
+        adminHubConfig.refreshProject();
         assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
-
+    
         try {
             writeProp("mlLoadBalancerHosts", "host1");
-            getHubAdminConfig();
+            resetProperties();
+            adminHubConfig.refreshProject();
         }
         catch (DataHubConfigurationException e){
             assertEquals( "\"mlLoadBalancerHosts\" must be the same as \"mlHost\"", e.getMessage());
         }
-
+    
         deleteProp("mlLoadBalancerHosts");
         deleteProp("mlIsHostLoadBalancer");
-        getHubAdminConfig();
+        resetProperties();
+        adminHubConfig.refreshProject();
         assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 

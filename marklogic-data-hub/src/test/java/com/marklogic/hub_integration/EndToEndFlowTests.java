@@ -1365,7 +1365,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getJobDocCount());
 
         installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
-
+        getHubFlowRunnerConfig();
         Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
@@ -1392,6 +1392,8 @@ public class EndToEndFlowTests extends HubTestBase {
                 throw new RuntimeException(e);
             }
         }
+        //Reset HubConfig to hubadmin user/password
+        getHubAdminConfig();
         return new Tuple<>(flowRunner, jobTicket);
     }
 

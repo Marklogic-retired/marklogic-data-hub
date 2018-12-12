@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -74,6 +75,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -82,6 +84,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
@@ -387,10 +391,9 @@ public class HubTestBase {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
-        adminHubConfig.resetProperties();
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-        adminHubConfig.refreshProject();
+        wireClients();
         return adminHubConfig;
     }
 
@@ -398,17 +401,13 @@ public class HubTestBase {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
-        adminHubConfig.resetProperties();
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-        adminHubConfig.refreshProject();
+        wireClients();
         return adminHubConfig;
     }
 
     protected HubConfigImpl getHubFlowRunnerConfig() {
-        adminHubConfig.resetProperties();
-        adminHubConfig.refreshProject();
-
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
         appConfig = adminHubConfig.getAppConfig();
@@ -1038,5 +1037,19 @@ public class HubTestBase {
         dataHub.wireClient();
         versions.setupClient();
 
+    }
+    //Use this method sparingly as it slows down the test
+    public void resetProperties() {
+        Field[] fields = HubConfigImpl.class.getDeclaredFields();
+        Set<String> s =  Stream.of("hubProject", "environment", "flowManager", 
+                "dataHub", "versions", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
+
+        for(Field f : fields){
+            if(! s.contains(f.getName())) {
+                ReflectionUtils.makeAccessible(f);
+                ReflectionUtils.setField(f, adminHubConfig, null);                
+            }
+            
+        }
     }
 }
