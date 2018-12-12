@@ -45,7 +45,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.junit.rules.TemporaryFolder
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
-import org.springframework.core.env.PropertiesPropertySource
+import org.springframework.util.ReflectionUtils
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
 import spock.lang.Specification
@@ -53,9 +53,12 @@ import spock.lang.Specification
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
+import java.lang.reflect.Field
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
 @EnableAutoConfiguration
 class BaseTest extends Specification {
@@ -282,6 +285,21 @@ class BaseTest extends Specification {
     public int getJobsRangePathIndexSize() {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
         return databseFragment.getElementValues("//m:range-path-index").size()
+    }
+
+    //Use this method sparingly as it slows down the test
+    public void resetProperties() {
+        Field[] fields = HubConfigImpl.class.getDeclaredFields();
+        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
+            "dataHub", "versions", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
+
+        for(Field f : fields){
+            if(! s.contains(f.getName())) {
+                ReflectionUtils.makeAccessible(f);
+                ReflectionUtils.setField(f, _hubConfig, null);
+            }
+
+        }
     }
 
     def setupSpec() {
