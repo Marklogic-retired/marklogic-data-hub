@@ -407,6 +407,7 @@ public class HubTestBase {
 
     protected HubConfigImpl getHubFlowRunnerConfig() {
         adminHubConfig.resetProperties();
+        adminHubConfig.refreshProject();
 
         adminHubConfig.setMlUsername(flowRunnerUser);
         adminHubConfig.setMlPassword(flowRunnerPassword);
@@ -427,7 +428,7 @@ public class HubTestBase {
         manageClient.setManageConfig(manageConfig);
         ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
         ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
-        adminHubConfig.refreshProject();
+        wireClients();
         return adminHubConfig;
     }
 
