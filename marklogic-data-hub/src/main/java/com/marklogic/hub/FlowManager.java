@@ -20,7 +20,6 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.impl.FlowManagerImpl;
 import org.w3c.dom.Element;
 
 import java.nio.file.Path;
@@ -39,12 +38,6 @@ public interface FlowManager {
     static Flow flowFromXml(Element doc) {
         return FlowImpl.fromXml(doc);
     }
-
-    /**
-     * initializes the FlowManager with a new DatabaseClient.  Needed
-     * when the project is refreshed.
-     */
-    void setupClient();
 
     /**
      * retrieves a list of all the flows on the local files systems
