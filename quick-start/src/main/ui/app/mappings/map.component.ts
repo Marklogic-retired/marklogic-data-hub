@@ -417,6 +417,20 @@ export class MapComponent implements OnInit {
   }
 
   /**
+   * Return string if sufficiently long, otherwise empty string
+   * @param str String to return
+   * @param num Character threshold
+   * @returns {any} string
+   */
+  getURITooltip(str, num) {
+    let result = '';
+    if (typeof str === 'string' && str.length > num) {
+      result = str;
+    }
+    return result;
+  }
+
+  /**
    * Does entity property have an element range index set?
    * @param name Name of property
    * @returns {boolean}
