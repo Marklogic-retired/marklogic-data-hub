@@ -27,8 +27,6 @@ public class Installer extends HubTestBase {
 
     @PostConstruct
     public void bootstrapHub() {
-        super.init();
-        dataHub.initProject();
         boolean isInstalled = false;
         try {
         	isInstalled = dataHub.isInstalled().isInstalled();

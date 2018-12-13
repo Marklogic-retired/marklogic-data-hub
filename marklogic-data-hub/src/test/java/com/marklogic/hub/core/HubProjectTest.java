@@ -3,6 +3,7 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.ApplicationConfig;
 
 import org.apache.commons.io.FileUtils;
@@ -33,18 +34,21 @@ public class HubProjectTest extends HubTestBase {
 
     @BeforeEach
     public void setupDir() {
-        deleteProjectDir();
+        deleteProjectDir();      
     }
 
     @AfterEach
-    public void resetProperties() {
+    public void cleanup() {
+        resetProperties();
+        createProjectDir();
         adminHubConfig.createProject(PROJECT_PATH);
-        adminHubConfig.loadConfigurationFromProperties();
+        adminHubConfig.refreshProject();
     }
 
     @Test
     public void testInit() throws IOException {
         HubConfig config = getHubFlowRunnerConfig();
+        config.createProject(PROJECT_PATH);
         config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setForestsPerHost(DatabaseKind.STAGING, 100);
@@ -156,6 +160,7 @@ public class HubProjectTest extends HubTestBase {
 
         FileUtils.deleteDirectory(projectDir);
         FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf403from300").toFile(), projectDir);
+        resetProperties();
         adminHubConfig.createProject(projectDir.getAbsolutePath());
         adminHubConfig.refreshProject();
 

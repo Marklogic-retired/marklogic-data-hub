@@ -64,7 +64,7 @@ public class JobManagerTest extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
-
+        getHubAdminConfig();
         enableDebugging();
         enableTracing();
 
