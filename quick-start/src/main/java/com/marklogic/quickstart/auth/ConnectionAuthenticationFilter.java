@@ -113,6 +113,7 @@ public class ConnectionAuthenticationFilter extends
 
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
+        hubConfig.resetAppConfigs();
         hubConfig.refreshProject();
         hubConfig.getAppConfig().setAppServicesUsername(username);
         hubConfig.getAppConfig().setAppServicesPassword(password);

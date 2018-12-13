@@ -1915,5 +1915,14 @@ public class HubConfigImpl implements HubConfig
 
     public String getStagingSchemasDbName() {
         return this.stagingSchemasDbName;
-    }    
+    }
+
+    // Only used by QS for login
+    public void resetAppConfigs() {
+        appConfig = null;
+        adminConfig = null;
+        adminManager = null;
+        manageConfig = null;
+        manageClient = null;
+    }
 }
