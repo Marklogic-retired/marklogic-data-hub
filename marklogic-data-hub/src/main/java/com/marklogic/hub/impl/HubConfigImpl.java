@@ -1925,4 +1925,5 @@ public class HubConfigImpl implements HubConfig
         manageConfig = null;
         manageClient = null;
     }
+
 }
