@@ -69,7 +69,7 @@ export default function(tmpDir) {
     it ('should go to the dashboard', async function() {
       dashboardPage.isLoaded();
       await dashboardPage.clearDatabases.click();
-      //browser.driver.sleep(3000);
+      browser.driver.sleep(3000);
       browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
       await dashboardPage.clearButton.click();
       //wait for all three to be 0
@@ -89,6 +89,7 @@ export default function(tmpDir) {
       console.log('create Order entity');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
+      browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('Order');
       await entityPage.saveEntity.click();
@@ -111,6 +112,7 @@ export default function(tmpDir) {
       console.log('create Product entity');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
+      browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('Product');
       await entityPage.saveEntity.click();
@@ -350,6 +352,7 @@ export default function(tmpDir) {
       browser.get('http://localhost:8080/#/entities');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
+      browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('TestEntity');
       await entityPage.saveEntity.click();
@@ -463,6 +466,7 @@ export default function(tmpDir) {
       browser.get('http://localhost:8080/#/entities');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
+      browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('PIIEntity');
       await entityPage.saveEntity.click();
@@ -625,6 +629,7 @@ export default function(tmpDir) {
       browser.get('http://localhost:8080/#/entities');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
+      browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('WorldBank');
       await entityPage.saveEntity.click();

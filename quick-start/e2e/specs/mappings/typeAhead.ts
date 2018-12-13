@@ -190,6 +190,7 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
+        browser.sleep(5000);
         //browser.wait(EC.presenceOf(entityPage.toast));
         //browser.wait(EC.stalenessOf(entityPage.toast));
         expect(mappingsPage.verifySourcePropertyName('id').isDisplayed()).toBeTruthy();
@@ -210,6 +211,7 @@ export default function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
         await flowPage.createHarmonizeFlow('WorldBank', 'Harmonize WorldBank', 'json', 'sjs', true, 'MapWorldBank');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isDisplayed()).
           toBe(true, 'Harmonize WorldBank' + ' is not present');
@@ -224,9 +226,11 @@ export default function() {
       it('should run Harmonize WorldBank flow with mapping', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));
         expect(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').isPresent()).toBe(true);
         flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE').click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
         expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
         await flowPage.runHarmonizeButton().click();

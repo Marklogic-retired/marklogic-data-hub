@@ -78,6 +78,7 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
+        browser.sleep(5000);
         //browser.wait(EC.presenceOf(entityPage.toast));
         //browser.wait(EC.stalenessOf(entityPage.toast));
         expect(mappingsPage.verifySourcePropertyName('sku').isDisplayed()).toBeTruthy();
@@ -134,6 +135,7 @@ export default function() {
         // save the map
         browser.wait(EC.elementToBeClickable(mappingsPage.saveMapButton()));
         await mappingsPage.saveMapButton().click();
+        browser.sleep(5000);
         //browser.wait(EC.presenceOf(entityPage.toast));
         //browser.wait(EC.stalenessOf(entityPage.toast));
       });
@@ -147,8 +149,9 @@ export default function() {
       it('should create Harmonize SKU flow on Product', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('Product');
-        //browser.sleep(5000);
+        browser.sleep(5000);
         await flowPage.createHarmonizeFlow('Product', 'Harmonize SKU', 'json', 'sjs', true, 'MapProduct');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isDisplayed()).
           toBe(true, 'Harmonize Product' + ' is not present');
@@ -163,10 +166,11 @@ export default function() {
       it('should run Harmonize SKU flow with mapping', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('Product');
-        //browser.sleep(5000);
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE')));
         expect(flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').isPresent()).toBe(true);
         await flowPage.getFlow('Product', 'Harmonize SKU', 'HARMONIZE').click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()), 10000);
         expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
         await flowPage.runHarmonizeButton().click();
@@ -251,6 +255,7 @@ export default function() {
         await mappingsPage.resetButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.resetConfirmationCancel()));
         await mappingsPage.resetConfirmationCancel().click();
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the source URI and the properties persist (still game_id, but not saved)
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
@@ -278,6 +283,7 @@ export default function() {
         await mappingsPage.resetButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.resetConfirmationCancel()));
         await mappingsPage.resetConfirmationOK().click()
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the properties reset to old SKU (rollback to previous version)
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
