@@ -541,10 +541,10 @@ public interface HubConfig {
     HubConfig withPropertiesFromEnvironment(String environment);
 
     /**
-     * Loads HubConfig object with values from gradle.properties (optionally overriden with
-     * gradle-(environment).properties). This method must be called every time after Spring creates
-     * HubConfig object and the project is initialized with createProject(String projectDirString)
-     * method
+     * Loads HubConfig object with values from gradle.properties (optionally overridden with
+     * gradle-(environment).properties). Once Spring creates HubConfig object and the project is initialized with
+     * {@link #createProject(String)} you can use setter methods to change HubConfig properties
+     * and then call this method.
      */
     void refreshProject();
 }
