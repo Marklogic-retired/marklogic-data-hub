@@ -23,10 +23,12 @@ export default function() {
         browser.get('http://localhost:8080/#/flows');
         //create WorldBank input flow
         await flowPage.clickEntityDisclosure('WorldBank');
+        browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('WorldBank')));
         await flowPage.createInputFlow('WorldBank', 'Load WorldBank', 'json', 'sjs', false);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
         expect(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT').isDisplayed()).
           toBe(true, 'Load WorldBank' + ' is not present');
+        browser.sleep(5000);
       });
 
       it ('should redeploy modules', async function() {
