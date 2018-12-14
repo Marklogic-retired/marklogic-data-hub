@@ -283,7 +283,7 @@ export default function() {
         await mappingsPage.resetButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.resetConfirmationCancel()));
         await mappingsPage.resetConfirmationOK().click()
-        browser.sleep(5000);
+        browser.sleep(8000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the properties reset to old SKU (rollback to previous version)
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);
