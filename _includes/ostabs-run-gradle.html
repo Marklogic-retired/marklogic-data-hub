@@ -1,0 +1,20 @@
+      {% assign counter = (counter || -1) %}
+      {% assign counter = counter | plus: 1 %}
+      <p class="code-tabs">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a role="tab" aria-controls="linux-{{counter}}" href="#linux-{{counter}}">Unix Systems</a>
+          </li>
+          <li role="presentation" class="">
+            <a role="tab" aria-controls="windows-{{counter}}" href="#windows-{{counter}}">Windows</a>
+          </li>
+        </ul>
+        <span class="tab-content">
+          <span role="tabpanel" class="tab-pane active" id="linux-{{counter}}">
+            <pre class="cmdline">./gradlew {{include.grtask}}</pre>
+          </span>
+          <span role="tabpanel" class="tab-pane" id="windows-{{counter}}">
+            <pre class="cmdline">gradlew.bat {{include.grtask}}</pre>
+          </span>
+        </span>
+      </p>
