@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
+import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.job.JobManager
@@ -69,6 +70,11 @@ abstract class HubTask extends DefaultTask {
     @Internal
     EntityManager getEntityManager() {
         getProject().property("entityManager")
+    }
+    
+    @Internal
+    GeneratePiiCommand getGeneratePiiCommand() {
+        getProject().property("generatePiiCommand")
     }
 
     @Internal

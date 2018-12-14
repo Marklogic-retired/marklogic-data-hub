@@ -24,7 +24,7 @@ class GeneratePiiTask extends HubTask {
 
     @TaskAction
     void generatePii() {
-        def cmd = new GeneratePiiCommand(getHubConfig())
+        def cmd = getGeneratePiiCommand()
         cmd.execute(getCommandContext())
     }
 
