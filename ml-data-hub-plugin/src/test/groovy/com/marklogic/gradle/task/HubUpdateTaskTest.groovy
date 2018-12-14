@@ -37,8 +37,8 @@ class HubUpdateTaskTest extends BaseTest {
     //if 4.0 project is upgraded, remove the backed up directories
     def setup() {
         //hardcoding to 4.0
-        File hubConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/hub-internal-config-4.0.SNAPSHOT").toFile()
-        File mlConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/ml-config-4.0.SNAPSHOT").toFile()
+        File hubConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/hub-internal-config-4.0-SNAPSHOT").toFile()
+        File mlConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/ml-config-4.0-SNAPSHOT").toFile()
         if (hubConfigDir.exists() && mlConfigDir.exists()) {
             FileUtils.forceDelete(hubConfigDir)
             FileUtils.forceDelete(mlConfigDir)
