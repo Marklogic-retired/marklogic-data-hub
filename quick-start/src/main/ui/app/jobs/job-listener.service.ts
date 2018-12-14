@@ -2,12 +2,15 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp';
 import { FlowStatus } from '../entities/flow-status.model';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class JobListenerService {
 
   public jobStarted: EventEmitter<any> = new EventEmitter();
   public jobFinished: EventEmitter<any> = new EventEmitter();
+  public jobsRunning: BehaviorSubject<number>;
+  public percentage: BehaviorSubject<number>;
 
   private runningJobs: Map<string, FlowStatus> = new Map<string, FlowStatus>();
   private jobOutputs: Map<string, Array<string>> = new Map<string, Array<string>>();
@@ -15,19 +18,29 @@ export class JobListenerService {
   constructor(private stomp: STOMPService) {
     this.stomp.messages.subscribe(this.onWebsockMessage);
     this.stomp.subscribe('/topic/flow-status');
+    this.jobsRunning = new BehaviorSubject<number>(0);
+    this.percentage = new BehaviorSubject<number>(0);
   }
 
-  public runningJobCount(): number {
-    return this.runningJobs.size;
+  public runningJobCount(): Observable<number>  {
+    return this.jobsRunning.asObservable();
   }
 
-  public totalPercentComplete(): number {
-    const total = this.runningJobCount();
+  public totalPercentComplete(): Observable<number> {
+    return this.percentage.asObservable();
+  }
+
+  public setJobsRunning(newValue: number): void {
+    this.jobsRunning.next(newValue);
+  }
+
+  public setPercentage(): void {
+    const total = this.runningJobs.size;
     let pc = 0;
     this.runningJobs.forEach((value, key) => {
       pc += value.percentComplete;
     });
-    return Math.floor(pc / total);
+    this.percentage.next(Math.floor(pc / total));
   }
 
   public jobHasOutput(jobId: string): boolean {
@@ -45,6 +58,8 @@ export class JobListenerService {
 
       // either add or remove to list of running flows
       if (running) {
+        this.setJobsRunning(this.runningJobs.size);
+        this.setPercentage();
         // a job may have started
         if (!this.runningJobs.has(status.jobId)) {
           this.jobStarted.next(status.jobId);
@@ -71,6 +86,8 @@ export class JobListenerService {
         if (this.jobOutputs.has(status.jobId)) {
           this.jobOutputs.delete(status.jobId);
         }
+        this.setJobsRunning(this.runningJobs.size);
+        this.setPercentage();
       }
     }
   }
