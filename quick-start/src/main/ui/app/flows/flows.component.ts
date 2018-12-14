@@ -279,9 +279,11 @@ export class FlowsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isActiveFlow(flow: Flow): boolean {
-    return this.flow && this.flow.entityName === flow.entityName &&
-      this.flow.flowName === flow.flowName;
+  isActiveFlow(flow: Flow, flowType: string): boolean {
+    return this.flow && 
+      this.flow.entityName === flow.entityName &&
+      this.flow.flowName === flow.flowName &&
+      this.flowType.toUpperCase() === flowType.toUpperCase();
   }
 
   isActiveEntity(entity: Entity): boolean {
@@ -324,17 +326,15 @@ export class FlowsComponent implements OnInit, OnDestroy {
       providers: [
         { provide: 'flowType', useValue: flowType },
         { provide: 'actions', useValue: actions },
-        { provide: 'entity', useValue: entity}
+        { provide: 'entity', useValue: entity },
+        { provide: 'flows', useValue: this.getFlows(entity, flowType) }
       ],
       isModal: true
     });
   }
 
   getFlows(entity: Entity, flowType: string) {
-    if (flowType === 'Input') {
-      return entity.inputFlows;
-    }
-    return entity.harmonizeFlows;
+    return (flowType.toUpperCase() === 'INPUT') ? entity.inputFlows : entity.harmonizeFlows;
   }
 
   getFlowType(flow: Flow, entityName: string) {
