@@ -15,6 +15,15 @@
   mdl-textfield {
     width: 100%;
   }
+
+  /deep/ mdl-textfield.custom-invalid input.mdl-textfield__input {
+    border-bottom: 1px solid #a94442;
+  }
+
+  .alert-text {
+    margin-top:-20px;  /* position directly under the input */
+    color: #a94442;
+  }
 }
 
 /deep/ .mdl-textfield__label:after {

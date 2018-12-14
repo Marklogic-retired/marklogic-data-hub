@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import {MapService} from "../mappings/map.service";
 import {Mapping} from "../mappings/mapping.model";
 import {Entity} from "../entities";
+import {Flow} from '../entities/flow.model';
 
 @Component({
   selector: 'app-new-flow',
@@ -18,6 +19,9 @@ export class NewFlowComponent implements OnDestroy {
   flowType: string;
   actions: any;
   entity: Entity;
+  flows: Array<Flow>;
+  errorMsg: string;
+  isNameValid: boolean = true;
 
   scaffoldOptions = [
     { label: 'Create Structure from Entity Definition', value: true },
@@ -59,22 +63,22 @@ export class NewFlowComponent implements OnDestroy {
     private mapService: MapService,
     @Inject('flowType') flowType: string,
     @Inject('actions') actions: any,
-    @Inject('entity') entity: Entity
+    @Inject('entity') entity: Entity,
+    @Inject('flows') flows: Array<Flow>
   ) {
     this.flowType = _.capitalize(flowType);
     this.flow = _.clone(this.emptyFlow);
     this.actions = actions;
     this.entity = entity;
+    this.flows = flows;
     this.startingMappingOption = this.mappingOptions[0];
     this.mapService.getMappings();
     if (this.getMarkLogicVersion() === 8) {
       this.flow.useEsModel = false;
     } else {
-      if (flowType === 'INPUT') {
-        this.startingScaffoldOption = this.scaffoldOptions[1];
-      } else {
-        this.startingScaffoldOption = this.scaffoldOptions[0];
-      }
+      this.startingScaffoldOption = (flowType === 'INPUT') ?
+        this.scaffoldOptions[1] :
+        this.scaffoldOptions[0];
     }
   }
 
@@ -119,4 +123,16 @@ export class NewFlowComponent implements OnDestroy {
     let version = this.envService.marklogicVersion.substr(0, this.envService.marklogicVersion.indexOf('.'));
     return parseInt(version);
   }
+
+  checkName() {
+    let nameValid = true;
+    let entityName = this.entity && this.entity.info && this.entity.info.title;
+    let flowPrefix = (this.flowType.toUpperCase() === 'INPUT') ? 'an' : 'a';
+    _.forEach(this.flows, (f) => {
+      nameValid = (this.flow.flowName === f.flowName) ? false: nameValid;
+    });
+    this.errorMsg = (!nameValid) ? `Flow names must be unique. Entity "${entityName}" already contains ${flowPrefix} ${this.flowType} flow named "${this.flow.flowName}"` : '';
+    this.isNameValid = nameValid;
+  }
+  
 }
