@@ -10,7 +10,7 @@ import {
 import {action} from '@storybook/addon-actions';
 import {StoryCardComponent} from '../../utils';
 import {ThemeModule} from "../../../components";
-import { CodemirrorComponent} from '../../../components/codemirror/codemirror.component';
+import { CodemirrorComponent} from '../../../components/codemirror';
 import {TraceViewerUiComponent, MlErrorComponent} from '../../../components';
 
 storiesOf('Components|Trace Viewer', module)

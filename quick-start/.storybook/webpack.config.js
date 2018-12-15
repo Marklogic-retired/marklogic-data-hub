@@ -3,9 +3,9 @@ const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 
 module.exports = (baseConfig, env, defaultConfig) => {
-    baseConfig.plugins.push( new webpack.ProvidePlugin({
+  baseConfig.plugins.push( new webpack.ProvidePlugin({
     CodeMirror: 'codemirror'
-  }))
+  }));
   baseConfig.module.rules.push(
     {
       test: [/\.stories\.ts?$/, /index\.ts$/],
@@ -20,16 +20,11 @@ module.exports = (baseConfig, env, defaultConfig) => {
       include: [path.resolve(__dirname, '../src')],
       enforce: 'pre',
     },
-    {
+    /*{
       test: /\.css$/,
       use: [
-        require.resolve('style-loader'),
-        {
-          loader: require.resolve('css-loader'),
-          options: {
-            importLoaders: 1,
-          },
-        },
+        { loader: require.resolve('style-loader') },
+        { loader: require.resolve('css-loader') },
         {
           loader: require.resolve('postcss-loader'),
           options: {
@@ -41,9 +36,9 @@ module.exports = (baseConfig, env, defaultConfig) => {
               }),
             ],
           },
-        },
-      ],
-    },
+        }
+      ]
+    },*/
     {
       test: /\.(ico|jpg|jpeg|png|gif|eot|otf|svg|webp|ttf|woff|woff2)(\?.*)?$/,
       loaders: ["file-loader"],
