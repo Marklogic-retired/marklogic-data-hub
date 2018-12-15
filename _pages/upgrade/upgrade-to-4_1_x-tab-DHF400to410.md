@@ -10,15 +10,15 @@ The notes and steps in this tab are for the following upgrade paths:
 
 - The `hubUpdate` task makes the following changes.
 
-    - Renames old configuration folders in your DHF project under `/src/main`.
+    - Renames old configuration directories in your DHF project under `/src/main`.
 
-      | old folder | new folder |
+      | old directory | new directory |
       |---|---|
       | `hub-internal-config` | `hub-internal-config-4.0.0` |
       | `ml-config` | `ml-config-4.0.0` |
       {:.table-b1gray}
 
-    - Overwrites the existing databases and server files with the new project folder structure (*root*`/src/main` and its subfolders) and new files.
+    - Overwrites the existing databases and server files with the new project directory structure (*root*`/src/main` and its subdirectories) and new files.
 
     - Copies some settings from the old configuration files to the new ones. (You must still manually copy any custom configurations.)
 

@@ -11,16 +11,16 @@ The notes and steps in this tab are for the following upgrade paths:
 
 - The `hubUpdate` Gradle task makes the following changes.
 
-    - Renames old configuration folders.
+    - Renames old configuration directories.
 
-      | old folder | new folder |
+      | old directory | new directory |
       |---|---|
       | `hub-internal-config` | `hub-internal-config.old` |
       | `user-config` | `user-config.old` |
       | `entity-config` | `entity-config.old` |
       {:.table-b1gray}
 
-    - Overwrites the existing databases and server files with the new project folder structure (*root*`/src/main` and its subfolders) and new files.
+    - Overwrites the existing databases and server files with the new project directory structure (*root*`/src/main` and its subdirectories) and new files.
 
     - Copies some settings from the old configuration files to the new ones. <!-- TODO: What are these settings? -->
 
