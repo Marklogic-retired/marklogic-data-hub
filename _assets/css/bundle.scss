@@ -561,18 +561,21 @@ details {
   > summary {
     color: #337ab7;
   }
-  > summary:before {
-    content: "► ";
-  }
-  > details[open] summary:before {
-    content: "▼ ";
-  }
   > div {
     padding-top: 5px;
     padding-bottom: 10px;
   }
 }
+details > summary:before {
+  content: "► ";
+}
+details[open] > summary:before {
+  content: "▼ ";
+}
 
+.dirtree {
+  line-height: 1.15;
+}
 
 /* Source: https://www.w3schools.com/howto/howto_js_tabs.asp */
 /* Style the tab */
@@ -614,3 +617,4 @@ details {
   border-left: 1px solid #aaa;
   border-bottom: 1px solid #aaa;
 }
+
