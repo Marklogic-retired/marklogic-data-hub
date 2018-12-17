@@ -44,14 +44,17 @@ public class HubConfigTest extends HubTestBase {
     
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
+        
         AppConfig config = adminHubConfig.getAppConfig();
 
         assertEquals(new Integer(8011), config.getRestPort(),
             "The final port should be used as restPort so that any ml-gradle feature that depends on mlRestPost " +
                 "ends up talking to the final app server");
-        assertNull(config.getRestSslContext(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
-        assertNull(config.getRestSslHostnameVerifier(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
-        assertNull(config.getRestTrustManager(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+        if (!(isCertAuth() || isSslRun())) {
+            assertNull(config.getRestSslContext(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+            assertNull(config.getRestSslHostnameVerifier(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+            assertNull(config.getRestTrustManager(), "Should be null because neither mlSimpleSsl nor mlFinalSimpleSsl were set to true");
+        }
         //get the old values
         String port = adminHubConfig.getPort(DatabaseKind.FINAL).toString();
         String authMethod = adminHubConfig.getAuthMethod(DatabaseKind.FINAL);
@@ -96,11 +99,12 @@ public class HubConfigTest extends HubTestBase {
             props.put("mlFinalExternalName", extName);
         props.put("mlFinalSimpleSsl", sslMethod);
         //if sslContext is set , it is assumed that it is a secure connection, hence unsetting them
-        if(! sslMethod) {
+        if(! sslMethod && !isCertAuth()) {
             adminHubConfig.setSslContext(DatabaseKind.FINAL, null);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, null);
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, null);
         }
+        
         
     }
 

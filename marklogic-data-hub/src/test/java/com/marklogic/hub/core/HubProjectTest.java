@@ -3,13 +3,13 @@ package com.marklogic.hub.core;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.ApplicationConfig;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -155,6 +155,7 @@ public class HubProjectTest extends HubTestBase {
     
     @Test
     public void upgrade300To403ToCurrentVersion() throws Exception {
+        Assumptions.assumeFalse((isCertAuth() || isSslRun())); 
         final String projectPath = "build/tmp/upgrade-projects/dhf403from300";
         final File projectDir = Paths.get(projectPath).toFile();
 

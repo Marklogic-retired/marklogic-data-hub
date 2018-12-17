@@ -327,7 +327,7 @@ task setupSSL{
             javaexec {
                 classpath = sourceSets.test.runtimeClasspath
                 main = 'com.marklogic.bootstrap.SSLsetup'
-                args = [mlHost, mlSecurityUsername, mlSecurityPassword, certAuth]
+                args = [mlHost, mlSecurityUsername, mlSecurityPassword, certAuth, sslRun]
                 }
             }
             if(sslRun) {
@@ -338,6 +338,8 @@ task setupSSL{
                             "mlFinalSimpleSsl=true\n" +
                             "mlAdminScheme=https\n" +
                             "mlManageScheme=https\n" +
+                            "mlAppServicesSimpleSsl=true\n" +
+                            "mlManageSimpleSsl=true\n" +
                             "mlStagingSimpleSsl=true")
                 }
             }
@@ -350,6 +352,7 @@ task setupSSL{
                             "mlAdminScheme=https\n" +
                             "mlFinalScheme=https\n" +
                             "mlStagingScheme=https\n" +
+                            "mlManageScheme=https\n" +
                             "mlJobScheme=https\n" +
                             "mlJobAuth=certificate")
             }
@@ -357,8 +360,9 @@ task setupSSL{
     }
 }
 
-setupSSL.dependsOn(testClasses)
-bootstrap.dependsOn(setupSSL)
+//setupSSL.dependsOn(testClasses)
+//bootstrap.dependsOn(setupSSL)
+bootstrap.dependsOn(testClasses)
 test.dependsOn(bootstrap)
 testIntegration.dependsOn(bootstrap)
 testAcceptance.dependsOn(bootstrap)

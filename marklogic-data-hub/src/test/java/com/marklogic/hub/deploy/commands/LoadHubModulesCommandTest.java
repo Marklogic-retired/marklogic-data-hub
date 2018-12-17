@@ -46,8 +46,8 @@ public class LoadHubModulesCommandTest extends HubTestBase {
         createProjectDir();
         loadHubModulesCommand = new LoadHubModulesCommand();
         loadHubModulesCommand.setHubConfig(adminHubConfig);
-        ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
-        commandContext = new CommandContext(adminHubConfig.getAppConfig(), manageClient, null);
+        //ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
+        commandContext = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
     }
 
     @Test

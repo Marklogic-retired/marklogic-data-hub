@@ -18,6 +18,7 @@ public class Installer extends HubTestBase {
     private static Logger logger = LoggerFactory.getLogger(Installer.class);
 
     public void setupProject() {
+        deleteProjectDir();
         createProjectDir();
     }
 
