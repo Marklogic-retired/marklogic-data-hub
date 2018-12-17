@@ -50,7 +50,10 @@ A DHF 4.1.x project will have the following directory structure after initializa
   │  └─ main
   │     ├─ entity-config
   │     │  ├─ final-entity-options.xml
-  │     │  └─ staging-entity-options.xml
+  │     │  ├─ staging-entity-options.xml
+  │     │  └─ databases
+  │     │     ├─ final-database.json
+  │     │     └─ staging-database.json
   │     ├─ hub-internal-config
   │     │  ├─ databases
   │     │  │  ├─ job-database.json
@@ -173,7 +176,6 @@ You can add custom server-side files in this directory.
 When deployed to MarkLogic `./plugins` is equivalent to the root URI (`/`), so a library module at `./plugins/my-directory/my-lib.xqy` would be loaded into the modules database as `/my-directory/my-lib.xqy`.
 
 
-
 ### plugins/entities
 
 <pre class="dirtree">
@@ -252,7 +254,7 @@ When deployed to MarkLogic `./plugins` is equivalent to the root URI (`/`), so a
 
 ### plugins/mappings
 
-  ```???
+  ```
   mappings
   ├─ mapping1
   │  ├─ mapping1-0.mapping.json
@@ -282,6 +284,7 @@ This directory contains model-to-model mapping configuration artifacts that can 
   src
   └─ main
      ├─ entity-config
+     │  └─ databases
      ├─ hub-internal-config
      │  ├─ databases
      │  ├─ schemas
@@ -298,15 +301,21 @@ This directory contains model-to-model mapping configuration artifacts that can 
      └─ ml-schemas
 </pre>
 
+{% include note.html type="NOTE" content="As of DHF 4.1.0, the internal structures of all configuration directories align with that of ml-gradle and should work [as documented in the ml-gradle documentation](https://github.com/marklogic-community/ml-gradle/wiki)." %}
+
+
 ### src/main/entity-config
 
 <pre class="dirtree">
   entity-config
   ├─ final-entity-options.xml
-  └─ staging-entity-options.xml
+  ├─ staging-entity-options.xml
+  └─ databases
+     ├─ final-database.json
+     └─ staging-database.json
 </pre>
 
-This directory contains two options files created by QuickStart (for staging and for final). These files are typically not modified by users.
+This directory contains two options files and two database configuration files created by QuickStart (for staging and for final). These files are typically not modified by users.
 
 
 ### src/main/hub-internal-config
@@ -337,9 +346,9 @@ This directory contains two options files created by QuickStart (for staging and
   └─ triggers
 </pre>
 
-{% include note.html type="NOTE" content="As of DHF 4.1.0, the internal structure of all configuration directories aligns with that of ml-gradle and should work [as documented in the ml-gradle documentation](https://github.com/marklogic-community/ml-gradle/wiki)." %}
+This directory contains subdirectories and JSON files used to configure your DHF project's **STAGING** environment.
 
-This directory contains subdirectories and JSON files used to configure your MarkLogic server. These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the [ml-config directory](#src/main/ml-config) and add any properties you'd like to override.
+These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the [ml-config directory](#src/main/ml-config) and add any properties you'd like to override.
 
 Each of the above JSON files conforms to the MarkLogic REST API for creating the following:
 - [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties)
@@ -367,16 +376,17 @@ Each of the above JSON files conforms to the MarkLogic REST API for creating the
   └─ triggers
 </pre>
 
-This directory contains subdirectories and JSON files used to configure your MarkLogic server, including configuration used to bootstrap a DHF project's **FINAL** environment.
+This directory contains subdirectories and JSON files used to configure your DHF project's **FINAL** environment.
 
 You can add custom modules and transforms, as well as other configuration artifacts, in this directory.
 
-### src/main/ml-modules
 
-This directory is the standard `ml-gradle` location for artifacts to be deployed to the modules database.
+### src/main/ml-modules
+This directory is the default ml-gradle location for artifacts to be deployed to the modules database.
 
 
 ### src/main/ml-schemas
+This directory contains your project's schemas which are loaded by ml-gradle.
 
 
 ## .tmp

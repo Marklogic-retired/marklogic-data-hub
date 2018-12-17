@@ -65,7 +65,7 @@ You should also update the DHF version in the `dependencies` section of any cust
 
 ## Notes for Upgrading to the Latest Version
 
-Before upgrading your DHF project, you should review the [Changes and Incompatibilities]({{site.baseurl}}/docs/release-notes#changes-and-incompatibilities) section of the release notes and the following additional notes appropriate to your current DHF version:
+Before upgrading your DHF project, you should review the [Changes and Incompatibilities]({{site.baseurl}}/release-notes/release-notes-4_0_x/#changes-and-incompatibilities) section of the release notes and the following additional notes appropriate to your current DHF version:
 
 * [Upgrading a Project with a Custom Hub Name](#upgrading-a-project-with-a-custom-hub-name)
 * [Upgrading from 2.0.4+ to 4.0.x](#upgrading-from-204-to-40x) for upgrading from any 2.0.x from 2.0.4 onwards.
@@ -86,10 +86,10 @@ Note that there a several new gradle properties related to your hub databases an
 
 For example, where previously your `gradle.properties` or `gradle-local.properties` file contained a setting for `mlTriggersDbName`, now it must contain a setting for `mlStagingTriggersDbName` and `mlFinalTriggersDbName`. This requirement is a side-effect of the following change described in the release notes:
 
-* [Independent **STAGING** and **FINAL** App Server Stacks Stacks]({{site.baseurl}}/docs/release-notes/#independent-staging-and-final-app-server-stacks)
+* [Independent **STAGING** and **FINAL** App Server Stacks]({{site.baseurl}}/release-notes/release-notes-4_0_x/#independent-staging-and-final-app-server-stacks)
 
 ### Upgrading from 3.0.0 to 4.0.x
-The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0 and later. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.
+The upgrades notes in this section apply specifically to upgrading from DHF 3.0.0 to DHF 4.0.0 and later. You should also review the [release notes]({{site.baseurl}}/release-notes/release-notes-4_0_x/) for more generally applicable information.
 
 * [DHF Core Library Installation Changes](#dhf-core-library-installation-changes)
 
@@ -99,10 +99,10 @@ The DHF core library modules for DHF 3.0.0 were installed with MarkLogic. Those 
 
 When you upgrade to DHF 4.0.x or install it for the first time, the DHF core library modules are automatically installed on MarkLogic in the modules database shared by your **STAGING** and **FINAL** environments.
 
-This change should be transparent to your application, aside from the module path change described in [New DHF Core Server-Side Module Paths]({{site.baseurl}}/docs/release-notes#new-dhf-core-server-side-module-paths).
+This change should be transparent to your application, aside from the module path change described in [New DHF Core Server-Side Module Paths]({{site.baseurl}}/release-notes/release-notes-4_0_x/#new-dhf-core-server-side-module-paths).
 
 ### Upgrading from 2.0.4+ to 4.0.x
-The upgrades notes in this section apply specifically to upgrading from DHF 2.0.4 or a later 2.0.x release to DHF 4.0.x. You should also review the [release notes]({{site.baseurl}}/docs/release-notes) for more generally applicable information.
+The upgrades notes in this section apply specifically to upgrading from DHF 2.0.4 or a later 2.0.x release to DHF 4.0.x. You should also review the [release notes]({{site.baseurl}}/release-notes/release-notes-4_0_x/) for more generally applicable information.
 
 If you are upgrading from a DHF version older than 2.0.4, you should first upgrade to the latest 2.0.x version.
 

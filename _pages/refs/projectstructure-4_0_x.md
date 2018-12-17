@@ -130,9 +130,12 @@ A model to model mapping configuration files. There may be multiple versions. Fo
 
 
 ## src/main/hub-internal-config folder
-{% include note.html type="NOTE" content="As of DHF 4.0.0, the internal structure of all configuration directories aligns with that of `ml-gradle` and should work as documented in that project." %}
 
-This folder contains subfolders and JSON files used to configure your MarkLogic server. These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the [ml-config folder](#ml-config) and add any properties you'd like to override.
+This folder contains subfolders and JSON files used to configure your DHF project's **STAGING** environment.
+
+These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the [ml-config folder](#ml-config) and add any properties you'd like to override.
+
+{% include note.html type="NOTE" content="As of DHF 4.0.0, the internal structure of all configuration directories aligns with that of `ml-gradle` and should work as documented in that project." %}
 
 ```
 |- databases
@@ -155,13 +158,17 @@ This folder contains subfolders and JSON files used to configure your MarkLogic 
 
 Each of the above JSON files conforms to the MarkLogic REST API for creating [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties), [mimetypes](https://docs.marklogic.com/REST/PUT/manage/v2/mimetypes/[id-or-name]/properties), [roles](https://docs.marklogic.com/REST/PUT/manage/v2/roles/[id-or-name]/properties), [users](https://docs.marklogic.com/REST/PUT/manage/v2/users/[id-or-name]/properties), or [servers](https://docs.marklogic.com/REST/PUT/manage/v2/servers/[id-or-name]/properties).
 
-### src/main/ml-config folder
-This folder contains subfolders and JSON files used to configure your MarkLogic server.
-It contains some configuration that is used to bootstrap a DHF's **FINAL** environment.  In addition, users can place more configuration artifacts here to customize the system
-See [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki) for details on what goes in here.
-Any JSON files you put here will be merged with the hub-internal-config configurations by the Data Hub Framework upon deploy.
 
-### src/main/ml-modules
+## src/main/ml-config folder
+
+This folder contains subfolders and JSON files used to configure your DHF project's **FINAL** environment.
+
+You can add configuration artifacts here to customize the system. See [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki).
+
+Any JSON files you put here will be merged with the hub-internal-config configurations by the Data Hub Framework during deployment.
+
+
+## src/main/ml-modules
 This folder is the standard `ml-gradle` location for artifacts to be deployed to the modules database.  It comes out-of-the box with a default Search options configuration.
 
 ### src/main/ml-modules-jobs

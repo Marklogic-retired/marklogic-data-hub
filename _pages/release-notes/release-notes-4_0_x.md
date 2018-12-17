@@ -50,7 +50,7 @@ Data Hub Framework 4.0.0 includes the following changes, some of which may intro
 * [Independent **STAGING** and **FINAL** App Server Stacks](#independent-staging-and-final-app-server-stacks)
 
 #### Security Model Improvements
-DHF 4.0.0 supports better separation of roles and responsibilities between development, deployment, and ingestion tasks. For more details, see the new security model documentation: [Security]({{site.baseurl}}/docs/security).
+DHF 4.0.0 supports better separation of roles and responsibilities between development, deployment, and ingestion tasks. For more details, see the new security model documentation: [Security]({{site.baseurl}}/refs/security/).
 
 You do not have to make changes to your DHF project or data application in response to this change, but you may be able to improve the security of your project by taking advantage of the new configurable roles.
 
@@ -100,11 +100,11 @@ Upgrading does not affect any existing **TRACES** database. However, DHF will no
 
 As of DHF 4.0.0, the **STAGING** and **FINAL** final App Servers each have their own content, schemas, and triggers databases. In previous versions, the **STAGING** and **FINAL** application servers shared the same modules, triggers, and schemas databases. This change introduces several new gradle properties.
 
-You do not need to make changes to your project to accommodate this change unless your hub databases and App Servers use a prefix other than "data-hub". For example, if your **STAGING** database is not named "data-hub-STAGING", then see [Upgrading a Project with a Custom Hub Name]({{site.baseurl}}/understanding/upgrading/#upgrading-a-project-with-a-custom-hub-name).
+You do not need to make changes to your project to accommodate this change unless your hub databases and App Servers use a prefix other than "data-hub". For example, if your **STAGING** database is not named "data-hub-STAGING", then see [Upgrading a Project with a Custom Hub Name]({{site.baseurl}}/upgrade/upgrade-to-4_0_x/#upgrading-a-project-with-a-custom-hub-name).
 
 **NOTE**: DHF 4.0.0 projects have separate modules databases for **STAGING** and **FINAL**. As of DHF 4.0.1, **STAGING** and **FINAL** share a single modules database. For details, see [Shared Modules Database for Staging and Final Environments](#shared-modules-database-for-staging-and-final-environments).
 
-See also [Servers and Databases]({{site.baseurl}}/docs/architecture#servers-and-databases).
+See also [Servers and Databases]({{site.baseurl}}/refs/servers-databases).
 
 ### DHF 4.0.1 Changes and Incompatibilities
 
