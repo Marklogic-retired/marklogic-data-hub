@@ -86,6 +86,7 @@ public class PiiE2E extends HubTestBase
     public static void setupAll() throws Exception
     {
         XMLUnit.setIgnoreWhitespace(true);
+        new Installer().teardownProject();
         new Installer().setupProject();
         Path src = Paths.get(PiiE2E.class.getClassLoader().getResource("pii-test").toURI());
         Path dest = Paths.get(PROJECT_PATH).getFileName().toAbsolutePath();
