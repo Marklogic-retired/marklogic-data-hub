@@ -26,10 +26,11 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
-import java.util.Properties;
 
 /**
- * An interface to set, manage and recall the Data Hub's Configuration
+ * An interface to set, manage and recall the Data Hub's Configuration.
+ * HubConfig has a singleton scope so set everything you want at the start of the application and
+ * and then call {@link #refreshProject()} to wire up all clients.
  */
 @JsonDeserialize(as = HubConfigImpl.class)
 @JsonSerialize(as = HubConfigImpl.class)
@@ -535,8 +536,8 @@ public interface HubConfig {
      * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
      * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
      * 
-     * @param environment
-     * @return
+     * @param environment - The name of the environment to use (local,dev,qa,prod,...)
+     * @return A HubConfig
      */
     HubConfig withPropertiesFromEnvironment(String environment);
 
