@@ -10,8 +10,7 @@ import { AppUiComponent } from './shared/components';
 import { FlowsComponent } from './flows';
 import { HasBugsDialogComponent } from './shared/components';
 import {
-  EntityModelerComponent,
-  ExternalDefDialogComponent
+  EntityModelerComponent
 } from './entity-modeler';
 import { LoginComponent } from './login';
 import { LoginUIComponent } from './shared/components'
@@ -87,7 +86,8 @@ import {
   ChooseCollationComponent,
   EntityBoxComponent,
   TraceViewerUiComponent,
-  EntityEditorComponent
+  EntityEditorComponent,
+  ExternalDefDialogComponent
 } from './shared/components';
 
 @NgModule({
