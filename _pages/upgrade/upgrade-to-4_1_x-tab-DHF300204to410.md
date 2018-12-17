@@ -25,7 +25,7 @@ The notes and steps in this tab are for the following upgrade paths:
     - Copies some settings from the old configuration files to the new ones. <!-- TODO: What are these settings? -->
 
 
-- {% include_relative conref-remark-hubupdate-verbose.md %}
+- {% include conrefs/conref-remark-hubupdate-verbose.md %}
 
 
 - You might need to update your custom plugins for the flows as follows.

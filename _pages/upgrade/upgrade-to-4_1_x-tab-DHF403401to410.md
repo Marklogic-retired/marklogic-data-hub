@@ -25,7 +25,7 @@ The notes and steps in this tab are for the following upgrade paths:
     - Deletes obsolete files that were left behind by previous upgrades.
 
 
-- {% include_relative conref-remark-hubupdate-verbose.md %}
+- {% include conrefs/conref-remark-hubupdate-verbose.md %}
 
 
 ### Steps

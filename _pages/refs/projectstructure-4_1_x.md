@@ -254,7 +254,7 @@ When deployed to MarkLogic `./plugins` is equivalent to the root URI (`/`), so a
 
 ### plugins/mappings
 
-  ```
+<pre class="dirtree">
   mappings
   ├─ mapping1
   │  ├─ mapping1-0.mapping.json
@@ -262,8 +262,7 @@ When deployed to MarkLogic `./plugins` is equivalent to the root URI (`/`), so a
   │  └─ mapping1-N.mapping.json
   ├─ ...
   └─ mappingN
-  ```
-{:.dirtree}
+</pre>
 
 This directory contains model-to-model mapping configuration artifacts that can be used to configure an input flow. For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
@@ -348,7 +347,7 @@ This directory contains two options files and two database configuration files c
 
 This directory contains subdirectories and JSON files used to configure your DHF project's **STAGING** environment.
 
-These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the [ml-config directory](#src/main/ml-config) and add any properties you'd like to override.
+These files represent the minimum configuration necessary for DHF to function. **Do not edit anything in this directory.** If you need to override a configuration in this directory, create a file with the same name and directory structure under the [ml-config directory](#src/main/ml-config) and add any properties you'd like to override.
 
 Each of the above JSON files conforms to the MarkLogic REST API for creating the following:
 - [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties)
@@ -379,6 +378,13 @@ Each of the above JSON files conforms to the MarkLogic REST API for creating the
 This directory contains subdirectories and JSON files used to configure your DHF project's **FINAL** environment.
 
 You can add custom modules and transforms, as well as other configuration artifacts, in this directory.
+
+The following files are found only in the `ml-config` directory only:
+- `final-database.json`
+- `final-schemas-database.json`
+- `final-triggers-database.json`
+- `modules-database.json`
+- `final-server.json`
 
 
 ### src/main/ml-modules

@@ -1,271 +1,276 @@
 ---
 layout: inner
-title: Gradle Tasks
+title: Gradle Tasks in DHF
 permalink: /refs/gradle-tasks/
 redirect_from: "/docs/gradle-tasks/"
 ---
 
-# Gradle Tasks
+# Gradle Tasks in DHF
 
-This page provides a complete list of all of the Gradle tasks available from the ml-data-hub plugin.
+[Gradle](https://gradle.org/releases/) is a third-party tool that automates build tasks. MarkLogic provides a Gradle plugin ([ml-gradle](https://github.com/marklogic-community/ml-gradle/wiki)) that automates many of tasks required to manage a MarkLogic server.
 
-1. [In General](#in-general)
-1. [MarkLogic Data Hub Setup tasks](#marklogic-data-hub-setup-tasks)
-1. [MarkLogic Data Hub Scaffolding tasks](#marklogic-data-hub-scaffolding-tasks)
-1. [MarkLogic Data Hub Flow Management tasks](#marklogic-data-hub-flow-management-tasks)
-1. [Uninstalling MarkLogic Data Hub](#uninstalling-marklogic-data-hub)
+The DHF Gradle Plugin (ml-data-hub) expands ml-gradle with DHF-specific tasks and uses it to deploy MarkLogic server resources (e.g., databases, users, roles, app servers). ml-gradle deploys these resources according to the configurations in the following directories:
+- `hub-internal-config` (`your-project-root/src/main/hub-internal-config`)
+- `ml-config` (`your-project-root/src/main/ml-config`)
 
-## In General
-When passing parameters to Gradle tasks you must use the environment variable syntax `-PparameterName=parameterValue`.
+This page provides a complete list of all of the Gradle tasks available in DHF Gradle Plugin (ml-data-hub). These tasks are either customized for DHF from the ml-gradle implementation (tasks with names starting with `ml`) or created specifically for DHF (tasks with names starting with `hub`). See the [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki) for descriptions of the default behavior of customized tasks.
 
-We recommend the use of the [net.saliman.properties](https://github.com/stevesaliman/gradle-properties-plugin) Gradle plugin to manage different environments.
+- [Using Gradle in DHF](#using-gradle-in-dhf)
+- [MarkLogic Data Hub Setup tasks](#marklogic-data-hub-setup-tasks)
+- [MarkLogic Data Hub Scaffolding tasks](#marklogic-data-hub-scaffolding-tasks)
+- [MarkLogic Data Hub Flow Management tasks](#marklogic-data-hub-flow-management-tasks)
+- [Uninstalling Your MarkLogic Data Hub](#uninstalling-your-marklogic-data-hub)
 
-You can include the plugin by adding the following to your `build.gradle` file. You may need to adjust the com.marklogic.ml-data-hub version to match the DHF version you intend to use.
 
-```groovy
-plugins {
-    // This plugin allows you to create different environments
-    // for your gradle deploy. Each environment is represented
-    // by a gradle-${env}.properties file
-    // See https://github.com/stevesaliman/gradle-properties-plugin
-    // specify the env on the command line with:
-    // gradle -PenvironmentName=x ...
-    id 'net.saliman.properties' version '1.4.6'
+## Using Gradle in DHF
 
-    // this is the data hub framework gradle plugin
-    // it includes ml-gradle. This plugin is what lets you
-    // run DHF (Data Hub Framework) tasks from the
-    // command line
-    id 'com.marklogic.ml-data-hub' version '4.0.1'
-}
-```
+To use DHF Gradle Plugin in the DHF flows (i.e., ingest and harmonize), see [DHF Gradle Plugin]({{site.baseurl}}/tools/gradle-plugin/).
 
-You can create multiple environment scoped properties files with the naming convention: `gradle-${env}.properties` where `${env}` is the environment the file is for. So if you wanted a **qa** environment file you would create `gradle-qa.properties`. For a **production** file it would be `gradle-production.properties`. By default, the DHF uses a `gradle-local.properties` for your **local** environment.
+To pass parameters to Gradle tasks, use the `-P` option.
 
-The contents of these environment files will override any values set in the gradle.properties file.
+{% include ostabs-run-gradle.html grtask="taskname ... -PparameterName=parameterValue ..." %}
 
-To specify an environment at runtime you must pass the `-PenvironmentName=xxx` option to the gradle command line. To run a Gradle command against the production file you would type:
+{% include note.html type="IMPORTANT" content="ml-gradle cannot be used to undeploy users, privileges, or amps." %}
 
-<pre class="cmdline">
-gradle -PenvironmentName=production ...
-</pre>
+### Running ml-gradle Tasks for Different Environments
 
-## MarkLogic Data Hub Setup tasks
-These tasks are for configuring the Data Hub Framework.
+You can run ml-gradle tasks for a specific environment (e.g., development, QA, production, local).
 
-### hubUpdate
-Update your DHF instance from a previous version. Run this after you update your build.gradle to point to a newer ml-data-hub plugin.
+1. For each environment, create a properties file with a filename in the format `gradle-${env}.properties`, where `${env}` is the environment the file is intended for.
 
-Before you can run this command you will need to update your build.gradle file manually to point to the latest version of the ml-data-hub plugin. For example, to use DHF version 4.0.1, your build.gradle file should contain the following:
+    **Examples:**
+    - For a `development` environment, create a file called `gradle-dev.properties`.
+    - For a `QA` environment, create a file called `gradle-qa.properties`.
+    - For a `production` environment, create a file called `gradle-prod.properties`.
 
-```groovy
-plugins {
-    // this is the data hub framework gradle plugin
-    // it includes ml-gradle. This plugin is what lets you
-    // run DHF (Data Hub Framework) tasks from the
-    // command line
-    id 'com.marklogic.ml-data-hub' version '4.0.1'
-}
-```
+    By default, DHF uses `gradle-local.properties` for your local environment.
 
-Then run the command:
-<pre class="cmdline">
-gradle hubUpdate
-</pre>
+1. Enter the environment-specific property settings inside the appropriate properties file. The contents of these environment files will override any values set in the `gradle.properties` file.
 
-### hubEnableDebugging
-Enable Extra Debugging within the Data Hub Framework
-<pre class="cmdline">
-gradle hubEnableDebugging
-</pre>
----
-### hubDisableDebugging
-Disable Extra Debugging within the Data Hub Framework
-<pre class="cmdline">
-gradle hubDisableDebugging
-</pre>
----
-### hubEnableTracing
-Enable Tracing within the Data Hub Framework
-<pre class="cmdline">
-gradle hubEnableTracing
-</pre>
----
-### hubDisableTracing
-Disable Tracing within the Data Hub Framework
-<pre class="cmdline">
-gradle hubDisableTracing
-</pre>
----
-### hubInstallModules
-Install the Data Hub Framework's built-in modules into MarkLogic
-<pre class="cmdline">
-gradle hubInstallModules
-</pre>
----
-### hubInfo
-Print out some basic info about the Data Hub Framework config
-<pre class="cmdline">
-gradle hubInfo
-</pre>
+1. To specify an environment at runtime, use the `-PenvironmentName=xxx` option.
 
-## MarkLogic Data Hub Scaffolding tasks
+    **Example:** To run a Gradle command against the production environment,
+
+      {% include ostabs-run-gradle.html grtask="taskname ... -PenvironmentName=production ..." %}
+
+
+## MarkLogic Data Hub Setup Tasks
+These tasks are used to configure the Data Hub Framework and manage the data hub.
+
+<dl>
+
+<dt>hubUpdate</dt>
+<dd>Updates your DHF instance to a newer version.
+  {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
+
+  <div markdown="1">
+  Before you run the `hubUpdate` task, edit the `build.gradle` file. Under `plugins`, change the value of `'com.marklogic.ml-data-hub' version` to the new DHF version.
+
+  **Example:** If you are updating to DHF 4.1.0,
+  ```
+  plugins {
+      id 'com.marklogic.ml-data-hub' version '4.0.1'
+  }
+  ```
+  </div>
+
+  {% include conrefs/conref-remark-hubupdate-verbose.md %}
+</dd>
+
+<dt>hubEnableDebugging</dt>
+<dd>Enables extra debugging features in DHF.
+  {% include ostabs-run-gradle.html grtask="hubEnableDebugging" %}
+</dd>
+
+<dt>hubDisableDebugging</dt>
+<dd>Disables extra debugging features in DHF.
+  {% include ostabs-run-gradle.html grtask="hubDisableDebugging" %}
+</dd>
+
+<dt>hubEnableTracing</dt>
+<dd>Enables tracing in DHF.
+  {% include ostabs-run-gradle.html grtask="hubEnableTracing" %}
+</dd>
+
+<dt>hubDisableTracing</dt>
+<dd>Disables tracing in DHF.
+  {% include ostabs-run-gradle.html grtask="hubDisableTracing" %}
+</dd>
+
+<dt>hubInfo</dt>
+<dd>Prints out basic info about the DHF configuration.
+  {% include ostabs-run-gradle.html grtask="hubInfo" %}
+</dd>
+
+<dt>mlDeploy</dt>
+<dd>Uses `hubPreinstallCheck` to deploy your DHF project.
+  {% include ostabs-run-gradle.html grtask="mlDeploy" %}
+</dd>
+
+<dt>hubDeployAmps</dt>
+<dd>Deploys the amps included in the DHF .jar file.
+  {% include ostabs-run-gradle.html grtask="hubDeployAmps" %}
+</dd>
+
+<dt>mlUpdateIndexes</dt>
+<dd>Updates the properties of every database without creating or updating forests. Many properties of a database are related to indexing.
+  {% include ostabs-run-gradle.html grtask="mlUpdateIndexes" %}
+</dd>
+
+<dt>mlWatch</dt>
+<dd>Extends ml-gradle's WatchTask by ensuring that modules in DHF-specific folders (`plugins` and `entity-config`) are monitored.
+  {% include ostabs-run-gradle.html grtask="mlWatch" %}
+</dd>
+
+<dt>hubInstallModules</dt>
+<dd>Installs the hub modules from the DHF .jar file to the MarkLogic server.
+  {% include ostabs-run-gradle.html grtask="hubInstallModules" %}
+</dd>
+
+<dt>hubDeployUserModules</dt>
+<dd>Loads the user modules from the DHF-specific folders (`plugins` and `entity-config`).
+  {% include ostabs-run-gradle.html grtask="hubDeployUserModules" %}
+</dd>
+
+<dt>mlClearModulesDatabase</dt>
+<dd>Clears modules in the modules database, except the DHF-specific modules deployed by `hubInstallModules` from the DHF .jar file.
+  {% include ostabs-run-gradle.html grtask="mlClearModulesDatabase" %}
+</dd>
+
+<dt>hubDeleteModuleTimestampsFile</dt>
+<dd>Deletes the module timestamps file that DHF uses for DHF-specific module locations.
+  {% include ostabs-run-gradle.html grtask="hubDeleteModuleTimestampsFile" %}
+</dd>
+
+<dt>mlDeleteModuleTimestampsFile</dt>
+<dd>Uses `hubDeleteModuleTimestampsFile` to delete both module timestamps files.
+  {% include ostabs-run-gradle.html grtask="mlDeleteModuleTimestampsFile" %}
+</dd>
+
+</dl>
+
+
+## MarkLogic Data Hub Scaffolding Tasks
 These tasks allow you to scaffold projects, entities, and flows.
 
-### hubInit
-Initialize the current directory as a Data Hub Framework project
-<pre class="cmdline">
-gradle hubInit
-</pre>
+<dt>hubInit</dt>
+<dd>Initializes the current directory as a DHF project.
+  {% include ostabs-run-gradle.html grtask="hubInit" %}
+</dd>
 
-### hubCreateEntity
-Create a boilerplate entity
-<pre class="cmdline">
-gradle hubCreateEntity -PentityName=yourentityname
-</pre>
-#### Parameters
-##### Required
-- **entityName** - the entity name to create
+<dt>hubCreateEntity</dt>
+<dd>Creates a boilerplate entity.
+  {% include ostabs-run-gradle.html grtask="hubCreateEntity -PentityName=yourentityname" %}
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **entityName** | (Required) The name of the entity to create. |
+  {:.table-b1gray}
+  </div>
+</dd>
 
-### hubCreateInputFlow
-Create an input flow
-<pre class="cmdline">
-gradle hubCreateInputFlow \
-  -PentityName=yourentityname \
-  -PflowName=yourflowname \
-  -PdataFormat=(xml|json) \
-  -PpluginFormat=(xqy|sjs)
-</pre>
-#### Parameters
-##### Required
-- **entityName** - the name of the entity that owns the flow
-- **flowName** - the name of the input flow to create
+<dt>hubCreateInputFlow</dt>
+<dd>Creates an input flow.
+  {% include ostabs-run-gradle.html grtask="hubCreateInputFlow -PentityName=yourentityname -PflowName=yourflowname -PdataFormat=(xml|json) -PpluginFormat=(xqy|sjs)" %}
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **entityName** | (Required) The name of the entity that owns the flow. |
+  | **flowName**   | (Required) The name of the input flow to create. |
+  | **dataFormat** | `xml` or `json`. Default is `json`. |
+  {:.table-b1gray}
+  </div>
+</dd>
 
-##### Optional
-- **dataFormat** - xml or json
+<dt>hubCreateHarmonizeFlow</dt>
+<dd>Creates a harmonization flow.
+  {% include ostabs-run-gradle.html grtask="hubCreateHarmonizeFlow -PentityName=yourentityname -PflowName=yourflowname -PdataFormat=(xml|json) -PpluginFormat=(xqy|sjs) -PmappingName=yourmappingname" %}
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **entityName**   | (Required) The name of the entity that owns the flow. |
+  | **flowName**     | (Required) The name of the harmonize flow to create. |
+  | **dataFormat**   | `xml` or `json`. Default is `json`. |
+  | **pluginFormat** | `xqy` or `sjs`. The plugin programming language. |
+  | **mappingName**  | The name of a model-to-model mapping to use during code generation. |
+  {:.table-b1gray}
+  </div>
+</dd>
 
-##### Default Values
-- **dataFormat**=json
+<dt>hubGeneratePii</dt>
+<dd><span markdown="1">Generates security configuration files for protecting entity properties designated as Personally Identifiable Information (PII). For details, see [Managing Personally Identifiable Information]({{site.baseurl}}/govern/pii).</span>
+  {% include ostabs-run-gradle.html grtask="hubGeneratePii" %}
+</dd>
 
-### hubCreateHarmonizeFlow
-Create a harmonize flow
-<pre class="cmdline">
-gradle hubCreateHarmonizeFlow \
-  -PentityName=yourentityname \
-  -PflowName=yourflowname \
-  -PdataFormat=(xml|json) \
-  -PpluginFormat=(xqy|sjs) \
-  -PmappingName=yourmappingname
-</pre>
-#### Parameters
-##### Required
-- **entityName** - the name of the entity that owns the flow
-- **flowName** - the name of the harmonize flow to create
-
-##### Optional
-- **dataFormat** - xml or json
-- **pluginFormat** - xqy or sjs; the plugin programming language
-- **mappingName** - the name of a model-to-model mapping to use during code generation
-
-##### Default Values
-- **dataFormat**=json
-
-### hubGeneratePii
-Generate security configuration files for protecting entity properties designated as Personally Identifiable Information (PII). For details, see [Managing Personally Identifiable Information]({{site.baseurl}}/govern/pii).
-<pre class="cmdline">
-gradle hubGeneratePii
-</pre>
 
 ## MarkLogic Data Hub Flow Management tasks
-These tasks allow you to run and clean up after flows.
+These tasks allow you to run flows and clean up.
 
-### hubRunFlow
-Run a harmonize flow
+<dt>hubRunFlow</dt>
+<dd>Runs a harmonization flow.
+  {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=yourentityname -PflowName=yourflowname -PbatchSize=100 -PthreadCount=4 -PsourceDB=data-hub-STAGING-PdestDB=data-hub-FINAL -PshowOptions=(true|false)" %}
 
-<pre class="cmdline">
-gradle hubRunFlow \
-  -PentityName=yourentityname \
-  -PflowName=yourflowname \
-  -PbatchSize=100 \
-  -PthreadCount=4 \
-  -PsourceDB=data-hub-STAGING\
-  -PdestDB=data-hub-FINAL \
-  -PshowOptions=(true|false)
-</pre>
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **entityName**  | (Required) The name of the entity containing the harmonize flow. |
+  | **flowName**    | (Required) The name of the harmonize flow to run. |
+  | **batchSize**   | The number of items to include in a batch. Default is 100. |
+  | **threadCount** | The number of threads to run. Default is 4. |
+  | **sourceDB**    | The name of the database to run against. Default is the name of your staging database. |
+  | **destDB**      | The name of the database to put harmonized results into. Default is the name of your final database. |
+  | **showOptions** | Whether or not to print out options that were passed in to the command. Default is `false`. |
+  {:.table-b1gray}
 
-#### Parameters
-##### Required
-- **entityName** - the name of the entity containing the harmonize flow
-- **flowName** - the name of the harmonize flow to run
+  You can also pass custom key-value parameters to your flows. These key-value pairs will be available in the $options (xqy) or options (sjs) passed to your flows. To pass custom key-value pairs, prefix your keys with `dhf`.
+  </div>
 
-##### Optional
-- **batchSize** - the number of items to include in a batch.
-- **threadCount** - the number of threads to run
-- **sourceDB** - the name of the database to run against
-- **destDB** - the name of the database to put harmonized results into
-- **showOptions** - whether or not to print out options that were passed in to the command
+  <span markdown="1">**Example:**</span>
 
-##### Default Values
-- batchSize=100
-- threadCount=4
-- sourceDB=the name of your staging db
-- destDB=the name of your final db
-- showOptions=false
+  {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=yourentityname -PflowName=yourflowname -Pdhf.myKey=myValue -Pdhf.myOtherKey=myOtherValue" %}
 
-#### Passing Extra Options
-You can also pass arbitrary key=value parameters to your flows. These key=value pairs will be available in the $options (xqy) or options (sjs) passed to your flows.
+  <div markdown="1">
+  The following options become available:
+  ```json
+    {
+      "myKey": "myValue",
+      "myOtherKey": "myOtherValue"
+    }
+  ```
+  </div>
+</dd>
 
-Simply prefix your keys with **dhf**:
-<pre class="cmdline">
-gradle hubRunFlow \
-  -PentityName=yourentityname \
-  -PflowName=yourflowname \
-  -Pdhf.myKey=myValue \
-  -Pdhf.myOtherKey=myOtherValue
-</pre>
+<dt>hubDeleteJobs</dt>
+<dd>Deletes job records and their associated traces. This task does not affect the contents of the staging or final databases.
 
-then you will get something like this in your options:
-```json
-  {
-    "myKey": "myValue",
-    "myOtherKey": "myOtherValue"
-  }
-```
+  {% include ostabs-run-gradle.html grtask="hubDeleteJobs -PjobIds=list-of-ids" %}
 
-### hubDeleteJobs
-Delete job records and the traces that go with them. Does not affect the content of the staging or final databases.
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **jobIds** | (Required) A comma-separated list of job IDs to delete. |
+  {:.table-b1gray}
+  </div>
+</dd>
 
-<pre class="cmdline">
-gradle hubDeleteJobs \
-  -PjobIds=list-of-ids
-</pre>
+<dt>hubExportJobs</dt>
+<dd>Exports job records and their associated traces. This task does not affect the contents of the staging or final databases.
 
-#### Parameters
-##### Required
-- **jobIds** - a comma-separated list of job IDs to delete
+  {% include ostabs-run-gradle.html grtask="hubExportJobs -PjobIds=list-of-ids -Pfilename=export.zip" %}
 
-### hubExportJobs
-Export job records and the traces that go with them. Does not affect the content of the staging or final databases.
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **jobIds**   | A comma-separated list of job IDs to export. Any traces associated with those jobs will be exported. |
+  | **filename** | The name of the zip file to generated, including the file extension. Default is `jobexport.zip`. |
+  {:.table-b1gray}
+  </div>
+</dd>
 
-<pre class="cmdline">
-gradle hubExportJobs \
-  -PjobIds=list-of-ids \
-  -Pfilename=export.zip
-</pre>
 
-#### Parameters
-##### Optional
-- **jobIds** - a comma-separated list of job IDs to export. Any traces
-  associated with those jobs will be exported.
-- **filename** - name of the zip file to be generated, including extension
-  (default: "jobexport.zip")
+## Uninstalling Your MarkLogic Data Hub
 
-## Uninstalling MarkLogic Data Hub
-
-### mlUndeploy
-Removes all components of your data hub on MarkLogic, including databases, application servers, forests, and users.
-
-<pre class="cmdline">
-./gradlew mlUndeploy \
-  -Pconfirm=true
-</pre>
+<dt>mlUndeploy</dt>
+<dd>Removes all components of your data hub from the MarkLogic server, including databases, application servers, forests, and users.
+  {% include ostabs-run-gradle.html grtask="mlUndeploy -Pconfirm=true" %}
+</dd>

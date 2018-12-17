@@ -23,7 +23,7 @@ The notes and steps in this tab are for the following upgrade paths:
     - Copies some settings from the old configuration files to the new ones. (You must still manually copy any custom configurations.)
 
 
-- {% include_relative conref-remark-hubupdate-verbose.md %}
+- {% include conrefs/conref-remark-hubupdate-verbose.md %}
 
 
 ### Steps
