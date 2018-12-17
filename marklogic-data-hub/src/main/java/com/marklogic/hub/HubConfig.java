@@ -30,7 +30,8 @@ import java.nio.file.Path;
 /**
  * An interface to set, manage and recall the Data Hub's Configuration.
  * HubConfig has a singleton scope so set everything you want at the start of the application and
- * and then call {@link #refreshProject()} to wire up all clients.
+ * and then call {@link #refreshProject()} to wire up all clients and load the properties from gradle.properties
+ * (optionally overridden with gradle-{env}.properties).
  */
 @JsonDeserialize(as = HubConfigImpl.class)
 @JsonSerialize(as = HubConfigImpl.class)
