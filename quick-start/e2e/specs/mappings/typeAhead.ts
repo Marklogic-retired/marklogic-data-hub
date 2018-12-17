@@ -208,6 +208,12 @@ export default function() {
         await appPage.flowsTab.click();
         flowPage.isLoaded();
       });
+      
+      it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
+        await flowPage.redeployButton.click();
+        browser.sleep(5000);
+      });
 
       it('should create Harmonize WorldBank flow', async function() {
         browser.get('http://localhost:8080/#/flows');
