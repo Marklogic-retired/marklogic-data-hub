@@ -15,7 +15,7 @@
     "webdriver-update": "webdriver-manager update",
     "storybook": "start-storybook -p 6006 -s ./src/main/ui/assets",
     "storybook:build": "build-storybook -o site/docs/mlui-storybook -s ./src/main/ui/assets",
-    "docs:build": "./node_modules/.bin/compodoc -p ./tsconfig.json -n MLUI-OpsDirector --theme readthedocs -d site/docs/mlui-angular-docs/ --hideGenerator --disableGraph"
+    "docs:build": "./node_modules/.bin/compodoc -p ./tsconfig.json -n DHF-QuickStart --theme readthedocs -d site/docs/mlui-angular-docs/ --hideGenerator --disableGraph"
   },
   "private": true,
   "dependencies": {
