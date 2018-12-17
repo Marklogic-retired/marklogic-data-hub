@@ -99,7 +99,7 @@ public class HubConfigTest extends HubTestBase {
             props.put("mlFinalExternalName", extName);
         props.put("mlFinalSimpleSsl", sslMethod);
         //if sslContext is set , it is assumed that it is a secure connection, hence unsetting them
-        if(! sslMethod && !isCertAuth()) {
+        if(! sslMethod) {
             adminHubConfig.setSslContext(DatabaseKind.FINAL, null);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, null);
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, null);
