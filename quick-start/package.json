@@ -14,7 +14,8 @@
     "e2e": "./node_modules/.bin/ng e2e",
     "webdriver-update": "webdriver-manager update",
     "storybook": "start-storybook -p 6006 -s ./src/main/ui/assets",
-    "storybook:build": "build-storybook -o site/docs/mlui-storybook -s ./src/main/ui/assets"
+    "storybook:build": "build-storybook -o site/docs/mlui-storybook -s ./src/main/ui/assets",
+    "docs:build": "./node_modules/.bin/compodoc -p ./tsconfig.json -n MLUI-OpsDirector --theme readthedocs -d site/docs/mlui-angular-docs/ --hideGenerator --disableGraph"
   },
   "private": true,
   "dependencies": {
@@ -34,6 +35,7 @@
     "classlist.js": "^1.1.20150312",
     "clipboard": "^2.0.1",
     "codemirror": "^5.40.2",
+    "compodoc": "0.0.41",
     "core-js": "^2.5.7",
     "date-fns": "^1.29.0",
     "font-awesome": "^4.7.0",
