@@ -74,6 +74,7 @@ The notes and steps in this tab are for the following upgrade paths:
     b. Add the following properties and replace the values accordingly.
 
       ```
+      mlDHFVersion=4.1.0
       mlModulesDbName=data-hub-MODULES
       mlModulesForestsPerHost=1
       ```
@@ -94,7 +95,7 @@ The notes and steps in this tab are for the following upgrade paths:
 
 ### Remarks
 
-Running `mlUndeploy` would leave the following obsolete resources behind:
+After running `mlUndeploy`, delete the following obsolete resources:
 - data-hub-staging-MODULES database and forest
 - data-hub-final-MODULES database and forest
 </div>

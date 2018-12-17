@@ -13,8 +13,11 @@ The DHF Gradle Plugin (ml-data-hub) expands ml-gradle with DHF-specific tasks an
 - `hub-internal-config` (`your-project-root/src/main/hub-internal-config`)
 - `ml-config` (`your-project-root/src/main/ml-config`)
 
-This page provides a complete list of all of the Gradle tasks available in DHF Gradle Plugin (ml-data-hub). These tasks are either customized for DHF from the ml-gradle implementation (tasks with names starting with `ml`) or created specifically for DHF (tasks with names starting with `hub`). See the [ml-gradle wiki](https://github.com/marklogic-community/ml-gradle/wiki) for descriptions of the default behavior of customized tasks.
+This page provides a complete list of all of the Gradle tasks available in DHF Gradle Plugin (ml-data-hub). These tasks are either customized for DHF from the ml-gradle implementation (tasks with names starting with `ml`) or created specifically for DHF (tasks with names starting with `hub`). See [ml-gradle Common Tasks](
+https://github.com/marklogic-community/ml-gradle/wiki/Common-tasks) or [ml-gradle Task Reference](https://github.com/marklogic-community/ml-gradle/wiki/Task-reference) for the default (non-DHF) behavior of ml-gradle tasks.
 
+
+In this page:
 - [Using Gradle in DHF](#using-gradle-in-dhf)
 - [MarkLogic Data Hub Setup tasks](#marklogic-data-hub-setup-tasks)
 - [MarkLogic Data Hub Scaffolding tasks](#marklogic-data-hub-scaffolding-tasks)
@@ -29,8 +32,6 @@ To use DHF Gradle Plugin in the DHF flows (i.e., ingest and harmonize), see [DHF
 To pass parameters to Gradle tasks, use the `-P` option.
 
 {% include ostabs-run-gradle.html grtask="taskname ... -PparameterName=parameterValue ..." %}
-
-{% include note.html type="IMPORTANT" content="ml-gradle cannot be used to undeploy users, privileges, or amps." %}
 
 ### Running ml-gradle Tasks for Different Environments
 
@@ -59,6 +60,31 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
 
 <dl>
 
+<dt>mlDeploy</dt>
+<dd>Uses `hubPreinstallCheck` to deploy your DHF project.
+  {% include ostabs-run-gradle.html grtask="mlDeploy" %}
+</dd>
+
+<dt>mlWatch</dt>
+<dd>Extends ml-gradle's WatchTask by ensuring that modules in DHF-specific folders (`plugins` and `entity-config`) are monitored.
+  {% include ostabs-run-gradle.html grtask="mlWatch" %}
+</dd>
+
+<dt>mlUpdateIndexes</dt>
+<dd>Updates the properties of every database without creating or updating forests. Many properties of a database are related to indexing.
+  {% include ostabs-run-gradle.html grtask="mlUpdateIndexes" %}
+</dd>
+
+<!-- dt>mlClearModulesDatabase</dt>
+<dd>Clears modules in the modules database, except the DHF-specific modules deployed by `hubInstallModules` from the DHF .jar file.
+  {% include ostabs-run-gradle.html grtask="mlClearModulesDatabase" %}
+</dd -->
+
+<!-- dt>mlDeleteModuleTimestampsFile</dt>
+<dd>Uses `hubDeleteModuleTimestampsFile` to delete both module timestamps files.
+  {% include ostabs-run-gradle.html grtask="mlDeleteModuleTimestampsFile" %}
+</dd -->
+
 <dt>hubUpdate</dt>
 <dd>Updates your DHF instance to a newer version.
   {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
@@ -69,12 +95,17 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
   **Example:** If you are updating to DHF 4.1.0,
   ```
   plugins {
-      id 'com.marklogic.ml-data-hub' version '4.0.1'
+      id 'com.marklogic.ml-data-hub' version '4.1.0'
   }
   ```
   </div>
 
   {% include conrefs/conref-remark-hubupdate-verbose.md %}
+</dd>
+
+<dt>hubInfo</dt>
+<dd>Prints out basic info about the DHF configuration.
+  {% include ostabs-run-gradle.html grtask="hubInfo" %}
 </dd>
 
 <dt>hubEnableDebugging</dt>
@@ -97,55 +128,25 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
   {% include ostabs-run-gradle.html grtask="hubDisableTracing" %}
 </dd>
 
-<dt>hubInfo</dt>
-<dd>Prints out basic info about the DHF configuration.
-  {% include ostabs-run-gradle.html grtask="hubInfo" %}
-</dd>
-
-<dt>mlDeploy</dt>
-<dd>Uses `hubPreinstallCheck` to deploy your DHF project.
-  {% include ostabs-run-gradle.html grtask="mlDeploy" %}
-</dd>
-
-<dt>hubDeployAmps</dt>
+<!-- dt>hubDeployAmps</dt>
 <dd>Deploys the amps included in the DHF .jar file.
   {% include ostabs-run-gradle.html grtask="hubDeployAmps" %}
-</dd>
+</dd -->
 
-<dt>mlUpdateIndexes</dt>
-<dd>Updates the properties of every database without creating or updating forests. Many properties of a database are related to indexing.
-  {% include ostabs-run-gradle.html grtask="mlUpdateIndexes" %}
-</dd>
-
-<dt>mlWatch</dt>
-<dd>Extends ml-gradle's WatchTask by ensuring that modules in DHF-specific folders (`plugins` and `entity-config`) are monitored.
-  {% include ostabs-run-gradle.html grtask="mlWatch" %}
-</dd>
-
-<dt>hubInstallModules</dt>
+<!-- dt>hubInstallModules</dt>
 <dd>Installs the hub modules from the DHF .jar file to the MarkLogic server.
   {% include ostabs-run-gradle.html grtask="hubInstallModules" %}
-</dd>
+</dd -->
 
-<dt>hubDeployUserModules</dt>
+<!-- dt>hubDeployUserModules</dt>
 <dd>Loads the user modules from the DHF-specific folders (`plugins` and `entity-config`).
   {% include ostabs-run-gradle.html grtask="hubDeployUserModules" %}
-</dd>
+</dd -->
 
-<dt>mlClearModulesDatabase</dt>
-<dd>Clears modules in the modules database, except the DHF-specific modules deployed by `hubInstallModules` from the DHF .jar file.
-  {% include ostabs-run-gradle.html grtask="mlClearModulesDatabase" %}
-</dd>
-
-<dt>hubDeleteModuleTimestampsFile</dt>
+<!-- dt>hubDeleteModuleTimestampsFile</dt>
 <dd>Deletes the module timestamps file that DHF uses for DHF-specific module locations.
   {% include ostabs-run-gradle.html grtask="hubDeleteModuleTimestampsFile" %}
-</dd>
-
-<dt>mlDeleteModuleTimestampsFile</dt>
-<dd>Uses `hubDeleteModuleTimestampsFile` to delete both module timestamps files.
-  {% include ostabs-run-gradle.html grtask="mlDeleteModuleTimestampsFile" %}
-</dd>
+</dd -->
 
 </dl>
 
@@ -240,19 +241,6 @@ These tasks allow you to run flows and clean up.
   </div>
 </dd>
 
-<dt>hubDeleteJobs</dt>
-<dd>Deletes job records and their associated traces. This task does not affect the contents of the staging or final databases.
-
-  {% include ostabs-run-gradle.html grtask="hubDeleteJobs -PjobIds=list-of-ids" %}
-
-  <div markdown="1">
-  | Parameter | Description |
-  |---|---|
-  | **jobIds** | (Required) A comma-separated list of job IDs to delete. |
-  {:.table-b1gray}
-  </div>
-</dd>
-
 <dt>hubExportJobs</dt>
 <dd>Exports job records and their associated traces. This task does not affect the contents of the staging or final databases.
 
@@ -263,6 +251,19 @@ These tasks allow you to run flows and clean up.
   |---|---|
   | **jobIds**   | A comma-separated list of job IDs to export. Any traces associated with those jobs will be exported. |
   | **filename** | The name of the zip file to generated, including the file extension. Default is `jobexport.zip`. |
+  {:.table-b1gray}
+  </div>
+</dd>
+
+<dt>hubDeleteJobs</dt>
+<dd>Deletes job records and their associated traces. This task does not affect the contents of the staging or final databases.
+
+  {% include ostabs-run-gradle.html grtask="hubDeleteJobs -PjobIds=list-of-ids" %}
+
+  <div markdown="1">
+  | Parameter | Description |
+  |---|---|
+  | **jobIds** | (Required) A comma-separated list of job IDs to delete. |
   {:.table-b1gray}
   </div>
 </dd>

@@ -52,7 +52,13 @@ The notes and steps in this tab are for the following upgrade paths:
 
 1. {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
 
-1. Copy any custom database/server configurations from the old (renamed) config files to the new ones.
+1. Edit your `gradle.properties` file, and add the following property.
+
+      ```
+      mlDHFVersion=4.1.0
+      ```
+
+1. Copy any custom database/server configurations from the old (renamed) configuration files to the new ones.
 
     | copy from | paste to |
     |---|---|

@@ -379,12 +379,14 @@ This directory contains subdirectories and JSON files used to configure your DHF
 
 You can add custom modules and transforms, as well as other configuration artifacts, in this directory.
 
-The following files are found only in the `ml-config` directory only:
+The following files are found in the `ml-config` directory only:
 - `final-database.json`
 - `final-schemas-database.json`
 - `final-triggers-database.json`
 - `modules-database.json`
 - `final-server.json`
+
+{% include note.html type="IMPORTANT" content="Starting with DHF 4.1.0, custom triggers must be added to `ml-config/databases/(database name)/triggers`. (In previous versions, triggers were added to `hub-internal-config/triggers` or `ml-config/triggers`.) See [ml-grade Project Layout](https://github.com/marklogic-community/ml-gradle/wiki/Project-layout#database-specific-resources) for more information on triggers." %}
 
 
 ### src/main/ml-modules

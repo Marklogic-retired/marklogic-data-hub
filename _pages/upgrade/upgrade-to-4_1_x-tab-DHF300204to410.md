@@ -76,6 +76,7 @@ The notes and steps in this tab are for the following upgrade paths:
     b. Add the following properties and replace the values accordingly.
 
       ```
+      mlDHFVersion=4.1.0
       mlStagingTriggersDbName=data-hub-staging-TRIGGERS
       mlStagingTriggersForestsPerHost=1
       mlStagingSchemasDbName=data-hub-staging-SCHEMAS
