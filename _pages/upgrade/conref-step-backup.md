@@ -1,1 +1,0 @@
-Back up your project. For example, ensure your project is under source control and all changes are checked in.

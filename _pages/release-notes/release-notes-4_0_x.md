@@ -1,10 +1,10 @@
 ---
 layout: inner
-title: DHF 4.0.x Release Notes
+title: Release Notes for DHF 4.0.x
 permalink: /release-notes/release-notes-4_0_x/
 ---
 
-# DHF 4.0.x Release Notes
+# Release Notes for DHF 4.0.x
 
 * [New Features in DHF 4.0.0](#new-features-in-dhf-4.0.0)
 * [Changes and Incompatibilities](#changes-and-incompatibilities)

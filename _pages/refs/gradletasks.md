@@ -13,7 +13,11 @@ The DHF Gradle Plugin (ml-data-hub) expands ml-gradle with DHF-specific tasks an
 - `hub-internal-config` (`your-project-root/src/main/hub-internal-config`)
 - `ml-config` (`your-project-root/src/main/ml-config`)
 
-This page provides a complete list of all of the Gradle tasks available in DHF Gradle Plugin (ml-data-hub). These tasks are either customized for DHF from the ml-gradle implementation (tasks with names starting with `ml`) or created specifically for DHF (tasks with names starting with `hub`). See [ml-gradle Common Tasks](
+This page provides a complete list of all of the Gradle tasks available in DHF Gradle Plugin (ml-data-hub).
+- Tasks with names starting with `ml` are customized for DHF from the ml-gradle implementation.
+- Tasks with names starting with `hub` are created specifically for DHF.
+
+See [ml-gradle Common Tasks](
 https://github.com/marklogic-community/ml-gradle/wiki/Common-tasks) or [ml-gradle Task Reference](https://github.com/marklogic-community/ml-gradle/wiki/Task-reference) for the default (non-DHF) behavior of ml-gradle tasks.
 
 

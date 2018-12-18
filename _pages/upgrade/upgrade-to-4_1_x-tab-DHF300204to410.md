@@ -11,7 +11,7 @@ The notes and steps in this tab are for the following upgrade paths:
 
 - The `hubUpdate` Gradle task makes the following changes.
 
-    - Renames old configuration directories.
+    - Renames old configuration directories under your project root.
 
       | old directory | new directory |
       |---|---|
@@ -20,31 +20,33 @@ The notes and steps in this tab are for the following upgrade paths:
       | `entity-config` | `entity-config.old` |
       {:.table-b1gray}
 
-    - Overwrites the existing databases and server files with the new project directory structure (*root*`/src/main` and its subdirectories) and new files.
+    - Creates the new project directory structure (`your-project-root/src/main` and its subdirectories) and new files.
 
-    - Copies some settings from the old configuration files to the new ones. <!-- TODO: What are these settings? -->
+    - Copies some settings from the old configuration files to the new ones.
 
+    - Updates all flows to use updated imports. See the [notes to upgrade to 4.0.0] ]({{site.baseurl}}https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x).
 
 - {% include conrefs/conref-remark-hubupdate-verbose.md %}
 
+- If custom configurations (i.e., from `user-config`) are missing, you must manually copy them to `ml-config`.
 
-- You might need to update your custom plugins for the flows as follows.
+- Because DHF 3.0.0 and DHF 2.0.4+ had only a single schemas database and a single triggers database, you must decide whether to use those existing databases as the staging databases or as the final databases in DHF 4.1.0. The settings in `gradle.properties` (and possibly other configurations) depend on your decision.
 
-    - Update all flows to use updated imports. See the [notes to upgrade to 4.0.0] ]({{site.baseurl}}https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x).
+  | DHF 3.0.0 and 2.0.4+ | DHF 4.x |
+  |---|---|
+  | `data-hub-SCHEMAS` database | `data-hub-staging-SCHEMAS` database<br>`data-hub-final-SCHEMAS` database |
+  | `data-hub-TRIGGERS` dtabase | `data-hub-staging-TRIGGERS` database<br>`data-hub-final-TRIGGERS` database |
 
-    - If configurations (i.e., from `user-config`) are missing, you must manually copy them to `ml-config`.
-
-
+<!--
 - In 4.0.0, the return type for plugins was changed to `objectNode()`. If your custom plugins contains lines that convert a plugin parameter using `.toObject()`, those lines of code must be removed or commented out.
 
     **Examples:**
         - `content = content.toObject()` in header.sjs under input directory
         - `envelope = envelope.toObject()` in writer.sjs under harmonize directory
+-->
 
 
 ### Steps
-
-1. {% include_relative conref-step-backup.md %}
 
 1. In your `build.gradle` file, replace all occurrences of your old DHF version number with `4.1.0`.
 
@@ -89,7 +91,7 @@ The notes and steps in this tab are for the following upgrade paths:
       mlHubAdminUserName=hub-admin-user
       ```
 
-    c. (Optional) Add default modules permissions.
+    c. Add default modules permissions.
 
       ```
       mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,data-hub-role,read,data-hub-role,execute

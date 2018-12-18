@@ -10,25 +10,20 @@ The notes and steps in this tab are for the following upgrade paths:
 
 - The `hubUpdate` task makes the following changes.
 
-    - Renames old configuration directories in your DHF project under `/src/main`.
+    - Archives existing configuration directories under `your-project-root/src/main`.
 
-      | old directory | new directory |
+      | old directory | new archive directory |
       |---|---|
       | `hub-internal-config` | `hub-internal-config-4.0.0` |
       | `ml-config` | `ml-config-4.0.0` |
       {:.table-b1gray}
 
-    - Overwrites the existing databases and server files with the new project directory structure (*root*`/src/main` and its subdirectories) and new files.
-
-    - Copies some settings from the old configuration files to the new ones. (You must still manually copy any custom configurations.)
-
+    - Overwrites the existing databases, server directories, and the security directory.
 
 - {% include conrefs/conref-remark-hubupdate-verbose.md %}
 
 
 ### Steps
-
-1. {% include_relative conref-step-backup.md %}
 
 1. In your `build.gradle` file, replace all occurrences of your old DHF version number with `4.1.0`.
 
@@ -48,9 +43,9 @@ The notes and steps in this tab are for the following upgrade paths:
 
 1. {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
 
-1. Copy any custom database/server configurations from the old (renamed) config files to the new ones.
+1. In `your-project-root/src/main`, copy any custom database/server configurations from the archived configuration files to the new ones.
 
-    | copy from | paste to |
+    | copy from files in | paste to files in |
     |---|---|
     | `hub-internal-config-4.0.0` | `hub-internal-config` |
     | `ml-config-4.0.0` | `ml-config` |

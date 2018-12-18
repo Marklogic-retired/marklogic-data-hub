@@ -1,3 +1,9 @@
+---
+layout: inner
+title: Project Directory Structure
+permalink: /refs/project-structure-4_0_x/
+---
+
 # Project Directory Structure for DHF 4.0.x
 
 When you initialize a Data Hub Framework project using QuickStart or the `hubInit` gradle task, it sets up the following directory hierarchy. The diagram includes some placeholder entries so you can see, for example, how creation of entities, flows, and mappings interacts with the layout. An explanation of the sub-directories and files follows the diagram.
