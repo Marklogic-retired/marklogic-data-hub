@@ -4,7 +4,6 @@
  * This is a general purpose Gradle build.
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
  */
-
 plugins {
     id 'java'
     id 'eclipse'
@@ -50,15 +49,15 @@ dependencies {
     mlcp files("lib")
 }
 
-/*
+
 task importAllCustomers(type: com.marklogic.gradle.task.MlcpTask) {
 	doFirst {
 		classpath = configurations.mlcp
-		input_file_path = "/Users/sbalasub/git/marklogic-data-hub/examples/DHS-e2e/DHS/input/json/customers/"
+		input_file_path = "$mlInput" + "$customersPath"
 		input_file_type = "documents"
 		output_collections = "Customer,DHS"
 		output_permissions = "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowDeveloper,update,flowOperator,read,flowOperator,update,flowOperator,execute,flowOperator,insert"
-		output_uri_replace = "/Users/sbalasub/git/marklogic-data-hub/examples/DHS-e2e/DHS/input/json,''"
+		output_uri_replace = input_file_path + ",''" 
 		document_type = "json"
 		transform_module =  "/data-hub/4/transforms/mlcp-flow-transform.sjs"
 		transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
@@ -72,4 +71,4 @@ task importAllCustomers(type: com.marklogic.gradle.task.MlcpTask) {
 		restrict_hosts = true
 		}
 }
-*/
+
