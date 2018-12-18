@@ -506,7 +506,7 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void updateIndexes() {
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
 
         AppConfig appConfig = hubConfig.getAppConfig();
