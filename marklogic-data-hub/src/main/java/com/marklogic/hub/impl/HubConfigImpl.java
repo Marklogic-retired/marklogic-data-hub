@@ -1283,6 +1283,20 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlHubUserName", hubUserName);
         }
+        
+        if (hubAdminRoleName == null) {
+            hubAdminRoleName = getEnvPropString(projectProperties, "mlHubAdminRole", environment.getProperty("mlHubAdminRole"));
+        }
+        else {
+            projectProperties.setProperty("mlHubAdminRole", hubAdminRoleName);
+        }
+
+        if (hubAdminUserName == null) {
+            hubAdminUserName = getEnvPropString(projectProperties, "mlHubAdminUserName", environment.getProperty("mlHubAdminUserName"));
+        }
+        else {
+            projectProperties.setProperty("mlHubAdminUserName", hubAdminUserName);
+        }
 
         if (modulePermissions == null) {
             modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));

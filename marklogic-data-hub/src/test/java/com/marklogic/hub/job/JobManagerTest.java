@@ -92,6 +92,7 @@ public class JobManagerTest extends HubTestBase {
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
+        getHubFlowRunnerConfig();
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(10)
@@ -113,7 +114,7 @@ public class JobManagerTest extends HubTestBase {
             .onItemComplete(flowItemCompleteListener);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        jobManager = JobManager.create(getHubAdminConfig().newJobDbClient());
+        jobManager = JobManager.create(getHubFlowRunnerConfig().newJobDbClient());
     }
 
     @AfterEach
@@ -124,6 +125,7 @@ public class JobManagerTest extends HubTestBase {
 			e.printStackTrace();
 		}
     	disableTracing();
+    	getHubAdminConfig();
     }
     private static void recordJobId(String jobId) {
         jobIds.add(jobId);
