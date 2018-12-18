@@ -27,7 +27,7 @@ Place custom modules and libraries in the standard `ml-gradle` location under sr
 
 ## Can I change the source or destination database?
 
-Yes. Simply specify **sourceDB** and **finalDB** when [running your flow from Gradle](docs/gradletasks.md#hubrunflow).
+Yes. Simply specify **sourceDB** and **finalDB** when [running your flow from Gradle]({{site.baseurl}}/refs/gradle-tasks/#hubrunflow).
 
 By default the DHF reads from Staging and writes to Final.
 
@@ -41,7 +41,7 @@ gradle someTask -PmlUsername=admin -PmlUsername=admin
 </pre>
 
 ## How can I run a harmonize flow immediately for one document?
-See our [Harmonizing via REST page](harmonize/rest.md) for details on how to run a harmonize flow immediately without batching.
+See our [Harmonizing via REST page]({{site.baseurl}}/harmonize/rest/) for details on how to run a harmonize flow immediately without batching.
 
 ## How do I load binaries via an input flow?
 

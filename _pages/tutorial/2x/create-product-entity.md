@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Create the Product Entity
-lead_text: ''
 permalink: /tutorial/2x/create-product-entity/
 ---
 
@@ -23,4 +22,4 @@ You have just created an Entity, albeit not very useful since we didn't define a
 ![Product Entity]({{site.baseurl}}/images/2x/first-entity.png)
 
 ## Next Up
-[Create the Product Input Flow](../create-product-input-flow/)
+[Create the Product Input Flow]({{site.baseurl}}/tutorial/2x/create-product-input-flow/)

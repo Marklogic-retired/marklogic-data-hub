@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Create the Order Entity
-lead_text: ''
 permalink: /tutorial/2x/create-order-entity/
 ---
 
@@ -27,4 +26,4 @@ You have just created your second Entity.
 
 ## Up Next
 
-[Create the Order Input Flow](../create-order-input-flow/)
+[Create the Order Input Flow]({{site.baseurl}}/tutorial/2x/create-order-input-flow/)

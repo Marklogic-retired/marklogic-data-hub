@@ -8,9 +8,9 @@ redirect_from: "/understanding/architecture/"
 # DHF Tools
 
 The Data Hub Framework (DHF) includes the following tools:
-- [DHF QuickStart](/tools/quickstart/) is an easy-to-use user interface to create and manage a working data hub in a development environment.
-- [DHF Gradle Plugin](/tools/gradle-plugin/) allows you to set up and manipulate your data hub from the command line.
-- [DHF Java Library](/javadocs/) is the core of DHF. It handles the MarkLogic setup and deployment, as well as the execution of the flows.
+- [DHF QuickStart]({{site.baseurl}}/tools/quickstart/) is an easy-to-use user interface to create and manage a working data hub in a development environment.
+- [DHF Gradle Plugin]({{site.baseurl}}/tools/gradle-plugin/) allows you to set up and manipulate your data hub from the command line.
+- [DHF Java Library]({{site.baseurl}}/javadocs/) is the core of DHF. It handles the MarkLogic setup and deployment, as well as the execution of the flows.
 
 Other MarkLogic tools can also be used with DHF to ingest and harmonize your data:
 - [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp/)
@@ -19,4 +19,4 @@ Other MarkLogic tools can also be used with DHF to ingest and harmonize your dat
 
 
 ## See Also
-- [Using DHF](/using/)
+- [Using DHF]({{site.baseurl}}/using/)

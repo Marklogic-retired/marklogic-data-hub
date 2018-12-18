@@ -17,14 +17,15 @@ To use DHF QuickStart,
     ```
     java -jar quick-start-4.0.3.war
     ```
-1. [Create a project using QuickStart](/project/quickstart/) or point to the root directory of an existing project.
-1. [Ingest your data using QuickStart.](/ingest/quickstart/)
-1. [Harmonize your data using QuickStart.](/harmonize/quickstart/)
+1. [Create a project using QuickStart]({{site.baseurl}}/project/quickstart/) or point to the root directory of an existing project.
+1. [Ingest your data using QuickStart.]({{site.baseurl}}/ingest/quickstart/)
+1. [Harmonize your data using QuickStart.]({{site.baseurl}}/harmonize/quickstart/)
 
-{% include note.html type="NOTE" content="QuickStart is intended for the development environment only. For production, use the [DHF Gradle Plugin](/tools/gradle-plugin/) or the [DHF Java Library](/javadocs/)." %}
+QuickStart is intended for the development environment only. For production, use the DHF Gradle Plugin or the DHF Java Library.
 
 
 ## See Also
-- [DHF Gradle Plugin](/tools/gradle-plugin/)
-- [Tutorial on QuickStart](/tutorial/)
+- [DHF Gradle Plugin]({{site.baseurl}}/tools/gradle-plugin/)
+- [DHF Java Library]({{site.baseurl}}/javadocs/)
+- [Tutorial on QuickStart]({{site.baseurl}}/tutorial/)
 - [MarkLogic University courses using QuickStart](https://www.marklogic.com/?s=quickstart)

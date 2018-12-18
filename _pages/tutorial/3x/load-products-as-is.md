@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Load the Product Data As-Is
-lead_text: ''
-permalink: /tutorial/load-products-as-is/
+permalink: /tutorial/3x/load-products-as-is/
 ---
 
 # Getting Started Tutorial<br>Load the Product Data As-Is
@@ -73,4 +72,4 @@ You also see a flow diagram that enables you to examine the inputs and outputs f
 
 ## Up Next
 
-[Browse and Understand the Product Data](../browse-understand-product-data/)
+[Browse and Understand the Product Data]({{site.baseurl}}/tutorial/3x/browse-understand-product-data/)

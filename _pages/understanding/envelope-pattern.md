@@ -135,6 +135,6 @@ Now searching your data becomes much easier because you have a consistent field 
 
 
 ## See Also
-- [Entities](/understanding/entities/)
-- [Flows](/understanding/flows/)
-- [Plugins](/understanding/plugins/)
+- [Entities]({{site.baseurl}}/understanding/entities/)
+- [Flows]({{site.baseurl}}/understanding/flows/)
+- [Plugins]({{site.baseurl}}/understanding/plugins/)

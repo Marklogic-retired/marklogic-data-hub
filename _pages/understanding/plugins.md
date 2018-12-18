@@ -311,6 +311,7 @@ module.exports = {
 
 
 ## See Also
-- [Entities](/understanding/entities/)
-- [Plugins](/understanding/plugins/)
-- [Envelope Pattern](/understanding/envelope-pattern/)
+- [Project Directory Structure — Plugins Folder]({{site.baseurl}}/understanding/project-structure/#plugins-folder)
+- [Entities]({{site.baseurl}}/understanding/entities/)
+- [Plugins]({{site.baseurl}}/understanding/plugins/)
+- [Envelope Pattern]({{site.baseurl}}/understanding/envelope-pattern/)

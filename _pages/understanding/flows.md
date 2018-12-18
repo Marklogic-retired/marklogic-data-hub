@@ -47,6 +47,6 @@ Because harmonize flows run in batches, DHF uses the [Data Movement SDK (DMSDK)]
 
 
 ## See Also
-- [Entities](/understanding/entities/)
-- [Plugins](/understanding/plugins/)
-- [Envelope Pattern](/understanding/envelope-pattern/)
+- [Entities]({{site.baseurl}}/understanding/entities/)
+- [Plugins]({{site.baseurl}}/understanding/plugins/)
+- [Envelope Pattern]({{site.baseurl}}/understanding/envelope-pattern/)

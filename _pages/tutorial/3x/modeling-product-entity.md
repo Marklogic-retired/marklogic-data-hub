@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Model the Product Entity
-lead_text: ''
-permalink: /tutorial/modeling-product-entity/
+permalink: /tutorial/3x/modeling-product-entity/
 ---
 
 # Getting Started Tutorial<br>Model the Product Entity
@@ -38,4 +37,4 @@ When you answer yes in the last step, QuickStart updates the index settings base
 
 ## Up Next
 
-[Create a Product Source-to-Entity Mapping](../mapping-product-entity/)
+[Create a Product Source-to-Entity Mapping]({{site.baseurl}}/tutorial/3x/mapping-product-entity/)

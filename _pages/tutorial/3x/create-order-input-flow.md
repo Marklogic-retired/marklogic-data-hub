@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Create the Order Input Flow
-lead_text: ''
-permalink: /tutorial/create-order-input-flow/
+permalink: /tutorial/3x/create-order-input-flow/
 ---
 
 # Getting Started Tutorial<br>Create the Order Input Flow
@@ -22,4 +21,4 @@ The following picture summarizes this procedure:
 
 ## Up Next
 
-[Load the Order Data As-Is](../load-orders-as-is/)
+[Load the Order Data As-Is]({{site.baseurl}}/tutorial/3x/load-orders-as-is/)

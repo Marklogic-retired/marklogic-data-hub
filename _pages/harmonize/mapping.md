@@ -106,8 +106,8 @@ You cannot add a mapping to an existing flow. Instead, create a new flow that us
 
 For an end to end example, see the following parts of the QuickStart tutorial:
 
-* [Create a Model-to-Model Mapping for Product](../../tutorial/mapping-product-entity/)
-* [Harmonize the Product Data](../../tutorial/harmonizing-product-data/)
+* [Create a Model-to-Model Mapping for Product]({{site.baseurl}}/tutorial/3x/mapping-product-entity/)
+* [Harmonize the Product Data]({{site.baseurl}}/tutorial/3x/harmonizing-product-data/)
 
 ## Modifying an Existing Mapping
 
@@ -200,11 +200,11 @@ The products property of an Order is an array of references to Product entity in
 
 Such a relationship cannot be captured in a mapping. Whether you use a mapping to generate baseline code or not, you must customize the content plugin to handle this case.
 
-In the tutorial, the Order harmonization flow does not use a mapping to generate baseline code, but it could: The same code customizations could be applied to mapping-based baseline code. To review the Order customizations, see [Harmonize the Order Data](../../tutorial/harmonizing-order-data/) in the tutorial.
+In the tutorial, the Order harmonization flow does not use a mapping to generate baseline code, but it could: The same code customizations could be applied to mapping-based baseline code. To review the Order customizations, see [Harmonize the Order Data]({{site.baseurl}}/tutorial/3x/harmonizing-order-data/) in the tutorial.
 
 ### Simple Value Transformation Requirement
 The code generated from a mapping handles the case where the source value can be converted to the entity property data type through a simple type conversion. For example, if you have a string source property whose contents can always be safely cast to a number, such as "1234", then you can map it on to an entity property of type decimal.
 
-However, if a source value requires a more sophisticated transformation, such as date normalization, string concatenation, or a computation, then the code generated from a mapping will not work out of the box. The **price** property of the Order entity type in the QuickStart tutorial is an example of a property whose value is computed during harmonization. See [Harmonize the Order Data](../../tutorial/harmonizing-order-data/) in the tutorial.
+However, if a source value requires a more sophisticated transformation, such as date normalization, string concatenation, or a computation, then the code generated from a mapping will not work out of the box. The **price** property of the Order entity type in the QuickStart tutorial is an example of a property whose value is computed during harmonization. See [Harmonize the Order Data]({{site.baseurl}}/tutorial/3x/harmonizing-order-data/) in the tutorial.
 
 Whether you use a mapping as a baseline or not, you must customize the content plugin to handle this case.

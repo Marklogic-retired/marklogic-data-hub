@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Wrapping Up
-lead_text: ''
-permalink: /tutorial/wrapping-up/
+permalink: /tutorial/3x/wrapping-up/
 ---
 
 # Getting Started Tutorial<br>Wrapping Up
@@ -29,7 +28,7 @@ There are more resources available to help you on your MarkLogic Data Hub journe
 - [Data Hub Framework Wiki](https://github.com/marklogic/marklogic-data-hub/wiki): Read about more advanced uses
 - [Data Hub Framework Examples](https://github.com/marklogic/marklogic-data-hub/tree/develop/examples): Many examples of how to use the Data Hub Framework
 
-Remember that QuickStart is a tool that helps show how the Data Hub Framework works. For production use, use MLCP or other tools for input flows and gradle tasks or your own code (using the provided [Java classes](../../harmonize/java/)) for harmonize flows.
+Remember that QuickStart is a tool that helps show how the Data Hub Framework works. For production use, use MLCP or other tools for input flows and gradle tasks or your own code (using the provided [Java classes]({{site.baseurl}}/harmonize/java/)) for harmonize flows.
 
 Have a question? Use the [#marklogic-dhf tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic-dhf).
 

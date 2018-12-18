@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Create the Product Input Flow
-lead_text: ''
-permalink: /tutorial/create-product-input-flow/
+permalink: /tutorial/3x/create-product-input-flow/
 ---
 
 # Getting Started Tutorial<br>Create the Product Input Flow
@@ -29,4 +28,4 @@ The following picture summarizes the procedure for creating an input flow:
 ![New Load Products Flows]({{site.baseurl}}/images/3x/create-product-input-flow/create-load-product-flow.png)
 
 ## Next Up
-[Load the Product Data As-Is](../load-products-as-is/)
+[Load the Product Data As-Is]({{site.baseurl}}/tutorial/3x/load-products-as-is/)

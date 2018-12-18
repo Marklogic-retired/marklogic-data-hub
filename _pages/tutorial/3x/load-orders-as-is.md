@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Load the Orders As-Is
-lead_text: ''
-permalink: /tutorial/load-orders-as-is/
+permalink: /tutorial/3x/load-orders-as-is/
 ---
 
 # Getting Started Tutorial<br>Load the Orders As-Is
@@ -49,4 +48,4 @@ Examine the Load Orders job results. This job should be the most recent run.
 
 ## Up Next
 
-[Modeling the Order Entity](../modeling-order-entity/)
+[Modeling the Order Entity]({{site.baseurl}}/tutorial/3x/modeling-order-entity/)

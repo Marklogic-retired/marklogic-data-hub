@@ -1,7 +1,6 @@
 ---
 layout: inner
 title: Getting Started Tutorial 2.x<br>Browse and Understand the Product Data
-lead_text: ''
 permalink: /tutorial/2x/harmonizing-product-data/
 ---
 
@@ -122,4 +121,4 @@ You should see harmonized documents in the search results.
 
 Congratulations! You just loaded and harmonized your Product data. Up next is doing the same thing for the Order data.
 
-[Loading Orders > Create the Order Entity](../create-order-entity/)
+[Loading Orders > Create the Order Entity]({{site.baseurl}}/tutorial/2x/create-order-entity/)

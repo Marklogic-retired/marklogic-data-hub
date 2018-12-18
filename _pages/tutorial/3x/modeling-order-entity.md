@@ -1,8 +1,7 @@
 ---
 layout: inner
 title: Getting Started Tutorial<br>Model the Order Entity
-lead_text: ''
-permalink: /tutorial/modeling-order-entity/
+permalink: /tutorial/3x/modeling-order-entity/
 ---
 
 # Getting Started Tutorial<br>Model the Order Entity
@@ -96,4 +95,4 @@ One of the benefits of having the Data Hub Framework model your data with Entity
 
 ## Up Next
 
-[Harmonizing the Order Data](../harmonizing-order-data/)
+[Harmonizing the Order Data]({{site.baseurl}}/tutorial/3x/harmonizing-order-data/)
