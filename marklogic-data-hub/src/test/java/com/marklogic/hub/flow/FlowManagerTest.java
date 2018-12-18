@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.flow;
 
+import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.FlowManager;
@@ -26,6 +27,7 @@ import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,6 +58,11 @@ public class FlowManagerTest extends HubTestBase {
 
     @Autowired
     private Scaffolding scaffolding;
+    
+    @BeforeAll
+    public static void runOnce() {
+        new Installer().deleteProjectDir();
+    }
 
     @BeforeEach
     public void setup() throws IOException {
@@ -309,6 +316,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(0, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
+        getHubFlowRunnerConfig();
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -318,6 +326,7 @@ public class FlowManagerTest extends HubTestBase {
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
+        getHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -343,6 +352,7 @@ public class FlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
+        getHubFlowRunnerConfig();
         Flow flow1 = fm.getFlow("test", "my-test-flow-with-header");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -350,6 +360,7 @@ public class FlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
+        getHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -373,6 +384,7 @@ public class FlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
+        getHubFlowRunnerConfig();
         Flow flow1 = fm.getFlow("test", "my-test-flow-with-all");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -380,6 +392,7 @@ public class FlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
+        getHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );

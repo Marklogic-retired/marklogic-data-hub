@@ -67,11 +67,13 @@ public class TracingTest extends HubTestBase {
             new File(PROJECT_PATH + "/plugins")
         );
         installUserModules(adminHubConfig, true);
+        //Disable tracing that may have been enabled in previous tests
+        Tracing.create(flowRunnerClient).disable();
      }
 
     @AfterEach
     public void afterEach() {
-    	disableTracing();
+        Tracing.create(flowRunnerClient).disable();
         clearDatabases(HubConfig.DEFAULT_JOB_NAME, HubConfig.DEFAULT_FINAL_NAME);
     }
 
