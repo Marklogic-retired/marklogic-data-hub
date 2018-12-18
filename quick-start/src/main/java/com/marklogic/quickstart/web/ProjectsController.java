@@ -98,17 +98,7 @@ public class ProjectsController {
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             hubConfig = om.readerForUpdating(hubConfig).readValue(hubConfigDelta);
-
-            // TODO: Is this needed anymore?
-//            AppConfig appConfig = this.hubConfig.getAppConfig();
-//            if (hubConfigDelta.get("host") != null) {
-//                appConfig.setHost(hubConfigDelta.get("host").asText());
-//            }
-//            if (hubConfigDelta.get("name") != null) {
-//                appConfig.setName(hubConfigDelta.get("name").asText());
-//            }
-
-            this.hubConfig.createProject(project.path);
+            hubConfig.createProject(project.path);
             dataHub.initProject();
             return project;
         } catch (Exception e) {
