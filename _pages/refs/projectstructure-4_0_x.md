@@ -77,7 +77,7 @@ For example: gradle-dev.properties, gradle-qa.properties, gradle-prod.properties
 These are the \*nix and Windows executable files to run the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.
 
 ## plugins folder
-This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like, but the recommended location for custom modules and transforms is src/main/ml-modules; see the [ml-gradle documentation](https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded) for details.
+This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like, but the recommended location for custom modules and transforms is src/main/ml-modules; see the [ml-gradle documentation](https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded).
 
 When deployed to MarkLogic ./plugins is equivalent to the root uri **/**, so a library module at `./plugins/my-folder/my-lib.xqy` would be loaded into the modules database as `/my-folder/my-lib.xqy`.
 
@@ -113,7 +113,7 @@ The server-side module (XQuery or JavaScript) responsible for creating the conte
 ### plugins/entities/{entity}/harmonize/headers.(sjs|xqy)
 The server-side module (XQuery or JavaScript) responsible for creating the headers section of your envelope.
 
-### plugins/entities/{entity}/input/main.(sjs|xqy)
+### plugins/entities/{entity}/harmonize/main.(sjs|xqy)
 The server-side module (XQuery or JavaScript) responsible for orchestrating your plugins.
 
 ### plugins/entities/{entity}/harmonize/triples.(sjs|xqy)
@@ -126,13 +126,13 @@ The server-side module (XQuery or JavaScript) responsible for persisting your en
 In DHF 4.0, items that used to be here should be placed in `src/main/ml-modules`
 
 ### plugins/mappings
-This folder contains model-to-model mapping configuration artifacts that can be used to configure an input flow. For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+This folder contains model-to-model mapping configuration artifacts that can be used to configure an input flow. See [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 ### plugins/mappings/{mapping}
-This folder contains all versions of a given model-to-model mapping. The name of the folder is the same as mapping name. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+This folder contains all versions of a given model-to-model mapping. The name of the folder is the same as mapping name. See [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 ### plugins/mappings/{mapping}/{mapping}-{version}.json
-A model to model mapping configuration files. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. For details, see For details, see [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+A model-to-model mapping configuration files. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. See [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 
 ## src/main/hub-internal-config folder
@@ -175,10 +175,10 @@ Any JSON files you put here will be merged with the hub-internal-config configur
 
 
 ## src/main/ml-modules
-This folder is the standard `ml-gradle` location for artifacts to be deployed to the modules database.  It comes out-of-the box with a default Search options configuration.
+This folder is the standard `ml-gradle` location for artifacts to be deployed to the modules database.  It comes out of the box with a default Search options configuration.
 
 ### src/main/ml-modules-jobs
-This folder is the standard `ml-gradle` location for artifacts to be deployed to the modules database, but to be used with the JOBS appserver (specifically, the jobs and traces search options configuration.  Users probably have no need to add to this directory.
+This folder is the standard `ml-gradle` location for artifacts to be deployed to the modules database, but to be used with the JOBS appserver (specifically, the jobs and traces search options configuration).  Users probably have no need to add to this directory.
 
 
 ## .tmp folder
