@@ -15,7 +15,7 @@ The DHF Java library is distributed via bintray so that you can include it easil
 **Gradle**
 
 ```groovy
-compile('com.marklogic:marklogic-data-hub:4.0.1')
+compile('com.marklogic:marklogic-data-hub:4.1.0')
 ```
 
 **Maven**
@@ -24,7 +24,7 @@ compile('com.marklogic:marklogic-data-hub:4.0.1')
 <dependency>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-data-hub</artifactId>
-  <version>4.0.1</version>
+  <version>4.1.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -32,7 +32,7 @@ compile('com.marklogic:marklogic-data-hub:4.0.1')
 **Ivy**
 
 ```xml
-<dependency org='com.marklogic' name='marklogic-data-hub' rev='4.0.1'>
+<dependency org='com.marklogic' name='marklogic-data-hub' rev='4.1.0'>
   <artifact name='$AID' ext='pom'></artifact>
 </dependency>
 ```
@@ -42,47 +42,75 @@ compile('com.marklogic:marklogic-data-hub:4.0.1')
 By running a harmonize flow from Java, you get finer control over the process.
 
 ```java
-    import com.marklogic.hub.flow.FlowRunner;
-    import com.marklogic.hub.HubConfig;
-    import com.marklogic.hub.HubConfigBuilder;
-    import com.marklogic.hub.FlowRunner;
-    import com.marklogic.hub.Flow;
-    import com.marklogic.hub.FlowType;
     import com.marklogic.client.datamovement.JobTicket;
+    import com.marklogic.hub.ApplicationConfig;
+    import com.marklogic.hub.FlowManager;
+    import com.marklogic.hub.HubConfig;
+    import com.marklogic.hub.flow.Flow;
+    import com.marklogic.hub.flow.FlowRunner;
+    import com.marklogic.hub.flow.FlowType;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.boot.SpringApplication;
+    import org.springframework.boot.WebApplicationType;
+
+    import javax.annotation.PostConstruct;
 
     public class MyApp {
-        public static void main(String[] args) {
-            // get a hub config
-            HubConfig dataHubConfig = HubConfigBuilder.newHubConfigBuilder("/path/to/your/project")
-                .withPropertiesFromEnvironment("local")
-                .build();
 
-            // get a flow manager
-            FlowManager flowManager = new FlowManager(dataHubConfig);
+        // get a hub config
+        @Autowired
+        HubConfig hubConfig;
+
+        // get a flow manager
+        @Autowired
+        FlowManager flowManager;
+
+        @PostConstruct
+        void runHarmonizeFlow() {
+
+            /*
+             * Once Spring creates HubConfig object and the project is initialized with
+             * createProject(String) you can use setter methods to change HubConfig properties
+             * and then call refreshProject() method which will load HubConfig object with values
+             * from gradle.properties (optionally overridden with
+             * gradle-(environment).properties) and the setters.
+             */
+            hubConfig.createProject("/path/to/your/project");
+            hubConfig.withPropertiesFromEnvironment("local");
+            hubConfig.refreshProject();
 
             // retrieve the flow you wish to run
             Flow harmonizeFlow = flowManager.getFlow("my entity name", "my flow name", FlowType.HARMONIZE);
 
             // build the flow runner
             FlowRunner flowRunner = flowManager.newFlowRunner()
-                .withFlow(harmonizeFlow)
-                .withBatchSize(10)
-                .withThreadCount(4)
-                .withOptions(options)
-                .withSourceClient(srcClient)
-                .withDestinationDatabase(destDb)
-                .onItemComplete((String jobId, String itemId) -> {
-                  // do something with this completed item
-                })
-                .onItemFailed((String jobId, String itemId) -> {
-                  // do something with this failed item
-                });
+                    .withFlow(harmonizeFlow)
+                    .withBatchSize(10)
+                    .withThreadCount(4)
+                    .withOptions(options)
+                    .withSourceClient(srcClient)
+                    .withDestinationDatabase(destDb)
+                    .onItemComplete((String jobId, String itemId) -> {
+                        // do something with this completed item
+                    })
+                    .onItemFailed((String jobId, String itemId) -> {
+                        // do something with this failed item
+                    });
 
             // run the flow
             JobTicket jobTicket = flowRunner.run();
 
             // optionally wait for the flow to finish running
             flowRunner.awaitCompletion();
+        }
+
+
+        public static void main(String[] args) {
+
+            // start the Spring application
+            SpringApplication app = new SpringApplication(MyApp.class, ApplicationConfig.class);
+            app.setWebApplicationType(WebApplicationType.NONE);
+            app.run();
         }
     }
 ```
