@@ -314,7 +314,7 @@ This directory contains model-to-model mapping configuration artifacts that can 
      └─ staging-database.json
 </pre>
 
-This directory contains two options files and two database configuration files created by QuickStart (for staging and for final). These files are typically not modified by users.
+This directory contains two options files and two database configuration files for staging and for final. These files can be modified to configure indexes.
 
 
 ### src/main/hub-internal-config
@@ -345,9 +345,7 @@ This directory contains two options files and two database configuration files c
   └─ triggers
 </pre>
 
-This directory contains subdirectories and JSON files used to configure your DHF project's **STAGING** environment.
-
-These files represent the minimum configuration necessary for DHF to function. **Do not edit anything in this directory.** If you need to override a configuration in this directory, create a file with the same name and directory structure under the [ml-config directory](#src/main/ml-config) and add any properties you'd like to override.
+This directory contains subdirectories and JSON files that represent the minimum configuration necessary for DHF to function. **Do not edit anything in this directory.** If you need to override a configuration in this directory, create a file with the same name and directory structure under the [ml-config directory](#src/main/ml-config) and add any properties you'd like to override.
 
 Each of the above JSON files conforms to the MarkLogic REST API for creating the following:
 - [databases](https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties)
@@ -375,9 +373,7 @@ Each of the above JSON files conforms to the MarkLogic REST API for creating the
   └─ triggers
 </pre>
 
-This directory contains subdirectories and JSON files used to configure your DHF project's **FINAL** environment.
-
-You can add custom modules and transforms, as well as other configuration artifacts, in this directory.
+This directory contains additional subdirectories and JSON files used to configure your DHF project. You can add custom modules and transforms, as well as other configuration assets, in this directory.
 
 The following files are found in the `ml-config` directory only:
 - `final-database.json`
