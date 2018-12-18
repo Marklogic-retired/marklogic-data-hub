@@ -104,6 +104,8 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
   ```
   </div>
 
+  For complete instructions to upgrade to a newer DHF version, see [Upgrading DHF]({{site.baseurl}}/upgrade/).
+
   {% include conrefs/conref-remark-hubupdate-verbose.md %}
 </dd>
 

@@ -43,7 +43,7 @@
 <details open><summary class="relnote-summary">DHF Java API changed to allow DHF to use the Spring Framework.</summary>
   <div markdown="1">
   - The Java `HubConfig` class now has a singleton scope.
-  - See https://marklogic.github.io/marklogic-data-hub/javadocs/4.1.0/ (DHF 4.1) for more information.
+  - See [DHF Java Library](https://marklogic.github.io/marklogic-data-hub/javadocs/4.1.0/) for more information.
   </div>
 </details>
 
