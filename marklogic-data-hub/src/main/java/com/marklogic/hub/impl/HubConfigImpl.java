@@ -188,7 +188,6 @@ public class HubConfigImpl implements HubConfig
 
     public void createProject(String projectDirString) {
         hubProject.createProject(projectDirString);
-//        initializeApplicationConfigurations();
     }
 
     public String getHost() { return appConfig.getHost(); }
@@ -1604,13 +1603,6 @@ public class HubConfigImpl implements HubConfig
     @Override public String getDHFVersion() {
 
         return this.DHFVersion;
-    }
-
-
-    /* this method takes care of setting app config and other non-injected dependencies */
-    public void initializeApplicationConfigurations() {
-        hydrateAppConfigs(environment);
-        hydrateConfigs();
     }
 
     private Map<String, String> getCustomTokens() {
