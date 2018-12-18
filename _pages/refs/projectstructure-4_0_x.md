@@ -132,7 +132,7 @@ This folder contains model-to-model mapping configuration artifacts that can be 
 This folder contains all versions of a given model-to-model mapping. The name of the folder is the same as mapping name. See [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 ### plugins/mappings/{mapping}/{mapping}-{version}.json
-A model-to-model mapping configuration files. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. See [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
+A model-to-model mapping configuration file. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. See [Using Model-to-Model Mapping]({{site.baseurl}}/harmonize/mapping/).
 
 
 ## src/main/hub-internal-config folder
