@@ -60,6 +60,7 @@ public class FlowManagerTest extends HubTestBase {
     @BeforeEach
     public void setup() throws IOException {
         basicSetup();
+        getHubAdminConfig();
         enableDebugging();
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
@@ -283,7 +284,7 @@ public class FlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig().refreshProject();
+        getHubFlowRunnerConfig();
         Flow flow1 = fm.getFlow("test", "my-test-flow1");
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -291,6 +292,7 @@ public class FlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
+        getHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );

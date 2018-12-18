@@ -18,6 +18,7 @@ export default function(tmpDir) {
     it ('should run Load Products flow', async function() {
       browser.get('http://localhost:8080/#/flows');
       await flowPage.clickEntityDisclosure('Product');
+      browser.sleep(5000);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Load Products', 'INPUT')));
       await flowPage.runInputFlow('Product', 'Load Products', 'json', 'products',
         'delimited_text', '/product', '?doc=yes&type=foo');
@@ -129,9 +130,11 @@ export default function(tmpDir) {
       console.log('clicking Product entity');
       await flowPage.clickEntityDisclosure('Product');
       console.log('clicking Harmonize Products flow');
+      browser.sleep(5000);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
       expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isPresent()).toBe(true);
       await flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
+      browser.sleep(5000);
       browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
       expect(flowPage.runHarmonizeButton().isPresent()).toBe(true);
       console.log('found the button and clicking Run Harmonize button');
@@ -224,6 +227,7 @@ export default function(tmpDir) {
     it ('should open the TestEntity disclosure', async function() {
       browser.get('http://localhost:8080/#/flows');
       await flowPage.clickEntityDisclosure('TestEntity');
+      browser.sleep(5000);
       browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json INPUT', 'INPUT')));
     });
 

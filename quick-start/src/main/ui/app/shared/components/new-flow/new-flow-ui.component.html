@@ -10,15 +10,18 @@
     <form (submit)="create()">
       <div class="modal-body">
         <div class="md-dialog-content" flex layout="column">
-          <mdl-textfield name="flowTypeInput" type="text"
+          <mdl-textfield
+            [ngClass]="{ 'custom-invalid' : !isNameValid }"
+            name="flowTypeInput"
+            type="text"
             required autofocus floating-label
             id="flowTypeInput"
             label="{{flowType}} Flow Name (required)"
             #flowTypeInput="ngModel"
             [(ngModel)]="flow.flowName"
-            (ngModelChange)="emitUpdatedFlow()"
-            ></mdl-textfield>
-          <ng-template [ngIf]="markLogicVersion >= 9">
+            (keyup)="checkName()"></mdl-textfield>
+          <div *ngIf="!isNameValid" class="alert-text">{{ errorMsg }}</div>
+          <ng-template [ngIf]="getMarkLogicVersion() >= 9">
             <label>Code Generation</label>
             <app-select-list
               [items]="scaffoldOptions"
@@ -49,7 +52,7 @@
         </div>
       </div>
       <div class="mdl-dialog__actions">
-        <button type="submit" [disabled]="flowTypeInput && flowTypeInput.errors && flowTypeInput.errors.required" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
+        <button type="submit" [disabled]="(flowTypeInput && flowTypeInput.errors && flowTypeInput.errors.required) || !isNameValid" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
         <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
       </div>
     </form>

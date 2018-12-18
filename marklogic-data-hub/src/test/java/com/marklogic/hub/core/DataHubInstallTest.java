@@ -103,6 +103,7 @@ public class DataHubInstallTest extends HubTestBase {
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, versions.getHubVersion());
+        getHubAdminConfig();
     }
 
     @Test

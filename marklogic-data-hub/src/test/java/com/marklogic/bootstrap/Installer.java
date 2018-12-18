@@ -17,7 +17,7 @@ public class Installer extends HubTestBase {
 
     private static Logger logger = LoggerFactory.getLogger(Installer.class);
 
-    public void setupProject() {
+    public void setupProject() {       
         createProjectDir();
     }
 
@@ -27,8 +27,6 @@ public class Installer extends HubTestBase {
 
     @PostConstruct
     public void bootstrapHub() {
-        super.init();
-        dataHub.initProject();
         boolean isInstalled = false;
         try {
         	isInstalled = dataHub.isInstalled().isInstalled();

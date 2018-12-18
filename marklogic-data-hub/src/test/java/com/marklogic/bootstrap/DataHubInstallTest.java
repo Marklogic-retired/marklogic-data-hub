@@ -196,6 +196,7 @@ public class DataHubInstallTest extends HubTestBase
     {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, versions.getHubVersion());
+        getHubAdminConfig();
     }
 
     @Test

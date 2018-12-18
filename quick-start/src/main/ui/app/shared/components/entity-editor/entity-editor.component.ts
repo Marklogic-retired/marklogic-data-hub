@@ -2,6 +2,9 @@ import {
   Component,
   HostListener,
   Inject,
+  ElementRef,
+  ViewChild,
+  AfterViewChecked
 } from '@angular/core';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
@@ -17,7 +20,10 @@ import * as _ from 'lodash';
   templateUrl: './entity-editor.component.html',
   styleUrls: ['./entity-editor.component.scss']
 })
-export class EntityEditorComponent {
+export class EntityEditorComponent implements AfterViewChecked {
+
+  @ViewChild('dialogContent') el:ElementRef;
+
   entity: Entity;
   actions: any;
   dataTypes: Array<any>;
@@ -40,6 +46,8 @@ export class EntityEditorComponent {
       value: 'ONE_TO_MANY'
     }
   ];
+
+  propAdded: boolean = false;
 
   // property name pattern: name cannot have space characters in it
   readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
@@ -162,6 +170,14 @@ export class EntityEditorComponent {
 
   addProperty() {
     this.entity.definition.properties.push(new PropertyType());
+    this.propAdded = true;
+  }
+
+  ngAfterViewChecked() {
+    if (this.propAdded) {
+      this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
+      this.propAdded = false;
+    }
   }
 
   deleteSelectedProperties() {

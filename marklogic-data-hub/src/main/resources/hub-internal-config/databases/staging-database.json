@@ -1,6 +1,5 @@
 {
   "database-name": "%%mlStagingDbName%%",
-  "range-element-index": [],
   "schema-database": "%%mlStagingSchemasDbName%%",
   "triggers-database": "%%mlStagingTriggersDbName%%",
   "triple-index": true,
