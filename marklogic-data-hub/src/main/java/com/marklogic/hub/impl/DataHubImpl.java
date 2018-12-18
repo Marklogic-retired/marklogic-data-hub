@@ -506,18 +506,31 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void updateIndexes() {
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
-        DeployOtherDatabasesCommand c = null;
 
         AppConfig appConfig = hubConfig.getAppConfig();
         final boolean originalCreateForests = appConfig.isCreateForests();
+        final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
             appConfig.setCreateForests(false);
+            if (hubConfig.getIsProvisionedEnvironment()) {
+                appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
+            }
             deployer.deploy(hubConfig.getAppConfig());
         } finally {
             appConfig.setCreateForests(originalCreateForests);
+            appConfig.setResourceFilenamesIncludePattern(originalIncludePattern);
         }
+    }
+
+    /**
+     * In a provisioned environment, only the databases defined by this pattern can be updated.
+     *
+     * @return
+     */
+    protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
+        return Pattern.compile("(staging|final|job)-database.json");
     }
 
     /**
