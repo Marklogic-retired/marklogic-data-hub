@@ -8,7 +8,7 @@ permalink: /ingest/quickstart/
 
 QuickStart is an easy-to-use user interface for working with the Data Hub Framework.
 
-{% include_relative prereq-createproject.html %}
+{% include_relative conref-prereq-createproject.md %}
 
 The following parts of the [tutorial]({{site.baseurl}}/tutorial/3x/) describe the ingest process in QuickStart:
 

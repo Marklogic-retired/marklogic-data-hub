@@ -37,6 +37,7 @@ main:
             childPages: [
               { url: '/tools/quickstart/', text: 'DHF QuickStart' },
               { url: '/tools/gradle-plugin/', text: 'DHF Gradle Plugin' },
+              # { url: '/tools/ml-gradle', text: 'ml-gradle Tasks for DHF' },
               { url: '/javadocs/', text: 'DHF Java Library' },
               { absurl: 'https://docs.marklogic.com/guide/mlcp/', text: 'MarkLogic Content Pump' },
               { absurl: 'https://docs.marklogic.com/REST/client/', text: 'REST Client API' },
@@ -138,11 +139,7 @@ main:
           },
           {
             url: '/upgrade/',
-            text: 'Upgrading DHF',
-            childPages: [
-              # { url: '/upgrade/upgrade-to-4_1_x/', text: 'Upgrade to DHF 4.1.x' },
-              { url: '/upgrade/upgrade-to-4_0_x/', text: 'Upgrade to DHF 4.0.x' },
-            ]
+            text: 'Upgrade',
           }
         ]
       }

@@ -1,0 +1,21 @@
+At your project's root folder, run the `{{ include.grtask }}` Gradle task.
+      {% assign counter = (counter || -1) %}
+      {% assign counter = counter | plus: 1 %}
+      <div class="code-tabs">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a role="tab" aria-controls="tab1-{{counter}}" href="#tab1-{{counter}}">Unix Systems</a>
+          </li>
+          <li role="presentation" class="">
+            <a role="tab" aria-controls="tab2-{{counter}}" href="#tab2-{{counter}}">Windows</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="tab1-{{counter}}">
+            <pre class="cmdline">./gradlew {{ include.grtask }}</pre>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="tab2-{{counter}}">
+            <pre class="cmdline">gradlew.bat {{ include.grtask }}</pre>
+          </div>
+        </div>
+      </div>
