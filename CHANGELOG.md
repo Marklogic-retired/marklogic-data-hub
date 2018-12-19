@@ -1,6 +1,6 @@
 # Change Log
 
-## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.1.0) (2018-12-19)
+## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0) (2018-12-19)
 
 Bug
 
