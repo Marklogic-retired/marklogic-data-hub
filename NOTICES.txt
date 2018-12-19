@@ -19,7 +19,7 @@ Open source software required to be made available under license is included her
 
 The following software may be included in this project:
 
-@angular-mdl/core 6.0.1 
+@angular-mdl/core 4.0.8 
 
 Attribution Statements
 http://mseemann.io/angular2-mdl/
@@ -52,7 +52,7 @@ THE SOFTWARE.
 
 Source materials are available for download at: https://github.com/mseemann/angular2-mdl 
 
-@angular-mdl/popover 6.0.0 
+@angular-mdl/popover 0.10.0 
 
 Attribution Statements
 https://www.npmjs.com/package/@angular-mdl/popover
@@ -85,7 +85,7 @@ SOFTWARE.
 
 Source materials are available for download at: https://github.com/mseemann/angular2-mdl-ext 
 
-@angular-mdl/select 6.0.0 
+@angular-mdl/select 0.13.0 
 
 Attribution Statements
 https://www.npmjs.com/package/@angular-mdl/select
@@ -118,7 +118,7 @@ SOFTWARE.
 
 Source materials are available for download at: https://github.com/mseemann/angular2-mdl-ext 
 
-Angular 6.1.9 
+Angular 4.4.6 
 
 Attribution Statements
 https://angular.io/
@@ -151,7 +151,7 @@ THE SOFTWARE.
 
 Source materials are available for download at: https://github.com/angular/angular 
 
-Angular DevKit 0.8.4
+Angular DevKit 0.0.22 
 
 Attribution Statements
 https://www.npmjs.com/package/@angular-devkit/build-optimizer
@@ -521,7 +521,7 @@ Made available under the SIL Open Font License 1.1. See Appendix for license tex
 
 Source materials are available for download at: https://github.com/FortAwesome/Font-Awesome 
 
-Gradle 4.10 
+Gradle 3.4 
 
 Attribution Statements
 https://gradle.org/
@@ -791,7 +791,7 @@ Copyright Statements
 License Text (http://spdx.org/licenses/Apache-2.0)
 Made available under the Apache License 2.0. See Appendix for full text.
 
-Source materials are available for download at: https://services.gradle.org/distributions/gradle-4.10-bin.zip
+Source materials are available for download at: https://services.gradle.org/distributions/gradle-3.4-bin.zip 
 
 Gradle Bintray Plugin 1.7.2 
 
@@ -806,10 +806,10 @@ Made available under the Apache License 2.0. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/bintray/gradle-bintray-plugin 
 
-Gradle Plugin for Node 1.2.0 
+Gradle Plugin for Node 1.1.1 
 
 Attribution Statements
-https://plugins.gradle.org/plugin/com.moowork.node/1.2.0
+https://plugins.gradle.org/plugin/com.moowork.node/1.1.1
 
 Copyright Statements
 Sten Roger Sandvik
@@ -858,7 +858,7 @@ Made available under the Apache License 2.0. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/FasterXML/jackson-databind 
 
-Java SE Runtime Environment (JRE) 8 
+Java SE Runtime Environment (JRE) 7 
 
 Attribution Statements
 http://docs.oracle.com/javase/
@@ -950,7 +950,7 @@ Optional Files and Directories
 -----------------------------------------------------------------------
 
 The following files may be optionally excluded from redistributions.
-These files are located in the jre1.8.0_<version> directory, where
+These files are located in the jre1.7.0_<version> directory, where
 <version> is the update version number.  Solaris and Linux filenames
 and separators are shown. Windows executables have the ".exe" suffix.
 Corresponding files with _g in the name can also be excluded.
@@ -964,7 +964,7 @@ for the Solaris(TM) Operating System and Linux).
    are not available on all OS or Architectures. The
    runtime environment must contain at least one implementation
    of each of the required Security algorithms as described in:
-   http://download.oracle.com/javase/8/docs/technotes/guides/
+   http://download.oracle.com/javase/7/docs/technotes/guides/
    security/StandardNames.html
            
    localedata.jar - contains many of the resources 
@@ -1120,7 +1120,7 @@ certificate file located at
 For more information, see "The cacerts Certificates File" section
 in the keytool documentation at:
 
-http://download.oracle.com/javase/8/docs/technotes/guides/security
+http://download.oracle.com/javase/7/docs/technotes/guides/security
 
 =======================================================================
 Endorsed Standards Override Mechanism
@@ -1142,7 +1142,7 @@ For more information on the Endorsed Standards Override Mechanism,
 including the list of platform packages that it may be used to
 override, see
 
-    http://download.oracle.com/javase/8/docs/technotes/guides/standards/
+    http://download.oracle.com/javase/7/docs/technotes/guides/standards/
 
 Copyright Statements
 The Java(TM) Runtime Environment (JRE) is a product of Oracle.
@@ -1306,7 +1306,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Source materials are available for download at: https://github.com/douglascrockford/JSON-java 
 
-JUnit 5.3.1 
+JUnit 4.12 
 
 Attribution Statements
 http://junit.org
@@ -1369,7 +1369,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Source materials are available for download at: https://github.com/lodash/lodash 
 
-Logback 1.1.11 
+Logback 1.1.8 
 
 Attribution Statements
 http://logback.qos.ch
@@ -1680,7 +1680,7 @@ Made available under the Apache License 2.0. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/spockframework/spock 
 
-Spring Boot 2.0.6 
+Spring Boot 1.5.6 
 
 Attribution Statements
 https://projects.spring.io/spring-boot/
@@ -1795,7 +1795,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 Source materials are available for download at: https://github.com/xmlunit/xmlunit/tree/master/xmlunit-legacy 
 
-Zone.js 0.8.26 
+Zone.js 0.8.14 
 
 Attribution Statements
 https://github.com/angular/zone.js
@@ -1830,7 +1830,7 @@ THE SOFTWARE.
 
 Source materials are available for download at: https://github.com/angular/zone.js 
 
-Zone.js 0.8.26 
+Zone.js 0.8.18 
 
 Attribution Statements
 https://github.com/angular/zone.js
