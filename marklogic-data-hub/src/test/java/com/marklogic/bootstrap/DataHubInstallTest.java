@@ -16,30 +16,28 @@
 package com.marklogic.bootstrap;
 
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -54,128 +52,163 @@ import static org.junit.jupiter.api.Assertions.*;
  * or on-demand.  It's the only test that requires setup/teardown
  * and is not valid in a provisioned environment.
  */
-@RunWith(JUnitPlatform.class)
-public class DataHubInstallTest extends HubTestBase {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
+public class DataHubInstallTest extends HubTestBase
+{
+    private static DataHub dataHub;
+
+    @Autowired
+    private DeployHubAmpsCommand deployHubAmpsCommand;
+
     private static int afterTelemetryInstallCount = 0;
 
-    static boolean setupDone=false;
+    static boolean setupDone = false;
     static String projectDir = PROJECT_PATH;
+
+    @Autowired
+    public void setDataHub(DataHub dataHub){
+        DataHubInstallTest.dataHub = dataHub;
+    }
+    
+    @BeforeAll
+    public static void setupOnce() {
+        new Installer().deleteProjectDir();
+    }
+
     @BeforeEach
-    public void setup() {
+    public void setup()
+    {
         // special case do-one setup.
         XMLUnit.setIgnoreWhitespace(true);
         // the project dir must be available for uninstall to do anything... interesting.
         createProjectDir();
 
         if (!setupDone) {
-        	HubProject project =  getHubAdminConfig().getHubProject();
+            HubProject project = getHubAdminConfig().getHubProject();
 
-        	//creating directories for adding final schemas/ modules and trigger files
+            //creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
             Path userModulesDir = project.getUserFinalModulesDir();
-            Path userTriggersDir = project.getUserConfigDir().resolve("triggers");
+            Path finalTriggersDir = project.getUserDatabaseDir()
+                    .resolve(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME)
+                    .resolve("triggers");
+            Path stagingTriggersDir = project.getUserDatabaseDir()
+            .resolve(HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME)
+            .resolve("triggers");
 
             userSchemasDir.resolve("tde").toFile().mkdirs();
             userModulesDir.resolve("ext").toFile().mkdirs();
-            userTriggersDir.toFile().mkdirs();
+            finalTriggersDir.toFile().mkdirs();
+            stagingTriggersDir.toFile().mkdirs();
+            //userTriggersDir.toFile().mkdirs();
 
-          //creating directories for adding staging schemas/ modules and trigger files
+            //creating directories for adding staging schemas/ modules and trigger files
             Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
             Path hubModulesDir = project.getHubStagingModulesDir();
-            Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
+            //Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
 
             hubSchemasDir.resolve("tde").toFile().mkdirs();
             hubModulesDir.resolve("ext").toFile().mkdirs();
-            hubTriggersDir.toFile().mkdirs();
+            //hubTriggersDir.toFile().mkdirs();
             //Copying files to their locations
             try {
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), userSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), userModulesDir.resolve("ext").toFile());
-                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"),  userTriggersDir.toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/final-trigger.json"), finalTriggersDir.toFile());
 
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/tdedoc.xml"), hubSchemasDir.resolve("tde").toFile());
                 FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/sample-trigger.xqy"), hubModulesDir.resolve("ext").toFile());
-                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"),  hubTriggersDir.toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/scaffolding/staging-trigger.json"), stagingTriggersDir.toFile());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        	getDataHub().install(null);
-        	setupDone=true;
+            getDataHub().install(null);
+            getHubAdminConfig().refreshProject();
+            setupDone = true;
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
-    
+
     @AfterAll
-    public static void cleanUp() {
-        HubConfigBuilder builder = HubConfigBuilder.newHubConfigBuilder(projectDir)
-                .withPropertiesFromEnvironment();
-        DataHub.create(builder.build()).uninstall();
+    public static void cleanUp()
+    {
+        dataHub.uninstall();
         setupDone = false;
     }
 
 
     @Test
-    public void testTelemetryInstallCount() throws IOException {
+    public void testTelemetryInstallCount() throws IOException
+    {
         assertTrue(afterTelemetryInstallCount > 0, "Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount);
     }
 
     @Test
-    public void testProjectScaffolding() throws IOException {
-    	DatabaseClient stagingTriggersClient = null;
-    	DatabaseClient finalTriggersClient = null;
+    public void testProjectScaffolding() throws IOException
+    {
+        DatabaseClient stagingTriggersClient = null;
+        DatabaseClient finalTriggersClient = null;
 
-    	DatabaseClient stagingSchemasClient = null;
-    	DatabaseClient finalSchemasClient = null;
-    	try {
-			stagingTriggersClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME, user, password, stagingAuthMethod);
-			finalTriggersClient  = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, user, password, finalAuthMethod);
-			stagingSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, user, password, stagingAuthMethod);
-			finalSchemasClient  = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, user, password, finalAuthMethod);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-    	//checking if triggers are written
-        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue()==1);
-        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue()==1);
-
+        DatabaseClient stagingSchemasClient = null;
+        DatabaseClient finalSchemasClient = null;
+        try {
+            stagingTriggersClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME, user, password, stagingAuthMethod);
+            finalTriggersClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, user, password, finalAuthMethod);
+            stagingSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, user, password, stagingAuthMethod);
+            finalSchemasClient = getClient(host, finalPort, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, user, password, finalAuthMethod);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         //checking if modules are written to correct db
         assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
         assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
-        ////checking if tdes are written to correct db
+        //checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
         Document actualXml = stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
         actualXml = finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
+        
+        //checking if triggers are written
+        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        
     }
 
     @Test
-    public void testInstallHubModules() throws IOException {
+    public void testInstallHubModules() throws IOException
+    {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
 
         assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0, "trace options not installed");
-        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0,"jobs options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0, "jobs options not installed");
         assertTrue(getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0, "staging options not installed");
         assertTrue(getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0, "final options not installed");
     }
 
     @Test
-    public void getHubModulesVersion() throws IOException {
+    public void getHubModulesVersion() throws IOException
+    {
         String version = getHubFlowRunnerConfig().getJarVersion();
-        assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
+        assertEquals(version, versions.getHubVersion());
+        getHubAdminConfig();
     }
 
     @Test
-    public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
-        URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
-        String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
+    public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException
+    {
+        deleteProjectDir();
+        Path src = Paths.get(DataHubInstallTest.class.getClassLoader().getResource("data-hub-test").toURI());
+        Path dest = Paths.get(PROJECT_PATH).getFileName().toAbsolutePath();
+        FileUtils.copyDirectory(src.toFile(), dest.toFile());
 
-        createProjectDir(path);
-        HubConfig hubConfig = getHubAdminConfig(path);
+        createProjectDir();
+        HubConfig hubConfig = getHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         installUserModules(hubConfig, true);
@@ -276,36 +309,33 @@ public class DataHubInstallTest extends HubTestBase {
             getResource("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-input-transform/assets/transform.xqy"));
 
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.initialize();
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/my-lib.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/content.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/headers.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/triples.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/writer.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/main.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/content.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/headers.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/triples.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/writer.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/main.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/REST/options/doctors.xml")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/my-lib.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/content.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/headers.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/triples.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/writer.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/main.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/content.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/headers.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/triples.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/writer.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/main.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/REST/options/doctors.xml")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/REST/options/patients.xml")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy")));
     }
 
     @Test
-    public void testClearUserModules() throws URISyntaxException {
+    public void testClearUserModules() throws URISyntaxException
+    {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        HubConfig hubConfig = getHubAdminConfig(path);
-        DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
-
-
-        installUserModules(hubConfig, true);
+        installUserModules(adminHubConfig, true);
 
         // removed counts assertions which were so brittle as to be just an impediment to life.
 
@@ -315,11 +345,14 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    public void testAmpLoading() {
+    public void testAmpLoading()
+    {
         HubConfig config = getHubAdminConfig();
-        LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand(config);
-        CommandContext commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
-        DeployAmpsCommand amps = new DeployHubAmpsCommand(config);
-        amps.execute(commandContext);
+        LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand();
+        loadHubModulesCommand.setHubConfig(config);
+        ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
+        CommandContext commandContext = new CommandContext(config.getAppConfig(), manageClient, null);
+        deployHubAmpsCommand.setHubConfig(config);
+        deployHubAmpsCommand.execute(commandContext);
     }
 }

@@ -17,21 +17,36 @@
 
 package com.marklogic.gradle
 
+
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
-import com.marklogic.hub.DataHub
-import com.marklogic.hub.HubConfigBuilder
-import com.marklogic.hub.impl.DataHubImpl
-import com.marklogic.hub.util.Versions
+import com.marklogic.hub.ApplicationConfig
+import com.marklogic.hub.deploy.commands.GeneratePiiCommand
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.impl.*
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
+@EnableAutoConfiguration
 class DataHubPlugin implements Plugin<Project> {
 
-    private DataHub dataHub
+    private DataHubImpl dataHub
+    private ScaffoldingImpl scaffolding
+    private HubProjectImpl hubProject
+    private HubConfigImpl hubConfig
+    private LoadHubModulesCommand loadHubModulesCommand
+    private LoadUserModulesCommand loadUserModulesCommand
+    private MappingManagerImpl mappingManager
+    private FlowManagerImpl flowManager
+    private EntityManagerImpl entityManager
+    private GeneratePiiCommand generatePiiCommand
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -51,9 +66,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.plugins.apply(MarkLogicPlugin.class)
 
         logger.info("\nInitializing data-hub-gradle")
-
-        initializeProjectExtensions(project)
-        configureAppDeployer(project)
+        setupHub(project)
 
         String deployGroup = "MarkLogic Data Hub Setup"
         project.task("hubEnableDebugging", group: deployGroup, type: EnableDebuggingTask,
@@ -64,13 +77,13 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Enables tracing on the running DHF server. Requires hub-admin-role or equivalent.")
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask,
             description: "Disables tracing on the running DHF server. Requires hub-admin-role or equivalent.")
-        project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
-            description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
-            .mustRunAfter(["mlClearModulesDatabase"])
         project.task("hubPreInstallCheck", group: deployGroup, type: PreinstallCheckTask,
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
         project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
+        // Tasks for deploying/undeploying the amps included in the DHF jar
+        project.task("hubDeployAmps", group: deployGroup, type: DeployHubAmpsTask, description: "Deploy the hub-specific amps contained in DHF")
+        project.task("hubUndeployAmps", group: deployGroup, type: UndeployHubAmpsTask, description: "Undeploy the hub-specific amps container in DHF; currently only supported for MarkLogic version 9.0-5")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
@@ -83,60 +96,136 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
             description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
-
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
-			description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
+            description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
 
-        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
-            description: "Installs user modules into the STAGING modules database for DHF extension.")
-        project.tasks.mlLoadModules.getDependsOn().add("hubDeployUserModules")
-        project.tasks.replace("mlWatch", HubWatchTask)
-        project.tasks.replace("mlDeleteModuleTimestampsFile", DeleteHubModuleTimestampsFileTask)
-        project.tasks.replace("mlDeployRoles", DeployHubRolesTask);
-        project.tasks.replace("mlDeployUsers", DeployHubUsersTask);
-        project.tasks.replace("mlDeployAmps", DeployHubAmpsTask);
-        project.tasks.replace("mlDeployPrivileges", DeployHubPrivilegesTask);
-        project.tasks.replace("mlUndeployRoles", UndeployHubRolesTask);
-        project.tasks.replace("mlUndeployUsers", UndeployHubUsersTask);
-        project.tasks.replace("mlUndeployAmps", UndeployHubAmpsTask);
-        project.tasks.replace("mlUndeployPrivileges", UndeployHubPrivilegesTask);
+        /**
+         * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
+         * overridden so that it can call DataHub.updateIndexes. It doesn't behave the same as in ml-gradle, which
+         * strips out all "non-index" properties from the payload. But it's not certain that that behavior is desirable
+         * here - within the context of DHF, this is really used as a way to say "I need to update each of the databases".
+         */
+        project.tasks.replace("mlUpdateIndexes", HubUpdateIndexesTask);
+
+        // DHF has custom logic for clearing the modules database
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
-        project.tasks.replace("mlUpdateIndexes", UpdateIndexes)
-        project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployRoles");
-        project.tasks.mlDeploySecurity.getDependsOn().add("mlDeployUsers");
-        project.tasks.mlUndeploySecurity.getDependsOn().add("mlUndeployRoles");
-        project.tasks.mlUndeploySecurity.getDependsOn().add("mlUndeployUsers");
-        project.tasks.hubPreInstallCheck.getDependsOn().add("mlDeploySecurity")
+        project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
+
+        project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
+            description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
+            .mustRunAfter(["mlClearModulesDatabase"])
+
+        // This isn't likely to be used, but it's being kept for regression purposes for now
+        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask, description: "Installs user modules from the plugins and src/main/entity-config directories.")
+
+        // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
+        project.tasks.replace("mlWatch", HubWatchTask)
+
+        // DHF uses an additional timestamps file needs to be deleted when the ml-gradle one is deleted
+        project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
+        project.tasks.mlDeleteModuleTimestampsFile.getDependsOn().add("hubDeleteModuleTimestampsFile")
+
+        /**
+         * mlDeploySecurity can't be used here because it will deploy amps under src/main/ml-config, and those will fail
+         * to deploy since the modules database hasn't been created yet.
+         */
+        project.task("hubDeploySecurity", type: HubDeploySecurityTask)
+        project.tasks.hubPreInstallCheck.getDependsOn().add("hubDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
-        project.tasks.mlReloadModules.setDependsOn(["mlClearModulesDatabase", "hubInstallModules", "mlLoadModules"])
 
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
-        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask )
-        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask )
+        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask)
+        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask)
         // This task is undocumented, so don't let it appear in the list
-        project.task("hubImportJobs", group: null, type: ImportJobsTask )
+        project.task("hubImportJobs", group: null, type: ImportJobsTask)
 
         logger.info("Finished initializing ml-data-hub\n")
     }
 
+    void setupHub(Project project) {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext()
+        ctx.register(ApplicationConfig.class)
+        ctx.refresh()
+
+        hubConfig = ctx.getBean(HubConfigImpl.class)
+        hubProject = ctx.getBean(HubProjectImpl.class)
+        dataHub = ctx.getBean(DataHubImpl.class)
+        scaffolding = ctx.getBean(ScaffoldingImpl.class)
+        loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
+        loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
+        mappingManager = ctx.getBean(MappingManagerImpl.class)
+        flowManager = ctx.getBean(FlowManagerImpl.class)
+        entityManager = ctx.getBean(EntityManagerImpl.class)
+        generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
+
+        initializeProjectExtensions(project)
+    }
+
     void initializeProjectExtensions(Project project) {
-        def projectDir = project.getProjectDir().getAbsolutePath()
-        def properties = new ProjectPropertySource(project).getProperties()
+
         def extensions = project.getExtensions()
 
-        def hubConfig = HubConfigBuilder.newHubConfigBuilder(projectDir)
-            .withProperties(properties)
-            .withStagingAppConfig(extensions.getByName("mlAppConfig"))
-            .withAdminConfig(extensions.getByName("mlAdminConfig"))
-            .withAdminManager(extensions.getByName("mlAdminManager"))
-            .withManageConfig(extensions.getByName("mlManageConfig"))
-            .withManageClient(extensions.getByName("mlManageClient"))
-            .build()
-        project.extensions.add("hubConfig", hubConfig)
+        hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
-        dataHub = DataHub.create(hubConfig)
-        project.extensions.add("dataHub", dataHub)
+        boolean calledHubInit = this.userCalledHubInit(project)
+        boolean calledHubUpdate = this.userCalledHubUpdate(project)
+        boolean calledHubInitOrUpdate = calledHubInit || calledHubUpdate
+
+        if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {
+            throw new GradleException("Please initialize your project first by running the 'hubInit' Gradle task, or update it by running the 'hubUpdate' Gradle task")
+        }
+
+        else {
+
+            // If the user called hubInit, only load the configuration. Refreshing the project will fail because
+            // gradle.properties doesn't exist yet. 
+            if (calledHubInit) {
+                hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
+            }
+             else {
+                // If the user called hubUpdate, it should be fine to do this because they have a gradle.properties file
+                // with the properties necessary to construct a DatabaseClient
+                hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
+            }
+
+            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
+            hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
+            hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
+            hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
+            hubConfig.setManageClient(extensions.getByName("mlManageClient"))
+
+            project.extensions.add("hubConfig", hubConfig)
+            project.extensions.add("hubProject", hubProject)
+            project.extensions.add("dataHub", dataHub)
+            project.extensions.add("scaffolding", scaffolding)
+            project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
+            project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
+            project.extensions.add("mappingManager", mappingManager)
+            project.extensions.add("flowManager", flowManager)
+            project.extensions.add("entityManager", entityManager)
+            project.extensions.add("generatePiiCommand", generatePiiCommand)
+
+            configureAppDeployer(project)
+        }
+    }
+
+    boolean userCalledHubInit(Project project) {
+        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
+            if (taskName.toLowerCase().equals("hubinit")) {
+                return true
+            }
+        }
+        return false
+    }
+
+    boolean userCalledHubUpdate(Project project) {
+        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
+            if (taskName.toLowerCase().equals("hubupdate")) {
+                return true
+            }
+        }
+        return false
     }
 
     void configureAppDeployer(Project project) {
@@ -144,9 +233,28 @@ class DataHubPlugin implements Plugin<Project> {
         if (mlAppDeployer == null) {
             throw new RuntimeException("You must apply the ml-gradle plugin before the ml-datahub plugin.")
         }
-        List <Command> allCommands = new ArrayList()
-        allCommands.addAll(((DataHubImpl)dataHub).getFinalCommandList())
-        allCommands.addAll(((DataHubImpl)dataHub).getStagingCommandList())
-        mlAppDeployer.setCommands(allCommands)
+
+        DataHubImpl hubImpl = (DataHubImpl)dataHub;
+        Map<String, List<Command>> commandsMap = hubImpl.buildCommandMap()
+
+        /**
+         * Need to update each ml(resource type)Commands extension that was added by ml-gradle. This accounts for
+         * changes made by DataHubImpl to the command map.
+         */
+        List<Command> newSetOfCommands = new ArrayList()
+        for (String key : commandsMap.keySet()) {
+            List<Command> commands = commandsMap.get(key)
+            newSetOfCommands.addAll(commands)
+            if (project.extensions.findByName(key) != null) {
+                List<Command> existingCommands = project.extensions.findByName(key)
+                existingCommands.clear()
+                existingCommands.addAll(commands)
+            } else {
+                project.extensions.add(key, commands);
+            }
+        }
+
+        mlAppDeployer.setCommands(newSetOfCommands)
+
     }
 }

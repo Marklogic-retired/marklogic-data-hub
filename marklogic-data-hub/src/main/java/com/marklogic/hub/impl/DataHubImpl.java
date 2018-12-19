@@ -21,7 +21,13 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
+import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
+import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
+import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
+import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
@@ -38,7 +44,6 @@ import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
-import com.marklogic.hub.util.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
@@ -49,13 +54,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -63,44 +71,53 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@Component
 public class DataHubImpl implements DataHub {
 
     private ManageClient _manageClient;
     private DatabaseManager _databaseManager;
     private ServerManager _serverManager;
+
+    @Autowired
     private HubConfigImpl hubConfig;
+
+    @Autowired
+    private HubProject project;
+
+    @Autowired
+    private LoadHubModulesCommand loadHubModulesCommand;
+
+    @Autowired
+    private LoadUserModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    private DeployHubAmpsCommand deployHubAmpsCommand;
+    
+    @Autowired
+    private Versions versions;
+    
+    @Autowired
+    private FlowManagerImpl flowManager;
 
     private AdminManager _adminManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private String finalFile = "final-database.json";
-    private String stagingFile = "staging-database.json";
-    private String jobsFile = "job-database.json";
 
-    public DataHubImpl(HubConfig hubConfig) {
-        if (hubConfig == null) {
-            throw new DataHubConfigurationException("HubConfig must not be null when creating a data hub");
-        }
-        this.hubConfig = ((HubConfigImpl) hubConfig);
-    }
-
-    private ManageClient getManageClient() {
-        if (this._manageClient == null) {
-            this._manageClient = this.hubConfig.getManageClient();
-        }
-        return this._manageClient;
+    @PostConstruct
+    public void wireClient() {
+        this._manageClient = hubConfig.getManageClient();
+        this._adminManager = hubConfig.getAdminManager();
+        this._databaseManager = new DatabaseManager(_manageClient);
+        this._serverManager = new ServerManager(_manageClient);
     }
 
     @Override
     public void clearDatabase(String database) {
-        DatabaseManager mgr = new DatabaseManager(this.getManageClient());
+        DatabaseManager mgr = new DatabaseManager(_manageClient);
         mgr.clearDatabase(database);
     }
 
     private AdminManager getAdminManager() {
-        if (this._adminManager == null) {
-            this._adminManager = this.hubConfig.getAdminManager();
-        }
         return this._adminManager;
     }
 
@@ -108,17 +125,15 @@ public class DataHubImpl implements DataHub {
         this._adminManager = manager;
     }
 
+    private ManageClient getManageClient() {
+        return _manageClient;
+    }
+
     private DatabaseManager getDatabaseManager() {
-        if (this._databaseManager == null) {
-            this._databaseManager = new DatabaseManager(getManageClient());
-        }
         return this._databaseManager;
     }
 
     private ServerManager getServerManager() {
-        if (this._serverManager == null) {
-            this._serverManager = new ServerManager(getManageClient());
-        }
         return this._serverManager;
     }
 
@@ -213,7 +228,7 @@ public class DataHubImpl implements DataHub {
     public boolean isServerVersionValid(String versionString) {
         try {
             if (versionString == null) {
-                versionString = new Versions(hubConfig).getMarkLogicVersion();
+                versionString = versions.getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             if (major < 9) {
@@ -346,17 +361,8 @@ public class DataHubImpl implements DataHub {
         }
     }
 
-    public List<Command> getStagingCommandList() {
-        Map<String, List<Command>> commandMap = getStagingCommands();
-        List<Command> commands = new ArrayList<>();
-        for (String name : commandMap.keySet()) {
-            commands.addAll(commandMap.get(name));
-        }
-        return commands;
-    }
-
-    public List<Command> getFinalCommandList() {
-        Map<String, List<Command>> commandMap = getFinalCommands();
+    public List<Command> buildListOfCommands() {
+        Map<String, List<Command>> commandMap = buildCommandMap();
         List<Command> commands = new ArrayList<>();
         for (String name : commandMap.keySet()) {
             commands.addAll(commandMap.get(name));
@@ -375,12 +381,7 @@ public class DataHubImpl implements DataHub {
 
 
     @Override
-    public HashMap runPreInstallCheck() {
-        return runPreInstallCheck(null);
-    }
-
-    @Override
-    public HashMap<String, Boolean> runPreInstallCheck(Versions versions) {
+    public HashMap<String, Boolean> runPreInstallCheck() {
 
 
         Map<Integer, String> portsInUse = null;
@@ -423,9 +424,6 @@ public class DataHubImpl implements DataHub {
         }
 
 
-        if (versions == null) {
-            versions = new Versions(hubConfig);
-        }
         serverVersion = versions.getMarkLogicVersion();
         serverVersionOk = isServerVersionValid(serverVersion);
         HashMap response = new HashMap();
@@ -448,18 +446,14 @@ public class DataHubImpl implements DataHub {
      * just installs the hub modules, for more granular management of upgrade
      */
     private void hubInstallModules() {
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        CommandContext stagingContext = new CommandContext(stagingConfig, null, null);
-        new LoadHubModulesCommand(hubConfig).execute(stagingContext);
+        loadHubModulesCommand.execute(new CommandContext(hubConfig.getAppConfig(), null, null));
     }
 
     /*
      * just installs the user modules, for more granular management of upgrade
      */
     private void loadUserModules() {
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        CommandContext stagingContext = new CommandContext(stagingConfig, null, null);
-        new LoadUserStagingModulesCommand(hubConfig).execute(stagingContext);
+        loadUserModulesCommand.execute(new CommandContext(hubConfig.getAppConfig(), null, null));
     }
 
     /**
@@ -477,14 +471,16 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void install(HubDeployStatusListener listener) {
-        initProject();
+        if (!hubConfig.getHubProject().isInitialized()) {
+            initProject();
+        }
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
-            AppConfig roleConfig = hubConfig.getStagingAppConfig();
+            AppConfig roleConfig = hubConfig.getAppConfig();
             SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
             roleDeployer.setCommands(getSecurityCommandList());
             roleDeployer.deploy(roleConfig);
@@ -496,51 +492,45 @@ public class DataHubImpl implements DataHub {
             }
         }
 
-        AppConfig finalConfig = hubConfig.getFinalAppConfig();
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setFinalCommandsList(getFinalCommandList());
-
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        finalDeployer.setStagingCommandsList(getStagingCommandList());
-
-        finalDeployer.deployAll(finalConfig, stagingConfig);
+        finalDeployer.setCommands(buildListOfCommands());
+        finalDeployer.deploy(hubConfig.getAppConfig());
     }
 
-    @Override
-    public void installFinal(HubDeployStatusListener listener) {
-
-        logger.warn("Installing the Data Hub into MarkLogic");
-        AppConfig finalConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
-        finalDeployer.setCommands(getFinalCommandList());
-        finalDeployer.deploy(finalConfig);
-    }
-
-    @Override
-    public void installStaging(HubDeployStatusListener listener) {
-        // i know it's weird that the final client installs staging, but it's needed
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
-        stagingDeployer.setCommands(getStagingCommandList());
-        stagingDeployer.deploy(stagingConfig);
-    }
-
+    /**
+     * Note that this differs from how "mlUpdateIndexes" works in ml-gradle. This is not stripping out any "non-index"
+     * properties from each payload - it's just updating every database.
+     *
+     * This does however disable forest creation which speeds up the process so that the only calls made are to
+     * update the databases.
+     */
     @Override
     public void updateIndexes() {
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+        deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
 
-        AppConfig finalConfig = hubConfig.getFinalAppConfig();
-        List<Command> finalDBCommand = new ArrayList<>();
-        finalDBCommand.add(new DeployHubDatabaseCommand(hubConfig, finalFile));
-        deployer.setFinalCommandsList(finalDBCommand);
+        AppConfig appConfig = hubConfig.getAppConfig();
+        final boolean originalCreateForests = appConfig.isCreateForests();
+        final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
+        try {
+            appConfig.setCreateForests(false);
+            if (hubConfig.getIsProvisionedEnvironment()) {
+                appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
+            }
+            deployer.deploy(hubConfig.getAppConfig());
+        } finally {
+            appConfig.setCreateForests(originalCreateForests);
+            appConfig.setResourceFilenamesIncludePattern(originalIncludePattern);
+        }
+    }
 
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        List<Command> stagingDBCommand = new ArrayList<>();
-        stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, stagingFile));
-        stagingDBCommand.add(new DeployHubDatabaseCommand(hubConfig, jobsFile));
-        deployer.setStagingCommandsList(stagingDBCommand);
-
-        deployer.deployAll(finalConfig, stagingConfig);
+    /**
+     * In a provisioned environment, only the databases defined by this pattern can be updated.
+     *
+     * @return
+     */
+    protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
+        return Pattern.compile("(staging|final|job)-database.json");
     }
 
     /**
@@ -560,39 +550,10 @@ public class DataHubImpl implements DataHub {
     public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
 
-        AppConfig finalConfig = hubConfig.getFinalAppConfig();
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setFinalCommandsList(getFinalCommandList());
-
-        AppConfig stagingConfig = hubConfig.getStagingAppConfig();
-        finalDeployer.setStagingCommandsList(getStagingCommandList());
-
-        finalDeployer.undeployAll(finalConfig, stagingConfig);
-
-        AppConfig roleConfig = hubConfig.getStagingAppConfig();
-        SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
-        roleDeployer.setCommands(getSecurityCommandList());
-        roleDeployer.undeploy(roleConfig);
+        finalDeployer.setCommands(buildListOfCommands());
+        finalDeployer.undeploy(hubConfig.getAppConfig());
     }
-
-    @Override
-    public void uninstallStaging(HubDeployStatusListener listener) {
-
-        AppConfig config = hubConfig.getStagingAppConfig();
-        HubAppDeployer stagingDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        stagingDeployer.setCommands(getStagingCommandList());
-        stagingDeployer.undeploy(config);
-    }
-
-    @Override
-    public void uninstallFinal(HubDeployStatusListener listener) {
-
-        AppConfig finalAppConfig = hubConfig.getFinalAppConfig();
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newFinalClient());
-        finalDeployer.setCommands(getFinalCommandList());
-        finalDeployer.undeploy(finalAppConfig);
-    }
-
 
     private void runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
@@ -607,39 +568,29 @@ public class DataHubImpl implements DataHub {
         eval.xquery(xqy).eval();
     }
 
-
-    private Map<String, List<Command>> getStagingCommands() {
+    public Map<String, List<Command>> buildCommandMap() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
-        List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubStagingTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubStagingSchemasDatabaseCommand(hubConfig));
-        commandMap.put("mlDatabaseCommands", dbCommands);
+        /**
+         * This kept separate from mlSecurityCommands because hub amps are stored in the DHF jar, while the commands
+         * in the mlSecurityCommands list deploy resources defined by users.
+         */
+        List<Command> hubAmpsCommands = new ArrayList<>();
+        hubAmpsCommands.add(deployHubAmpsCommand);
+        commandMap.put("mlHubAmpsCommand", hubAmpsCommands);
 
-        commandMap.remove("mlSecurityCommands");
+        updateDatabaseCommandList(commandMap);
 
-        // staging deploys amps.
-        List<Command> securityCommand = new ArrayList<>();
-        securityCommand.add(new DeployHubAmpsCommand(hubConfig));
-        securityCommand.add(new DeployHubPrivilegesCommand());
-        commandMap.put("mlSecurityCommand", securityCommand);
+        updateServerCommandList(commandMap);
 
-        // don't deploy rest api servers
+        updateSchemaCommandList(commandMap);
+
+        updateModuleCommandList(commandMap);
+
+        // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
         commandMap.remove("mlRestApiCommands");
 
-        List<Command> serverCommands = new ArrayList<>();
-        serverCommands.add(new DeployHubServersCommand(hubConfig));
-        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        serverCommands.add(otherServersCommand);
-        commandMap.put("mlServerCommands", serverCommands);
-
-        List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(new LoadHubModulesCommand(hubConfig));
-        moduleCommands.add(new LoadUserStagingModulesCommand(hubConfig));
-        commandMap.put("mlModuleCommands", moduleCommands);
-
+        // DHF has a custom property named "mlCustomForestPath" that has to be set on this command.
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
@@ -647,43 +598,87 @@ public class DataHubImpl implements DataHub {
         return commandMap;
     }
 
-    private Map<String, List<Command>> getFinalCommands() {
-        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
-
-        // final bootstraps users and roles for the hub
-        List<Command> securityCommands = commandMap.get("mlSecurityCommands");
-        securityCommands.set(0, new DeployUserRolesCommand(hubConfig));
-        securityCommands.set(1, new DeployUserUsersCommand(hubConfig));
-
-        commandMap.put("mlSecurityCommands", securityCommands);
-
+    /**
+     * DHF doesn't need the default commands for deploying a specific content/triggers/schemas database. It does want to
+     * preserve any other commands, with the one addition being that it needs to modify DeployOtherDatabaseCommand so
+     * that a custom DeployDatabaseCommand implementation is used.
+     *
+     * @param commandMap
+     */
+    private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
         List<Command> dbCommands = new ArrayList<>();
-        dbCommands.add(new DeployHubOtherDatabasesCommand(hubConfig));
-        dbCommands.add(new DeployHubFinalTriggersDatabaseCommand(hubConfig));
-        dbCommands.add(new DeployHubFinalSchemasDatabaseCommand(hubConfig));
+        for (Command c : commandMap.get("mlDatabaseCommands")) {
+            if (!(c instanceof DeployContentDatabasesCommand || c instanceof DeployTriggersDatabaseCommand || c instanceof DeploySchemasDatabaseCommand)) {
+                dbCommands.add(c);
+                if (c instanceof DeployOtherDatabasesCommand) {
+                    ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
+                }
+            }
+        }
         commandMap.put("mlDatabaseCommands", dbCommands);
+    }
 
-        // don't deploy rest api servers
-        commandMap.remove("mlRestApiCommands");
+    private void updateServerCommandList(Map<String, List<Command>> commandMap) {
+        final String key = "mlServerCommands";
+        List<Command> newCommands = new ArrayList<>();
+        for (Command c : commandMap.get(key)) {
+            /**
+             * DHF doesn't need the "Update REST API" command that ml-gradle includes because DHF isn't using ml-gradle's support
+             * for a default REST API server.
+             */
+            if (c instanceof UpdateRestApiServersCommand) {
+                continue;
+            }
+            /**
+             * Replace ml-gradle's DeployOtherServersCommand with a subclass that has DHF-specific functionality
+             */
+            if (c instanceof DeployOtherServersCommand) {
+                newCommands.add(new DeployHubOtherServersCommand());
+            }
+            else {
+                newCommands.add(c);
+            }
+        }
+        commandMap.put(key, newCommands);
+    }
 
-        List<Command> serverCommands = new ArrayList<>();
-        serverCommands.add(new DeployUserServersCommand(hubConfig));
-        DeployOtherServersCommand otherServersCommand = new DeployOtherServersCommand();
-        otherServersCommand.setFilenamesToIgnore("staging-server.json", "final-server.json", "job-server.json", "trace-server.json");
-        serverCommands.add(otherServersCommand);
-        commandMap.put("mlServerCommands", serverCommands);
+    /**
+     * The existing "LoadSchemasCommand" is based on the ml-config path and the AppConfig object should set the default
+     * schemas database name to that of the final schemas database. Thus, we just need to add a hub-specific command for
+     * loading staging schemas from a different path and into the staging schemas database.
+     *
+     * @param commandMap
+     */
+    private void updateSchemaCommandList(Map<String, List<Command>> commandMap) {
+        List<Command> commands = commandMap.get("mlSchemaCommands");
+        final String hubSchemasPath = hubConfig.getHubConfigDir().resolve("schemas").toString();
+        commands.add(new LoadHubSchemasCommand(hubSchemasPath, hubConfig.getStagingSchemasDbName()));
+    }
 
-        // this is the vanilla load-modules command from ml-gradle, to be included in this
-        // command list for install
-        List<Command> moduleCommands = new ArrayList<>();
-        moduleCommands.add(new LoadModulesCommand());
-        commandMap.put("mlModuleCommands", moduleCommands);
+    /**
+     * This affects what mlLoadModules does. We want it to load all modules, including hub modules. This supports a
+     * scenario where a user may clear her modules database; mlLoadModules should then load everything in.
+     *
+     * @param commandsMap
+     */
+    private void updateModuleCommandList(Map<String, List<Command>> commandsMap) {
+        List<Command> commands = new ArrayList();
+        commands.add(loadHubModulesCommand);
+        commands.add(loadUserModulesCommand);
 
-        List<Command> forestCommands = commandMap.get("mlForestCommands");
-        DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
-        deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
+        for (Command c : commandsMap.get("mlModuleCommands")) {
+            if (c instanceof LoadModulesCommand) {
+                // Don't want this, since our custom command above extends LoadModulesCommand
+                continue;
+            }
+            if (c instanceof DeleteTestModulesCommand) {
+                // Make sure this runs after our custom command for loading modules
+                ((DeleteTestModulesCommand) c).setExecuteSortOrder(loadUserModulesCommand.getExecuteSortOrder() + 1);
+            }
+            commands.add(c);
+        }
 
-        return commandMap;
+        commandsMap.put("mlModuleCommands", commands);
     }
 
     private Map<Integer, String> getServerPortsInUse() {
@@ -820,44 +815,53 @@ public class DataHubImpl implements DataHub {
     @Override
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled = this.isInstalled().isInstalled();
-        String currentVersion = new Versions(hubConfig).getHubVersion();
+        String currentVersion = versions.getHubVersion();
+
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }
-
         boolean result = false;
-        boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
-        File buildGradle = Paths.get(hubConfig.getProjectDir(), "build.gradle").toFile();
-
-        // update the hub-internal-config files
-        hubConfig.initHubProject();
+        boolean alreadyInitialized = project.isInitialized();                
         try {
-            if (alreadyInitialized) {
+            /*Ideally this should move to HubProject.upgradeProject() method
+             * But since it requires 'hubConfig' and 'versions', for now 
+             * leaving it here 
+             */
+            if(alreadyInitialized) {
+                // The version provided in "mlDHFVersion" property in gradle.properties.
+                String gradleVersion = versions.getDHFVersion();
+                File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
+                
+                // Back up the hub-internal-config and user-config directories in versions > 4.0
+                FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
+                FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
+                  
+                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin. 
+                System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
+                System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
+                System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
+                        + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
+                        + HubProject.USER_CONFIG_DIR);
                 // replace the hub version in build.gradle
                 String text = FileUtils.readFileToString(buildGradle);
                 String version = hubConfig.getJarVersion();
                 text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
                 text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
                 FileUtils.writeStringToFile(buildGradle, text);
-
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
             }
-
+            
+            hubConfig.initHubProject();
+            
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
-
-            // update legacy flows to include main.(sjs|xqy)
-            List<String> flows = FlowManager.create(hubConfig).updateLegacyFlows(currentVersion);
+            List<String> flows = flowManager.updateLegacyFlows(currentVersion);
             if (updatedFlows != null) {
                 updatedFlows.addAll(flows);
             }
-
             if (isHubInstalled) {
-                // install hub modules into MarkLogic
                 runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
-
-                // should be install user modules and hub modules, not install
                 this.hubInstallModules();
                 this.loadUserModules();
             }
@@ -869,5 +873,15 @@ public class DataHubImpl implements DataHub {
         }
 
         return result;
+    }
+
+    // only used in test
+    public void setHubConfig(HubConfigImpl hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
+    // only used in test
+    public void setVersions(Versions versions) {
+        this.versions = versions;
     }
 }

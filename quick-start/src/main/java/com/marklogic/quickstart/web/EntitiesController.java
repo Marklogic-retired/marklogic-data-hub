@@ -19,7 +19,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
 import com.marklogic.quickstart.model.PluginModel;
@@ -40,7 +40,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/api/current-project")
-class EntitiesController extends EnvironmentAware {
+class EntitiesController {
     @Autowired
     protected EntityManagerService entityManagerService;
 
@@ -53,10 +53,13 @@ class EntitiesController extends EnvironmentAware {
     @Autowired
     private SimpMessagingTemplate template;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     @RequestMapping(value = "/entities/create", method = RequestMethod.POST)
     @ResponseBody
     public EntityModel createEntity(@RequestBody EntityModel newEntity) throws ClassNotFoundException, IOException {
-        return entityManagerService.createEntity(envConfig().getProjectDir(), newEntity);
+        return entityManagerService.createEntity(newEntity);
     }
 
     @RequestMapping(value = "/entities/", method = RequestMethod.GET)
@@ -72,10 +75,10 @@ class EntitiesController extends EnvironmentAware {
         for (EntityModel entity : entities) {
             entityManagerService.saveEntity(entity);
         }
-        entityManagerService.savePii(envConfig());
-        entityManagerService.deploySearchOptions(envConfig());
+        entityManagerService.savePii();
+        entityManagerService.deploySearchOptions();
         entityManagerService.saveAllUiData(entities);
-        entityManagerService.saveDbIndexes(envConfig());
+        entityManagerService.saveDbIndexes();
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -92,9 +95,9 @@ class EntitiesController extends EnvironmentAware {
     public EntityModel saveEntity(@RequestBody EntityModel entity) throws ClassNotFoundException, IOException {
         entityManagerService.saveEntityUiData(entity);
         EntityModel m = entityManagerService.saveEntity(entity);
-        entityManagerService.savePii(envConfig());
-        entityManagerService.deploySearchOptions(envConfig());
-        entityManagerService.saveDbIndexes(envConfig());
+        entityManagerService.savePii();
+        entityManagerService.deploySearchOptions();
+        entityManagerService.saveDbIndexes();
         return m;
     }
 
@@ -118,7 +121,7 @@ class EntitiesController extends EnvironmentAware {
             @PathVariable String entityName,
             @PathVariable FlowType flowType,
             @RequestBody FlowModel newFlow) throws ClassNotFoundException, IOException {
-        return entityManagerService.createFlow(envConfig().getProjectDir(), entityName, flowType, newFlow);
+        return entityManagerService.createFlow(entityName, flowType, newFlow);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/{flowName}/{flowType}", method = RequestMethod.DELETE)
@@ -127,7 +130,7 @@ class EntitiesController extends EnvironmentAware {
         @PathVariable String entityName,
         @PathVariable String flowName,
         @PathVariable FlowType flowType) throws ClassNotFoundException, IOException {
-        entityManagerService.deleteFlow(envConfig().getProjectDir(), entityName, flowName, flowType);
+        entityManagerService.deleteFlow(entityName, flowName, flowType);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -188,7 +191,7 @@ class EntitiesController extends EnvironmentAware {
         @PathVariable FlowType flowType,
         @PathVariable String flowName,
         @RequestBody PluginModel plugin) throws IOException {
-        return entityManagerService.validatePlugin(envConfig().getMlSettings(), entityName, flowName, plugin);
+        return entityManagerService.validatePlugin(hubConfig, entityName, flowName, plugin);
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/harmonize/{flowName}/save-harmonize-options", method = RequestMethod.POST)
@@ -246,7 +249,7 @@ class EntitiesController extends EnvironmentAware {
             @PathVariable String entityName,
             @PathVariable String flowName,
             @PathVariable String jobId) throws IOException {
-        JobService jm = new JobService(envConfig().getJobClient());
+        JobService jm = new JobService(hubConfig.newJobDbClient());
         jm.cancelJob(Long.parseLong(jobId));
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

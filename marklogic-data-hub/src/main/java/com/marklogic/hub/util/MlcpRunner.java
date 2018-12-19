@@ -86,8 +86,8 @@ public class MlcpRunner extends ProcessRunner {
             }
 
             // Assume that the HTTP credentials will work for mlcp
-            bean.setUsername(hubConfig.getStagingAppConfig().getAppServicesUsername());
-            bean.setPassword(hubConfig.getStagingAppConfig().getAppServicesPassword());
+            bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
+            bean.setPassword(hubConfig.getAppConfig().getAppServicesPassword());
 
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
@@ -194,6 +194,7 @@ public class MlcpRunner extends ProcessRunner {
                             .stream()
                             .filter(
                                 u -> (
+                                    u.contains(System.getProperty("user.dir")) ||
                                     u.contains("jdk") ||
                                     u.contains("jre") ||
                                     u.contains("log") ||

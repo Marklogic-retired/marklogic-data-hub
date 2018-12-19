@@ -39,7 +39,7 @@
                   <li
                     class="flow mdl-list__item"
                     [attr.data-flow-list]="type.toUpperCase()"
-                    [ngClass]="{'active': isActiveFlow(flow)}"
+                    [ngClass]="{'active': isActiveFlow(flow, type)}"
                     *ngFor="let flow of getFlows(entity, type)">
                     <div (click)="setFlow(flow, type.toUpperCase())" [attr.data-flow-name]="flow.flowName">
                       <span class="mdl-list__item-primary-content">
@@ -109,13 +109,15 @@
                   <i class="fa fa-bug" *ngIf="pluginHasError(flow, plugin.pluginType)"></i>
                   <span class="plugin-path">{{plugin.pluginPath}}</span>
                   <span *ngIf="isSaving">Saving <i class="fa fa-spinner fa-pulse"></i></span>
-                  <div class="pull-right save-button">
+                  <div
+                    class="pull-right save-button"
+                    tooltip="This will save the plugin code."
+                    placement="bottom"
+                    container="body">
                     <mdl-button
                       mdl-button-type="raised" mdl-colored="primary" mdl-ripple
                       [disabled]="!plugin.$dirty || isSaving"
-                      (click)="savePlugin(plugin)"
-                      tooltip="This will save the plugin code."
-                      tooltipPlacement="bottom">
+                      (click)="savePlugin(plugin)">
                       Save <i class="fa fa-floppy-o"></i>
                     </mdl-button>
                   </div>

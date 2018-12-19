@@ -18,7 +18,8 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.model.TraceQuery;
 import com.marklogic.quickstart.service.TraceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,18 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value="/api/traces")
-public class TracesController extends EnvironmentAware {
+public class TracesController {
 
     @Autowired
     TraceService traceService;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     TraceService traceManager() {
-        return new TraceService(envConfig().getJobClient());
+        return new TraceService(hubConfig.newJobDbClient());
     }
 
     @RequestMapping(method = RequestMethod.POST)

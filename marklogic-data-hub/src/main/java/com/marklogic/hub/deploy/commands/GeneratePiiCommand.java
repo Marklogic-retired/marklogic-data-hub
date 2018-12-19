@@ -4,18 +4,24 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GeneratePiiCommand extends AbstractCommand {
 
+    @Autowired
     private HubConfig hubConfig;
 
-    public GeneratePiiCommand(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-    }
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public void execute(CommandContext context) {
-        EntityManager entityManager = EntityManager.create(hubConfig);
         entityManager.savePii();
+    }
+
+    public void setHubConfig(HubConfig hubAdminConfig) {
+        this.hubConfig = hubAdminConfig;
     }
 }

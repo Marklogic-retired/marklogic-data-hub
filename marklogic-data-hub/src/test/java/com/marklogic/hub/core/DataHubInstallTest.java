@@ -15,22 +15,22 @@
  */
 package com.marklogic.hub.core;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.*;
+import com.marklogic.hub.ApplicationConfig;
+import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URISyntaxException;
@@ -40,19 +40,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class DataHubInstallTest extends HubTestBase {
     private static int afterTelemetryInstallCount = 0;
 
     static boolean setupDone=false;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        // special case do-one setup.
         XMLUnit.setIgnoreWhitespace(true);
-        // the project dir must be available for uninstall to do anything because it relies on properties file.
         createProjectDir();
+    }
+
+    @AfterEach
+    public void teardown() {
+        deleteProjectDir();
     }
 
     //should be removed after DHFPROD-1263 is fixed.
@@ -75,9 +82,9 @@ public class DataHubInstallTest extends HubTestBase {
 	}
 
     @Test
-    @Ignore
+    @Disabled
     public void testTelemetryInstallCount() throws IOException {
-        assertTrue("Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount, afterTelemetryInstallCount > 0);
+        assertTrue(afterTelemetryInstallCount > 0, "Telemetry install count was not incremented during install.  Value now is " + afterTelemetryInstallCount);
     }
 
     @Test
@@ -86,25 +93,30 @@ public class DataHubInstallTest extends HubTestBase {
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
 
-        assertTrue("trace options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0);
-        assertTrue("jobs options not installed", getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0);
-        assertTrue("staging options not installed", getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0);
-        assertTrue("final options not installed", getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0);
+        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0, "trace options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0, "jobs options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0,"staging options not installed");
+        assertTrue(getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0, "final options not installed");
     }
 
     @Test
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
-        assertEquals(version, new Versions(getHubFlowRunnerConfig()).getHubVersion());
+        assertEquals(version, versions.getHubVersion());
+        getHubAdminConfig();
     }
 
     @Test
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
+        File srcDir = new File(path);
+        File projectDir = new File(PROJECT_PATH);
 
         createProjectDir(path);
-        HubConfig hubConfig = getHubAdminConfig(path);
+        FileUtils.cleanDirectory(projectDir);
+        FileUtils.copyDirectory(srcDir, projectDir);
+        HubConfig hubConfig = getHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         installUserModules(hubConfig, true);
@@ -205,23 +217,23 @@ public class DataHubInstallTest extends HubTestBase {
             getResource("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-input-transform/assets/transform.xqy"));
 
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.initialize();
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/my-lib.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/content.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/headers.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/triples.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/writer.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/final/main.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/content.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/headers.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/triples.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/writer.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/hl7/main.xqy")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/REST/options/doctors.xml")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml")));
-        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(getResourceFile("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/my-lib.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/content.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/headers.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/triples.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/writer.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/final/main.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/content.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/headers.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/triples.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/writer.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/hl7/main.xqy")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/REST/options/doctors.xml")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/REST/options/patients.xml")));
+        assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy")));
     }
 
     @Test
@@ -230,7 +242,6 @@ public class DataHubInstallTest extends HubTestBase {
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
         HubConfig hubConfig = getHubAdminConfig(path);
-        DataHub dataHub = DataHub.create(hubConfig);
         dataHub.clearUserModules();
 
 

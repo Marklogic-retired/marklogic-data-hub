@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
+import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.DatabaseClientConfig;
@@ -29,38 +30,70 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
     getterVisibility = JsonAutoDetect.Visibility.ANY,
     setterVisibility = JsonAutoDetect.Visibility.ANY)
-public class HubConfigImpl implements HubConfig {
+@Component
+@PropertySource({"classpath:dhf-defaults.properties"})
+public class HubConfigImpl implements HubConfig
+{
+    @Autowired
+    private HubProject hubProject;
 
-    protected String stagingDbName = DEFAULT_STAGING_NAME;
-    protected String stagingHttpName = DEFAULT_STAGING_NAME;
-    protected Integer stagingForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    protected Integer stagingPort = DEFAULT_STAGING_PORT;
-    protected String stagingAuthMethod = DEFAULT_AUTH_METHOD;
-    private String stagingScheme = DEFAULT_SCHEME;
-    private boolean stagingSimpleSsl = false;
+    @Autowired
+    private Environment environment;
+
+    // a set of properties to use for legacy token replacement.
+    Properties projectProperties = null;
+
+    @Autowired
+    FlowManagerImpl flowManager;
+    @Autowired
+    DataHubImpl dataHub;
+    @Autowired
+    Versions versions;
+
+
+    protected String host;
+
+    protected String stagingDbName;
+    protected String stagingHttpName;
+    protected Integer stagingForestsPerHost;
+    protected Integer stagingPort;
+    protected String stagingAuthMethod;
+    private String stagingScheme;
+    private Boolean stagingSimpleSsl;
+
     private SSLContext stagingSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier;
     private String stagingCertFile;
@@ -68,13 +101,15 @@ public class HubConfigImpl implements HubConfig {
     private String stagingExternalName;
     private X509TrustManager stagingTrustManager;
 
-    protected String finalDbName = DEFAULT_FINAL_NAME;
-    protected String finalHttpName = DEFAULT_FINAL_NAME;
-    protected Integer finalForestsPerHost = DEFAULT_FORESTS_PER_HOST;
-    protected Integer finalPort = DEFAULT_FINAL_PORT;
-    protected String finalAuthMethod = DEFAULT_AUTH_METHOD;
-    private String finalScheme = DEFAULT_SCHEME;
-    private boolean finalSimpleSsl = false;
+
+    protected String finalDbName;
+    protected String finalHttpName;
+    protected Integer finalForestsPerHost;
+    protected Integer finalPort;
+    protected String finalAuthMethod;
+    private String finalScheme;
+
+    private Boolean finalSimpleSsl;
     private SSLContext finalSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
     private String finalCertFile;
@@ -82,13 +117,15 @@ public class HubConfigImpl implements HubConfig {
     private String finalExternalName;
     private X509TrustManager finalTrustManager;
 
-    protected String jobDbName = DEFAULT_JOB_NAME;
-    protected String jobHttpName = DEFAULT_JOB_NAME;
-    protected Integer jobForestsPerHost = 1;
-    protected Integer jobPort = DEFAULT_JOB_PORT;
-    protected String jobAuthMethod = DEFAULT_AUTH_METHOD;
-    private String jobScheme = DEFAULT_SCHEME;
-    private boolean jobSimpleSsl = false;
+
+    protected String jobDbName;
+    protected String jobHttpName;
+    protected Integer jobForestsPerHost;
+    protected Integer jobPort;
+    protected String jobAuthMethod;
+    private String jobScheme;
+
+    private Boolean jobSimpleSsl;
     private SSLContext jobSslContext;
     private DatabaseClientFactory.SSLHostnameVerifier jobSslHostnameVerifier;
     private String jobCertFile;
@@ -96,70 +133,64 @@ public class HubConfigImpl implements HubConfig {
     private String jobExternalName;
     private X509TrustManager jobTrustManager;
 
-    protected String modulesDbName = DEFAULT_MODULES_DB_NAME;
-    protected Integer modulesForestsPerHost = 1;
 
-    protected String stagingTriggersDbName = DEFAULT_STAGING_TRIGGERS_DB_NAME;
-    protected Integer stagingTriggersForestsPerHost = 1;
-    protected String finalTriggersDbName = DEFAULT_FINAL_TRIGGERS_DB_NAME;
-    protected Integer finalTriggersForestsPerHost = 1;
+    protected String modulesDbName;
+    protected Integer modulesForestsPerHost;
+    protected String stagingTriggersDbName;
+    protected Integer stagingTriggersForestsPerHost;
+    protected String finalTriggersDbName;
+    protected Integer finalTriggersForestsPerHost;
+    protected String stagingSchemasDbName;
+    protected Integer stagingSchemasForestsPerHost;
+    protected String finalSchemasDbName;
+    protected Integer finalSchemasForestsPerHost;
 
-    protected String stagingSchemasDbName = DEFAULT_STAGING_SCHEMAS_DB_NAME;
-    protected Integer stagingSchemasForestsPerHost = 1;
-    protected String finalSchemasDbName = DEFAULT_FINAL_SCHEMAS_DB_NAME;
-    protected Integer finalSchemasForestsPerHost = 1;
 
-    private String hubRoleName = DEFAULT_ROLE_NAME;
-    private String hubUserName = DEFAULT_USER_NAME;
-    private String hubAdminRoleName = DEFAULT_ADMIN_ROLE_NAME;
-    private String hubAdminUserName = DEFAULT_ADMIN_USER_NAME;
+    private String hubRoleName;
+    private String hubUserName;
 
-    //we assume DHF 2.x unless otherwise told, our earliest 'from' version
-    private String DHFVersion = "2.0.0";
+    private String hubAdminRoleName;
+    private String hubAdminUserName;
+
+    private String DHFVersion;
 
     // these hold runtime credentials for flows.
     private String mlUsername = null;
     private String mlPassword = null;
 
     private String loadBalancerHost;
-
     private Boolean isHostLoadBalancer;
 
     private Boolean isProvisionedEnvironment;
 
-    protected String customForestPath = DEFAULT_CUSTOM_FOREST_PATH;
-    protected String modulePermissions = "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute";
+    protected String customForestPath;
 
-    private String projectDir;
-
-    private Properties environmentProperties;
-
-    private HubProject hubProject;
+    protected String modulePermissions;
 
     private ManageConfig manageConfig;
     private ManageClient manageClient;
     private AdminConfig adminConfig;
     private AdminManager adminManager;
 
-    private AppConfig stagingAppConfig;
-    private AppConfig finalAppConfig;
+    private AppConfig appConfig;
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
     private ObjectMapper objmapper;
 
+    private String envString;
+
     public HubConfigImpl() {
-
         objmapper = new ObjectMapper();
-    }
-
-    public HubConfigImpl(String projectDir) {
-        this();
-        setProjectDir(new File(projectDir).getAbsolutePath());
+        projectProperties = new Properties();
     }
 
 
-    public String getHost() { return stagingAppConfig.getHost(); }
+    public void createProject(String projectDirString) {
+        hubProject.createProject(projectDirString);
+    }
+
+    public String getHost() { return appConfig.getHost(); }
 
     @Override public String getDbName(DatabaseKind kind){
         String name;
@@ -776,6 +807,14 @@ public class HubConfigImpl implements HubConfig {
     public String getMlPassword() {
         return mlPassword;
     }
+    
+    public void setMlUsername(String mlUsername) {
+        this.mlUsername = mlUsername;
+    }
+
+    public void setMlPassword(String mlPassword) {
+        this.mlPassword = mlPassword;
+    }
     @Override  public void setHubUserName(String hubUserName) {
         this.hubUserName = hubUserName;
     }
@@ -810,17 +849,21 @@ public class HubConfigImpl implements HubConfig {
     @Override public String getModulePermissions() {
         return modulePermissions;
     }
+
+    @Override
+    @Deprecated
+    public String getProjectDir() {
+        return hubProject.getProjectDirString();
+    }
+
+    @Override
+    @Deprecated
+    public void setProjectDir(String projectDir) {
+        createProject(projectDir);
+    }
+
     public void setModulePermissions(String modulePermissions) {
         this.modulePermissions = modulePermissions;
-    }
-
-    @Override public String getProjectDir() {
-        return this.projectDir;
-    }
-
-    @Override public void setProjectDir(String projectDir) {
-        this.projectDir = projectDir;
-        this.hubProject = HubProject.create(projectDir);
     }
 
     @JsonIgnore
@@ -832,148 +875,523 @@ public class HubConfigImpl implements HubConfig {
         this.hubProject.init(getCustomTokens());
     }
 
-    @JsonIgnore
-    @Override  public String getHubModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+    @Override
+    @Deprecated
+    public String getHubModulesDeployTimestampFile() {
+        return hubProject.getHubModulesDeployTimestampFile();
     }
 
-    @JsonIgnore
-    @Override public String getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+    @Override
+    @Deprecated
+    public String getUserModulesDeployTimestampFile() {
+        return hubProject.getUserModulesDeployTimestampFile();
     }
 
-    @JsonIgnore
-    public File getUserContentDeployTimestampFile() {
-        return Paths.get(projectDir, ".tmp", USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES).toFile();
-    }
 
-    public void loadConfigurationFromProperties(Properties environmentProperties) {
-        this.environmentProperties = environmentProperties;
-
-        if (this.environmentProperties != null) {
-            stagingDbName = getEnvPropString(environmentProperties, "mlStagingDbName", stagingDbName);
-            stagingHttpName = getEnvPropString(environmentProperties, "mlStagingAppserverName", stagingHttpName);
-            stagingForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingForestsPerHost", stagingForestsPerHost);
-            stagingPort = getEnvPropInteger(environmentProperties, "mlStagingPort", stagingPort);
-            stagingAuthMethod = getEnvPropString(environmentProperties, "mlStagingAuth", stagingAuthMethod);
-            stagingScheme = getEnvPropString(environmentProperties, "mlStagingScheme", stagingScheme);
-            stagingSimpleSsl = getEnvPropBoolean(environmentProperties, "mlStagingSimpleSsl", false);
-            if (stagingSimpleSsl) {
-                stagingSslContext = SimpleX509TrustManager.newSSLContext();
-                stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-                stagingTrustManager = new SimpleX509TrustManager();
-            }
-            stagingCertFile = getEnvPropString(environmentProperties, "mlStagingCertFile", stagingCertFile);
-            stagingCertPassword = getEnvPropString(environmentProperties, "mlStagingCertPassword", stagingCertPassword);
-            stagingExternalName = getEnvPropString(environmentProperties, "mlStagingExternalName", stagingExternalName);
-
-
-            finalDbName = getEnvPropString(environmentProperties, "mlFinalDbName", finalDbName);
-            finalHttpName = getEnvPropString(environmentProperties, "mlFinalAppserverName", finalHttpName);
-            finalForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalForestsPerHost", finalForestsPerHost);
-            finalPort = getEnvPropInteger(environmentProperties, "mlFinalPort", finalPort);
-            finalAuthMethod = getEnvPropString(environmentProperties, "mlFinalAuth", finalAuthMethod);
-            finalScheme = getEnvPropString(environmentProperties, "mlFinalScheme", finalScheme);
-            finalSimpleSsl = getEnvPropBoolean(environmentProperties, "mlFinalSimpleSsl", false);
-            if (finalSimpleSsl) {
-                finalSslContext = SimpleX509TrustManager.newSSLContext();
-                finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-                finalTrustManager = new SimpleX509TrustManager();
-            }
-            finalCertFile = getEnvPropString(environmentProperties, "mlFinalCertFile", finalCertFile);
-            finalCertPassword = getEnvPropString(environmentProperties, "mlFinalCertPassword", finalCertPassword);
-            finalExternalName = getEnvPropString(environmentProperties, "mlFinalExternalName", finalExternalName);
-
-
-            jobDbName = getEnvPropString(environmentProperties, "mlJobDbName", jobDbName);
-            jobHttpName = getEnvPropString(environmentProperties, "mlJobAppserverName", jobHttpName);
-            jobForestsPerHost = getEnvPropInteger(environmentProperties, "mlJobForestsPerHost", jobForestsPerHost);
-            jobPort = getEnvPropInteger(environmentProperties, "mlJobPort", jobPort);
-            jobAuthMethod = getEnvPropString(environmentProperties, "mlJobAuth", jobAuthMethod);
-            jobScheme = getEnvPropString(environmentProperties, "mlJobScheme", jobScheme);
-            jobSimpleSsl = getEnvPropBoolean(environmentProperties, "mlJobSimpleSsl", false);
-            if (jobSimpleSsl) {
-                jobSslContext = SimpleX509TrustManager.newSSLContext();
-                jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
-                jobTrustManager = new SimpleX509TrustManager();
-            }
-            jobCertFile = getEnvPropString(environmentProperties, "mlJobCertFile", jobCertFile);
-            jobCertPassword = getEnvPropString(environmentProperties, "mlJobCertPassword", jobCertPassword);
-            jobExternalName = getEnvPropString(environmentProperties, "mlJobExternalName", jobExternalName);
-
-            customForestPath = getEnvPropString(environmentProperties, "mlCustomForestPath", customForestPath);
-
-            modulesDbName = getEnvPropString(environmentProperties, "mlModulesDbName", modulesDbName);
-            modulesForestsPerHost = getEnvPropInteger(environmentProperties, "mlModulesForestsPerHost", modulesForestsPerHost);
-            modulePermissions = getEnvPropString(environmentProperties, "mlModulePermissions", modulePermissions);
-
-            stagingTriggersDbName = getEnvPropString(environmentProperties, "mlStagingTriggersDbName", stagingTriggersDbName);
-            stagingTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost);
-
-            finalTriggersDbName = getEnvPropString(environmentProperties, "mlFinalTriggersDbName", finalTriggersDbName);
-            finalTriggersForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost);
-
-            stagingSchemasDbName = getEnvPropString(environmentProperties, "mlStagingSchemasDbName", stagingSchemasDbName);
-            stagingSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost);
-
-            finalSchemasDbName = getEnvPropString(environmentProperties, "mlFinalSchemasDbName", finalSchemasDbName);
-            finalSchemasForestsPerHost = getEnvPropInteger(environmentProperties, "mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost);
-
-            hubRoleName = getEnvPropString(environmentProperties, "mlHubUserRole", hubRoleName);
-            hubUserName = getEnvPropString(environmentProperties, "mlHubUserName", hubUserName);
-
-            DHFVersion = getEnvPropString(environmentProperties, "mlDHFVersion", DHFVersion);
-
-            // this is a runtime username/password for running flows
-            // could be factored away with FlowRunner
-            mlUsername = getEnvPropString(environmentProperties, "mlUsername", mlUsername);
-            mlPassword = getEnvPropString(environmentProperties, "mlPassword", mlPassword);
-
-            isHostLoadBalancer = getEnvPropBoolean(environmentProperties, "mlIsHostLoadBalancer");
-            String mlHost = getEnvPropString(environmentProperties, "mlHost", null);
-            String lbh = getEnvPropString(environmentProperties, "mlLoadBalancerHosts", null);
-            if (isHostLoadBalancer != null){
-                if (isHostLoadBalancer) {
-                    if (mlHost != null && lbh != null){
-                        logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\", the value specified for \"mlHost\" will be used as the load balancer.");
-                        if (!mlHost.equals(lbh)) {
-                            throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
-                        }
-                        else {
-                            loadBalancerHost = mlHost;
-                        }
-                    }
-                }
-                else {
-                    if (lbh != null){
-                        throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
-                    }
-                }
-            }
-            else{
-                if (mlHost != null && lbh != null){
-                    if (!mlHost.equals(lbh)) {
+    public void hydrateConfigs() {
+        if (stagingSimpleSsl != null && stagingSimpleSsl) {
+            stagingSslContext = SimpleX509TrustManager.newSSLContext();
+            stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+            stagingTrustManager = new SimpleX509TrustManager();
+        }
+        if (finalSimpleSsl != null && finalSimpleSsl) {
+            finalSslContext = SimpleX509TrustManager.newSSLContext();
+            finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+            finalTrustManager = new SimpleX509TrustManager();
+        }
+        if (jobSimpleSsl != null && jobSimpleSsl) {
+            jobSslContext = SimpleX509TrustManager.newSSLContext();
+            jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+            jobTrustManager = new SimpleX509TrustManager();
+        }
+        if (isHostLoadBalancer != null){
+            if (isHostLoadBalancer) {
+                if (host != null && loadBalancerHost != null){
+                    logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\"properties, the value specified for \"mlHost\" will be used as the load balancer.");
+                    if (!host.equals(loadBalancerHost)) {
                         throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
                     }
                     else {
-                        isHostLoadBalancer = true;
-                        loadBalancerHost = mlHost;
+                        loadBalancerHost = host;
                     }
                 }
-                else {
-                    isHostLoadBalancer = false;
+            }
+            else {
+                if (loadBalancerHost != null){
+                    throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
                 }
             }
+        }
+        else{
+            if (host != null && loadBalancerHost != null){
+                if (!host.equals(loadBalancerHost)) {
+                    throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
+                }
+                else {
+                    isHostLoadBalancer = true;
+                    loadBalancerHost = host;
+                }
+            }
+            else {
+                isHostLoadBalancer = false;
+            }
+        }
+    }
 
 
-            isProvisionedEnvironment = getEnvPropBoolean(environmentProperties, "mlIsProvisionedEnvironment", false);
+    public void loadConfigurationFromProperties(){
+        loadConfigurationFromProperties(null, true);
+    }
 
-            projectDir = getEnvPropString(environmentProperties, "hubProjectDir", projectDir);
+    public void loadConfigurationFromProperties(Properties properties, boolean loadGradleProperties) {
+        projectProperties = new Properties();
 
-            logger.info("Hub Project Dir: " + projectDir);
+        /*
+         * Not sure if this code should still be here. We don't want to do this in a Gradle environment because the
+         * properties have already been loaded and processed by the Gradle properties plugin, and they should be in
+         * the incoming Properties object. So the use case for this would be when there's a gradle.properties file
+         * available but Gradle isn't being used.
+         */
+        if (loadGradleProperties) {
+            if (logger.isInfoEnabled()) {
+                logger.info("Loading properties from gradle.properties");
+            }
+            File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
+            loadPropertiesFromFile(file, projectProperties);
+
+            if (envString != null) {
+                File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + envString + ".properties").toFile();
+                if (envPropertiesFile != null && envPropertiesFile.exists()) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
+                    }
+                    loadPropertiesFromFile(envPropertiesFile, projectProperties);
+                }
+            }
+        }
+
+        if (properties != null){
+            properties.forEach(projectProperties::put);
+        }
+
+        if (host == null) {
+            host = getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost"));
         }
         else {
-            logger.error("Missing environmentProperties");
+            projectProperties.setProperty("mlHost", host);
+        }
+
+        if (stagingDbName == null) {
+            stagingDbName = getEnvPropString(projectProperties, "mlStagingDbName", environment.getProperty("mlStagingDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlStagingDbName", stagingDbName);
+        }
+
+        if (stagingHttpName == null) {
+            stagingHttpName = getEnvPropString(projectProperties, "mlStagingAppserverName", environment.getProperty("mlStagingAppserverName"));
+        }
+        else {
+            projectProperties.setProperty("mlStagingAppserverName", stagingHttpName);
+        }
+
+        if (stagingForestsPerHost == null) {
+            stagingForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlStagingForestsPerHost", stagingForestsPerHost.toString());
+        }
+
+        if (stagingPort == null) {
+            stagingPort = getEnvPropInteger(projectProperties, "mlStagingPort", Integer.parseInt(environment.getProperty("mlStagingPort")));
+        }
+        else {
+            projectProperties.setProperty("mlStagingPort", stagingPort.toString());
+        }
+
+        if (stagingAuthMethod == null) {
+            stagingAuthMethod = getEnvPropString(projectProperties, "mlStagingAuth", environment.getProperty("mlStagingAuth"));
+        }
+        else {
+            projectProperties.setProperty("mlStagingAuth", stagingAuthMethod);
+        }
+
+        if (stagingScheme == null) {
+            stagingScheme = getEnvPropString(projectProperties, "mlStagingScheme", environment.getProperty("mlStagingScheme"));
+        }
+        else {
+            projectProperties.setProperty("mlStagingScheme", stagingScheme);
+        }
+
+        if (stagingSimpleSsl == null) {
+            stagingSimpleSsl = getEnvPropBoolean(projectProperties, "mlStagingSimpleSsl", false);
+        }
+        else {
+            projectProperties.setProperty("mlStagingSimpleSsl", stagingSimpleSsl.toString());
+        }
+
+        if (stagingCertFile == null) {
+            stagingCertFile = getEnvPropString(projectProperties, "mlStagingCertFile", stagingCertFile);
+        }
+        else {
+            projectProperties.setProperty("mlStagingCertFile", stagingCertFile);
+        }
+
+        if (stagingCertPassword == null) {
+            stagingCertPassword = getEnvPropString(projectProperties, "mlStagingCertPassword", stagingCertPassword);
+        }
+        else {
+            projectProperties.setProperty("mlStagingCertPassword", stagingCertPassword);
+        }
+
+        if (stagingExternalName == null) {
+            stagingExternalName = getEnvPropString(projectProperties, "mlStagingExternalName", stagingExternalName);
+        }
+        else {
+            projectProperties.setProperty("mlStagingExternalName", stagingExternalName);
+        }
+
+
+        if (finalDbName == null) {
+            finalDbName = getEnvPropString(projectProperties, "mlFinalDbName", environment.getProperty("mlFinalDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlFinalDbName", finalDbName);
+        }
+
+        if (finalHttpName == null) {
+            finalHttpName = getEnvPropString(projectProperties, "mlFinalAppserverName", environment.getProperty("mlFinalAppserverName"));
+        }
+        else {
+            projectProperties.setProperty("mlFinalAppserverName", finalHttpName);
+        }
+
+        if (finalForestsPerHost == null) {
+            finalForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlFinalForestsPerHost", finalForestsPerHost.toString());
+        }
+
+        if (finalPort == null) {
+            finalPort = getEnvPropInteger(projectProperties, "mlFinalPort", Integer.parseInt(environment.getProperty("mlFinalPort")));
+        }
+        else {
+            projectProperties.setProperty("mlFinalPort", finalPort.toString());
+        }
+
+        if (finalAuthMethod == null) {
+            finalAuthMethod = getEnvPropString(projectProperties, "mlFinalAuth", environment.getProperty("mlFinalAuth"));
+        }
+        else {
+            projectProperties.setProperty("mlFinalAuth", finalAuthMethod);
+        }
+
+        if (finalScheme == null) {
+            finalScheme = getEnvPropString(projectProperties, "mlFinalScheme", environment.getProperty("mlFinalScheme"));
+        }
+        else {
+            projectProperties.setProperty("mlFinalScheme", finalScheme);
+        }
+
+        if (finalSimpleSsl == null) {
+            finalSimpleSsl = getEnvPropBoolean(projectProperties, "mlFinalSimpleSsl", false);
+        }
+        else {
+            projectProperties.setProperty("mlFinalSimpleSsl", finalSimpleSsl.toString());
+        }
+
+        if (finalCertFile == null) {
+            finalCertFile = getEnvPropString(projectProperties, "mlFinalCertFile", finalCertFile);
+        }
+        else {
+            projectProperties.setProperty("mlFinalCertFile", finalCertFile);
+        }
+
+        if (finalCertPassword == null) {
+            finalCertPassword = getEnvPropString(projectProperties, "mlFinalCertPassword", finalCertPassword);
+        }
+        else {
+            projectProperties.setProperty("mlFinalCertPassword", finalCertPassword);
+        }
+
+        if (finalExternalName == null) {
+            finalExternalName = getEnvPropString(projectProperties, "mlFinalExternalName", finalExternalName);
+        }
+        else {
+            projectProperties.setProperty("mlFinalExternalName", finalExternalName);
+        }
+
+        if (jobDbName == null) {
+            jobDbName = getEnvPropString(projectProperties, "mlJobDbName", environment.getProperty("mlJobDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlJobDbName", jobDbName);
+        }
+
+        if (jobHttpName == null) {
+            jobHttpName = getEnvPropString(projectProperties, "mlJobAppserverName", environment.getProperty("mlJobAppserverName"));
+        }
+        else {
+            projectProperties.setProperty("mlJobAppserverName", jobHttpName);
+        }
+
+        if (jobForestsPerHost == null) {
+            jobForestsPerHost = getEnvPropInteger(projectProperties, "mlJobForestsPerHost", Integer.parseInt(environment.getProperty("mlJobForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlJobForestsPerHost", jobForestsPerHost.toString());
+        }
+
+        if (jobPort == null) {
+            jobPort = getEnvPropInteger(projectProperties, "mlJobPort", Integer.parseInt(environment.getProperty("mlJobPort")));
+        }
+        else {
+            projectProperties.setProperty("mlJobPort", jobPort.toString());
+        }
+
+        if (jobAuthMethod == null) {
+            jobAuthMethod = getEnvPropString(projectProperties, "mlJobAuth", environment.getProperty("mlJobAuth"));
+        }
+        else {
+            projectProperties.setProperty("mlJobAuth", jobAuthMethod);
+        }
+
+        if (jobScheme == null) {
+            jobScheme = getEnvPropString(projectProperties, "mlJobScheme", environment.getProperty("mlJobScheme"));
+        }
+        else {
+            projectProperties.setProperty("mlJobScheme", jobScheme);
+        }
+
+        if (jobSimpleSsl == null) {
+            jobSimpleSsl = getEnvPropBoolean(projectProperties, "mlJobSimpleSsl", false);
+        }
+        else {
+            projectProperties.setProperty("mlJobSimpleSsl", jobSimpleSsl.toString());
+        }
+
+        if (jobCertFile == null) {
+            jobCertFile = getEnvPropString(projectProperties, "mlJobCertFile", jobCertFile);
+        }
+        else {
+            projectProperties.setProperty("mlJobCertFile", jobCertFile);
+        }
+
+        if (jobCertPassword == null) {
+            jobCertPassword = getEnvPropString(projectProperties, "mlJobCertPassword", jobCertPassword);
+        }
+        else {
+            projectProperties.setProperty("mlJobCertPassword", jobCertPassword);
+        }
+
+        if (jobExternalName == null) {
+            jobExternalName = getEnvPropString(projectProperties, "mlJobExternalName", jobExternalName);
+        }
+        else {
+            projectProperties.setProperty("mlJobExternalName", jobExternalName);
+        }
+
+        if (customForestPath == null) {
+            customForestPath = getEnvPropString(projectProperties, "mlCustomForestPath", environment.getProperty("mlCustomForestPath"));
+        }
+        else {
+            projectProperties.setProperty("mlCustomForestPath", customForestPath);
+        }
+
+        if (modulesDbName == null) {
+            modulesDbName = getEnvPropString(projectProperties, "mlModulesDbName", environment.getProperty("mlModulesDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlModulesDbName", modulesDbName);
+        }
+
+        if (modulesForestsPerHost == null) {
+            modulesForestsPerHost = getEnvPropInteger(projectProperties, "mlModulesForestsPerHost", Integer.parseInt(environment.getProperty("mlModulesForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlModulesForestsPerHost", modulesForestsPerHost.toString());
+        }
+
+        if (stagingTriggersDbName == null) {
+            stagingTriggersDbName = getEnvPropString(projectProperties, "mlStagingTriggersDbName", environment.getProperty("mlStagingTriggersDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlStagingTriggersDbName", stagingTriggersDbName);
+        }
+
+        if (stagingTriggersForestsPerHost == null) {
+            stagingTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingTriggersForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingTriggersForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost.toString());
+        }
+
+        if (finalTriggersDbName == null) {
+            finalTriggersDbName = getEnvPropString(projectProperties, "mlFinalTriggersDbName", environment.getProperty("mlFinalTriggersDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlFinalTriggersDbName", finalTriggersDbName);
+        }
+
+        if (finalTriggersForestsPerHost == null) {
+            finalTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalTriggersForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalTriggersForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost.toString());
+        }
+
+        if (stagingSchemasDbName == null) {
+            stagingSchemasDbName = getEnvPropString(projectProperties, "mlStagingSchemasDbName", environment.getProperty("mlStagingSchemasDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlStagingSchemasDbName", stagingSchemasDbName);
+        }
+
+        if (stagingSchemasForestsPerHost == null) {
+            stagingSchemasForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingSchemasForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingSchemasForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost.toString());
+        }
+
+        if (finalSchemasDbName == null) {
+            finalSchemasDbName = getEnvPropString(projectProperties, "mlFinalSchemasDbName", environment.getProperty("mlFinalSchemasDbName"));
+        }
+        else {
+            projectProperties.setProperty("mlFinalSchemasDbName", finalSchemasDbName);
+        }
+
+        if (finalSchemasForestsPerHost == null) {
+            finalSchemasForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalSchemasForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalSchemasForestsPerHost")));
+        }
+        else {
+            projectProperties.setProperty("mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost.toString());
+        }
+
+        if (hubRoleName == null) {
+            hubRoleName = getEnvPropString(projectProperties, "mlHubUserRole", environment.getProperty("mlHubUserRole"));
+        }
+        else {
+            projectProperties.setProperty("mlHubUserRole", hubRoleName);
+        }
+
+        if (hubUserName == null) {
+            hubUserName = getEnvPropString(projectProperties, "mlHubUserName", environment.getProperty("mlHubUserName"));
+        }
+        else {
+            projectProperties.setProperty("mlHubUserName", hubUserName);
+        }
+        
+        if (hubAdminRoleName == null) {
+            hubAdminRoleName = getEnvPropString(projectProperties, "mlHubAdminRole", environment.getProperty("mlHubAdminRole"));
+        }
+        else {
+            projectProperties.setProperty("mlHubAdminRole", hubAdminRoleName);
+        }
+
+        if (hubAdminUserName == null) {
+            hubAdminUserName = getEnvPropString(projectProperties, "mlHubAdminUserName", environment.getProperty("mlHubAdminUserName"));
+        }
+        else {
+            projectProperties.setProperty("mlHubAdminUserName", hubAdminUserName);
+        }
+
+        if (modulePermissions == null) {
+            modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlModulePermissions", modulePermissions);
+        }
+
+        DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
+
+        // this is a runtime username/password for running flows
+        // could be factored away with FlowRunner
+        if (mlUsername == null) {
+            mlUsername = getEnvPropString(projectProperties, "mlUsername", mlUsername);
+        }
+        else {
+            projectProperties.setProperty("mlUsername", mlUsername);
+        }
+
+        if (mlPassword == null) {
+            mlPassword = getEnvPropString(projectProperties, "mlPassword", mlPassword);
+        }
+        else {
+            projectProperties.setProperty("mlPassword", mlPassword);
+        }
+
+        if (loadBalancerHost == null) {
+            loadBalancerHost = getEnvPropString(projectProperties, "mlLoadBalancerHosts", null);
+        }
+        else {
+            projectProperties.setProperty("mlLoadBalancerHosts", loadBalancerHost);
+        }
+
+        if (isHostLoadBalancer == null) {
+            isHostLoadBalancer = getEnvPropBoolean(projectProperties, "mlIsHostLoadBalancer", Boolean.parseBoolean(environment.getProperty("mlIsHostLoadBalancer")));
+        }
+        else {
+            projectProperties.setProperty("mlIsHostLoadBalancer", isHostLoadBalancer.toString());
+        }
+
+        if (isProvisionedEnvironment == null) {
+            isProvisionedEnvironment = getEnvPropBoolean(projectProperties, "mlIsProvisionedEnvironment", false);
+        }
+        else {
+            projectProperties.setProperty("mlIsProvisionedEnvironment", isProvisionedEnvironment.toString());
+        }
+        // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
+        hydrateConfigs();
+
+        hydrateAppConfigs(projectProperties);
+    }
+
+    private void hydrateAppConfigs(Properties properties) {
+        com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
+        hydrateAppConfigs(propertySource);
+    }
+
+    private void hydrateAppConfigs(Environment environment) {
+        com.marklogic.mgmt.util.PropertySource propertySource = environment::getProperty;
+        hydrateAppConfigs(propertySource);
+    }
+
+    private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
+        if (appConfig != null) {
+            setAppConfig(appConfig);
+        }
+        else {
+            setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
+        }
+
+        if (adminConfig != null) {
+            setAdminConfig(adminConfig);
+        }
+        else {
+            setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
+        }
+
+        if (adminManager != null) {
+            setAdminManager(adminManager);
+        }
+        else {
+            setAdminManager(new AdminManager(getAdminConfig()));
+        }
+
+        if (manageConfig != null) {
+            setManageConfig(manageConfig);
+        }
+        else {
+            setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
+        }
+
+        if (manageClient != null) {
+            setManageClient(manageClient);
+        }
+        else {
+            setManageClient(new ManageClient(getManageConfig()));
         }
     }
 
@@ -1004,7 +1422,7 @@ public class HubConfigImpl implements HubConfig {
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
     public DatabaseClient newAppServicesClient() {
-        return getStagingAppConfig().newAppServicesDatabaseClient(stagingDbName);
+        return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
     }
 
     @Override
@@ -1013,120 +1431,32 @@ public class HubConfigImpl implements HubConfig {
     }
 
     private DatabaseClient newStagingClient(String dbName) {
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
+        config.setDatabase(dbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(stagingSslHostnameVerifier);
+        config.setSslContext(stagingSslContext);
+        config.setCertFile(stagingCertFile);
+        config.setCertPassword(stagingCertPassword);
+        config.setExternalName(stagingExternalName);
+        config.setTrustManager(stagingTrustManager);
         if (isHostLoadBalancer) {
-            return newStagingDbClientForLoadBalancerHost(dbName);
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
-        else {
-            AppConfig appConfig = getStagingAppConfig();
-            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
-            config.setDatabase(dbName);
-            config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
-            config.setSslHostnameVerifier(stagingSslHostnameVerifier);
-            config.setSslContext(stagingSslContext);
-            config.setCertFile(stagingCertFile);
-            config.setCertPassword(stagingCertPassword);
-            config.setExternalName(stagingExternalName);
-            config.setTrustManager(stagingTrustManager);
-            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-        }
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
     @Override
     // this method uses STAGING appserver but FINAL database.
     // it's only use is for reverse flows, which need to use staging modules.
     public DatabaseClient newReverseFlowClient() {
-        if (isHostLoadBalancer) {
-            return newStagingDbClientForLoadBalancerHost(finalDbName);
-        } else {
-            return newStagingClient(finalDbName);
-        }
-    }
-
-    public DatabaseClient newStagingDbClientForLoadBalancerHost(String database){
-        return getDatabaseClientForLoadBalancerHost(stagingAuthMethod, stagingTrustManager, stagingSslHostnameVerifier, stagingCertFile, stagingCertPassword, stagingSslContext, stagingExternalName, stagingPort, database);
-
-    }
-
-    private DatabaseClient newJobDbClientForLoadBalancerHost(){
-        return getDatabaseClientForLoadBalancerHost(jobAuthMethod, jobTrustManager, jobSslHostnameVerifier, jobCertFile, jobCertPassword, jobSslContext, jobExternalName, jobPort, jobDbName);
-
-    }
-
-    private DatabaseClient getDatabaseClientForLoadBalancerHost(String stagingAuthMethod, X509TrustManager stagingTrustManager, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier, String stagingCertFile, String stagingCertPassword, SSLContext stagingSslContext, String stagingExternalName, Integer stagingPort, String stagingDbName)
-    {
-        AppConfig appConfig = getStagingAppConfig();
-
-        DatabaseClientFactory.SecurityContext securityContext;
-
-        SecurityContextType securityContextType = SecurityContextType.valueOf(stagingAuthMethod.toUpperCase());
-
-        if (SecurityContextType.BASIC.equals(securityContextType)) {
-            securityContext = new DatabaseClientFactory.BasicAuthContext(getMlUsername(), getMlPassword());
-        } else if (SecurityContextType.CERTIFICATE.equals(securityContextType)) {
-            X509TrustManager trustManager = stagingTrustManager;
-            DatabaseClientFactory.SSLHostnameVerifier verifier = stagingSslHostnameVerifier;
-
-            String certFile = stagingCertFile;
-            if (certFile != null) {
-                try {
-                    if (stagingCertPassword != null) {
-                        securityContext = new DatabaseClientFactory.CertificateAuthContext(certFile, stagingCertPassword, trustManager);
-                    }
-                    else {
-                        securityContext = new DatabaseClientFactory.CertificateAuthContext(certFile, trustManager);
-                    }
-                } catch (Exception ex) {
-                    throw new RuntimeException("Unable to build CertificateAuthContext: " + ex.getMessage(), ex);
-                }
-            }
-            else if (verifier != null) {
-                securityContext = new DatabaseClientFactory.CertificateAuthContext(stagingSslContext, verifier, trustManager);
-            }
-            else {
-                securityContext = new DatabaseClientFactory.CertificateAuthContext(stagingSslContext, trustManager);
-
-            }
-        } else if (SecurityContextType.DIGEST.equals(securityContextType)) {
-            securityContext = new DatabaseClientFactory.DigestAuthContext(getMlUsername(), getMlPassword());
-        } else if (SecurityContextType.KERBEROS.equals(securityContextType)) {
-            securityContext = new DatabaseClientFactory.KerberosAuthContext(stagingExternalName);
-        } else if (SecurityContextType.NONE.equals(securityContextType)) {
-            securityContext = null;
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported SecurityContextType: " + securityContextType);
-        }
-
-        if (securityContext != null) {
-            SSLContext sslContext = stagingSslContext;
-            DatabaseClientFactory.SSLHostnameVerifier verifier = stagingSslHostnameVerifier;
-            if (sslContext != null) {
-                securityContext = securityContext.withSSLContext(sslContext, stagingTrustManager);
-            }
-            if (verifier != null) {
-                securityContext = securityContext.withSSLHostnameVerifier(verifier);
-            }
-        }
-
-        String host = appConfig.getHost();
-        int port = stagingPort;
-        String database = stagingDbName;
-
-        if (securityContext == null) {
-            if (database == null) {
-                return DatabaseClientFactory.newClient(host, port, null, DatabaseClient.ConnectionType.GATEWAY);
-            }
-            return DatabaseClientFactory.newClient(host, port, database, null, DatabaseClient.ConnectionType.GATEWAY);
-        }
-        if (database == null) {
-            return DatabaseClientFactory.newClient(host, port, securityContext, DatabaseClient.ConnectionType.GATEWAY);
-        }
-        return DatabaseClientFactory.newClient(host, port, database, securityContext, DatabaseClient.ConnectionType.GATEWAY);
+        return newStagingClient(finalDbName);
     }
 
     @Override
     public DatabaseClient newFinalClient() {
-        AppConfig appConfig = getFinalAppConfig();
+        AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
         config.setDatabase(finalDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
@@ -1136,26 +1466,27 @@ public class HubConfigImpl implements HubConfig {
         config.setCertPassword(finalCertPassword);
         config.setExternalName(finalExternalName);
         config.setTrustManager(finalTrustManager);
+        if (isHostLoadBalancer) {
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
+        }
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
     public DatabaseClient newJobDbClient() {
-        if (isHostLoadBalancer){
-            return newJobDbClientForLoadBalancerHost();
+        AppConfig appConfig = getAppConfig();
+        DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
+        config.setDatabase(jobDbName);
+        config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(jobSslHostnameVerifier);
+        config.setSslContext(jobSslContext);
+        config.setCertFile(jobCertFile);
+        config.setCertPassword(jobCertPassword);
+        config.setExternalName(jobExternalName);
+        config.setTrustManager(jobTrustManager);
+        if (isHostLoadBalancer) {
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
-        else {
-            AppConfig appConfig = getStagingAppConfig();
-            DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
-            config.setDatabase(jobDbName);
-            config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
-            config.setSslHostnameVerifier(jobSslHostnameVerifier);
-            config.setSslContext(jobSslContext);
-            config.setCertFile(jobCertFile);
-            config.setCertPassword(jobCertPassword);
-            config.setExternalName(jobExternalName);
-            config.setTrustManager(jobTrustManager);
-            return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
-        }
+        return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
     public DatabaseClient newTraceDbClient() {
@@ -1163,7 +1494,7 @@ public class HubConfigImpl implements HubConfig {
     }
 
     public DatabaseClient newModulesDbClient() {
-        AppConfig appConfig = getStagingAppConfig();
+        AppConfig appConfig = getAppConfig();
         // this has to be finalPort because final is a stock REST API.
         // staging will not be; but its rewriter isn't loaded yet.
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, mlUsername, mlPassword);
@@ -1175,6 +1506,9 @@ public class HubConfigImpl implements HubConfig {
         config.setCertPassword(finalCertPassword);
         config.setExternalName(finalExternalName);
         config.setTrustManager(finalTrustManager);
+        if (isHostLoadBalancer) {
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
+        }
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
@@ -1182,6 +1516,9 @@ public class HubConfigImpl implements HubConfig {
     @Override public Path getModulesDir() {
         return hubProject.getModulesDir();
     }
+
+    @JsonIgnore
+    public Path getHubProjectDir() { return hubProject.getProjectDir(); }
 
     @JsonIgnore
     @Override public Path getHubPluginsDir() {
@@ -1243,36 +1580,19 @@ public class HubConfigImpl implements HubConfig {
     }
 
     @JsonIgnore
-    @Override public AppConfig getStagingAppConfig() {
-        return stagingAppConfig;
+    @Override public AppConfig getAppConfig() {
+        return appConfig;
     }
 
 
-    @Override public void setStagingAppConfig(AppConfig config) {
-        setStagingAppConfig(config, false);
+    @Override public void setAppConfig(AppConfig config) {
+        setAppConfig(config, false);
     }
 
-    @Override public void setStagingAppConfig(AppConfig config, boolean skipUpdate) {
-        this.stagingAppConfig = config;
+    @Override public void setAppConfig(AppConfig config, boolean skipUpdate) {
+        this.appConfig = config;
         if (!skipUpdate) {
-            updateStagingAppConfig(this.stagingAppConfig);
-        }
-    }
-
-    @JsonIgnore
-    @Override public AppConfig getFinalAppConfig() {
-        return finalAppConfig;
-    }
-
-
-    @Override public void setFinalAppConfig(AppConfig config) {
-        setFinalAppConfig(config, false);
-    }
-
-    @Override public void setFinalAppConfig(AppConfig config, boolean skipUpdate) {
-        this.finalAppConfig = config;
-        if (!skipUpdate) {
-            updateFinalAppConfig(this.finalAppConfig);
+            updateAppConfig(this.appConfig);
         }
     }
 
@@ -1289,7 +1609,7 @@ public class HubConfigImpl implements HubConfig {
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "4.0.3";
+            version = "4.1.0";
         }
         return version;
     }
@@ -1299,53 +1619,57 @@ public class HubConfigImpl implements HubConfig {
         return this.DHFVersion;
     }
 
-
     private Map<String, String> getCustomTokens() {
-        AppConfig appConfig = getStagingAppConfig();
+        AppConfig appConfig = getAppConfig();
+
+        if (appConfig == null) {
+            appConfig = new DefaultAppConfigFactory().newAppConfig();
+        }
+
         return getCustomTokens(appConfig, appConfig.getCustomTokens());
     }
 
     private Map<String, String> getCustomTokens(AppConfig appConfig, Map<String, String> customTokens) {
-        customTokens.put("%%mlHost%%", appConfig.getHost());
-        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
-        customTokens.put("\"%%mlStagingPort%%\"", stagingPort.toString());
-        customTokens.put("%%mlStagingDbName%%", stagingDbName);
-        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
-        customTokens.put("%%mlStagingAuth%%", stagingAuthMethod);
+        customTokens.put("%%mlHost%%", appConfig == null ? environment.getProperty("mlHost") : appConfig.getHost());
+        customTokens.put("%%mlStagingAppserverName%%", stagingHttpName == null ? environment.getProperty("mlStagingAppserverName") : stagingHttpName);
+        customTokens.put("\"%%mlStagingPort%%\"", stagingPort == null ? environment.getProperty("mlStagingPort") : stagingPort.toString());
+        customTokens.put("%%mlStagingDbName%%", stagingDbName == null ? environment.getProperty("mlStagingDbName") : stagingDbName);
+        customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost == null ? environment.getProperty("mlStagingForestsPerHost") : stagingForestsPerHost.toString());
+        customTokens.put("%%mlStagingAuth%%", stagingAuthMethod == null ? environment.getProperty("mlStagingAuth") : stagingAuthMethod);
 
-        customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
-        customTokens.put("\"%%mlFinalPort%%\"", finalPort.toString());
-        customTokens.put("%%mlFinalDbName%%", finalDbName);
-        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
-        customTokens.put("%%mlFinalAuth%%", finalAuthMethod);
+        customTokens.put("%%mlFinalAppserverName%%", finalHttpName == null ? environment.getProperty("mlFinalAppserverName") : finalHttpName);
+        customTokens.put("\"%%mlFinalPort%%\"", finalPort == null ? environment.getProperty("mlFinalPort") : finalPort.toString());
+        customTokens.put("%%mlFinalDbName%%", finalDbName == null ? environment.getProperty("mlFinalDbName") : finalDbName);
+        customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost == null ? environment.getProperty("mlFinalForestsPerHost") : finalForestsPerHost.toString());
+        customTokens.put("%%mlFinalAuth%%", finalAuthMethod == null ? environment.getProperty("mlFinalAuth") : finalAuthMethod);
 
 
-        customTokens.put("%%mlJobAppserverName%%", jobHttpName);
-        customTokens.put("\"%%mlJobPort%%\"", jobPort.toString());
-        customTokens.put("%%mlJobDbName%%", jobDbName);
-        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
-        customTokens.put("%%mlJobAuth%%", jobAuthMethod);
+        customTokens.put("%%mlJobAppserverName%%", jobHttpName == null ? environment.getProperty("mlJobAppserverName") : jobHttpName);
+        customTokens.put("\"%%mlJobPort%%\"", jobPort == null ? environment.getProperty("mlJobPort") : jobPort.toString());
+        customTokens.put("%%mlJobDbName%%", jobDbName == null ? environment.getProperty("mlJobDbName") : jobDbName);
+        customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost == null ? environment.getProperty("mlJobForestsPerHost") : jobForestsPerHost.toString());
+        customTokens.put("%%mlJobAuth%%", jobAuthMethod == null ? environment.getProperty("mlJobAuth") : jobAuthMethod);
 
-        customTokens.put("%%mlModulesDbName%%", modulesDbName);
-        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost.toString());
+        customTokens.put("%%mlModulesDbName%%", modulesDbName == null ? environment.getProperty("mlModulesDbName") : modulesDbName);
+        customTokens.put("%%mlModulesForestsPerHost%%", modulesForestsPerHost == null ? environment.getProperty("mlModulesForestsPerHost") : modulesForestsPerHost.toString());
 
-        customTokens.put("%%mlStagingTriggersDbName%%", stagingTriggersDbName);
-        customTokens.put("%%mlStagingTriggersForestsPerHost%%", stagingTriggersForestsPerHost.toString());
+        customTokens.put("%%mlStagingTriggersDbName%%", stagingTriggersDbName == null ? environment.getProperty("mlStagingTriggersDbName") : stagingTriggersDbName);
+        customTokens.put("%%mlStagingTriggersForestsPerHost%%", stagingTriggersForestsPerHost == null ? environment.getProperty("mlStagingTriggersForestsPerHost") : stagingTriggersForestsPerHost.toString());
 
-        customTokens.put("%%mlFinalTriggersDbName%%", finalTriggersDbName);
-        customTokens.put("%%mlFinalTriggersForestsPerHost%%", finalTriggersForestsPerHost.toString());
+        customTokens.put("%%mlFinalTriggersDbName%%", finalTriggersDbName == null ? environment.getProperty("mlFinalTriggersDbName") : finalTriggersDbName);
+        customTokens.put("%%mlFinalTriggersForestsPerHost%%", finalTriggersForestsPerHost == null ? environment.getProperty("mlFinalTriggersForestsPerHost") : finalTriggersForestsPerHost.toString());
 
-        customTokens.put("%%mlStagingSchemasDbName%%", stagingSchemasDbName);
-        customTokens.put("%%mlStagingSchemasForestsPerHost%%", stagingSchemasForestsPerHost.toString());
+        customTokens.put("%%mlStagingSchemasDbName%%", stagingSchemasDbName == null ? environment.getProperty("mlStagingSchemasDbName") : stagingSchemasDbName);
+        customTokens.put("%%mlStagingSchemasForestsPerHost%%", stagingSchemasForestsPerHost == null ? environment.getProperty("mlStagingSchemasForestsPerHost") : stagingSchemasForestsPerHost.toString());
 
-        customTokens.put("%%mlFinalSchemasDbName%%", finalSchemasDbName);
-        customTokens.put("%%mlFinalSchemasForestsPerHost%%", finalSchemasForestsPerHost.toString());
+        customTokens.put("%%mlFinalSchemasDbName%%", finalSchemasDbName == null ? environment.getProperty("mlFinalSchemasDbName") : finalSchemasDbName);
+        customTokens.put("%%mlFinalSchemasForestsPerHost%%", finalSchemasForestsPerHost == null ? environment.getProperty("mlFinalSchemasForestsPerHost") : finalSchemasForestsPerHost.toString());
 
-        customTokens.put("%%mlHubUserRole%%", hubRoleName);
-        customTokens.put("%%mlHubUserName%%", hubUserName);
+        customTokens.put("%%mlHubUserRole%%", hubRoleName == null ? environment.getProperty("mlHubUserRole") : hubRoleName);
+        customTokens.put("%%mlHubUserName%%", hubUserName == null ? environment.getProperty("mlHubUserName") : hubUserName);
 
-        customTokens.put("%%mlHubAdminRole%%", hubAdminRoleName);
-        customTokens.put("%%mlHubAdminUserName%%", hubAdminUserName);
+        customTokens.put("%%mlHubAdminRole%%", hubAdminRoleName == null ? environment.getProperty("mlHubAdminRole") : hubAdminRoleName);
+        customTokens.put("%%mlHubAdminUserName%%", hubAdminUserName == null ? environment.getProperty("mlHubAdminUserName") : hubAdminUserName);
 
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
@@ -1353,13 +1677,21 @@ public class HubConfigImpl implements HubConfig {
         // and another random password for hub Admin User
         customTokens.put("%%mlHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
-        customTokens.put("%%mlCustomForestPath%%", customForestPath);
+        customTokens.put("%%mlCustomForestPath%%", customForestPath == null ? environment.getProperty("mlCustomForestPath") : customForestPath);
 
         //version of DHF the user INTENDS to use
         customTokens.put("%%mlDHFVersion%%", getJarVersion());
 
-        if (environmentProperties != null) {
-            Enumeration keyEnum = environmentProperties.propertyNames();
+        // in a load-from-properties situation we don't want a random string...
+        if (projectProperties.containsKey("mlHubUserPassword")) {
+            customTokens.put("%%mlHubUserPassword%%", projectProperties.getProperty("mlHubUserPassword"));
+        }
+        if (projectProperties.containsKey("mlHubAdminUserPassword")) {
+            customTokens.put("%%mlHubAdminUserPassword%%", projectProperties.getProperty("mlHubAdminUserPassword"));
+        }
+        /* can't iterate through env properties, so rely on custom tokens itself?
+        if (environment != null) {
+            Enumeration keyEnum = environment.propertyNames();
             while (keyEnum.hasMoreElements()) {
                 String key = (String) keyEnum.nextElement();
                 if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
@@ -1367,53 +1699,24 @@ public class HubConfigImpl implements HubConfig {
                 }
             }
         }
+        */
 
         return customTokens;
     }
 
-    private void updateStagingAppConfig(AppConfig config) {
-        config.setRestPort(stagingPort);
+    /**
+     * Makes DHF-specific updates to the AppConfig, after it's been constructed by ml-gradle.
+     *
+     * @param config
+     */
+    private void updateAppConfig(AppConfig config) {
+        // This shouldn't be used for any resource names, but it does appear in logging, and DHF is a better choice than "my-app"
+        config.setName("DHF");
 
-        config.setTriggersDatabaseName(stagingTriggersDbName);
-        config.setSchemasDatabaseName(stagingSchemasDbName);
-        config.setModulesDatabaseName(modulesDbName);
+        // DHF never needs the default REST server provided by ml-gradle
+        config.setNoRestServer(true);
 
-        config.setReplaceTokensInModules(true);
-        config.setUseRoxyTokenPrefix(false);
-        config.setModulePermissions(modulePermissions);
-
-        HashMap<String, Integer> forestCounts = new HashMap<>();
-        forestCounts.put(stagingDbName, stagingForestsPerHost);
-        forestCounts.put(jobDbName, jobForestsPerHost);
-        forestCounts.put(modulesDbName, modulesForestsPerHost);
-        forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
-        forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
-        config.setForestCounts(forestCounts);
-
-        ConfigDir configDir = new ConfigDir(getHubConfigDir().toFile());
-        config.setConfigDir(configDir);
-        config.setSchemasPath(getHubConfigDir().resolve("schemas").toString());
-
-        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
-        if (environmentProperties != null) {
-            Enumeration keyEnum = environmentProperties.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
-
-
-        String version = getJarVersion();
-        customTokens.put("%%mlHubVersion%%", version);
-
-        stagingAppConfig = config;
-    }
-
-    private void updateFinalAppConfig(AppConfig config) {
-        config.setRestPort(finalPort);
+        applyFinalConnectionSettingsToMlGradleDefaultRestSettings(config);
 
         config.setTriggersDatabaseName(finalTriggersDbName);
         config.setSchemasDatabaseName(finalSchemasDbName);
@@ -1423,49 +1726,115 @@ public class HubConfigImpl implements HubConfig {
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(modulePermissions);
 
-        HashMap<String, Integer> forestCounts = new HashMap<>();
-        forestCounts.put(finalDbName, finalForestsPerHost);
+        Map<String, Integer> forestCounts = config.getForestCounts();
+        forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
+        forestCounts.put(stagingDbName, stagingForestsPerHost);
+        forestCounts.put(stagingTriggersDbName, stagingTriggersForestsPerHost);
+        forestCounts.put(stagingSchemasDbName, stagingSchemasForestsPerHost);
+        forestCounts.put(finalDbName, finalForestsPerHost);
         forestCounts.put(finalTriggersDbName, finalTriggersForestsPerHost);
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
-        ConfigDir configDir = new ConfigDir(getUserConfigDir().toFile());
-        config.setConfigDir(configDir);
+        initializeConfigDirs(config);
+
+        initializeModulePaths(config);
+
         config.setSchemasPath(getUserSchemasDir().toString());
-        List<String> modulesPathList = new ArrayList<>();
-        modulesPathList.add(getModulesDir().normalize().toAbsolutePath().toString());
-        config.setModulePaths(modulesPathList);
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
-
-        if (environmentProperties != null) {
-            Enumeration keyEnum = environmentProperties.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
-
 
         String version = getJarVersion();
         customTokens.put("%%mlHubVersion%%", version);
 
-        finalAppConfig = config;
+        appConfig = config;
     }
 
-    private String getEnvPropString(Properties environmentProperties, String key, String fallback) {
-        String value = environmentProperties.getProperty(key);
+    /**
+     * ml-app-deployer defaults to a single config path of src/main/ml-config. If that's still the only path present,
+     * it's overridden with the DHF defaults - src/main/hub-internal-config first, then src/main/ml-config second, with
+     * both of those being relative to the DHF project directory.
+     *
+     * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
+     * method just ensures that they're relative to the DHF project directory.
+     * 
+     * @param config
+     */
+    protected void initializeConfigDirs(AppConfig config) {
+        final String defaultConfigPath = String.join(File.separator, "src", "main", "ml-config");
+
+        boolean configDirsIsSetToTheMlAppDeployerDefault = config.getConfigDirs().size() == 1 && config.getConfigDirs().get(0).getBaseDir().toString().endsWith(defaultConfigPath);
+
+        if (configDirsIsSetToTheMlAppDeployerDefault) {
+            List<ConfigDir> configDirs = new ArrayList<>();
+            configDirs.add(new ConfigDir(getHubConfigDir().toFile()));
+            configDirs.add(new ConfigDir(getUserConfigDir().toFile()));
+            config.setConfigDirs(configDirs);
+        }
+        else {
+            // Need to make each custom config dir relative to the project dir
+            List<ConfigDir> configDirs = new ArrayList<>();
+            for (ConfigDir configDir : config.getConfigDirs()) {
+                File f = getHubProject().getProjectDir().resolve(configDir.getBaseDir().toString()).normalize().toAbsolutePath().toFile();
+                configDirs.add(new ConfigDir(f));
+            }
+            config.setConfigDirs(configDirs);
+        }
+
+        if (logger.isInfoEnabled()) {
+            config.getConfigDirs().forEach(configDir -> logger.info("Config path: " + configDir.getBaseDir().getAbsolutePath()));
+        }
+    }
+
+    /**
+     * Need to initialize every module path as being relative to the current project directory.
+     *
+     * @param config
+     */
+    protected void initializeModulePaths(AppConfig config) {
+        List<String> modulePaths = new ArrayList<>();
+        Path projectDir = getHubProject().getProjectDir();
+        for (String modulePath : config.getModulePaths()) {
+            modulePaths.add(projectDir.resolve(modulePath).normalize().toAbsolutePath().toString());
+        }
+        config.setModulePaths(modulePaths);
+        if (logger.isInfoEnabled()) {
+            logger.info("Module paths: " + modulePaths);
+        }
+    }
+
+    /**
+     * This is needed so that mlFinal* properties that configure the connection to the final REST server are also used
+     * for any feature in ml-gradle that expects to use the same mlRest* properties. For example, LoadModulesCommand
+     * uses those properties to construct a DatabaseClient for loading modules; we want to ensure that the properties
+     * mirror the mlFinal* properties.
+     *
+     * @param config
+     */
+    private void applyFinalConnectionSettingsToMlGradleDefaultRestSettings(AppConfig config) {
+        if (finalAuthMethod != null) {
+            config.setRestSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        }
+        config.setRestPort(finalPort);
+        config.setRestCertFile(finalCertFile);
+        config.setRestCertPassword(finalCertPassword);
+        config.setRestExternalName(finalExternalName);
+        config.setRestSslContext(finalSslContext);
+        config.setRestSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setRestTrustManager(finalTrustManager);
+    }
+
+    private String getEnvPropString(Properties properties, String key, String fallback) {
+        String value = properties.getProperty(key);
         if (value == null) {
             value = fallback;
         }
         return value;
     }
 
-    private int getEnvPropInteger(Properties environmentProperties, String key, int fallback) {
-        String value = environmentProperties.getProperty(key);
+    private int getEnvPropInteger(Properties properties, String key, int fallback) {
+        String value = properties.getProperty(key);
         int res;
         if (value != null) {
             res = Integer.parseInt(value);
@@ -1476,26 +1845,14 @@ public class HubConfigImpl implements HubConfig {
         return res;
     }
 
-    private boolean getEnvPropBoolean(Properties environmentProperties, String key, boolean fallback) {
-        String value = environmentProperties.getProperty(key);
+    private boolean getEnvPropBoolean(Properties properties, String key, boolean fallback) {
+        String value = properties.getProperty(key);
         boolean res;
         if (value != null) {
             res = Boolean.parseBoolean(value);
         }
         else {
             res = fallback;
-        }
-        return res;
-    }
-
-    private Boolean getEnvPropBoolean(Properties environmentProperties, String key) {
-        String value = environmentProperties.getProperty(key);
-        Boolean res;
-        if (value != null) {
-            res = Boolean.parseBoolean(value);
-        }
-        else {
-            res = null;
         }
         return res;
     }
@@ -1515,7 +1872,64 @@ public class HubConfigImpl implements HubConfig {
 
     }
 
+    @JsonIgnore
+    public void refreshProject() {
+        refreshProject(null, true);
+    }
+
+    @JsonIgnore
+    public void refreshProject(Properties properties, boolean loadGradleProperties) {
+        loadConfigurationFromProperties(properties, loadGradleProperties);
+
+        flowManager.setupClient();
+        dataHub.wireClient();
+        versions.setupClient();
+    }
+
+    /**
+     * It is not expected that a client would use this, as it would be partially re-inventing what the Gradle
+     * properties plugin does. But it is being preserved for backwards compatibility in case any clients prior to
+     * 4.1 were using HubConfigBuilder.withPropertiesFromEnvironment.
+     *
+     * @param environment
+     * @return
+     */
+    @JsonIgnore
+    public HubConfig withPropertiesFromEnvironment(String environment) {
+        this.envString = environment;
+        return this;
+    }
+
     public String toString() {
         return getInfo();
     }
+
+    // loads properties from a .properties file
+    private void loadPropertiesFromFile(File propertiesFile, Properties loadedProperties) {
+        InputStream is;
+        try {
+            if (propertiesFile.exists()) {
+                is = new FileInputStream(propertiesFile);
+                loadedProperties.load(is);
+                is.close();
+            }
+        }
+        catch (IOException e) {
+            throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
+        }
+    }
+
+    public String getStagingSchemasDbName() {
+        return this.stagingSchemasDbName;
+    }
+
+    // Only used by QS for login
+    public void resetAppConfigs() {
+        appConfig = null;
+        adminConfig = null;
+        adminManager = null;
+        manageConfig = null;
+        manageClient = null;
+    }
+
 }

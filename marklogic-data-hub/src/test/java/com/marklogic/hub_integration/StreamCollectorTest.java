@@ -23,6 +23,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -30,9 +31,17 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,12 +49,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
 
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class StreamCollectorTest extends HubTestBase {
 
     private static final String ENTITY = "streamentity";
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
+    private static Path projectDir = Paths.get(PROJECT_PATH);
     private static final int TEST_SIZE = 3000000;
     private static final int BATCH_SIZE = 1000;
     private static int DOC_COUNT = TEST_SIZE / BATCH_SIZE;
@@ -54,11 +65,18 @@ public class StreamCollectorTest extends HubTestBase {
     private boolean installDocsFailed = false;
     private String installDocError;
 
-    @Before
+    @Autowired
+    private FlowManager fm;
+
+    @Autowired
+    private Scaffolding scaffolding;
+
+    @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
 
         createProjectDir();
+        dataHub.initProject();
 
         // it triggers installation of staging db before staging schemas db exists.
         // a subtle bug. to solve, users must create schemas db hook here too.
@@ -66,13 +84,10 @@ public class StreamCollectorTest extends HubTestBase {
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
 
-        createProjectDir();
-
         // disable tracing because trying to trace the 3 million ids to a doc will fail.
         disableDebugging();
         disableTracing();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
@@ -118,7 +133,7 @@ public class StreamCollectorTest extends HubTestBase {
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
     }
 
-    @After
+    @AfterEach
     public void removeProjectDir() {
         deleteProjectDir();
     }
@@ -131,7 +146,6 @@ public class StreamCollectorTest extends HubTestBase {
         // having to wait for the entire harmonize flow to finish.
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

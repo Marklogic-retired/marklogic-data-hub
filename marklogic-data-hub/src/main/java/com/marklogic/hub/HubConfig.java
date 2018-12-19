@@ -28,7 +28,10 @@ import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
 
 /**
- * An interface to set, manage and recall the Data Hub's Configuration
+ * An interface to set, manage and recall the Data Hub's Configuration.
+ * HubConfig has a singleton scope so set everything you want at the start of the application and
+ * and then call {@link #refreshProject()} to wire up all clients and load the properties from gradle.properties
+ * (optionally overridden with gradle-{env}.properties).
  */
 @JsonDeserialize(as = HubConfigImpl.class)
 @JsonSerialize(as = HubConfigImpl.class)
@@ -81,15 +84,6 @@ public interface HubConfig {
      * @return name of host
      */
     String getHost();
-
-    /**
-     * Creates and returns a hubconfig object for a project directory
-     * @param projectDir - string path to the project directory
-     * @return HubConfig based in the project directory
-     */
-    static HubConfig create(String projectDir) {
-        return new HubConfigImpl(projectDir);
-    }
 
     /**
      * Returns the database name for the DatabaseKind set in the config
@@ -475,44 +469,24 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current staging appconfig object attached to the HubConfig
-     * @return Returns current staging AppConfig object set for HubConfig
+     * Returns the current AppConfig object attached to the HubConfig
+     * @return Returns current AppConfig object set for HubConfig
      */
     @JsonIgnore
-    AppConfig getStagingAppConfig();
+    AppConfig getAppConfig();
 
     /**
-     * Sets the staging App Config for the current HubConfig
-     * @param config staging AppConfig to associate with the HubConfig
+     * Sets the AppConfig for the current HubConfig
+     * @param config AppConfig to associate with the HubConfig
      */
-    void setStagingAppConfig(AppConfig config);
+    void setAppConfig(AppConfig config);
 
     /**
-     * Sets the staging App Config for the current HubConfig, with skipUpdate option
-     * @param config - staging AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of staging AppConfig, true to skip it
+     * Sets the AppConfig for the current HubConfig, with skipUpdate option
+     * @param config - AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of AppConfig, true to skip it
      */
-    void setStagingAppConfig(AppConfig config, boolean skipUpdate);
-
-    /**
-     * Returns the current final appconfig object attached to the HubConfig
-     * @return Returns current final AppConfig object set for HubConfig
-     */
-    @JsonIgnore
-    AppConfig getFinalAppConfig();
-
-    /**
-     * Sets the final App Config for the current HubConfig
-     * @param config final AppConfig to associate with the HubConfig
-     */
-    void setFinalAppConfig(AppConfig config);
-
-    /**
-     * Sets the final App Config for the current HubConfig, with skipUpdate option
-     * @param config - final AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of final AppConfig, true to skip it
-     */
-    void setFinalAppConfig(AppConfig config, boolean skipUpdate);
+    void setAppConfig(AppConfig config, boolean skipUpdate);
 
     /**
      * Gets the current version of the DHF Jar
@@ -552,4 +526,27 @@ public interface HubConfig {
     String getInfo();
 
 
+    /**
+     * Initializes the java application state to a specific location.  A properties file
+     * is expected to be found in this directory.
+     * @param projectDirString The directory in which to find properties for a project.
+     */
+    void createProject(String projectDirString);
+
+    /**
+     * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
+     * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
+     * 
+     * @param environment - The name of the environment to use (local,dev,qa,prod,...)
+     * @return A HubConfig
+     */
+    HubConfig withPropertiesFromEnvironment(String environment);
+
+    /**
+     * Loads HubConfig object with values from gradle.properties (optionally overridden with
+     * gradle-(environment).properties). Once Spring creates HubConfig object and the project is initialized with
+     * {@link #createProject(String)} you can use setter methods to change HubConfig properties
+     * and then call this method.
+     */
+    void refreshProject();
 }

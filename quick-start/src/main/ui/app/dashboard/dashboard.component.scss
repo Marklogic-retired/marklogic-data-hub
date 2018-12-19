@@ -47,3 +47,8 @@ $light: unquote("rgb(#{$palette-datahub-A100})");
     }
   }
 }
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}

@@ -17,46 +17,50 @@ package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.mgmt.ManageClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class LoadHubModulesCommandTest extends HubTestBase {
 
     private static Logger logger = LoggerFactory.getLogger(LoadHubModulesCommandTest.class);
 
     LoadHubModulesCommand loadHubModulesCommand;
     CommandContext commandContext;
-    HubConfig config;
 
     @BeforeEach
     public void setup() {
         createProjectDir();
-        config = getHubAdminConfig();
-        loadHubModulesCommand = new LoadHubModulesCommand(config);
-        commandContext = new CommandContext(config.getStagingAppConfig(), manageClient, null);
+        loadHubModulesCommand = new LoadHubModulesCommand();
+        loadHubModulesCommand.setHubConfig(adminHubConfig);
+        //ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
+        commandContext = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
     }
 
     @Test
     public void ensureHubFourLoaded() {
         loadHubModulesCommand.execute(commandContext);
 
-        String jarVersion = config.getJarVersion();
+        String jarVersion = adminHubConfig.getJarVersion();
 
-        Versions versions = new Versions(config);
 
-        logger.info(jarVersion);
+        //logger.info(jarVersion);
 
         // this test will work until major version 10
-        assertTrue(jarVersion.compareTo("4.0.1") >= 0);
+        assertTrue(jarVersion.charAt(0) >= '4');
         assertEquals(jarVersion, versions.getHubVersion(),
             "Jar version must match version in config.xqy/config.sjs after installation");
 

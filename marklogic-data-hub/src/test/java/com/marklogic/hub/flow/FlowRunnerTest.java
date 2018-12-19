@@ -22,20 +22,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,84 +46,79 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class FlowRunnerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
-    private Scaffolding scaffolding;
 
-
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
         createProjectDir();
         enableDebugging();
         enableTracing();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME,  HubConfig.DEFAULT_FINAL_NAME);
-        scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
-        scaffolding.createEntity(ENTITY);       
-    }
-    
-    @After
-    public void tearDown() {
-    	clearUserModules();
-    	deleteProjectDir();
+
+        scaffolding.createEntity(ENTITY);
+        clearUserModules();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @Test
     public void testPassOptions() throws IOException, ParserConfigurationException, SAXException {
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.XML, false);
+                CodeFormat.XQUERY, DataFormat.XML, false);
         Files.copy(getResourceStream("flow-runner-test/collector.xqy"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy"),
+                StandardCopyOption.REPLACE_EXISTING);
         Files.copy(getResourceStream("flow-runner-test/content-for-options.xqy"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
+                StandardCopyOption.REPLACE_EXISTING);
 
         installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
-            FlowType.HARMONIZE);
+                FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
         FlowRunner flowRunner = fm.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(10)
-            .withThreadCount(1)
-            .withOptions(options);
+                .withFlow(harmonizeFlow)
+                .withBatchSize(10)
+                .withThreadCount(1)
+                .withOptions(options);
         flowRunner.run();
         flowRunner.awaitCompletion();
 
         EvalResultIterator resultItr = runInDatabase("xdmp:database('" + HubConfig.DEFAULT_FINAL_NAME + "')", HubConfig.DEFAULT_FINAL_NAME);
         String targetDB = resultItr.next().getString();
         String expected =
-            "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
-            "  <headers></headers>\n" +
-            "  <triples></triples>\n" +
-            "  <instance>\n" +
-            "   <info>\n" +
-            "     <title>Person</title>\n" +
-            "     <version>0.0.2</version>\n" +
-            "   </info>\n" +
-            "    <Person xmlns=\"\">\n" +
-            "      <name>Bob Smith</name>\n" +
-            "      <age>55</age>\n" +
-            "      <entity>e2eentity</entity>\n" +
-            "      <flow>testharmonize</flow>\n" +
-            "      <flowType>harmonize</flowType>\n" +
-            "      <dataFormat>xml</dataFormat>\n" +
-            "      <target-database>" + targetDB + "</target-database>\n" +
-            "    </Person>\n" +
-            "  </instance>\n" +
-            "  <attachments><original xmlns=\"\">data</original></attachments>\n" +
-            "</envelope>";
+                "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
+                        "  <headers></headers>\n" +
+                        "  <triples></triples>\n" +
+                        "  <instance>\n" +
+                        "   <info>\n" +
+                        "     <title>Person</title>\n" +
+                        "     <version>0.0.2</version>\n" +
+                        "   </info>\n" +
+                        "    <Person xmlns=\"\">\n" +
+                        "      <name>Bob Smith</name>\n" +
+                        "      <age>55</age>\n" +
+                        "      <entity>e2eentity</entity>\n" +
+                        "      <flow>testharmonize</flow>\n" +
+                        "      <flowType>harmonize</flowType>\n" +
+                        "      <dataFormat>xml</dataFormat>\n" +
+                        "      <target-database>" + targetDB + "</target-database>\n" +
+                        "    </Person>\n" +
+                        "  </instance>\n" +
+                        "  <attachments><original xmlns=\"\">data</original></attachments>\n" +
+                        "</envelope>";
 
         String actual = finalDocMgr.read("1.xml").next().getContent(new StringHandle()).get();
 
@@ -135,25 +129,24 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testEnvelopeSJS() throws IOException {
         scaffolding.createFlow(ENTITY, "testharmonize-sjs-json", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
+                CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
         //testing sjs JSON canonical instance
         Files.copy(getResourceStream("flow-runner-test/collector.sjs"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/collector.sjs"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/collector.sjs"),
+                StandardCopyOption.REPLACE_EXISTING);
         Files.copy(getResourceStream("flow-runner-test/contentTestingEnvelope.sjs"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
+                StandardCopyOption.REPLACE_EXISTING);
 
         installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
-            FlowType.HARMONIZE);
+                FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(10)
-            .withThreadCount(1);
+                .withFlow(harmonizeFlow)
+                .withBatchSize(10)
+                .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
 
@@ -173,26 +166,22 @@ public class FlowRunnerTest extends HubTestBase {
 
         //testing xqy JSON canonical instance
         scaffolding.createFlow(ENTITY, "testharmonize-xqy-json", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON, false);
+                CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/collector.xqy"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/collector.xqy"),
+                StandardCopyOption.REPLACE_EXISTING);
         Files.copy(getResourceStream("flow-runner-test/content-testing-envelope.xqy"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
+                StandardCopyOption.REPLACE_EXISTING);
 
         installUserModules(getHubAdminConfig(), false);
 
-
-
-
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
-            FlowType.HARMONIZE);
+                FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(10)
-            .withThreadCount(1);
+                .withFlow(harmonizeFlow)
+                .withBatchSize(10)
+                .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
 
@@ -211,46 +200,45 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testEnvelopeSJSXML() throws IOException, SAXException {
         scaffolding.createFlow(ENTITY, "testharmonize-sjs-xml", FlowType.HARMONIZE,
-            CodeFormat.JAVASCRIPT, DataFormat.XML, false);
+                CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
         Files.copy(getResourceStream("flow-runner-test/collector2.sjs"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/collector.sjs"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/collector.sjs"),
+                StandardCopyOption.REPLACE_EXISTING);
         Files.copy(getResourceStream("flow-runner-test/contentTestingEnvelope.sjs"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
+                StandardCopyOption.REPLACE_EXISTING);
 
         installUserModules(getHubAdminConfig(), false);
 
 
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
-            FlowType.HARMONIZE);
+                FlowType.HARMONIZE);
         FlowRunner flowRunner = fm.newFlowRunner()
-            .withFlow(harmonizeFlow)
-            .withBatchSize(10)
-            .withThreadCount(1);
+                .withFlow(harmonizeFlow)
+                .withBatchSize(10)
+                .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
 
         String expected =
-            "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
-                "  <headers></headers>\n" +
-                "  <triples></triples>\n" +
-                "  <instance>\n" +
-                "   <info>\n" +
-                "     <title>Person</title>\n" +
-                "     <version>0.0.1</version>\n" +
-                "   </info>\n" +
-                "    <Person xmlns=\"\">\n" +
-                "       <an>instance</an>\n" +
-                "       <document>that</document>\n" +
-                "       <is>not</is>\n" +
-                "       <harmononized>yeah</harmononized>\n" +
-                "    </Person>\n" +
-                "  </instance>\n" +
-                "  <attachments><and xmlns=\"\">originaldochere</and></attachments>\n" +
-                "</envelope>";
+                "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
+                        "  <headers></headers>\n" +
+                        "  <triples></triples>\n" +
+                        "  <instance>\n" +
+                        "   <info>\n" +
+                        "     <title>Person</title>\n" +
+                        "     <version>0.0.1</version>\n" +
+                        "   </info>\n" +
+                        "    <Person xmlns=\"\">\n" +
+                        "       <an>instance</an>\n" +
+                        "       <document>that</document>\n" +
+                        "       <is>not</is>\n" +
+                        "       <harmononized>yeah</harmononized>\n" +
+                        "    </Person>\n" +
+                        "  </instance>\n" +
+                        "  <attachments><and xmlns=\"\">originaldochere</and></attachments>\n" +
+                        "</envelope>";
 
         String actual = finalDocMgr.read("2.xml").next().getContentAs(String.class);
         //logger.debug(expected);
@@ -262,66 +250,64 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), flowRunnerClient);
-
         scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
-            CodeFormat.XQUERY, DataFormat.JSON, false);
+                CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/collector.xqy"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/collector.xqy"),
+                StandardCopyOption.REPLACE_EXISTING);
         Files.copy(getResourceStream("flow-runner-test/content-testing-envelope.xqy"),
-            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/content.xqy"),
-            StandardCopyOption.REPLACE_EXISTING);
+                projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/content.xqy"),
+                StandardCopyOption.REPLACE_EXISTING);
         try {
-        	installUserModules(getHubFlowRunnerConfig(), false);
+            installUserModules(getHubFlowRunnerConfig(), false);
         }
         catch(Exception e) {
-        	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
         //The flow should not be deployed.
         assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/FlowWithHubUser/FlowWithHubUser.xml"));
 
-    	Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
-    	copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-    	 try {
-         	installUserModules(getHubFlowRunnerConfig(), false);
-         }
-         catch(Exception e) {
-         	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
-         }
+        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
+        try {
+            installUserModules(getHubFlowRunnerConfig(), false);
+        }
+        catch(Exception e) {
+            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+        }
+        getHubAdminConfig();
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
         //deploys the entity to final db
         installUserModules(getHubAdminConfig(), false);
 
-        MappingManager mappingManager = MappingManager.getMappingManager(getHubAdminConfig());
         ObjectMapper mapper = new ObjectMapper();
-		Mapping testMap = Mapping.create("test");
-		testMap.setDescription("This is a test.");
-		testMap.setSourceContext("//");
-		testMap.setTargetEntityType(ENTITY);
-		HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
-		mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "id"));
-		mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "name"));
-		mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "salary"));
-		mappingManager.saveMapping(testMap);
+        Mapping testMap = Mapping.create("test");
+        testMap.setDescription("This is a test.");
+        testMap.setSourceContext("//");
+        testMap.setTargetEntityType(ENTITY);
+        HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
+        mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "id"));
+        mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "name"));
+        mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "salary"));
+        mappingManager.saveMapping(testMap);
 
-		try {
-        	installUserModules(getHubFlowRunnerConfig(), false);
+        try {
+            installUserModules(getHubFlowRunnerConfig(), false);
         }
         catch(Exception e) {
-        	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
-		// Mapping should not be deployed
-        Assert.assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
+        // Mapping should not be deployed
+        assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
         installUserModules(getHubAdminConfig(), true);
 
-		scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
-		try {
-        	installUserModules(getHubFlowRunnerConfig(), false);
+        scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
+        try {
+            installUserModules(getHubFlowRunnerConfig(), false);
         }
         catch(Exception e) {
-        	Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
         assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/MappingFlowWithHubUser/MappingFlowWithHubUser.xml"));
     }

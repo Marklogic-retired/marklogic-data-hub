@@ -12,7 +12,7 @@
   font-weight: normal;
   margin: 10px 0;
   padding: 0;
-  width: 685px;
+  width: 651px;
   position: relative;
   float: left;
 }
@@ -25,13 +25,23 @@
   }
 }
 
-div.item-type {
-  margin: 0;
-  padding: 0;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  font-size: 24px;
-  font-weight: 200;
+div.item-title {
+  div.item-type {
+    display: inline-block;
+    margin: 5px 10px 10px 0;
+    font-size: 24px;
+    font-weight: 200;
+  }
+  span.help-icon {
+    position: relative;
+    top: -3px;
+    i.fa-question-circle {
+      cursor: pointer;
+    }
+    a, a:hover {
+      color: #212529;
+    }
+  }
 }
 
 p.item-identifying-info {
@@ -248,6 +258,12 @@ p.edit-uri {
   margin: 0 0 6px 2px;
 }
 
+span.uri-label {
+  font-weight: bold;
+  margin: 0 4px 0 0;
+  font-size: 15px;
+}
+
 .edit-desc {
   font-size: 16px;
   padding-left: 0;
@@ -257,7 +273,7 @@ p.edit-uri {
 }
 
 .edit-uri-val, .edit-desc-val {
-  width: 411px;
+  width: 376px;
   padding: 3px 1px;
   height: 28px;
 }
@@ -277,4 +293,14 @@ p.edit-uri {
   color: #AAA;
   font-style: italic;
   padding-right: 7px;
+}
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}
+
+/* Widen tooltip container for long phrases */
+/deep/ .tooltip .tooltip-inner {
+  max-width: 350px;
 }

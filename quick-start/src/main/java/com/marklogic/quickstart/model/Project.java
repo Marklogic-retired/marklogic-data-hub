@@ -16,27 +16,35 @@
  */
 package com.marklogic.quickstart.model;
 
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Project {
 
     public int id;
     public String path;
 
-    public Project(int id, String path) {
+    @Autowired
+    private HubProject hubProject;
+
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public void setPath(String path) {
         this.path = path;
     }
 
     public boolean isInitialized() {
-        return HubProject.create(this.path).isInitialized();
+        hubProject.createProject(this.path);
+        return hubProject.isInitialized();
     }
 
     public List<String> getEnvironments() {
@@ -48,11 +56,5 @@ public class Project {
             environments.add(env);
         }
         return environments;
-    }
-
-    public void initialize(HubConfig hubConfig) {
-        hubConfig.setProjectDir(this.path);
-        DataHub hub = DataHub.create(hubConfig);
-        hub.initProject();
     }
 }

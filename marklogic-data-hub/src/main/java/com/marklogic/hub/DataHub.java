@@ -19,8 +19,6 @@ package com.marklogic.hub;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
-import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.util.Versions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +29,6 @@ import java.util.List;
  * Includes installs, version validation, updates, and the init of a DHF project.
  */
 public interface DataHub {
-
-    static DataHub create(HubConfig hubConfig) {
-        return new DataHubImpl(hubConfig);
-    }
 
     /**
      * Clears the database of all documents
@@ -77,16 +71,6 @@ public interface DataHub {
     HashMap runPreInstallCheck();
 
     /**
-     * Runs the pre-install check for the datahub populating the object
-     * with variables necessary to perform the install.
-     * This is used for running install.
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param versions - the versions that the check is to be run against
-     * @return - a hashmap of the results of the preinstall check
-     */
-    HashMap runPreInstallCheck(Versions versions);
-
-    /**
      * Installs the data hub configuration and server-side config files into MarkLogic
      * Must be run as a user with sufficient privileges to install a data hub.
      */
@@ -98,10 +82,6 @@ public interface DataHub {
      * @param listener - the callback method to receive status updates
      */
     void install(HubDeployStatusListener listener);
-
-    void installFinal(HubDeployStatusListener listener);
-
-    void installStaging(HubDeployStatusListener listener);
 
     /**
      * Updates the indexes in the database based on the project
@@ -121,10 +101,6 @@ public interface DataHub {
      * @param listener - the callback method to receive status updates
      */
     void uninstall(HubDeployStatusListener listener);
-
-    void uninstallStaging(HubDeployStatusListener listener);
-
-    void uninstallFinal(HubDeployStatusListener listener);
 
     /**
      * Checks to make sure all the versions and database in a valid configuration with version check

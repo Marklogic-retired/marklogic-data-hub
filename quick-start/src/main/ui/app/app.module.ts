@@ -22,7 +22,7 @@ import { MdlModule } from '@angular-mdl/core';
 import { MdlPopoverModule } from '@angular-mdl/popover';
 import { MdlSelectModule } from '@angular-mdl/select';
 import { GridManiaModule } from './grid';
-import { BsDropdownModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TooltipModule } from 'ngx-bootstrap';
 
 import { ROUTES } from './app.routes';
 import { AUTH_PROVIDERS } from './auth';
@@ -40,7 +40,6 @@ import { PaginationComponent } from './shared/components/pagination';
 import { ResizableComponent } from './shared/components/resizable/resizable.component';
 import { SelectComponent } from './shared/components/select/select.component';
 import { SelectListComponent } from './shared/components/select-list/select-list.component';
-import { TooltipModule } from './tooltip';
 import { TracesComponent, TraceViewerComponent } from './traces';
 import { SearchComponent, SearchViewerComponent } from './search';
 
@@ -140,11 +139,11 @@ import {ThemeModule} from "./shared/components/theme/theme.module";
     MdlModule,
     MdlPopoverModule,
     MdlSelectModule,
-    TooltipModule,
     GridManiaModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
     DatePipeModule,
     BsDropdownModule.forRoot(),
+    TooltipModule.forRoot(),
     ThemeModule
   ],
   providers: [

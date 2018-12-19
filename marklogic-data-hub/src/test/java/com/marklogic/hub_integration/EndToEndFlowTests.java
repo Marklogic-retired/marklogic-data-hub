@@ -25,24 +25,27 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.Installer;
+import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.hub.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.TransformerException;
@@ -101,19 +104,21 @@ class FinalCounts {
     }
 }
 
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class EndToEndFlowTests extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
+    @Autowired
     private FlowManager flowManager;
     private DataMovementManager flowRunnerDataMovementManager;
 
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
-
+    @Autowired
     private Scaffolding scaffolding;
 
     @BeforeAll
@@ -138,10 +143,8 @@ public class EndToEndFlowTests extends HubTestBase {
         enableDebugging();
 
 
-        flowManager = FlowManager.create(getHubFlowRunnerConfig());
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
 
-        scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
 
         // create some flows in a format that pre-dates the 2.0 flow format with properties files
@@ -149,7 +152,6 @@ public class EndToEndFlowTests extends HubTestBase {
             createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
         });
 
-        flowManager = FlowManager.create(getHubFlowRunnerConfig());
         List<String> legacyFlows = flowManager.getLegacyFlows();
         assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value
@@ -1363,7 +1365,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getJobDocCount());
 
         installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
-
+        getHubFlowRunnerConfig();
         Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
         FlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
@@ -1390,6 +1392,8 @@ public class EndToEndFlowTests extends HubTestBase {
                 throw new RuntimeException(e);
             }
         }
+        //Reset HubConfig to hubadmin user/password
+        getHubAdminConfig();
         return new Tuple<>(flowRunner, jobTicket);
     }
 

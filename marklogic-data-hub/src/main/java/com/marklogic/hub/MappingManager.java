@@ -37,9 +37,9 @@ public interface MappingManager {
      * @param hubConfig - a hubConfig object for the mappingmanager to use
      * @return A mapping manager instance
      */
-    static MappingManager getMappingManager(HubConfig hubConfig) {
-        return MappingManagerImpl.getInstance(hubConfig);
-    };
+    //static MappingManager getMappingManager(HubConfig hubConfig) {
+        //return MappingManagerImpl.getInstance(hubConfig);
+    //};
 
     /**
      * Creates a mapping given a string name

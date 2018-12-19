@@ -21,6 +21,13 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
   bottom: 12px;
 }
 
+div.selected-entity div.mdl-dialog__content {
+  display:block;
+  overflow:auto;
+  max-height:596px;
+  width:100%;
+}
+
 table.properties {
   border-collapse: collapse;
   border: 1px solid #ccc;
@@ -93,3 +100,27 @@ table.properties {
   border: 2px solid #a94442 !important;
   outline-width: 0;
 }
+
+.toolbar button {
+  margin-right: 5px;
+}
+
+.properties-heading {
+  padding-bottom: 20px;
+  .properties-title {
+    display: inline-block;
+    margin: 5px 10px 10px 0;
+    font-size: 24px;
+  }
+  .help-icon {
+    position: relative;
+    top: -3px;
+    i.fa-question-circle {
+      cursor: pointer;
+    }
+    a, a:hover {
+      color: rgba(0,0,0, 0.54);
+    }
+  }
+}
+

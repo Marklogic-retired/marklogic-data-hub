@@ -24,10 +24,9 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.validate.EntitiesValidator;
-import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
@@ -50,12 +49,21 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
-public class EntityManagerService extends EnvironmentAware {
+public class EntityManagerService {
 
     private static final String UI_LAYOUT_FILE = "entities.layout.json";
     private static final String PLUGINS_DIR = "plugins";
     private static final String ENTITIES_DIR = "entities";
     public static final String ENTITY_FILE_EXTENSION = ".entity.json";
+
+    @Autowired
+    EntityManager em;
+
+    @Autowired
+    HubConfigImpl hubConfig;
+
+    @Autowired
+    Scaffolding scaffolding;
 
     @Autowired
     private FlowManagerService flowManagerService;
@@ -70,32 +78,25 @@ public class EntityManagerService extends EnvironmentAware {
     private MappingManagerService mappingManagerService;
 
     public List<EntityModel> getLegacyEntities() throws IOException {
-        String projectDir = envConfig().getProjectDir();
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesDir = envConfig().getMlSettings().getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
         for (String entityName : entityNames) {
             EntityModel entityModel = new EntityModel();
             InfoType infoType = new InfoType();
             infoType.setTitle(entityName);
             entityModel.setInfo(infoType);
-            entityModel.inputFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.INPUT);
-            entityModel.harmonizeFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.HARMONIZE);
+            entityModel.inputFlows = flowManagerService.getFlows(entityName, FlowType.INPUT);
+            entityModel.harmonizeFlows = flowManagerService.getFlows(entityName, FlowType.HARMONIZE);
             entities.add(entityModel);
         }
         return entities;
     }
 
     public List<EntityModel> getEntities() throws IOException {
-        if (envConfig().getMarklogicVersion().startsWith("8")) {
-            return getLegacyEntities();
-        }
-
-        String projectDir = envConfig().getProjectDir();
-
         Map<String, HubUIData> hubUiData = getUiData();
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesPath = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR);
+        Path entitiesPath = hubConfig.getHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
         ObjectMapper objectMapper = new ObjectMapper();
         for (String entityName : entityNames) {
@@ -111,8 +112,8 @@ public class EntityManagerService extends EnvironmentAware {
                         data = new HubUIData();
                     }
                     entityModel.setHubUi(data);
-                    entityModel.inputFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.INPUT);
-                    entityModel.harmonizeFlows = flowManagerService.getFlows(projectDir, entityName, FlowType.HARMONIZE);
+                    entityModel.inputFlows = flowManagerService.getFlows(entityName, FlowType.INPUT);
+                    entityModel.harmonizeFlows = flowManagerService.getFlows(entityName, FlowType.HARMONIZE);
 
                     entities.add(entityModel);
                 }
@@ -122,8 +123,7 @@ public class EntityManagerService extends EnvironmentAware {
         return entities;
     }
 
-    public EntityModel createEntity(String projectDir, EntityModel newEntity) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
+    public EntityModel createEntity(EntityModel newEntity) throws IOException {
         scaffolding.createEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
@@ -148,7 +148,7 @@ public class EntityManagerService extends EnvironmentAware {
         String title = entity.getInfo().getTitle();
 
         if (fullpath == null) {
-            Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, title);
+            Path dir = hubConfig.getHubEntitiesDir().resolve(title);
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -181,7 +181,7 @@ public class EntityManagerService extends EnvironmentAware {
                 entity.setFilename(fullpath);
 
                 // Redeploy the flows
-                dataHubService.reinstallUserModules(envConfig().getMlSettings(), null, null);
+                dataHubService.reinstallUserModules(hubConfig, null, null);
             }
         }
 
@@ -193,26 +193,22 @@ public class EntityManagerService extends EnvironmentAware {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = Paths.get(envConfig().getProjectDir(), PLUGINS_DIR, ENTITIES_DIR, entity);
+        Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
         if (dir.toFile().exists()) {
             watcherService.unwatch(dir.getParent().toString());
             FileUtils.deleteDirectory(dir.toFile());
         }
     }
 
-    //TODO Autowire in an Entity Manager
-    public void deploySearchOptions(EnvironmentConfig environmentConfig) {
-        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+    public void deploySearchOptions() {
         em.deployQueryOptions();
     }
 
-    public void saveDbIndexes(EnvironmentConfig environmentConfig) {
-        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+    public void saveDbIndexes() {
         em.saveDbIndexes();
     }
 
-    public void savePii(EnvironmentConfig environmentConfig) {
-        EntityManager em = EntityManager.create(environmentConfig.getMlSettings());
+    public void savePii() {
         em.savePii();
     }
 
@@ -226,7 +222,7 @@ public class EntityManagerService extends EnvironmentAware {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+        Path dir = hubConfig.getUserConfigDir();
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -256,7 +252,7 @@ public class EntityManagerService extends EnvironmentAware {
             uiData = JsonNodeFactory.instance.objectNode();
         }
 
-        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+        Path dir = hubConfig.getUserConfigDir();
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
@@ -303,8 +299,7 @@ public class EntityManagerService extends EnvironmentAware {
         throw new DataHubProjectException("Flow not found: " + entityName + " / " + flowName);
     }
 
-    public FlowModel createFlow(String projectDir, String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
+    public FlowModel createFlow(String entityName, FlowType flowType, FlowModel newFlow) throws IOException {
         newFlow.entityName = entityName;
         if(newFlow.mappingName != null) {
             try {
@@ -318,8 +313,7 @@ public class EntityManagerService extends EnvironmentAware {
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
-    public void deleteFlow(String projectDir, String entityName, String flowName, FlowType flowType) throws IOException {
-        Scaffolding scaffolding = Scaffolding.create(projectDir, envConfig().getStagingClient());
+    public void deleteFlow(String entityName, String flowName, FlowType flowType) throws IOException {
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }
@@ -351,7 +345,7 @@ public class EntityManagerService extends EnvironmentAware {
     }
     private JsonNode getUiRawData() {
         JsonNode json = null;
-        Path dir = Paths.get(envConfig().getProjectDir(), HubConfig.USER_CONFIG_DIR);
+        Path dir = hubConfig.getUserConfigDir();
         File file = Paths.get(dir.toString(), UI_LAYOUT_FILE).toFile();
         if (file.exists()) {
             try {

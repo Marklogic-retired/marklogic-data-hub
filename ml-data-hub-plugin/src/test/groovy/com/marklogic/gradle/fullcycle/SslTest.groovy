@@ -17,28 +17,20 @@
 
 package com.marklogic.gradle.fullcycle
 
-import com.fasterxml.jackson.databind.node.ObjectNode
+
 import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.gradle.task.BaseTest
-import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
-import com.marklogic.rest.util.JsonNodeUtil
-
-import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
-import spock.lang.Ignore
 
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-
-import java.nio.file.Files
-import java.nio.file.Path
 
 class SslTest extends BaseTest {
 
@@ -161,17 +153,16 @@ class SslTest extends BaseTest {
         runTask("hubInit")
         runTask("mlDeploySecurity")
 
-        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"), 
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
             new File("src/test/resources/ssl-test/ssl-server.json"))
-        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"), 
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"),
             new File("src/test/resources/ssl-test/ssl-server.json"))
-        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"), 
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"),
             new File("src/test/resources/ssl-test/ssl-server.json"))
-        /*copyResourceToFile("ssl-test/my-template.xml", new File(BaseTest.testProjectDir.root, "src/main/ml-config/security/certificate-templates/my-template.xml"))
-         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"))
-         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"))
-         copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"))*/
+
         createProperties()
+        resetProperties()
+        hubConfig().refreshProject()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
         } catch (e) {
@@ -282,13 +273,13 @@ class SslTest extends BaseTest {
 
         when:
         println(runTask(
-                'hubRunFlow',
-                '-PentityName=my-new-entity',
-                '-PflowName=my-new-harmonize-flow',
-                '-PsourceDB=data-hub-FINAL',
-                '-PdestDB=data-hub-STAGING',
-                '-i'
-                ).getOutput())
+            'hubRunFlow',
+            '-PentityName=my-new-entity',
+            '-PflowName=my-new-harmonize-flow',
+            '-PsourceDB=data-hub-FINAL',
+            '-PdestDB=data-hub-STAGING',
+            '-i'
+        ).getOutput())
 
         then:
         notThrown(UnexpectedBuildFailure)

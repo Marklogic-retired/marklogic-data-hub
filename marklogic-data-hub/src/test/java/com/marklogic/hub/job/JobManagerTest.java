@@ -16,15 +16,17 @@
 package com.marklogic.hub.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.*;
-import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,9 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class JobManagerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static final String HARMONIZE_FLOW_XML = "testharmonize-xml";
@@ -54,17 +58,16 @@ public class JobManagerTest extends HubTestBase {
     private FlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
 
-    @Before
+    @BeforeEach
     public void setupStuff() throws InterruptedException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         deleteProjectDir();
 
         createProjectDir();
-
+        getHubAdminConfig();
         enableDebugging();
         enableTracing();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         // Traces can be XML or JSON, depending on the DataFormat of the flow that created them. Get some of each
         // to make sure export and import work correctly.
@@ -85,11 +88,11 @@ public class JobManagerTest extends HubTestBase {
 
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
+        getHubFlowRunnerConfig();
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(10)
@@ -111,10 +114,10 @@ public class JobManagerTest extends HubTestBase {
             .onItemComplete(flowItemCompleteListener);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        jobManager = JobManager.create(getHubAdminConfig().newJobDbClient());
+        jobManager = JobManager.create(getHubFlowRunnerConfig().newJobDbClient());
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
     	try {
 			Files.deleteIfExists(exportPath);
@@ -122,6 +125,7 @@ public class JobManagerTest extends HubTestBase {
 			e.printStackTrace();
 		}
     	disableTracing();
+    	getHubAdminConfig();
     }
     private static void recordJobId(String jobId) {
         jobIds.add(jobId);
@@ -213,9 +217,9 @@ public class JobManagerTest extends HubTestBase {
 
         ZipFile actual = new ZipFile(zipFile);
         // There should be one job and two trace documents
-        assertEquals(3, actual.size());
-
+        int actualSize = actual.size();
         actual.close();
+        assertEquals(3, actualSize);
     }
 
     @Test
@@ -229,9 +233,9 @@ public class JobManagerTest extends HubTestBase {
         assertTrue(zipFile.exists());
         ZipFile actual = new ZipFile(zipFile);
         // There should be two job and four trace documents
-        assertEquals(6, actual.size());
-
+        int actualSize = actual.size();
         actual.close();
+        assertEquals(6, actualSize);
     }
 
     @Test
@@ -240,13 +244,10 @@ public class JobManagerTest extends HubTestBase {
         assertFalse(zipFile.exists());
 
         jobManager.exportJobs(exportPath, null);
-
         assertTrue(zipFile.exists());
 
         ZipFile actual = new ZipFile(zipFile);
-        // There should be four job and eight trace documents
         assertEquals(12, actual.size());
-
         actual.close();
     }
 

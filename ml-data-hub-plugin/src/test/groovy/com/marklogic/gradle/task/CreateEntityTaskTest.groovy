@@ -28,6 +28,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 class CreateEntityTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
+        runTask('hubInit')
     }
 
     def "create entity with no name"() {

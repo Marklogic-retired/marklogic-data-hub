@@ -19,6 +19,14 @@ $easingFunc: ease-in-out;
   padding: 0px 24px 8px 24px;
 }
 
+.mdl-dialog__actions {
+  flex-direction: row;
+  padding-left: 16px;
+  .save-options {
+    margin-right: 8px;
+  }
+}
+
 .group-container {
   margin-bottom: 10px;
 
@@ -106,4 +114,14 @@ $easingFunc: ease-in-out;
 
 /deep/ .mdl-textfield__label:after {
   bottom: 12px;
+}
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}
+
+/* Widen tooltip container for long phrases */
+/deep/ .tooltip .tooltip-inner {
+  max-width: 250px;
 }

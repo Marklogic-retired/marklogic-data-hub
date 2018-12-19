@@ -2,10 +2,15 @@ package com.marklogic.quickstart.model;
 
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 /**
  * A transport object that matches up with the Hubsettings typescript model
  */
+@Component
+@PropertySource({"classpath:dhf-defaults.properties"})
 public class HubSettings {
 
     public static HubSettings fromHubConfig(HubConfig config) {
@@ -36,7 +41,7 @@ public class HubSettings {
         settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
 
         settings.username = config.getHubUserName();
-        settings.projectDir = config.getProjectDir();
+        settings.projectDir = config.getHubProject().getProjectDirString();
         return settings;
     }
 
@@ -233,33 +238,73 @@ public class HubSettings {
         this.projectDir = projectDir;
     }
 
+    @Value("${mlHost}")
     String host = null;
+
     String name = "data-hub";
 
+    @Value("${mlStagingDbName}")
     String stagingDbName = null;
+
+    @Value("${mlStagingTriggersDbName}")
     String stagingTriggersDbName = null;
+
+    @Value("${mlStagingSchemasDbName}")
     String stagingSchemasDbName = null;
+
+    @Value("${mlStagingAppserverName}")
     String stagingHttpName = null;
+
+    @Value("${mlStagingForestsPerHost}")
     Integer stagingForestsPerHost = null;
+
+    @Value("${mlStagingPort}")
     Integer stagingPort = null;
+
+    @Value("${mlStagingAuth}")
     String stagingAuthMethod = null;
 
+    @Value("${mlFinalDbName}")
     String finalDbName = null;
+
+    @Value("${mlFinalTriggersDbName}")
     String finalTriggersDbName = null;
+
+    @Value("${mlFinalSchemasDbName}")
     String finalSchemasDbName = null;
+
+    @Value("${mlFinalAppserverName}")
     String finalHttpName = null;
+
+    @Value("${mlFinalForestsPerHost}")
     Integer finalForestsPerHost = null;
+
+    @Value("${mlFinalPort}")
     Integer finalPort = null;
+
+    @Value("${mlFinalAuth}")
     String finalAuthMethod = null;
 
+    @Value("${mlJobDbName}")
     String jobDbName = null;
+
+    @Value("${mlJobAppserverName}")
     String jobHttpName = null;
+
+    @Value("${mlJobForestsPerHost}")
     Integer jobForestsPerHost = null;
+
+    @Value("${mlJobPort}")
     Integer jobPort = null;
+
+    @Value("${mlJobAuth}")
     String jobAuthMethod = null;
 
+    @Value("${mlModulesDbName}")
     String modulesDbName = null;
 
+    @Value("${mlHubUserName}")
     String username = null;
+
     String projectDir = null;
 }

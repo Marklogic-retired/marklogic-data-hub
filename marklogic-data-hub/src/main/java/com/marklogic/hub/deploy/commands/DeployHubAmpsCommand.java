@@ -22,23 +22,39 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.util.Versions;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Component
 public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
+    @Autowired
     private HubConfig hubConfig;
 
-    public DeployHubAmpsCommand(HubConfig hubConfig) {
+    @Autowired
+    private Versions versions;
+
+    public DeployHubAmpsCommand() {
         super();
+    }
+
+    /**
+     * This is still needed by the Gradle tasks.
+     *
+     * @param hubConfig
+     */
+    public DeployHubAmpsCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.versions = new Versions(hubConfig);
     }
 
     /**
@@ -50,7 +66,6 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
         // this is a place to optimize -- is there a way to get
         // server versions without an http call?
-        Versions versions = new Versions(hubConfig);
         String serverVersion = versions.getMarkLogicVersion();
 
 
@@ -61,7 +76,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         }
         if (serverVersion.startsWith("9.0-5")) {
             logger.info("Using non-SSL-compatible method for 9.0-5 servers, for demos only");
-            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();
             String securityPassword = manageConfig.getSecurityPassword();
@@ -84,7 +99,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             }
         } else {
             logger.info("Using CMA for servers starting with 9.0-6");
-            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getAppConfig().getModulesDatabaseName();
             ManageClient manageClient = context.getManageClient();
 
             try (InputStream is = new ClassPathResource("hub-internal-config/configurations/amps.json").getInputStream()) {
@@ -101,13 +116,12 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
     public void undo(CommandContext context) {
         // this is a place to optimize -- is there a way to get
         // server versions without an http call?
-        Versions versions = new Versions(hubConfig);
         String serverVersion = versions.getMarkLogicVersion();
         logger.info("Choosing amp uninstall based on server version " + serverVersion);
 
         if (serverVersion.startsWith("9.0-5")) {
             logger.info("Using non-SSL-compatable method for 9.0-5 servers");
-            String modulesDatabaseName = hubConfig.getStagingAppConfig().getModulesDatabaseName();
+            String modulesDatabaseName = hubConfig.getAppConfig().getModulesDatabaseName();
             ManageConfig manageConfig = context.getManageClient().getManageConfig();
             String securityUsername = manageConfig.getSecurityUsername();
             String securityPassword = manageConfig.getSecurityPassword();
@@ -139,5 +153,10 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
     protected File[] getResourceDirs(CommandContext context) {
         return new File[] {
         };
+    }
+
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
     }
 }

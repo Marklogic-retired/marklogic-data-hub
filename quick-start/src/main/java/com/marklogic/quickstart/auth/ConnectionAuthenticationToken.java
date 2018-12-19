@@ -16,7 +16,7 @@
  */
 package com.marklogic.quickstart.auth;
 
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -46,7 +46,6 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
     private Object hostname;
     private int projectId;
     private String environment;
-    private EnvironmentConfig environmentConfig;
 
     // ~ Constructors
     // ===================================================================================================
@@ -124,13 +123,5 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
     public void eraseCredentials() {
         super.eraseCredentials();
         credentials = null;
-    }
-
-    public EnvironmentConfig getEnvironmentConfig() {
-        return environmentConfig;
-    }
-
-    public void setEnvironmentConfig(EnvironmentConfig environmentConfig) {
-        this.environmentConfig = environmentConfig;
     }
 }

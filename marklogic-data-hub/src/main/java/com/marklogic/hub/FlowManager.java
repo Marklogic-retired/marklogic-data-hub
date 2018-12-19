@@ -20,7 +20,6 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.impl.FlowManagerImpl;
 import org.w3c.dom.Element;
 
 import java.nio.file.Path;
@@ -30,14 +29,6 @@ import java.util.List;
  * Manages existing flows and creates flow runners to execute flows.
  */
 public interface FlowManager {
-    /**
-     * Creates and returns the FlowManager object
-     * @param hubConfig - the hubConfig for the FlowManager to use
-     * @return a FlowManager object with a set hubConfig
-     */
-    static FlowManager create(HubConfig hubConfig){
-        return new FlowManagerImpl(hubConfig);
-    }
 
     /**
      * Turns an XML document into a flow

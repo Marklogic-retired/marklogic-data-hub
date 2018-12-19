@@ -17,10 +17,12 @@
 package com.marklogic.quickstart.service;
 
 import com.marklogic.hub.HubConfig;
-import com.marklogic.quickstart.EnvironmentAware;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.sun.nio.file.SensitivityWatchEventModifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,24 +32,25 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 @Service
-public class FileSystemWatcherService extends EnvironmentAware implements DisposableBean {
+public class FileSystemWatcherService implements DisposableBean {
 
     private WatchService _watcher = null;
     // needs to have class scope so that it doesn't go away
     private Thread watcherThread;
     private Map<WatchKey,Path> keys = new HashMap<>();
 
+    private static Logger logger = LoggerFactory.getLogger(FileSystemWatcherService.class);
+
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     private final List<FileSystemEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
     private WatchService watcher() throws IOException {
         if (_watcher == null) {
-
-            EnvironmentConfig envConfig = envConfig();
-            if (envConfig != null) {
-                _watcher = FileSystems.getDefault().newWatchService();
-                watcherThread = new DirectoryWatcherThread("directory-watcher-thread", envConfig.getMlSettings());
-                watcherThread.start();
-            }
+            _watcher = FileSystems.getDefault().newWatchService();
+            watcherThread = new DirectoryWatcherThread("directory-watcher-thread", hubConfig);
+            watcherThread.start();
         }
         return _watcher;
     }

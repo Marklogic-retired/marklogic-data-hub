@@ -20,7 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.Debugging;
 import com.marklogic.hub.Tracing;
-import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.hub.impl.HubConfigImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,21 +30,24 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/settings")
-public class SettingsController extends EnvironmentAware {
+public class SettingsController {
 
     private Tracing tracing = null;
     private Debugging debugging = null;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     private Tracing getTracing() {
         if (tracing == null) {
-            tracing = Tracing.create(envConfig().getStagingClient());
+            tracing = Tracing.create(hubConfig.newJobDbClient());
         }
         return tracing;
     }
 
     private Debugging getDebugging() {
         if (debugging == null) {
-            debugging = Debugging.create(envConfig().getStagingClient());
+            debugging = Debugging.create(hubConfig.newStagingClient());
         }
         return debugging;
     }

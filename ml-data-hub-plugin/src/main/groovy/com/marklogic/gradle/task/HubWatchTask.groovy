@@ -17,33 +17,28 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.deploy.commands.LoadUserStagingModulesCommand
-import org.gradle.api.tasks.TaskAction
+import com.marklogic.gradle.task.client.WatchTask
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 
 /**
- * Runs an infinite loop, and each second, it loads any new/modified modules. Often useful to run with the Gradle "-i" flag
- * so you can see which modules are loaded.
- *
- * Depends on an instance of LoadModulesCommand being in the Gradle Project, which should have been placed there by
- * MarkLogicPlugin. This prevents this class from having to know how to construct a ModulesLoader.
+ * Extends ml-gradle's WatchTask so that after WatchTask loads modules, this task can invoke the custom DHF command for
+ * loading modules. The reason this is needed is because WatchTask doesn't just invoke all the commands in the
+ * "mlModuleCommands" list - it may be enhanced in the future to do that. But currently, it accesses the ModulesLoader
+ * that's created by LoadModulesCommand and invokes it.
  */
-class HubWatchTask extends HubTask {
+class HubWatchTask extends WatchTask {
 
-    long sleepTime = 1000
+    LoadUserModulesCommand command
 
-    @TaskAction
-    public void watchModules() {
+    @Override
+    void afterModulesLoaded() {
+        super.afterModulesLoaded()
 
-        LoadUserStagingModulesCommand command = new LoadUserStagingModulesCommand(getHubConfig())
-        println "Watching modules in paths: " + getHubConfig().projectDir
-
-        while (true) {
-            command.execute(getCommandContext())
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException ie) {
-                // Ignore
-            }
+        if (command == null) {
+            command = getProject().property("loadUserModulesCommand")
+            command.setWatchingModules(true)
         }
+
+        command.execute(getCommandContext())
     }
 }
