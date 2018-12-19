@@ -1,5 +1,45 @@
 # Change Log
 
+## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0) (2018-12-19)
+
+Bug
+
+    [DHFPROD-1193] - #1261 ⁃ "gradle createEntity" does not create an entity descriptor file
+    [DHFPROD-1263] - DataHub.runPreInstallCheck() returning incorrect results
+    [DHFPROD-1304] - mlDeploySecurity is not deploying protected-paths and query-rolesets
+    [DHFPROD-1328] - Able to create duplicate flow (input or harmonize)
+    [DHFPROD-1400] - Gradle Tasks using incorrect datahub.isInstalled() check to verify DHF installation
+    [DHFPROD-1433] - QuickStart entity editor: too many properties, buttons are hidden
+    [DHFPROD-1557] - Memory leak on gradle runFlow
+    [DHFPROD-1561] - DataHub installation fails
+    [DHFPROD-1576] - ./gradlew build fails with no user provided error
+    [DHFPROD-1592] - hubUpdate should work even when the project fails an initialization check
+    [DHFPROD-1595] - mlDeploy fails post hubUpdate in 4.1-rc1 DHF version
+    [DHFPROD-1601] - Deploy fails when mlModulePermissions does not exist in gradle.properties
+    [DHFPROD-1605] - mlDeploy fails when an amp exists under src/main/ml-config
+    [DHFPROD-1608] - QuickStart 4.1.0-rc fails to display flows
+    [DHFPROD-1615] - Upgrade issues in DHF with versions 4.0.x
+    [DHFPROD-1617] - Update documentation for 4.1.0 
+    [DHFPROD-1636] - hubGeneratePii task is failing
+    [DHFPROD-1637] - Docs: "Independent STAGING and FINAL App Server Stacks Stacks" link redirection error
+    [DHFPROD-1640] - Triggers config from hub-internal-config is making post request to data-hub-final-TRIGGERS database
+    [DHFPROD-1645] - 4.1.0 'mlUpdateIndexes' command is giving error with in provisioned environment
+    [DHFPROD-1646] - Deployment fails with non default hub admin role and user
+
+
+Story
+
+    [DHFPROD-1338] - Create spring application context and make properties file a singleton configuration
+    [DHFPROD-1339] - Rework application architecture to use Spring IoC
+    [DHFPROD-1422] - Clarify through the QuickStart UI the origin of the source URI field in the Mapping Screen
+    [DHFPROD-1436] - Upgrade to Java 10 and OpenJDK
+    [DHFPROD-1518] - Design the ml-gradle solution
+    [DHFPROD-1519] - Separation of DHF override code from vanilla ml-gradle tasks
+    [DHFPROD-1524] - Stitch together quick-start Spring Context with core .
+    [DHFPROD-1554] - Release Notes and Upgrade guidance for 4.1
+
+
+
 ## [v4.0.3](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.3) (2018-11-19)
 
 Bug
