@@ -21,7 +21,7 @@
             [(ngModel)]="flow.flowName"
             (keyup)="checkName()"></mdl-textfield>
           <div *ngIf="!isNameValid" class="alert-text">{{ errorMsg }}</div>
-          <ng-template [ngIf]="getMarkLogicVersion() >= 9">
+          <ng-template [ngIf]="markLogicVersion >= 9">
             <label>Code Generation</label>
             <app-select-list
               [items]="scaffoldOptions"

@@ -23,6 +23,8 @@ import {Flow} from '../entities/flow.model';
       [startingScaffoldOption]="startingScaffoldOption"
       [startingMappingOption]="startingMappingOption"
       [flow]="flow"
+      [flows]="flows"
+      [entity]="entity"
       (flowChanged)="flowChanged($event)"
       (createClicked)="create()"
     ></app-new-flow-ui>
@@ -126,17 +128,6 @@ export class NewFlowComponent implements OnDestroy {
   getMarkLogicVersion(): number {
     let version = this.envService.marklogicVersion.substr(0, this.envService.marklogicVersion.indexOf('.'));
     return parseInt(version);
-  }
-
-  checkName() {
-    let nameValid = true;
-    let entityName = this.entity && this.entity.info && this.entity.info.title;
-    let flowPrefix = (this.flowType.toUpperCase() === 'INPUT') ? 'an' : 'a';
-    _.forEach(this.flows, (f) => {
-      nameValid = (this.flow.flowName === f.flowName) ? false: nameValid;
-    });
-    this.errorMsg = (!nameValid) ? `Flow names must be unique. Entity "${entityName}" already contains ${flowPrefix} ${this.flowType} flow named "${this.flow.flowName}"` : '';
-    this.isNameValid = nameValid;
   }
   
 }
