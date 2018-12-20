@@ -18,4 +18,4 @@ redirect_from: "/understanding/project-structure/"
 ## See Also
 - [Plugins]({{site.baseurl}}/understanding/plugins/)
 - [ml-gradle Wiki](https://github.com/marklogic-community/ml-gradle/wiki)
-- [ml-gradle: How modules are loaded]({{site.baseurl}}https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded)
+- [ml-gradle: How modules are loaded](https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded)

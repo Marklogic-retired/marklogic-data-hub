@@ -35,4 +35,4 @@ Data Hub Framework 4.1.0 requires the following software:
 
 ## See Also
 - [Release Notes for DHF 4.1.0]({{site.baseurl}}/release-notes/release-notes-4_1_x/)
-- [Download DHF 4.1.0.](https://github.com/marklogic/marklogic-data-hub/releases/tag/v.4.1.0)
+- [Download DHF 4.1.0.](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0)

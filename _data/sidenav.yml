@@ -6,6 +6,7 @@ main:
           { url: '/whats-new/', text: 'What''s New' },
           { url: '/release-notes/', text: 'Release Notes' },
           { absurl: 'https://github.com/marklogic/marklogic-data-hub/releases/', text: 'Download' },
+          { url: '/upgrade/', text: 'Upgrade' },
         ]
       }
     - {
@@ -136,10 +137,6 @@ main:
               { absurl: 'https://docs.marklogic.com/REST/client', text: 'Using the REST Client API' },
               { absurl: 'https://docs.marklogic.com/guide/admin/odbc', text: 'Using ODBC' },
             ]
-          },
-          {
-            url: '/upgrade/',
-            text: 'Upgrade',
           }
         ]
       }
