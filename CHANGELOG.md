@@ -40,7 +40,7 @@ Story
 
 
 
-## [v4.0.3](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.3) (2018-11-19)
+## [v4.0.3](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.0.3) (2018-11-19)
 
 Bug
 
@@ -48,7 +48,7 @@ Bug
     
    
 
-## [v4.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.2) (2018-11-05)
+## [v4.0.2](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.0.2) (2018-11-05)
 
 Bug
 
@@ -68,7 +68,7 @@ Bug
  
 
 
-## [v4.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.1) (2018-10-05)
+## [v4.0.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.0.1) (2018-10-05)
 
 Bug
 
@@ -120,7 +120,7 @@ Story
 
 
 
-## [v4.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.0) (2018-09-11)
+## [v4.0.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v4.0.0) (2018-09-11)
 
 Bugs
 
@@ -247,7 +247,7 @@ Story
 
 
 
-## [v3.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v3.0.0) (2018-05-03)
+## [v3.0.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v3.0.0) (2018-05-03)
 
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.4...v3.0.0)
 
