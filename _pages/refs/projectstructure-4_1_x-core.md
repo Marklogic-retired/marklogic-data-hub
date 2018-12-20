@@ -118,7 +118,7 @@ A DHF 4.1.x project will have the following directory structure after initializa
 <dl>
 
 <dt>build.gradle</dt>
-<dd><span markdown="1">This file enables you to use [Gradle](https://gradle.org/) to configure and manage your data hub instance. See the [Gradle documentation]({{site.baseurl}}https://docs.gradle.org/current/userguide/userguide.html).</span></dd>
+<dd><span markdown="1">This file enables you to use [Gradle](https://gradle.org/) to configure and manage your data hub instance. See the [Gradle documentation](https://docs.gradle.org/current/userguide/userguide.html).</span></dd>
 
 <dt>gradle.properties</dt>
 <dd><span markdown="1">This properties file defines variables needed by the data hub to install and run properly. Use this file to store values that apply to all instances of your data hub.</span></dd>

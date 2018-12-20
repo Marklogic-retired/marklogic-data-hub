@@ -24,7 +24,7 @@ The notes and steps in this tab are for the following upgrade paths:
 
     - Copies some settings from the old configuration files to the new ones.
 
-    - Updates all flows to use updated imports. See the [notes to upgrade to 4.0.0] ]({{site.baseurl}}https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x).
+    - Updates all flows to use updated imports. See the [notes to upgrade to 4.0.0] ](https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x).
 
 - {% include conrefs/conref-remark-hubupdate-verbose.md %}
 

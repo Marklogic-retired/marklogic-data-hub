@@ -18,7 +18,7 @@ redirect_from: "/glossary/"
 
 <dt>Envelope</dt>
 <dd><span markdown="1">A set of metadata wrapped around the original entity/data, including harmonized parts of the entity.
-*See also: [Envelope Pattern]({{site.baseurl}}/understanding/how-it-works/) and [Envelope Design Pattern (developer.marklogic.com)](https://developer.marklogic.com/blog/envelope-design-pattern)*</span></dd>
+*See also: [Envelope Pattern]({{site.baseurl}}/understanding/how-it-works/) and [Envelope Design Pattern (developer.marklogic.com)](https://www.marklogic.com/blog/design-patterns-envelope-design-pattern/)*</span></dd>
 
 <dt>Flow</dt>
 <dd><span markdown="1">A series of actions that process the data. Flows are implemented using a chain of plugins that perform sequential or concurrent steps in the process. The two types of flows are input and harmonize. *See also: [Envelope Pattern - Flows and Plugins]({{site.baseurl}}/understanding/how-it-works/#flows-and-plugins)*</span></dd>
