@@ -1,0 +1,5 @@
+{
+  "privilege-name": "dhf-internal-trace-ui",
+  "action": "/trace-ui/",
+  "kind": "uri"
+}
