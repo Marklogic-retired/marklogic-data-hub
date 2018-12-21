@@ -65,6 +65,7 @@ import { SearchService } from './search/search.service';
 import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options';
 import { HarmonizeFlowOptionsUiComponent } from './shared/components';
 import { DashboardComponent } from './dashboard';
+import { DashboardUiComponent } from './shared/components';
 import { TitlecasePipe } from './titlecase.pipe';
 import { InlineEditComponent } from './shared/components';
 import { FacetsComponent } from './shared/components/facets/facets.component';
@@ -146,6 +147,7 @@ import {
     HarmonizeFlowOptionsComponent,
     HarmonizeFlowOptionsUiComponent,
     DashboardComponent,
+    DashboardUiComponent,
     InlineEditComponent,
     FacetsComponent,
     TitlecasePipe,

@@ -7,7 +7,7 @@ export * from './inline-edit/inline-edit.component';
 export * from './pagination';
 export * from './select/select.component';
 export * from './mappings';
-export * from './login'
+export * from './login';
 export * from './search';
 export * from './choose-collation/choose-collation.component';
 export * from './entity-box/entity-box.component';
@@ -26,3 +26,4 @@ export * from './trace-viewer/trace-viewer-ui.component';
 export * from './entity-editor/entity-editor.component';
 export * from './new-flow/new-flow-ui.component';
 export * from './externaldef-dialog/externaldef-dialog.component';
+export * from './dashboard/dashboard-ui.component';
