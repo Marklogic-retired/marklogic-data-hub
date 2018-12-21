@@ -1,0 +1,4 @@
+{
+  "server-name": "%%mlStagingAppserverName%%",
+  "default-error-format": "xml"
+}
