@@ -4,7 +4,7 @@
       <div class="section-title">Databases</div>
       <div class="mdl-layout-spacer"></div>
       <button id="clear-all-databases" mdl-button mdl-button-type="icon" mdl-colored="primary" mdl-ripple
-        (click)="clearAllDatabases()"
+        (click)="emitClearAllDatabases()"
         tooltip="This will remove all documents from all of your Data Hub Databases!">
         <i class="mdi mdi-skull"></i>
       </button>
@@ -26,7 +26,7 @@
           <div class="mdl-layout-spacer"></div>
           <div class="info-column" layout="column" layout-align="end center">
             <button mdl-button mdl-button-type="icon" mdl-colored="primary" mdl-ripple
-              (click)="clearDatabase(db)"
+              (click)="emitClearDatabase(db)"
               tooltip="This will clear out any documents in your {{labelify(db) | titlecase}} database.">
               <i class="mdi mdi-delete"></i>
             </button>
