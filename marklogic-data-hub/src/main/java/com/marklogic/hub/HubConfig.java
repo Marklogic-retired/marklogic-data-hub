@@ -26,10 +26,12 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
-import java.util.Properties;
 
 /**
- * An interface to set, manage and recall the Data Hub's Configuration
+ * An interface to set, manage and recall the Data Hub's Configuration.
+ * HubConfig has a singleton scope so set everything you want at the start of the application and
+ * and then call {@link #refreshProject()} to wire up all clients and load the properties from gradle.properties
+ * (optionally overridden with gradle-{env}.properties).
  */
 @JsonDeserialize(as = HubConfigImpl.class)
 @JsonSerialize(as = HubConfigImpl.class)
@@ -467,22 +469,22 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current final appconfig object attached to the HubConfig
-     * @return Returns current final AppConfig object set for HubConfig
+     * Returns the current AppConfig object attached to the HubConfig
+     * @return Returns current AppConfig object set for HubConfig
      */
     @JsonIgnore
     AppConfig getAppConfig();
 
     /**
-     * Sets the final App Config for the current HubConfig
-     * @param config final AppConfig to associate with the HubConfig
+     * Sets the AppConfig for the current HubConfig
+     * @param config AppConfig to associate with the HubConfig
      */
     void setAppConfig(AppConfig config);
 
     /**
-     * Sets the final App Config for the current HubConfig, with skipUpdate option
-     * @param config - final AppConfig to associate with the HubConfig
-     * @param skipUpdate false to force update of final AppConfig, true to skip it
+     * Sets the AppConfig for the current HubConfig, with skipUpdate option
+     * @param config - AppConfig to associate with the HubConfig
+     * @param skipUpdate false to force update of AppConfig, true to skip it
      */
     void setAppConfig(AppConfig config, boolean skipUpdate);
 
@@ -531,14 +533,20 @@ public interface HubConfig {
      */
     void createProject(String projectDirString);
 
-    String getStagingSchemasDbName();
-
     /**
      * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
      * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
      * 
-     * @param environment
-     * @return
+     * @param environment - The name of the environment to use (local,dev,qa,prod,...)
+     * @return A HubConfig
      */
     HubConfig withPropertiesFromEnvironment(String environment);
+
+    /**
+     * Loads HubConfig object with values from gradle.properties (optionally overridden with
+     * gradle-(environment).properties). Once Spring creates HubConfig object and the project is initialized with
+     * {@link #createProject(String)} you can use setter methods to change HubConfig properties
+     * and then call this method.
+     */
+    void refreshProject();
 }

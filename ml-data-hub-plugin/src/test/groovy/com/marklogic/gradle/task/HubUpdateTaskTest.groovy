@@ -20,8 +20,6 @@ package com.marklogic.gradle.task
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
-import java.nio.file.Paths
-
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class HubUpdateTaskTest extends BaseTest {
@@ -32,6 +30,16 @@ class HubUpdateTaskTest extends BaseTest {
         // this will be relatively fast (idempotent) for already-installed hubs
         println(runTask('hubInstallModules', '-i').getOutput())
         println(runTask('mlLoadModules', '-i').getOutput())
+    }
+    
+    //if 4.0 project is upgraded, remove the backed up directories
+    def setup() {
+        File hubConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/hub-internal-config-" + hubConfig().getDHFVersion()).toFile()
+        File mlConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/ml-config-" + hubConfig().getDHFVersion()).toFile()
+        if (hubConfigDir.exists() && mlConfigDir.exists()) {
+            FileUtils.forceDelete(hubConfigDir)
+            FileUtils.forceDelete(mlConfigDir)
+        }
     }
 
     def "no updates needed"() {

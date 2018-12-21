@@ -39,7 +39,7 @@
                   <li
                     class="flow mdl-list__item"
                     [attr.data-flow-list]="type.toUpperCase()"
-                    [ngClass]="{'active': isActiveFlow(flow)}"
+                    [ngClass]="{'active': isActiveFlow(flow, type)}"
                     *ngFor="let flow of getFlows(entity, type)">
                     <div (click)="setFlow(flow, type.toUpperCase())" [attr.data-flow-name]="flow.flowName">
                       <span class="mdl-list__item-primary-content">

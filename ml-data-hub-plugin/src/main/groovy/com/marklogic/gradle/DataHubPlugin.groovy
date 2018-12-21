@@ -22,6 +22,7 @@ import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
+import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.impl.*
@@ -45,6 +46,7 @@ class DataHubPlugin implements Plugin<Project> {
     private MappingManagerImpl mappingManager
     private FlowManagerImpl flowManager
     private EntityManagerImpl entityManager
+    private GeneratePiiCommand generatePiiCommand
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -155,6 +157,7 @@ class DataHubPlugin implements Plugin<Project> {
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
+        generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
 
         initializeProjectExtensions(project)
     }
@@ -201,6 +204,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("mappingManager", mappingManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("entityManager", entityManager)
+            project.extensions.add("generatePiiCommand", generatePiiCommand)
 
             configureAppDeployer(project)
         }
