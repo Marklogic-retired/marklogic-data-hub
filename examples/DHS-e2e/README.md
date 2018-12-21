@@ -17,7 +17,7 @@ For information on DHS roles, refer to the [DHS documentation](https://internal.
 ## Assumptions and things to note ##
 * This project assumes that a DHS environment is already provisioned. All the app servers and databases should be provisioned and required roles created as described in the prerequisites above.
 * This example was run from bastion host.
-* DHS enables you to configure the endpoints to be private or public. If they are public, you can run this project from your laptop. If the endpoints are private, then these hosts are only accessible from the VPC that is peered to the MarkLogic VPC. In either case, please update `mlHost` in DHS/gradle.properties and DSF/gradle.properties to use the Flows endpoint.
+* DHS enables you to configure the endpoints to be private or public. If they are public, you can run this project from your laptop. If the endpoints are private, then these hosts are only accessible from the VPC that is peered to the MarkLogic VPC. In either case, please update `mlHost` in DHS/gradle.properties and DSF/gradle.properties to use the Flows endpoint and `operationsEndpoint` in DSF/gradle.properties to use the Operations endpoint.
 
 
 # Steps #
@@ -34,7 +34,8 @@ For information on DHS roles, refer to the [DHS documentation](https://internal.
         ___http://CURATION_ENDPOINT:8004/v1/search?database=data-hub-MODULES___
 4. Load your indexes into the databases
     * `./gradlew mlUpdateIndexes`
-5. Run the input flow
+5. Run the input flow in either ways below
+    * `./gradlew importAllCustomers` OR
     * `mlcp.sh import -mode "local" -host "`**Ingest/Flows endpoint**`" -port "8006" -username "`**Your username here**`" -password "`**Your password here**`" -input_file_path "`**path to DHS/input/json/customers/**`" -input_file_type "documents" -output_collections "Customer,DHS" -output_permissions "rest-reader,read,rest-writer,update" -output_uri_replace "`**path to DHS/input/json**`,''" -document_type "json" -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" -transform_param "entity-name=Customer,flow-name=customerInput" -restrict_hosts true`
     * Verify there are 11 documents in data-hub-STAGING:
         ___http://CURATION_ENDPOINT:8004/v1/search?database=data-hub-STAGING___
