@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import { MdlDialogReference } from '@angular-mdl/core';
-import { PropertyType } from '../entities';
+import { PropertyType } from '../../../entities';
 
 @Component({
   selector: 'app-external-def-dialog',

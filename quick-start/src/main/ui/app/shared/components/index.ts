@@ -25,4 +25,5 @@ export * from './tooltip/tooltip-container-ui.component';
 export * from './trace-viewer/trace-viewer-ui.component';
 export * from './entity-editor/entity-editor.component';
 export * from './new-flow/new-flow-ui.component';
+export * from './externaldef-dialog/externaldef-dialog.component';
 export * from './dashboard/dashboard-ui.component';
