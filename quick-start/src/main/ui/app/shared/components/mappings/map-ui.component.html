@@ -21,8 +21,8 @@
       </div>
 
       <div id="save-map">
-        <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="onSaveMap()">Save Map</mdl-button>
-        <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" disabled>Save Map</mdl-button>
+        <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="onSaveMap()">Save Mapping</mdl-button>
+        <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" disabled>Save Mapping</mdl-button>
         <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" (click)="onResetMap()">Reset</mdl-button>
         <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" disabled>Reset</mdl-button>
       </div>
@@ -33,16 +33,17 @@
       <div id="src-heading" #srcheading>
         <div class="item-title">
           <div class="item-type">Source</div>
-          <!-- TODO help icon for when docs are avail -->
-          <!-- <span class="help-icon">
-            <i class="fa fa-question-circle fa-lg"></i>
-          </span> -->
+          <span class="help-icon">
+            <a href="https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+          </span>
         </div>
         <p *ngIf="!editingURI" class="item-identifying-info">
-          <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" title="{{ mapping.sourceURI }}">{{ getLastChars(mapping.sourceURI, 40, '...') }}</span>
+          <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
+          <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 45) }}" container="body">{{ getLastChars(mapping.sourceURI, 45, '...') }}</span>
           <span class="fa fa-pencil edit-item" (click)="editingURI=true"></span>
         </p>
         <p *ngIf="editingURI" class="edit-uri">
+          <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
           <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
           <span class="edit-save" (click)="onUpdateURI();"><i class="fa fa-check"></i></span>
           <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>

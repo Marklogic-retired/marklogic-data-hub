@@ -23,6 +23,7 @@ export default function() {
         browser.get('http://localhost:8080/#/flows');
         //create WorldBank input flow
         await flowPage.clickEntityDisclosure('WorldBank');
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('WorldBank')));
         await flowPage.createInputFlow('WorldBank', 'Load WorldBank', 'json', 'sjs', false);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
@@ -208,7 +209,7 @@ export default function() {
         await appPage.flowsTab.click();
         flowPage.isLoaded();
       });
-      
+
       it ('should redeploy modules', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();
@@ -219,6 +220,7 @@ export default function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.clickEntityDisclosure('WorldBank');
         browser.sleep(5000);
+        browser.wait(EC.elementToBeClickable(flowPage.inputFlowButton('WorldBank')));
         await flowPage.createHarmonizeFlow('WorldBank', 'Harmonize WorldBank', 'json', 'sjs', true, 'MapWorldBank');
         browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Harmonize WorldBank', 'HARMONIZE')));

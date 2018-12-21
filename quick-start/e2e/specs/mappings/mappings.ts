@@ -97,7 +97,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         let sourceDocUriWithBigSku =
           browsePage.resultsSpecificUri('/board_games.csv-0-10?doc=yes&type=foo').getText();
-        browser.get('http://localhost:8080/#/mappings');  
+        browser.get('http://localhost:8080/#/mappings');
         // update the map with specific SKU doc uri
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
@@ -283,7 +283,7 @@ export default function() {
         await mappingsPage.resetButton().click();
         browser.wait(EC.elementToBeClickable(mappingsPage.resetConfirmationCancel()));
         await mappingsPage.resetConfirmationOK().click()
-        browser.sleep(8000);
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(mappingsPage.srcPropertyContainer('sku')));
         // verify that the properties reset to old SKU (rollback to previous version)
         expect(mappingsPage.getSourceURITitle()).toEqual(originalDocUri);

@@ -506,18 +506,31 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void updateIndexes() {
-        HubAppDeployer deployer = new HubAppDeployer(getManageClient(), getAdminManager(), null, hubConfig.newStagingClient());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
-        DeployOtherDatabasesCommand c = null;
 
         AppConfig appConfig = hubConfig.getAppConfig();
         final boolean originalCreateForests = appConfig.isCreateForests();
+        final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
             appConfig.setCreateForests(false);
+            if (hubConfig.getIsProvisionedEnvironment()) {
+                appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
+            }
             deployer.deploy(hubConfig.getAppConfig());
         } finally {
             appConfig.setCreateForests(originalCreateForests);
+            appConfig.setResourceFilenamesIncludePattern(originalIncludePattern);
         }
+    }
+
+    /**
+     * In a provisioned environment, only the databases defined by this pattern can be updated.
+     *
+     * @return
+     */
+    protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
+        return Pattern.compile("(staging|final|job)-database.json");
     }
 
     /**
@@ -803,29 +816,44 @@ public class DataHubImpl implements DataHub {
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled = this.isInstalled().isInstalled();
         String currentVersion = versions.getHubVersion();
+
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }
-
         boolean result = false;
-        boolean alreadyInitialized = hubConfig.getHubProject().isInitialized();
-        File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
-
-        // update the hub-internal-config files
-        hubConfig.initHubProject();
+        boolean alreadyInitialized = project.isInitialized();                
         try {
-            if (alreadyInitialized) {
+            /*Ideally this should move to HubProject.upgradeProject() method
+             * But since it requires 'hubConfig' and 'versions', for now 
+             * leaving it here 
+             */
+            if(alreadyInitialized) {
+                // The version provided in "mlDHFVersion" property in gradle.properties.
+                String gradleVersion = versions.getDHFVersion();
+                File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
+                
+                // Back up the hub-internal-config and user-config directories in versions > 4.0
+                FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
+                FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
+                  
+                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin. 
+                System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
+                System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
+                System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
+                        + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
+                        + HubProject.USER_CONFIG_DIR);
                 // replace the hub version in build.gradle
                 String text = FileUtils.readFileToString(buildGradle);
                 String version = hubConfig.getJarVersion();
                 text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
                 text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
                 FileUtils.writeStringToFile(buildGradle, text);
-
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
             }
-
+            
+            hubConfig.initHubProject();
+            
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
             List<String> flows = flowManager.updateLegacyFlows(currentVersion);
@@ -833,7 +861,6 @@ public class DataHubImpl implements DataHub {
                 updatedFlows.addAll(flows);
             }
             if (isHubInstalled) {
-
                 runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
                 this.hubInstallModules();
                 this.loadUserModules();

@@ -1,15 +1,6 @@
 import {configure} from '@storybook/angular';
 import {setOptions} from '@storybook/addon-options';
 
-import './storybook.css';
-
-import '../node_modules/mdi/css/materialdesignicons.css';
-import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css';
-import '../node_modules/font-awesome/css/font-awesome.css';
-import '../node_modules/codemirror/lib/codemirror.css';
-import '../node_modules/@angular-mdl/popover/popover.css';
-import '../node_modules/@angular-mdl/select/select.css';
-
 // Option defaults:
 setOptions({
   /**

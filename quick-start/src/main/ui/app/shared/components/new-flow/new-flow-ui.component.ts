@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output, Inject, HostListener} from "@angular/core";
 import {MdlDialogReference} from '@angular-mdl/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-new-flow-ui',
@@ -15,11 +16,16 @@ export class NewFlowUiComponent {
   @Input() dataFormats: any;
   @Input() startingScaffoldOption: any;
   @Input() startingMappingOption: any;
+  @Input() entity: any;
   @Input() flow: any;
+  @Input() flows: any;
 
   @Output() flowChanged = new EventEmitter();
   @Output() createClicked = new EventEmitter();
   @Output() cancelClicked = new EventEmitter();
+
+  public isNameValid: boolean = true;
+  public errorMsg: string = '';
 
   constructor(
     public dialog: MdlDialogReference
@@ -52,4 +58,15 @@ export class NewFlowUiComponent {
   emitUpdatedFlow() {
     this.flowChanged.emit(this.flow);
   }
+
+  checkName() {
+    let nameValid = true;
+    let entityName = this.entity && this.entity.info && this.entity.info.title;
+    let flowPrefix = (this.flowType.toUpperCase() === 'INPUT') ? 'an' : 'a';
+    _.forEach(this.flows, (f) => {
+      nameValid = (this.flow.flowName === f.flowName) ? false: nameValid;
+    });
+    this.errorMsg = (!nameValid) ? `Flow names must be unique. Entity "${entityName}" already contains ${flowPrefix} ${this.flowType} flow named "${this.flow.flowName}"` : '';
+    this.isNameValid = nameValid;
+  }  
 }

@@ -379,7 +379,7 @@ export class LoginComponent implements OnInit {
   hubUpdateUrl() {
     if (this.currentEnvironment && this.currentEnvironment.runningVersion) {
       const versionString = this.currentEnvironment.runningVersion.replace(/\./g, '');
-      return `https://marklogic.github.io/marklogic-data-hub/understanding/updating/`;
+      return `https://marklogic.github.io/marklogic-data-hub/upgrade/`;
     }
     return '';
   }
