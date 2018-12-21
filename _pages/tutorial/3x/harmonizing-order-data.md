@@ -33,10 +33,10 @@ The framework also [provides ways]({{site.baseurl}}/refs/faqs/#how-can-i-run-a-h
 
 A harmonization flow uses the following plugins:
 
+- **main**: orchestrates the behavior of the other plugins
 - **collector**: returns a list of strings to operate on
 - **content**: returns data to put into the content section of the envelope
 - **headers**: returns data to put into the headers section of the envelope
-- **main**: orchestrates the behavior of the other plugins
 - **triples**: returns data to put into the triples section of the envelope
 - **writer**: receives the final envelope and writes it to the database.
 
