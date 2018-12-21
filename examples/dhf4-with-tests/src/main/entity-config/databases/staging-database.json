@@ -1,0 +1,20 @@
+{
+  "range-element-index": [
+    {
+      "collation": "http://marklogic.com/collation/codepoint",
+      "invalid-values": "reject",
+      "localname": "entityConfigStaging1",
+      "namespace-uri": null,
+      "range-value-positions": false,
+      "scalar-type": "string"
+    },
+    {
+      "collation": "http://marklogic.com/collation/codepoint",
+      "invalid-values": "reject",
+      "localname": "entityConfigStaging2",
+      "namespace-uri": null,
+      "range-value-positions": false,
+      "scalar-type": "string"
+    }
+  ]
+}
