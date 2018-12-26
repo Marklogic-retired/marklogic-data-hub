@@ -68,7 +68,7 @@ main:
         text: 'Using DHF',
         childPages: [
           {
-            # url: '/project/',
+            url: '/project/',
             text: 'Prepare' ,
             childPages: [
               {

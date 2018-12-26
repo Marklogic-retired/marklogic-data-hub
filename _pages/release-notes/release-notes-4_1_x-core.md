@@ -5,7 +5,7 @@
 
   - The directory structure and locations of configuration files remain the same as in DHF 4.0.x.
 
-  - See [Project Directory Structure]({{site.baseurl}}/refs/project-structure/) for information on the `ml-user-config` and `hub-internal-config` directories.
+  - See [Project Directory Structure]({{site.baseurl}}/refs/project-structure/) for information on the `ml-config` and `hub-internal-config` directories.
 
   - See [Gradle tasks]({{site.baseurl}}/refs/gradle-tasks/) for information about ml-gradle tasks specific to DHF.
 

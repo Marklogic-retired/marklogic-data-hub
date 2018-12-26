@@ -12,7 +12,7 @@ In this exercise, you will configure and run an input flow to load order data. W
 
 We will configure the flow to do the following:
 
-* Load data from the sample data directory input/order.
+* Load data from the sample data directory input/orders.
 * Interpret the input data as delimited text (CSV).
 * Automatically generate unique URIs as the data is loaded. This prevents one document from overwriting another if multiple rows contain the same value in the first field.
 
@@ -32,7 +32,7 @@ Follow these steps to configure the input flow:
     ![Delimited Text Options]({{site.baseurl}}/images/3x/load-orders-as-is/delimited-text-options.png)
 
 1. Scroll to the bottom of the wizard and click **SAVE OPTIONS**.
-1. Click **RUN IMPORT**. MarkLogic begins loading data. Quickstart displays a progress bar at the bottom of your browser.
+1. Click **RUN IMPORT**. MarkLogic begins loading data. Quickstart displays a progress bar.
 
 When the load finishes, QuickStart displays a completion notice at the bottom of your browser.
 
