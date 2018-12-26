@@ -79,6 +79,7 @@ export default function(tmpDir) {
     });
 
     it ('should go to the entities page', async function() {
+      browser.get('http://localhost:8080/#/entities');
       await appPage.entitiesTab.click();
       entityPage.isLoaded();
     });
@@ -340,6 +341,7 @@ export default function(tmpDir) {
       await entityPage.toolsButton.click();
       //remove removeEntity entity
       await entityPage.deleteEntityButton('removeEntity').click();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
@@ -424,6 +426,7 @@ export default function(tmpDir) {
       expect(lastProperty.isDisplayed() && lastProperty.isDisplayed());
       await entityPage.getPropertyCheckBox(lastProperty).click();
       await entityPage.deleteProperty.click();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
@@ -659,7 +662,7 @@ export default function(tmpDir) {
       await settingsPage.redeployConfirmation.click();
       browser.wait(EC.visibilityOf(settingsPage.redeployStatus));
       expect(settingsPage.redeployStatus.isDisplayed()).toBe(true);
-      browser.sleep(120000);
+      browser.sleep(150000);
       browser.wait(EC.invisibilityOf(settingsPage.redeployStatus));
     });
 

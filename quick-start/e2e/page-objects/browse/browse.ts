@@ -10,7 +10,7 @@ export class BrowsePage extends AppPage {
 
   //to get the login box locater
   locator() {
-    return by.css('app-search > div');
+    return by.css('app-search > app-search-ui > div');
   }
 
   databaseDropDown() {

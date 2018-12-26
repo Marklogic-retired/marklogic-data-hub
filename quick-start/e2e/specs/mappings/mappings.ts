@@ -97,7 +97,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         let sourceDocUriWithBigSku =
           browsePage.resultsSpecificUri('/board_games.csv-0-10?doc=yes&type=foo').getText();
-        browser.get('http://localhost:8080/#/mappings');  
+        browser.get('http://localhost:8080/#/mappings');
         // update the map with specific SKU doc uri
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();

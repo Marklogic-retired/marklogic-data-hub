@@ -1,44 +1,36 @@
-import {Component, HostListener, Inject, Input} from '@angular/core';
-import {MdlDialogReference, MdlDialogService} from '@angular-mdl/core';
-import {JobService} from "./jobs.service";
+import {Component, Inject, ViewChild} from '@angular/core';
+import {JobService} from './jobs.service';
+import {JobExportUiComponent} from '../shared/components';
 
 @Component({
   selector: 'job-export-dialog',
-  templateUrl: 'job-export.component.html'
+  template: `
+  <app-job-export-ui      
+    [jobIds]="jobIds"
+    (exportClicked)="export()"
+  ></app-job-export-ui>
+  `
 })
 export class JobExportDialogComponent {
-
+  @ViewChild(JobExportUiComponent) private exportUI: JobExportUiComponent;
   jobIds: string[];
-  question: string;
 
   constructor(
-    public dialog: MdlDialogReference,
-    private dialogService: MdlDialogService,
     private jobService: JobService,
     @Inject('jobIds') jobIds: string[]
   ) {
-
     this.jobIds = jobIds;
-    this.question = "Export and download ";
-    if (jobIds.length === 0) {
-      this.question += "all jobs and their traces?";
-    } else if (this.jobIds.length === 1) {
-      this.question += "1 job and its traces?";
-    } else {
-      this.question += this.jobIds.length + " jobs and their traces?";
-    }
   }
 
   public export() {
-    this.dialog.hide();
     this.jobService.exportJobs(this.jobIds)
       .subscribe(response => {
           let body = response['_body'];
 
           // Create a download anchor tag and click it.
           var blob = new Blob([body], {type: 'application/zip'});
-          let a = document.createElement("a");
-          a.style.display = "none";
+          let a = document.createElement('a');
+          a.style.display = 'none';
           document.body.appendChild(a);
           let url = window.URL.createObjectURL(blob);
           a.href = url;
@@ -47,12 +39,8 @@ export class JobExportDialogComponent {
           window.URL.revokeObjectURL(url);
         },
         () => {
-          this.dialogService.alert("Unable to export jobs");
+          this.exportUI.alert('Unable to export jobs');
         });
   }
 
-  @HostListener('keydown.esc')
-  public onEsc(): void {
-    this.dialog.hide();
-  }
 }

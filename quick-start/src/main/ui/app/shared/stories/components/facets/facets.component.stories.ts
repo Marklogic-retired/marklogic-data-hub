@@ -35,7 +35,7 @@ storiesOf('Components|Facets', module)
             </mlui-dhf-theme>
         `,
         props: {
-            facets: {
+            facets: object('facets', {
               Collection: {
                 facetValues: [
                   {
@@ -56,8 +56,8 @@ storiesOf('Components|Facets', module)
                 ],
                 type: "collection"
               }
-            },
-            activeFacets: { },
+            }),
+            activeFacets: object('activeFacets', { }),
             updateFacets: action('Update Facets')
         },
     }));

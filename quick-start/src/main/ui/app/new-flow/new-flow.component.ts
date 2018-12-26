@@ -12,11 +12,27 @@ import {Flow} from '../entities/flow.model';
 
 @Component({
   selector: 'app-new-flow',
-  templateUrl: './new-flow.component.html',
-  styleUrls: ['./new-flow.component.scss']
+  template: `
+    <app-new-flow-ui 
+      [markLogicVersion]="markLogicVersion"
+      [flowType]="flowType"
+      [scaffoldOptions]="scaffoldOptions"
+      [mappingOptions]="mappingOptions"
+      [codeFormats]="codeFormats"
+      [dataFormats]="dataFormats"
+      [startingScaffoldOption]="startingScaffoldOption"
+      [startingMappingOption]="startingMappingOption"
+      [flow]="flow"
+      [flows]="flows"
+      [entity]="entity"
+      (flowChanged)="flowChanged($event)"
+      (createClicked)="create()"
+    ></app-new-flow-ui>
+  `
 })
 export class NewFlowComponent implements OnDestroy {
   flowType: string;
+  markLogicVersion: number;
   actions: any;
   entity: Entity;
   flows: Array<Flow>;
@@ -58,7 +74,6 @@ export class NewFlowComponent implements OnDestroy {
   mapSub: any;
 
   constructor(
-    private dialog: MdlDialogReference,
     private envService: EnvironmentService,
     private mapService: MapService,
     @Inject('flowType') flowType: string,
@@ -73,6 +88,7 @@ export class NewFlowComponent implements OnDestroy {
     this.flows = flows;
     this.startingMappingOption = this.mappingOptions[0];
     this.mapService.getMappings();
+    this.markLogicVersion = this.getMarkLogicVersion();
     if (this.getMarkLogicVersion() === 8) {
       this.flow.useEsModel = false;
     } else {
@@ -97,42 +113,21 @@ export class NewFlowComponent implements OnDestroy {
     this.mapSub.unsubscribe();
   }
 
-  hide() {
-    this.dialog.hide();
-  }
-
-  @HostListener('keydown.esc')
-  public onEsc(): void {
-    this.cancel();
+  flowChanged(flow: any) {
+    this.flow = flow;
   }
 
   create() {
     if (this.flow.flowName && this.flow.flowName.length > 0) {
-      this.hide();
       if (this.actions && this.actions.save) {
         this.actions.save(this.flow);
       }
     }
   }
 
-  cancel() {
-    this.hide();
-  }
-
   getMarkLogicVersion(): number {
     let version = this.envService.marklogicVersion.substr(0, this.envService.marklogicVersion.indexOf('.'));
     return parseInt(version);
-  }
-
-  checkName() {
-    let nameValid = true;
-    let entityName = this.entity && this.entity.info && this.entity.info.title;
-    let flowPrefix = (this.flowType.toUpperCase() === 'INPUT') ? 'an' : 'a';
-    _.forEach(this.flows, (f) => {
-      nameValid = (this.flow.flowName === f.flowName) ? false: nameValid;
-    });
-    this.errorMsg = (!nameValid) ? `Flow names must be unique. Entity "${entityName}" already contains ${flowPrefix} ${this.flowType} flow named "${this.flow.flowName}"` : '';
-    this.isNameValid = nameValid;
   }
   
 }

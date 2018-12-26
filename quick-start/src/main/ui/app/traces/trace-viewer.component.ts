@@ -1,19 +1,30 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { TraceService } from './trace.service';
-import { Trace } from './trace.model';
 
-import * as _ from 'lodash';
-
+import { TraceService } from '../traces/trace.service';
+import { Trace } from '../traces/trace.model';
 @Component({
   selector: 'app-trace-viewer',
-  encapsulation: ViewEncapsulation.None,
-  templateUrl: './trace-viewer.component.html',
-  styleUrls: ['./trace-viewer.component.scss'],
+  template: `
+  <app-trace-viewer-ui
+    [trace]="trace"
+    [currentPluginType]="currentPluginType"
+    [currentPlugin]="currentPlugin"
+    [collapsed]="collapsed"
+    [outputCollapsed]="outputCollapsed"
+    [errorCollapsed]="errorCollapsed"
+    [codeMirrorConfig]="codeMirrorConfig"
+    (setCurrent)="this.setCurrent($event)"
+  ></app-trace-viewer-ui>
+`
 })
 export class TraceViewerComponent implements OnInit, OnDestroy {
+  private sub: any;
+  public trace: Trace;
 
+  public currentPluginType: string;
+  public currentPlugin: Plugin;
   collapsed = {};
   outputCollapsed = false;
   errorCollapsed = false;
@@ -24,13 +35,6 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
     readOnly: true,
     cursorBlinkRate: 0
   };
-
-  private sub: any;
-  public trace: Trace;
-  private plugins: Array<string>;
-
-  private currentPluginType: string;
-  public currentPlugin: Plugin;
 
   constructor(
     private route: ActivatedRoute,
@@ -51,34 +55,7 @@ export class TraceViewerComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  getKeys(thing: any) {
-    return _.keys(thing).sort();
-  }
-
-  formatData(data: any) {
-    if (_.isObject(data) || _.isArray(data)) {
-      return JSON.stringify(data, null, '  ');
-    }
-    try {
-      return JSON.stringify(JSON.parse(data), null, '  ');
-     } catch(e) {
-      return data;
-     }
-  }
-
-  getButtonClasses(plugin) {
-    let classes = [];
-    if (this.currentPluginType === plugin) {
-      classes.push('active');
-    }
-
-    if (plugin.error) {
-      classes.push('error');
-    }
-    return classes.join(' ');
-  }
-
-  private setCurrent(plugin: any) {
+  public setCurrent(plugin: any) {
     this.currentPluginType = plugin.label;
     this.currentPlugin = plugin;
   }

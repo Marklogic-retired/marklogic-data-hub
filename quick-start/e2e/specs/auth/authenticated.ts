@@ -59,8 +59,9 @@ export default function(tmpDir) {
         .toEqual('data-hub-ol-final-SCHEMAS');
       await loginPage.clickAdvancedSettings();
       await loginPage.clickRestoreDefaults();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(loginPage.restoreButton));
-      await loginPage.clickRestore();
+      await loginPage.restoreButton.click();
       await loginPage.clickAdvancedSettings();
       console.log('verify restored settings');
       expect(loginPage.stagingAppserverNameLabel.isDisplayed()).toBe(true);
