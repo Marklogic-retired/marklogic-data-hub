@@ -158,7 +158,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
                 ){
                 continue;
             }
-            String parsedFileNameVersion = fileName.replace(mappingName, "").replace(MAPPING_FILE_EXTENSION, "").replaceAll("-", "");
+            /*  Captures the number between that is in between "-" and  ".mapping.json"
+             *  as in test-mapping-5.mapping.json would set parsedFileNameVersion to "5"
+             */
+            String parsedFileNameVersion = fileName.replaceAll(".+\\-([0-9]+)\\.mapping\\.json" , "$1");
             int fileNameVersion = Integer.parseInt(parsedFileNameVersion);
             if( version == -1 && fileNameVersion > highestVersion){
                 highestVersion = fileNameVersion;
