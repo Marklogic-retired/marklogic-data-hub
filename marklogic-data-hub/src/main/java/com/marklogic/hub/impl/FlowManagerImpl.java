@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -136,11 +135,15 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     @Override public Flow getFlowFromProperties(Path propertiesFile) {
         String quotedSeparator = Pattern.quote(File.separator);
-        String flowTypeRegex = ".+" + quotedSeparator + "(input|harmonize)" + quotedSeparator + ".+";
-        FlowType flowType = propertiesFile.toString().replaceAll(flowTypeRegex, "$1").equals("input")
+        /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
+         * input|harmonize/<flowName>/flowName.properties
+         */
+        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator 
+                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";        
+        FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
                 ? FlowType.INPUT : FlowType.HARMONIZE;
 
-        String entityName = propertiesFile.toString().replaceAll(".+" + quotedSeparator + "([^/\\\\]+)" + quotedSeparator + "(input|harmonize)" + quotedSeparator + ".+", "$1");
+        String entityName = propertiesFile.toString().replaceAll(floweRegex, "$1");
         return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
     }
 
