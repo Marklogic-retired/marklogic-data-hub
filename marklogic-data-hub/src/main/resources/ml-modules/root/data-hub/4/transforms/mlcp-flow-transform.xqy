@@ -52,13 +52,23 @@ declare function mlcpFlow:transform(
   let $uri := map:get($content, "uri")
   return
     perf:log('mlcp-flow-transform(' || $uri || ')', function() {
-      let $params := map:new((
-        for $pair in map:get($context, 'transform_param') ! fn:tokenize(., ",")
-        let $parts := fn:tokenize($pair, "=")
-        return
-          map:entry($parts[1], $parts[2])
-      ))
-
+      let $transform-string := map:get($context, 'transform_param')
+      let $options-string := replace($transform-string, '^.*(options=\{.*\}).*$', '$1')
+      let $parsed-transform-string :=
+      if ($transform-string = $options-string) then
+        $transform-string
+      else
+        fn:replace($transform-string, 'options=\{.*\}', '')
+      let $params := map:new(
+        for $pair in $parsed-transform-string ! fn:tokenize(., ",")
+          let $parts := fn:tokenize($pair, "=")
+          return
+            if(fn:not(fn:empty($parts[1]))) then
+              map:entry($parts[1], $parts[2])
+            else
+              ()
+      )
+      
       let $job-id := (map:get($params, "job-id"), sem:uuid-string())[1]
       let $entity-name := map:get($params, 'entity-name') ! xdmp:url-decode(.)
       let $flow-name := map:get($params, 'flow-name') ! xdmp:url-decode(.)
@@ -74,8 +84,14 @@ declare function mlcpFlow:transform(
           fn:error((), "RESTAPI-SRVEXERR", "The specified flow " || map:get($params, "flow") || " is missing.")
 
       (: configure the options :)
+      let $opts := map:new(
+        let $opt-parts := fn:tokenize($options-string, "=")
+
+        return
+          map:entry($opt-parts[1], $opt-parts[2])
+      )
       let $options as map:map := (
-        map:get($params, "options") ! xdmp:unquote(.)/object-node(),
+        map:get($opts, "options") ! xdmp:unquote(.)/object-node(),
         map:map()
       )[1]
       let $_ := flow:set-default-options($options, $flow)
