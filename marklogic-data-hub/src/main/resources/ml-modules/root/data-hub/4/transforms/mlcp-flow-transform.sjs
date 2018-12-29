@@ -23,7 +23,20 @@ const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 function transform(content, context) {
   let uri = content.uri;
   let params = {};
-  let splits = context.transform_param.split(',');
+  let optionsString = null;
+  let parsedTransformParam = null;
+  let transformString = context.transform_param;
+  let pattern = '^.*(options=\{.*\}).*$';
+  let match = new RegExp(pattern).exec(transformString);
+  if (match === null){
+    parsedTransformParam = transformString;
+  }
+  else{
+    optionsString = match[1];
+    parsedTransformParam = transformString.replace(optionsString, '');
+  }
+  
+  let splits = parsedTransformParam.split(',');
   for (let i in splits) {
     let pair = splits[i];
     let parts = pair.split('=');
@@ -38,11 +51,10 @@ function transform(content, context) {
   if (!flow) {
     fn.error(null, "RESTAPI-SRVEXERR", "The specified flow " + params.flow + " is missing.");
   }
-
-  // configure the options
   let options = {};
-  if (params.options) {
-    options = JSON.parse(params.options);
+  if (optionsString) {
+    let splits = optionsString.split("=");
+    options = JSON.parse(splits[1]);
   }
   flowlib.setDefaultOptions(options, flow);
 

@@ -140,7 +140,7 @@ public class EndToEndFlowTests extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         enableTracing();
-        enableDebugging();
+        disableDebugging();
 
 
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
@@ -356,6 +356,7 @@ public class EndToEndFlowTests extends HubTestBase {
             	tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
+                    options.put("secondOption", "secondValue");
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, useEs ? "-es" : "", flowRunnerClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
