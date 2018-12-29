@@ -140,7 +140,7 @@ public class EndToEndFlowTests extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         enableTracing();
-        disableDebugging();
+        enableDebugging();
 
 
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
