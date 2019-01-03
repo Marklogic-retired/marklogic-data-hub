@@ -228,7 +228,7 @@ export class EntityEditorComponent implements AfterViewChecked {
 
   saveEntity() {
     if (this.actions.save) {
-      if (this.ENTITY_TITLE_REGEX.test(this.entity.info.title)) {
+      if (this.ENTITY_TITLE_REGEX.test(this.entity.info.title) || this.entity.info.title === '') {
         // invalid characters in title
         this.validTitle = false;
         return;
