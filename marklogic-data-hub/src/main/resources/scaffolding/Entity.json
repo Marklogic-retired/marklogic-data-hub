@@ -10,6 +10,7 @@
       "description" : "The placeholder entity root.",
       "required" : [ ],
       "rangeIndex" : [ ],
+      "elementRangeIndex" : [ ],
       "wordLexicon" : [ ],
       "pii" : [ ],
       "properties" : { }
