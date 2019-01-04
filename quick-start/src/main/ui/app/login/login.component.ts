@@ -144,7 +144,9 @@ export class LoginComponent implements OnInit {
 
     this.installationStatus = '';
     let emitter = this.installService.messageEmitter.subscribe((payload: any) => {
-      this.percentComplete = payload.percentComplete;
+      if (payload.percentComplete != -1) {
+        this.percentComplete = payload.percentComplete;
+      }
       this.installationStatus += '\n' + payload.message;
     });
 
