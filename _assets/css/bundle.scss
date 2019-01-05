@@ -547,7 +547,7 @@ h2 {
   }
 }
 
-.ol-steps {
+.ol-steps, .ol-prereqs {
   > li {
     padding-bottom: 10px;
   }
@@ -580,13 +580,42 @@ details > summary:before {
 details[open] > summary:before {
   content: "▼ ";
 }
+
 .relnote-summary {
   font-size: 120%;
+}
+
+.footnotes {
+  font-size: 90%;
+  margin: 5px 0 0 2px;
 }
 
 .dirtree {
   line-height: 1.15;
 }
+
+.navgrid {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  grid-gap: 5px;
+  width: 100%;
+  margin: 20px 0 20px 0;
+  padding: 10px 0 10px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.prevbtn {
+  text-align: left;
+}
+.nextbtn {
+  text-align: right;
+}
+.go2pagebtn {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  text-align: left;
+}
+
 
 /* Source: https://www.w3schools.com/howto/howto_js_tabs.asp */
 /* Style the tab */

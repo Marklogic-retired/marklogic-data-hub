@@ -9,15 +9,20 @@ redirect_from: "/using/quickstart/"
 
 DHF QuickStart is a visual development tool that you can run locally to set up a working data hub in minutes. The tool is implemented as a standalone Java application and distributed as a web application archive (`.war`) file.
 
+QuickStart runs its own internal web server on port 8080. It can run on any computer that can access a MarkLogic Server instance via HTTP.
+
+<!-- To use a different port, .... -->
+
+
 This is the recommended tool for users who are new to DHF.
 
 To use DHF QuickStart,
-1. [Download the latest `quick-start-*.war` file.](https://github.com/marklogic/marklogic-data-hub/releases/)
+1. [Download the latest `quick-start-*.war` file](https://github.com/marklogic/marklogic-data-hub/releases/) and place it your project root directory.
 1. Run the downloaded file. Example:
     ```
     java -jar quick-start-4.0.3.war
     ```
-1. [Create a project using QuickStart]({{site.baseurl}}/project/quickstart/) or point to the root directory of an existing project.
+1. [Create a project using QuickStart]({{site.baseurl}}/project/quickstart/) or browse to an existing project's root directory.
 1. [Ingest your data using QuickStart.]({{site.baseurl}}/ingest/quickstart/)
 1. [Harmonize your data using QuickStart.]({{site.baseurl}}/harmonize/quickstart/)
 
