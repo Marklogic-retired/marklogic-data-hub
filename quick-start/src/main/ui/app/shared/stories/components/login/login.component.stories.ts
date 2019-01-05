@@ -46,6 +46,7 @@ storiesOf('Components|Login', module)
                 (onInstall)='onInstall'
                 (onUninstall)='onUninstall'
                 (onInstallNext)='onInstallNext'
+                (onFinished)='onFinished'
                 (onChooseProject)='onChooseProject'
                 (onPostInitNext)='onPostInitNext'
                 (onLogin)='onLogin'
