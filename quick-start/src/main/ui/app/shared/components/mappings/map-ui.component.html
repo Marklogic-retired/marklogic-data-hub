@@ -21,10 +21,8 @@
       </div>
 
       <div id="save-map">
-        <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" (click)="onSaveMap()">Save Mapping</mdl-button>
-        <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" disabled>Save Mapping</mdl-button>
-        <mdl-button *ngIf="mapChanged()" mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" (click)="onResetMap()">Reset</mdl-button>
-        <mdl-button *ngIf="!mapChanged()" mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" disabled>Reset</mdl-button>
+        <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" [disabled]="!mapChanged()" (click)="mapChanged() && onSaveMap()">Save Mapping</mdl-button>
+        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" [disabled]="!mapChanged()" (click)="mapChanged() && onResetMap()">Reset</mdl-button>
       </div>
 
     </div>
