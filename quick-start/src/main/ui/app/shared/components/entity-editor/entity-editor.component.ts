@@ -219,7 +219,7 @@ export class EntityEditorComponent implements AfterViewChecked {
         return prop.selected;
       });
 
-    }, () => {}); 
+    }, () => {});
   }
 
   selectedCount() {
