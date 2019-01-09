@@ -24,13 +24,6 @@ After you create and test your project locally (your development environment) us
 
 DHF projects and DHS projects have different default configurations:
 
-- mlFinalAppserverName
-
-  |                      | DHF            | DHS            |
-  |----------------------|:--------------:|:--------------:|
-  | mlFinalAppserverName | data-hub-FINAL | data-hub-ADMIN |
-  {:.table-b1gray}
-
 - Ports for app servers
 
   | app server  | DHF  | DHS  |
@@ -85,9 +78,11 @@ If your endpoints are publicly available, you can use any machine that is set up
 
 ## Steps
 
-1. Copy your entire DHF project folder to the machine from which you will access the endpoints, and perform the following steps on that machine.
+1. Copy your entire DHF project directory to the machine from which you will access the endpoints, and perform the following steps on that machine.
     {% include note-in-list.html type="IMPORTANT" content="If your endpoints are private, this machine must be a bastion host." %}
-1. In the root of your DHF project folder, edit the `gradle.properties` file.
+1. Open a command-line window, and navigate to your DHF project root directory.
+1. Delete the `gradle-local.properties` file if it exists.
+1. Edit the `gradle.properties` file.
 
     a. Replace the entire contents of `gradle.properties` with the following:
 
@@ -106,7 +101,7 @@ If your endpoints are publicly available, you can use any machine that is set up
         mlStagingDbName=data-hub-STAGING
         mlStagingForestsPerHost=1
 
-        mlFinalAppserverName=data-hub-ADMIN
+        mlFinalAppserverName=data-hub-FINAL
         mlFinalPort=8004
         mlFinalDbName=data-hub-FINAL
         mlFinalForestsPerHost=1
@@ -132,7 +127,7 @@ If your endpoints are publicly available, you can use any machine that is set up
       | Key | Replace the value with ... |
       | --- | --- |
       | mlDHFVersion | The [DHF version](https://github.com/marklogic/marklogic-data-hub/releases) to use in your production environment. |
-      | mlHost | The name of your DHS host. |
+      | mlHost | The name of your DHS host. **Tip:** The host name is the domain name of the DHS final endpoint (remove 'http://' and the ':' and port number from the endpoint URL). |
       | mlUsername<br>mlPassword | The username and password of the user account assigned to the `flowOperator` role. |
       | mlManageUsername<br>mlManagePassword | The username and password of the user account assigned to the `flowDeveloper` role. |
       | ml*DbName | The names of the DHS databases, if customized. |
@@ -168,11 +163,11 @@ If your endpoints are publicly available, you can use any machine that is set up
 
     a. In the following URLs, replace `CURATION-ENDPOINT-URL` with the REST curation endpoint URL from your DHS administrator.
 
-      | Final database   | `http://CURATION-ENDPOINT-URL:8004/v1/search?database=data-hub-FINAL`   |
-      | Staging database | `http://CURATION-ENDPOINT-URL:8004/v1/search?database=data-hub-STAGING` |
+      | Final database   | `http://CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-FINAL`   |
+      | Staging database | `http://CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-STAGING` |
       {:.table-b1gray}
 
-      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8004/v1/search?database=data-hub-FINAL`
+      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search?database=data-hub-FINAL`
 
       {% include note-in-list.html type="TIP" content="Narrow the search to return fewer items. See [MarkLogic REST API Search](https://docs.marklogic.com/REST/GET/v1/search)." %}
 
