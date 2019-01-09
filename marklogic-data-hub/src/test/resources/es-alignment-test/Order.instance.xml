@@ -1,0 +1,19 @@
+<Order>
+	<id>123</id>
+	<purchasedItems datatype="array">
+		<Item>
+			<id>123</id>
+			<name>some string</name>
+			<description>some string</description>
+			<rating>123</rating>
+		</Item>
+	</purchasedItems>
+	<customer>
+		<Customer>
+			<id>123</id>
+			<name>some string</name>
+		</Customer>
+	</customer>
+	<transactionDateTime>2000-01-23T17:00:26.789186-08:00</transactionDateTime>
+	<totalCost>123</totalCost>
+</Order>
