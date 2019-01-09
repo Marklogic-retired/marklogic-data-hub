@@ -12,7 +12,7 @@ Entities are the high-level business objects in your enterprise. They can be thi
 
 To create an entity, you simply issue this gradle command:
 
-{% include ostabs.html linux="./gradlew hubCreateEntity -PEntityName=\"My Awesome Entity\"" windows="gradlew.bat hubCreateEntity -PEntityName=\"My Awesome Entity\"" %}
+{% include ostabs.html linux="./gradlew hubCreateEntity -PentityName=\"My Awesome Entity\"" windows="gradlew.bat hubCreateEntity -PentityName=\"My Awesome Entity\"" %}
 
 The command will generate an empty directory: `$project-dir/plugins/entities/My Awesome Entity`
 
