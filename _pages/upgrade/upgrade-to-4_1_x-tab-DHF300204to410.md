@@ -36,6 +36,7 @@ The notes and steps in this tab are for the following upgrade paths:
   |---|---|
   | `data-hub-SCHEMAS` database | `data-hub-staging-SCHEMAS` database<br>`data-hub-final-SCHEMAS` database |
   | `data-hub-TRIGGERS` dtabase | `data-hub-staging-TRIGGERS` database<br>`data-hub-final-TRIGGERS` database |
+  {:.table-b1gray}
 
 <!--
 - In 4.0.0, the return type for plugins was changed to `objectNode()`. If your custom plugins contains lines that convert a plugin parameter using `.toObject()`, those lines of code must be removed or commented out.
