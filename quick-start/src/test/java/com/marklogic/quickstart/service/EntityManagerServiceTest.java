@@ -42,10 +42,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
@@ -141,9 +143,9 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         List<EntityModel> entities = entityMgrService.getEntities();
 
         assertEquals(2, entities.size());
-        String[] expected = {ENTITY, ENTITY2};
-        String[] actual = { entities.get(0).getName(), entities.get(1).getName() };
-        assertArrayEquals(expected, actual);
+        List<String> expected = Arrays.asList(ENTITY, ENTITY2);
+        List<String> actual = Arrays.asList(entities.get(0).getName(), entities.get(1).getName());
+        assertTrue(expected.containsAll(actual));
     }
 
     @Test
@@ -224,9 +226,10 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         // Load the entity, then check the flows to make sure they know the right entity name
         final String FLOW_NAME = "sjs-json-input-flow";
         List<FlowModel> inputFlows = entities.get(0).getInputFlows();
+        List<String> flowNameList = inputFlows.stream().map(flow -> flow.flowName).collect(Collectors.toList());
 
         assertEquals(RENAMED_ENTITY, inputFlows.get(0).entityName);
-        assertEquals(FLOW_NAME, inputFlows.get(0).flowName);
+        assertTrue(flowNameList.contains(FLOW_NAME));
         assertEquals(FlowType.INPUT, inputFlows.get(0).flowType);
 
         //cleanup.
