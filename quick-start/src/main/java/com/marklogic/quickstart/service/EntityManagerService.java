@@ -22,23 +22,23 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.validate.EntitiesValidator;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.model.entity_services.InfoType;
-import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -96,27 +96,21 @@ public class EntityManagerService {
     public List<EntityModel> getEntities() throws IOException {
         Map<String, HubUIData> hubUiData = getUiData();
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesPath = hubConfig.getHubEntitiesDir();
-        List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
-        ObjectMapper objectMapper = new ObjectMapper();
-        for (String entityName : entityNames) {
-            File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
-            for (File entityDef : entityDefs) {
-                FileInputStream fileInputStream = new FileInputStream(entityDef);
-                JsonNode node = objectMapper.readTree(fileInputStream);
-                fileInputStream.close();
-                EntityModel entityModel = EntityModel.fromJson(entityDef.getAbsolutePath(), node);
-                if (entityModel != null) {
-                    HubUIData data = hubUiData.get(entityModel.getInfo().getTitle());
-                    if (data == null) {
-                        data = new HubUIData();
-                    }
-                    entityModel.setHubUi(data);
-                    entityModel.inputFlows = flowManagerService.getFlows(entityName, FlowType.INPUT);
-                    entityModel.harmonizeFlows = flowManagerService.getFlows(entityName, FlowType.HARMONIZE);
 
-                    entities.add(entityModel);
+        List<HubEntity> entityList = em.getEntities();
+
+        for (HubEntity entity : entityList) {
+            EntityModel entityModel = EntityModel.fromJson(entity.getFilename(), entity.toJson());
+            if (entityModel != null) {
+                HubUIData data = hubUiData.get(entityModel.getInfo().getTitle());
+                if (data == null) {
+                    data = new HubUIData();
                 }
+                entityModel.setHubUi(data);
+                entityModel.inputFlows = flowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
+                entityModel.harmonizeFlows = flowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
+
+                entities.add(entityModel);
             }
         }
 
@@ -143,51 +137,21 @@ public class EntityManagerService {
 
     public EntityModel saveEntity(EntityModel entity) throws IOException {
         JsonNode node = entity.toJson();
-        ObjectMapper objectMapper = new ObjectMapper();
         String fullpath = entity.getFilename();
-        String title = entity.getInfo().getTitle();
+
+        HubEntity hubEntity = HubEntity.fromJson(fullpath, node);
+
 
         if (fullpath == null) {
-            Path dir = hubConfig.getHubEntitiesDir().resolve(title);
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
-            }
-            fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+            em.saveEntity(hubEntity, false);
         }
         else {
-            String filename = new File(fullpath).getName();
-            String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
-            if (!entityFromFilename.equals(entity.getName())) {
-                // The entity name was changed since the files were created. Update
-                // the path.
+            em.saveEntity(hubEntity, true);
 
-                // Update the name of the entity definition file
-                File origFile = new File(fullpath);
-                File newFile = new File(origFile.getParent() + File.separator + title + ENTITY_FILE_EXTENSION);
-                if (!origFile.renameTo(newFile)) {
-                    throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
-                        newFile.getAbsolutePath());
-                };
-
-                // Update the directory name
-                File origDirectory = new File(origFile.getParent());
-                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
-                if (!origDirectory.renameTo(newDirectory)) {
-                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
-                        newDirectory.getAbsolutePath());
-                }
-
-                fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
-                entity.setFilename(fullpath);
-
-                // Redeploy the flows
-                dataHubService.reinstallUserModules(hubConfig, null, null);
-            }
+            // Redeploy the flows
+            dataHubService.reinstallUserModules(hubConfig, null, null);
         }
 
-
-        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-        FileUtils.writeStringToFile(new File(fullpath), json);
 
         return entity;
     }
@@ -196,7 +160,7 @@ public class EntityManagerService {
         Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
         if (dir.toFile().exists()) {
             watcherService.unwatch(dir.getParent().toString());
-            FileUtils.deleteDirectory(dir.toFile());
+            em.deleteEntity(entity);
         }
     }
 
