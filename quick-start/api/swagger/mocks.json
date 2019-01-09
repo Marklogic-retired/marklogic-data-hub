@@ -1,0 +1,192 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample of a QuickStart DataHub Swagger doucment defining endpoints to be mocked",
+    "version": "1.0.0",
+    "title": "QuickStart DataHub API",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "sample",
+      "description": "Sample resource"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/samples": {
+      "get": {
+        "tags": [
+          "sample"
+        ],
+        "summary": "Returns all samples, optionally filtered by one or more criteria",
+        "description": "Returns all samples, optionally filtered by one or more criteria",
+        "operationId": "findSamples",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/sample"
+              },
+              "default": [
+                { "id": 1, "name": "aaa", "status": "new" },
+                { "id": 2, "name": "bbb", "status": "new" },
+                { "id": 3, "name": "ccc", "status": "ready" },
+                { "id": 4, "name": "ddd", "status": "ready" },
+                { "id": 5, "name": "eee", "status": "approved" }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/samples/{sampleId}": {
+      "get": {
+        "tags": [
+          "sample"
+        ],
+        "summary": "Find sample by ID",
+        "description": "....",
+        "operationId": "getSampleById",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sampleId",
+            "in": "path",
+            "description": "ID of sample that needs to be fetched",
+            "required": true,
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/sample",
+              "default": [
+                { "id": 1, "name": "aaa", "status": "new" }
+              ]
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Sample not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "sample"
+        ],
+        "summary": "Delete sample by ID",
+        "description": "...",
+        "operationId": "deleteSample",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sampleId",
+            "in": "path",
+            "description": "ID of the sample that needs to be deleted",
+            "required": true,
+            "type": "integer",
+            "minimum": 1.0,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Sample not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {},
+  "definitions": {
+    "sample": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "tags": {
+          "type": "array",
+          "xml": {
+            "name": "tag",
+            "wrapped": true
+          },
+          "items": {
+            "$ref": "#/definitions/tag"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "Sample Status",
+          "enum": [
+            "new",
+            "ready",
+            "approved"
+          ]
+        }
+      },
+      "xml": {
+        "name": "Sample"
+      }
+    },
+    "tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "Tag"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about MarkLogic Data Hub",
+    "url": "https://github.com/marklogic/marklogic-data-hub"
+  }
+}
