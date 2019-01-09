@@ -69,19 +69,15 @@ main:
         childPages: [
           {
             url: '/project/',
-            text: 'Prepare' ,
+            text: 'Create Project' ,
             childPages: [
               {
-                url: '/project/create-project/',
-                text: 'Create Project',
-                childPages: [
-                  { url: '/project/quickstart/', text: 'Using QuickStart' },
-                  { url: '/project/gradle/', text: 'Using Gradle' },
-                ]
+                { url: '/project/quickstart/', text: 'Using QuickStart' },
+                { url: '/project/gradle/', text: 'Using Gradle' },
               },
               {
                 url: '/project/flow-tracing/',
-                text: 'Flow Tracing',
+                text: 'Configure Flow Tracing',
                 # childPages: [
                 #   { url: '/project/set-flow-tracing/', text: 'Set Up Flow Tracing' },
                 #   { url: '/project/view-traces/', text: 'View Traces' },
