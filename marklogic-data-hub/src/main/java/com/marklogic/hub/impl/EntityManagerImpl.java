@@ -301,17 +301,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
                 entity.setFilename(fullpath);
             }
-            else {
-                Path dir = hubConfig.getHubEntitiesDir().resolve(title);
-                if (!dir.toFile().exists()) {
-                    dir.toFile().mkdirs();
-                }
-                fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
-            }
-
-            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-            FileUtils.writeStringToFile(new File(fullpath), json);
         }
+        else {
+            Path dir = hubConfig.getHubEntitiesDir().resolve(title);
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+        }
+
+
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+        FileUtils.writeStringToFile(new File(fullpath), json);
 
         return entity;
     }
