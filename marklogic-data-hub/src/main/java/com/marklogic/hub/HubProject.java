@@ -98,6 +98,13 @@ public interface HubProject {
     Path getHubSecurityDir();
 
     /**
+     * Gets the path for the hub's triggers directory
+     *
+     * @return the path for the hub's triggers directory
+     */
+    Path getHubTriggersDir();
+
+    /**
      * Gets the path for the user config directory
      *
      * @return the path for the user config directory
