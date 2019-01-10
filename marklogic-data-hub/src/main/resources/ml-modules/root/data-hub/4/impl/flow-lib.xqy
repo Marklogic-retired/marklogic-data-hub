@@ -529,7 +529,6 @@ declare function flow:make-legacy-envelope($content, $headers, $triples, $data-f
 declare function flow:instance-to-canonical-json(
   $entity-instance as map:map) as json:object
 {
-  let $root-object := json:object()
   let $o :=
     if ( map:contains($entity-instance, "$ref") ) then
       map:get($entity-instance, "$ref")
@@ -569,7 +568,13 @@ declare function flow:instance-to-canonical-json(
       )
       return
         $o
-  let $_ := map:put($root-object, map:get($entity-instance, "$type"), $o)
+  let $root-object :=
+    if (map:contains($entity-instance, "$type")) then
+      let $object := json:object()
+      let $_ := map:put($object, map:get($entity-instance, "$type"), $o)
+      return $object
+    else
+      $o
   return
     $root-object
 };
