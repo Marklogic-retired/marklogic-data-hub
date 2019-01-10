@@ -81,10 +81,11 @@ If your endpoints are publicly available, you can use any machine that is set up
 1. Copy your entire DHF project directory to the machine from which you will access the endpoints, and perform the following steps on that machine.
     {% include note-in-list.html type="IMPORTANT" content="If your endpoints are private, this machine must be a bastion host." %}
 1. Open a command-line window, and navigate to your DHF project root directory.
-1. Delete the `gradle-local.properties` file if it exists.
-1. Edit the `gradle.properties` file.
+1. At your project root, create a new `gradle-DHS.properties` file.
 
-    a. Replace the entire contents of `gradle.properties` with the following:
+    {% include note-in-list.html type="IMPORTANT" content="If you use a different name for the properties file, remember to update the value of the \"-Penvironment\" parameter in the Gradle commands in the following steps." %}
+
+    a. Copy the following to the new file:
 
         mlDHFVersion=YOUR_DHF_VERSION
         mlHost=YOUR_DHS_HOSTNAME
@@ -136,15 +137,15 @@ If your endpoints are publicly available, you can use any machine that is set up
       {:.table-b1gray}
 1. Install the DHF core modules.
     ```
-    gradle hubInstallModules
+    gradle hubInstallModules -Penvironment="gradle-DHS.properties"
     ```
 1. Install the plugins for your project.
     ```
-    gradle mlLoadModules
+    gradle mlLoadModules -Penvironment="gradle-DHS.properties"
     ```
 1. If you are using DHF 4.0.2 or later, load the indexes in the DHS databases.
     ```
-    gradlew mlUpdateIndexes
+    gradlew mlUpdateIndexes -Penvironment="gradle-DHS.properties"
     ```
 1. [Run the input flows using MarkLogic Content Pump (MLCP).](https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/)
 
@@ -155,8 +156,8 @@ If your endpoints are publicly available, you can use any machine that is set up
 
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
     {% include ostabs-in-list.html
-        linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\""
-        windows="gradlew.bat hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\""
+        linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -Penvironment=\"gradle-DHS.properties\""
+        windows="gradlew.bat hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\" -Penvironment=\"gradle-DHS.properties\""
     %}
 
 1. Verify that your documents are in the databases.
