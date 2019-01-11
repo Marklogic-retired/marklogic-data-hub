@@ -138,10 +138,10 @@ export class CodemirrorComponent implements AfterViewInit, OnInit, OnChanges {
       this.instance.clearGutter('buglines');
 
       if (this.error && this.error.line) {
-        const line = this.error.line - 1;
+        const line = this.error.line - 2;
         const endChar = this.instance.getDoc().getLine(line).length;
         this.currentError = this.instance.getDoc().markText({line: line, ch: 0}, {line: line, ch: endChar}, {className: 'error-line'});
-        this.instance.setGutterMarker(line, 'buglines', this.makeBugMarker(line, `${this.error.msg}\nat line ${this.error.line}, column ${this.error.column}`));
+        this.instance.setGutterMarker(line, 'buglines', this.makeBugMarker(line, `${this.error.msg}\nat line ${this.error.line - 1}, column ${this.error.column}`));
         this.instance.getDoc().setCursor({ line: line, ch: 0 });
       }
     }
