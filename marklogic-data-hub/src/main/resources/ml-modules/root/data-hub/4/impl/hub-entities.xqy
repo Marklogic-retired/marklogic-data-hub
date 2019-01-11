@@ -33,21 +33,24 @@ declare function hent:get-model($entity-name as xs:string)
 
 declare function hent:get-model($entity-name as xs:string, $used-models as xs:string*)
 {
-  let $model := fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
+  let $model := fn:collection("http://marklogic.com/entity-services/models")[info/title = $entity-name]
   where fn:exists($model)
-  return
+   return
     let $model-map as map:map? := $model
     let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
-    let $_ :=
-      let $definitions := map:get($model-map, "definitions")
-      for $ref in $refs[fn:not(. = $used-models)]
-      let $other-model as map:map? := hent:get-model($ref, ($used-models, $entity-name))
-      let $other-defs := map:get($other-model, "definitions")
-      for $key in map:keys($other-defs)
-      return
-        map:put($definitions, $key, map:get($other-defs, $key))
-    return
-      $model-map
+    let $definitions := map:get($model-map, "definitions")
+      let $_ :=
+        for $ref in $refs[fn:not(. = $used-models)]
+        let $m :=
+          if (fn:empty(map:get($definitions, $ref))) then
+          let $other-model as map:map? := hent:get-model($ref, ($used-models, $entity-name))
+          let $other-defs := map:get($other-model, "definitions")
+          for $key in map:keys($other-defs)
+          return
+            map:put($definitions, $key, map:get($other-defs, $key))
+          else ()
+      return ()
+    return $model-map
 };
 
 declare function hent:uber-model() as map:map
