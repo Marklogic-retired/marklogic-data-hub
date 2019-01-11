@@ -128,13 +128,18 @@ export class FlowsComponent implements OnInit, OnDestroy {
     if (this.entities && !this.paramListener) {
       this.registerParamListener();
     }
-    this.hasErrorsInput = this.hasErrors();
+    
     this.markLogicVersionInput = this.getMarkLogicVersion();
     Observable.timer(300).subscribe(() => {
       this.lastDeployedInput = this.getLastDeployed();
     });
   }
 
+  ngDoCheck() {
+    this.hasErrorsInput = this.hasErrors();
+    this.errorsInput = this.getErrors();
+  }
+  
   ngOnDestroy() {
     this.paramListener.unsubscribe();
   }
