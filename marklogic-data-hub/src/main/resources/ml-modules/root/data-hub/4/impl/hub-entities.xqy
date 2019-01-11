@@ -33,9 +33,9 @@ declare function hent:get-model($entity-name as xs:string)
 
 declare function hent:get-model($entity-name as xs:string, $used-models as xs:string*)
 {
-  let $model := fn:collection("http://marklogic.com/entity-services/models")[info/title = $entity-name]
+  let $model := fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
   where fn:exists($model)
-   return
+  return
     let $model-map as map:map? := $model
     let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
     let $definitions := map:get($model-map, "definitions")

@@ -338,7 +338,8 @@ service:generate-lets($model, $entity-type-name, $mapping, $entity)
     let $properties := map:get($entity-type, "properties")
     let $required-properties := (
       map:get($entity-type, "primaryKey"),
-    if (fn:empty(map:get($entity-type, "required"))) then ()
+    if (fn:empty(map:get($entity-type, "required"))) then 
+      ()
     else 
       json:array-values(map:get($entity-type, "required"))
     )
