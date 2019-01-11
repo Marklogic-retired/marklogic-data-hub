@@ -24,12 +24,21 @@ After you create and test your project locally (your development environment) us
 
 DHF projects and DHS projects have different default configurations:
 
+<!--
+- mlFinalAppserverName
+
+  |                      | DHF            | DHS            |
+  |:--------------------:|:--------------:|:--------------:|
+  | mlFinalAppserverName | data-hub-FINAL | data-hub-ADMIN |
+  {:.table-b1gray}
+-->
+
 - Ports for app servers
 
   | app server  | DHF  | DHS  |
   |-------------|:----:|:----:|
   | staging     | 8010 | 8006 |
-  | final/admin | 8011 | 8004 |
+  | final <!-- /admin --> | 8011 | 8004 |
   | jobs        | 8013 | 8007 |
   {:.table-b1gray}
 
@@ -83,7 +92,7 @@ If your endpoints are publicly available, you can use any machine that is set up
 1. Open a command-line window, and navigate to your DHF project root directory.
 1. At your project root, create a new `gradle-DHS.properties` file.
 
-    {% include note-in-list.html type="IMPORTANT" content="If you use a different name for the properties file, remember to update the value of the \"-Penvironment\" parameter in the Gradle commands in the following steps." %}
+    {% include note-in-list.html type="IMPORTANT" content="If you use a different name for the properties file, remember to update the value of the \"-PenvironmentName\" parameter in the Gradle commands in the following steps." %}
 
     a. Copy the following to the new file:
 
@@ -129,24 +138,24 @@ If your endpoints are publicly available, you can use any machine that is set up
       | --- | --- |
       | mlDHFVersion | The [DHF version](https://github.com/marklogic/marklogic-data-hub/releases) to use in your production environment. |
       | mlHost | The name of your DHS host. **Tip:** The host name is the domain name of the DHS final endpoint (remove 'http://' and the ':' and port number from the endpoint URL). |
-      | mlUsername<br>mlPassword | The username and password of the user account assigned to the `flowOperator` role. |
+      | mlUsername<br>mlPassword | The username and password of the user account assigned to the `flowOperator` role. **Note:** This can also be a user account assigned to the `flowDeveloper` role if additional permissions are required. |
       | mlManageUsername<br>mlManagePassword | The username and password of the user account assigned to the `flowDeveloper` role. |
       | ml*DbName | The names of the DHS databases, if customized. |
       | ml*AppserverName | The names of the DHS app servers, if customized. |
       | ml*Port | The ports that your DHS project is configured with, if not the defaults. |
       {:.table-b1gray}
 1. Install the DHF core modules.
-    ```
-    gradle hubInstallModules -Penvironment="gradle-DHS.properties"
-    ```
+
+    {% include ostabs-run-gradle.html grtask="hubInstallModules -PenvironmentName=\"gradle-DHS.properties\"" %}
+
 1. Install the plugins for your project.
-    ```
-    gradle mlLoadModules -Penvironment="gradle-DHS.properties"
-    ```
+
+    {% include ostabs-run-gradle.html grtask="mlLoadModules -PenvironmentName=\"gradle-DHS.properties\"" %}
+
 1. If you are using DHF 4.0.2 or later, load the indexes in the DHS databases.
-    ```
-    gradlew mlUpdateIndexes -Penvironment="gradle-DHS.properties"
-    ```
+
+    {% include ostabs-run-gradle.html grtask="mlUpdateIndexes -PenvironmentName=\"gradle-DHS.properties\"" %}
+
 1. [Run the input flows using MarkLogic Content Pump (MLCP).](https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/)
 
     You can also use any of the following:
@@ -155,17 +164,15 @@ If your endpoints are publicly available, you can use any machine that is set up
       - [Apache NiFi](https://developer.marklogic.com/code/apache-nifi) <!-- TODO: After DHFPROD-1542, replace this link. -->
 
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
-    {% include ostabs-in-list.html
-        linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -Penvironment=\"gradle-DHS.properties\""
-        windows="gradlew.bat hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\" -Penvironment=\"gradle-DHS.properties\""
-    %}
+
+    {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -PenvironmentName=\"gradle-DHS.properties\"" %}
 
 1. Verify that your documents are in the databases.
 
-    a. In the following URLs, replace `CURATION-ENDPOINT-URL` with the REST curation endpoint URL from your DHS administrator.
+    a. In the following URLs, replace `REST-CURATION-ENDPOINT-URL` with the REST curation endpoint URL from your DHS administrator.
 
-      | Final database   | `http://CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-FINAL`   |
-      | Staging database | `http://CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-STAGING` |
+      | Final database   | `http://REST-CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-FINAL`   |
+      | Staging database | `http://REST-CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-STAGING` |
       {:.table-b1gray}
 
       **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search?database=data-hub-FINAL`
