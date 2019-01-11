@@ -145,17 +145,11 @@ If your endpoints are publicly available, you can use any machine that is set up
       | ml*Port | The ports that your DHS project is configured with, if not the defaults. |
       {:.table-b1gray}
 1. Install the DHF core modules.
-
-    {% include ostabs-run-gradle.html grtask="hubInstallModules -PenvironmentName=\"gradle-DHS.properties\"" %}
-
+   {% include ostabs-run-gradle.html grtask="hubInstallModules -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. Install the plugins for your project.
-
-    {% include ostabs-run-gradle.html grtask="mlLoadModules -PenvironmentName=\"gradle-DHS.properties\"" %}
-
+   {% include ostabs-run-gradle.html grtask="mlLoadModules -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. If you are using DHF 4.0.2 or later, load the indexes in the DHS databases.
-
-    {% include ostabs-run-gradle.html grtask="mlUpdateIndexes -PenvironmentName=\"gradle-DHS.properties\"" %}
-
+   {% include ostabs-run-gradle.html grtask="mlUpdateIndexes -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. [Run the input flows using MarkLogic Content Pump (MLCP).](https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/)
 
     You can also use any of the following:
@@ -164,9 +158,7 @@ If your endpoints are publicly available, you can use any machine that is set up
       - [Apache NiFi](https://developer.marklogic.com/code/apache-nifi) <!-- TODO: After DHFPROD-1542, replace this link. -->
 
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
-
-    {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -PenvironmentName=\"gradle-DHS.properties\"" %}
-
+   {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. Verify that your documents are in the databases.
 
     a. In the following URLs, replace `REST-CURATION-ENDPOINT-URL` with the REST curation endpoint URL from your DHS administrator.
@@ -182,6 +174,7 @@ If your endpoints are publicly available, you can use any machine that is set up
     b. In a web browser, navigate to one of the URLs.
 
       The result is an XML list of all your documents in the database. Each item in the list includes the document's URI, path, and other metadata, as well as a preview of the content.
+{:.ol-steps}
 
 
 ## Remarks
