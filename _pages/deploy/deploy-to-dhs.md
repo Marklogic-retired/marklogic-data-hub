@@ -33,14 +33,16 @@ DHF projects and DHS projects have different default configurations:
   {:.table-b1gray}
 -->
 
-- Ports for app servers
+- Ports and load balancers for app servers
 
-  | app server  | DHF  | DHS  |
-  |-------------|:----:|:----:|
-  | staging     | 8010 | 8006 |
-  | final <!-- /admin --> | 8011 | 8004 |
-  | jobs        | 8013 | 8007 |
+  | app server | DHF  | DHS* | DHS load balancers |
+  |------------|:----:|:----:|:------------------:|
+  | staging    | 8010 | 8004 | curation           |
+  | final      | 8011 | 8010 | operations         |
+  | jobs       | 8013 | 8007 | analytics          |
   {:.table-b1gray}
+
+  DHS provides load balancers for each of the app servers. Each load balancer can be configured with multiple ports; for example, the curation load balancer can have these ports: 8002 (Manage), 8004 (REST), 8005 (Ingest), and 8006 (Flows).
 
 - Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 
@@ -161,13 +163,13 @@ If your endpoints are publicly available, you can use any machine that is set up
    {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. Verify that your documents are in the databases.
 
-    a. In the following URLs, replace `REST-CURATION-ENDPOINT-URL` with the REST curation endpoint URL from your DHS administrator.
+    a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
 
-      | Final database   | `http://REST-CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-FINAL`   |
-      | Staging database | `http://REST-CURATION-ENDPOINT-URL:8010/v1/search?database=data-hub-STAGING` |
+      | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8010/v1/search`                |
+      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8004/v1/search?database=data-hub-STAGING` |
       {:.table-b1gray}
 
-      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search?database=data-hub-FINAL`
+      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search`
 
       {% include note-in-list.html type="TIP" content="Narrow the search to return fewer items. See [MarkLogic REST API Search](https://docs.marklogic.com/REST/GET/v1/search)." %}
 
