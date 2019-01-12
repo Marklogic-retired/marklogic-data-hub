@@ -37,12 +37,10 @@ DHF projects and DHS projects have different default configurations:
 
   | app server | DHF  | DHS* | DHS load balancers |
   |------------|:----:|:----:|:------------------:|
-  | staging    | 8010 | 8004 | curation           |
+  | staging    | 8010 | 8004 <!-- 8002 (Manage)<br>8004 (REST)<br>8005 (Ingest)<br>8006 (Flows) --> | curation           |
   | final      | 8011 | 8010 | operations         |
   | jobs       | 8013 | 8007 | analytics          |
   {:.table-b1gray}
-
-  DHS provides load balancers for each of the app servers. Each load balancer can be configured with multiple ports; for example, the curation load balancer can have these ports: 8002 (Manage), 8004 (REST), 8005 (Ingest), and 8006 (Flows).
 
 - Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 
