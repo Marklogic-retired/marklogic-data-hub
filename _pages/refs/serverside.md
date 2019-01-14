@@ -222,7 +222,7 @@ Adds a trace input to the context. You can add as many trace inputs as you like 
 
 ```xquery
 declare function dhf:add-trace-input($context as json:object, $input-label as xs:string, $input) as json:object
- ```
+```
 
 #### Parameters
  - **context** - the context
@@ -244,7 +244,7 @@ Logs a trace, but only if tracing is enabled.
 
 ```xquery
 declare function dhf:log-trace($context as json:object)
- ```
+```
 
 #### Parameters
  - **context** - the context

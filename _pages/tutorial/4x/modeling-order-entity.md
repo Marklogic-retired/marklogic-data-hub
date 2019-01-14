@@ -4,6 +4,9 @@ title: Tutorial - Model the Order Entity
 permalink: /tutorial/4x/modeling-order-entity/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Model the Order Entity
 
 ## Determine What to Model

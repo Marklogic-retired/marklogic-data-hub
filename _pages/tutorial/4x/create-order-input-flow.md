@@ -4,20 +4,20 @@ title: Tutorial - Create the Order Input Flow
 permalink: /tutorial/4x/create-order-input-flow/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Create the Order Input Flow
 
-Next, we will create an input flow for orders so that we can load data as-is. We follow the same procedure we used to create the products input flow.
+Next, we create an input flow for the `Order` entity, following the same procedure we used to create the `Product` input flow.
 
-To begin, click **Flows** in the top navigation bar, then follow these steps:
+{% include conrefs/conref-qs-create-input-flow.md imgpath=var-imgpath entityname="Order" %}
 
-1. Click on **Order** to show the Input and Harmonize Flows.
-1. Click the **+** icon next to **Input Flows**. The Create Input Flow dialog appears.
-1. Type **Load Orders** in the **Input Flow Name** field.
-1. Click **Create** to create the new flow.
 
-The following picture summarizes this procedure:
+### Result
 
-![New Load Order Flows]({{site.baseurl}}/images/3x/create-order-input-flow/create-load-order-flow.png)
+Your new flow appears under **Input Flows**{:.uilabel} in the left panel.
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-xxx.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" %}
 
 
 {% include prev-next-nav.html

@@ -4,6 +4,9 @@ title: Tutorial - Wrapping Up
 permalink: /tutorial/4x/wrapping-up/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Wrapping Up
 
 ## Congratulations!

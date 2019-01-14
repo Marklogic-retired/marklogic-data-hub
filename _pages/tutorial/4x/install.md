@@ -4,8 +4,9 @@ title: Tutorial - Install the Data Hub Framework
 permalink: /tutorial/4x/install/
 ---
 
-# Tutorial: Install the Data Hub Framework
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
 
+# Tutorial: Install the Data Hub Framework
 
 ## 1 - Set Up the Project Directory and Sample Data
 
@@ -16,7 +17,7 @@ permalink: /tutorial/4x/install/
 1. Copy the subdirectories (e.g., `campaigns`, `customers`, `orders`) inside the sample data .zip file into the `input` directory.
 {:.ol-steps}
 
-**Result**
+### Result
 
 Your project directory structure will be as follows:
 
@@ -27,69 +28,38 @@ Your project directory structure will be as follows:
      ├─ campaigns
      ├─ customers
      ├─ issuehistories
-     ├─ ...
+     ├─ issues
+     ├─ orders
+     ├─ parties
+     ├─ products
+     │  ├─ games
+     │  └─ misc
+     ├─ responses
      └─ supportcustomers
 </pre>
 
 
 ## 2 - Start QuickStart
 
-1. At a command-line window, run the QuickStart .war.
-  - To use the default port number for the internal web server (port 8080):
-
-        ```
-        java -jar quick-start-{{ site.data.global.hub_version_4x }}.war
-        ```
-
-  - To use a custom port number; e.g., port 9000:
-
-        ```
-        java -jar quick-start-{{ site.data.global.hub_version_4x }}.war --server.port=9000
-        ```
-  {:.ol-substeps}
-
-  {% include note-in-list.html type="NOTE" content="If you are using Windows and a firewall alert appears, click `Allow access`." %}
-
-  **Result**
-
-  ![QuickStart initialization]({{site.baseurl}}/images/3x/install/start-quickstart.png)
-
-1. In a web browser, navigate to [`http://localhost:8080`](http://localhost:8080){:target="_blank"} to open the QuickStart UI.
-{:.ol-steps}
+{% include conrefs/conref-qs-start.md imgpath=var-imgpath %}
 
 
 ## 3 - Install the Data Hub
 
-In the QuickStart UI,
+{% include conrefs/conref-qs-4x-install-dh.md imgpath=var-imgpath %}
 
-1. Browse to your project root directory. Click **NEXT**.
-<br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-1.png){:.screenshot}
+### Result
 
-2. Click **INITIALIZE** to initialize your project directory.
-<br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-2.png){:.screenshot}
+When installation is complete, the **Dashboard**{:.uilabel} page displays the three initial databases and the number of documents in each.
+- **Staging**{:.uilabel} contains incoming data.
+- **Final**{:.uilabel} contains harmonized data.
+- **Jobs**{:.uilabel} contains data about the jobs that are run and tracing data about each harmonized document.
 
-3. You have now initialized your Data Hub Framework project. Your project directory now contains many new files and directories. If you are curious, you can read about the [files in a Data Hub Framework project](https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure). Click **NEXT**.
-<br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-3.png){:.screenshot}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-dashboard-00.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" %}
 
-4. Choose the local environment, then click **NEXT**.
-<br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-4.png){:.screenshot}
 
-5. Enter your MarkLogic credentials, then click **LOGIN**.
-<br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-5.png){:.screenshot}
-
-6. Click **INSTALL** to install the data hub into MarkLogic. You will see a screen with progress information while the data hub is being installed.
-<br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-6.png){:.screenshot}
-
-Congratulations! The Data Hub Framework is installed and ready to use.
-You are taken to the Dashboard page where you can see the document counts of all three hub databases. Additionally, you can clear out the databases one at a time or all in one fell swoop.
-
-The following are the three databases and what they store:
-
-- **Staging**: incoming data
-- **Final**: harmonized data
-- **Jobs**: data about the jobs run and tracing data about each harmonized document
-
-![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-7.png)
+## See Also
+- [DHF Project Directory Structure](https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure)
 
 
 {% include prev-next-nav.html

@@ -4,6 +4,9 @@ title: Tutorial - Browse and Understand the Product Data
 permalink: /tutorial/4x/browse-understand-product-data/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Browse and Understand the Product Data
 
 Click **Browse Data** in the top navigation bar to bring up the data browser:

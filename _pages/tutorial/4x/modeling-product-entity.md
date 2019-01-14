@@ -4,6 +4,9 @@ title: Tutorial - Model the Product Entity
 permalink: /tutorial/4x/modeling-product-entity/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Model the Product Entity
 
 After browsing the data and speaking to our company's data guru, we now know that we want to harmonize two fields: **sku** and **price**.

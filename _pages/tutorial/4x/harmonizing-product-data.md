@@ -4,6 +4,9 @@ title: Tutorial - Harmonize the Product Data
 permalink: /tutorial/4x/harmonizing-product-data/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Harmonize the Product Data
 
 Now that we have modeled the Product entity type and defined a model-to-model mapping for it, we can use the Data Hub Framework to harmonize our source data with our entity model. Harmonization creates canonical entity instances containing the necessary parts of your source data.

@@ -3,3 +3,4 @@
 //= require ./github
 //= require ./code-prettify/run_prettify
 //= require ./code-tabs
+//= require ./slideshow

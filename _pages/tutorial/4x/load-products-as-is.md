@@ -4,6 +4,9 @@ title: Tutorial - Load the Product Data As-Is
 permalink: /tutorial/4x/load-products-as-is/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Load the Product Data As-Is
 
 ## Ingest Product Data As-Is

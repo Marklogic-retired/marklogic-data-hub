@@ -4,6 +4,9 @@ title: Tutorial - Load the Orders As-Is
 permalink: /tutorial/4x/load-orders-as-is/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Load the Orders As-Is
 
 ## Ingest Order Data As-Is

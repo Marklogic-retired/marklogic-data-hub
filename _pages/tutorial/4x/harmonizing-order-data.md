@@ -4,6 +4,9 @@ title: Tutorial - Harmonize the Order Data
 permalink: /tutorial/4x/harmonizing-order-data/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Harmonize the Order Data
 
 Now that we have modeled the Order entity we can use the Data Hub Framework's code scaffolding to generate harmonization code and then customize it for our application.

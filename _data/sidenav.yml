@@ -133,7 +133,15 @@ main:
               { absurl: 'https://docs.marklogic.com/REST/client', text: 'Using the REST Client API' },
               { absurl: 'https://docs.marklogic.com/guide/admin/odbc', text: 'Using ODBC' },
             ]
-          }
+          },
+          # {
+          #   url: '/maintain/',
+          #   text: 'Maintain',
+          #   childPages: [
+          #     { url: '/maintain/clear-database/', text: 'Clear Databases' },
+          #     { url: '/maintain/uninstall-data-hub/', text: 'Uninstall a Data Hub' },
+          #   ]
+          # },
         ]
       }
     - {

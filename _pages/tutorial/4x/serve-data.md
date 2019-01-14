@@ -4,6 +4,9 @@ title: Tutorial - Serve the Data Out of MarkLogic
 permalink: /tutorial/4x/serve-data/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Serve the Data Out of MarkLogic
 
 <!--- DHFPROD-646 https://github.com/marklogic/marklogic-data-hub/issues/790#issuecomment-373201418 -->

@@ -4,6 +4,9 @@ title: Tutorial - Create a Product Source-to-Entity Mapping
 permalink: /tutorial/4x/mapping-product-entity/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Tutorial: Create a Product Source-to-Entity Mapping
 
 This exercise walks you through creating a mapping for the Product entity.
