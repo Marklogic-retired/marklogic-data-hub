@@ -24,7 +24,7 @@ public class HubEntity extends JsonPojo {
 
     protected String filename;
     protected InfoType info;
-    protected DefinitionType definition;
+    protected DefinitionsType definitions;
 
     public String getFilename() {
         return filename;
@@ -42,12 +42,12 @@ public class HubEntity extends JsonPojo {
         this.info = info;
     }
 
-    public DefinitionType getDefinition() {
-        return definition;
+    public DefinitionsType getDefinitions() {
+        return definitions;
     }
 
-    public void setDefinition(DefinitionType definition) {
-        this.definition = definition;
+    public void setDefinitions(DefinitionsType definition) {
+        this.definitions = definition;
     }
 
 
@@ -56,9 +56,7 @@ public class HubEntity extends JsonPojo {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         writeObjectIf(node, "info", info);
 
-        ObjectNode definitions = JsonNodeFactory.instance.objectNode();
-        definitions.set(info.getTitle(), definition.toJson());
-        node.set("definitions",definitions);
+        node.set("definitions",definitions.toJson());
 
         return node;
     }
@@ -69,7 +67,7 @@ public class HubEntity extends JsonPojo {
         hubEntity.setInfo(InfoType.fromJson(node.get("info")));
 
         String title = hubEntity.getInfo().getTitle();
-        hubEntity.setDefinition(DefinitionType.fromJson(title, node.get("definitions")));
+        hubEntity.setDefinitions(DefinitionsType.fromJson(node.get("definitions")));
         return hubEntity;
     }
 }

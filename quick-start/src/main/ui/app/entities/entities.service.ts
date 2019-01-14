@@ -4,6 +4,7 @@ import { ProjectService } from '../projects';
 import { Subject } from 'rxjs/Subject';
 import { SettingsService } from '../settings';
 
+import { DefinitionsType } from './definitions.model';
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';
 import { Plugin } from './plugin.model';
@@ -19,6 +20,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class EntitiesService {
+  static readonly entityRefPrefix = '#/definitions/';
   coreDataTypes: Array<any> = EntityConsts.coreDataTypes;
 
   entityRefDataTypes: Array<any> = [];
@@ -36,7 +38,7 @@ export class EntitiesService {
 
   getEntities() {
     this.http.get(this.url('/entities/')).map((res: Response) => {
-      let entities: Array<any> = res.json();
+      const entities: Array<any> = res.json();
       return entities.map((entity) => {
         return new Entity().fromJSON(entity);
       });
@@ -52,17 +54,18 @@ export class EntitiesService {
   // }
 
   createEntity(entity: Entity) {
-    return this.http.post(this.url('/entities/create'), entity).map((res:Response) => {
+    return this.http.post(this.url('/entities/create'), entity).map((res: Response) => {
       return new Entity().fromJSON(res.json());
     });
   }
 
   saveEntity(entity: Entity) {
-    let resp = this.http.put(this.url(`/entities/${entity.name}`), entity).map((res: Response) => {
+    const expandedEntity = this.expandEntity(entity);
+    const resp = this.http.put(this.url(`/entities/${expandedEntity.name}`), expandedEntity).map((res: Response) => {
       return new Entity().fromJSON(res.json());
     }).share();
     resp.subscribe((newEntity: Entity) => {
-      let index = _.findIndex(this.entities, { 'name': newEntity.name });
+      const index = _.findIndex(this.entities, { 'name': newEntity.name });
       if (index >= 0) {
         this.entities[index] = newEntity;
       } else {
@@ -74,9 +77,49 @@ export class EntitiesService {
     return resp;
   }
 
+  expandEntity(entity: Entity) {
+    const supportingEntites: Array<Entity> = this.findSupportingEntities(entity);
+    const definitions = new DefinitionsType();
+    definitions.set(entity.name, entity.definition);
+    supportingEntites.forEach((supportingEntity) => {
+      definitions.set(supportingEntity.name, supportingEntity.definition);
+    });
+    entity.definitions = definitions;
+    return entity;
+  }
+
+  /*
+   * find entities that are referenced in entities recursively. Avoid infinite loop by tracking
+   * entities visited.
+   */
+  findSupportingEntities(entity: Entity, visitedEntities: Array<string> = []): Array<Entity> {
+    if (visitedEntities.length === 0) {
+      visitedEntities.push(entity.name);
+    }
+    let supportingEntities: Array<Entity> = [];
+    this.entityReferencesInEntity(entity).forEach((prop: PropertyType) => {
+      const ref = prop.$ref || prop.items.$ref;
+      const refEntityName = ref.substr(EntitiesService.entityRefPrefix.length);
+      if (visitedEntities.findIndex((entityName: string) => refEntityName === entityName) < 0) {
+        const refEntity = this.findEntityByName(refEntityName);
+        visitedEntities.push(refEntityName);
+        const refSupportingEntities = this.findSupportingEntities(refEntity, visitedEntities);
+        supportingEntities.push(refEntity);
+        if (refSupportingEntities.length > 0) {
+          supportingEntities = supportingEntities.concat(refSupportingEntities);
+        }
+      }
+    });
+    return supportingEntities;
+  }
+
+  findEntityByName(entityName: string): Entity {
+    return _.find(this.entities, { 'name': entityName });
+  }
+
   editEntity(entity: Entity) {
-    let result = new Subject();
-    let actions = {
+    const result = new Subject();
+    const actions = {
       save: () => {
         result.next(null);
         result.complete();
@@ -86,7 +129,7 @@ export class EntitiesService {
       }
     };
 
-    let editDialog = this.dialogService.showCustomDialog({
+    const editDialog = this.dialogService.showCustomDialog({
       component: EntityEditorComponent,
       providers: [
         { provide: 'entity', useValue: entity },
@@ -100,18 +143,26 @@ export class EntitiesService {
     return result.asObservable();
   }
 
+  entityReferencesInEntity(entity: Entity) {
+    if (entity.definition && entity.definition.properties) {
+      return entity.definition.properties.filter((prop: PropertyType) => {
+        return prop.$ref || (prop.items && prop.items.$ref);
+      });
+    } else {
+      return [];
+    }
+  }
+
   deleteEntity(entityToDelete: Entity) {
     // remove references to this entity
     this.entities.forEach((entity: Entity) => {
-      if (entity.definition && entity.definition.properties) {
-        entity.definition.properties.forEach((prop: PropertyType) => {
-          if (prop.$ref && prop.$ref.endsWith(entityToDelete.name)) {
-            prop.$ref = null;
-          } else if (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entityToDelete.name)) {
-            prop.items.$ref = null;
-          }
-        });
-      }
+     this.entityReferencesInEntity(entity).forEach((prop: PropertyType) => {
+       if (prop.$ref && prop.$ref.endsWith(entityToDelete.name)) {
+          prop.$ref = null;
+       } else if (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entityToDelete.name)) {
+         prop.items.$ref = null;
+       }
+     });
 
       const connectionName = `${entity.name}-${entityToDelete.name}`;
       if (entity.hubUi && entity.hubUi.vertices && entity.hubUi.vertices[connectionName]) {
@@ -126,7 +177,7 @@ export class EntitiesService {
   }
 
   deleteFlow(flow: Flow, flowType: string) {
-    let resp = this.http.delete(this.url(`/entities/${flow.entityName}/flows/${flow.flowName}/${flowType}`)).share();
+    const resp = this.http.delete(this.url(`/entities/${flow.entityName}/flows/${flow.flowName}/${flowType}`)).share();
     resp.subscribe(() => {
       this.entities.forEach((entity: Entity) => {
         if (entity.name === flow.entityName) {
@@ -187,7 +238,7 @@ export class EntitiesService {
 
   runInputFlow(flow: Flow, mlcpOptions: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/input/${flow.flowName}/run`);
-    let options = {
+    const options = {
       mlcpPath: this.settingsService.mlcpPath,
       mlcpOptions: mlcpOptions
     };
@@ -217,10 +268,10 @@ export class EntitiesService {
 
       if (entity.definition && entity.definition.properties) {
         entity.definition.properties.forEach((property: PropertyType) => {
-          if (property.$ref && !property.$ref.startsWith('#/definitions/')) {
+          if (property.$ref && !property.$ref.startsWith(EntitiesService.entityRefPrefix)) {
             this.externalRefDataTypes.push(property.$ref);
           } else if (property.datatype === 'array') {
-            if (property.items && property.items.$ref && !property.items.$ref.startsWith('#/definitions/')) {
+            if (property.items && property.items.$ref && !property.items.$ref.startsWith(EntitiesService.entityRefPrefix)) {
               this.externalRefDataTypes.push(property.items.$ref);
             }
           }

@@ -28,6 +28,11 @@ import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.EntityDeploymentUtil;
 
+import java.util.Set;
+
+/*
+ * Additional command to load entity model JSON that needs to run after the triggers are loaded.
+ */
 @Component
 public class LoadEntityModelsCommand extends AbstractCommand {
 
@@ -48,13 +53,16 @@ public class LoadEntityModelsCommand extends AbstractCommand {
         
         DocumentWriteSet finalWriteSet = finalEntityDocMgr.newWriteSet();
         DocumentWriteSet stagingWriteSet = stagingEntityDocMgr.newWriteSet();
-        for (String entityURI : EntityDeploymentUtil.getEntityURIs()) {
-        	WriteEvent writeEvent = EntityDeploymentUtil.dequeueEntity(entityURI);
+        Set<String> entityURIs = EntityDeploymentUtil.getInstance().getEntityURIs();
+        for (String entityURI : entityURIs) {
+            WriteEvent writeEvent = EntityDeploymentUtil.getInstance().dequeueEntity(entityURI);
         	finalWriteSet.add(entityURI, writeEvent.getMetadata(), writeEvent.getContent());
         	stagingWriteSet.add(entityURI, writeEvent.getMetadata(), writeEvent.getContent());
         }
-        finalEntityDocMgr.write(finalWriteSet);
-        stagingEntityDocMgr.write(stagingWriteSet);
+        if (finalWriteSet.size() > 0) {
+            finalEntityDocMgr.write(finalWriteSet);
+            stagingEntityDocMgr.write(stagingWriteSet);
+        }
         finalClient.release();
         stagingClient.release();
     }

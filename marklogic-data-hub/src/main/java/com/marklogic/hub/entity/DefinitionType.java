@@ -109,10 +109,9 @@ public class DefinitionType extends JsonPojo {
         this.properties = properties;
     }
 
-    public static DefinitionType fromJson(String name, JsonNode defs) {
+    public static DefinitionType fromJson(String name, JsonNode node) {
         DefinitionType definitionType = new DefinitionType();
         definitionType.setName(name);
-        JsonNode node = defs.get(name);
 
         definitionType.setDescription(getValue(node, "description"));
         definitionType.setPrimaryKey(getValue(node, "primaryKey"));

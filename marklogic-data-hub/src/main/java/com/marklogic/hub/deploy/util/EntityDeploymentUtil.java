@@ -15,25 +15,22 @@
  */
 package com.marklogic.hub.deploy.util;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.marklogic.client.datamovement.WriteEvent;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.client.io.marker.DocumentMetadataWriteHandle;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 /*
  * Singleton to aid with Entity deployment. Needed as bridge between walking the entities file structure
  * on modules deploy and inserting entity JSON models in the database after triggers are created.
  */
 public class EntityDeploymentUtil {
-	private static Map<String, DocumentMetadataHandle> metaMap = new ConcurrentHashMap<String, DocumentMetadataHandle>();
-	private static Map<String, JSONWriteHandle> contentMap = new ConcurrentHashMap<String, JSONWriteHandle>();
-	private static Set<String> entityURIs = new HashSet<String>();
+	private static ConcurrentHashMap<String, DocumentMetadataHandle> metaMap = new ConcurrentHashMap<String, DocumentMetadataHandle>();
+	private static ConcurrentHashMap<String, JSONWriteHandle> contentMap = new ConcurrentHashMap<String, JSONWriteHandle>();
 
 	private static EntityDeploymentUtil instance;
     
@@ -45,26 +42,23 @@ public class EntityDeploymentUtil {
     }
 
     public static Set<String> getEntityURIs() {
-		return entityURIs;
+        return contentMap.keySet();
 	}
 	
 	public static void enqueueEntity(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
-		metaMap.put(uri, meta);
+        metaMap.put(uri, meta);
 		contentMap.put(uri, content);
-		entityURIs.add(uri);
 	}
 
 	public static WriteEvent dequeueEntity(String uri) {
-		DocumentMetadataHandle meta = metaMap.remove(uri);
-		JSONWriteHandle content = contentMap.remove(uri);
-		entityURIs.remove(uri);
+		DocumentMetadataHandle meta = metaMap.get(uri);
+		JSONWriteHandle content = contentMap.get(uri);
 		return getInstance().new WriteEventImpl(uri, meta, content);
 	}
 	
 	public static void reset() {
 		metaMap.clear();
 		contentMap.clear();
-		entityURIs.clear();
 	}
 	
 	private class WriteEventImpl implements WriteEvent {

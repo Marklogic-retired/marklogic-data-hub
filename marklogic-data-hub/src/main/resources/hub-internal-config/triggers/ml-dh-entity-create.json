@@ -17,5 +17,15 @@
   "module-root": "/",
   "enabled": true,
   "recursive": true,
-  "task-priority": "normal"
+  "task-priority": "normal",
+  "permission": [
+    {
+      "role-name": "%%mlHubAdminRole%%",
+      "capability": "update"
+    },
+    {
+      "role-name": "%%mlHubUserRole%%",
+      "capability": "read"
+    }
+  ]
 }

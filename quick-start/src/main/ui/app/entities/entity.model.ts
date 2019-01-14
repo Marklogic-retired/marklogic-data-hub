@@ -1,5 +1,6 @@
 import { InfoType } from './info.model';
 import { DefinitionType } from './definition.model';
+import { DefinitionsType } from './definitions.model';
 import { HubUIData } from './hubuidata.model';
 import { Point } from '../entity-modeler/math-helper';
 import { Flow } from './flow.model';
@@ -11,6 +12,7 @@ export class Entity {
 
   info: InfoType;
   definition: DefinitionType;
+  definitions: DefinitionsType;
 
   inputFlows: Array<Flow>;
   harmonizeFlows: Array<Flow>;
@@ -91,6 +93,10 @@ export class Entity {
     this.transform = `translate(${this.x}, ${this.y}) scale(${this.scale})`;
   }
 
+  set definitionsType(_definitions: DefinitionsType) {
+    this.definitions = _definitions;
+  }
+
   constructor() {}
 
   fromJSON(json) {
@@ -108,6 +114,13 @@ export class Entity {
       this.definition = new DefinitionType().fromJSON(json.definition);
     }
 
+    if (json.definitions) {
+      this.definitions = new DefinitionsType().fromJSON(json.definitions);
+      if (!json.definition) {
+        this.definition = this.definitions.get(this.name);
+      }
+    }
+
     this.inputFlows = [];
     if (json.inputFlows && _.isArray(json.inputFlows)) {
       for (let flow of json.inputFlows) {
@@ -121,6 +134,7 @@ export class Entity {
         this.harmonizeFlows.push(new Flow().fromJSON(flow));
       }
     }
+
 
     return this;
   }

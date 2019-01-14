@@ -267,7 +267,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    EntityDeploymentUtil.enqueueEntity("/entities/" + r.getFilename(), meta, handle);
+                                    EntityDeploymentUtil.getInstance().enqueueEntity("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
