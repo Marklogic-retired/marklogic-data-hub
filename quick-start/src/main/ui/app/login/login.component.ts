@@ -36,7 +36,6 @@ import * as SemVer from 'semver';
       (onInstall)="this.install()"
       (onUninstall)="this.unInstall()"
       (onInstallNext)="this.installNext()"
-      (onFinished)="this.finished()"
       (onChooseProject)="this.chooseProject()"
       (onPostInitNext)="this.postInitNext()"
       (onLogin)="this.login()"
@@ -157,23 +156,17 @@ export class LoginComponent implements OnInit {
         this.installing = false;
         this.installationStatus = null;
         emitter.unsubscribe();
+
+        let installInfo = this.currentEnvironment.installInfo;
+        if (installInfo && installInfo.installed) {
+          // goto login tab
+          let redirect = this.auth.redirectUrl || '';
+          this.router.navigate([redirect]);
+        } else {
+          // go to install hub tab
+          this.loginUi.gotoTab('Installer');
+        }
       })
-    });
-  }
-
-  finished() {
-    this.projectService.getProjectEnvironment().subscribe((env: any) => {
-      this.currentEnvironment = env;
-
-      let installInfo = this.currentEnvironment.installInfo;
-      if (installInfo && installInfo.installed) {
-        // goto login tab
-        let redirect = this.auth.redirectUrl || '';
-        this.router.navigate([redirect]);
-      } else {
-        // go to install hub tab
-        this.loginUi.gotoTab('Installer');
-      }
     });
   }
 

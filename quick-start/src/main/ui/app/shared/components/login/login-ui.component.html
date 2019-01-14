@@ -374,7 +374,7 @@
 
           <div layout="row" layout-align="end center" class="init-buttons">
             <button type="button" mdl-button (click)="back()">&lt; Back</button>
-            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="percentComplete!=100" (click)="onFinished.emit()">Finished</button>
+            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironment.installInfo.installed" (click)="onInstallNext.emit()">Finished</button>
           </div>
         </div>
       </div>

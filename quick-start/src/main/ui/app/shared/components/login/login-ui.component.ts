@@ -33,7 +33,6 @@ export class LoginUIComponent {
   @Output() onInstall: EventEmitter<any> = new EventEmitter<any>();
   @Output() onUninstall: EventEmitter<any> = new EventEmitter<any>();
   @Output() onInstallNext: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onFinished: EventEmitter<any> = new EventEmitter<any>();
   @Output() onLogin: EventEmitter<any> = new EventEmitter<any>();
   @Output() onHubNameChanged: EventEmitter<any> = new EventEmitter<any>();
   @Output() onGotEnvironment: EventEmitter<any> = new EventEmitter<any>();

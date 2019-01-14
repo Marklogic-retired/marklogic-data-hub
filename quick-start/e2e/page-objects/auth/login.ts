@@ -83,7 +83,7 @@ export class LoginPage extends AppPage {
   }
 
   get finishedButton() {
-    return element(by.buttonText('Finished'));
+    return element(by.css('#finished-button'));
   }
 
   get dataHubNameLabel() {
@@ -146,10 +146,6 @@ export class LoginPage extends AppPage {
 
   async clickInstall() {
     await element(by.css('#installer-button')).click();
-  }
-
-  async clickFinished() {
-    await this.finishedButton.click();
   }
 
   //get userName element

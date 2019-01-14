@@ -199,15 +199,14 @@ export default function(tmpDir) {
       console.log('modified jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
       browser.wait(EC.presenceOf(loginPage.installProgress), 600000, 'install progress is not present');
       expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      browser.wait(EC.elementToBeClickable(loginPage.finishedButton), 600000, 'finished button is not displayed');
+      browser.wait(EC.visibilityOf(appPage.flowsTab), 600000, 'dashboard page is not displayed');
       jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       console.log('changed back to original jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
     });
 
-    it ('should complete the install and go to the dashboard',  async function() {
-      browser.driver.sleep(3000);
-      console.log('clicking Finished button');
-      await loginPage.clickFinished();
+    it ('should complete the install and go to the dashboard', function() {
+      console.log('refresh the browser');
+      browser.refresh();
       console.log('loading dashboard page');
       dashboardPage.isLoaded();
       expect(appPage.flowsTab.isDisplayed()).toBe(true);
