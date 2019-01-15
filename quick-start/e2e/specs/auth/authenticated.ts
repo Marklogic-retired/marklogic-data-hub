@@ -205,7 +205,7 @@ export default function(tmpDir) {
     });
 
     it ('should complete the install and go to the dashboard',  async function() {
-      browser.driver.sleep(3000);
+      browser.driver.sleep(5000);
       console.log('clicking Finished button');
       await loginPage.clickFinished();
       console.log('loading dashboard page');
