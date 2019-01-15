@@ -197,7 +197,7 @@ function writeErrorTrace(itemContext) {
           created: currentTrace.created,
           identifier: rfc.getId(itemContext),
           flowType: rfc.getFlowType(),
-          hasError: hasErrors(),
+          hasError: false,
           steps: []
         }
       };
@@ -205,6 +205,9 @@ function writeErrorTrace(itemContext) {
       for (i = 0; i < currentTrace.traceSteps.length; i++) {
         let step = currentTrace.traceSteps[i];
         trace.trace.steps.push(step);
+        if(step.error){
+          trace.trace.hasError = true;
+        }
       }
     }
     else {
@@ -229,9 +232,7 @@ function writeErrorTrace(itemContext) {
           nb.startElement("flowType");
             nb.addText(rfc.getFlowType().toString());
           nb.endElement();
-          nb.startElement("hasError");
-            nb.addText(hasErrors().toString());
-          nb.endElement();
+          let hasErrors = false;
           nb.startElement("steps");
             let i;
             for (i = 0; i < currentTrace.traceSteps.length; i++) {
@@ -270,6 +271,7 @@ function writeErrorTrace(itemContext) {
                 nb.endElement();
                 nb.startElement("error");
                   if (step.error) {
+                    hasErrors = true;
                     if (isXmlNode(step.error)) {
                       nb.addNode(step.error);
                     }
@@ -295,6 +297,9 @@ function writeErrorTrace(itemContext) {
                 nb.endElement();
               nb.endElement();
             }
+          nb.endElement();
+          nb.startElement("hasError");
+          nb.addText(hasErrors.toString());
           nb.endElement();
         nb.endElement();
       nb.endDocument();
