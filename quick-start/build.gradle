@@ -18,11 +18,11 @@
 import java.util.concurrent.Executors
 
 plugins {
-  id 'java'
-  id 'eclipse'
-  id 'idea'
-  id 'com.moowork.node' version '1.2.0'
-  id 'org.springframework.boot' version '2.0.6.RELEASE'
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'com.moowork.node' version '1.2.0'
+    id 'org.springframework.boot' version '2.0.2.RELEASE'
   id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
