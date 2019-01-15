@@ -195,7 +195,7 @@ export default function(tmpDir) {
       let originalTimeout;
       originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
       console.log('original jasmine timeout: ' + originalTimeout);
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = 370000;
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 420000;
       console.log('modified jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
       browser.wait(EC.presenceOf(loginPage.installProgress), 600000, 'install progress is not present');
       expect(loginPage.installProgress.isDisplayed()).toBe(true);
