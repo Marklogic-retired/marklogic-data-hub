@@ -48,9 +48,12 @@ export class EntityEditorComponent implements AfterViewChecked {
   ];
 
   propAdded: boolean = false;
+  validTitle: boolean = true;
 
   // property name pattern: name cannot have space characters in it
   readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
+  // Entity title: no space or invalid characters
+  readonly ENTITY_TITLE_REGEX = /^.*?(?=[\^\s!@#%&$\*:;<>\?/\{\|\}]).*$/;
 
   constructor(
     private dialog: MdlDialogReference,
@@ -225,34 +228,41 @@ export class EntityEditorComponent implements AfterViewChecked {
 
   saveEntity() {
     if (this.actions.save) {
-      // Set entity state based on property ui flags
-      this.entity.definition.primaryKey = null;
-      this.entity.definition.elementRangeIndex = [];
-      this.entity.definition.rangeIndex = [];
-      this.entity.definition.wordLexicon = [];
-      this.entity.definition.required = [];
-      this.entity.definition.pii = [];
-      this.entity.definition.properties.forEach((property) => {
-        if (property.isPrimaryKey) {
-          this.entity.definition.primaryKey = property.name;
-        }
-        if (property.hasElementRangeIndex) {
-          this.entity.definition.elementRangeIndex.push(property.name);
-        }
-        if (property.hasRangeIndex) {
-          this.entity.definition.rangeIndex.push(property.name);
-        }
-        if (property.hasWordLexicon) {
-          this.entity.definition.wordLexicon.push(property.name);
-        }
-        if (property.required) {
-          this.entity.definition.required.push(property.name);
-        }
-        if (property.pii) {
-          this.entity.definition.pii.push(property.name);
-        }
-      }, this);
-      this.actions.save();
+      if (this.ENTITY_TITLE_REGEX.test(this.entity.info.title) || this.entity.info.title === '') {
+        // invalid characters in title
+        this.validTitle = false;
+        return;
+      } else {
+        this.validTitle = true;
+        // Set entity state based on property ui flags
+        this.entity.definition.primaryKey = null;
+        this.entity.definition.elementRangeIndex = [];
+        this.entity.definition.rangeIndex = [];
+        this.entity.definition.wordLexicon = [];
+        this.entity.definition.required = [];
+        this.entity.definition.pii = [];
+        this.entity.definition.properties.forEach((property) => {
+          if (property.isPrimaryKey) {
+            this.entity.definition.primaryKey = property.name;
+          }
+          if (property.hasElementRangeIndex) {
+            this.entity.definition.elementRangeIndex.push(property.name);
+          }
+          if (property.hasRangeIndex) {
+            this.entity.definition.rangeIndex.push(property.name);
+          }
+          if (property.hasWordLexicon) {
+            this.entity.definition.wordLexicon.push(property.name);
+          }
+          if (property.required) {
+            this.entity.definition.required.push(property.name);
+          }
+          if (property.pii) {
+            this.entity.definition.pii.push(property.name);
+          }
+        }, this);
+        this.actions.save();
+      }
     }
     this.dialog.hide();
   }
