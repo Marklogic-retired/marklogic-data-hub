@@ -98,8 +98,8 @@ One of the benefits of having the Data Hub Framework model your data with Entity
 
 
 {% include prev-next-nav.html
-  prevtext="Load the Orders As-Is"
-  prevlink="/tutorial/4x/load-orders-as-is/"
+  prevtext="Load the Raw Orders Data"
+  prevlink="/tutorial/4x/load-raw-orders/"
   increl="tutorial-toc.md"
   nexttext="Harmonize the Order Data"
   nextlink="/tutorial/4x/harmonizing-order-data/"

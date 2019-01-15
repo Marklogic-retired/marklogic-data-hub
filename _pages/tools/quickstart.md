@@ -26,6 +26,9 @@ To use DHF QuickStart,
 1. [Ingest your data using QuickStart.]({{site.baseurl}}/ingest/quickstart/)
 1. [Harmonize your data using QuickStart.]({{site.baseurl}}/harmonize/quickstart/)
 
+You can also:
+- [Track the jobs that are performed on your data hub.]({{site.baseurl}}/maintain/jobs-traces/)
+
 QuickStart is intended for the development environment only. For production, use the DHF Gradle Plugin or the DHF Java Library.
 
 

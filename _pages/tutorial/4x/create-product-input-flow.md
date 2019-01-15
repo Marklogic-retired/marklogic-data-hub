@@ -21,13 +21,13 @@ In this exercise, we create an input flow for the `Product` entity. The input fl
 ### Result
 
 Your new flow appears under **Input Flows**{:.uilabel} in the left panel.
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-xxx.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-result-load-products.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Load Products in the list of input flows" class="screenshot" %}
 
 
 {% include prev-next-nav.html
   prevtext="Create the Product Entity"
   prevlink="/tutorial/4x/create-product-entity/"
   increl="tutorial-toc.md"
-  nexttext="Load the Product Data As-Is"
-  nextlink="/tutorial/4x/load-products-as-is/"
+  nexttext="Load the Raw Products Data"
+  nextlink="/tutorial/4x/load-raw-products/"
 %}

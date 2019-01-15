@@ -305,6 +305,11 @@ img {
 }
 
 .thumbnail {
+  max-width: 150px;
+  height: auto;
+}
+
+.img-small {
   max-width: 300px;
   height: auto;
 }

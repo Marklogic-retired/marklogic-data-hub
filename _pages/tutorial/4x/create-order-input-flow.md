@@ -17,13 +17,13 @@ Next, we create an input flow for the `Order` entity, following the same procedu
 ### Result
 
 Your new flow appears under **Input Flows**{:.uilabel} in the left panel.
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-xxx.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-result-load-orders.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Load Orders in the list of input flows" class="screenshot" %}
 
 
 {% include prev-next-nav.html
   prevtext="Create the Order Entity"
   prevlink="/tutorial/4x/create-order-entity/"
   increl="tutorial-toc.md"
-  nexttext="Load the Orders As-Is"
-  nextlink="/tutorial/4x/load-orders-as-is/"
+  nexttext="Load the Raw Orders Data"
+  nextlink="/tutorial/4x/load-raw-orders/"
 %}

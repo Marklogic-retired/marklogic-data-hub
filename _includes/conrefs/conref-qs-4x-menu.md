@@ -1,6 +1,6 @@
 {% assign full-imgpath = site.baseurl | append: "/images/4x/" | append: "qs-4x-menubar.png" %}
 
-{% assign full-msg = "In QuickStart's navigation bar, click <span class=\"uimenuitem\">" | append: include.selection | append: "</span>." %}
+{% assign full-msg = "In QuickStart's navigation bar, click <span class='uimenuitem'>" | append: include.selection | append: "</span>." %}
 
 {% assign basic-style = "position: absolute; height: 50%; border: 3px solid #73AD21; " %}
 

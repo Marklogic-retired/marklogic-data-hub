@@ -138,6 +138,7 @@ main:
           #   url: '/maintain/',
           #   text: 'Maintain',
           #   childPages: [
+          #     { url: '/maintain/jobs-traces/', text: 'View Jobs Performed on Data Hub' },
           #     { url: '/maintain/clear-database/', text: 'Clear Databases' },
           #     { url: '/maintain/uninstall-data-hub/', text: 'Uninstall a Data Hub' },
           #   ]

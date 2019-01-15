@@ -17,7 +17,7 @@ Entities are the business objects that you will be working with in the data hub.
 ### Result
 
 The new `Product` entity card is displayed.
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-entities-entity-card-Product-00.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-entities-entity-card-Product-00.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" %}
 
 
 {% include prev-next-nav.html

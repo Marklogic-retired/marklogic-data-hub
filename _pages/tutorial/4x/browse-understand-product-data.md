@@ -29,8 +29,8 @@ You are shown the raw data.
 
 
 {% include prev-next-nav.html
-  prevtext="Load the Product Data As-Is"
-  prevlink="/tutorial/4x/load-products-as-is/"
+  prevtext="Load the Raw Product Data"
+  prevlink="/tutorial/4x/load-raw-products/"
   increl="tutorial-toc.md"
   nexttext="Model the Product Entity"
   nextlink="/tutorial/4x/modeling-product-entity/"
