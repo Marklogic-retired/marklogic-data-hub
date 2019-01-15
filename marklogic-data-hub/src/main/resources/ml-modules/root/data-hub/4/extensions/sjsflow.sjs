@@ -85,12 +85,14 @@ function post(context, params, input) {
       }
     }
 
+    let before = xdmp.elapsedTime();
     try {
       flowlib.runWriters(identifiers);
     }
     catch(ex) {
       xdmp.log(["error in runWriters", ex.toString()]);
       errors.push(ex);
+      tracelib.errorTrace(rfc.getItemContext(), {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
     }
 
     resp = {
