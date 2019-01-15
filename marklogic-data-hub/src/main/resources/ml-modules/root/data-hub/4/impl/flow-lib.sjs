@@ -597,6 +597,7 @@ function runWriters(identifiers) {
 function runWriter(writerFunction, itemContext, identifier, envelope, options) {
   let before = xdmp.elapsedTime();
   let currentTrace = rfc.getTrace(itemContext);
+  rfc.setItemContext(itemContext);
   tracelib.setPluginLabel("writer", currentTrace);
   tracelib.resetPluginInput(currentTrace);
   tracelib.setPluginInput("envelope", envelope, currentTrace);
@@ -611,7 +612,7 @@ function runWriter(writerFunction, itemContext, identifier, envelope, options) {
       tracelib.writeTrace(itemContext);
   }
   catch(ex) {
-    tracelib.errorTrace(itemContext, {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
+    tracelib.errorTrace(rfc.getItemContext(), {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
   }
 
   return resp;

@@ -73,7 +73,7 @@ function hasErrors() {
 
 function incrementErrorCount() {
   let ts = getCurrentTraceSettings();
-  ts.errorCount = tracelib.getErrorCount() + 1;
+  ts.errorCount = getErrorCount() + 1;
 }
 
 function getErrorCount() {
