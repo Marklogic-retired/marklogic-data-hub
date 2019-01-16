@@ -1,0 +1,15 @@
+<div class="navgrid">
+
+<span markdown="1" class="prevbtn">[**&#171;** **PREVIOUS:** {{ include.prevtext }}]({{ site.baseurl }}{{ include.prevlink }})</span>
+
+<span markdown="1" class="nextbtn">[**NEXT:** {{ include.nexttext }} **&#187;**]({{ site.baseurl }}{{ include.nextlink }})</span>
+
+<span class="go2pagebtn">
+<details><summary><b>Go to page</b></summary>
+<div markdown="1">
+{% include_relative {{ include.increl }} %}
+</div>
+</details>
+</span>
+
+</div>

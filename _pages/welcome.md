@@ -19,10 +19,10 @@ The MarkLogic Data Hub Framework (or DHF) is a set of tools and libraries that h
 
 ### Why do I need the DHF?
 Here's what the DHF can do for you:
-1. Accelerate the process of building a Data Hub on top of MarkLogic
-1. Ensure best practices are followed when building Data Hubs with MarkLogic
-1. Integrate and harmonization your data at scale
-1. Help you become familiar with MarkLogic
+- Accelerate the process of building a data hub on top of MarkLogic.
+- Ensure best practices are followed when building data hubs with MarkLogic.
+- Integrate and harmonize your data at scale.
+- Help you become familiar with MarkLogic.
 
 The DHF does this by both running key operations itself, and also generating code scaffolding that organizes and jump-starts development. Industrial strength DevOps processes are also included to set up a fully automated build from the start.
 

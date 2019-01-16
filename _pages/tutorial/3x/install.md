@@ -15,7 +15,7 @@ mkdir data-hub
 cd data-hub
 </pre>
 
-Download the latest [QuickStart .war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
+Download the latest [QuickStart .war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version_3x }}/quick-start-{{ site.data.global.hub_version_3x }}.war) and place it in the folder you just created.
 
 ## 2. Download the Sample Data
 
@@ -34,7 +34,7 @@ Your project folder should look like this:
 <pre class="cmdline">
 data-hub
  +-- input
- +-- quick-start-{{ site.data.global.hub_version }}.war
+ +-- quick-start-{{ site.data.global.hub_version_3x }}.war
 </pre>
 
 ## 3. Run QuickStart
@@ -44,13 +44,13 @@ The QuickStart application is a stand-alone Java Web Application. It runs its ow
 To run QuickStart, open a terminal window in the data-hub directory and run the .war:
 
 <pre class="cmdline">
-java -jar quick-start-{{ site.data.global.hub_version }}.war
+java -jar quick-start-{{ site.data.global.hub_version_3x }}.war
 </pre>
 
 If you need to run on a different port then add the --server.port option:
 
 <pre class="cmdline">
-java -jar quick-start-{{ site.data.global.hub_version }}.war --server.port=9000
+java -jar quick-start-{{ site.data.global.hub_version_3x }}.war --server.port=9000
 </pre>
 
 After running the .war, should see the following in the terminal:
