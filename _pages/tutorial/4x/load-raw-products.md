@@ -37,7 +37,7 @@ If the job completed successfully, the report would show:
 - `OUTPUT_RECORDS_FAILED: 0`
 - the same value for both `INPUT_RECORDS` and `OUTPUT_RECORDS`
 
-{% assign full-imgpath=var-imgpath | append: "qs-4x-jobs-job-output-Product.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Job Output" class="screenshot" %}
+{% assign full-imgpath=var-imgpath | append: "qs-4x-jobs-job-output-Product.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Job Output" class="img-small" tab="  " %}
 
 
 ## Inspect the Trace Logs for your Job

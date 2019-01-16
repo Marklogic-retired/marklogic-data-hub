@@ -1,5 +1,6 @@
+{% assign tab=include.tab %}
 {% assign myclass="thumbnail" %}
 {% if include.class %}{% assign myclass=include.class %}{% endif %}
-<a href="{{ include.imgfile }}" target="_blank">
-<img src="{{ include.imgfile }}" alt="{{ include.alttext }}" class="{{ myclass }}">
-</a>
+{{ tab }}<a href="{{ include.imgfile }}" target="_blank">
+{{ tab }}<img src="{{ include.imgfile }}" alt="{{ include.alttext }}" class="{{ myclass }}">
+{{ tab }}</a>

@@ -3,7 +3,7 @@ To create an input flow for the `{{ include.entityname }}` entity,
 {% assign pref="qs-4x-flows-create-complete" %}
 {% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% endif %}
 {% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
-{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" %}
+{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" tab="  " %}
 
 1. In QuickStart's navigation bar, click **Flows**{:.uimenuitem}.
 1. {% assign full-text = "Expand **" | append: include.entityname | append: "**{:.uilabel} in the left panel." %}{{ full-text }}

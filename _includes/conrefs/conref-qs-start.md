@@ -12,7 +12,6 @@
     {% include note-in-list.html type="NOTE" content="If you are using Windows and a firewall alert appears, click `Allow access`." %}
 
     **Result**
-
-      {% assign full-imgpath = include.imgpath | append: "qs-4x-install.png" %}{% include thumbnail.html imgfile=full-imgpath %}
+      {% assign full-imgpath = include.imgpath | append: "qs-4x-install.png" %}{% include thumbnail.html imgfile=full-imgpath tab="      " %}
 1. In a web browser, navigate to [`http://localhost:8080`](http://localhost:8080){:target="_blank"} to open the QuickStart UI.
 {:.ol-steps}
