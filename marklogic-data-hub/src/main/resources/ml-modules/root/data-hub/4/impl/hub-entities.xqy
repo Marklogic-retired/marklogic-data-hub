@@ -103,6 +103,7 @@ declare %private function hent:fix-options($nodes as node()*)
     typeswitch($n)
       case element(search:options) return
         element { fn:node-name($n) } {
+          $n/namespace::node(),
           <search:constraint name="Collection">
             <search:collection/>
           </search:constraint>,
@@ -111,7 +112,10 @@ declare %private function hent:fix-options($nodes as node()*)
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element() return
-        element { fn:node-name($n) } { hent:fix-options(($n/@*, $n/node())) }
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          hent:fix-options(($n/@*, $n/node()))
+        }
       case text() return
         fn:replace($n, "es:", "*:")
       default return $n
