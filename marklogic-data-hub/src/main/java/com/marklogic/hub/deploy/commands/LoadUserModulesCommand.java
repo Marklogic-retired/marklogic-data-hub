@@ -262,12 +262,13 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
                             meta.getCollections().add("http://marklogic.com/entity-services/models");
                             documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                            EntityDeploymentUtil entityDeployUtil = EntityDeploymentUtil.getInstance();
                             for (Resource r : modules.getAssets()) {
                                 if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    EntityDeploymentUtil.getInstance().enqueueEntity("/entities/" + r.getFilename(), meta, handle);
+                                    entityDeployUtil.enqueueEntity("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }

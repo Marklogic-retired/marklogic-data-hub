@@ -53,9 +53,10 @@ public class LoadEntityModelsCommand extends AbstractCommand {
         
         DocumentWriteSet finalWriteSet = finalEntityDocMgr.newWriteSet();
         DocumentWriteSet stagingWriteSet = stagingEntityDocMgr.newWriteSet();
-        Set<String> entityURIs = EntityDeploymentUtil.getInstance().getEntityURIs();
+        EntityDeploymentUtil entityDeployUtil = EntityDeploymentUtil.getInstance();
+        Set<String> entityURIs = entityDeployUtil.getEntityURIs();
         for (String entityURI : entityURIs) {
-            WriteEvent writeEvent = EntityDeploymentUtil.getInstance().dequeueEntity(entityURI);
+            WriteEvent writeEvent = entityDeployUtil.dequeueEntity(entityURI);
         	finalWriteSet.add(entityURI, writeEvent.getMetadata(), writeEvent.getContent());
         	stagingWriteSet.add(entityURI, writeEvent.getMetadata(), writeEvent.getContent());
         }
@@ -63,6 +64,7 @@ public class LoadEntityModelsCommand extends AbstractCommand {
             finalEntityDocMgr.write(finalWriteSet);
             stagingEntityDocMgr.write(stagingWriteSet);
         }
+        entityDeployUtil.reset();
         finalClient.release();
         stagingClient.release();
     }

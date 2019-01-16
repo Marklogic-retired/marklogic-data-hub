@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * on modules deploy and inserting entity JSON models in the database after triggers are created.
  */
 public class EntityDeploymentUtil {
-	private static ConcurrentHashMap<String, DocumentMetadataHandle> metaMap = new ConcurrentHashMap<String, DocumentMetadataHandle>();
-	private static ConcurrentHashMap<String, JSONWriteHandle> contentMap = new ConcurrentHashMap<String, JSONWriteHandle>();
+	private ConcurrentHashMap<String, DocumentMetadataHandle> metaMap = new ConcurrentHashMap<String, DocumentMetadataHandle>();
+	private ConcurrentHashMap<String, JSONWriteHandle> contentMap = new ConcurrentHashMap<String, JSONWriteHandle>();
 
 	private static EntityDeploymentUtil instance;
     
@@ -41,22 +41,22 @@ public class EntityDeploymentUtil {
         return instance;
     }
 
-    public static Set<String> getEntityURIs() {
+    public Set<String> getEntityURIs() {
         return contentMap.keySet();
 	}
 	
-	public static void enqueueEntity(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
+	public void enqueueEntity(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
         metaMap.put(uri, meta);
 		contentMap.put(uri, content);
 	}
 
-	public static WriteEvent dequeueEntity(String uri) {
+	public WriteEvent dequeueEntity(String uri) {
 		DocumentMetadataHandle meta = metaMap.get(uri);
 		JSONWriteHandle content = contentMap.get(uri);
-		return getInstance().new WriteEventImpl(uri, meta, content);
+		return new WriteEventImpl(uri, meta, content);
 	}
 	
-	public static void reset() {
+	public void reset() {
 		metaMap.clear();
 		contentMap.clear();
 	}
