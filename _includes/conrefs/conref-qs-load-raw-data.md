@@ -3,7 +3,7 @@ To configure and run the `{{ include.jobname }}` input flow,
 {% assign pref="qs-4x-flows-load-data" %}
 {% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% endif %}
 {% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
-{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" %}
+{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" tab="  " %}
 
 1. Click **{{ include.jobname }}**{:.uilabel} under **Input Flows**{:.uilabel}.
 
@@ -36,4 +36,4 @@ To configure and run the `{{ include.jobname }}` input flow,
 
 QuickStart displays a completion notice.
 
-{% assign full-imgpath = include.imgpath | append: "qs-4x-flows-job-finished.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Job Finished notice" class="screenshot" %}
+{% assign full-imgpath = include.imgpath | append: "qs-4x-flows-job-finished.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Job Finished notice" class="screenshot" tab="  " %}

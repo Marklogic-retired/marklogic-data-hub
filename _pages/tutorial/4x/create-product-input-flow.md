@@ -21,7 +21,7 @@ In this exercise, we create an input flow for the `Product` entity. The input fl
 ### Result
 
 Your new flow appears under **Input Flows**{:.uilabel} in the left panel.
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-result-load-products.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Load Products in the list of input flows" class="screenshot" %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-result-load-Product.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Load Products in the list of input flows" class="img-small" tab="  " %}
 
 
 {% include prev-next-nav.html

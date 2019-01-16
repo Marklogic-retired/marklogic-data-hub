@@ -55,7 +55,7 @@ When installation is complete, the **Dashboard**{:.uilabel} page displays the th
 - **Final**{:.uilabel} contains harmonized data.
 - **Jobs**{:.uilabel} contains data about the jobs that are run and tracing data about each harmonized document.
 
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-dashboard-00.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-dashboard-00.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" tab="  " %}
 
 
 ## See Also

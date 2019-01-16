@@ -3,7 +3,7 @@ To create an entity named `{{ include.entityname }}`,
 {% assign pref="qs-4x-entities-create-complete" %}
 {% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% endif %}
 {% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
-{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" %}
+{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" tab="  " %}
 
 1. In QuickStart's navigation bar, click **Entities**{:.uimenuitem}.
 1. Click the wrench icon **<i class='fa fa-wrench'></i>**{:.circle-button} to open the entity tools control.

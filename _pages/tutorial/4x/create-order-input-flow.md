@@ -17,7 +17,7 @@ Next, we create an input flow for the `Order` entity, following the same procedu
 ### Result
 
 Your new flow appears under **Input Flows**{:.uilabel} in the left panel.
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-result-load-orders.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Load Orders in the list of input flows" class="screenshot" %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-flows-result-load-Order.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="Load Orders in the list of input flows" class="img-small" tab="  " %}
 
 
 {% include prev-next-nav.html

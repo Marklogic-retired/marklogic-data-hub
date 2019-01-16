@@ -3,7 +3,7 @@ To view the results of a previously run job,
 {% assign pref="qs-4x-jobs" %}
 {% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% endif %}
 {% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
-{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" %}
+{% include thumbnail.html imgfile=full-imgpath alttext="" class="screenshot" tab="  " %}
 
 {% if include.jobname %}{% assign var-jobname="`" | append: {{ include.jobname }} | append: "`" %}{% endif %}
 
