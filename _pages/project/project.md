@@ -4,7 +4,10 @@ title: Create a DHF Project
 permalink: /project/
 ---
 
-# Create a DHF Project
+# Prepare Your Project
+
+
+## Create a DHF Project
 
 The first step in using the Data Hub Framework is to create a DHF project, if you do not already have one. You can do this via the QuickStart UI or the Gradle plugin.
 
