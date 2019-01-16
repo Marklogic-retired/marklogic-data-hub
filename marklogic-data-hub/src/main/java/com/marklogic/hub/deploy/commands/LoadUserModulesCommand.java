@@ -41,7 +41,6 @@ import com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.util.EntityDeploymentUtil;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
@@ -93,7 +92,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     public LoadUserModulesCommand() {
         super();
-        setExecuteSortOrder(460);
+        setExecuteSortOrder(710);
     }
 
     private PropertiesModuleManager getModulesManager() {
@@ -219,6 +218,8 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         }
 
         //for now we'll use two different document managers
+        JSONDocumentManager finalEntityDocMgr = finalClient.newJSONDocumentManager();
+        JSONDocumentManager stagingEntityDocMgr = stagingClient.newJSONDocumentManager();
         JSONDocumentManager finalMappingDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager stagingMappingDocMgr = stagingClient.newJSONDocumentManager();
         DocumentWriteSet finalMappingDocumentWriteSet = finalMappingDocMgr.newWriteSet();
@@ -267,7 +268,10 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    EntityDeploymentUtil.getInstance().enqueueEntity("/entities/" + r.getFilename(), meta, handle);
+                                    finalEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
+
+                                    // Uncomment to send entity model to staging db as well
+                                    stagingEntityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
                                     modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }

@@ -36,7 +36,6 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.deploy.commands.LoadEntityModelsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
@@ -121,9 +120,6 @@ public class HubTestBase {
 
     @Autowired
     protected LoadUserModulesCommand loadUserModulesCommand;
-
-    @Autowired
-    protected LoadEntityModelsCommand loadEntityModelsCommand;
 
     @Autowired
     protected Scaffolding scaffolding;
@@ -888,8 +884,6 @@ public class HubTestBase {
         LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
         commands.add(loadModulesCommand);
 
-        // separate command to load entity models after triggers are deployed
-        commands.add(loadEntityModelsCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
