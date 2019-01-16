@@ -5,6 +5,7 @@ import {
   object,
   text,
   boolean,
+  number,
   withKnobs
 } from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
@@ -39,9 +40,9 @@ storiesOf('Components|Pagination', module)
                 </mlui-story-card>
            </mlui-dhf-theme>`,
     props: {
-      start: 1,
-      total: 120,
-      pageLength: 10,
+      start: number('start', 1),
+      total: number('total', 120),
+      pageLength: number('pageLength', 10),
       pageChanged: action('Page Changed')
     }
   }));

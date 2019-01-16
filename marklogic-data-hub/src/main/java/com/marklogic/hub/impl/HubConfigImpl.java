@@ -1721,6 +1721,7 @@ public class HubConfigImpl implements HubConfig
         config.setTriggersDatabaseName(finalTriggersDbName);
         config.setSchemasDatabaseName(finalSchemasDbName);
         config.setModulesDatabaseName(modulesDbName);
+        config.setContentDatabaseName(finalDbName);
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);

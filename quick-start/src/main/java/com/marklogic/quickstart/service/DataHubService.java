@@ -63,7 +63,7 @@ public class DataHubService {
             return true;
         } catch(Throwable e) {
             e.printStackTrace();
-            listener.onStatusChange(100, getStackTrace(e));
+            listener.onStatusChange(-1, getStackTrace(e));
         }
         return false;
     }

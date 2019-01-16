@@ -41,7 +41,16 @@ public class HubConfigTest extends HubTestBase {
         resetProperties();
         adminHubConfig.refreshProject();
     }
-    
+
+    @Test
+    public void testAppConfigDefaultProps() {
+        AppConfig config = adminHubConfig.getAppConfig();
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, config.getContentDatabaseName());
+        assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, config.getTriggersDatabaseName());
+        assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, config.getSchemasDatabaseName());
+        assertEquals(HubConfig.DEFAULT_MODULES_DB_NAME, config.getModulesDatabaseName());
+    }
+
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
         

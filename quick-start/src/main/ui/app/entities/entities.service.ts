@@ -1,8 +1,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { ProjectService } from '../projects/projects.service';
+import { ProjectService } from '../projects';
 import { Subject } from 'rxjs/Subject';
-import { SettingsService } from '../settings/settings.service';
+import { SettingsService } from '../settings';
 
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';
@@ -11,7 +11,7 @@ import { PropertyType } from './property.model';
 
 import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 
-import { EntityEditorComponent } from '../entity-modeler/entity-editor.component';
+import { EntityEditorComponent } from '../shared/components/';
 
 import { EntityConsts } from './entity-consts';
 

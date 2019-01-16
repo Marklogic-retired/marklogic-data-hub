@@ -155,7 +155,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/404",
             "/assets/**",
             "/shutdown",
-            "/main/ui/assets/img/**"
+            "/img/**",
+            "/favicon.ico"
         };
     }
 }

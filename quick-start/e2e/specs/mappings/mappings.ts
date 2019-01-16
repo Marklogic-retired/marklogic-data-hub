@@ -97,7 +97,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(browsePage.resultsUri()));
         let sourceDocUriWithBigSku =
           browsePage.resultsSpecificUri('/board_games.csv-0-10?doc=yes&type=foo').getText();
-        browser.get('http://localhost:8080/#/mappings');  
+        browser.get('http://localhost:8080/#/mappings');
         // update the map with specific SKU doc uri
         await appPage.mappingsTab.click();
         mappingsPage.isLoaded();
@@ -144,6 +144,12 @@ export default function() {
         browser.get('http://localhost:8080/#/flows');
         await appPage.flowsTab.click();
         flowPage.isLoaded();
+      });
+      
+      it ('should redeploy modules', async function() {
+        browser.get('http://localhost:8080/#/flows');
+        await flowPage.redeployButton.click();
+        browser.sleep(5000);
       });
 
       it('should create Harmonize SKU flow on Product', async function() {

@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -56,8 +56,11 @@ class CreateEntityTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateEntity").outcome == SUCCESS
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity").toFile()
-        entityDir.isDirectory() == true
+        File entityFile = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "my-new-entity.entity.json").toFile()
+        entityFile.isFile() == true
+        String entityActual = entityFile.getText('UTF-8')
+        String entityExpected = new File("src/test/resources/my-new-entity.entity.json").getText('UTF-8')
+        assert(entityActual == entityExpected)
     }
 
 }

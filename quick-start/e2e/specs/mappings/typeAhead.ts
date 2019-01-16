@@ -29,6 +29,7 @@ export default function() {
         browser.wait(EC.elementToBeClickable(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT')));
         expect(flowPage.getFlow('WorldBank', 'Load WorldBank', 'INPUT').isDisplayed()).
           toBe(true, 'Load WorldBank' + ' is not present');
+        browser.sleep(5000);
       });
 
       it ('should redeploy modules', async function() {
@@ -208,7 +209,7 @@ export default function() {
         await appPage.flowsTab.click();
         flowPage.isLoaded();
       });
-      
+
       it ('should redeploy modules', async function() {
         browser.get('http://localhost:8080/#/flows');
         await flowPage.redeployButton.click();

@@ -1,0 +1,68 @@
+<ng-template [ngIf]="flow">
+  <h3>
+    <i class="mdi mdi-looks"></i>
+    {{flow.entityName}} : {{flow.flowName}}
+  </h3>
+  <div class="run-options">
+    <h3>Run Flow</h3>
+    <div class="group-section slideDown" flex layout="column">
+      <div class="setting">
+        <mdl-textfield floating-label type="number"
+          label="Batch Size"
+          name="batchSize"
+          [(ngModel)]="settings.batchSize"
+          (input)="saveSettings()"
+          ></mdl-textfield>
+      </div>
+      <div class="setting">
+        <mdl-textfield floating-label type="number"
+          label="Thread Count"
+          name="threadCount"
+          [(ngModel)]="settings.threadCount"
+          (input)="saveSettings()"
+          ></mdl-textfield>
+      </div>
+      <!--
+      <div class="map">
+        <div class="map-heading">
+          <h4>Map</h4>
+        </div>
+        <div *ngIf="!hasDocs">
+          <span class="map-not-avail">No source documents available for mapping. To define a map, run an input flow to load documents.</span>
+        </div>
+        <div *ngIf="hasDocs">
+          <div *ngIf="!mapName">
+            <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple [routerLink]="['/map']"
+              [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">Create Map</mdl-button>
+          </div>
+          <div *ngIf="mapName">
+            <span class="map-saved">
+              <a [routerLink]="['/map']"
+                [queryParams]="{entityName: flow.entityName,flowName: flow.flowName}">{{flow.flowName}} Map</a>
+            </span>
+            <span class="map-delete">
+              <i class="fa fa-trash" (click)="deleteMap($event)"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+      -->
+      <app-select-key-values
+        [title]="keyValTitle"
+        [keyVals]="keyVals"
+        (onChange)="updateKayVals($event)"
+        (onRemove)="saveSettings()"
+      ></app-select-key-values>
+</div>
+    <div *ngIf="!validEntityCheck else noWhitespace">
+            <span class="has-whitespace">Whitespaces are not allowed in property names</span>
+            <div>
+              <button class="mdl-button mdl-js-button mdl-button--raised" disabled>Run Harmonize</button>
+            </div>
+          </div>
+
+        <ng-template #noWhitespace>
+          <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="runHarmonize()">Run Harmonize</mdl-button>
+        </ng-template>
+  </div>
+</ng-template>

@@ -21,8 +21,18 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-harmonize-flow-options',
-  templateUrl: './harmonize-flow-options.component.html',
-  styleUrls: ['./harmonize-flow-options.component.scss']
+  template: `
+    <app-harmonize-flow-options-ui
+      [flow]="flow"
+      [settings]="settings"
+      [keyVals]="keyVals"
+      [keyValTitle]="keyValTitle"
+      [validEntityCheck]="this.validEntityCheck()"
+      (keyValuesUpdate)="this.updateKayVals($event)"
+      (saveSetting)="this.saveSettings()"
+      (harmonize)="this.runHarmonize()"
+      ></app-harmonize-flow-options-ui>
+  `
 })
 export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
@@ -68,6 +78,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.docsLoaded(this.flow.entityName);
     this.saveSettings();
     this.validEntityCheck();
+    console.log('init flow options', this.flow);
   }
 
   ngOnChanges(changes: SimpleChanges) {

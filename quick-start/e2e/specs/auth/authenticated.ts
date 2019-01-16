@@ -59,8 +59,9 @@ export default function(tmpDir) {
         .toEqual('data-hub-ol-final-SCHEMAS');
       await loginPage.clickAdvancedSettings();
       await loginPage.clickRestoreDefaults();
+      browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(loginPage.restoreButton));
-      await loginPage.clickRestore();
+      await loginPage.restoreButton.click();
       await loginPage.clickAdvancedSettings();
       console.log('verify restored settings');
       expect(loginPage.stagingAppserverNameLabel.isDisplayed()).toBe(true);
@@ -194,18 +195,19 @@ export default function(tmpDir) {
       let originalTimeout;
       originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
       console.log('original jasmine timeout: ' + originalTimeout);
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = 370000;
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 420000;
       console.log('modified jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
       browser.wait(EC.presenceOf(loginPage.installProgress), 600000, 'install progress is not present');
       expect(loginPage.installProgress.isDisplayed()).toBe(true);
-      browser.wait(EC.visibilityOf(appPage.flowsTab), 600000, 'dashboard page is not displayed');
+      browser.wait(EC.elementToBeClickable(loginPage.finishedButton), 600000, 'finished button is not displayed');
       jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       console.log('changed back to original jasmine timeout: ' + jasmine.DEFAULT_TIMEOUT_INTERVAL);
     });
 
-    it ('should complete the install and go to the dashboard', function() {
-      console.log('refresh the browser');
-      browser.refresh();
+    it ('should complete the install and go to the dashboard',  async function() {
+      browser.driver.sleep(5000);
+      console.log('clicking Finished button');
+      await loginPage.clickFinished();
       console.log('loading dashboard page');
       dashboardPage.isLoaded();
       expect(appPage.flowsTab.isDisplayed()).toBe(true);
