@@ -5,9 +5,9 @@
 
 **Implemented enhancements:**
 
-- contentContext creates "undefined" object wrapper around objects in an array [\#1652](https://github.com/marklogic/marklogic-data-hub/issues/1652)
+- Better handling of nested objects as properties when property is not defined as a formal entity, array, or scalar value  [\#1652](https://github.com/marklogic/marklogic-data-hub/issues/1652)
 
-**Fixed bugs:**
+**Confirmed fixed bugs:**
 
 - mlFinalForestsPerHost is ignored [\#1596](https://github.com/marklogic/marklogic-data-hub/issues/1596)
 - mlDeployDatabases ignores config files under entity-config [\#1437](https://github.com/marklogic/marklogic-data-hub/issues/1437)
@@ -33,7 +33,7 @@
 
 **Merged pull requests:**
 
--  Revert Spring boot version upgrade for QS [\#1748](https://github.com/marklogic/marklogic-data-hub/pull/1748) ([akshaysonvane](https://github.com/akshaysonvane))
+- Revert Spring boot version upgrade for QS [\#1748](https://github.com/marklogic/marklogic-data-hub/pull/1748) ([akshaysonvane](https://github.com/akshaysonvane))
 - Es alignment - Fix failing tests [\#1747](https://github.com/marklogic/marklogic-data-hub/pull/1747) ([ryanjdew](https://github.com/ryanjdew))
 - Setting content db to final db [\#1744](https://github.com/marklogic/marklogic-data-hub/pull/1744) ([srinathgit](https://github.com/srinathgit))
 - Revert "Dhfprod 662 qs stuck \(\#1726\)" [\#1743](https://github.com/marklogic/marklogic-data-hub/pull/1743) ([akshaysonvane](https://github.com/akshaysonvane))
