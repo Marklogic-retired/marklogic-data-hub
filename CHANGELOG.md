@@ -1,5 +1,74 @@
 # Change Log
 
+## [v4.1.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.1.1) (2019-01-15)
+[Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/4.1.0...v4.1.1)
+
+**Implemented enhancements:**
+
+- contentContext creates "undefined" object wrapper around objects in an array [\#1652](https://github.com/marklogic/marklogic-data-hub/issues/1652)
+
+**Fixed bugs:**
+
+- mlFinalForestsPerHost is ignored [\#1596](https://github.com/marklogic/marklogic-data-hub/issues/1596)
+- mlDeployDatabases ignores config files under entity-config [\#1437](https://github.com/marklogic/marklogic-data-hub/issues/1437)
+- mlWatch doesn't load from src/main/ml-modules [\#1429](https://github.com/marklogic/marklogic-data-hub/issues/1429)
+- certificate-templates and external-security config not being deployed from ml-config [\#1384](https://github.com/marklogic/marklogic-data-hub/issues/1384)
+- DHF 4.0.0: mlDeployDatabases not deploying config from src/main/ml-config \(same for mlDeploySecurity\) [\#1382](https://github.com/marklogic/marklogic-data-hub/issues/1382)
+- DHF 4.0.0: mlDeploy fails \(in some conditions\) if project contains REST extension in ml-config [\#1378](https://github.com/marklogic/marklogic-data-hub/issues/1378)
+- Modules location and deployment in DHF400 [\#1362](https://github.com/marklogic/marklogic-data-hub/issues/1362)
+
+**Closed issues:**
+
+- hubinit task should create a "stub" gradle-local.properties [\#1736](https://github.com/marklogic/marklogic-data-hub/issues/1736)
+- Require workaround for deploying flexrep for data-hub-FINAL [\#1724](https://github.com/marklogic/marklogic-data-hub/issues/1724)
+- if you call your mapping "mapping", it doesn't work \(v4.1.0\) [\#1710](https://github.com/marklogic/marklogic-data-hub/issues/1710)
+- If you call your input flow "input", it doesn't work \(v4.1.0\) [\#1709](https://github.com/marklogic/marklogic-data-hub/issues/1709)
+- If you call your harmonize flow "harmonize", it doesn't work \(v4.1.0\) [\#1708](https://github.com/marklogic/marklogic-data-hub/issues/1708)
+- Adding server namespaces in final-server.json breaks redeployment [\#1631](https://github.com/marklogic/marklogic-data-hub/issues/1631)
+- mlLoadSchemas only loads to data-hub-staging-SCHEMAS  [\#1619](https://github.com/marklogic/marklogic-data-hub/issues/1619)
+- Tutorial Documentation: Wrong Product Ingest folder? [\#1578](https://github.com/marklogic/marklogic-data-hub/issues/1578)
+- \[WORKAROUND\] DHF does not deploy REST extensions [\#1574](https://github.com/marklogic/marklogic-data-hub/issues/1574)
+- Support for mlConfigPaths and mlModulePaths properties like ml-gradle has [\#1464](https://github.com/marklogic/marklogic-data-hub/issues/1464)
+- Traces not capturing error message or stack [\#1402](https://github.com/marklogic/marklogic-data-hub/issues/1402)
+
+**Merged pull requests:**
+
+-  Revert Spring boot version upgrade for QS [\#1748](https://github.com/marklogic/marklogic-data-hub/pull/1748) ([akshaysonvane](https://github.com/akshaysonvane))
+- Es alignment - Fix failing tests [\#1747](https://github.com/marklogic/marklogic-data-hub/pull/1747) ([ryanjdew](https://github.com/ryanjdew))
+- Setting content db to final db [\#1744](https://github.com/marklogic/marklogic-data-hub/pull/1744) ([srinathgit](https://github.com/srinathgit))
+- Revert "Dhfprod 662 qs stuck \(\#1726\)" [\#1743](https://github.com/marklogic/marklogic-data-hub/pull/1743) ([akshaysonvane](https://github.com/akshaysonvane))
+- Fix for DHFPROD-590 and DHFPROD-1698 [\#1741](https://github.com/marklogic/marklogic-data-hub/pull/1741) ([srinathgit](https://github.com/srinathgit))
+- Updating test for DHFPROD-1581 [\#1740](https://github.com/marklogic/marklogic-data-hub/pull/1740) ([bsrikan](https://github.com/bsrikan))
+- Incorporate referenced entity model definitions in same definitions [\#1739](https://github.com/marklogic/marklogic-data-hub/pull/1739) ([ryanjdew](https://github.com/ryanjdew))
+- Support for ES models in content creation [\#1738](https://github.com/marklogic/marklogic-data-hub/pull/1738) ([srinathgit](https://github.com/srinathgit))
+- fixing \#1736 [\#1737](https://github.com/marklogic/marklogic-data-hub/pull/1737) ([paxtonhare](https://github.com/paxtonhare))
+- Move entity management logic from QS to core lib [\#1735](https://github.com/marklogic/marklogic-data-hub/pull/1735) ([akshaysonvane](https://github.com/akshaysonvane))
+- Add triggers for entity model TDE generation [\#1734](https://github.com/marklogic/marklogic-data-hub/pull/1734) ([ryanjdew](https://github.com/ryanjdew))
+- gradle-dhs.properties for DHS integration tests [\#1731](https://github.com/marklogic/marklogic-data-hub/pull/1731) ([bsrikan](https://github.com/bsrikan))
+- add redeploy to stabilize [\#1730](https://github.com/marklogic/marklogic-data-hub/pull/1730) ([ayuwono](https://github.com/ayuwono))
+- GH \#1652 If $type is undefined, don't nest [\#1729](https://github.com/marklogic/marklogic-data-hub/pull/1729) ([ryanjdew](https://github.com/ryanjdew))
+- Fix for DHFPROD-1161 [\#1728](https://github.com/marklogic/marklogic-data-hub/pull/1728) ([clockworked247](https://github.com/clockworked247))
+- Send percentComplete as -1 in case of an error [\#1727](https://github.com/marklogic/marklogic-data-hub/pull/1727) ([akshaysonvane](https://github.com/akshaysonvane))
+- Dhfprod 662 qs stuck [\#1726](https://github.com/marklogic/marklogic-data-hub/pull/1726) ([akshaysonvane](https://github.com/akshaysonvane))
+- DHFPROD-1581 fix [\#1725](https://github.com/marklogic/marklogic-data-hub/pull/1725) ([srinathgit](https://github.com/srinathgit))
+- DHFPROD-490 - added invalid character check for entity title [\#1723](https://github.com/marklogic/marklogic-data-hub/pull/1723) ([brucean52](https://github.com/brucean52))
+-  Passing more than one options in input flows using mlcp [\#1722](https://github.com/marklogic/marklogic-data-hub/pull/1722) ([srinathgit](https://github.com/srinathgit))
+- Fix for DHFPROD-1663, 1664, 1665 [\#1719](https://github.com/marklogic/marklogic-data-hub/pull/1719) ([srinathgit](https://github.com/srinathgit))
+- DHFPROD-1526 - Beautify trace errors on QuickStart UI [\#1718](https://github.com/marklogic/marklogic-data-hub/pull/1718) ([brucean52](https://github.com/brucean52))
+- 1580 Added DHF4 project with test cases for verifying the deployment … [\#1714](https://github.com/marklogic/marklogic-data-hub/pull/1714) ([rjrudin](https://github.com/rjrudin))
+- Doc bug fixes [\#1707](https://github.com/marklogic/marklogic-data-hub/pull/1707) ([eltesoro-ml](https://github.com/eltesoro-ml))
+- DHFPROD-1658 fix mapping view [\#1706](https://github.com/marklogic/marklogic-data-hub/pull/1706) ([wooldridge](https://github.com/wooldridge))
+- Changed to SNAPSHOT version [\#1703](https://github.com/marklogic/marklogic-data-hub/pull/1703) ([akshaysonvane](https://github.com/akshaysonvane))
+- DHFPROD-1652 fixed broken links and other tweaks [\#1702](https://github.com/marklogic/marklogic-data-hub/pull/1702) ([eltesoro-ml](https://github.com/eltesoro-ml))
+- Bring develop up to date [\#1701](https://github.com/marklogic/marklogic-data-hub/pull/1701) ([aebadirad](https://github.com/aebadirad))
+- HubAppDeployer no longer loses functionality in SimpleAppDeployer [\#1700](https://github.com/marklogic/marklogic-data-hub/pull/1700) ([rjrudin](https://github.com/rjrudin))
+- MLUI-257: dashboard.component.ts [\#1699](https://github.com/marklogic/marklogic-data-hub/pull/1699) ([brucean52](https://github.com/brucean52))
+- Upgrade Spring boot ver for QS [\#1698](https://github.com/marklogic/marklogic-data-hub/pull/1698) ([akshaysonvane](https://github.com/akshaysonvane))
+- Integrate mlui-integration branch into develop [\#1696](https://github.com/marklogic/marklogic-data-hub/pull/1696) ([alexsmr](https://github.com/alexsmr))
+- MLUI-258: externaldef-dialog.component.ts [\#1685](https://github.com/marklogic/marklogic-data-hub/pull/1685) ([brucean52](https://github.com/brucean52))
+- Added DHF4 project with test cases for verifying the deployment [\#1640](https://github.com/marklogic/marklogic-data-hub/pull/1640) ([rjrudin](https://github.com/rjrudin))
+- DHS e2e example changes [\#1585](https://github.com/marklogic/marklogic-data-hub/pull/1585) ([bsrikan](https://github.com/bsrikan))
+
 ## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0) (2018-12-19)
 
 Bug
