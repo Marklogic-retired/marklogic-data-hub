@@ -46,3 +46,4 @@ In the QuickStart UI,
 
 Progress information is displayed while the Data Hub Framework is installed and your data hub is initialized.
   {% assign full-imgpath = include.imgpath | append: "qs-4x-install-wiz07-dhf-progress-30pc.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" tab="  " %}
+  
