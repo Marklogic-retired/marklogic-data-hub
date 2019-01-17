@@ -20,6 +20,7 @@ import com.marklogic.hub.ApplicationConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -32,50 +33,63 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-public class LoadUserModulesCommandTest extends HubTestBase {
-
-    public LoadUserModulesCommand loadUserModulesCommand;
+public class LoadUserArtifactsCommandTest extends HubTestBase {
 
     @BeforeEach
     public void setup() {
-        loadUserModulesCommand = new LoadUserModulesCommand();
-        loadUserModulesCommand.setHubConfig(getHubAdminConfig());
+        loadUserArtifactsCommand.setHubConfig(getHubAdminConfig());
     }
 
     @Test
     public void testIsEntityDir() {
         Path startPath = Paths.get("/tmp/my-project/plugins/entities");
         Path dir = Paths.get("/tmp/my-project/plugins/entities/my-entity");
-        assertTrue(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
         startPath = Paths.get("/tmp/my-project/plugins/entities");
         dir = Paths.get("/tmp/my-project/plugins/entities");
-        assertFalse(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
         startPath = Paths.get("/tmp/my-project/plugins/entities");
         dir = Paths.get("/tmp/my-project/plugins/entities/my-entity/input");
-        assertFalse(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
         startPath = Paths.get("/tmp/my-project/plugins/entities");
         dir = Paths.get("/tmp/my-project/plugins/entities/my-entity/input/my-input-flow");
-        assertFalse(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
+
+        startPath = Paths.get("/tmp/my-project/plugins/mappings");
+        dir = Paths.get("/tmp/my-project/plugins/mappings/my-mappings/input");
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
+
+        startPath = Paths.get("/tmp/my-project/plugins/mappings");
+        dir = Paths.get("/tmp/my-project/plugins/mappings/my-mappings");
+        assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
 
         // test windows paths
         startPath = Paths.get("c:\\temp\\my-project\\plugins\\entities");
         dir = Paths.get("c:\\temp\\my-project\\plugins\\entities\\my-entity");
-        assertTrue(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
         startPath = Paths.get("c:\\temp\\my-project\\plugins\\entities");
         dir = Paths.get("c:\\temp\\my-project\\plugins\\entities");
-        assertFalse(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
         startPath = Paths.get("c:\\temp\\my-project\\plugins\\entities");
         dir = Paths.get("c:\\temp\\my-project\\plugins\\entities\\my-entity\\input");
-        assertFalse(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
         startPath = Paths.get("c:\\temp\\my-project\\plugins\\entities");
         dir = Paths.get("c:\\temp\\my-project\\plugins\\entities\\my-entity\\input\\my-input-flow");
-        assertFalse(loadUserModulesCommand.isEntityDir(dir, startPath));
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
+
+        startPath = Paths.get("c:\\temp\\my-project\\plugins\\mappings");
+        dir = Paths.get("c:\\temp\\my-project\\plugins\\mappings\\my-mappings\\path1\\path2");
+        assertFalse(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
+
+        startPath = Paths.get("c:\\temp\\my-project\\plugins\\mappings");
+        dir = Paths.get("c:\\temp\\my-project\\plugins\\mappings\\my-mappings");
+        assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
     }
 }

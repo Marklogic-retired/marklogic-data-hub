@@ -119,7 +119,7 @@ public class DataHubInstallTest extends HubTestBase {
         HubConfig hubConfig = getHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        installUserModules(hubConfig, true);
+        installUserModules(hubConfig, false);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -216,6 +216,12 @@ public class DataHubInstallTest extends HubTestBase {
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-input-transform/assets/transform.xqy"));
+
+        /*
+        ** The following tests would fail as installUserModules() is run with "forceLoad" option set to true as the
+        * LoadUserModulesCommand runs first and the timestamp file it creates will be deleted by LoadUserArtifactsCommand
+        * as currently these 2 commands share the timestamp file
+         */
 
         String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
