@@ -76,9 +76,6 @@ middleware.init(swaggerMockDocPath, (err) => {
     ws: true, // proxy websockets
   }))
 
-  // can pre-define what to proxy - useful if we can pre-populate this with Swagger endpoints
-  // proxy(['/api', '/ajax', '/someotherpath'], {...})
-
   app.listen(8081, () => {
     console.log('Sample Mock API server is now running at http://localhost:8081');
   });
