@@ -233,6 +233,10 @@ export class FlowPage extends AppPage {
     return fs.readFileSync(filepath, 'utf8');
   }
 
+  get duplicateFlowNameAlertText() {
+    return element(by.className('alert-text'));
+  }
+
   /*
   * Run input flow -- this will replace the old runInputFlow that has hardcoded input folder
   * @entityName: entity name
