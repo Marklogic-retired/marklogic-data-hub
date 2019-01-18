@@ -161,6 +161,10 @@ export class EntityPage extends AppPage {
     return element(by.className('alert-text'));
   }
 
+  get errorInvalidTitleMessage() {
+    return element(by.cssContainingText('.alert-text', 'Only Alphanumeric characters are allowed in the Title'));
+  }
+
   get toast() {
     return element(by.css('mdl-snackbar-component'));
   }
