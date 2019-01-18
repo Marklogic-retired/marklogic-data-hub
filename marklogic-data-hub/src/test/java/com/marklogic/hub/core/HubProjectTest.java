@@ -166,7 +166,7 @@ public class HubProjectTest extends HubTestBase {
         adminHubConfig.refreshProject();
 
         dataHub.upgradeHub();
-        
+
         // Confirm that the directories have been backed up
         Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
                 .resolve("src/main/hub-internal-config-4.0.3").toFile().exists());

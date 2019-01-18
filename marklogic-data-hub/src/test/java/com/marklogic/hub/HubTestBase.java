@@ -37,6 +37,7 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.CodeFormat;
@@ -120,6 +121,9 @@ public class HubTestBase {
 
     @Autowired
     protected LoadUserModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    protected LoadUserArtifactsCommand loadUserArtifactsCommand;
 
     @Autowired
     protected Scaffolding scaffolding;
@@ -884,6 +888,8 @@ public class HubTestBase {
         LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
         commands.add(loadModulesCommand);
 
+        loadUserArtifactsCommand.setForceLoad(force);
+        commands.add(loadUserArtifactsCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);

@@ -24,6 +24,7 @@ import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.job.JobManager
 import com.marklogic.hub.scaffold.Scaffolding
@@ -60,6 +61,11 @@ abstract class HubTask extends DefaultTask {
     @Internal
     LoadUserModulesCommand getLoadUserModulesCommand() {
         getProject().property("loadUserModulesCommand")
+    }
+
+    @Internal
+    LoadUserArtifactsCommand getLoadUserArtifactsCommand() {
+        getProject().property("loadUserArtifactsCommand")
     }
 
     @Internal

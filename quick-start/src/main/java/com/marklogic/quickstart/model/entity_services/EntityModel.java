@@ -17,6 +17,7 @@
 package com.marklogic.quickstart.model.entity_services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -29,7 +30,7 @@ public class EntityModel extends JsonPojo {
     protected String filename;
     protected HubUIData hubUi;
     protected InfoType info;
-    protected DefinitionType definition;
+    protected DefinitionsType definitions;
     public List<FlowModel> inputFlows;
     public List<FlowModel> harmonizeFlows;
 
@@ -87,8 +88,9 @@ public class EntityModel extends JsonPojo {
      *     {@link DefinitionsType }
      *
      */
-    public DefinitionType getDefinition() {
-        return definition;
+    @JsonUnwrapped
+    public DefinitionsType getDefinitions() {
+        return definitions;
     }
 
     /**
@@ -99,8 +101,8 @@ public class EntityModel extends JsonPojo {
      *     {@link DefinitionsType }
      *
      */
-    public void setDefinition(DefinitionType value) {
-        this.definition = value;
+    public void setDefinitions(DefinitionsType value) {
+        this.definitions = value;
     }
 
     public List<FlowModel> getInputFlows() {
@@ -125,7 +127,8 @@ public class EntityModel extends JsonPojo {
         entityModel.setInfo(InfoType.fromJson(node.get("info")));
 
         String title = entityModel.getInfo().getTitle();
-        entityModel.setDefinition(DefinitionType.fromJson(title, node.get("definitions")));
+
+        entityModel.setDefinitions(DefinitionsType.fromJson(node.get("definitions")));
         return entityModel;
     }
 
@@ -133,9 +136,7 @@ public class EntityModel extends JsonPojo {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         writeObjectIf(node, "info", info);
 
-        ObjectNode definitions = JsonNodeFactory.instance.objectNode();
-        definitions.set(info.getTitle(), definition.toJson());
-        node.set("definitions",definitions);
+        node.set("definitions",definitions.toJson());
 
         return node;
     }

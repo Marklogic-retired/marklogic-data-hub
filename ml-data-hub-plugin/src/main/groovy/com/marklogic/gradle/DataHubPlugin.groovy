@@ -25,6 +25,7 @@ import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.impl.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -43,6 +44,7 @@ class DataHubPlugin implements Plugin<Project> {
     private HubConfigImpl hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
     private LoadUserModulesCommand loadUserModulesCommand
+    private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
     private FlowManagerImpl flowManager
     private EntityManagerImpl entityManager
@@ -118,6 +120,10 @@ class DataHubPlugin implements Plugin<Project> {
         // This isn't likely to be used, but it's being kept for regression purposes for now
         project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask, description: "Installs user modules from the plugins and src/main/entity-config directories.")
 
+        project.task("hubDeployUserArtifacts", group: deployGroup, type: DeployUserArtifactsTask,
+            description: "Installs user artifacts such as entities and mappings.")
+            .mustRunAfter(["hubDeployUserModules"])
+
         // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
         project.tasks.replace("mlWatch", HubWatchTask)
 
@@ -154,6 +160,7 @@ class DataHubPlugin implements Plugin<Project> {
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
+        loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
@@ -201,6 +208,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("scaffolding", scaffolding)
             project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
+            project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("entityManager", entityManager)

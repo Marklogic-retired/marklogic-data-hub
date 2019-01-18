@@ -16,9 +16,11 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.impl.EntityManagerImpl;
+import com.marklogic.hub.entity.HubEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Manages existing entities' MarkLogic Server database index settings and query options.
@@ -57,4 +59,10 @@ public interface EntityManager {
     boolean deployFinalQueryOptions();
 
     boolean deployStagingQueryOptions();
+
+    List<HubEntity> getEntities();
+
+    HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException;
+
+    void deleteEntity(String entity) throws IOException;
 }

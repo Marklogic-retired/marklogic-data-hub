@@ -91,6 +91,9 @@ public class DataHubImpl implements DataHub {
     private LoadUserModulesCommand loadUserModulesCommand;
 
     @Autowired
+    private LoadUserArtifactsCommand loadUserArtifactsCommand;
+
+    @Autowired
     private DeployHubAmpsCommand deployHubAmpsCommand;
     
     @Autowired
@@ -665,6 +668,7 @@ public class DataHubImpl implements DataHub {
         List<Command> commands = new ArrayList();
         commands.add(loadHubModulesCommand);
         commands.add(loadUserModulesCommand);
+        commands.add(loadUserArtifactsCommand);
 
         for (Command c : commandsMap.get("mlModuleCommands")) {
             if (c instanceof LoadModulesCommand) {
