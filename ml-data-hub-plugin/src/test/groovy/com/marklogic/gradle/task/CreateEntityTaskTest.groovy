@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle.task
 
+import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
@@ -29,6 +30,7 @@ class CreateEntityTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     def "create entity with no name"() {
@@ -48,16 +50,20 @@ class CreateEntityTaskTest extends BaseTest {
                 entityName=my-new-entity
             }
         """
-
+        getStagingDocCount("http://marklogic.com/entity-services/models") == 0
+        def modCount = getModulesDocCount();
         when:
-        def result = runTask('hubCreateEntity')
+        def result = runTask('hubCreateEntity', 'hubDeployUserArtifacts')
 
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateEntity").outcome == SUCCESS
+        result.task(":hubDeployUserArtifacts").outcome == SUCCESS
 
         File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity").toFile()
         entityDir.isDirectory() == true
+        getStagingDocCount("http://marklogic.com/entity-services/models") == 1
+        getModulesDocCount() == modCount
     }
 
 }

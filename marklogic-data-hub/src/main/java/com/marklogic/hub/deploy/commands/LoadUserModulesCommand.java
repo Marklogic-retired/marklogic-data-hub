@@ -21,44 +21,31 @@ import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.ext.modulesloader.Modules;
+import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.client.ext.modulesloader.ModulesManager;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
-import com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
-import com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.util.EntityDeploymentUtil;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
+
 
 /**
  * Extends ml-app-deployer's LoadModulesCommand, which expects to load from every path defined by "mlModulePaths", so
@@ -77,7 +64,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     @Autowired
     private FlowManager flowManager;
-
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -117,6 +103,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private AssetFileLoader getAssetFileLoader(AppConfig config, PropertiesModuleManager moduleManager) {
         AssetFileLoader assetFileLoader = new AssetFileLoader(hubConfig.newModulesDbClient(), moduleManager);
         assetFileLoader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
+        //Add file extensions to HubFileFilter.accept() to prevent mappings, entities  files being loaded to Modules db
         assetFileLoader.addFileFilter(new HubFileFilter());
         assetFileLoader.setPermissions(config.getModulePermissions());
         return assetFileLoader;
@@ -147,20 +134,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     boolean isHarmonizeRestDir(Path dir) {
         return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]harmonize[/\\\\].*");
-    }
-
-    boolean isEntityDir(Path dir, Path startPath) {
-        String dirStr = dir.toString();
-        String startPathStr = Pattern.quote(startPath.toString());
-        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
-        return dirStr.matches(regex);
-    }
-
-    boolean isMappingDir(Path dir, Path startPath) {
-        String dirStr = dir.toString();
-        String startPathStr = Pattern.quote(startPath.toString());
-        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
-        return dirStr.matches(regex);
     }
 
     boolean isFlowPropertiesFile(Path dir) {
@@ -218,12 +191,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
             modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
         }
 
-        //for now we'll use two different document managers
-        JSONDocumentManager finalMappingDocMgr = finalClient.newJSONDocumentManager();
-        JSONDocumentManager stagingMappingDocMgr = stagingClient.newJSONDocumentManager();
-        DocumentWriteSet finalMappingDocumentWriteSet = finalMappingDocMgr.newWriteSet();
-        DocumentWriteSet stagingMappingDocumentWriteSet = stagingMappingDocMgr.newWriteSet();
-
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
         Path dir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
@@ -257,23 +224,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                             modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
                             return FileVisitResult.SKIP_SUBTREE;
                         }
-                        else if (isEntityDir(dir, startPath.toAbsolutePath())) {
-                            Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
-                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                            meta.getCollections().add("http://marklogic.com/entity-services/models");
-                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                            EntityDeploymentUtil entityDeployUtil = EntityDeploymentUtil.getInstance();
-                            for (Resource r : modules.getAssets()) {
-                                if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                    InputStream inputStream = r.getInputStream();
-                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                    inputStream.close();
-                                    entityDeployUtil.enqueueEntity("/entities/" + r.getFilename(), meta, handle);
-                                    modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                }
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
                         else {
                             return FileVisitResult.CONTINUE;
                         }
@@ -293,57 +243,8 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                         return FileVisitResult.CONTINUE;
                     }
                 });
-
-                //now let's do the mappings path
-                if (mappingPath.toFile().exists()) {
-                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                            String currentDir = dir.normalize().toAbsolutePath().toString();
-
-                            if (isMappingDir(dir, mappingPath.toAbsolutePath())) {
-                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
-                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
-                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                                for (Resource r : modules.getAssets()) {
-                                    if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                        InputStream inputStream = r.getInputStream();
-                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                        inputStream.close();
-                                        finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                    }
-                                }
-                                return FileVisitResult.CONTINUE;
-                            } else {
-                                return FileVisitResult.CONTINUE;
-                            }
-                        }
-
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException {
-                            if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
-                                Flow flow = flowManager.getFlowFromProperties(file);
-                                StringHandle handle = new StringHandle(flow.serialize());
-                                handle.setFormat(Format.XML);
-                                documentWriteSet.add(flow.getFlowDbPath(), handle);
-                                modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-                }
-
                 if (documentWriteSet.size() > 0) {
                     documentManager.write(documentWriteSet);
-                }
-
-                if (stagingMappingDocumentWriteSet.size() > 0) {
-                    finalMappingDocMgr.write(finalMappingDocumentWriteSet);
-                    stagingMappingDocMgr.write(stagingMappingDocumentWriteSet);
                 }
             }
             threadPoolTaskExecutor.shutdown();
