@@ -69,6 +69,10 @@ class CreateEntityTaskTest extends BaseTest {
         String entityActual = entityFile.getText('UTF-8')
         String entityExpected = new File("src/test/resources/my-new-entity.entity.json").getText('UTF-8')
         assert(entityActual == entityExpected)
+        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity").toFile()
+        entityDir.isDirectory() == true
+        getStagingDocCount("http://marklogic.com/entity-services/models") == 1
+        getModulesDocCount() == modCount
     }
 
 }
