@@ -105,8 +105,8 @@ export default function() {
         browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
         expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
         await entityPage.confirmDialogYesButton.click();
-        browser.wait(EC.presenceOf(entityPage.toast));
-        browser.wait(EC.stalenessOf(entityPage.toast));
+        //browser.wait(EC.presenceOf(entityPage.toast));
+        //browser.wait(EC.stalenessOf(entityPage.toast));
       });
 
       it('should create a mapping for WorldBank entity', async function() {

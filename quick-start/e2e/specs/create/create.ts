@@ -97,8 +97,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       expect(entityPage.getEntityBox('Order').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
@@ -120,8 +120,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
@@ -166,8 +166,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should add properties to Order entity', async function() {
@@ -207,8 +207,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should verify properties to Product entity', async function() {
@@ -282,8 +282,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('removeEntity')));
       await entityPage.toolsButton.click();
       //remove removeEntity entity
@@ -466,8 +466,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should verify pii property to PII entity', async function() {
