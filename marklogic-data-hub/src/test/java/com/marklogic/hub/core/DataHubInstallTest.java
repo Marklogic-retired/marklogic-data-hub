@@ -20,6 +20,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.ApplicationConfig;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -89,6 +90,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallHubModules() throws IOException {
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
@@ -108,6 +110,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         File srcDir = new File(path);
