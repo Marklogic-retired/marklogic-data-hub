@@ -39,10 +39,4 @@ Next, follow these steps to add the "price" property:
 When you answer yes in the last step, QuickStart updates the index settings based on how you model your data. One of the benefits of modeling your data with Entity Services is that you can use the model to create database configuration options automatically.
 
 
-{% include prev-next-nav.html
-  prevtext="Browse and Understand the Product Data"
-  prevlink="/tutorial/4x/browse-understand-product-data/"
-  increl="tutorial-toc.md"
-  nexttext="Create a Product Source-to-Entity Mapping"
-  nextlink="/tutorial/4x/mapping-product-entity/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}

@@ -1,0 +1,50 @@
+<div class="navgrid">
+
+{% assign found=0 %}
+{% for item in site.data.tut4xtoc %}
+  {% if item.url %}
+    {% if page.permalink==item.url %}
+      {% if tempurl %}<span markdown="1" class="prevbtn">[**&#171;** **PREVIOUS:** {{ temptext }}]({{ site.baseurl }}{{ tempurl }})</span>{% endif %}
+      {% assign found=1 %}
+    {% else %}
+      {% if found==0 %}
+        {% assign tempurl=item.url %}
+        {% assign temptext=item.text %}
+      {% elsif found==1 %}
+        {% if item.url %}
+          <span markdown="1" class="nextbtn">[**NEXT:** {{ item.text }} **&#187;**]({{ site.baseurl }}{{ item.url }})</span>
+          {% assign found=2 %}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% else %}
+    {% for subitem in item.childPages %}
+      {% if subitem.url %}
+        {% if page.permalink==subitem.url %}
+          {% if tempurl %}<span markdown="1" class="prevbtn">[**&#171;** **PREVIOUS:** {{ temptext }}]({{ site.baseurl }}{{ tempurl }})</span>{% endif %}
+          {% assign found=1 %}
+        {% else %}
+          {% if found==0 %}
+            {% assign tempurl=subitem.url %}
+            {% assign temptext=subitem.text %}
+          {% elsif found==1 %}
+            {% if subitem.url %}
+              <span markdown="1" class="nextbtn">[**NEXT:** {{ subitem.text }} **&#187;**]({{ site.baseurl }}{{ subitem.url }})</span>
+              {% assign found=2 %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
+<span class="go2pagebtn">
+<details><summary><b>Go to page</b></summary>
+<div markdown="1">
+{% include_relative {{ include.gotopage }} class="tut-nav" %}
+</div>
+</details>
+</span>
+
+</div>

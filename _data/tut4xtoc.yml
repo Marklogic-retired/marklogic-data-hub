@@ -1,0 +1,44 @@
+- {
+    url: '/tutorial/4x/install/',
+    text: 'Install the Data Hub Framework',
+  }
+- {
+    text: 'Loading the Raw Data',
+    childPages: [
+      { url: '/tutorial/4x/create-entities/', text: 'Create the Entities' },
+      { url: '/tutorial/4x/create-input-flows/', text: 'Create the Input Flows' },
+      { url: '/tutorial/4x/config-run-input-flows/', text: 'Configure and Run the Input Flows' },
+    ]
+  }
+- {
+    text: 'Viewing Jobs, Traces, and Data',
+    childPages: [
+      { url: '/tutorial/4x/view-jobs/', text: 'View the Jobs Log' },
+      { url: '/tutorial/4x/view-traces/', text: 'View the Traces Log' },
+      { url: '/tutorial/4x/browse-data/', text: 'Browse the Data' },
+    ]
+  }
+- {
+    text: 'Harmonizing Data',
+    childPages: [
+      { url: '/tutorial/4x/modeling-product-entity/', text: 'Model the Product Entity' },
+      { url: '/tutorial/4x/mapping-product-entity/', text: 'Create a Product Source-to-Entity Mapping' },
+      { url: '/tutorial/4x/harmonizing-product-data/', text: 'Harmonize the Product Data' },
+    ]
+  }
+- {
+    text: 'Harmonizing Orders',
+    childPages: [
+      { url: '/tutorial/4x/modeling-order-entity/', text: 'Model the Order Entity' },
+      { url: '/tutorial/4x/harmonizing-order-data/', text: 'Harmonize the Order Data' },
+      { url: '/tutorial/4x/securing-pii/', text: 'Securing PII' },
+    ]
+  }
+- {
+    url: '/tutorial/4x/serve-data/',
+    text: 'Serve the Data Out of MarkLogic',
+  }
+- {
+    url: '/tutorial/4x/wrapping-up/',
+    text: 'Wrapping Up',
+  }

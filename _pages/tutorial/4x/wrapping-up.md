@@ -38,10 +38,4 @@ Have a question? Use the [#marklogic-dhf tag on StackOverflow](https://stackover
 Have a comment? Found a bug? [File an issue on Github](https://github.com/marklogic/marklogic-data-hub/issues/new) and we will see it.
 
 
-{% include prev-next-nav.html
-  prevtext="Serve the Data Out of MarkLogic"
-  prevlink="/tutorial/4x/serve-data/"
-  increl="tutorial-toc.md"
-  nexttext="Tutorials"
-  nextlink="/tutorial/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}
