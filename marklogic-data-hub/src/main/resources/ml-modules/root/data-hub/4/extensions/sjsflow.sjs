@@ -85,12 +85,32 @@ function post(context, params, input) {
       }
     }
 
+    let before = xdmp.elapsedTime();
     try {
       flowlib.runWriters(identifiers);
     }
     catch(ex) {
       xdmp.log(["error in runWriters", ex.toString()]);
       errors.push(ex);
+      const batchFailedError = {
+        "message": "BATCH-FAILED: " + ex.message,
+        "stack": "BATCH-FAILED: " + ex.stack,
+        "stackFrames": ex.stackFrames
+      };
+      const unmodifiedError = {
+        "message": ex.message,
+        "stack": ex.stack,
+        "stackFrames": ex.stackFrames
+      };
+      for (const identifier of identifiers) {
+        let err = batchFailedError;
+        // check if the error is connected to this specific document
+        if (Array.isArray(ex.data) && !!ex.data.find((val) => val === identifier)) {
+          // if so, pass the original error unmodified
+          err = unmodifiedError;
+        }
+        tracelib.errorTrace(flowlib.contextQueue[identifier], err, xdmp.elapsedTime().subtract(before));
+      }
     }
 
     resp = {

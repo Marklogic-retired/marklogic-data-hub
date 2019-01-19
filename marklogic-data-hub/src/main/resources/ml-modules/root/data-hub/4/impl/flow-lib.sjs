@@ -600,6 +600,7 @@ function runWriter(writerFunction, itemContext, identifier, envelope, options) {
   tracelib.setPluginLabel("writer", currentTrace);
   tracelib.resetPluginInput(currentTrace);
   tracelib.setPluginInput("envelope", envelope, currentTrace);
+  tracelib.getCurrentTraceSettings();
   let resp = null;
   try {
       // resp = xdmp.apply(writerFunction, identifier, envelope, options);
