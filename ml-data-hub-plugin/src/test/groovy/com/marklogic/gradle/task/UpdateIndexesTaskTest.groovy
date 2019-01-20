@@ -78,7 +78,7 @@ class UpdateIndexesTaskTest extends BaseTest {
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	}
 
-    @IgnoreIf({ hubConfig().getIsProvisionedEnvironment() })
+    @IgnoreIf({ System.getProperty('mlIsProvisionedEnvironment') })
 	def "test to deploy indexes to STAGING/FINAL/JOBS Database"() {
 		given:
 		int stagingIndexCount = getStagingRangePathIndexSize()
