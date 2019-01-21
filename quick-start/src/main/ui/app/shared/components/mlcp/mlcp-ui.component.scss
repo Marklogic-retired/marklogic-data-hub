@@ -84,10 +84,8 @@ input {
   font-size: 14px;
   line-height: 1.35;
 }
-::ng-deep {
-  .container {
-    width: 50%;
-  }
+:host::ng-deep .container{
+  width: auto;
 }
 
 @media (min-width: 960px) {
