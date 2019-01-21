@@ -24,21 +24,36 @@ After you create and test your project locally (your development environment) us
 
 DHF projects and DHS projects have different default configurations:
 
+<!--
 - mlFinalAppserverName
 
   |                      | DHF            | DHS            |
-  |----------------------|:--------------:|:--------------:|
+  |:--------------------:|:--------------:|:--------------:|
   | mlFinalAppserverName | data-hub-FINAL | data-hub-ADMIN |
   {:.table-b1gray}
+-->
 
-- Ports for app servers
+- Ports and load balancers for app servers
 
-  | app server  | DHF  | DHS  |
-  |-------------|:----:|:----:|
-  | staging     | 8010 | 8006 |
-  | final/admin | 8011 | 8004 |
-  | jobs        | 8013 | 8007 |
+  | app server | DHF  | DHS* | DHS load balancers |
+  |------------|:----:|:----:|:------------------:|
+  | staging    | 8010 | 8004 | curation           |
+  | final      | 8011 | 8010 | operations         |
+  | jobs       | 8013 | 8007 | analytics          |
   {:.table-b1gray}
+
+<!-- Port numbers provided by DHS. Which are for which load balancers?
+ODBC: 5432
+Manage: 8002
+REST: 8004
+Ingest: 8005
+Flows: 8006
+Jobs: 8007
+Analytics: 8008
+Operations: 8009
+Operations REST: 8010
+Analytics REST: 8011
+-->
 
 - Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 
@@ -85,11 +100,14 @@ If your endpoints are publicly available, you can use any machine that is set up
 
 ## Steps
 
-1. Copy your entire DHF project folder to the machine from which you will access the endpoints, and perform the following steps on that machine.
+1. Copy your entire DHF project directory to the machine from which you will access the endpoints, and perform the following steps on that machine.
     {% include note-in-list.html type="IMPORTANT" content="If your endpoints are private, this machine must be a bastion host." %}
-1. In the root of your DHF project folder, edit the `gradle.properties` file.
+1. Open a command-line window, and navigate to your DHF project root directory.
+1. At your project root, create a new `gradle-DHS.properties` file.
 
-    a. Replace the entire contents of `gradle.properties` with the following:
+    {% include note-in-list.html type="IMPORTANT" content="If you use a different name for the properties file, remember to update the value of the \"-PenvironmentName\" parameter in the Gradle commands in the following steps." %}
+
+    a. Copy the following to the new file:
 
         mlDHFVersion=YOUR_DHF_VERSION
         mlHost=YOUR_DHS_HOSTNAME
@@ -106,7 +124,7 @@ If your endpoints are publicly available, you can use any machine that is set up
         mlStagingDbName=data-hub-STAGING
         mlStagingForestsPerHost=1
 
-        mlFinalAppserverName=data-hub-ADMIN
+        mlFinalAppserverName=data-hub-FINAL
         mlFinalPort=8004
         mlFinalDbName=data-hub-FINAL
         mlFinalForestsPerHost=1
@@ -132,25 +150,19 @@ If your endpoints are publicly available, you can use any machine that is set up
       | Key | Replace the value with ... |
       | --- | --- |
       | mlDHFVersion | The [DHF version](https://github.com/marklogic/marklogic-data-hub/releases) to use in your production environment. |
-      | mlHost | The name of your DHS host. |
-      | mlUsername<br>mlPassword | The username and password of the user account assigned to the `flowOperator` role. |
+      | mlHost | The name of your DHS host. **Tip:** The host name is the domain name of the DHS final endpoint (remove 'http://' and the ':' and port number from the endpoint URL). |
+      | mlUsername<br>mlPassword | The username and password of the user account assigned to the `flowOperator` role. **Note:** This can also be a user account assigned to the `flowDeveloper` role if additional permissions are required. |
       | mlManageUsername<br>mlManagePassword | The username and password of the user account assigned to the `flowDeveloper` role. |
       | ml*DbName | The names of the DHS databases, if customized. |
       | ml*AppserverName | The names of the DHS app servers, if customized. |
       | ml*Port | The ports that your DHS project is configured with, if not the defaults. |
       {:.table-b1gray}
 1. Install the DHF core modules.
-    ```
-    gradle hubInstallModules
-    ```
+   {% include ostabs-run-gradle.html grtask="hubInstallModules -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. Install the plugins for your project.
-    ```
-    gradle mlLoadModules
-    ```
+   {% include ostabs-run-gradle.html grtask="mlLoadModules -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. If you are using DHF 4.0.2 or later, load the indexes in the DHS databases.
-    ```
-    gradlew mlUpdateIndexes
-    ```
+   {% include ostabs-run-gradle.html grtask="mlUpdateIndexes -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. [Run the input flows using MarkLogic Content Pump (MLCP).](https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/)
 
     You can also use any of the following:
@@ -159,26 +171,23 @@ If your endpoints are publicly available, you can use any machine that is set up
       - [Apache NiFi](https://developer.marklogic.com/code/apache-nifi) <!-- TODO: After DHFPROD-1542, replace this link. -->
 
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
-    {% include ostabs-in-list.html
-        linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\""
-        windows="gradlew.bat hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\""
-    %}
-
+   {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -PenvironmentName=\"gradle-DHS.properties\"" %}
 1. Verify that your documents are in the databases.
 
-    a. In the following URLs, replace `CURATION-ENDPOINT-URL` with the REST curation endpoint URL from your DHS administrator.
+    a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
 
-      | Final database   | `http://CURATION-ENDPOINT-URL:8004/v1/search?database=data-hub-FINAL`   |
-      | Staging database | `http://CURATION-ENDPOINT-URL:8004/v1/search?database=data-hub-STAGING` |
+      | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8010/v1/search`                |
+      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8004/v1/search?database=data-hub-STAGING` |
       {:.table-b1gray}
 
-      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8004/v1/search?database=data-hub-FINAL`
+      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search`
 
       {% include note-in-list.html type="TIP" content="Narrow the search to return fewer items. See [MarkLogic REST API Search](https://docs.marklogic.com/REST/GET/v1/search)." %}
 
     b. In a web browser, navigate to one of the URLs.
 
       The result is an XML list of all your documents in the database. Each item in the list includes the document's URI, path, and other metadata, as well as a preview of the content.
+{:.ol-steps}
 
 
 ## Remarks

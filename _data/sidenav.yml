@@ -6,6 +6,7 @@ main:
           { url: '/whats-new/', text: 'What''s New' },
           { url: '/release-notes/', text: 'Release Notes' },
           { absurl: 'https://github.com/marklogic/marklogic-data-hub/releases/', text: 'Download' },
+          { url: '/upgrade/', text: 'Upgrade' },
         ]
       }
     - {
@@ -37,6 +38,7 @@ main:
             childPages: [
               { url: '/tools/quickstart/', text: 'DHF QuickStart' },
               { url: '/tools/gradle-plugin/', text: 'DHF Gradle Plugin' },
+              # { url: '/tools/ml-gradle', text: 'ml-gradle Tasks for DHF' },
               { url: '/javadocs/', text: 'DHF Java Library' },
               { absurl: 'https://docs.marklogic.com/guide/mlcp/', text: 'MarkLogic Content Pump' },
               { absurl: 'https://docs.marklogic.com/REST/client/', text: 'REST Client API' },
@@ -66,20 +68,16 @@ main:
         text: 'Using DHF',
         childPages: [
           {
-            # url: '/project/',
-            text: 'Prepare' ,
+            url: '/project/',
+            text: 'Create Project' ,
             childPages: [
               {
-                url: '/project/create-project/',
-                text: 'Create Project',
-                childPages: [
-                  { url: '/project/quickstart/', text: 'Using QuickStart' },
-                  { url: '/project/gradle/', text: 'Using Gradle' },
-                ]
+                { url: '/project/quickstart/', text: 'Using QuickStart' },
+                { url: '/project/gradle/', text: 'Using Gradle' },
               },
               {
                 url: '/project/flow-tracing/',
-                text: 'Flow Tracing',
+                text: 'Configure Flow Tracing',
                 # childPages: [
                 #   { url: '/project/set-flow-tracing/', text: 'Set Up Flow Tracing' },
                 #   { url: '/project/view-traces/', text: 'View Traces' },
@@ -136,14 +134,15 @@ main:
               { absurl: 'https://docs.marklogic.com/guide/admin/odbc', text: 'Using ODBC' },
             ]
           },
-          {
-            url: '/upgrade/',
-            text: 'Upgrading DHF',
-            childPages: [
-              # { url: '/upgrade/upgrade-to-4_1_x/', text: 'Upgrade to DHF 4.1.x' },
-              { url: '/upgrade/upgrade-to-4_0_x/', text: 'Upgrade to DHF 4.0.x' },
-            ]
-          }
+          # {
+          #   url: '/maintain/',
+          #   text: 'Maintain',
+          #   childPages: [
+          #     { url: '/maintain/jobs-traces/', text: 'View Jobs Performed on Data Hub' },
+          #     { url: '/maintain/clear-database/', text: 'Clear Databases' },
+          #     { url: '/maintain/uninstall-data-hub/', text: 'Uninstall a Data Hub' },
+          #   ]
+          # },
         ]
       }
     - {

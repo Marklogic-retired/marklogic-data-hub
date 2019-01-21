@@ -1,0 +1,1 @@
+Deploying to the **MarkLogic Data Hub Service** requires DHF 4.0.1 or later and MarkLogic 9.0-7 or later. See the Data Hub Service [overview](https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/) and [documentation](https://cloudservices.marklogic.com/help?type=datahub&subtype=user).

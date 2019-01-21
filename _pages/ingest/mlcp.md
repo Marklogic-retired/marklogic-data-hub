@@ -8,7 +8,7 @@ permalink: /ingest/mlcp/
 
 [MarkLogic Content Pump (MLCP)](https://docs.marklogic.com/guide/ingestion/content-pump) is a standalone Java utility provided by MarkLogic. It provides a rich command-line interface for loading content into MarkLogic. You can read more in the [MLCP User Guide](https://docs.marklogic.com/guide/mlcp).
 
-{% include_relative prereq-createproject.html %}
+{% include_relative conref-prereq-createproject.md %}
 
 You can have MLCP invoke your input flow by including three parameters with your MLCP command:
 
@@ -23,16 +23,16 @@ You can have MLCP invoke your input flow by including three parameters with your
 
 The `-transform_module` and `-transform_namespace` parameters must be set to the following:
 
-<pre class="cmdline">
--transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy"
--transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform"
-</pre>
+  ```
+  -transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy"
+  -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform"
+  ```
 
 For SJS transforms use
 
-<pre class="cmdline">
--transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs"
-</pre>
+  ```
+  -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs"
+  ```
 
 The `-transform_param` parameter will contain a comma-delimited list of key=value pairs to be passed to the `mlcp-flow-transform.xqy` module. Here are the keys and a description of their values:
 
@@ -53,22 +53,22 @@ Since 2.0.0 you can [URL encode](https://en.wikipedia.org/wiki/Percent-encoding)
 
 This is how you would run a flow named "My Awesome Flow" for the entity named "YourEntityName".
 
-<pre class="cmdline">
-/path/to/mlcp import \
-... \
--transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy" \
--transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" \
--transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
-</pre>
+  ```
+  /path/to/mlcp import \
+  ... \
+  -transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy" \
+  -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" \
+  -transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
+  ```
 
 If your flow is implemented with JavaScript, use this module:
 
-<pre class="cmdline">
-/path/to/mlcp import \
-... \
--transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" \
--transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
-
+  ```
+  /path/to/mlcp import \
+  ... \
+  -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" \
+  -transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
+  ```
 
 ## See Also
 - [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp){:target="_blank"}

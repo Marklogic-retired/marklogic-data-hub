@@ -14,3 +14,5 @@ You can run input flows using any of the following:
 - [MLCP (MarkLogic Content Pump)](mlcp.md) - A command-line utility for ingesting content into MarkLogic. Use MLCP if you need to load data into MarkLogic via the command line.
 - [MarkLogic Java Client API](javaclientapi.md) - A Java API for interacting with MarkLogic. Use the Java Client API if you need to load data into MarkLogic from a Java program.
 - [MarkLogic REST Client API](rest.md) - MarkLogic exposes RESTful APIs for loading content. Use the REST Client API if you need to load data into MarkLogic from a non-Java application.
+
+After ingesting, you can [protect personally identifiable information]({{site.baseurl}}/govern/pii/) in your data.
