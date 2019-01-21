@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.impl;
 
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
@@ -31,6 +32,7 @@ public class Versions extends ResourceManager {
     private static final String NAME = "ml:hubversion";
 
     DatabaseClient stagingClient;
+    private AppConfig appConfig;
 
     @Autowired
     private HubConfig hubConfig;
@@ -42,10 +44,20 @@ public class Versions extends ResourceManager {
     /**
      * Needed for the Gradle tasks.
      *
-     * @param hubConfig
+     * @param hubConfig HubConfig
      */
     public Versions(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.appConfig = hubConfig.getAppConfig();
+    }
+
+    /**
+     * Needed for the Gradle tasks.
+     *
+     * @param appConfig AppConfig
+     */
+    public Versions(AppConfig appConfig) {
+        this.appConfig = appConfig;
     }
 
     public void setupClient() {
@@ -74,8 +86,11 @@ public class Versions extends ResourceManager {
     }
 
     public String getMarkLogicVersion() {
+        if (this.appConfig == null) {
+            this.appConfig = hubConfig.getAppConfig();
+        }
         // this call specifically needs to access marklogic without a known database
-        ServerEvaluationCall eval = hubConfig.getAppConfig().newAppServicesDatabaseClient(null).newServerEval();
+        ServerEvaluationCall eval = appConfig.newAppServicesDatabaseClient(null).newServerEval();
         String xqy = "xdmp:version()";
         EvalResultIterator result = eval.xquery(xqy).eval();
         if (result.hasNext()) {
