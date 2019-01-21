@@ -70,10 +70,4 @@ Your final Product mapping should look like the following:
 Next, we will create a harmonization flow that uses the mapping, and then run it to harmonize the product data.
 
 
-{% include prev-next-nav.html
-  prevtext="Model the Product Entity"
-  prevlink="/tutorial/4x/modeling-product-entity/"
-  increl="tutorial-toc.md"
-  nexttext="Harmonize the Product Data"
-  nextlink="/tutorial/4x/harmonizing-product-data/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}

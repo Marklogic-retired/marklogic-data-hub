@@ -183,10 +183,4 @@ Click a result to see the raw data.
 ![Harmonized Product Detail]({{site.baseurl}}/images/3x/harmonizing-order-data/harmonized-order-details.png){:.screenshot-border}
 
 
-{% include prev-next-nav.html
-  prevtext="Model the Order Entity"
-  prevlink="/tutorial/4x/modeling-order-entity/"
-  increl="tutorial-toc.md"
-  nexttext="Serve the Data Out of MarkLogic"
-  nextlink="/tutorial/4x/serve-data/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}

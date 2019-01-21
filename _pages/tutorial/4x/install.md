@@ -11,7 +11,7 @@ permalink: /tutorial/4x/install/
 ## 1 - Set Up the Project Directory and Sample Data
 
 1. Create a directory called `data-hub`. This directory will be referred to as "your project root" or simply "root".
-1. {% include conrefs/conref-qs-download.md warver=site.data.global.hub_version_4x %}
+1. {% include conrefs/conref-qs-4x-download.md warver=site.data.global.hub_version_4x %}
 1. Under your project root, create a directory called `input`.
 1. Download the [sample data .zip file]({{site.baseurl}}/data/store-data.zip){:target="_blank"}. Expand it, as needed.
 1. Copy the subdirectories (e.g., `campaigns`, `customers`, `orders`) inside the sample data .zip file into the `input` directory.
@@ -41,7 +41,11 @@ Your project directory structure will be as follows:
 
 ## 2 - Start QuickStart
 
-{% include conrefs/conref-qs-start.md imgpath=var-imgpath %}
+{% include conrefs/conref-qs-4x-start.md imgpath=var-imgpath %}
+
+### Result
+
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-install.png" %}{% include thumbnail.html imgfile=full-imgpath imgclass="img-results" alttext="" tab="  " %}
 
 
 ## 3 - Install the Data Hub
@@ -55,17 +59,11 @@ When installation is complete, the **Dashboard**{:.uilabel} page displays the th
 - **Final**{:.uilabel} contains harmonized data.
 - **Jobs**{:.uilabel} contains data about the jobs that are run and tracing data about each harmonized document.
 
-  {% assign full-imgpath = var-imgpath | append: "qs-4x-dashboard-00.png" %}{% include thumbnail.html imgfile=full-imgpath alttext="" tab="  " %}
+  {% assign full-imgpath = var-imgpath | append: "qs-4x-dashboard-00.png" %}{% include thumbnail.html imgfile=full-imgpath imgclass="img-results" alttext="" tab="  " %}
 
 
 ## See Also
-- [DHF Project Directory Structure](https://github.com/marklogic-community/marklogic-data-hub/wiki/Project-Directory-Structure)
+- [DHF Project Directory Structure]({{site.baseurl}}/refs/project-structure/)
 
 
-{% include prev-next-nav.html
-  prevtext="Overview"
-  prevlink="/tutorial/4x/"
-  increl="tutorial-toc.md"
-  nexttext="Create the Product Entity"
-  nextlink="/tutorial/4x/create-product-entity/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}

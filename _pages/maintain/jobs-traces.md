@@ -6,10 +6,19 @@ permalink: /maintain/jobs-traces/
 
 # Jobs and Traces
 
-MarkLogic tracks the jobs that are performed on your data hub. QuickStart's job viewer provides an easy way to view a job's results. This interface offers free-text search and faceted navigation to easily search for a specific job.
+MarkLogic tracks:
+- the jobs that are performed on your data hub (**Jobs**{:.uilabel})
+- the inputs into and outputs from each plugin that runs during a flow (**Traces**{:.uilabel})
+
+These **Jobs**{:.uilabel} and **Traces**{:.uilabel} logs can help troubleshoot errors in your flows.
+
 
 ## View Job Results
-{% include conrefs/conref-qs-jobs.md imgpath=var-imgpath entityname="" jobname=var-jobname %}
+{% include conrefs/conref-qs-4x-jobs.md imgpath=var-imgpath entityname="" jobname=var-jobname %}
+
+
+## View Traces
+{% include conrefs/conref-qs-4x-traces.md imgpath=var-imgpath entityname="" %}
 
 
 <!--
