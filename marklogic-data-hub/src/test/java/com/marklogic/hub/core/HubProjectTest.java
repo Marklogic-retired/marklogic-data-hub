@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ public class HubProjectTest extends HubTestBase {
 
     @BeforeEach
     public void setupDir() {
-        deleteProjectDir();      
+        deleteProjectDir();
     }
 
     @AfterEach
@@ -152,10 +152,10 @@ public class HubProjectTest extends HubTestBase {
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
     }
-    
+
     @Test
     public void upgrade300To403ToCurrentVersion() throws Exception {
-        Assumptions.assumeFalse((isCertAuth() || isSslRun())); 
+        Assumptions.assumeFalse((isCertAuth() || isSslRun() || getHubAdminConfig().getIsProvisionedEnvironment()));
         final String projectPath = "build/tmp/upgrade-projects/dhf403from300";
         final File projectDir = Paths.get(projectPath).toFile();
 
@@ -175,6 +175,6 @@ public class HubProjectTest extends HubTestBase {
                 .resolve("src/main/hub-internal-config-4.0.3/databases/final-database.json").toFile().exists());
         Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
                 .resolve("src/main/ml-config-4.0.3").toFile().exists());
-        
+
     }
 }
