@@ -64,5 +64,3 @@
    imgclass="img-50"
 %}
 {:.ol-steps}
-
-
