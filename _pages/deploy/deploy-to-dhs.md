@@ -178,8 +178,8 @@ If your endpoints are publicly available, you can use any machine that is set up
 
     a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
 
-      | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8010/v1/search`                |
-      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8004/v1/search?database=data-hub-STAGING` |
+      | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8010/v1/search` |
+      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8006/v1/search`   |
       {:.table-b1gray}
 
       **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search`
