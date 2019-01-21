@@ -19,7 +19,7 @@
         <div class="group-section slideDown" [ngClass]="getSectionClass(group.category)">
           <div class="setting" *ngFor="let setting of group.settings">
             <mdl-switch
-              [mdl-tooltip]="switchTooltip"
+              [mdl-tooltip]="tooltip"
               mdl-tooltip-position="right"
               [attr.id]="setting.field"
               class="primary-color"
@@ -28,13 +28,9 @@
               (change)="handleValueChanged(setting, $event)">
                 {{setting.label}}
             </mdl-switch>
-            <mdl-tooltip #switchTooltip="mdlTooltip">
-              {{setting.description}}
-            </mdl-tooltip>
-
             <label *ngIf="isText(setting.type)">{{setting.label}}</label>
             <input 
-              [mdl-tooltip]="inputTooltip"
+              [mdl-tooltip]="tooltip"
               mdl-tooltip-position="right"
               type="search" 
               [disabled]="setting.readOnly" 
@@ -42,12 +38,8 @@
               [(ngModel)]="setting.value" 
               *ngIf="isText(setting.type)" 
               (input)="handleValueChanged(setting, $event.target.value)">
-              <mdl-tooltip #inputTooltip="mdlTooltip">
-                {{setting.description}}
-              </mdl-tooltip>
-
             <app-custom-select
-              [mdl-tooltip]="selectTooltip"
+              [mdl-tooltip]="tooltip"
               mdl-tooltip-position="right"
               [attr.id]="setting.field"
               [labelText]="setting.label"
@@ -57,7 +49,7 @@
               *ngIf="setting.type === 'type'"
               label="label"
               value="value"></app-custom-select>
-              <mdl-tooltip #selectTooltip="mdlTooltip">
+              <mdl-tooltip #tooltip="mdlTooltip">
                 {{setting.description}}
               </mdl-tooltip>
           </div>
