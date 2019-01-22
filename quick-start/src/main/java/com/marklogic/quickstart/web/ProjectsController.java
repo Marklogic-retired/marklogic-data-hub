@@ -19,6 +19,7 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.annotations.Since;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -99,6 +100,10 @@ public class ProjectsController {
         try {
             hubConfig = om.readerForUpdating(hubConfig).readValue(hubConfigDelta);
             hubConfig.createProject(project.path);
+            /* Since we access 'hubConfig' when initProject() is called, it must be populated with properties,
+               so refreshProject() has to be called, otherwise NPE will be thrown
+             */
+            hubConfig.refreshProject();
             dataHub.initProject();
             return project;
         } catch (Exception e) {
