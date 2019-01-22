@@ -80,7 +80,11 @@ public interface HubProject {
      * Gets the path for the hub/staging schemas directory
      *
      * @return the path for the hub/staging schemas directory
+     * @deprecated Since 4.2.0: users should use the ml-gradle supported <project_dir>/src/main/ml-config/databases/
+     * <STAGING_SCHEMAS_DB_NAME>/schemas path to deploy schemas
+     *
      */
+    @Deprecated
     Path getHubSchemasDir();
 
     /**

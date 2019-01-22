@@ -3,12 +3,14 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class UpgradeProjectTest {
 
+    private Map<String, String> createMap() {
+        Map<String,String> myMap = new HashMap<>();
+        myMap.put("%%mlStagingSchemasDbName%%", HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        return myMap;
+    }
+
     @Test
     public void upgrade300ToCurrentVersion() throws Exception {
         final String projectPath = "build/tmp/upgrade-projects/dhf300";
@@ -28,8 +36,8 @@ public class UpgradeProjectTest {
 
         HubProjectImpl hubProject = new HubProjectImpl();
         hubProject.createProject(projectPath);
-        // The tokens map doesn't seem to matter for what we're testing here
-        hubProject.init(new HashMap<>());
+        // We require %%mlStagingSchemasDbName%% in the map for test. In real scenarios, its value will always be set.
+        hubProject.init(createMap());
         hubProject.upgradeProject();
 
         File srcDir = new File(projectDir, "src");
@@ -53,8 +61,8 @@ public class UpgradeProjectTest {
 
         HubProjectImpl hubProject = new HubProjectImpl();
         hubProject.createProject(projectPath);
-        // The tokens map doesn't seem to matter for what we're testing here
-        hubProject.init(new HashMap<>());
+        // We require %%mlStagingSchemasDbName%% in the map for test. In real scenarios, its value will always be set.
+        hubProject.init(createMap());
         hubProject.upgradeProject();
 
         File srcDir = new File(projectDir, "src");
@@ -71,6 +79,9 @@ public class UpgradeProjectTest {
 
     private void verifyInternalDatabases(File internalConfigDir) {
         File databasesDir = new File(internalConfigDir, "databases");
+
+        // old schemas doesn't exist
+        assertFalse(internalConfigDir.toPath().resolve("schemas").toFile().exists());
 
         File jobFile = new File(databasesDir, "job-database.json");
         assertTrue(jobFile.exists());
@@ -128,6 +139,8 @@ public class UpgradeProjectTest {
 
     private void verifyUserDatabases(File configDir) {
         File databasesDir = new File(configDir, "databases");
+        // new schemas path exists
+        assertTrue(databasesDir.toPath().resolve(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME).resolve("schemas").toFile().exists());
 
         File finalFile = new File(databasesDir, "final-database.json");
         assertTrue(finalFile.exists());

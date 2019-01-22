@@ -61,6 +61,7 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
+    private Path stagingSchemasDir;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -105,7 +106,12 @@ public class HubProjectImpl implements HubProject {
         return getHubConfigDir().resolve("security");
     }
 
-    @Override public Path getHubSchemasDir() { return getHubConfigDir().resolve("schemas"); }
+    @Override
+    public Path getHubSchemasDir() { return this.stagingSchemasDir; }
+
+    private void setHubSchemasDir(Path stagingSchemasDir) {
+        this.stagingSchemasDir = stagingSchemasDir ;
+    }
 
     @Override public Path getHubTriggersDir() {
     	return getHubConfigDir().resolve("triggers"); 
@@ -247,6 +253,7 @@ public class HubProjectImpl implements HubProject {
         getUserDatabaseDir().toFile().mkdirs();
 
         //scaffold schemas
+        setHubSchemasDir(getUserDatabaseDir().resolve(customTokens.get("%%mlStagingSchemasDbName%%")).resolve("schemas"));
         getHubSchemasDir().toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
 
