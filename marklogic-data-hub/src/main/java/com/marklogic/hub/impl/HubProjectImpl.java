@@ -27,6 +27,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -61,7 +63,9 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
-    private Path stagingSchemasDir;
+
+    @Autowired @Lazy
+    private HubConfigImpl hubConfig;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -107,11 +111,7 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getHubSchemasDir() { return this.stagingSchemasDir; }
-
-    private void setHubSchemasDir(Path stagingSchemasDir) {
-        this.stagingSchemasDir = stagingSchemasDir ;
-    }
+    public Path getHubSchemasDir() { return getUserDatabaseDir().resolve(hubConfig.getStagingSchemasDbName()).resolve("schemas"); }
 
     @Override public Path getHubTriggersDir() {
     	return getHubConfigDir().resolve("triggers"); 
@@ -253,7 +253,6 @@ public class HubProjectImpl implements HubProject {
         getUserDatabaseDir().toFile().mkdirs();
 
         //scaffold schemas
-        setHubSchemasDir(getUserDatabaseDir().resolve(customTokens.get("%%mlStagingSchemasDbName%%")).resolve("schemas"));
         getHubSchemasDir().toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
 
