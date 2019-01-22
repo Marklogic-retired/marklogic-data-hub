@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
-public interface FlowFinishedListener {
-    /**
-     * Listens for when the flow is complete
-     */
-    void onFlowFinished();
+public enum DataFormat {
+    XML("xml"), JSON("json");
+
+    private String type;
+    DataFormat(String type) {
+        this.type = type;
+    }
+
+    public static DataFormat getDataFormat(String type) {
+        for (DataFormat dataFormat : DataFormat.values()) {
+            if (dataFormat.toString().equals(type)) {
+                return dataFormat;
+            }
+        }
+        return null;
+    }
+
+    public String toString() {
+        return type;
+    }
 }

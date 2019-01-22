@@ -15,9 +15,9 @@
  */
 package com.marklogic.hub.util;
 
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
 
 public interface ComboListener {
     void onCombo(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs);

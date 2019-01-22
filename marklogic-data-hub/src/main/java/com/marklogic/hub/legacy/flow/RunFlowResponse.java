@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
-public interface FlowItemFailureListener {
-    /**
-     * Listener interface for each flow item that failed
-     * @param jobId - the id of the job as a string
-     * @param itemId - the id of the item as a string
-     */
-    void processFailure(String jobId, String itemId);
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
+
+public class RunFlowResponse {
+    public long totalCount = 0;
+    public long errorCount = 0;
+    public List<String> completedItems;
+    public List<String> failedItems;
+    public List<JsonNode> errors;
+
+    public String toString() {
+        return "{totalCount: " + totalCount + ", errorCount: " + errorCount + ", completedItems: " + completedItems.size() + ", failedItems: " + failedItems.size() + ", errors: " + errors.size() + "}";
+    }
 }

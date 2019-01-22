@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow.impl;
+package com.marklogic.hub.legacy.flow.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,10 +30,10 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.flow.*;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.legacy.flow.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

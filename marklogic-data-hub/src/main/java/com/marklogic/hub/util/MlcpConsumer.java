@@ -15,7 +15,7 @@
  */
 package com.marklogic.hub.util;
 
-import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.legacy.flow.FlowStatusListener;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
