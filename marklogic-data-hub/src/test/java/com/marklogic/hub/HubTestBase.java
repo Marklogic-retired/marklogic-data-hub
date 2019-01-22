@@ -206,6 +206,10 @@ public class HubTestBase {
         //dataHub.initProject();
         createProjectDir();
         adminHubConfig.createProject(PROJECT_PATH);
+        /* Since we access 'hubConfig' when initProject() is called, it must be populated with properties,
+           so refreshProject() has to be called, otherwise NPE will be thrown
+        */
+        adminHubConfig.refreshProject();
         if(! project.isInitialized()) {
             adminHubConfig.initHubProject();
         }
