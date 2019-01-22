@@ -15,7 +15,7 @@
  */
 package com.marklogic.hub.main.impl;
 
-import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.main.MainPlugin;
 
 public class MainPluginImpl implements MainPlugin {

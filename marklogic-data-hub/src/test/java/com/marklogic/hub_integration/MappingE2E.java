@@ -34,6 +34,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;

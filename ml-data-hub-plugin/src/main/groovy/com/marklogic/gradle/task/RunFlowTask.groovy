@@ -25,7 +25,11 @@ import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
-import com.marklogic.hub.flow.*
+import com.marklogic.hub.legacy.flow.Flow
+import com.marklogic.hub.legacy.flow.FlowItemCompleteListener
+import com.marklogic.hub.legacy.flow.FlowItemFailureListener
+import com.marklogic.hub.legacy.flow.FlowRunner
+import com.marklogic.hub.legacy.flow.FlowType
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException

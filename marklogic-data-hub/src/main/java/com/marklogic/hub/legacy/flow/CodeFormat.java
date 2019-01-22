@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
-public enum DataFormat {
-    XML("xml"), JSON("json");
+public enum CodeFormat {
+    JAVASCRIPT("sjs"), XQUERY("xqy");
 
-    private String type;
-    DataFormat(String type) {
-        this.type = type;
+    private String name;
+
+    CodeFormat(String name) {
+        this.name = name;
     }
 
-    public static DataFormat getDataFormat(String type) {
-        for (DataFormat dataFormat : DataFormat.values()) {
-            if (dataFormat.toString().equals(type)) {
-                return dataFormat;
+    public static CodeFormat getCodeFormat(String format) {
+        for (CodeFormat codeFormat : CodeFormat.values()) {
+            if (codeFormat.toString().equals(format)) {
+                return codeFormat;
             }
         }
         return null;
     }
 
     public String toString() {
-        return type;
+        return name;
     }
 }

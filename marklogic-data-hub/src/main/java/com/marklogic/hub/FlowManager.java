@@ -16,10 +16,10 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.legacy.flow.Flow;
+import com.marklogic.hub.legacy.flow.FlowRunner;
+import com.marklogic.hub.legacy.flow.FlowType;
+import com.marklogic.hub.legacy.flow.impl.FlowImpl;
 import org.w3c.dom.Element;
 
 import java.nio.file.Path;

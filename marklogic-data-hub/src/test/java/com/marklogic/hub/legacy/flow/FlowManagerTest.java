@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.io.DOMHandle;
@@ -27,6 +27,7 @@ import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -241,11 +242,11 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(FlowType.HARMONIZE, flow1.getType());
 
         Collector c = flow1.getCollector();
-        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        Assertions.assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
         assertEquals("/entities/test/harmonize/my-test-flow1/collector.xqy", c.getModule());
 
         MainPlugin main = flow1.getMain();
-        assertEquals(CodeFormat.XQUERY, main.getCodeFormat());
+        Assertions.assertEquals(CodeFormat.XQUERY, main.getCodeFormat());
         assertEquals("/entities/test/harmonize/my-test-flow1/main.xqy", main.getModule());
 
         // flow 2
@@ -257,11 +258,11 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(FlowType.HARMONIZE, flow2.getType());
 
         c = flow2.getCollector();
-        assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
+        Assertions.assertEquals(CodeFormat.XQUERY, c.getCodeFormat());
         assertEquals("/entities/test/harmonize/my-test-flow1/collector.xqy", c.getModule());
 
         main = flow2.getMain();
-        assertEquals(CodeFormat.XQUERY, main.getCodeFormat());
+        Assertions.assertEquals(CodeFormat.XQUERY, main.getCodeFormat());
         assertEquals("/entities/test/harmonize/my-test-flow1/main.xqy", main.getModule());
     }
 
@@ -277,11 +278,11 @@ public class FlowManagerTest extends HubTestBase {
         assertEquals(FlowType.HARMONIZE, flow1.getType());
 
         Collector c = flow1.getCollector();
-        assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
+        Assertions.assertEquals(CodeFormat.JAVASCRIPT, c.getCodeFormat());
         assertEquals("/entities/test/harmonize/my-test-flow1/collector.sjs", c.getModule());
 
         MainPlugin main = flow1.getMain();
-        assertEquals(CodeFormat.JAVASCRIPT, main.getCodeFormat());
+        Assertions.assertEquals(CodeFormat.JAVASCRIPT, main.getCodeFormat());
         assertEquals("/entities/test/harmonize/my-test-flow1/main.sjs", main.getModule());
     }
 

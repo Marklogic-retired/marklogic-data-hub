@@ -15,7 +15,7 @@
  */
 package com.marklogic.hub.main;
 
-import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.CodeFormat;
 
 /**
  * Interface to the in-memory representation of the main plugin module (main.sjs or main.xqy)

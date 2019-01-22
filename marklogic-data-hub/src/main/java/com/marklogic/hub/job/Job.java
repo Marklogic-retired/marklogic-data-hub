@@ -16,7 +16,7 @@
 package com.marklogic.hub.job;
 
 import com.marklogic.client.pojo.annotation.Id;
-import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.legacy.flow.Flow;
 
 import java.util.ArrayList;
 import java.util.Date;

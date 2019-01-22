@@ -16,13 +16,11 @@
 
 package com.marklogic.hub.scaffold;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.impl.ScaffoldingImpl;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
 
 import java.nio.file.Path;
 import java.util.List;

@@ -19,9 +19,9 @@ package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
-import com.marklogic.hub.flow.CodeFormat
-import com.marklogic.hub.flow.DataFormat
-import com.marklogic.hub.flow.FlowType
+import com.marklogic.hub.legacy.flow.CodeFormat
+import com.marklogic.hub.legacy.flow.DataFormat
+import com.marklogic.hub.legacy.flow.FlowType
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.tasks.Input
 
