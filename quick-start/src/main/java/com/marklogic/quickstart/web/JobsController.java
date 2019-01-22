@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
  */
 package com.marklogic.quickstart.web;
 
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDeleteResponse;
-import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.model.JobExport;
 import com.marklogic.quickstart.model.JobQuery;
@@ -38,15 +38,18 @@ import java.io.*;
 
 @Controller
 @RequestMapping(value="/api/jobs")
-public class JobsController extends EnvironmentAware {
+public class JobsController {
 
     @Autowired
     JobService jobService;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     JobService jobManager() {
-        return new JobService(envConfig().getJobClient());
+        return new JobService(hubConfig.newJobDbClient());
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})

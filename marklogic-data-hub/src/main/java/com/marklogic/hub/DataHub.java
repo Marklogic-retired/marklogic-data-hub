@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package com.marklogic.hub;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
-import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.util.Versions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +29,6 @@ import java.util.List;
  * Includes installs, version validation, updates, and the init of a DHF project.
  */
 public interface DataHub {
-
-    static DataHub create(HubConfig hubConfig) {
-        return new DataHubImpl(hubConfig);
-    }
 
     /**
      * Clears the database of all documents
@@ -77,16 +71,6 @@ public interface DataHub {
     HashMap runPreInstallCheck();
 
     /**
-     * Runs the pre-install check for the datahub populating the object
-     * with variables necessary to perform the install.
-     * This is used for running install.
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param versions - the versions that the check is to be run against
-     * @return - a hashmap of the results of the preinstall check
-     */
-    HashMap runPreInstallCheck(Versions versions);
-
-    /**
      * Installs the data hub configuration and server-side config files into MarkLogic
      * Must be run as a user with sufficient privileges to install a data hub.
      */
@@ -106,13 +90,13 @@ public interface DataHub {
     void updateIndexes();
 
     /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
      * Must be run as a user with sufficient privileges to install a data hub.
      */
     void uninstall();
 
     /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
+     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
      * Must be run as a user with sufficient privileges to install a data hub.
      * @param listener - the callback method to receive status updates
      */

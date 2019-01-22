@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ class CreateMappingTask extends HubTask {
         if (mappingName == null) {
             throw new MappingNameRequiredException()
         }
-        def projectDir = getHubConfig().projectDir
+        def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "mappingName: " + mappingName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
+        Scaffolding scaffolding = getScaffolding()
         scaffolding.createMappingDir(mappingName)
-        MappingManager mappingManager = MappingManager.getMappingManager(hubConfig)
+        MappingManager mappingManager = getMappingManager()
         def mapping = mappingManager.createMapping(mappingName)
         mappingManager.saveMapping(mapping)
     }

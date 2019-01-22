@@ -7,11 +7,11 @@ import { AuthService } from './auth';
 
 import { EnvironmentService } from './environment';
 
-import { JobService } from './jobs/jobs.service';
+import { JobService } from './jobs';
 
-import { ProjectService } from './projects/projects.service';
+import { ProjectService } from './projects';
 
-import { STOMPService } from './stomp/stomp.service';
+import { STOMPService } from './stomp';
 
 import { TraceService } from './traces/trace.service';
 
@@ -27,13 +27,17 @@ declare var window: CustomWindow;
 @Component({
   selector: 'app-root',
   encapsulation: ViewEncapsulation.None,
-  styleUrls: [
-    './app.component.scss'
-  ],
-  templateUrl: './app.component.html'
+  template: `
+    <app-ui
+      [canShowHeader]="flagCanShowHeader"
+      [headerOffset]="flagheaderOffset"
+    ></app-ui>
+  `
 })
 export class AppComponent implements OnInit {
   authenticated: boolean = false;
+  flagCanShowHeader: boolean = false;
+  flagheaderOffset: string = '0px';
 
   constructor(
     private auth: AuthService,
@@ -62,8 +66,14 @@ export class AppComponent implements OnInit {
     }
   }
 
-  canShowHeader() {
-    return this.authenticated && this.router.url !== '/login' && this.envService.settings;
+  ngAfterContentChecked() {
+    this.flagCanShowHeader = this.canShowHeader();
+    this.flagheaderOffset = this.headerOffset();
+  }
+
+
+  canShowHeader(): boolean {
+    return (this.authenticated && this.router.url !== '/login' && this.envService.settings !== undefined);
   }
 
   headerOffset(): string {

@@ -25,16 +25,16 @@ export class EntityPage extends AppPage {
     return element(by.css('app-entity-editor'));
   }
 
-  selectEntity(entityName: string) {
-    return element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
+  async selectEntity(entityName: string) {
+    await element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
   }
 
   entityBox(entityName: string) {
     return element(by.id(`aeb-${entityName}`)).element(by.css('div.title'));
   }
 
-  clickEditEntity(entityName: string) {
-    browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
+  async clickEditEntity(entityName: string) {
+    await browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
   }
 
   deleteEntityButton(entityName: string) {
@@ -119,7 +119,7 @@ export class EntityPage extends AppPage {
   }
 
   getPropertyWordLexicon(property: ElementFinder){
-    return property.element(by.css('app-entity-editor table.properties > tbody .fa-won'));
+    return property.element(by.css('app-entity-editor table.properties > tbody .fa-krw'));
   }
 
   getPropertyRequired(property: ElementFinder){
@@ -159,6 +159,10 @@ export class EntityPage extends AppPage {
 
   get errorWhiteSpaceMessage() {
     return element(by.className('alert-text'));
+  }
+
+  get errorInvalidTitleMessage() {
+    return element(by.cssContainingText('.alert-text', 'Only Alphanumeric characters are allowed in the Title'));
   }
 
   get toast() {

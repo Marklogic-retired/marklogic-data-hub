@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,60 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.ext.modulesloader.Modules;
+import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.client.ext.modulesloader.ModulesManager;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
-import com.marklogic.com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
-import com.marklogic.com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
-import com.marklogic.com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
 import com.marklogic.hub.flow.Flow;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
-public class LoadUserModulesCommand extends AbstractCommand {
 
+/**
+ * Extends ml-app-deployer's LoadModulesCommand, which expects to load from every path defined by "mlModulePaths", so
+ * that it can also load from two DHF-specific locations - "./plugins" and "src/main/entity-config". Unfortunately,
+ * those directories don't conform to the structure expected by ml-app-deployer (technically by DefaultModulesLoader
+ * in ml-javaclient-util), so they require special handling, which this class provides.
+ */
+@Component
+public class LoadUserModulesCommand extends LoadModulesCommand {
+
+    @Autowired
     private HubConfig hubConfig;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private FlowManager flowManager;
+
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    private boolean watchingModules = false;
+    private boolean loadAllModules = true;
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -68,16 +77,25 @@ public class LoadUserModulesCommand extends AbstractCommand {
 
     private boolean forceLoad = false;
 
-    public LoadUserModulesCommand(HubConfig hubConfig) {
-        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
-        this.hubConfig = hubConfig;
+    public LoadUserModulesCommand() {
+        super();
+        setExecuteSortOrder(460);
     }
 
     private PropertiesModuleManager getModulesManager() {
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
+
+        // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
+        // loaded by the modules loader in the parent class which adds these entries to the ml-javaclient-utils timestamp file
+        String filePath = hubConfig.getAppConfig().getModuleTimestampsPath();
+        File defaultTimestampFile = new File(filePath);
+
         if (forceLoad) {
             pmm.deletePropertiesFile();
+            if (defaultTimestampFile.exists()){
+                defaultTimestampFile.delete();
+            }
         }
         return pmm;
     }
@@ -85,6 +103,7 @@ public class LoadUserModulesCommand extends AbstractCommand {
     private AssetFileLoader getAssetFileLoader(AppConfig config, PropertiesModuleManager moduleManager) {
         AssetFileLoader assetFileLoader = new AssetFileLoader(hubConfig.newModulesDbClient(), moduleManager);
         assetFileLoader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
+        //Add file extensions to HubFileFilter.accept() to prevent mappings, entities  files being loaded to Modules db
         assetFileLoader.addFileFilter(new HubFileFilter());
         assetFileLoader.setPermissions(config.getModulePermissions());
         return assetFileLoader;
@@ -117,20 +136,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
         return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]harmonize[/\\\\].*");
     }
 
-    boolean isEntityDir(Path dir, Path startPath) {
-        String dirStr = dir.toString();
-        String startPathStr = Pattern.quote(startPath.toString());
-        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
-        return dirStr.matches(regex);
-    }
-
-    boolean isMappingDir(Path dir, Path startPath) {
-        String dirStr = dir.toString();
-        String startPathStr = Pattern.quote(startPath.toString());
-        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
-        return dirStr.matches(regex);
-    }
-
     boolean isFlowPropertiesFile(Path dir) {
         Path parent = dir.getParent();
         return dir.toFile().isFile() &&
@@ -139,12 +144,31 @@ public class LoadUserModulesCommand extends AbstractCommand {
             dir.getFileName().toString().equals(parent.getFileName().toString() + ".properties");
     }
 
+    /**
+     * Ask the parent class to load modules first, which should consist of reading from every path defined by
+     * mlModulePaths / appConfig.getModulePaths. By default, that's just src/main/ml-modules. If any mlRestApi
+     * dependencies are included, those will be in the set of module paths as well.
+     *
+     * The one catch here is that if any REST extensions under ./plugins have dependencies on mlRestApi libraries or
+     * library modules in ml-modules, those extensions will fail to load. However, REST extensions under ./plugins
+     * aren't technically supported anymore, so this should not be an issue.
+     *
+     * The loadAllModules bit is included solely to preserve the functionality of the DeployUserModulesTask - i.e.
+     * only load from the hub-specific module locations.
+     */
+    private void loadModulesFromStandardMlGradleLocations(CommandContext context) {
+        super.execute(context);
+    }
+
     @Override
     public void execute(CommandContext context) {
-        FlowManager flowManager = FlowManager.create(hubConfig);
         List<String> legacyFlows = flowManager.getLegacyFlows();
         if (legacyFlows.size() > 0) {
             throw new LegacyFlowsException(legacyFlows);
+        }
+
+        if (loadAllModules) {
+            loadModulesFromStandardMlGradleLocations(context);
         }
 
         AppConfig config = context.getAppConfig();
@@ -162,20 +186,19 @@ public class LoadUserModulesCommand extends AbstractCommand {
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
-        //for now we'll use two different document managers
-        JSONDocumentManager entityDocMgr = finalClient.newJSONDocumentManager();
-        JSONDocumentManager mappingDocMgr = finalClient.newJSONDocumentManager();
-        DocumentWriteSet mappingDocumentWriteSet = mappingDocMgr.newWriteSet();
+        // Don't load these while "watching" modules (i.e. mlWatch is being run), as users can't change these
+        if (!watchingModules) {
+            modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
+        }
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
-        Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+        Path dir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
         if (!dir.toFile().exists()) {
             dir.toFile().mkdirs();
         }
 
         // deploy the auto-generated ES search options
-        EntityManager entityManager = EntityManager.create(hubConfig);
         entityManager.deployQueryOptions();
 
         try {
@@ -201,22 +224,6 @@ public class LoadUserModulesCommand extends AbstractCommand {
                             modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
                             return FileVisitResult.SKIP_SUBTREE;
                         }
-                        else if (isEntityDir(dir, startPath.toAbsolutePath())) {
-                            Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
-                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                            meta.getCollections().add("http://marklogic.com/entity-services/models");
-                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                            for (Resource r : modules.getAssets()) {
-                                if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                    InputStream inputStream = r.getInputStream();
-                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                    inputStream.close();
-                                    entityDocMgr.write("/entities/" + r.getFilename(), meta, handle);
-                                    modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                }
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
                         else {
                             return FileVisitResult.CONTINUE;
                         }
@@ -236,62 +243,27 @@ public class LoadUserModulesCommand extends AbstractCommand {
                         return FileVisitResult.CONTINUE;
                     }
                 });
-
-                //now let's do the mappings path
-                if (mappingPath.toFile().exists()) {
-                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                            String currentDir = dir.normalize().toAbsolutePath().toString();
-
-                            if (isMappingDir(dir, mappingPath.toAbsolutePath())) {
-                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
-                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
-                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                                for (Resource r : modules.getAssets()) {
-                                    if (forceLoad || modulesManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                        InputStream inputStream = r.getInputStream();
-                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                        inputStream.close();
-                                        mappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        modulesManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                    }
-                                }
-                                return FileVisitResult.CONTINUE;
-                            } else {
-                                return FileVisitResult.CONTINUE;
-                            }
-                        }
-
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException {
-                            if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
-                                Flow flow = flowManager.getFlowFromProperties(file);
-                                StringHandle handle = new StringHandle(flow.serialize());
-                                handle.setFormat(Format.XML);
-                                documentWriteSet.add(flow.getFlowDbPath(), handle);
-                                modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-                }
-
                 if (documentWriteSet.size() > 0) {
                     documentManager.write(documentWriteSet);
-                }
-
-                if (mappingDocumentWriteSet.size() > 0) {
-                    mappingDocMgr.write(mappingDocumentWriteSet);
                 }
             }
             threadPoolTaskExecutor.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
+    }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
+    public void setWatchingModules(boolean watchingModules) {
+        this.watchingModules = watchingModules;
+    }
+
+    public void setLoadAllModules(boolean loadAllModules) {
+        this.loadAllModules = loadAllModules;
     }
 }
 

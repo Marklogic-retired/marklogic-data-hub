@@ -7,8 +7,15 @@ import { MdlDialogService } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  template: `
+  <app-dashboard-ui
+    [rows]="rows"
+    [databases]="databases"
+    [stats]="stats"
+    (clearDatabase)="this.clearDatabase($event)"
+    (clearAllDatabases)="this.clearAllDatabases()"
+  ></app-dashboard-ui>
+`
 })
 export class DashboardComponent implements OnInit {
 
@@ -39,19 +46,13 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.getStatus();
   }
-
   labelify(db) {
     if (db === "job") {
       return "jobs";
     } else {
       return db;
     }
-
   }
-  getDbCount(db) {
-    return this.stats[db + 'Count'];
-  }
-
   clearDatabase(db) {
     const message = `Do you really want to remove all files from your ${this.labelify(db)} Database?`;
     this.dialogService.confirm(message, 'Cancel', 'Clear!').subscribe(() => {

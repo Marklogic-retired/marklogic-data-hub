@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,18 +29,26 @@ public enum DatabaseKind {
         FINAL,
         JOB,
         @Deprecated TRACE,
-        SCHEMAS,
-        TRIGGERS,
-        MODULES;
+        STAGING_SCHEMAS,
+        FINAL_SCHEMAS,
+        STAGING_TRIGGERS,
+        FINAL_TRIGGERS,
+        MODULES,
+        @Deprecated STAGING_MODULES,
+        @Deprecated FINAL_MODULES;
 
        static private String[] databaseNames = {
            "staging",
            "final",
            "jobs",
            "jobs",
-            "schemas",
-            "triggers",
-            "modules"
+           "staging_schemas",
+           "final_schemas",
+           "staging_triggers",
+           "final_triggers",
+           "modules",
+           "modules",
+           "modules"
         };
 
      /**

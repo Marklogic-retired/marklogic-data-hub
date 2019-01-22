@@ -12,7 +12,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Flow } from '../entities/flow.model';
 import { EntitiesService } from '../entities/entities.service';
 import { SearchService } from '../search/search.service';
-import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
+import { SelectKeyValuesComponent } from '../shared/components/select-key-values/select-key-values.component';
 import { MapService } from '../mappings/map.service';
 import { MdlDialogService } from '@angular-mdl/core';
 import { PropertyType } from '../entities';
@@ -21,8 +21,18 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-harmonize-flow-options',
-  templateUrl: './harmonize-flow-options.component.html',
-  styleUrls: ['./harmonize-flow-options.component.scss']
+  template: `
+    <app-harmonize-flow-options-ui
+      [flow]="flow"
+      [settings]="settings"
+      [keyVals]="keyVals"
+      [keyValTitle]="keyValTitle"
+      [validEntityCheck]="this.validEntityCheck()"
+      (keyValuesUpdate)="this.updateKayVals($event)"
+      (saveSetting)="this.saveSettings()"
+      (harmonize)="this.runHarmonize()"
+      ></app-harmonize-flow-options-ui>
+  `
 })
 export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
 
@@ -68,6 +78,7 @@ export class HarmonizeFlowOptionsComponent implements OnInit, OnChanges {
     this.docsLoaded(this.flow.entityName);
     this.saveSettings();
     this.validEntityCheck();
+    console.log('init flow options', this.flow);
   }
 
   ngOnChanges(changes: SimpleChanges) {

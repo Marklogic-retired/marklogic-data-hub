@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,20 +19,28 @@ package com.marklogic.quickstart.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcraft.jsch.IO;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.MappingModel;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest()
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, MappingManagerServiceTest.class})
 public class MappingManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
@@ -40,16 +48,29 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     @Autowired
     MappingManagerService mappingManagerService;
 
-    @Before
-    public void setup() {
-        deleteProjectDir();
+    @Autowired
+    FileSystemWatcherService fileSystemWatcherService;
 
+    @BeforeEach
+    public void setup() throws IOException {
+        // watcher service is not compatible with this test.
+        try {
+            fileSystemWatcherService.unwatch(PROJECT_PATH);
+        } catch (IOException e) {
+            // ignore... might be a problem but probably just a forced delete.
+        }
         createProjectDir();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
-        deleteProjectDir();
+        try {
+            fileSystemWatcherService.unwatch(PROJECT_PATH);
+            deleteProjectDir();
+        } catch (Exception e) {
+            // ignore... might be a problem but probably just trying to delete
+            // from under an unstopped service.
+        }
     }
 
     @Test
@@ -72,12 +93,12 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         // First Save
         mappingManagerService.saveMapping(mappingName, jsonNode);
         MappingModel mappingModel = mappingManagerService.getMapping(mappingName);
-        Assert.assertEquals(0, mappingModel.getVersion());
+        assertEquals(0, mappingModel.getVersion());
 
         // Second save
         mappingManagerService.saveMapping(mappingName, jsonNode);
         mappingModel = mappingManagerService.getMapping(mappingName);
-        Assert.assertEquals(1, mappingModel.getVersion());
+        assertEquals(1, mappingModel.getVersion());
     }
 
     @Test
@@ -97,6 +118,6 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        Assert.assertNotNull(mappingManagerService.saveMapping(mappingName, jsonNode));
+        assertNotNull(mappingManagerService.saveMapping(mappingName, jsonNode));
     }
 }

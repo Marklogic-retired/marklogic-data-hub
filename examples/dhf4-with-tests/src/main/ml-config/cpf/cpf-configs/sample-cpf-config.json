@@ -1,0 +1,17 @@
+{
+  "domain-name": "sample-domain",
+  "restart-user-name": "%%mlHubUserName%%",
+  "eval-module": "%%MODULES_DATABASE%%",
+  "eval-root": "/",
+  "conversion-enabled": false,
+  "permission": [
+    {
+      "role-name": "rest-reader",
+      "capability": "read"
+    },
+    {
+      "role-name": "rest-writer",
+      "capability": "update"
+    }
+  ]
+}

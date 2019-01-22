@@ -1,0 +1,33 @@
+.key-value-heading {
+  display: inline-block;
+  padding: 40px 0 22px 0;
+  font-size: 24px;
+}
+
+.key-value-add {
+  position: relative;
+  bottom: 5px;
+  display: inline-block;
+  padding-left: 10px;
+}
+
+.key-value-input:first-child {
+  padding-left:0;
+  clear: both;
+}
+
+.key-value-input {
+  float:left;
+  width: 180px;
+  padding-left:10px;
+}
+
+.key-value-remove {
+  float:left;
+  padding-top:18px;
+  padding-left:10px;
+}
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
+}

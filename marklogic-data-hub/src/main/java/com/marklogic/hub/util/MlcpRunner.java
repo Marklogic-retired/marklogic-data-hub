@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
@@ -95,6 +94,10 @@ public class MlcpRunner extends ProcessRunner {
             bean.setInput_file_path(canonicalPath);
             bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
             bean.setModules_root("/");
+
+            if (hubConfig.getIsHostLoadBalancer()) {
+                bean.setRestrict_hosts(true);
+            }
 
             buildCommand(bean);
 
@@ -191,6 +194,7 @@ public class MlcpRunner extends ProcessRunner {
                             .stream()
                             .filter(
                                 u -> (
+                                    u.contains(System.getProperty("user.dir")) ||
                                     u.contains("jdk") ||
                                     u.contains("jre") ||
                                     u.contains("log") ||

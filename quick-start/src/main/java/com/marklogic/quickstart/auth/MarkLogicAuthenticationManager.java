@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,17 +19,19 @@ package com.marklogic.quickstart.auth;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -41,9 +43,14 @@ import java.net.URI;
  * request to MarkLogic and checking for a 401. Also implements AuthenticationProvider so that it can be used with
  * Spring Security's ProviderManager.
  */
+@Component
 public class MarkLogicAuthenticationManager implements AuthenticationProvider, AuthenticationManager {
 
     private String pathToAuthenticateAgainst = "/v1/ping";
+
+
+    @Autowired
+    HubConfigImpl hubConfig;
 
     /**
      * A RestConfig instance is needed so a request can be made to MarkLogic to see if the user can successfully
@@ -77,16 +84,14 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
          * For now, building a new RestTemplate each time. This should in general be okay, because we're typically not
          * authenticating users over and over.
          */
-        EnvironmentConfig environmentConfig = token.getEnvironmentConfig();
-        HubConfig hubConfig = environmentConfig.getMlSettings();
-        ManageConfig manageConfig = ((HubConfigImpl)hubConfig).getManageConfig();
-        RestTemplate restTemplate = ((HubConfigImpl) hubConfig).getManageClient().getRestTemplate();
+        ManageConfig manageConfig = hubConfig.getManageConfig();
+        RestTemplate restTemplate = hubConfig.getManageClient().getRestTemplate();
         URI uri = manageConfig.buildUri(pathToAuthenticateAgainst);
         try {
             restTemplate.getForObject(uri, String.class);
         }
         catch(ResourceAccessException ex) {
-            throw new RuntimeException("Cannot connect to MarkLogic at " + hostname + ". Are you sure MarkLogic is running?");
+            throw new BadCredentialsException("Cannot connect to MarkLogic at " + hostname + ". Are you sure MarkLogic is running?");
         }
         catch(HttpClientErrorException ex) {
             if (HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
@@ -100,7 +105,6 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
 
         ConnectionAuthenticationToken authenticationToken =new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
                 token.getHostname(), projectId, environment, token.getAuthorities());
-        authenticationToken.setEnvironmentConfig(token.getEnvironmentConfig());
         return authenticationToken;
     }
 

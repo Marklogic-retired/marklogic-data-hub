@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,13 +206,17 @@ public class FlowRunnerImpl implements FlowRunner {
 
         DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
 
+        int uriCount = uris.size();
+
         double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
 
-        QueryBatcher tempQueryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+
+
+        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .withJobId(jobId)
@@ -289,21 +293,9 @@ public class FlowRunnerImpl implements FlowRunner {
             });
 
 
-        if (hubConfig.getLoadBalancerHosts() != null && hubConfig.getLoadBalancerHosts().length > 0){
-            tempQueryBatcher = tempQueryBatcher.withForestConfig(
-                new FilteredForestConfiguration(
-                    dataMovementManager.readForestConfig()
-                ).withWhiteList(hubConfig.getLoadBalancerHosts())
-            );
-        }
-        QueryBatcher queryBatcher = tempQueryBatcher;
-
-
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
         ticketWrapper.put("jobTicket", jobTicket);
         jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
-
-        int uriCount = uris.size();
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();

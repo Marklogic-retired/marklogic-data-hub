@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,16 @@ package com.marklogic.hub.collector;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.*;
-import com.marklogic.hub.scaffold.Scaffolding;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,27 +36,27 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class EmptyCollectorTest extends HubTestBase {
 
     private static final String ENTITY = "streamentity";
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         // note, not basicSetup
 
         XMLUnit.setIgnoreWhitespace(true);
-        deleteProjectDir();
 
         createProjectDir();
 
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         clearUserModules();
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getHubAdminConfig(), true);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
@@ -64,7 +65,6 @@ public class EmptyCollectorTest extends HubTestBase {
     public void runCollector() {
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        FlowManager fm = FlowManager.create(getHubFlowRunnerConfig());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();

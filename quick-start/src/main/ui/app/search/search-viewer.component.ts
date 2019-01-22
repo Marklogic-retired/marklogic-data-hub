@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { SearchService } from './search.service';
@@ -10,17 +10,19 @@ require('codemirror/mode/javascript/javascript');
 
 @Component({
   selector: 'app-search-viewer',
-  encapsulation: ViewEncapsulation.None,
-  templateUrl: './search-viewer.component.html',
-  styleUrls: [
-    './search-viewer.component.scss'
-  ],
+  template: `
+    <app-search-viewer-ui
+      [doc]="doc"
+      [uri]="uri"
+      [codeMirrorConfig]="codeMirrorConfig"
+    ></app-search-viewer-ui>
+  `,
 })
 export class SearchViewerComponent implements OnInit, OnDestroy {
 
   private sub: any;
-  currentDatabase: string = 'STAGING';
-  doc: string = null;
+  currentDatabase = 'STAGING';
+  doc: string;
   uri: string;
   codeMirrorConfig = {
     lineNumbers: true,

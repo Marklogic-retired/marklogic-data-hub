@@ -1,0 +1,14 @@
+{
+  "server-name": "%%mlJobAppserverName%%",
+  "server-type": "http",
+  "root": "/",
+  "group-name": "%%GROUP%%",
+  "port": "%%mlJobPort%%",
+  "modules-database": "%%mlModulesDbName%%",
+  "content-database": "%%mlJobDbName%%",
+  "authentication": "%%mlJobAuth%%",
+  "default-error-format": "json",
+  "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
+  "url-rewriter": "/data-hub/4/tracing/tracing-rewriter.xml",
+  "rewrite-resolves-globally": true
+}

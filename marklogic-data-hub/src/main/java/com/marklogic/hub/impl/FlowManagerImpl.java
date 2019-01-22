@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,16 +45,26 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+@Component
 public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     private static final String NAME = "ml:flow";
 
     private DatabaseClient stagingClient;
+
+
+    @Autowired
     private HubConfig hubConfig;
 
-    public FlowManagerImpl(HubConfig hubConfig) {
+    @Autowired
+    private Scaffolding scaffolding;
+
+    public FlowManagerImpl() {
         super();
-        this.hubConfig = hubConfig;
+    }
+
+    
+    public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
     }
@@ -123,11 +135,15 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     @Override public Flow getFlowFromProperties(Path propertiesFile) {
         String quotedSeparator = Pattern.quote(File.separator);
-        String flowTypeRegex = ".+" + quotedSeparator + "(input|harmonize)" + quotedSeparator + ".+";
-        FlowType flowType = propertiesFile.toString().replaceAll(flowTypeRegex, "$1").equals("input")
+        /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
+         * input|harmonize/<flowName>/flowName.properties
+         */
+        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator 
+                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";        
+        FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
                 ? FlowType.INPUT : FlowType.HARMONIZE;
 
-        String entityName = propertiesFile.toString().replaceAll(".+" + quotedSeparator + "([^/\\\\]+)" + quotedSeparator + "(input|harmonize)" + quotedSeparator + ".+", "$1");
+        String entityName = propertiesFile.toString().replaceAll(floweRegex, "$1");
         return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
     }
 
@@ -257,8 +273,6 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
     }
 
     @Override public List<String> updateLegacyFlows(String fromVersion) {
-
-        Scaffolding scaffolding = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newFinalClient());
 
         List<String> updatedFlows = new ArrayList<>();
         File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
  */
 package com.marklogic.quickstart.model.entity_services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,4 +34,28 @@ public class DefinitionsType {
         return this.definitions;
     }
 
+    public void addDefinition(String name, DefinitionType definitionType) {
+        getDefinitions().put(name, definitionType);
+    }
+
+    public void removeDefinition(String name) {
+        getDefinitions().remove(name);
+    }
+
+    public static DefinitionsType fromJson(JsonNode json) {
+        DefinitionsType definitionsType = new DefinitionsType();
+        json.fields().forEachRemaining((Map.Entry<String, JsonNode> field) -> {
+            definitionsType.addDefinition(field.getKey(), DefinitionType.fromJson(field.getKey(), field.getValue()));
+        });
+        return definitionsType;
+    }
+
+    public JsonNode toJson() {
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        this.getDefinitions().forEach((definitionName, definitionType) -> {
+            node.set(definitionName, definitionType.toJson());
+        });
+
+        return node;
+    }
 }

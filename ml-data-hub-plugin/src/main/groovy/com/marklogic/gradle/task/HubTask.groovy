@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,9 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
-import com.marklogic.hub.deploy.HubAppDeployer
-import com.marklogic.hub.deploy.util.HubDeployStatusListener
-import com.marklogic.hub.job.JobManager;
+import com.marklogic.hub.deploy.commands.GeneratePiiCommand
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.job.JobManager
+import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 
@@ -34,10 +37,50 @@ abstract class HubTask extends DefaultTask {
     HubConfig getHubConfig() {
         getProject().property("hubConfig")
     }
+    
+    @Internal
+    HubProject getHubProject() {
+        getProject().property("hubProject")
+    }
 
     @Internal
     DataHub getDataHub() {
         getProject().property("dataHub")
+    }
+
+    @Internal
+    Scaffolding getScaffolding() {
+        getProject().property("scaffolding")
+    }
+
+    @Internal
+    LoadHubModulesCommand getLoadHubModulesCommand() {
+        getProject().property("loadHubModulesCommand")
+    }
+
+    @Internal
+    LoadUserModulesCommand getLoadUserModulesCommand() {
+        getProject().property("loadUserModulesCommand")
+    }
+
+    @Internal
+    LoadUserArtifactsCommand getLoadUserArtifactsCommand() {
+        getProject().property("loadUserArtifactsCommand")
+    }
+
+    @Internal
+    MappingManager getMappingManager() {
+        getProject().property("mappingManager")
+    }
+    
+    @Internal
+    EntityManager getEntityManager() {
+        getProject().property("entityManager")
+    }
+    
+    @Internal
+    GeneratePiiCommand getGeneratePiiCommand() {
+        getProject().property("generatePiiCommand")
     }
 
     @Internal
@@ -52,7 +95,7 @@ abstract class HubTask extends DefaultTask {
 
     @Internal
     FlowManager getFlowManager() {
-        return FlowManager.create(getHubConfig())
+        getProject().property("flowManager")
     }
 
     @Internal
@@ -66,8 +109,9 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
+    // all the groovy tasks that getFinalClient actually need the DHF modules.
     DatabaseClient getFinalClient() {
-        return getHubConfig().newFinalClient()
+        return getHubConfig().newReverseFlowClient()
     }
 
     @Internal
@@ -88,13 +132,12 @@ abstract class HubTask extends DefaultTask {
             ObjectMapper mapper = new ObjectMapper()
             if (str instanceof JsonNode) {
                 jsonObject = str
-            }
-            else {
+            } else {
                 jsonObject = mapper.readValue(str, Object.class)
             }
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject)
         }
-        catch(Exception e) {
+        catch (Exception e) {
             return str
         }
     }

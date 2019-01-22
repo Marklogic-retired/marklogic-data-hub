@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@ class ExportJobsTaskTest extends BaseTest {
         createGradleFiles()
         runTask('hubInit')
         // this will be relatively fast (idempotent) for already-installed hubs
-        println(runTask('mlDeploy', '-i').getOutput())
+        println(runTask('hubInstallModules', '-i').getOutput())
+        println(runTask('mlLoadModules', '-i').getOutput())
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
         DocumentMetadataHandle meta = new DocumentMetadataHandle();

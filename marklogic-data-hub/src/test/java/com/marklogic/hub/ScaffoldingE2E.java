@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,19 @@
  */
 package com.marklogic.hub;
 
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.CodeFormat;
 import com.marklogic.hub.flow.DataFormat;
 import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.Installer;
+import com.marklogic.bootstrap.Installer;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -40,7 +41,8 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class ScaffoldingE2E extends HubTestBase {
 
 
@@ -48,15 +50,21 @@ public class ScaffoldingE2E extends HubTestBase {
     private static File projectDir = projectPath.toFile();
     private static File pluginDir = projectPath.resolve("plugins").toFile();
 
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    HubProject project;
+
     @BeforeAll
     public static void setupHub() {
         XMLUnit.setIgnoreWhitespace(true);
-        new Installer().installHubOnce();
+        new Installer().setupProject();
     }
 
     @AfterAll
     public static void teardown() {
-        new Installer().uninstallHub();
+        new Installer().teardownProject();
     }
 
     @BeforeEach
@@ -64,17 +72,16 @@ public class ScaffoldingE2E extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     private void installEntity() {
         String entityName = "my-fun-test";
 
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
-
-        Path entityDir = scaffolding.getEntityDir(entityName);
+        Path entityDir = project.getEntityDir(entityName);
         assertFalse(entityDir.toFile().exists(), entityDir.toString() + " should not exist but does");
 
-        Path employeeDir = scaffolding.getEntityDir("employee");
+        Path employeeDir = project.getEntityDir("employee");
         assertFalse(employeeDir.toFile().exists());
 
         scaffolding.createEntity(entityName);
@@ -93,8 +100,6 @@ public class ScaffoldingE2E extends HubTestBase {
     private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {
         String entityName = "my-fun-test";
         String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
 
         scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
         Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
@@ -137,6 +142,7 @@ public class ScaffoldingE2E extends HubTestBase {
 
         if (useEsModel) {
             try {
+                // FIXME every time the codegen changes these assertions break.  is that what we really want?
                 assertEquals(
                     getResource("scaffolding-test/es-" + flowType.toString() + "-content." + codeFormat.toString())
                         .replaceAll("\\s+", " ")

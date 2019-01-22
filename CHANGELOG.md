@@ -1,5 +1,252 @@
 # Change Log
 
+## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0) (2018-12-19)
+
+Bug
+
+    [DHFPROD-1193] - #1261 ⁃ "gradle createEntity" does not create an entity descriptor file
+    [DHFPROD-1263] - DataHub.runPreInstallCheck() returning incorrect results
+    [DHFPROD-1304] - mlDeploySecurity is not deploying protected-paths and query-rolesets
+    [DHFPROD-1328] - Able to create duplicate flow (input or harmonize)
+    [DHFPROD-1400] - Gradle Tasks using incorrect datahub.isInstalled() check to verify DHF installation
+    [DHFPROD-1433] - QuickStart entity editor: too many properties, buttons are hidden
+    [DHFPROD-1557] - Memory leak on gradle runFlow
+    [DHFPROD-1561] - DataHub installation fails
+    [DHFPROD-1576] - ./gradlew build fails with no user provided error
+    [DHFPROD-1592] - hubUpdate should work even when the project fails an initialization check
+    [DHFPROD-1595] - mlDeploy fails post hubUpdate in 4.1-rc1 DHF version
+    [DHFPROD-1601] - Deploy fails when mlModulePermissions does not exist in gradle.properties
+    [DHFPROD-1605] - mlDeploy fails when an amp exists under src/main/ml-config
+    [DHFPROD-1608] - QuickStart 4.1.0-rc fails to display flows
+    [DHFPROD-1615] - Upgrade issues in DHF with versions 4.0.x
+    [DHFPROD-1617] - Update documentation for 4.1.0 
+    [DHFPROD-1636] - hubGeneratePii task is failing
+    [DHFPROD-1637] - Docs: "Independent STAGING and FINAL App Server Stacks Stacks" link redirection error
+    [DHFPROD-1640] - Triggers config from hub-internal-config is making post request to data-hub-final-TRIGGERS database
+    [DHFPROD-1645] - 4.1.0 'mlUpdateIndexes' command is giving error with in provisioned environment
+    [DHFPROD-1646] - Deployment fails with non default hub admin role and user
+
+
+Story
+
+    [DHFPROD-1338] - Create spring application context and make properties file a singleton configuration
+    [DHFPROD-1339] - Rework application architecture to use Spring IoC
+    [DHFPROD-1422] - Clarify through the QuickStart UI the origin of the source URI field in the Mapping Screen
+    [DHFPROD-1436] - Upgrade to Java 10 and OpenJDK
+    [DHFPROD-1518] - Design the ml-gradle solution
+    [DHFPROD-1519] - Separation of DHF override code from vanilla ml-gradle tasks
+    [DHFPROD-1524] - Stitch together quick-start Spring Context with core .
+    [DHFPROD-1554] - Release Notes and Upgrade guidance for 4.1
+
+
+
+## [v4.0.3](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.3) (2018-11-19)
+
+Bug
+
+    [DHFPROD-1512] - #1462 ⁃ SSL with mlRedeploy/mlReloadModules doesn't work
+    
+   
+
+## [v4.0.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.2) (2018-11-05)
+
+Bug
+
+    [DHFPROD-1095] - #1152 ⁃ Trace content plugin on harmonized data is broken
+    [DHFPROD-1246] - 'data-hub-user' able to deploy flows
+    [DHFPROD-1306] - HubInit command does not generate mlSecurityUserName and mlSecurityPassword place holders
+    [DHFPROD-1401] - Unable to save and update indexes using gradle tasks
+    [DHFPROD-978] - Verify fix: #1062 ⁃ Online shopping tutorial repository code missing an element index in Order entity
+    [DHFPROD-1307] - hubPreInstallCheck command displays object hashcode
+    [DHFPROD-1418] - DHS documentation has incorrect values for 'mUsername' and 'mlManageUSername'
+    [DHFPROD-1420] - Bad link to upgrade instructions.
+    [DHFPROD-1448] - data-hub-MODULES is hard-coded somewhere
+    [DHFPROD-1483] - hubPreInstallCheck returning incorrect result
+    [DHFPROD-1495] - every mlcp job from quick start throws an error
+    [DHFPROD-1502] - Unable to redeploy hub
+    [DHFPROD-1302] - Issues in trace UI rendering in 4.0
+ 
+
+
+## [v4.0.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.1) (2018-10-05)
+
+Bug
+
+    [DHFPROD-653] - #799 ⁃ Tests failing on AWS if host is set to ELB host
+    [DHFPROD-760] - #873 ⁃ RFE: Single location for all resource configuration
+    [DHFPROD-789] - FlowManager.getFlow() and Mlcp flows failing with ELB
+    [DHFPROD-1045] - #1120 ⁃ On Harmonize flow page, the plus sign for Options is not aligned
+    [DHFPROD-1126] - #1183 ⁃ Outdated references to dhf.xqy
+    [DHFPROD-1175] - gradle mlUndeploy is throwing 401 unauthorized error
+    [DHFPROD-1248] - LoadUserModules not loading mappings if force load is set to 'false'
+    [DHFPROD-1250] - #1279 ⁃ main.sjs not properly updated during upgrade
+    [DHFPROD-1278] - QuickStart uninstall status is delayed
+    [DHFPROD-1299] - Installation/Uninstallation fails when App-Services set to ssl/cert-auth
+    [DHFPROD-1343] - QuickStart install has 404 not found error message when changing the data-hub modules db name
+    [DHFPROD-1346] - Test failures in VPC environment in AWS
+    [DHFPROD-1368] - Incompatibility between DHF and DHaaS with respect to usage of 'finalClient'
+    [DHFPROD-1374] - Unable to load user modules from gradle
+    [DHFPROD-1376] - Unable to create flows with "FlowDeveloper" role
+    [DHFPROD-1378] - Unable to getFlow()
+    [DHFPROD-1399] - DHS - hubRunFlowTask is failing as final AppServer details are MISSING
+    [DHFPROD-1402] - DHS - hubExportJobs and hubDeleteJobs are failing due to missing indexes in Jobs Database
+
+Task
+
+    [DHFPROD-1373] - Unable to load hub modules in DHaaS environment
+    [DHFPROD-1375] - Specify permissions for modules in gradle.properties
+    [DHFPROD-1380] - Replace java client api static binary to publicly available one
+
+Sub-task
+
+    [DHFPROD-1329] - On upgrade, new databases created should not have default names
+
+Epic
+
+    [DHFPROD-1084] - Upgrade improvements - Doc and e-node changes
+
+Story
+
+    [DHFPROD-1085] - Upgrade to 3.0 overall guidance
+    [DHFPROD-1087] - Upgrade instructions
+    [DHFPROD-1228] - Integrated Testing for DHaaS in a simulated environment
+    [DHFPROD-1229] - Install DHF via lambda/appdeployer task
+    [DHFPROD-1234] - Create roles and test DHF with hardened RBAC model for DHaaS
+    [DHFPROD-1240] - Release DHaaS-related work as 4.0.1
+    [DHFPROD-1251] - Integrated Testing for DHaaS in a 'real' environment
+    [DHFPROD-1261] - Document differences in managing a data hub on-prem. vs in DHaaS
+    [DHFPROD-1310] - Refactor DHF to use a single modules database (again)
+    [DHFPROD-1335] - Deprecate mlLoadBalancerHosts with error checking
+
+
+
+## [v4.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.0.0) (2018-09-11)
+
+Bugs
+
+    [DHFPROD-859] - #989 ⁃ DHF 3.0 upgrade path not clear
+    [DHFPROD-890] - #1009 ⁃ 9.0-5 Upgrade : make sure to update the path of the rewriter on the Trace Server
+    [DHFPROD-1100] - #1155 ⁃ Upgrading in Quickstart (with Quickstart.war) doesn't always work
+    [DHFPROD-1174] - Running input flow after fresh install from a DHF project doesnt surface all the previously saved maps
+    [DHFPROD-1252] - XDMP-NOSUCHDB error on running hubUpdate task to upgrade to 4.0.0
+    [DHFPROD-1254] - QuickStart project needs to be initialized although DHF is already installed
+    [DHFPROD-1298] - Installation fails with non default staging modules db
+    [DHFPROD-1308] - Traces are created after disabling traces
+    [DHFPROD-1309] - Incorrect content.sjs generated for input flows when 'requireEs' set to true
+
+    [DHFPROD-434] - #458 ⁃ Document the roles available and what each one does
+    [DHFPROD-495] - #673 ⁃ Problem with clipboard button
+    [DHFPROD-651] - #796 ⁃ Hub tracing fails (silently) if XQuery plugins return XML
+    [DHFPROD-774] - Compatibiilty -- quickstart 3.0 to 3.1
+    [DHFPROD-788] - #893 ⁃ accept header ignored by /v1/resources/flow
+    [DHFPROD-790] - #894 ⁃ Clearer documentation with respect to the Java prerequisite
+    [DHFPROD-791] - gradlew hubInfo task returns garbage
+    [DHFPROD-797] - #902 ⁃ xml options in entity-config get saved with JSON content and fail to deploy
+    [DHFPROD-844] - #976 ⁃ add mldeploy step
+    [DHFPROD-847] - #979 ⁃ list ports in use by dhf
+    [DHFPROD-848] - #977 ⁃ explain databases created by dhf project
+    [DHFPROD-850] - #980 ⁃ Update documentation for transform renames
+    [DHFPROD-872] - #1000 ⁃ XML Processing Instructions break DHF ingest
+    [DHFPROD-927] - #1029 ⁃ The total number of jobs is incorrect after running a flow
+    [DHFPROD-931] - #1034 ⁃ UI messaging on entity that has no properties on Map
+    [DHFPROD-933] - #1036 ⁃ Unable to save map
+    [DHFPROD-942] - #1051 ⁃ On mapping, a data that starts with a number then followed by non-number character is interpreted as number
+    [DHFPROD-944] - #1052 ⁃ Scaffolding allows white space in the Entity properties.
+    [DHFPROD-945] - #1053 ⁃ incorrect label for triggers db setting in QS advanced options.
+    [DHFPROD-948] - #1057 ⁃ Trace UI is showing nothing on ingested xml document
+    [DHFPROD-958] - #1061 ⁃ DHF is not being installed from quick-start UI
+    [DHFPROD-1001] - Unable to set different SSL context for (staging, final)client and (staging, final)manageclient
+    [DHFPROD-1008] - TrustManager is not set when creating client objects
+    [DHFPROD-1017] - #1104 ⁃ Some icons on QuickStart UI login page are missing if you start QuickStart war
+    [DHFPROD-1033] - Differences in <attachments> content in the envelope generated by xqy and sjs
+    [DHFPROD-1034] - Unmapped properties shows up as null with mapping generated content.sjs
+    [DHFPROD-1045] - #1120 ⁃ On Harmonize flow page, the plus sign for Options is not aligned
+    [DHFPROD-1046] - The source xpath returns incorrect result with mapping generated content.sjs
+    [DHFPROD-1051] - #1124 ⁃ Map doesn't retain the properties if you change the source (on map revisit)
+    [DHFPROD-1061] - #1134 ⁃ Unable to create a harmonize flow that uses the mapping if not redeploying the modules
+    [DHFPROD-1062] - #1135 ⁃ After creating and modeling the map, the first mapping property on content.sjs is not indented
+    [DHFPROD-1065] - #1138 ⁃ Performance decrease if you have multiple maps
+    [DHFPROD-1074] - #1144 ⁃ Able to save an entity with duplicate property names
+    [DHFPROD-1082] - #1146 ⁃ Harmonized flow with mapping on second entity is broken
+    [DHFPROD-1094] - #1151 ⁃ Cannot edit the source of an already existing map
+    [DHFPROD-1096] - #1153 ⁃ HTTP 500: Internal Server Error while retrieving a map with a name
+    [DHFPROD-1097] - #1154 ⁃ Overlapped facet counts if it has 4 digits or more
+    [DHFPROD-1110] - #1165 ⁃ content.sjs creates incorrect variables for properties having underscore in the entity
+    [DHFPROD-1112] - #1166 ⁃ Hub Graphic corrupted / missing
+    [DHFPROD-1113] - #1168 ⁃ content.xqy generates extract-instance-X() with empty mapping
+    [DHFPROD-1114] - #1170 ⁃ Mapping doesnt allow to save an edited version of a map
+    [DHFPROD-1118] - Mapping generates incorrect content
+    [DHFPROD-1119] - #1175 ⁃ Click of + button for entity 2 mapping when on a map for entity 1 doesnt bring up the new-map modal
+    [DHFPROD-1120] - #1176 ⁃ Able to create maps with duplicate names
+    [DHFPROD-1122] - #1179 ⁃ Map created from QuickStart should not be deployed to Modules database until map is saved
+    [DHFPROD-1124] - #1180 ⁃ Updating description of a mapping should prompt to Save the map again
+    [DHFPROD-1125] - #1181 ⁃ Using an invalid source URI should first check for validity before resetting existing selection/mapping
+    [DHFPROD-1127] - #1184 ⁃ Input flow/mlcp failing in QuickStart when any datatype other than string is used
+    [DHFPROD-1131] - source xpath generates JS content with syntax error
+    [DHFPROD-1151] - #1201 ⁃ Issue when using a collector on a huge amount of URIs
+    [DHFPROD-1159] - #1217 ⁃ ResourceNotFound exception if mapping name contains whitespace
+    [DHFPROD-1164] - Overflowing mapping value if it's too long
+    [DHFPROD-1165] - #1229 ⁃ Tracing database exist on DHF Upgrade from 3.0.0 to 3.1.0
+
+
+Task
+
+    [DHFPROD-964] - Upgrade testing from DHF-3.0.0 to DHF-3.1.0
+    [DHFPROD-225] - Design and implement security model to preempt needs for PII story
+    [DHFPROD-338] - Atomic return value as a response header
+    [DHFPROD-640] - JSON Schema for API First function declaration
+    [DHFPROD-909] - Create E2E test Plan for Flat Model-to-Model mapping
+    [DHFPROD-911] - Create test plan for Security policy
+    [DHFPROD-924] - Investigate and create POC to create framework to run unit and integration tests for sprint boot layer API's
+    [DHFPROD-1056] - Document PII support
+
+
+Epic
+
+    [DHFPROD-234] - Flat model-to-model mapping
+    [DHFPROD-1084] - Upgrade improvements - Doc and e-node changes
+
+Story
+
+    [DHFPROD-1078] - Update tutorial to showcase model-to-model mapping
+    [DHFPROD-1085] - Upgrade to 3.0 overall guidance
+    [DHFPROD-1087] - Upgrade instructions
+    [DHFPROD-1101] - Technical story: Understand the upgrade path
+    [DHFPROD-1103] - Documentation for model-to-model mapping
+    [DHFPROD-1133] - Execute the DHF Release (4.0)
+    [DHFPROD-1168] - Release notes for 4.0
+    [DHFPROD-1192] - Return e-node modules to modules db
+    [DHFPROD-1194] - Provide modules, schemas and triggers databases for FINAL
+    [DHFPROD-254] - Document Error Codes
+    [DHFPROD-278] - API Service Developer can generate Java database function
+    [DHFPROD-279] - Data Service Developer can support proxy requests in the appserver
+    [DHFPROD-307] - Data Architect manipulates the mapping of property-to-property
+    [DHFPROD-308] - Data Architect can run flow
+    [DHFPROD-311] - API Service Developer can generate simplest Java proxy function
+    [DHFPROD-341] - Mapping experience for long lists of attributes
+    [DHFPROD-346] - API Service Developer can generate a Java proxy with payloads
+    [DHFPROD-350] - API Service Developer can generate a class from a bundle
+    [DHFPROD-351] - PII Configuration artifacts get deployed to data hub
+    [DHFPROD-583] - Default document permissions (read) for harmonized entities
+    [DHFPROD-606] - Default document permissions (update) for harmonized entities
+    [DHFPROD-607] - API Service Developer can generate a Java database function with multipart payloads
+    [DHFPROD-608] - Build a demo that showcases pii
+    [DHFPROD-612] - API Service Developer can map Java datatypes to server datatypes
+    [DHFPROD-615] - API Service Developer can call a database function from AWS middle tier
+    [DHFPROD-619] - Move base support for generated classes into the Java API
+    [DHFPROD-625] - Toggle PII on entity property as part of modeling UI activities
+    [DHFPROD-666] - Data Service Developer can opt into efficient but constrained HTTP transport
+    [DHFPROD-678] - Determine what is PII
+    [DHFPROD-816] - CLONE - Default document permissions (read + write) for harmonized entities
+    [DHFPROD-819] - CLONE - Default document permissions (update) for harmonized entities
+    [DHFPROD-839] - Security vulnerability in package-lock.json
+    [DHFPROD-949] - Ability to change source doc
+    [DHFPROD-956] - Execute the code generation from Gradle
+    [DHFPROD-1024] - Orient example in tutorial to current model to model mapping scenario (eg all same source doc)
+
+
+
+
 ## [v3.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v3.0.0) (2018-05-03)
 
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v2.0.4...v3.0.0)
@@ -516,7 +763,7 @@
 
 **Implemented enhancements:**
 
-- Cannot specify default permissions for data-hub-modules db [\#434](https://github.com/marklogic/marklogic-data-hub/issues/434)
+- Cannot specify default permissions for data-hub-staging-MODULES db [\#434](https://github.com/marklogic/marklogic-data-hub/issues/434)
 
 **Fixed bugs:**
 

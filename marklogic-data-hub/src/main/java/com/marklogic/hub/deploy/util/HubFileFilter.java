@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ public class HubFileFilter implements FileFilter {
         boolean result = f != null &&
             !f.getName().startsWith(".") &&
             !f.getName().endsWith("entity.json") &&
+            !f.getName().endsWith("mapping.json") &&
             !f.getName().equals(f.getParentFile().getName() + ".properties") &&
             !f.toString().matches(".*[/\\\\]REST[/\\\\].*") &&
 

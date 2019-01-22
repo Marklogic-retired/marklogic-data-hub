@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,22 +17,25 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import org.gradle.api.tasks.TaskAction
 
 class DeployUserModulesTask extends HubTask {
 
     @TaskAction
     void deployUserModules() {
-        def dh = getDataHub()
-        if (!dh.isInstalled()) {
+        if (!isHubInstalled()) {
             println("Data Hub is not installed.")
             return
         }
-        def cmd = new LoadUserModulesCommand(getHubConfig())
-        // TODO: make this user configurable
-        cmd.setForceLoad(false);
+
+        def cmd = getLoadUserModulesCommand()
+        cmd.setForceLoad(true);
+
+        // This task is expected to only load modules from the hub-specific locations (plugins and entity-config)
+        // mlLoadModules should be used to load modules from all locations
+        cmd.setLoadAllModules(false)
 
         cmd.execute(getCommandContext())
+
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle.fullcycle
 
+
 import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
 import com.marklogic.client.io.DOMHandle
@@ -31,11 +32,9 @@ import javax.net.ssl.TrustManager
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-
-/* this particular test requires bootstrap to run on a clean
-   and ssl-enabled database.
- */
 class SslTest extends BaseTest {
+
+
     def setupSpec() {
         createFullPropertiesFile()
         BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
@@ -43,15 +42,6 @@ class SslTest extends BaseTest {
             plugins {
                 id 'com.marklogic.ml-data-hub'
             }
-
-            ext {
-                def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
-                command.setTemplateIdOrName("dhf-cert")
-                command.setCommonName("localhost")
-                command.setValidFor(365)
-                mlAppDeployer.commands.add(command)
-            }
-
 
             task enableSSL(type: com.marklogic.gradle.task.MarkLogicTask) {
                 doFirst {
@@ -68,12 +58,19 @@ class SslTest extends BaseTest {
 
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(manageClient)
                     certManager.save(adminCert())
+                    certManager.save(dhfCert())
 
                     def gtcc = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand();
                     gtcc.setTemplateIdOrName("admin-cert");
                     gtcc.setCommonName("localhost");
                     gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
-
+                    
+                    def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
+                    command.setTemplateIdOrName("dhf-cert")
+                    command.setCommonName("localhost")
+                    command.setValidFor(365)
+                    command.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
+                    
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
                     adminConfig.setConfigureSimpleSsl(true)
@@ -108,6 +105,7 @@ class SslTest extends BaseTest {
 
                     def certManager = new com.marklogic.mgmt.resource.security.CertificateTemplateManager(mgClient)
                     certManager.delete(adminCert())
+                    certManager.delete(dhfCert())
                 }
             }
 
@@ -128,15 +126,43 @@ class SslTest extends BaseTest {
                 """
             }
 
+             def dhfCert() {
+                return """
+                   <certificate-template-properties xmlns="http://marklogic.com/manage">
+                    <template-name>dhf-cert</template-name>
+                    <template-description>Sample description</template-description>
+                    <key-type>rsa</key-type>
+                    <key-options />
+                    <req>
+                    <version>0</version>
+                    <subject>
+                    <countryName>US</countryName>
+                    <stateOrProvinceName>VA</stateOrProvinceName>
+                    <localityName>McLean</localityName>
+                    <organizationName>MarkLogic</organizationName>
+                    <organizationalUnitName>Consulting</organizationalUnitName>
+                    <emailAddress>nobody@marklogic.com</emailAddress>
+                    </subject>
+                    </req>
+                    </certificate-template-properties>
+                """
+            }
+
         '''
 
         runTask("hubInit")
         runTask("mlDeploySecurity")
-        copyResourceToFile("ssl-test/my-template.xml", new File(BaseTest.testProjectDir.root, "user-config/security/certificate-templates/my-template.xml"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/final-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/job-server.json"))
-        copyResourceToFile("ssl-test/ssl-server.json", new File(BaseTest.testProjectDir.root, "user-config/servers/staging-server.json"))
+
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
+            new File("src/test/resources/ssl-test/ssl-server.json"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"),
+            new File("src/test/resources/ssl-test/ssl-server.json"))
+        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"),
+            new File("src/test/resources/ssl-test/ssl-server.json"))
+
         createProperties()
+        resetProperties()
+        hubConfig().refreshProject()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
         } catch (e) {
@@ -168,6 +194,7 @@ class SslTest extends BaseTest {
         """
     }
 
+
     def "bootstrap a project with ssl out the wazoo"() {
         when:
         def result = runTask('mlDeploy')
@@ -183,6 +210,7 @@ class SslTest extends BaseTest {
         modCount == BaseTest.MOD_COUNT_NO_OPTIONS_NO_TRACES
         result.task(":mlDeploy").outcome == SUCCESS
     }
+
 
     def "runHarmonizeFlow with default src and dest"() {
         given:
@@ -218,6 +246,7 @@ class SslTest extends BaseTest {
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
+
 
     def "runHarmonizeFlow with swapped src and dest"() {
         given:

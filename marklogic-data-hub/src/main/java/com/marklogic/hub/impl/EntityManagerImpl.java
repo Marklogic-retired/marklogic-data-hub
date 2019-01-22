@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
@@ -31,11 +32,16 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.EntityServicesGenerationException;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,19 +51,27 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
+    @Autowired
     private HubConfig hubConfig;
 
-    public EntityManagerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
+    @Autowired
+    private HubProject hubProject;
+
+    private ObjectMapper mapper;
+
+    public EntityManagerImpl() {
+        mapper = new ObjectMapper();
     }
 
-    @Override public boolean saveQueryOptions() {
+    @Override
+    public boolean saveQueryOptions() {
         QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
         try {
-            Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
+            Path dir = hubProject.getEntityConfigDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -73,69 +87,83 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 FileUtils.writeStringToFile(finalFile, options);
                 return true;
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    @Override public HashMap<Enum, Boolean> deployQueryOptions() {
+    @Override
+    public HashMap<Enum, Boolean> deployQueryOptions() {
         // save them first
         saveQueryOptions();
+
+        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
+        if (deployFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
+        if (deployStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
+        return loadedResources;
+    }
+
+
+    public boolean deployFinalQueryOptions() {
+        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    public boolean deployStagingQueryOptions() {
+        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    private boolean deployQueryOptions(DatabaseClient client, String filename) {
 
         HubModuleManager propsManager = getPropsMgr();
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
 
+        boolean isLoaded = false;
+
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
-        HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-
-        Path dir = Paths.get(hubConfig.getProjectDir(), HubConfig.ENTITY_CONFIG_DIR);
-        File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+        Path dir = hubProject.getEntityConfigDir();
+        File stagingFile = Paths.get(dir.toString(), filename).toFile();
         if (stagingFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newStagingClient());
+            modulesLoader.setDatabaseClient(client);
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
-                loadedResources.put(DatabaseKind.STAGING, true);
-            }
-        }
-
-        File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
-        if (finalFile.exists()) {
-            modulesLoader.setDatabaseClient(hubConfig.newFinalClient());
-            Resource r = modulesLoader.installQueryOptions(new FileSystemResource(finalFile));
-            if (r != null) {
-                loadedResources.put(DatabaseKind.FINAL, true);
+                isLoaded = true;
             }
         }
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(true);
         modulesLoader.waitForTaskExecutorToFinish();
 
-        return loadedResources;
+        return isLoaded;
     }
 
-    @Override public boolean saveDbIndexes() {
+    @Override
+    public boolean saveDbIndexes() {
         try {
             Path dir = hubConfig.getEntityDatabaseDir();
+            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            File finalFile = dir.resolve("final-database.json").toFile();
-            File stagingFile = dir.resolve("staging-database.json").toFile();
 
-            long lastModified = Math.max(finalFile.lastModified(), stagingFile.lastModified());
-            List<JsonNode> entities = getModifiedRawEntities(lastModified);
+            List<JsonNode> entities = getAllEntities();
+
             if (entities.size() > 0) {
-                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newFinalClient());
+                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
-                FileUtils.writeStringToFile(finalFile, indexes);
-                FileUtils.writeStringToFile(stagingFile, indexes);
+
+                // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
+                // ml-app-deployer removes these keys upon sending to marklogic.
+                ObjectNode indexNode = (ObjectNode) mapper.readTree(indexes);
+                indexNode.put("database-name", "%%mlFinalDbName%%");
+                mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
+                indexNode.put("database-name", "%%mlStagingDbName%%");
+                mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
                 return true;
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
@@ -143,7 +171,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }
@@ -160,7 +188,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                boolean hasOneChanged = false;
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
                     for (File entityDef : entityDefs) {
@@ -218,6 +245,85 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
+    public List<HubEntity> getEntities() {
+        List<HubEntity> entities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (String entityName : entityNames) {
+            File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+            for (File entityDef : entityDefs) {
+                try {
+                    FileInputStream fileInputStream = new FileInputStream(entityDef);
+                    JsonNode node = objectMapper.readTree(fileInputStream);
+                    entities.add(HubEntity.fromJson(entityDef.getAbsolutePath(), node));
+                    fileInputStream.close();
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return entities;
+    }
+
+    public HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException {
+        JsonNode node = entity.toJson();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String fullpath = entity.getFilename();
+        String title = entity.getInfo().getTitle();
+
+        if (rename) {
+            String filename = new File(fullpath).getName();
+            String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
+            if (!entityFromFilename.equals(entity.getInfo().getTitle())) {
+                // The entity name was changed since the files were created. Update
+                // the path.
+
+                // Update the name of the entity definition file
+                File origFile = new File(fullpath);
+                File newFile = new File(origFile.getParent() + File.separator + title + ENTITY_FILE_EXTENSION);
+                if (!origFile.renameTo(newFile)) {
+                    throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
+                        newFile.getAbsolutePath());
+                }
+                ;
+
+                // Update the directory name
+                File origDirectory = new File(origFile.getParent());
+                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
+                if (!origDirectory.renameTo(newDirectory)) {
+                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
+                        newDirectory.getAbsolutePath());
+                }
+
+                fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
+                entity.setFilename(fullpath);
+            }
+        }
+        else {
+            Path dir = hubConfig.getHubEntitiesDir().resolve(title);
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
+        }
+
+
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+        FileUtils.writeStringToFile(new File(fullpath), json);
+
+        return entity;
+    }
+
+    public void deleteEntity(String entity) throws IOException {
+        Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
+        if (dir.toFile().exists()) {
+            FileUtils.deleteDirectory(dir.toFile());
+        }
+    }
+
     private class PiiGenerator extends ResourceManager {
         private static final String NAME = "ml:piiGenerator";
         private RequestParameters params = new RequestParameters();
@@ -231,7 +337,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode node = objectMapper.valueToTree(entities);
             ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-            if (resultItr == null || ! resultItr.hasNext()) {
+            if (resultItr == null || !resultItr.hasNext()) {
                 throw new EntityServicesGenerationException("Unable to generate pii config");
             }
             ResourceServices.ServiceResult res = resultItr.next();
@@ -239,6 +345,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
 
     }
+
     private class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 
@@ -254,13 +361,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || ! resultItr.hasNext()) {
+                if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate query options");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return "{}";
@@ -282,13 +388,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || ! resultItr.hasNext()) {
+                if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate database indexes");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return "{}";
@@ -315,27 +420,27 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             // get all the entities.
             List<JsonNode> entities = getAllEntities();
             if (entities.size() > 0) {
-                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newFinalClient());
+                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newReverseFlowClient());
 
                 String v3Config = piiGenerator.piiGenerate(entities);
                 JsonNode v3ConfigAsJson = null;
                 v3ConfigAsJson = mapper.readTree(v3Config);
 
                 ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
-                int i=0;
+                int i = 0;
                 // write each path as a separate file for ml-gradle
                 Iterator<JsonNode> pathsIterator = paths.iterator();
                 while (pathsIterator.hasNext()) {
                     JsonNode n = pathsIterator.next();
                     i++;
-                    String thisPath = String.format("%02d_%s", i , HubConfig.PII_PROTECTED_PATHS_FILE);
+                    String thisPath = String.format("%02d_%s", i, HubConfig.PII_PROTECTED_PATHS_FILE);
                     File protectedPathConfig = protectedPaths.resolve(thisPath).toFile();
                     writer.writeValue(protectedPathConfig, n);
                 }
-                writer.writeValue(queryRolesetsConfig,  v3ConfigAsJson.get("config").get("query-roleset"));
+                writer.writeValue(queryRolesetsConfig, v3ConfigAsJson.get("config").get("query-roleset"));
             }
         } catch (IOException e) {
-            throw new EntityServicesGenerationException("Protected path writing failed",e);
+            throw new EntityServicesGenerationException("Protected path writing failed", e);
         }
         return true;
     }

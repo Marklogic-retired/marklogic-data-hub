@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,27 +24,26 @@ import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -52,8 +51,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest()
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, FlowManagerServiceTest.class})
 public class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
@@ -62,10 +64,18 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     FlowManagerService fm;
 
-    @Before
+    @Autowired
+    FlowManager flowManager;
+
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    HubConfig hubConfig;
+
+    @BeforeEach
     public void setup() {
         createProjectDir();
-        Scaffolding scaffolding = Scaffolding.create(projectDir.toString(), stagingClient);
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -108,37 +118,21 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         installUserModules(getHubAdminConfig(), true);
     }
 
-    protected void setEnvConfig(EnvironmentConfig envConfig) {
-
+    protected void setEnvConfig() {
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        authenticationToken.setEnvironmentConfig(envConfig);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @Test
-    public void getFlowMlcpOptionsFromFileNix() throws Exception {
-        String pdir = "/some/crazy/path/to/project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
-        setEnvConfig(envConfig);
+    public void getFlowMlcpOptionsFromFile() throws Exception {
+        setEnvConfig();
 
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"/some/crazy/path/to/project\" }", new ObjectMapper().writeValueAsString(options), true);
+        JSONAssert.assertEquals("{ \"input_file_path\": " + hubConfig.getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
-    public void getFlowMlcpOptionsFromFileWin() throws Exception {
-        String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).withPropertiesFromEnvironment().build());
-        setEnvConfig(envConfig);
-
-        Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": \"C:\\\\some\\\\crazy\\\\path\\\\to\\\\project\" }", new ObjectMapper().writeValueAsString(options), true);
-    }
-
-    @Test
-    @Ignore
+    @Disabled
     // this test fails in some environments because wihen running in test,
     // its classpath is too long to call mlcp as an interprocess communication.
     public void runMlcp() throws IOException, InterruptedException, JSONException {
@@ -146,7 +140,6 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
 
         String flowName = "sjs-json-input-flow";
 
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -160,7 +153,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
                 "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                 "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
                 "\"document_type\":\"\\\"json\\\"\"," +
-                "\"transform_module\":\"\\\"/MarkLogic/data-hub-framework/transforms/mlcp-flow-transform.sjs\\\"\"," +
+                "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.sjs\\\"\"," +
                 "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
                 "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + "\\\"\"" +
                 "}");
@@ -171,7 +164,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
         mlcpRunner.start();
         mlcpRunner.join();
 
-        Assert.assertEquals(1, getStagingDocCount());
+        assertEquals(1, getStagingDocCount());
         String expected = getResource("flow-manager/final.json");
 
         String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
@@ -182,19 +175,16 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     public void runHarmonizationFlow() throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        Assert.assertEquals(0, getFinalDocCount());
+        assertEquals(0, getFinalDocCount());
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
-        setEnvConfig(envConfig);
+        setEnvConfig();
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();
@@ -218,26 +208,25 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
             monitor.wait();
         }
 
-        Assert.assertEquals(1, getFinalDocCount());
+        assertEquals(1, getFinalDocCount());
     }
 
     @Test
     public void runHarmonizationFlowWithOptions() throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        Assert.assertEquals(0, getFinalDocCount());
+        assertEquals(0, getFinalDocCount());
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
-        EnvironmentConfig envConfig = new EnvironmentConfig(pdir, "local", "admin", "admin");
-        envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
-        setEnvConfig(envConfig);
+        //EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
+        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
+        setEnvConfig();
 
         String flowName = "sjs-json-harmonization-flow";
-        FlowManager flowManager = FlowManager.create(getHubFlowRunnerConfig());
         Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         //HubConfig hubConfig = getHubConfig();
@@ -265,12 +254,12 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
             monitor.wait();
         }
 
-        Assert.assertEquals(1, getFinalDocCount());
+        assertEquals(1, getFinalDocCount());
 
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode optionNode = root.path("envelope").path("headers").path("test-option");
-        Assert.assertFalse(optionNode.isMissingNode());
-        Assert.assertEquals(OPT_VALUE, optionNode.asText());
+        assertFalse(optionNode.isMissingNode());
+        assertEquals(OPT_VALUE, optionNode.asText());
     }
 }

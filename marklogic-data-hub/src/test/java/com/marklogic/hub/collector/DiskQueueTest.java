@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package com.marklogic.hub.collector;
 
-import com.google.common.io.Files;
 import com.marklogic.hub.HubTestBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Iterator;
 import java.util.Queue;
@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -37,39 +38,44 @@ import static org.junit.Assert.*;
  */
 public class DiskQueueTest extends HubTestBase {
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testDiskQueue_sizeTooSmall() {
-        new DiskQueue<String>(0);
-        fail();
+        assertThrows(InvalidParameterException.class, () -> {
+            new DiskQueue<String>(0);
+        });
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testDiskQueue_tempDirNotDir() throws IOException {
-        File tmpFile = File.createTempFile("tmp", "txt");
-        new DiskQueue<String>(0, tmpFile);
-        fail();
+        assertThrows(InvalidParameterException.class, () -> {
+            File tmpFile = File.createTempFile("tmp", "txt");
+            new DiskQueue<String>(0, tmpFile);
+        });
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testDiskQueue_tempFileDoesNotExist() throws IOException {
-        File tmpFile = new File("/does/not/exist");
-        new DiskQueue<String>(0, tmpFile);
-        fail();
+        assertThrows(InvalidParameterException.class, () -> {
+            File tmpFile = new File("/does/not/exist");
+            new DiskQueue<String>(0, tmpFile);
+        });
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testDiskQueue_tempDirIsNull() throws IOException {
-        File tmpFile = null;
-        new DiskQueue<String>(0, tmpFile);
-        fail();
+        assertThrows(InvalidParameterException.class, () -> {
+            File tmpFile = null;
+            new DiskQueue<String>(0, tmpFile);
+        });
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testDiskQueue_tempDirDoesNotExist() throws IOException {
-        File tmpFile = Files.createTempDir();
-        tmpFile.delete();
-        new DiskQueue<String>(0, tmpFile);
-        fail();
+        assertThrows(InvalidParameterException.class, () -> {
+            File tmpFile = Files.createTempDirectory("temp").toFile();
+            tmpFile.delete();
+            new DiskQueue<String>(0, tmpFile);
+        });
     }
 
     @Test
@@ -212,11 +218,12 @@ public class DiskQueueTest extends HubTestBase {
         assertTrue(result);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testOffer_null() {
-        Queue<String> instance = new DiskQueue<String>(1);
-        instance.offer(null);
-        fail();
+        assertThrows(NullPointerException.class, () -> {
+            Queue<String> instance = new DiskQueue<String>(1);
+            instance.offer(null);
+        });
     }
 
     /**
@@ -243,11 +250,12 @@ public class DiskQueueTest extends HubTestBase {
         assertEquals(element, result);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testRemove_whenEmpty() {
-        Queue<String> instance = new DiskQueue<String>(1);
-        instance.remove();
-        fail();
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            Queue<String> instance = new DiskQueue<String>(1);
+            instance.remove();
+        });
     }
 
     /**

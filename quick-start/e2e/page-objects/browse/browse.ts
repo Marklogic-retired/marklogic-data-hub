@@ -10,7 +10,7 @@ export class BrowsePage extends AppPage {
 
   //to get the login box locater
   locator() {
-    return by.css('app-search > div');
+    return by.css('app-search > app-search-ui > div');
   }
 
   databaseDropDown() {
@@ -42,15 +42,21 @@ export class BrowsePage extends AppPage {
   }
 
   resultsUri() {
-    return element(by.css('.results .result a'));
+    return element.all(by.css('.results .result a')).first();
   }
 
   resultsSpecificUri(uri: string) {
     return element(by.cssContainingText('.results .result a', uri));
   }
 
-  //TODO Locators for Collection facet
+  facetName(collection: string) {
+    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`));
+  }
 
+  facetCount(collection: string) {
+    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`))
+      .element(by.xpath('following-sibling::span')).getAttribute('data-badge');
+  }
 }
 
 var browsePage = new BrowsePage();

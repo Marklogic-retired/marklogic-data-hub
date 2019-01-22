@@ -13,7 +13,7 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '3.0.0'
+    id 'com.marklogic.ml-data-hub' version '4.0.3'
 }
 ```
 
@@ -41,4 +41,4 @@ You can use scaffolding commands to configure flows.
 gradle hubCreateInputFlow
 gradle hubCreateHarmonizeFlow
 ```
-For a complete list of gradle tasks, check here: [https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks](https://github.com/marklogic/marklogic-data-hub/wiki/Gradle-Tasks)
+For a complete list of gradle tasks, check here: [https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks](https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks)

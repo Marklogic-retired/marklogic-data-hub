@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.marklogic.quickstart.EnvironmentAware;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.model.SearchQuery;
 import com.marklogic.quickstart.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +33,18 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value="/api/search")
-public class SearchController extends EnvironmentAware {
+public class SearchController {
 
     @Autowired
     private SearchService searchService;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
     @Bean
     @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
     SearchService searchService() {
-        return new SearchService(envConfig().getMlSettings());
+        return new SearchService(hubConfig);
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
@@ -30,13 +30,13 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -45,22 +45,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@Component
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
-    private static MappingManagerImpl mappingManager = new MappingManagerImpl(null);
+
+    @Autowired
     private HubConfig hubConfig;
 
+    @Autowired
+    private HubProject hubProject;
 
-    private MappingManagerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-    }
+    @Autowired
+    private Scaffolding scaffolding;
 
-    static public MappingManager getInstance(HubConfig hubConfig){
-        if(mappingManager == null || mappingManager.hubConfig == null){
-            mappingManager = new MappingManagerImpl(hubConfig);
-        }
-        return (MappingManager)mappingManager;
-    }
 
     @Override public Mapping createMapping(String mappingName) {
         try {
@@ -100,8 +97,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public void saveMapping(Mapping mapping, boolean autoIncrement) {
-        Scaffolding scaffold = Scaffolding.create(hubConfig.getProjectDir(), hubConfig.newStagingClient());
-        scaffold.createMappingDir(mapping.getName());
+        scaffolding.createMappingDir(mapping.getName());
 
         try {
             if(autoIncrement){
@@ -162,7 +158,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
                 ){
                 continue;
             }
-            String parsedFileNameVersion = fileName.replace(mappingName, "").replace(MAPPING_FILE_EXTENSION, "").replaceAll("-", "");
+            /*  Captures the number between that is in between "-" and  ".mapping.json"
+             *  as in test-mapping-5.mapping.json would set parsedFileNameVersion to "5"
+             */
+            String parsedFileNameVersion = fileName.replaceAll(".+\\-([0-9]+)\\.mapping\\.json" , "$1");
             int fileNameVersion = Integer.parseInt(parsedFileNameVersion);
             if( version == -1 && fileNameVersion > highestVersion){
                 highestVersion = fileNameVersion;
@@ -234,7 +233,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = hubConfig.getUserModulesDeployTimestampFile();
+        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }

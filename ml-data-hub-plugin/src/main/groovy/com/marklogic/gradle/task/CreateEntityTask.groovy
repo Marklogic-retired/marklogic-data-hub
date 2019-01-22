@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -30,10 +30,10 @@ class CreateEntityTask extends HubTask {
         if (entityName == null) {
             throw new EntityNameRequiredException()
         }
-        def projectDir = getHubConfig().projectDir
+        def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "entityName: " + entityName
         println "projectDir: " + projectDir.toString()
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
-        scaffolding.createEntity(entityName)
+
+        getScaffolding().createEntity(entityName)
     }
 }

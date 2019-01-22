@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,8 +72,7 @@ abstract class CreateFlowTask extends HubTask {
             withMapping = " with mapping: " + mappingName
         }
 
-        def projectDir = getHubConfig().projectDir
-        Scaffolding scaffolding = Scaffolding.create(projectDir, getFinalClient())
+        Scaffolding scaffolding = getScaffolding()
         println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName + withMapping
         scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES, mappingName)
     }

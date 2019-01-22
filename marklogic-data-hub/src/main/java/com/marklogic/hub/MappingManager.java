@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Handles the artifacts associated with mapping of source documents into entity services models.
+ */
 public interface MappingManager {
 
     /**
@@ -35,9 +37,9 @@ public interface MappingManager {
      * @param hubConfig - a hubConfig object for the mappingmanager to use
      * @return A mapping manager instance
      */
-    static MappingManager getMappingManager(HubConfig hubConfig) {
-        return MappingManagerImpl.getInstance(hubConfig);
-    };
+    //static MappingManager getMappingManager(HubConfig hubConfig) {
+        //return MappingManagerImpl.getInstance(hubConfig);
+    //};
 
     /**
      * Creates a mapping given a string name

@@ -9,25 +9,17 @@ import { TooltipOptions } from './tooltip-options.class';
 @Component({
   selector: 'tooltip-container',
   // changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div class="tooltip" role="tooltip"
-     [ngStyle]="{top: top, left: left, display: display}"
-     [ngClass]="classMap">
-      <div class="tooltip-arrow"></div>
-      <div class="tooltip-inner"
-           *ngIf="htmlContent && !isTemplate"
-           innerHtml="{{htmlContent}}">
-      </div>
-      <div class="tooltip-inner"
-           *ngIf="htmlContent && isTemplate">
-        <ng-template [ngTemplateOutlet]="htmlContent"
-                  [ngTemplateOutletContext]="{model: context}">
-        </ng-template>
-      </div>
-      <div class="tooltip-inner"
-           *ngIf="content">
-        {{content}}
-      </div>
-    </div>`
+  template: `
+  <app-tooltip-container-ui
+    [isTemplate]="isTemplate"
+    [classMap]="classMap"
+    [top]="top"
+    [left]="left"
+    [display]="display"
+    [context]="context"
+    [content]="content"
+    [htmlContent]="htmlContent"
+  ></app-tooltip-container-ui>`
 })
 export class TooltipContainerComponent implements AfterViewInit {
   public classMap:any;
@@ -36,13 +28,13 @@ export class TooltipContainerComponent implements AfterViewInit {
   public display:string = 'block';
   public content:string;
   public htmlContent:string | TemplateRef<any>;
+  public context:any;
   private placement:string;
   private popupClass:string;
   private animation:boolean;
   private isOpen:boolean;
   private appendToBody:boolean = true;
   private hostEl:ElementRef;
-  private context:any;
 
   private element:ElementRef;
   private cdr:ChangeDetectorRef;
@@ -62,7 +54,7 @@ export class TooltipContainerComponent implements AfterViewInit {
     let p = positionService
       .positionElements(
         this.hostEl.nativeElement,
-        this.element.nativeElement.children[0],
+        this.element.nativeElement.children[0].children[0],
         this.placement, this.appendToBody);
     this.top = p.top + 'px';
     this.left = p.left + 'px';

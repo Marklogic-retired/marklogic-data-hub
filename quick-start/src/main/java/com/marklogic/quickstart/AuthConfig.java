@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.marklogic.quickstart;
 
 import com.marklogic.quickstart.auth.ConnectionAuthenticationFilter;
+import com.marklogic.quickstart.auth.LoginFailureHandler;
 import com.marklogic.quickstart.auth.MarkLogicAuthenticationManager;
 import com.marklogic.quickstart.auth.RestAuthenticationEntryPoint;
 import com.marklogic.quickstart.web.CurrentProjectController;
@@ -27,6 +28,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -60,6 +62,10 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CurrentProjectController currentProjectController;
 
+    @Lazy
+    @Autowired
+    private ConnectionAuthenticationFilter authFilter;
+
     /**
      * We seem to need this defined as a bean; otherwise, aspects of the default Spring Boot security will still remain.
      *
@@ -68,6 +74,16 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public MarkLogicAuthenticationManager markLogicAuthenticationManager() {
         return new MarkLogicAuthenticationManager();
+    }
+
+    @Bean
+    public ConnectionAuthenticationFilter getConnectionAuthenticationFilter() throws Exception{
+        ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
+        authFilter.setAuthenticationManager(markLogicAuthenticationManager());
+        authFilter.setAuthenticationSuccessHandler(currentProjectController);
+        authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
+
+        return authFilter;
     }
 
     /**
@@ -93,10 +109,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
-        authFilter.setAuthenticationManager(markLogicAuthenticationManager());
-        authFilter.setAuthenticationSuccessHandler(currentProjectController);
-        authFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler());
         http
             .headers().frameOptions().disable()
             .and()
@@ -143,7 +155,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/404",
             "/assets/**",
             "/shutdown",
-            "/main/ui/assets/img/*"
+            "/img/**",
+            "/favicon.ico"
         };
     }
 }

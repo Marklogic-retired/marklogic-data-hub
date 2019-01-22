@@ -1,0 +1,38 @@
+<div class="dashboard" layout-padding layout="column" layout-align="center center">
+  <div flex layout="column" layout-align="center center" class="databases">
+    <div layout="row" flex layout-align="center center" class="section-header">
+      <div class="section-title">Databases</div>
+      <div class="mdl-layout-spacer"></div>
+      <button id="clear-all-databases" mdl-button mdl-button-type="icon" mdl-colored="primary" mdl-ripple
+        (click)="emitClearAllDatabases()"
+        tooltip="This will remove all documents from all of your Data Hub Databases!">
+        <i class="mdi mdi-skull"></i>
+      </button>
+    </div>
+    <div layout="row" layout-align="center center" *ngFor="let row of rows">
+      <div class="info-card" mdl-shadow="2" *ngFor="let db of databases.slice(row * 2, (row * 2) + 2)">
+        <div class="info-title"><i class="mdi mdi-database"></i> {{labelify(db) | titlecase }}</div>
+        <div class="info-body" layout="column" *ngIf="!stats">
+          <div class="info-column" layout="column" layout-align="center center">
+            <mdl-spinner single-color active></mdl-spinner>
+            <div>Loading...</div>
+          </div>
+        </div>
+        <div class="info-body" layout="row" *ngIf="stats">
+          <div class="info-column" layout="column" layout-align="center center">
+            <div class="column-head">Documents</div>
+            <div class="column-body">{{getDbCount(db) | number}}</div>
+          </div>
+          <div class="mdl-layout-spacer"></div>
+          <div class="info-column" layout="column" layout-align="end center">
+            <button mdl-button mdl-button-type="icon" mdl-colored="primary" mdl-ripple
+              (click)="emitClearDatabase(db)"
+              tooltip="This will clear out any documents in your {{labelify(db) | titlecase}} database.">
+              <i class="mdi mdi-delete"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

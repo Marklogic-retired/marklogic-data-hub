@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package com.marklogic.quickstart.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.quickstart.model.EnvironmentConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.quickstart.service.EnvironmentConfig;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -30,6 +32,7 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Processes an authentication form submission. Called
@@ -63,14 +66,22 @@ public class ConnectionAuthenticationFilter extends
     private String hostnameParameter = SPRING_SECURITY_FORM_HOST_KEY;
     private boolean postOnly = true;
 
+    public Authentication authAttempt = null;
+
+    @Autowired
+    private HubConfigImpl hubConfig;
+
+    @Autowired
     private ProjectManagerService pm;
+
+    @Autowired
+    private EnvironmentConfig environmentConfig;
 
     // ~ Constructors
     // ===================================================================================================
 
     public ConnectionAuthenticationFilter() throws IOException, ClassNotFoundException {
         super(new AntPathRequestMatcher("/api/login", "POST"));
-        pm = new ProjectManagerService();
     }
 
     // ~ Methods
@@ -99,16 +110,24 @@ public class ConnectionAuthenticationFilter extends
 
         Project project = pm.getProject(loginInfo.projectId);
         pm.setLastProject(loginInfo.projectId);
-        EnvironmentConfig environmentConfig = new EnvironmentConfig(project.path, loginInfo.environment, username, password);
+
+        hubConfig.setMlUsername(username);
+        hubConfig.setMlPassword(password);
+        hubConfig.resetAppConfigs();
+        hubConfig.withPropertiesFromEnvironment(loginInfo.environment);
+        hubConfig.refreshProject();
+        hubConfig.getAppConfig().setAppServicesUsername(username);
+        hubConfig.getAppConfig().setAppServicesPassword(password);
+
+        environmentConfig.setEnvironment(loginInfo.environment);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
-                username, password, environmentConfig.getMlSettings().getAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
-        authRequest.setEnvironmentConfig(environmentConfig);
+                username, password, hubConfig.getAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
 
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
-
-        return this.getAuthenticationManager().authenticate(authRequest);
+        authAttempt = this.getAuthenticationManager().authenticate(authRequest);
+        return authAttempt;
     }
 
     /**

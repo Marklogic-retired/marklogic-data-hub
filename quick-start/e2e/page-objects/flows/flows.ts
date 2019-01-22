@@ -19,10 +19,15 @@ export class FlowPage extends AppPage {
     return element(by.css(`div[data-entity="${entityName}"] .collapsed`)).isPresent();
   }
 
-  clickEntityDisclosure(entityName: string) {
-    if(this.isEntityCollapsed(entityName)) {
-      this.entityDisclosure(entityName).click();
-    }
+  async clickEntityDisclosure(entityName: string) {
+    browser.wait(EC.elementToBeClickable(this.entityDisclosure("PIIEntity")), 10000);
+    await this.entityDisclosure("PIIEntity").click();
+    browser.sleep(3000);
+    browser.wait(EC.elementToBeClickable(this.inputFlowButton("PIIEntity")));
+    browser.wait(EC.elementToBeClickable(this.entityDisclosure(entityName)), 10000);
+    await this.entityDisclosure(entityName).click();
+    browser.sleep(3000);
+    browser.wait(EC.elementToBeClickable(this.inputFlowButton(entityName)));
   }
 
   get newFlowDialog() {
@@ -61,11 +66,11 @@ export class FlowPage extends AppPage {
     return element(by.css('app-select-key-values > div:nth-child(' + (position + 1) + ') > div:nth-child(2) > mdl-textfield > div > input'));
   }
 
-  setKeyValueFlowOptionsByPosition(position: number, key: string, value: string) {
-    this.getKeyFlowOptionsByPosition(position).clear();
-    this.getKeyFlowOptionsByPosition(position).sendKeys(key);
-    this.getValueFlowOptionsByPosition(position).clear();
-    this.getValueFlowOptionsByPosition(position).sendKeys(value);
+  async setKeyValueFlowOptionsByPosition(position: number, key: string, value: string) {
+    await this.getKeyFlowOptionsByPosition(position).clear();
+    await this.getKeyFlowOptionsByPosition(position).sendKeys(key);
+    await this.getValueFlowOptionsByPosition(position).clear();
+    await this.getValueFlowOptionsByPosition(position).sendKeys(value);
   }
 
   getFlowOptionsCount() {
@@ -183,11 +188,11 @@ export class FlowPage extends AppPage {
   }
 
   get toast() {
-    return element(by.css('mdl-snackbar-component'));
+    return element(by.id('demo-toast-example'));
   }
 
   get toastButton() {
-    return element(by.css('mdl-snackbar-component button'));
+    return element(by.css('#demo-toast-example button'));
   }
 
   get jobID() {
@@ -228,6 +233,10 @@ export class FlowPage extends AppPage {
     return fs.readFileSync(filepath, 'utf8');
   }
 
+  get duplicateFlowNameAlertText() {
+    return element(by.className('alert-text'));
+  }
+
   /*
   * Run input flow -- this will replace the old runInputFlow that has hardcoded input folder
   * @entityName: entity name
@@ -241,82 +250,84 @@ export class FlowPage extends AppPage {
   * @useInputCompressed: whether using input compressed file, default is false
   * @compressionCoded: zip | gzip
   */
-  runInputFlow(entityName: string, flowName: string, dataFormat: string, 
-      dataFolderName: string, inputFileType: string, uriPrefix: string, 
+  async runInputFlow(entityName: string, flowName: string, dataFormat: string,
+      dataFolderName: string, inputFileType: string, uriPrefix: string,
       uriSuffix: string, useInputCompressed = false, compressionCodec = '') {
     console.log(`running flow: ${entityName}: ${flowName}: ${dataFormat}`)
-    this.getFlow(entityName, flowName, 'INPUT').click();
+    await this.getFlow(entityName, flowName, 'INPUT').click();
 
     browser.wait(EC.visibilityOf(this.tabs));
     browser.wait(EC.visibilityOf(this.mlcpTab(entityName, flowName)));
 
     browser.wait(EC.visibilityOf(element(by.cssContainingText('.foldertree-container div.entry p', 'input'))));
     // set the input folder to products
-    element(by.cssContainingText('.foldertree-container div.entry p', 'input')).click();
-    element(by.cssContainingText('.foldertree-container div.entry p', dataFolderName)).click();
+    await element(by.cssContainingText('.foldertree-container div.entry p', 'input')).click();
+    await element(by.cssContainingText('.foldertree-container div.entry p', dataFolderName)).click();
 
     // open general options
     browser.wait(EC.elementToBeClickable(this.mlcpSection(' General Options')));
-    this.mlcpSection(' General Options').click();
+    await this.mlcpSection(' General Options').click();
 
     // click input file type
     browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_file_type')));
-    this.mlcpDropdown('input_file_type').click();
+    await this.mlcpDropdown('input_file_type').click();
 
     // select input file type
     browser.wait(EC.elementToBeClickable(this.menuItem(inputFileType)));
-    this.menuItem(inputFileType).click();
+    await this.menuItem(inputFileType).click();
 
     // click Document Type
     browser.wait(EC.elementToBeClickable(this.mlcpDropdown('document_type')));
-    this.mlcpDropdown('document_type').click();
+    await this.mlcpDropdown('document_type').click();
 
     // select document type
     browser.wait(EC.elementToBeClickable(this.menuItem(dataFormat)));
-    browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
-    this.menuItem(dataFormat).click();
+    await browser.actions().mouseMove(this.menuItem(dataFormat)).perform();
+    await this.menuItem(dataFormat).click();
 
     // set output uri prefix
-    this.mlcpInput('output_uri_prefix').clear();
-    this.mlcpInput('output_uri_prefix').sendKeys(uriPrefix);
-    
+    await this.mlcpInput('output_uri_prefix').clear();
+    await this.mlcpInput('output_uri_prefix').sendKeys(uriPrefix);
+
     // set output uri suffix
-    this.mlcpInput('output_uri_suffix').clear();
-    this.mlcpInput('output_uri_suffix').sendKeys(uriSuffix);
- 
+    await this.mlcpInput('output_uri_suffix').clear();
+    await this.mlcpInput('output_uri_suffix').sendKeys(uriSuffix);
+
     if(inputFileType === 'delimited_text') {
       // click delimited text options
       browser.wait(EC.elementToBeClickable(this.mlcpSection(' Delimited Text Options')));
-      this.mlcpSection(' Delimited Text Options').click();
+      await this.mlcpSection(' Delimited Text Options').click();
       browser.wait(EC.visibilityOf(this.mlcpSection(' Delimited Text Options')));
-  
+
       // enable generate uri
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('generate_uri')));
-      this.mlcpSwitch('generate_uri').click();
+      await this.mlcpSwitch('generate_uri').click();
     }
-    
+
     if(useInputCompressed) {
       // enable input_compressed
       browser.wait(EC.elementToBeClickable(this.mlcpSwitch('input_compressed')));
-      this.mlcpSwitch('input_compressed').click();
+      await this.mlcpSwitch('input_compressed').click();
       // select compression codec
       browser.wait(EC.elementToBeClickable(this.mlcpDropdown('input_compression_codec')));
-      this.mlcpDropdown('input_compression_codec').click();
+      await this.mlcpDropdown('input_compression_codec').click();
       browser.wait(EC.elementToBeClickable(this.menuItem(compressionCodec)));
-      this.menuItem(compressionCodec).click();
+      await this.menuItem(compressionCodec).click();
     }
-    
-    this.mlcpSaveOptionsButton.click();
-    this.mlcpRunButton.click();
+
+    await this.mlcpSaveOptionsButton.click();
+    console.log("Clicked Save button");
+    await this.mlcpRunButton.click();
+    console.log("Clicked Run button");
     browser.sleep(10000);
-    this.jobsTab.click();
+    await this.jobsTab.click();
     jobsPage.isLoaded();
     let lastFinishedJob = jobsPage.lastFinishedJob;
     expect(jobsPage.jobFlowName(lastFinishedJob).getText()).toEqual(flowName);
-    this.flowsTab.click();
+    await this.flowsTab.click();
     this.isLoaded();
   }
-  
+
   /*
   * Create input flow
   * @entityName: entity name
@@ -325,38 +336,38 @@ export class FlowPage extends AppPage {
   * @codeFormat: sjs | xqy
   * @useEs: false - use blank template | true - use entity service
   */
-  createInputFlow(
+  async createInputFlow(
     entityName: string, flowName: string, dataFormat: string,
     codeFormat: string, useEs: boolean)
   {
-    this.inputFlowButton(entityName).click();
-    
+    await this.inputFlowButton(entityName).click();
+
     browser.wait(EC.visibilityOf(this.newFlowDialog));
     expect(this.newFlowDialog.isDisplayed()).toBe(true);
 
-    this.newFlowName.sendKeys(flowName);
+    await this.newFlowName.sendKeys(flowName);
 
     if (useEs) {
-      this.esTemplateButton.click();
+      await this.esTemplateButton.click();
     } else {
-      this.blankTemplateButton.click();
+      await this.blankTemplateButton.click();
     }
 
     if (codeFormat === 'sjs') {
-      this.sjsFlowTypeButton.click();
+      await this.sjsFlowTypeButton.click();
     } else {
-      this.xqyFlowTypeButton.click();
+      await this.xqyFlowTypeButton.click();
     }
 
     if (dataFormat === 'json') {
-      this.jsonDataFormatButton.click();
+      await this.jsonDataFormatButton.click();
     } else {
-      this.xmlDataFormatButton.click();
+      await this.xmlDataFormatButton.click();
     }
 
-    this.createFlowButton.click();
+    await this.createFlowButton.click();
 
-    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    browser.wait(EC.stalenessOf(this.newFlowDialog));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
 
@@ -369,42 +380,42 @@ export class FlowPage extends AppPage {
   * @useEs: false - use blank template | true - use entity service
   * @mapName: mapping name, default is None. Only valid when useEs is true
   */
-  createHarmonizeFlow(
+  async createHarmonizeFlow(
     entityName: string, flowName: string, dataFormat: string,
     codeFormat: string, useEs: boolean, mapName = 'None')
   {
-    this.harmonizeFlowButton(entityName).click();
-    
+    await this.harmonizeFlowButton(entityName).click();
+
     browser.wait(EC.visibilityOf(this.newFlowDialog));
     expect(this.newFlowDialog.isDisplayed()).toBe(true);
 
-    this.newFlowName.sendKeys(flowName);
+    await this.newFlowName.sendKeys(flowName);
 
     if (useEs) {
-      this.esTemplateButton.click();
+      await this.esTemplateButton.click();
     } else {
-      this.blankTemplateButton.click();
+      await this.blankTemplateButton.click();
     }
 
     if (codeFormat === 'sjs') {
-      this.sjsFlowTypeButton.click();
+      await this.sjsFlowTypeButton.click();
     } else {
-      this.xqyFlowTypeButton.click();
+      await this.xqyFlowTypeButton.click();
     }
 
     if (dataFormat === 'json') {
-      this.jsonDataFormatButton.click();
+      await this.jsonDataFormatButton.click();
     } else {
-      this.xmlDataFormatButton.click();
+      await this.xmlDataFormatButton.click();
     }
 
-    this.useMapButton(mapName).click();
+    await this.useMapButton(mapName).click();
 
-    this.createFlowButton.click();
+    await this.createFlowButton.click();
 
-    browser.wait(EC.not(EC.presenceOf(this.newFlowDialog)));
+    browser.wait(EC.stalenessOf(this.newFlowDialog));
     expect(this.newFlowDialog.isPresent()).toBe(false);
-  }  
+  }
 }
 
 var flowPage = new FlowPage();

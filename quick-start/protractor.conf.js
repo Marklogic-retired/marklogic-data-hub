@@ -15,12 +15,13 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     chromeOptions: {
+      //
       args: ["--headless", "--disable-gpu", "--window-size=1920x1080"]
     }
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
-  framework: 'jasmine',
+  framework: 'jasmine2',
   allScriptsTimeout: 220000,
   getPageTimeout: 70000,
   jasmineNodeOpts: {
@@ -30,16 +31,33 @@ exports.config = {
     defaultTimeoutInterval: 220000,
     print: function() {}
   },
-  onPrepare() {
+  plugins: [{
+    package: 'protractor-screenshoter-plugin',
+    screenshotPath: './e2e/screenshoter-plugin',
+    screenshotOnExpect: 'failure',
+    screenshotOnSpec: 'failure+success',
+    withLogs: true,
+    writeReportFreq: 'end', //use asap for debugging locally
+    imageToAscii: 'none',
+    clearFoldersBeforeTest: true
+  }],
+
+  onPrepare: function() {
+    // returning the promise makes protractor wait for the reporter config before executing tests
+    return global.browser.getProcessedConfig().then(function(config) {
+      //it is ok to be empty
+    });
+  },
+  onPrepare: function() {
     require('ts-node').register({
       project: 'e2e/tsconfig.e2e.json'
     });
 
     //HTML report
     jasmine.getEnv().addReporter(new Jasmine2HtmlReporter({
-      takeScreenshots: true,
-      takeScreenshotsOnlyOnFailures: true,
-      fixedScreenshotName: true,
+      //takeScreenshots: true,
+      //takeScreenshotsOnlyOnFailures: true,
+      //fixedScreenshotName: true,
       consolidateAll: true,
       savePath: './e2e/reports/',
       filePrefix: 'html-report'
@@ -65,13 +83,13 @@ exports.config = {
       browserVersion = caps.get('version');
 
       testConfig = {
-        reportTitle: 'Opsdirector-Test Execution Report',
+        reportTitle: 'DHF-Test Execution Report',
         outputPath: './e2e/reports/',
-        screenshotPath: 'screenshots',
+        //screenshotPath: 'screenshots',
         testBrowser: browserName,
         browserVersion: browserVersion,
         modifiedSuiteName: false,
-        screenshotsOnlyOnFailure: true
+        //screenshotsOnlyOnFailure: true
       };
       new HTMLReport().from('./e2e/reports/xmlresults.xml', testConfig);
     });

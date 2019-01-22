@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package com.marklogic.gradle.task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
-import java.nio.file.Path
+import java.nio.file.Paths
 
 class ExportJobsTask extends HubTask {
     @Input
@@ -46,11 +46,11 @@ class ExportJobsTask extends HubTask {
 
         def jobManager = getJobManager()
         def dh = getDataHub()
-        if (!dh.isInstalled()) {
+        if (!isHubInstalled()) {
             println("Data Hub is not installed.")
             return
         }
-        def exportPath = getHubConfig().hubConfigDir.getParent().resolve(filename)
+        def exportPath = getHubConfig().hubProject.projectDir.resolve(filename)
         def jobExportResponse = jobManager.exportJobs(exportPath, jobIds)
         print jobExportResponse
     }

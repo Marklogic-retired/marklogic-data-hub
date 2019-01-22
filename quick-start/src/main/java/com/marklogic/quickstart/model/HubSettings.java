@@ -2,22 +2,31 @@ package com.marklogic.quickstart.model;
 
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 /**
  * A transport object that matches up with the Hubsettings typescript model
  */
+@Component
+@PropertySource({"classpath:dhf-defaults.properties"})
 public class HubSettings {
 
     public static HubSettings fromHubConfig(HubConfig config) {
         HubSettings settings = new HubSettings();
         settings.host = config.getHost();
         settings.stagingDbName = config.getDbName(DatabaseKind.STAGING);
+        settings.stagingTriggersDbName = config.getDbName(DatabaseKind.STAGING_TRIGGERS);
+        settings.stagingSchemasDbName = config.getDbName(DatabaseKind.STAGING_SCHEMAS);
         settings.stagingHttpName = config.getHttpName(DatabaseKind.STAGING);
         settings.stagingForestsPerHost = config.getForestsPerHost(DatabaseKind.STAGING);
         settings.stagingPort = config.getPort(DatabaseKind.STAGING);
         settings.stagingAuthMethod = config.getAuthMethod(DatabaseKind.STAGING);
 
         settings.finalDbName = config.getDbName(DatabaseKind.FINAL);
+        settings.finalTriggersDbName = config.getDbName(DatabaseKind.FINAL_TRIGGERS);
+        settings.finalSchemasDbName = config.getDbName(DatabaseKind.FINAL_SCHEMAS);
         settings.finalHttpName = config.getHttpName(DatabaseKind.FINAL);
         settings.finalForestsPerHost = config.getForestsPerHost(DatabaseKind.FINAL);
         settings.finalPort = config.getPort(DatabaseKind.FINAL);
@@ -30,11 +39,9 @@ public class HubSettings {
         settings.jobAuthMethod = config.getAuthMethod(DatabaseKind.JOB);
 
         settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
-        settings.triggersDbName = config.getDbName(DatabaseKind.TRIGGERS);
-        settings.schemasDbName = config.getDbName(DatabaseKind.SCHEMAS);
 
         settings.username = config.getHubUserName();
-        settings.projectDir = config.getProjectDir();
+        settings.projectDir = config.getHubProject().getProjectDirString();
         return settings;
     }
 
@@ -61,6 +68,31 @@ public class HubSettings {
     public void setStagingDbName(String stagingDbName) {
         this.stagingDbName = stagingDbName;
     }
+
+    public String getModulesDbName() {
+        return modulesDbName;
+    }
+
+    public void setModulesDbName(String modulesDbName) {
+        this.modulesDbName = modulesDbName;
+    }
+
+    public String getStagingTriggersDbName() {
+        return stagingTriggersDbName;
+    }
+
+    public void setStagingTriggersDbName(String stagingTriggersDbName) {
+        this.stagingTriggersDbName = stagingTriggersDbName;
+    }
+
+    public String getStagingSchemasDbName() {
+        return stagingSchemasDbName;
+    }
+
+    public void setStagingSchemasDbName(String stagingSchemasDbName) {
+        this.stagingSchemasDbName = stagingSchemasDbName;
+    }
+
 
     public String getStagingHttpName() {
         return stagingHttpName;
@@ -100,6 +132,22 @@ public class HubSettings {
 
     public void setFinalDbName(String finalDbName) {
         this.finalDbName = finalDbName;
+    }
+
+    public String getFinalTriggersDbName() {
+        return finalTriggersDbName;
+    }
+
+    public void setFinalTriggersDbName(String finalTriggersDbName) {
+        this.finalTriggersDbName = finalTriggersDbName;
+    }
+
+    public String getFinalSchemasDbName() {
+        return finalSchemasDbName;
+    }
+
+    public void setFinalSchemasDbName(String finalSchemasDbName) {
+        this.finalSchemasDbName = finalSchemasDbName;
     }
 
     public String getFinalHttpName() {
@@ -174,30 +222,6 @@ public class HubSettings {
         this.jobAuthMethod = jobAuthMethod;
     }
 
-    public String getModulesDbName() {
-        return modulesDbName;
-    }
-
-    public void setModulesDbName(String modulesDbName) {
-        this.modulesDbName = modulesDbName;
-    }
-
-    public String getTriggersDbName() {
-        return triggersDbName;
-    }
-
-    public void setTriggersDbName(String triggersDbName) {
-        this.triggersDbName = triggersDbName;
-    }
-
-    public String getSchemasDbName() {
-        return schemasDbName;
-    }
-
-    public void setSchemasDbName(String schemasDbName) {
-        this.schemasDbName = schemasDbName;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -214,31 +238,73 @@ public class HubSettings {
         this.projectDir = projectDir;
     }
 
+    @Value("${mlHost}")
     String host = null;
+
     String name = "data-hub";
 
+    @Value("${mlStagingDbName}")
     String stagingDbName = null;
+
+    @Value("${mlStagingTriggersDbName}")
+    String stagingTriggersDbName = null;
+
+    @Value("${mlStagingSchemasDbName}")
+    String stagingSchemasDbName = null;
+
+    @Value("${mlStagingAppserverName}")
     String stagingHttpName = null;
+
+    @Value("${mlStagingForestsPerHost}")
     Integer stagingForestsPerHost = null;
+
+    @Value("${mlStagingPort}")
     Integer stagingPort = null;
+
+    @Value("${mlStagingAuth}")
     String stagingAuthMethod = null;
 
+    @Value("${mlFinalDbName}")
     String finalDbName = null;
+
+    @Value("${mlFinalTriggersDbName}")
+    String finalTriggersDbName = null;
+
+    @Value("${mlFinalSchemasDbName}")
+    String finalSchemasDbName = null;
+
+    @Value("${mlFinalAppserverName}")
     String finalHttpName = null;
+
+    @Value("${mlFinalForestsPerHost}")
     Integer finalForestsPerHost = null;
+
+    @Value("${mlFinalPort}")
     Integer finalPort = null;
+
+    @Value("${mlFinalAuth}")
     String finalAuthMethod = null;
 
+    @Value("${mlJobDbName}")
     String jobDbName = null;
+
+    @Value("${mlJobAppserverName}")
     String jobHttpName = null;
+
+    @Value("${mlJobForestsPerHost}")
     Integer jobForestsPerHost = null;
+
+    @Value("${mlJobPort}")
     Integer jobPort = null;
+
+    @Value("${mlJobAuth}")
     String jobAuthMethod = null;
 
+    @Value("${mlModulesDbName}")
     String modulesDbName = null;
-    String triggersDbName = null;
-    String schemasDbName = null;
 
+    @Value("${mlHubUserName}")
     String username = null;
+
     String projectDir = null;
 }

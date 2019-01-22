@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,21 +30,34 @@ import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
-import com.marklogic.com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
-import com.marklogic.com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
+import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
+import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.hub.HubConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Handles loading modules that are contained within the DHF jar.
+ */
+@Component
 public class LoadHubModulesCommand extends AbstractCommand {
+
+
+    @Autowired
     private HubConfig hubConfig;
 
     private Throwable caughtException;
 
-    public LoadHubModulesCommand(HubConfig hubConfig) {
-        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES);
-        this.hubConfig = hubConfig;
+    public LoadHubModulesCommand() {
+        /**
+         * Hub modules should be loaded before any other modules - including those depended on via
+         * ml-gradle's mlRestApi dependency - to ensure that the DHF REST rewriter is available before any REST
+         * extensions are loaded via a /v1/config/* endpoint.
+         */
+        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES - 1);
     }
 
     private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
@@ -63,7 +76,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        String timestampFile = hubConfig.getHubModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.deletePropertiesFile();
 
@@ -88,6 +101,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(propsManager);
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
+            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
         }
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newJobDbClient());
@@ -95,12 +109,14 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), hubConfig.newJobDbClient());
         }
-        if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), hubConfig.newFinalClient());
-        }
+
 
         if (caughtException != null) {
             throw new RuntimeException(caughtException);
         }
+    }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
     }
 }

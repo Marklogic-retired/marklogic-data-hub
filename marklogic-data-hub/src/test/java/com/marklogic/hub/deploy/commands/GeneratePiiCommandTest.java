@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,40 +18,50 @@ package com.marklogic.hub.deploy.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.scaffold.impl.ScaffoldingImpl;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
 public class GeneratePiiCommandTest extends HubTestBase  {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
     private static File projectDir = projectPath.toFile();
     private static final String RESOURCES_DIR = "scaffolding-test";
 
+    @Autowired
+    HubProject project;
+
+    @Autowired
     GeneratePiiCommand generatePiiCommand;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        generatePiiCommand = new GeneratePiiCommand(getHubAdminConfig());
         deleteProjectDir();
     }
 
     private void installEntities() {
-        ScaffoldingImpl scaffolding = new ScaffoldingImpl(projectDir.toString(), finalClient);
-        Path employeeDir = scaffolding.getEntityDir("employee");
+        Path employeeDir = project.getEntityDir("employee");
         employeeDir.toFile().mkdirs();
         assertTrue(employeeDir.toFile().exists());
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
 
-        Path managerDir = scaffolding.getEntityDir("manager");
+        Path managerDir = project.getEntityDir("manager");
         managerDir.toFile().mkdirs();
         assertTrue(managerDir.toFile().exists());
         FileUtil.copy(getResourceStream("scaffolding-test/manager.entity.json"), managerDir.resolve("manager.entity.json").toFile());

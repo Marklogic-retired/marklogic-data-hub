@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubConfigBuilder;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.model.HubSettings;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.service.ProjectManagerService;
@@ -31,7 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +40,17 @@ public class ProjectsController {
 
     @Autowired
     private ProjectManagerService pm;
+
+
+    @Autowired
+    // this field wires quick-start to the main application context
+    private HubConfigImpl hubConfig;
+
+    @Autowired
+    private DataHub dataHub;
+
+    @Autowired
+    private HubSettings hubSettings;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
@@ -82,25 +92,16 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}/initialize", method = RequestMethod.POST)
     @ResponseBody
-    public Project initializeProject(@PathVariable int projectId, @RequestBody JsonNode hubConfig) {
+    public Project initializeProject(@PathVariable int projectId, @RequestBody JsonNode hubConfigDelta) {
         Project project = pm.getProject(projectId);
         ObjectMapper om = new ObjectMapper();
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
-            HubConfig config = HubConfigBuilder.newHubConfigBuilder(project.path)
-                .build();
-            config = om.readerForUpdating(config).readValue(hubConfig);
-            AppConfig appConfig = config.getAppConfig();
-            if (hubConfig.get("host") != null) {
-                appConfig.setHost(hubConfig.get("host").asText());
-            }
-            if (hubConfig.get("name") != null) {
-                appConfig.setName(hubConfig.get("name").asText());
-            }
-            project.initialize(config);
+            hubConfig = om.readerForUpdating(hubConfig).readValue(hubConfigDelta);
+            hubConfig.createProject(project.path);
+            dataHub.initProject();
             return project;
-        }
-        catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
@@ -110,8 +111,8 @@ public class ProjectsController {
     @ResponseBody
     public HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        return HubSettings.fromHubConfig(HubConfigBuilder.newHubConfigBuilder(project.path)
-            .withPropertiesFromEnvironment()
-            .build());
+        hubSettings.setProjectDir(project.path);
+
+        return hubSettings;
     }
 }

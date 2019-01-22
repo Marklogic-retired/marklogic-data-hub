@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -132,8 +132,6 @@ class RunFlowTask extends HubTask {
             }
         }
 
-        Vector<String> completed = new Vector<>()
-        Vector<String> failed = new Vector<>()
         FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
@@ -144,13 +142,13 @@ class RunFlowTask extends HubTask {
             .onItemComplete(new FlowItemCompleteListener() {
                 @Override
                 void processCompletion(String jobId, String itemId) {
-                    completed.add(itemId)
+                    //TODO in the future, let's figure out a good use of this space
                 }
             })
             .onItemFailed(new FlowItemFailureListener() {
                 @Override
                 void processFailure(String jobId, String itemId) {
-                    failed.add(itemId)
+                    //TODO ditto
                 }
             })
         JobTicket jobTicket = flowRunner.run()

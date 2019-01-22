@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.marklogic.quickstart.exception.BadRequestException;
 import com.marklogic.quickstart.exception.NotFoundException;
 import com.marklogic.quickstart.model.Project;
 import com.marklogic.quickstart.model.ProjectInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -32,6 +33,9 @@ public class ProjectManagerService {
 
     private Preferences prefs = Preferences.userNodeForPackage(ProjectManagerService.class);
     private int maxId = 0;
+
+    @Autowired
+    private Project project;
 
     public ProjectManagerService() {}
 
@@ -84,10 +88,10 @@ public class ProjectManagerService {
 
     public Project getProject(int id) {
         Map<Integer, ProjectInfo> projects = getProjects();
-        Project project;
         ProjectInfo pi = projects.get(id);
         if (pi != null) {
-            project = new Project(pi.id, pi.path);
+            project.setId(pi.id);
+            project.setPath(pi.path);
         }
         else {
             throw new NotFoundException();

@@ -28,14 +28,14 @@ function createContent(id, options) {
 
   return extractInstanceMyFunTest(source);
 }
-
+  
 /**
- * Creates an object instance from some source document.
- * @param source  A document or node that contains
- *   data for populating a my-fun-test
- * @return An object with extracted data and
- *   metadata about the instance.
- */
+* Creates an object instance from some source document.
+* @param source  A document or node that contains
+*   data for populating a my-fun-test
+* @return An object with extracted data and
+*   metadata about the instance.
+*/
 function extractInstanceMyFunTest(source) {
   // the original source documents
   let attachments = source;
@@ -48,26 +48,29 @@ function extractInstanceMyFunTest(source) {
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
-  let name = !fn.empty(source.xpath('/name')) ? xs.string(fn.head(source.xpath('/name'))) : null;
-  let price = !fn.empty(source.xpath('/price')) ? xs.decimal(fn.head(source.xpath('/price'))) : null;
-  let ages = !fn.empty(source.xpath('/ages')) ? source.xpath('/ages') : [];
-
+  else{
+    source = new NodeBuilder().addNode(fn.head(source)).toNode();
+  }
+  let name = !fn.empty(fn.head(source.xpath('/name'))) ? xs.string(fn.head(fn.head(source.xpath('/name')))) : null;
+  let price = !fn.empty(fn.head(source.xpath('/price'))) ? xs.decimal(fn.head(fn.head(source.xpath('/price')))) : null;
+  let ages = !fn.empty(fn.head(source.xpath('/ages'))) ? fn.head(source.xpath('/ages')) : [];
+  
   /* The following property is a local reference. */
   let employee = null;
-  if(source.xpath('/employee')) {
+  if(fn.head(source.xpath('/employee'))) {
     // let's create and pass the node
     let employeeSource = new NodeBuilder();
     employeeSource.addNode(fn.head(source.xpath('/employee'))).toNode();
     // either return an instance of a Employee
     employee = extractInstanceEmployee(employeeSource);
-
+  
     // or a reference to a Employee
     // employee = makeReferenceObject('Employee', employeeSource));
   };
-
+  
   /* The following property is a local reference. */
   let employees = [];
-  if(source.xpath('/employees')) {
+  if(fn.head(source.xpath('/employees'))) {
     for(const item of Sequence.from(source.xpath('/employees'))) {
       // let's create and pass the node
       let itemSource = new NodeBuilder();
@@ -93,13 +96,14 @@ function extractInstanceMyFunTest(source) {
 };
 
 /**
- * Creates an object instance from some source document.
- * @param source  A document or node that contains
- *   data for populating a Employee
- * @return An object with extracted data and
- *   metadata about the instance.
- */
+* Creates an object instance from some source document.
+* @param source  A document or node that contains
+*   data for populating a Employee
+* @return An object with extracted data and
+*   metadata about the instance.
+*/
 function extractInstanceEmployee(source) {
+  let attachments = source;
   // now check to see if we have XML or json, then create a node clone to operate of off
   if (source instanceof Element || source instanceof ObjectNode) {
     let instancePath = '/';
@@ -109,13 +113,16 @@ function extractInstanceEmployee(source) {
     }
     source = new NodeBuilder().addNode(fn.head(source.xpath(instancePath))).toNode();
   }
-  let id = !fn.empty(source.xpath('/id')) ? xs.string(fn.head(source.xpath('/id'))) : null;
-  let name = !fn.empty(source.xpath('/name')) ? xs.string(fn.head(source.xpath('/name'))) : null;
-  let salary = !fn.empty(source.xpath('/salary')) ? xs.decimal(fn.head(source.xpath('/salary'))) : null;
+  else{
+    source = new NodeBuilder().addNode(fn.head(source)).toNode();
+  }
+  let id = !fn.empty(fn.head(source.xpath('/id'))) ? xs.string(fn.head(fn.head(source.xpath('/id')))) : null;
+  let name = !fn.empty(fn.head(source.xpath('/name'))) ? xs.string(fn.head(fn.head(source.xpath('/name')))) : null;
+  let salary = !fn.empty(fn.head(source.xpath('/salary'))) ? xs.decimal(fn.head(fn.head(source.xpath('/salary')))) : null;
 
   // return the instance object
   return {
-
+  
     '$type': 'Employee',
     '$version': '0.0.1',
     'id': id,
@@ -135,3 +142,4 @@ function makeReferenceObject(type, ref) {
 module.exports = {
   createContent: createContent
 };
+

@@ -5,15 +5,29 @@ import { MdlTextFieldComponent } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-folder-browser',
-  templateUrl: './folder-browser.component.html',
-  styleUrls: ['./folder-browser.component.scss'],
+  template: `
+    <app-folder-browser-ui
+      [startPath]="startPath"
+      [absoluteOnly]="absoluteOnly"
+      [showFiles]="showFiles"
+      [currentPath]="currentPath"
+      [isLoading]="isLoading"
+      [folders]="folders"
+      [files]="files"
+      (inputPathChanged)="this.onInputPathChange($event)"
+      (entryClicked)="this.entryClicked($event)"
+      (fileClicked)="this.fileClicked($event)"
+      (folderChanged)="this.onFolderChange($event)"
+    ></app-folder-browser-ui>
+  `
 })
 export class FolderBrowserComponent implements OnInit, OnChanges {
   @Input() startPath: string = '.';
-  @Output() folderChosen = new EventEmitter();
-  @Output() fileChosen = new EventEmitter();
   @Input() absoluteOnly: boolean = false;
   @Input() showFiles: boolean = false;
+
+  @Output() folderChosen = new EventEmitter();
+  @Output() fileChosen = new EventEmitter();
 
   @ViewChild(MdlTextFieldComponent) inputPath: MdlTextFieldComponent;
 
@@ -26,16 +40,17 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.getFolders(this.startPath);
-    this.inputPath.registerOnChange((value: string) => {
-      if (this.currentPath !== value) {
-        this.currentPath = value;
-      }
-    });
   }
 
   ngOnChanges(changes: any) {
     if (changes.startPath && changes.startPath.currentValue) {
       this.getFolders(changes.startPath.currentValue);
+    }
+  }
+
+  onInputPathChange(path) {
+    if (this.currentPath !== path) {
+      this.currentPath = path;
     }
   }
 

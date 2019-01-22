@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 package com.marklogic.gradle.fullcycle
 
 import com.marklogic.gradle.task.BaseTest
+import com.marklogic.hub.HubConfig
+
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
@@ -32,6 +34,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         createGradleFiles()
         runTask("hubInit")
         runTask("mlDeploy")
+		clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     def cleanupSpec() {
@@ -107,31 +110,22 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
     }
 
     def "createHarmonizeFlow with valid mappingName"() {
-        given:
-        def pluginDir = Paths.get(hubConfig().projectDir).resolve("plugins")
-        def mappingDir = pluginDir.resolve("mappings")
-        def newMappingDir = mappingDir.resolve("my-new-mapping")
-        mappingDir.toFile().mkdirs()
-        newMappingDir.toFile().mkdirs()
-        FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), newMappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
-        BaseTest.propertiesFile << """
-            ext {
-                entityName=my-new-entity
-                flowName=my-new-harmonize-flow
-                mappingName=my-new-mapping
-                useES=false
-            }
-        """
-        runTask("mlLoadModules")
+		given:
+		def pluginDir = Paths.get(hubConfig().hubProject.projectDirString).resolve("plugins")
+		def mappingDir = pluginDir.resolve("mappings").resolve("my-new-mapping")
+		def entitiesDir = pluginDir.resolve("entities").resolve("Employee");
+		mappingDir.toFile().mkdirs()
+		FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), mappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
+		runTask("hubDeployUserModules")
+		entitiesDir.toFile().mkdirs();
+		FileUtils.copyFile(new File("src/test/resources/employee.entity.json"), entitiesDir.resolve('Employee.entity.json').toFile())
+		runTask("hubDeployUserModules")
 
-        when:
-        def result = runTask('hubCreateHarmonizeFlow')
+		when:
+		def result = runTask('hubCreateHarmonizeFlow', '-PentityName=Employee', '-PflowName=mapping-harmonize-flow', '-PmappingName=my-new-mapping-1', '-PuseES=true')
 
-        then:
-        notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
-
-        File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
-        entityDir.isDirectory() == true
-    }
+		then:
+		notThrown(UnexpectedBuildFailure)
+		result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
+	}
 }

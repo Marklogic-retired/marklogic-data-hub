@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
@@ -30,9 +31,9 @@ import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.listeners.DeployUserModulesListener;
 import com.marklogic.quickstart.listeners.ValidateListener;
-import com.marklogic.quickstart.model.EnvironmentConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -50,21 +51,28 @@ public class DataHubService {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private DataHub dataHub;
+
+    @Autowired
+    private LoadUserModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    private LoadUserArtifactsCommand loadUserArtifactsCommand;
+
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
-        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.install(listener);
             return true;
         } catch(Throwable e) {
             e.printStackTrace();
-            listener.onStatusChange(100, getStackTrace(e));
+            listener.onStatusChange(-1, getStackTrace(e));
         }
         return false;
     }
 
     public void updateIndexes(HubConfig config) {
-        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.updateIndexes();
         } catch(Throwable e) {
@@ -83,6 +91,7 @@ public class DataHubService {
         installUserModules(config, forceLoad, deployListener, validateListener);
     }
 
+    @Async
     public void installUserModules(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
@@ -99,7 +108,6 @@ public class DataHubService {
     public void reinstallUserModules(HubConfig config, DeployUserModulesListener deployListener, ValidateListener validateListener) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
-        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.clearUserModules();
             installUserModules(config, true, deployListener);
@@ -117,7 +125,6 @@ public class DataHubService {
     public void uninstallUserModules(HubConfig config) {
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
 
-        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.clearUserModules();
         } catch(Throwable e) {
@@ -127,7 +134,6 @@ public class DataHubService {
     }
 
     public HashMap preInstallCheck(HubConfig config) {
-        DataHub dataHub = DataHub.create(config);
         return dataHub.runPreInstallCheck();
     }
 
@@ -139,7 +145,6 @@ public class DataHubService {
     }
 
     public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
-        DataHub dataHub = DataHub.create(config);
         try {
             dataHub.uninstall(listener);
         } catch(Throwable e) {
@@ -149,7 +154,7 @@ public class DataHubService {
     }
 
     public String getLastDeployed(HubConfig config) {
-        File tsFile = new File(config.getUserModulesDeployTimestampFile());
+        File tsFile = new File(config.getHubProject().getUserModulesDeployTimestampFile());
         Date lastModified = new Date(tsFile.lastModified());
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -160,33 +165,32 @@ public class DataHubService {
     }
 
     public boolean updateHub(HubConfig config) throws IOException, CantUpgradeException {
-        boolean result = DataHub.create(config).upgradeHub();
+        boolean result = dataHub.upgradeHub();
         if (result) {
             ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-            if (authenticationToken != null) {
-                EnvironmentConfig environmentConfig = authenticationToken.getEnvironmentConfig();
-                environmentConfig.checkIfInstalled();
-            }
         }
         return result;
 
     }
 
     public void clearContent(HubConfig config, String database) {
-        DataHub dataHub = DataHub.create(config);
         dataHub.clearDatabase(database);
     }
 
     private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
         List<Command> commands = new ArrayList<>();
-        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
+        loadUserModulesCommand.setHubConfig(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
+
+        loadUserArtifactsCommand.setHubConfig(hubConfig);
+        loadUserArtifactsCommand.setForceLoad(forceLoad);
+
         commands.add(loadUserModulesCommand);
+        commands.add(loadUserArtifactsCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
-
         if(deployListener != null) {
             deployListener.onDeploy(getLastDeployed(hubConfig));
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.marklogic.appdeployer.AppConfig;
@@ -25,13 +24,14 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * An interface to set, manage and recall the Data Hub's Configuration
+ * An interface to set, manage and recall the Data Hub's Configuration.
+ * HubConfig has a singleton scope so set everything you want at the start of the application and
+ * and then call {@link #refreshProject()} to wire up all clients and load the properties from gradle.properties
+ * (optionally overridden with gradle-{env}.properties).
  */
 @JsonDeserialize(as = HubConfigImpl.class)
 @JsonSerialize(as = HubConfigImpl.class)
@@ -41,18 +41,24 @@ public interface HubConfig {
     String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
     String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
-    String HUB_CONFIG_DIR = "hub-internal-config";
-    String USER_CONFIG_DIR = "user-config";
-    String ENTITY_CONFIG_DIR = "entity-config";
+    String PATH_PREFIX = "src/main/";
+    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
+    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
+    String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
     String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
+    String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
+
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
     String DEFAULT_JOB_NAME = "data-hub-JOBS";
     String DEFAULT_MODULES_DB_NAME = "data-hub-MODULES";
-    String DEFAULT_TRIGGERS_DB_NAME = "data-hub-TRIGGERS";
-    String DEFAULT_SCHEMAS_DB_NAME = "data-hub-SCHEMAS";
+    String DEFAULT_STAGING_TRIGGERS_DB_NAME = "data-hub-staging-TRIGGERS";
+    String DEFAULT_FINAL_TRIGGERS_DB_NAME = "data-hub-final-TRIGGERS";
+    String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
+    String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
     String DEFAULT_ROLE_NAME = "data-hub-role";
     String DEFAULT_USER_NAME = "data-hub-user";
@@ -78,15 +84,6 @@ public interface HubConfig {
      * @return name of host
      */
     String getHost();
-
-    /**
-     * Creates and returns a hubconfig object for a project directory
-     * @param projectDir - string path to the project directory
-     * @return HubConfig based in the project directory
-     */
-    static HubConfig create(String projectDir) {
-        return new HubConfigImpl(projectDir);
-    }
 
     /**
      * Returns the database name for the DatabaseKind set in the config
@@ -297,10 +294,22 @@ public interface HubConfig {
     void setHubUserName(String hubUserName);
 
     /**
-     * Gets a string array of hosts
-     * @return String array of hosts
+     * Gets a string of load balancer host
+     * @return String of load balancer host
      */
-    String[] getLoadBalancerHosts();
+    String getLoadBalancerHost();
+
+    /**
+     * Signifies if the host is a load balancer host.
+     * @return a Boolean.
+     */
+    Boolean getIsHostLoadBalancer();
+
+    /**
+     * Signifies if we are dealing with a provisioned environment.
+     * @return a Boolean.
+     */
+    Boolean getIsProvisionedEnvironment();
 
     /**
      * Returns the path for the custom forests definition
@@ -376,6 +385,12 @@ public interface HubConfig {
     DatabaseClient newModulesDbClient();
 
     /**
+     * Gets the path for the modules directory
+     * @return the path for the modules directory
+     */
+    Path getModulesDir();
+
+    /**
      * Gets the path for the hub plugins directory
      * @return the path for the hub plugins directory
      */
@@ -436,6 +451,12 @@ public interface HubConfig {
     Path getUserDatabaseDir();
 
     /**
+     * Gets the path for the user schemas directory
+     * @return the path for the user schemas directory
+     */
+    Path getUserSchemasDir();
+
+    /**
      * Gets the path for the user servers directory
      * @return the path for the user servers database directory
      */
@@ -448,20 +469,20 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
-     * Returns the current appconfig object attached to the HubConfig
+     * Returns the current AppConfig object attached to the HubConfig
      * @return Returns current AppConfig object set for HubConfig
      */
     @JsonIgnore
     AppConfig getAppConfig();
 
     /**
-     * Sets the App Config for the current HubConfig
+     * Sets the AppConfig for the current HubConfig
      * @param config AppConfig to associate with the HubConfig
      */
     void setAppConfig(AppConfig config);
 
     /**
-     * Sets the App Config for the current HubConfig, with skipUpdate option
+     * Sets the AppConfig for the current HubConfig, with skipUpdate option
      * @param config - AppConfig to associate with the HubConfig
      * @param skipUpdate false to force update of AppConfig, true to skip it
      */
@@ -474,14 +495,26 @@ public interface HubConfig {
     String getJarVersion();
 
     /**
+     * Gets the current version of the project properties file is targetting
+     * @return Version of DHF that the project properties file is targetting
+     */
+    String getDHFVersion();
+
+    /**
      * Gets a new DatabaseClient that queries the staging database and appserver
-     * Uses mlUsername and mlPassword
-     * @return A client without elevated administrative privileges.
+     * @return A client that accesses the hub's staging appserver and staging database.
      */
     DatabaseClient newStagingClient();
 
     /**
      * Gets a new DatabaseClient that queries the Final database using the staging appserver.
+     * @return A database client configured for fetching from final database, but using DHF's staging modules.
+     */
+    DatabaseClient newReverseFlowClient();
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database using the final appserver.
+     * and final modules database.  (Future, will be same behavior as newReverseFlowClient when modules databases are merged.)
      * @return A DatabaseClient
      */
     DatabaseClient newFinalClient();
@@ -493,4 +526,27 @@ public interface HubConfig {
     String getInfo();
 
 
+    /**
+     * Initializes the java application state to a specific location.  A properties file
+     * is expected to be found in this directory.
+     * @param projectDirString The directory in which to find properties for a project.
+     */
+    void createProject(String projectDirString);
+
+    /**
+     * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
+     * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
+     * 
+     * @param environment - The name of the environment to use (local,dev,qa,prod,...)
+     * @return A HubConfig
+     */
+    HubConfig withPropertiesFromEnvironment(String environment);
+
+    /**
+     * Loads HubConfig object with values from gradle.properties (optionally overridden with
+     * gradle-(environment).properties). Once Spring creates HubConfig object and the project is initialized with
+     * {@link #createProject(String)} you can use setter methods to change HubConfig properties
+     * and then call this method.
+     */
+    void refreshProject();
 }
