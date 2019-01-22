@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.*
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.job.JobManager
 import com.marklogic.hub.scaffold.Scaffolding
@@ -60,6 +61,11 @@ abstract class HubTask extends DefaultTask {
     @Internal
     LoadUserModulesCommand getLoadUserModulesCommand() {
         getProject().property("loadUserModulesCommand")
+    }
+
+    @Internal
+    LoadUserArtifactsCommand getLoadUserArtifactsCommand() {
+        getProject().property("loadUserArtifactsCommand")
     }
 
     @Internal

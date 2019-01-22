@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,6 +107,10 @@ public class HubProjectImpl implements HubProject {
 
     @Override public Path getHubSchemasDir() { return getHubConfigDir().resolve("schemas"); }
 
+    @Override public Path getHubTriggersDir() {
+    	return getHubConfigDir().resolve("triggers"); 
+    }
+
     @Override public Path getUserConfigDir() {
         return this.projectDir.resolve(USER_CONFIG_DIR);
     }
@@ -158,6 +162,7 @@ public class HubProjectImpl implements HubProject {
         File databasesDir = getHubDatabaseDir().toFile();
         File serversDir = getHubServersDir().toFile();
         File securityDir = getHubSecurityDir().toFile();
+        File triggersDir = getHubTriggersDir().toFile();
 
         boolean newConfigInitialized =
             hubConfigDir.exists() &&
@@ -169,7 +174,9 @@ public class HubProjectImpl implements HubProject {
                 serversDir.exists() &&
                 serversDir.isDirectory() &&
                 securityDir.exists() &&
-                securityDir.isDirectory();
+                securityDir.isDirectory() &&
+                triggersDir.exists() &&
+                triggersDir.isDirectory();
 
         return buildGradle.exists() &&
             gradleProperties.exists() &&
@@ -243,6 +250,13 @@ public class HubProjectImpl implements HubProject {
         getHubSchemasDir().toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
 
+        //create hub triggers
+        Path hubTriggersDir = getHubTriggersDir();        
+        hubTriggersDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-create.json", hubTriggersDir.resolve("ml-dh-entity-create.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-modify.json", hubTriggersDir.resolve("ml-dh-entity-modify.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-delete.json", hubTriggersDir.resolve("ml-dh-entity-delete.json"), true);
+               
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
         makeExecutable(gradlew);

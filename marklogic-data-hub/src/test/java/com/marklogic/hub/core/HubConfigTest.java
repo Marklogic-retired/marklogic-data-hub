@@ -10,6 +10,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
 
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,16 +36,26 @@ public class HubConfigTest extends HubTestBase {
         createProjectDir();
         dataHub.initProject();
     }
-    
+
     @AfterEach
     public void cleanup() {
         resetProperties();
         adminHubConfig.refreshProject();
     }
-    
+
+    @Test
+    public void testAppConfigDefaultProps() {
+        AppConfig config = adminHubConfig.getAppConfig();
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, config.getContentDatabaseName());
+        assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, config.getTriggersDatabaseName());
+        assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, config.getSchemasDatabaseName());
+        assertEquals(HubConfig.DEFAULT_MODULES_DB_NAME, config.getModulesDatabaseName());
+    }
+
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
-        
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+
         AppConfig config = adminHubConfig.getAppConfig();
 
         assertEquals(new Integer(8011), config.getRestPort(),
@@ -62,7 +73,7 @@ public class HubConfigTest extends HubTestBase {
         String certPassword = adminHubConfig.getCertPassword(DatabaseKind.FINAL);
         String extName = adminHubConfig.getExternalName(DatabaseKind.FINAL);
         Boolean sslMethod = adminHubConfig.getSimpleSsl(DatabaseKind.FINAL);
-   
+
         Properties props = new Properties();
         props.put("mlFinalAuth", "basic");
         props.put("mlFinalPort", "8123");
@@ -74,8 +85,8 @@ public class HubConfigTest extends HubTestBase {
         resetProperties();
         adminHubConfig.refreshProject(props, true);
 
-        config = adminHubConfig.getAppConfig();        
-        
+        config = adminHubConfig.getAppConfig();
+
         assertEquals(SecurityContextType.BASIC, config.getRestSecurityContextType());
         assertEquals(new Integer(8123), config.getRestPort());
         assertEquals("/path/to/file", config.getRestCertFile());
@@ -83,13 +94,13 @@ public class HubConfigTest extends HubTestBase {
         assertEquals("somename", config.getRestExternalName());
         assertNotNull(config.getRestSslContext(), "Should have been set because mlFinalSimpleSsl=true");
         assertNotNull(config.getRestSslHostnameVerifier(), "Should have been set because mlFinalSimpleSsl=true");
-        assertNotNull(config.getRestTrustManager(), "Should have been set because mlFinalSimpleSsl=true"); 
-        
+        assertNotNull(config.getRestTrustManager(), "Should have been set because mlFinalSimpleSsl=true");
+
         props = new Properties();
         //reset them
         props.put("mlFinalAuth", authMethod);
         props.put("mlFinalPort", port);
-        
+
         //these values not set by dhf-default, so checking for null
         if(certFile != null)
             props.put("mlFinalCertFile", certFile);
@@ -104,8 +115,8 @@ public class HubConfigTest extends HubTestBase {
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, null);
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, null);
         }
-        
-        
+
+
     }
 
     @Test
@@ -114,17 +125,17 @@ public class HubConfigTest extends HubTestBase {
         resetProperties();
         adminHubConfig.refreshProject();
         assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
-    
+
         writeProp("mlIsHostLoadBalancer", "true");
         resetProperties();
         adminHubConfig.refreshProject();
         assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
-    
+
         writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
         resetProperties();
         adminHubConfig.refreshProject();
         assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
-    
+
         try {
             writeProp("mlLoadBalancerHosts", "host1");
             resetProperties();
@@ -133,7 +144,7 @@ public class HubConfigTest extends HubTestBase {
         catch (DataHubConfigurationException e){
             assertEquals( "\"mlLoadBalancerHosts\" must be the same as \"mlHost\"", e.getMessage());
         }
-    
+
         deleteProp("mlLoadBalancerHosts");
         deleteProp("mlIsHostLoadBalancer");
         resetProperties();

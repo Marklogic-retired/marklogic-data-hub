@@ -30,6 +30,7 @@ import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -249,6 +250,7 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
 
         scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);

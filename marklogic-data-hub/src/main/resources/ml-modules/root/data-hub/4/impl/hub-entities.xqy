@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2018 MarkLogic Corporation
+  Copyright 2012-2019 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -38,16 +38,19 @@ declare function hent:get-model($entity-name as xs:string, $used-models as xs:st
   return
     let $model-map as map:map? := $model
     let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
-    let $_ :=
-      let $definitions := map:get($model-map, "definitions")
-      for $ref in $refs[fn:not(. = $used-models)]
-      let $other-model as map:map? := hent:get-model($ref, ($used-models, $entity-name))
-      let $other-defs := map:get($other-model, "definitions")
-      for $key in map:keys($other-defs)
-      return
-        map:put($definitions, $key, map:get($other-defs, $key))
-    return
-      $model-map
+    let $definitions := map:get($model-map, "definitions")
+      let $_ :=
+        for $ref in $refs[fn:not(. = $used-models)]
+        let $m :=
+          if (fn:empty(map:get($definitions, $ref))) then
+          let $other-model as map:map? := hent:get-model($ref, ($used-models, $entity-name))
+          let $other-defs := map:get($other-model, "definitions")
+          for $key in map:keys($other-defs)
+          return
+            map:put($definitions, $key, map:get($other-defs, $key))
+          else ()
+      return ()
+    return $model-map
 };
 
 declare function hent:uber-model() as map:map
@@ -100,6 +103,7 @@ declare %private function hent:fix-options($nodes as node()*)
     typeswitch($n)
       case element(search:options) return
         element { fn:node-name($n) } {
+          $n/namespace::node(),
           <search:constraint name="Collection">
             <search:collection/>
           </search:constraint>,
@@ -108,7 +112,10 @@ declare %private function hent:fix-options($nodes as node()*)
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element() return
-        element { fn:node-name($n) } { hent:fix-options(($n/@*, $n/node())) }
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          hent:fix-options(($n/@*, $n/node()))
+        }
       case text() return
         fn:replace($n, "es:", "*:")
       default return $n

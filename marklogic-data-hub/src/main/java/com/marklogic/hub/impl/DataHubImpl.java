@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,9 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private LoadUserModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    private LoadUserArtifactsCommand loadUserArtifactsCommand;
 
     @Autowired
     private DeployHubAmpsCommand deployHubAmpsCommand;
@@ -665,6 +668,7 @@ public class DataHubImpl implements DataHub {
         List<Command> commands = new ArrayList();
         commands.add(loadHubModulesCommand);
         commands.add(loadUserModulesCommand);
+        commands.add(loadUserArtifactsCommand);
 
         for (Command c : commandsMap.get("mlModuleCommands")) {
             if (c instanceof LoadModulesCommand) {

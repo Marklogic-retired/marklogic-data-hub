@@ -17,7 +17,7 @@ public class Installer extends HubTestBase {
 
     private static Logger logger = LoggerFactory.getLogger(Installer.class);
 
-    public void setupProject() {       
+    public void setupProject() {
         createProjectDir();
     }
 
@@ -41,8 +41,11 @@ public class Installer extends HubTestBase {
 	            // this throws exception right now.
 	        } catch (Exception e) {
 	            logger.warn("Upgrade threw an exception during test bootstrapping");
-	
+
 	        }
+        }
+        if(getHubAdminConfig().getIsProvisionedEnvironment()) {
+            installHubModules();
         }
     }
 

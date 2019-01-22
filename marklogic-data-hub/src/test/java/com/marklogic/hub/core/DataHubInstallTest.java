@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.ApplicationConfig;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -89,6 +90,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallHubModules() throws IOException {
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
@@ -108,6 +110,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         File srcDir = new File(path);
@@ -119,7 +122,7 @@ public class DataHubInstallTest extends HubTestBase {
         HubConfig hubConfig = getHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        installUserModules(hubConfig, true);
+        installUserModules(hubConfig, false);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -216,6 +219,12 @@ public class DataHubInstallTest extends HubTestBase {
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy"),
             getModulesFile("/marklogic.rest.transform/test-input-transform/assets/transform.xqy"));
+
+        /*
+        ** The following tests would fail as installUserModules() is run with "forceLoad" option set to true as the
+        * LoadUserModulesCommand runs first and the timestamp file it creates will be deleted by LoadUserArtifactsCommand
+        * as currently these 2 commands share the timestamp file
+         */
 
         String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);

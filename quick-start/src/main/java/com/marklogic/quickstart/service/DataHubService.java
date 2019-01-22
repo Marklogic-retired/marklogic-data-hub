@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
@@ -55,6 +56,9 @@ public class DataHubService {
 
     @Autowired
     private LoadUserModulesCommand loadUserModulesCommand;
+
+    @Autowired
+    private LoadUserArtifactsCommand loadUserArtifactsCommand;
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
@@ -177,7 +181,12 @@ public class DataHubService {
         List<Command> commands = new ArrayList<>();
         loadUserModulesCommand.setHubConfig(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
+
+        loadUserArtifactsCommand.setHubConfig(hubConfig);
+        loadUserArtifactsCommand.setForceLoad(forceLoad);
+
         commands.add(loadUserModulesCommand);
+        commands.add(loadUserArtifactsCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);

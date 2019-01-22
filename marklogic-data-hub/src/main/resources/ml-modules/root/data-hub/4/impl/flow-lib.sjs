@@ -1,5 +1,5 @@
 /**
-  Copyright 2012-2018 MarkLogic Corporation
+  Copyright 2012-2019 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -600,6 +600,7 @@ function runWriter(writerFunction, itemContext, identifier, envelope, options) {
   tracelib.setPluginLabel("writer", currentTrace);
   tracelib.resetPluginInput(currentTrace);
   tracelib.setPluginInput("envelope", envelope, currentTrace);
+  tracelib.getCurrentTraceSettings();
   let resp = null;
   try {
       // resp = xdmp.apply(writerFunction, identifier, envelope, options);
