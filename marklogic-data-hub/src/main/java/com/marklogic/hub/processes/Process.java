@@ -18,6 +18,9 @@ package com.marklogic.hub.processes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public interface Process {
 
     enum ProcessType {
@@ -38,6 +41,10 @@ public interface Process {
                 }
             }
             return null;
+        }
+
+        public static ArrayList<ProcessType> getProcessTypes() {
+            return new ArrayList<>(Arrays.asList(ProcessType.values()));
         }
 
         public String toString() {
