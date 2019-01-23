@@ -19,7 +19,6 @@ package com.marklogic.quickstart.web;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.annotations.Since;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.impl.HubConfigImpl;
