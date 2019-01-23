@@ -27,6 +27,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -219,6 +221,7 @@ public class HubProjectImpl implements HubProject {
         Path userSecurityDir = getUserSecurityDir();
         Path rolesDir = hubSecurityDir.resolve("roles");
         Path usersDir = hubSecurityDir.resolve("users");
+        Path ampsDir = hubSecurityDir.resolve("amps");
         Path privilegesDir = hubSecurityDir.resolve("privileges");
         
         Path userRolesDir = userSecurityDir.resolve("roles");
@@ -232,6 +235,20 @@ public class HubProjectImpl implements HubProject {
         userRolesDir.toFile().mkdirs();
         userUsersDir.toFile().mkdirs();
         userPrivilegesDir.toFile().mkdirs();
+
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+        // Ant-style path matching
+        Resource[] resources = new Resource[0];
+        try {
+            resources = resolver.getResources("classpath:hub-internal-config/security/amps/*.json");
+            for (Resource resource : resources) {
+                InputStream is = resource.getInputStream();
+                FileUtil.copy(is, ampsDir.resolve(resource.getFilename()).toFile());
+            }
+        } catch (IOException e) {
+            logger.error("Failed to load amp resource", e);
+        }
 
         writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
         writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
