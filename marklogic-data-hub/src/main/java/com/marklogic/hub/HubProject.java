@@ -48,6 +48,8 @@ public interface HubProject {
      */
     Path getHubPluginsDir();
 
+    Path getProcessesDir();
+
     /**
      * Gets the path for the hub entities directory
      *
@@ -61,6 +63,12 @@ public interface HubProject {
      * @return the path for the hub mappings directory
      */
     Path getHubMappingsDir();
+
+    Path getMappingDir();
+
+    Path getIngestDir();
+
+    Path getCustomDir();
 
     /**
      * Gets the path for the hub's config directory

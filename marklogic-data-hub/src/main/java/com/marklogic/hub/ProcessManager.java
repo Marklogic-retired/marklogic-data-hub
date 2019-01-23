@@ -16,23 +16,69 @@
 
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.processes.Process;
 
 import java.util.ArrayList;
 
 public interface ProcessManager {
 
+    /**
+     * String value for the mapping file extension
+     */
+    String PROCESSES_FILE_EXTENSION = ".processes.json";
+
+    /**
+     * Saves a Process to disk
+     *
+     * @param process - the Process object to be saved
+     */
     void saveProcess(Process process);
 
+    /**
+     * Deletes a Process from disk
+     *
+     * @param process - the Process object to be deleted
+     */
     void deleteProcess(Process process);
 
+    /**
+     * Returns a list of all Processes currently defined
+     *
+     * @return - an ArrayList of all Process objects from disk
+     */
     ArrayList<Process> getProcesses();
 
-    ArrayList<Process> getProcesses(String name, Process.ProcessType type);
-
+    /**
+     * Returns a single Process given a name and a type
+     *
+     * @param name - name of the Process
+     * @param type - type of the Process
+     * @return the Process object
+     */
     Process getProcess(String name, Process.ProcessType type);
 
+    /**
+     * Returns a list of Processes that have the given type
+     *
+     * @param type - type of the Process
+     * @return an ArrayList of Process objects of a given type
+     */
     ArrayList<Process> getProcessesByType(Process.ProcessType type);
 
+    /**
+     * Returns a list of Process names that have the given type
+     *
+     * @param type - type of the Process
+     * @return an ArrayList of Process names of a given type
+     */
     ArrayList<String> getProcessNamesByType(Process.ProcessType type);
+
+    /**
+     * Creates a Process from a given JsonNode
+     *
+     * @param json - a JsonNode
+     * @return a Process object
+     */
+    Process createProcessFromJSON(JsonNode json);
 }

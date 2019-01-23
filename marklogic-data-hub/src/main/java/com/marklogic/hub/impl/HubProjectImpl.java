@@ -63,6 +63,7 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
+    private Path processesDir;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -77,10 +78,31 @@ public class HubProjectImpl implements HubProject {
         this.projectDirString = projectDirString;
         this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
+        this.processesDir = this.projectDir.resolve("processes");
     }
 
     @Override public Path getHubPluginsDir() {
         return this.pluginsDir;
+    }
+
+    @Override
+    public Path getProcessesDir() {
+        return this.processesDir;
+    }
+
+    @Override
+    public Path getMappingDir() {
+        return this.processesDir.resolve("mapping");
+    }
+
+    @Override
+    public Path getIngestDir() {
+        return this.processesDir.resolve("ingest");
+    }
+
+    @Override
+    public Path getCustomDir() {
+        return this.processesDir.resolve("custom");
     }
 
     @Override public Path getHubEntitiesDir() {
@@ -187,6 +209,7 @@ public class HubProjectImpl implements HubProject {
 
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
+        this.processesDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();

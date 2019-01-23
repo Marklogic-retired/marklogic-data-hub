@@ -807,7 +807,7 @@ public class HubConfigImpl implements HubConfig
     public String getMlPassword() {
         return mlPassword;
     }
-    
+
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
     }
@@ -1282,7 +1282,7 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlHubUserName", hubUserName);
         }
-        
+
         if (hubAdminRoleName == null) {
             hubAdminRoleName = getEnvPropString(projectProperties, "mlHubAdminRole", environment.getProperty("mlHubAdminRole"));
         }
@@ -1532,6 +1532,24 @@ public class HubConfigImpl implements HubConfig
     @Override public Path getHubMappingsDir() { return hubProject.getHubMappingsDir(); }
 
     @JsonIgnore
+    @Override
+    public Path getMappingDir() {
+        return hubProject.getMappingDir();
+    }
+
+    @JsonIgnore
+    @Override
+    public Path getIngestDir() {
+        return hubProject.getIngestDir();
+    }
+
+    @JsonIgnore
+    @Override
+    public Path getCustomDir() {
+        return hubProject.getCustomDir();
+    }
+
+    @JsonIgnore
     @Override public Path getHubConfigDir() {
         return hubProject.getHubConfigDir();
     }
@@ -1759,7 +1777,7 @@ public class HubConfigImpl implements HubConfig
      *
      * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
      * method just ensures that they're relative to the DHF project directory.
-     * 
+     *
      * @param config
      */
     protected void initializeConfigDirs(AppConfig config) {

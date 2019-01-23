@@ -408,6 +408,12 @@ public interface HubConfig {
      */
     Path getHubMappingsDir();
 
+    Path getMappingDir();
+
+    Path getIngestDir();
+
+    Path getCustomDir();
+
     /**
      * Gets the path for the hub's config directory
      * @return the path for the hub's config directory
