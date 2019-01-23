@@ -36,7 +36,7 @@ public interface Process {
 
         public static ProcessType getProcessType(String type) {
             for (ProcessType processType : ProcessType.values()) {
-                if (processType.toString().equals(type)) {
+                if (processType.toString().equalsIgnoreCase(type)) {
                     return processType;
                 }
             }
@@ -53,32 +53,43 @@ public interface Process {
     }
 
     /**
+     * Creates an in-memory default instance of a Process given a name and a type
+     *
+     * @param name - the name of the Process
+     * @param type - the type of the mapping
+     * @return a Process object
+     */
+    static Process create(String name, ProcessType type) {
+        return new ProcessImpl(name, type);
+    }
+
+    /**
      * Returns the name of the processes
      *
      * @return a processes name
      */
-    String getProcessName();
+    String getName();
 
     /**
      * Sets the name of the processes
      *
-     * @param processName - a processes name
+     * @param name - a processes name
      */
-    void setProcessName(String processName);
+    void setName(String name);
 
     /**
      * Returns the type of the Process
      *
      * @return - a processes type
      */
-    ProcessType getProcessType();
+    ProcessType getType();
 
     /**
      * Sets the type of the processes
      *
-     * @param processType - a processes type
+     * @param type - a processes type
      */
-    void setProcessType(ProcessType processType);
+    void setType(ProcessType type);
 
     /**
      * Serializes the mapping as a json string
@@ -88,10 +99,9 @@ public interface Process {
     String serialize();
 
     /**
-     * Deserializes a json response and applies it to this mapping
+     * Deserialize a json response and applies it to this mapping
      *
      * @param json - the JsonNode you want deserialize
-     * @return this mapping
      */
-    Process deserialize(JsonNode json);
+    void deserialize(JsonNode json);
 }
