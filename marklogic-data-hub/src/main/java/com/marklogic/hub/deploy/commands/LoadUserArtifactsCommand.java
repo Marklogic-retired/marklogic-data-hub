@@ -16,9 +16,9 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
-import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * Loads user artifacts like mappings and entities. This will be deployed after triggers
  */
 @Component
-public class LoadUserArtifactsCommand extends LoadModulesCommand {
+public class LoadUserArtifactsCommand extends AbstractCommand {
 
     @Autowired
     private HubConfig hubConfig;
