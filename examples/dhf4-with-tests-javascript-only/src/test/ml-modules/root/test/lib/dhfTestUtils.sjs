@@ -229,6 +229,15 @@ function mlHubHarmonizeContentRequire(entityName,flowName) {
     return require(`/entities/${entityName}/harmonize/${flowName}/content.sjs`);
 }
 
+/**
+ * Helper function that calls the "createContent" function for the given 
+ * "entityName" and "flowName"
+ * 
+ * @param entityName the name of the entity 
+ * @param flowName the name of the harmonize flow 
+ * @param id the id (uri) to pass to the createContent function
+ * @param [options] the options to pass to the createContent function
+ */
 function mlHubHarmonizeCreateContent(entityName, flowName, id, options={}) {
     const contentLib = mlHubHarmonizeContentRequire(entityName, flowName)
     return fn.head(mlExecuteUpdateOnStaging(()=>contentLib.createContent(id,options)))
