@@ -18,6 +18,7 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.impl.Versions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,6 +54,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
      */
     @Override
     public void execute(CommandContext context) {
+        CMASettings.getInstance().setCmaSettings(context.getAppConfig());
         super.execute(context);
     }
 
@@ -60,24 +62,20 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
     public void undo(CommandContext context) {
         // this is a place to optimize -- is there a way to get
         // server versions without an http call?
-        String serverVersion = versions.getMarkLogicVersion();
-        logger.info("Choosing amp uninstall based on server version " + serverVersion);
-
-        if (serverVersion.matches("^[9]\\.0-([6789]|[0-9]{2,})(\\.\\d+)?")) {
-            // only on 9.0-5 are amps uninstalled at all.
+        String hubVersion = versions.getHubVersion();
+        CMASettings.getInstance().setCmaSettings(context.getAppConfig());
+        if (hubVersion.contains("-SNAPSHOT")) {
             logger.warn("Amps from uninstalled data hub framework to remain, but are disabled.");
-            super.execute(context);
         }
         else {
-            // only on 9.0-5+ are amps uninstalled at all.
-            logger.warn("Amps from uninstalled data hub framework to remain, but are disabled.");
+            logger.info("Uninstalling amps from data hub framework.");
+            super.execute(context);
         }
     }
 
     @Override
     protected File[] getResourceDirs(CommandContext context) {
-        return new File[] {
-        };
+        return super.getResourceDirs(context);
     }
 
 

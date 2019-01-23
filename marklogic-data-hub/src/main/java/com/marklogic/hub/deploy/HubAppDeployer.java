@@ -23,8 +23,8 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 
@@ -54,7 +54,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     public void deploy(AppConfig appConfig) {
         this.completed = 0;
-        setCmaSettings(appConfig);
+        CMASettings.getInstance().setCmaSettings(appConfig);
         onStatusChange(0, "Installing...");
         super.deploy(appConfig);
         onStatusChange(100, "Installation Complete");
@@ -83,7 +83,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     public void undeploy(AppConfig appConfig) {
         this.completed = 0;
-        setCmaSettings(appConfig);
+        CMASettings.getInstance().setCmaSettings(appConfig);
         onStatusChange(0, "Uninstalling...");
         super.undeploy(appConfig);
         onStatusChange(100, "Installation Complete");
@@ -106,19 +106,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
     private void onStatusChange(int percentComplete, String message) {
         if (this.listener != null) {
             this.listener.onStatusChange(percentComplete, message);
-        }
-    }
-
-    private void setCmaSettings(AppConfig appConfig) {
-        if (mlVersion == null) {
-            this.mlVersion = new Versions(appConfig).getMarkLogicVersion();
-        }
-        if (mlVersion.matches("^[9]\\.0-([56789]|[0-9]{2,})(\\.\\d+)?")) {
-            appConfig.setDeployForestsWithCma(true);
-            appConfig.setDeployPrivilegesWithCma(true);
-            if (mlVersion.matches("^[9]\\.0-([6789]|[0-9]{2,})(\\.\\d+)?")) {
-                appConfig.setDeployAmpsWithCma(true);
-            }
         }
     }
 }
