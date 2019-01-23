@@ -174,7 +174,8 @@ public class DataHubInstallTest extends HubTestBase
         
         //checking if triggers are written
         assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
-        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        //we write 3 triggers as part of installation
+        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 4);
         
     }
 
@@ -211,7 +212,7 @@ public class DataHubInstallTest extends HubTestBase
         HubConfig hubConfig = getHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        installUserModules(hubConfig, true);
+        installUserModules(hubConfig, false);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),

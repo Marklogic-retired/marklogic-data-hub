@@ -118,11 +118,12 @@ class DataHubPlugin implements Plugin<Project> {
             .mustRunAfter(["mlClearModulesDatabase"])
 
         // This isn't likely to be used, but it's being kept for regression purposes for now
-        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask, description: "Installs user modules from the plugins and src/main/entity-config directories.")
+        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
+            description: "Installs user modules from the plugins and src/main/entity-config directories.")
+            .finalizedBy(["hubDeployUserArtifacts"])
 
         project.task("hubDeployUserArtifacts", group: deployGroup, type: DeployUserArtifactsTask,
             description: "Installs user artifacts such as entities and mappings.")
-            .mustRunAfter(["hubDeployUserModules"])
 
         // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
         project.tasks.replace("mlWatch", HubWatchTask)
