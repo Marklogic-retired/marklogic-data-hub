@@ -2,9 +2,19 @@
 
 This project shows a basic setup for writing marklogic unit tests for the DHF using __*only javascript*__.
 
-This includes the insertion of the data into the database as well as running harmonization jobs (and testing the output).
+This includes the insertion of the data into the database as well as running harmonization jobs (and testing the output). E.g.
+```javascript
+    const dtu = require('/test/lib/dhfTestUtils.sjs');
 
-Note that this __*does not*__ create a dedicated test database. Rather the tests runs using the staging and final databases that you have configured in your gradle-*.properties file
+    const results = dtu.mlHubRunFlow("Employee","sampleHarmonize",{"entity":"Employee"})
+
+    let testResults =  [
+        test.assertEqual(2, results.totalCount),
+        test.assertEqual(0, results.errorCount)
+    ]
+```
+
+Note that this exmaple __*does not*__ use a dedicated test database. Rather the tests runs using the staging and final databases that you have configured in your gradle-*.properties file
 
 ## Trying the project out locally
 
