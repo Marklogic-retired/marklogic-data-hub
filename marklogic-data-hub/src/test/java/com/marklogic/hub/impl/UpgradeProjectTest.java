@@ -38,6 +38,7 @@ public class UpgradeProjectTest  extends HubTestBase {
     @BeforeEach
     private void setUp() {
         deleteProjectDir();
+        resetProperties();
     }
 
     @AfterEach
@@ -57,9 +58,10 @@ public class UpgradeProjectTest  extends HubTestBase {
         FileUtils.deleteDirectory(projectDir);
         FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf300").toFile(), projectDir);
 
-        hubProject.createProject(projectPath);
-        // We don't need to pass any tokens
-        hubProject.init(new HashMap<>());
+        adminHubConfig.createProject(projectPath);
+        adminHubConfig.refreshProject();
+
+        adminHubConfig.initHubProject();
         hubProject.upgradeProject();
 
         File srcDir = new File(projectDir, "src");
@@ -81,9 +83,10 @@ public class UpgradeProjectTest  extends HubTestBase {
         FileUtils.deleteDirectory(projectDir);
         FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf403from300").toFile(), projectDir);
 
-        hubProject.createProject(projectPath);
-        // We don't need to pass any tokens
-        hubProject.init(new HashMap<>());
+        adminHubConfig.createProject(projectPath);
+        adminHubConfig.refreshProject();
+
+        adminHubConfig.initHubProject();
         hubProject.upgradeProject();
 
         File srcDir = new File(projectDir, "src");
