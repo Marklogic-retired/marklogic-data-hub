@@ -43,12 +43,14 @@ export default function(tmpDir) {
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       // verify entity only checkbox
-      await browsePage.entitiesOnlyChkBox().click()
+      await browsePage.entitiesOnlyChkBox().click();
+      browser.sleep(5000);
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       // verify it's returning the entities only result
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
       // clear the checkbox, results should include non-entities
-      await browsePage.entitiesOnlyChkBox().click()
+      await browsePage.entitiesOnlyChkBox().click();
+      browser.sleep(5000);
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       await browsePage.databaseDropDown().click();
