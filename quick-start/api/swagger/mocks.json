@@ -131,7 +131,7 @@
         }
       }
     },
-    "/create-mapping-process": {
+    "/mapping-process": {
       "post": {
         "tags": [
           "process"
@@ -151,6 +151,139 @@
             "schema": {
               "$ref": "#/definitions/Process"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/sample"
+              },
+              "default": [
+                { "id": 1, "name": "aaa", "status": "new" },
+                { "id": 2, "name": "bbb", "status": "new" },
+                { "id": 3, "name": "ccc", "status": "ready" },
+                { "id": 4, "name": "ddd", "status": "ready" },
+                { "id": 5, "name": "eee", "status": "approved" }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/mapping-process/{name}": {
+      "get": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Get a mapping process",
+        "description": "Get a mapping process",
+        "operationId": "getMappingProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of mapping process to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "schema": {
+                "$ref": "#/definitions/Process"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Update a mapping process",
+        "description": "Update a mapping process",
+        "operationId": "updateMappingProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of mapping process to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update Mapping Process Parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Process"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/sample"
+              },
+              "default": [
+                { "id": 1, "name": "aaa", "status": "new" },
+                { "id": 2, "name": "bbb", "status": "new" },
+                { "id": 3, "name": "ccc", "status": "ready" },
+                { "id": 4, "name": "ddd", "status": "ready" },
+                { "id": 5, "name": "eee", "status": "approved" }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Delete a mapping process",
+        "description": "Delete a mapping process",
+        "operationId": "deleteMappingProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of mapping process to delete",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
