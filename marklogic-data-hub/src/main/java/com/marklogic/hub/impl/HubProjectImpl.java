@@ -107,8 +107,6 @@ public class HubProjectImpl implements HubProject {
         return getHubConfigDir().resolve("security");
     }
 
-    @Override public Path getHubSchemasDir() { return getHubConfigDir().resolve("schemas"); }
-
     @Override public Path getHubTriggersDir() {
     	return getHubConfigDir().resolve("triggers"); 
     }
@@ -264,7 +262,7 @@ public class HubProjectImpl implements HubProject {
         getUserDatabaseDir().toFile().mkdirs();
 
         //scaffold schemas
-        getHubSchemasDir().toFile().mkdirs();
+        getUserDatabaseDir().resolve(customTokens.get("%%mlStagingSchemasDbName%%")).resolve("schemas").toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
 
         //create hub triggers

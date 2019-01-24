@@ -104,7 +104,9 @@ public class DataHubInstallTest extends HubTestBase
             //userTriggersDir.toFile().mkdirs();
 
             //creating directories for adding staging schemas/ modules and trigger files
-            Path hubSchemasDir = project.getHubConfigDir().resolve("schemas");
+            Path hubSchemasDir = project.getUserDatabaseDir()
+                .resolve(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME)
+                .resolve("schemas");
             Path hubModulesDir = project.getHubStagingModulesDir();
             //Path hubTriggersDir = project.getHubConfigDir().resolve("triggers");
 
