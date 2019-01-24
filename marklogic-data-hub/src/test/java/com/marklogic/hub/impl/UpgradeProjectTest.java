@@ -3,21 +3,14 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.HubTestBase;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,28 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * src/test/resources/upgrade-projects into the build directory (a non-version-controlled area) where it
  * can then be upgraded and verified.
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class UpgradeProjectTest  extends HubTestBase {
-
-    @Autowired
-    private HubProject hubProject;
-
-    @BeforeEach
-    private void setUp() {
-        deleteProjectDir();
-        resetProperties();
-    }
-
-    @AfterEach
-    private void cleanUp() {
-        resetProperties();
-        createProjectDir();
-        adminHubConfig.createProject(PROJECT_PATH);
-        adminHubConfig.initHubProject();
-        adminHubConfig.refreshProject();
-        getHubAdminConfig();
-    }
+public class UpgradeProjectTest {
 
     @Test
     public void upgrade300ToCurrentVersion() throws Exception {
@@ -56,8 +28,10 @@ public class UpgradeProjectTest  extends HubTestBase {
         FileUtils.deleteDirectory(projectDir);
         FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf300").toFile(), projectDir);
 
-        adminHubConfig.createProject(projectPath);
-        adminHubConfig.initHubProject();
+        HubProjectImpl hubProject = new HubProjectImpl();
+        hubProject.createProject(projectPath);
+        // We require %%mlStagingSchemasDbName%% in the map for test. In real scenarios, its value will always be set.
+        hubProject.init(createMap());
         hubProject.upgradeProject();
 
         File srcDir = new File(projectDir, "src");
@@ -79,8 +53,10 @@ public class UpgradeProjectTest  extends HubTestBase {
         FileUtils.deleteDirectory(projectDir);
         FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf403from300").toFile(), projectDir);
 
-        adminHubConfig.createProject(projectPath);
-        adminHubConfig.initHubProject();
+        HubProjectImpl hubProject = new HubProjectImpl();
+        hubProject.createProject(projectPath);
+        // We require %%mlStagingSchemasDbName%% in the map for test. In real scenarios, its value will always be set.
+        hubProject.init(createMap());
         hubProject.upgradeProject();
 
         File srcDir = new File(projectDir, "src");
@@ -93,6 +69,12 @@ public class UpgradeProjectTest  extends HubTestBase {
         File configDir = new File(mainDir, "ml-config");
         verifyUserDatabases(configDir);
         verifyUserServers(configDir);
+    }
+
+    private Map<String, String> createMap() {
+        Map<String,String> myMap = new HashMap<>();
+        myMap.put("%%mlStagingSchemasDbName%%", HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        return myMap;
     }
 
     private void verifyInternalDatabases(File internalConfigDir) {
