@@ -20,7 +20,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.hub.*;
-import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.io.FileUtils;
@@ -57,9 +56,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DataHubInstallTest extends HubTestBase
 {
     private static DataHub dataHub;
-
-    @Autowired
-    private DeployHubAmpsCommand deployHubAmpsCommand;
 
     private static int afterTelemetryInstallCount = 0;
 
@@ -174,7 +170,8 @@ public class DataHubInstallTest extends HubTestBase
         
         //checking if triggers are written
         assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
-        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        // 3 triggers are written as part of installation
+        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 4);
         
     }
 
@@ -211,7 +208,7 @@ public class DataHubInstallTest extends HubTestBase
         HubConfig hubConfig = getHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
-        installUserModules(hubConfig, true);
+        installUserModules(hubConfig, false);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -344,15 +341,4 @@ public class DataHubInstallTest extends HubTestBase
 
     }
 
-    @Test
-    public void testAmpLoading()
-    {
-        HubConfig config = getHubAdminConfig();
-        LoadHubModulesCommand loadHubModulesCommand = new LoadHubModulesCommand();
-        loadHubModulesCommand.setHubConfig(config);
-        ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(host, 8002, secUser, secPassword));
-        CommandContext commandContext = new CommandContext(config.getAppConfig(), manageClient, null);
-        deployHubAmpsCommand.setHubConfig(config);
-        deployHubAmpsCommand.execute(commandContext);
-    }
 }
