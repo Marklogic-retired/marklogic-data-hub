@@ -16,100 +16,79 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.legacy.flow.Flow;
-import com.marklogic.hub.legacy.flow.FlowRunner;
-import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.legacy.flow.impl.FlowImpl;
-import org.w3c.dom.Element;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.flow.Flow;
 
-import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Manages existing flows and creates flow runners to execute flows.
+ * Manages CRUD operations for flows
  */
 public interface FlowManager {
 
     /**
-     * Turns an XML document into a flow
-     * @param doc - the xml document representing a flow
-     * @return a Flow instance
+     * String value for the flow file extension
      */
-    static Flow flowFromXml(Element doc) {
-        return FlowImpl.fromXml(doc);
-    }
+    String FLOW_FILE_EXTENSION = ".flow.json";
 
     /**
-     * retrieves a list of all the flows on the local files systems
-     * @return a list of Flows
+     * Retrieves a named flow
+     * @param flowName - name of the flow
+     * @return a flow object
      */
-    List<Flow> getLocalFlows();
+    Flow getFlow(String flowName);
 
     /**
-     * retrieves a list of all the flows on the local files systems
-     * @param entityName - string name of the entity for the flow
-     * @return a list of Flows
+     * Returns a flow based on the provided name as JSON string
+     * @param flowName - name of the flow
+     * @return string json representation of the flow object
      */
-    List<Flow> getLocalFlowsForEntity(String entityName);
-
-    /**
-     * retrieves a list of all the flows on the local files systems
-     * @param entityName - string name of the entity for the flow
-     * @param flowType - the FlowType enum, eg: ingest or harmonize
-     * @return a list of Flows
-     */
-    List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType);
-
-    /**
-     * Obtains a flow from a property file
-     * @param propertiesFile - the Path to the property file
-     * @return - a flow object
-     */
-    Flow getFlowFromProperties(Path propertiesFile);
+    String getFlowAsJSON(String flowName);
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
-     * @param entityName - the entity from which to fetch the flows
-     * @return - a list of flows for the given entity
+     * @return - a list of all flows
      */
-    List<Flow> getFlows(String entityName);
+    List<Flow> getFlows();
 
     /**
-     * Retrieves a named flow from a given entity
-     *
-     * @param entityName - the entity that the flow belongs to
-     * @param flowName - the name of the flow to get
-     * @return the flow
+     * Retrieves a list of names of flows installed on the MarkLogic server
+     * @return - a list of names of all flows
      */
-    Flow getFlow(String entityName, String flowName);
+    List<String> getFlowNames();
 
     /**
-     * Retrieves a named flow from a given entity
-     *
-     * @param entityName - the entity that the flow belongs to
-     * @param flowName - the name of the flow to get
-     * @param flowType - the type of flow (ingest/harmonize)
-     * @return the flow
+     * Creates a flow
+     * @param flowName - name of the flow
      */
-    Flow getFlow(String entityName, String flowName, FlowType flowType);
+    Flow createFlow(String flowName);
 
     /**
-     * Updates the indexes in the database based on the project
-     * @return - a list of names for all the flows that are legacy
+     * Creates a flow from a given JSON string
+     * @param  json - string representation of the flow
+     * @return - a Flow object
      */
-
-    List<String> getLegacyFlows();
-
-    /**
-     * Sets the version that the legacy flow is to be updated from
-     * @param fromVersion - string representation of DHF version
-     * @return a list of updated flow names that were updated
-     */
-    List<String> updateLegacyFlows(String fromVersion);
+    Flow createFlowFromJSON(String json);
 
     /**
-     * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
-     * @return FlowRunner object with current hubconfig already set
+     * Creates a flow from a given JsonNode
+     * @param json - JsonNode representation of the flow
+     * @return - a Flow object
      */
-    FlowRunner newFlowRunner();
+    Flow createFlowFromJSON(JsonNode json);
+
+    /**
+     * Deletes a flow
+     * @param flowName - name of the flow
+     */
+    void deleteFlow(String flowName);
+
+    /**
+     * Saves a flow to disk
+     * @param flow - the flow object to be saved
+     */
+    void saveFlow(Flow flow);
+
+
 }

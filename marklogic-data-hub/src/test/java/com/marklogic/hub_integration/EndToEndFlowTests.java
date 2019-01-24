@@ -26,10 +26,9 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.flow.*;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -113,7 +112,7 @@ public class EndToEndFlowTests extends HubTestBase {
     private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
     @Autowired
-    private FlowManager flowManager;
+    private LegacyFlowManager flowManager;
     private DataMovementManager flowRunnerDataMovementManager;
 
     private boolean installDocsFinished = false;
