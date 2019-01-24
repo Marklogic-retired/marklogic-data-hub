@@ -209,7 +209,7 @@ class TlsTest extends BaseTest {
         '''
 
         def result = runTask("hubInit")
-        runTask("mlDeploySecurity")
+        runTask("hubDeploySecurity")
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"),
@@ -226,7 +226,7 @@ class TlsTest extends BaseTest {
     
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
-        runTask("mlDeploySecurity")
+        runTask("hubDeploySecurity")
         runTask("disableSSL")
         //runTask("mlUnDeploySecurity")
     }

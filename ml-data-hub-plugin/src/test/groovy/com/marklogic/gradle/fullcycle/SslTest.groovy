@@ -151,7 +151,7 @@ class SslTest extends BaseTest {
         '''
 
         runTask("hubInit")
-        runTask("mlDeploySecurity")
+        runTask("hubDeploySecurity")
 
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
             new File("src/test/resources/ssl-test/ssl-server.json"))
@@ -173,7 +173,7 @@ class SslTest extends BaseTest {
 
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
-        runTask("mlDeploySecurity")
+        runTask("hubDeploySecurity")
         runTask("disableSSL", "--stacktrace")
         //runTask("mlUnDeploySecurity")
     }
