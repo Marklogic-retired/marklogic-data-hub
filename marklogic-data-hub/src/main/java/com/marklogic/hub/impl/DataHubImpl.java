@@ -42,6 +42,7 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
 import com.marklogic.mgmt.ManageClient;
@@ -92,9 +93,6 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private LoadUserArtifactsCommand loadUserArtifactsCommand;
-
-    @Autowired
-    private DeployHubAmpsCommand deployHubAmpsCommand;
     
     @Autowired
     private Versions versions;
@@ -494,10 +492,12 @@ public class DataHubImpl implements DataHub {
                 throw new DataHubConfigurationException(e);
             }
         }
+        AppConfig appConfig = hubConfig.getAppConfig();
+        CMASettings.getInstance().setCmaSettings(appConfig);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.deploy(hubConfig.getAppConfig());
+        finalDeployer.deploy(appConfig);
     }
 
     /**
@@ -552,10 +552,16 @@ public class DataHubImpl implements DataHub {
     @Override
     public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
+        List<Command> commandMap = buildListOfCommands();
+        //Remove this line if CMA supports uninstalling amps
+        commandMap.removeIf(command -> command instanceof DeployAmpsCommand);
+
+        AppConfig appConfig = hubConfig.getAppConfig();
+        CMASettings.getInstance().setCmaSettings(appConfig);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.undeploy(hubConfig.getAppConfig());
+        finalDeployer.setCommands(commandMap);
+        finalDeployer.undeploy(appConfig);
     }
 
     private void runInDatabase(String query, String databaseName) {
@@ -573,14 +579,6 @@ public class DataHubImpl implements DataHub {
 
     public Map<String, List<Command>> buildCommandMap() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
-
-        /**
-         * This kept separate from mlSecurityCommands because hub amps are stored in the DHF jar, while the commands
-         * in the mlSecurityCommands list deploy resources defined by users.
-         */
-        List<Command> hubAmpsCommands = new ArrayList<>();
-        hubAmpsCommands.add(deployHubAmpsCommand);
-        commandMap.put("mlHubAmpsCommand", hubAmpsCommands);
 
         updateDatabaseCommandList(commandMap);
 
