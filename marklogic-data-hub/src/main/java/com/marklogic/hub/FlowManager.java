@@ -34,9 +34,8 @@ public interface FlowManager {
 
     /**
      * Retrieves a named flow
-     * @param flowName - string name of the flow
+     * @param flowName - name of the flow
      * @return a flow object
-     * @throws DataHubProjectException if flow is not present or is not a valid flow
      */
     Flow getFlow(String flowName);
 
@@ -44,14 +43,12 @@ public interface FlowManager {
      * Returns a flow based on the provided name as JSON string
      * @param flowName - name of the flow
      * @return string json representation of the flow object
-     * @throws DataHubProjectException if flow is not present or is not a valid flow
      */
     String getFlowAsJSON(String flowName);
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
      * @return - a list of all flows
-     * @throws DataHubProjectException if any of the flows is not valid
      */
     List<Flow> getFlows();
 
@@ -63,29 +60,27 @@ public interface FlowManager {
 
     /**
      * Creates a flow
-     * @param flowName - the name of the flow as a string
+     * @param flowName - name of the flow
      */
     Flow createFlow(String flowName);
 
     /**
      * Creates a flow from a given JSON string
-     * @param json - string representation of flow
+     * @param  json - string representation of the flow
      * @return - a Flow object
-     * @throws DataHubProjectException - thrown if flow file cannot be found/read off disk
      */
     Flow createFlowFromJSON(String json);
 
     /**
      * Creates a flow from a given JsonNode
-     * @param json - JsonNode
+     * @param json - JsonNode representation of the flow
      * @return - a Flow object
-     * @throws DataHubProjectException - thrown if flow file cannot be found/read off disk
      */
     Flow createFlowFromJSON(JsonNode json);
 
     /**
      * Deletes a flow
-     * @param flowName - the name of the flow as a string
+     * @param flowName - name of the flow
      */
     void deleteFlow(String flowName);
 
@@ -93,7 +88,7 @@ public interface FlowManager {
      * Saves a flow to disk
      * @param flow - the flow object to be saved
      */
-    void saveFlow(Flow flow) ;
+    void saveFlow(Flow flow);
 
 
 }
