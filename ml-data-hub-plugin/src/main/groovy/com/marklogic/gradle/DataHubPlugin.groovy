@@ -27,6 +27,7 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.impl.*
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -46,7 +47,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
-    private FlowManagerImpl flowManager
+    private LegacyFlowManagerImpl flowManager
     private EntityManagerImpl entityManager
     private GeneratePiiCommand generatePiiCommand
 
@@ -162,7 +163,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
-        flowManager = ctx.getBean(FlowManagerImpl.class)
+        flowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
         generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
 

@@ -25,9 +25,8 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.flow.*;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -65,7 +64,7 @@ public class FlowManagerServiceTest extends AbstractServiceTest {
     FlowManagerService fm;
 
     @Autowired
-    FlowManager flowManager;
+    LegacyFlowManager flowManager;
 
     @Autowired
     Scaffolding scaffolding;

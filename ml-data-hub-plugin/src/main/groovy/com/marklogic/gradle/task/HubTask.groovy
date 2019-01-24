@@ -27,6 +27,7 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.job.JobManager
+import com.marklogic.hub.legacy.LegacyFlowManager
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -94,7 +95,7 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    FlowManager getFlowManager() {
+    LegacyFlowManager getFlowManager() {
         getProject().property("flowManager")
     }
 

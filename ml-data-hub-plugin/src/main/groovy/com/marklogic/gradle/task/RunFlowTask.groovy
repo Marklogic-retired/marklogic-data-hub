@@ -24,7 +24,7 @@ import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
-import com.marklogic.hub.FlowManager
+import com.marklogic.hub.legacy.LegacyFlowManager
 import com.marklogic.hub.legacy.flow.Flow
 import com.marklogic.hub.legacy.flow.FlowItemCompleteListener
 import com.marklogic.hub.legacy.flow.FlowItemFailureListener
@@ -111,7 +111,7 @@ class RunFlowTask extends HubTask {
             throw new HubNotInstalledException()
         }
 
-        FlowManager fm = getFlowManager()
+        LegacyFlowManager fm = getFlowManager()
         Flow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
         if (flow == null) {
             throw new FlowNotFoundException(entityName, flowName);

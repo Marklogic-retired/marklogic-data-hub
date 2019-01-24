@@ -18,7 +18,7 @@ package com.marklogic.hub.legacy.flow;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.collector.Collector;
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FlowManagerTest extends HubTestBase {
 
     @Autowired
-    private FlowManager fm;
+    private LegacyFlowManager fm;
 
     @Autowired
     private Scaffolding scaffolding;
@@ -146,7 +146,7 @@ public class FlowManagerTest extends HubTestBase {
     public void testFlowFromXml() {
         Document d = getXmlFromResource("flow-manager-test/simple-flow.xml");
 
-        Flow flow = FlowManager.flowFromXml(d.getDocumentElement());
+        Flow flow = LegacyFlowManager.flowFromXml(d.getDocumentElement());
         assertEquals(flow.getName(), "my-test-flow");
         assertEquals(flow.getCollector().getCodeFormat(), CodeFormat.XQUERY);
         assertEquals(flow.getCollector().getModule(), "/entities/test/harmonize/my-test-flow/collector.xqy");
