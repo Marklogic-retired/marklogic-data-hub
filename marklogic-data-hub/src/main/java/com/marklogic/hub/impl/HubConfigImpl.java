@@ -32,6 +32,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.processes.Process;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -807,7 +808,7 @@ public class HubConfigImpl implements HubConfig
     public String getMlPassword() {
         return mlPassword;
     }
-    
+
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
     }
@@ -1282,7 +1283,7 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlHubUserName", hubUserName);
         }
-        
+
         if (hubAdminRoleName == null) {
             hubAdminRoleName = getEnvPropString(projectProperties, "mlHubAdminRole", environment.getProperty("mlHubAdminRole"));
         }
@@ -1532,6 +1533,12 @@ public class HubConfigImpl implements HubConfig
     @Override public Path getHubMappingsDir() { return hubProject.getHubMappingsDir(); }
 
     @JsonIgnore
+    @Override
+    public Path getProcessDir(Process.ProcessType type) {
+        return hubProject.getProcessDir(type);
+    }
+
+    @JsonIgnore
     @Override public Path getHubConfigDir() {
         return hubProject.getHubConfigDir();
     }
@@ -1759,7 +1766,7 @@ public class HubConfigImpl implements HubConfig
      *
      * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
      * method just ensures that they're relative to the DHF project directory.
-     * 
+     *
      * @param config
      */
     protected void initializeConfigDirs(AppConfig config) {

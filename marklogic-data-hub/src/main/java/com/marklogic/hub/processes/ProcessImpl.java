@@ -22,24 +22,47 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.error.DataHubProjectException;
 
 public class ProcessImpl implements Process {
+    private String name;
+    private ProcessType type;
+    private int version;
+    private JsonNode options;
 
-    private String processName;
-    private ProcessType processType;
-
-    public String getProcessName() {
-        return processName;
+    ProcessImpl(String name, ProcessType type) {
+        this.name = name;
+        this.type = type;
+        this.version = 1;
     }
 
-    public void setProcessName(String processName) {
-        this.processName = processName;
+    public String getName() {
+        return name;
     }
 
-    public ProcessType getProcessType() {
-        return processType;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setProcessType(ProcessType processType) {
-        this.processType = processType;
+    public ProcessType getType() {
+        return type;
+    }
+
+    public void setType(ProcessType type) {
+        this.type = type;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public JsonNode getOptions() {
+        return options;
+    }
+
+    public void setOptions(JsonNode options) {
+        this.options = options;
     }
 
     @Override
@@ -54,15 +77,21 @@ public class ProcessImpl implements Process {
     }
 
     @Override
-    public Process deserialize(JsonNode json) {
+    public void deserialize(JsonNode json) {
         if (json.has("name")) {
-            setProcessName(json.get("name").asText());
+            setName(json.get("name").asText());
         }
 
         if (json.has("type")) {
-            setProcessType(ProcessType.getProcessType(json.get("type").asText()));
+            setType(ProcessType.getProcessType(json.get("type").asText()));
         }
 
-        return this;
+        if (json.has("version")) {
+            setVersion(json.get("version").asInt());
+        }
+
+        if (json.has("options")) {
+            setOptions(json.get("options"));
+        }
     }
 }

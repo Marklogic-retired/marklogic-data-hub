@@ -22,6 +22,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.processes.Process;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -407,6 +408,8 @@ public interface HubConfig {
      * @return the path for the hub mappings directory
      */
     Path getHubMappingsDir();
+
+    Path getProcessDir(Process.ProcessType type);
 
     /**
      * Gets the path for the hub's config directory

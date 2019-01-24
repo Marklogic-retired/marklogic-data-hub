@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.processes.Process;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.rest.util.JsonNodeUtil;
 
@@ -63,6 +65,7 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
+    private Path processesDir;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -77,10 +80,37 @@ public class HubProjectImpl implements HubProject {
         this.projectDirString = projectDirString;
         this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
+        this.processesDir = this.projectDir.resolve("processes");
     }
 
     @Override public Path getHubPluginsDir() {
         return this.pluginsDir;
+    }
+
+    @Override
+    public Path getProcessesDir() {
+        return this.processesDir;
+    }
+
+    @Override
+    public Path getProcessDir(Process.ProcessType type) {
+        Path path;
+
+        switch (type) {
+            case CUSTOM:
+                path = this.processesDir.resolve("custom");
+                break;
+            case INGEST:
+                path = this.processesDir.resolve("ingest");
+                break;
+            case MAPPING:
+                path = this.processesDir.resolve("mapping");
+                break;
+            default:
+                throw new DataHubProjectException("Invalid Process path");
+        }
+
+        return path;
     }
 
     @Override public Path getHubEntitiesDir() {
@@ -185,6 +215,7 @@ public class HubProjectImpl implements HubProject {
 
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
+        this.processesDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();

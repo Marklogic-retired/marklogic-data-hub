@@ -132,6 +132,9 @@ public class HubTestBase {
     protected MappingManager mappingManager;
 
     @Autowired
+    protected ProcessManager processManager;
+
+    @Autowired
     protected FlowManagerImpl fm;
 
     // to speedup dev cycle, you can create a hub and set this to true.
