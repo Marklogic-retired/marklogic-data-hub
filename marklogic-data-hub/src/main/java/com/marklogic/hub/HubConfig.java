@@ -469,6 +469,13 @@ public interface HubConfig {
     Path getEntityDatabaseDir();
 
     /**
+     * Gets the path for the flows directory
+     *
+     * @return the path for the flows directory
+     */
+    Path getFlowsDir();
+
+    /**
      * Returns the current AppConfig object attached to the HubConfig
      * @return Returns current AppConfig object set for HubConfig
      */

@@ -32,6 +32,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -77,7 +78,7 @@ public class HubConfigImpl implements HubConfig
     Properties projectProperties = null;
 
     @Autowired
-    FlowManagerImpl flowManager;
+    LegacyFlowManagerImpl flowManager;
     @Autowired
     DataHubImpl dataHub;
     @Autowired
@@ -1573,6 +1574,9 @@ public class HubConfigImpl implements HubConfig
     @Override public Path getEntityDatabaseDir() {
         return hubProject.getEntityDatabaseDir();
     }
+
+    @Override
+    public Path getFlowsDir() { return hubProject.getFlowsDir();   }
 
     @JsonIgnore
     @Override public Path getUserServersDir() {
