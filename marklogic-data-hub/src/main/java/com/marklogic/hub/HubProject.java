@@ -16,8 +16,7 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.impl.HubProjectImpl;
-import org.springframework.core.io.ProtocolResolver;
+import com.marklogic.hub.processes.Process;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -64,11 +63,7 @@ public interface HubProject {
      */
     Path getHubMappingsDir();
 
-    Path getMappingDir();
-
-    Path getIngestDir();
-
-    Path getCustomDir();
+    Path getProcessDir(Process.ProcessType type);
 
     /**
      * Gets the path for the hub's config directory
@@ -225,6 +220,7 @@ public interface HubProject {
 
     /**
      * Returns the base directory for this project
+     *
      * @return the project's directory as a Path
      */
     Path getProjectDir();

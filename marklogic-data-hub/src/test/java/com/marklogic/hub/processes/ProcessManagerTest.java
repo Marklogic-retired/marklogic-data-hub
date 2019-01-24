@@ -58,7 +58,7 @@ public class ProcessManagerTest extends HubTestBase {
         processManager.saveProcess(process);
 
         String processFileName = mappingProcessName + ProcessManager.PROCESSES_FILE_EXTENSION;
-        assertTrue(Paths.get((getHubAdminConfig().getMappingDir().toString()), process.getName(), processFileName).toFile().exists());
+        assertTrue(Paths.get((getHubAdminConfig().getProcessDir(Process.ProcessType.MAPPING).toString()), process.getName(), processFileName).toFile().exists());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ProcessManagerTest extends HubTestBase {
         processManager.deleteProcess(process);
 
         String processFileName = mappingProcessName + ProcessManager.PROCESSES_FILE_EXTENSION;
-        assertFalse(Paths.get((getHubAdminConfig().getMappingDir().toString()), process.getName(), processFileName).toFile().exists());
+        assertFalse(Paths.get((getHubAdminConfig().getProcessDir(Process.ProcessType.MAPPING).toString()), process.getName(), processFileName).toFile().exists());
     }
 
     @Test
@@ -115,18 +115,18 @@ public class ProcessManagerTest extends HubTestBase {
     }
 
     private void copyTestMappingProcess() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingProcessName + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getMappingDir().resolve(mappingProcessName + "/" + mappingProcessName + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingProcessName + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getProcessDir(Process.ProcessType.MAPPING).resolve(mappingProcessName + "/" + mappingProcessName + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
     }
 
     private void copyTestIngestProcess() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + ingestProcessName + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getIngestDir().resolve(ingestProcessName + "/" + ingestProcessName + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + ingestProcessName + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getProcessDir(Process.ProcessType.INGEST).resolve(ingestProcessName + "/" + ingestProcessName + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
     }
 
     private void copyTestCustomProcess() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + customProcessName + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getCustomDir().resolve(customProcessName + "/" + customProcessName + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + customProcessName + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getProcessDir(Process.ProcessType.CUSTOM).resolve(customProcessName + "/" + customProcessName + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
     }
 
     private void copyTestMappingProcess2() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingProcessName + "2" + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getMappingDir().resolve(mappingProcessName + "2/" + mappingProcessName + "2" + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingProcessName + "2" + ProcessManager.PROCESSES_FILE_EXTENSION), getHubAdminConfig().getProcessDir(Process.ProcessType.MAPPING).resolve(mappingProcessName + "2/" + mappingProcessName + "2" + ProcessManager.PROCESSES_FILE_EXTENSION).toFile());
     }
 }

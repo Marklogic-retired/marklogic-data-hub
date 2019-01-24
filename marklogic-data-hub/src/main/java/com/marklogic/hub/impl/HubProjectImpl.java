@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.processes.Process;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.rest.util.JsonNodeUtil;
 
@@ -91,18 +93,24 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getMappingDir() {
-        return this.processesDir.resolve("mapping");
-    }
+    public Path getProcessDir(Process.ProcessType type) {
+        Path path;
 
-    @Override
-    public Path getIngestDir() {
-        return this.processesDir.resolve("ingest");
-    }
+        switch (type) {
+            case CUSTOM:
+                path = this.processesDir.resolve("custom");
+                break;
+            case INGEST:
+                path = this.processesDir.resolve("ingest");
+                break;
+            case MAPPING:
+                path = this.processesDir.resolve("mapping");
+                break;
+            default:
+                throw new DataHubProjectException("Invalid Process path");
+        }
 
-    @Override
-    public Path getCustomDir() {
-        return this.processesDir.resolve("custom");
+        return path;
     }
 
     @Override public Path getHubEntitiesDir() {

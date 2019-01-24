@@ -32,6 +32,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.processes.Process;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -1533,20 +1534,8 @@ public class HubConfigImpl implements HubConfig
 
     @JsonIgnore
     @Override
-    public Path getMappingDir() {
-        return hubProject.getMappingDir();
-    }
-
-    @JsonIgnore
-    @Override
-    public Path getIngestDir() {
-        return hubProject.getIngestDir();
-    }
-
-    @JsonIgnore
-    @Override
-    public Path getCustomDir() {
-        return hubProject.getCustomDir();
+    public Path getProcessDir(Process.ProcessType type) {
+        return hubProject.getProcessDir(type);
     }
 
     @JsonIgnore

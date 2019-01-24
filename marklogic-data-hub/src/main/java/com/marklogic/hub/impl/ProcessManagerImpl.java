@@ -47,7 +47,7 @@ public class ProcessManagerImpl implements ProcessManager {
     public void saveProcess(Process process) {
         try {
             String processString = process.serialize();
-            Path dir = getProcessPath(process.getName(), process.getType());
+            Path dir = resolvePath(hubConfig.getProcessDir(process.getType()), process.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -72,7 +72,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     @Override
     public void deleteProcess(Process process) {
-        Path dir = getProcessPath(process.getName(), process.getType());
+        Path dir = resolvePath(hubConfig.getProcessDir(process.getType()), process.getName());
         if (dir.toFile().exists()) {
             try {
                 FileUtils.deleteDirectory(dir.toFile());
@@ -96,7 +96,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     @Override
     public Process getProcess(String name, Process.ProcessType type) {
-        Path processPath = getProcessPath(name, type);
+        Path processPath = resolvePath(hubConfig.getProcessDir(type), name);
 
         try {
             String targetFileName = name + PROCESSES_FILE_EXTENSION;
@@ -126,7 +126,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     @Override
     public ArrayList<String> getProcessNamesByType(Process.ProcessType type) {
-        return (ArrayList<String>) FileUtil.listDirectFolders(getProcessPath(null, type));
+        return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getProcessDir(type));
     }
 
     @Override
@@ -136,26 +136,7 @@ public class ProcessManagerImpl implements ProcessManager {
         return process;
     }
 
-    private Path getProcessPath(String name, Process.ProcessType type) {
-        Path path;
-
-        switch (type) {
-            case MAPPING:
-                path = Paths.get(hubConfig.getMappingDir().toString());
-                path = name != null ? path.resolve(name) : path;
-                break;
-            case INGEST:
-                path = Paths.get(hubConfig.getIngestDir().toString());
-                path = name != null ? path.resolve(name) : path;
-                break;
-            case CUSTOM:
-                path = Paths.get(hubConfig.getCustomDir().toString());
-                path = name != null ? path.resolve(name) : path;
-                break;
-            default:
-                throw new DataHubProjectException("Invalid Process path");
-        }
-
-        return path;
+    private Path resolvePath(Path path, String more) {
+        return path.resolve(more);
     }
 }
