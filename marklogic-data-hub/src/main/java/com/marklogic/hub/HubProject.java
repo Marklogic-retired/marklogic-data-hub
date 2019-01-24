@@ -77,13 +77,6 @@ public interface HubProject {
     Path getHubDatabaseDir();
 
     /**
-     * Gets the path for the hub/staging schemas directory
-     *
-     * @return the path for the hub/staging schemas directory
-     */
-    Path getHubSchemasDir();
-
-    /**
      * Gets the path for the hub servers directory
      *
      * @return the path for the hub servers database directory
