@@ -54,7 +54,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     public void deploy(AppConfig appConfig) {
         this.completed = 0;
-        CMASettings.getInstance().setCmaSettings(appConfig);
         onStatusChange(0, "Installing...");
         super.deploy(appConfig);
         onStatusChange(100, "Installation Complete");
@@ -83,7 +82,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     public void undeploy(AppConfig appConfig) {
         this.completed = 0;
-        CMASettings.getInstance().setCmaSettings(appConfig);
         onStatusChange(0, "Uninstalling...");
         super.undeploy(appConfig);
         onStatusChange(100, "Installation Complete");
