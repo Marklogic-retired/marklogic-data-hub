@@ -29,10 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -108,8 +105,11 @@ public class ProcessManagerImpl implements ProcessManager {
                 return newProcess;
             }
         }
+        catch (FileNotFoundException e) {
+            return null;
+        }
         catch (IOException e) {
-            throw new DataHubProjectException("Could not read mapping on disk.");
+            throw new DataHubProjectException("Could not read Process on disk.");
         }
 
         return null;

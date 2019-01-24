@@ -46,6 +46,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
+    private ProcessManagerImpl processManager
     private FlowManagerImpl flowManager
     private EntityManagerImpl entityManager
     private GeneratePiiCommand generatePiiCommand
@@ -90,6 +91,7 @@ class DataHubPlugin implements Plugin<Project> {
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
+        project.task("hubCreateProcess", group: scaffoldGroup, type: CreateProcessTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputFlowTask)
@@ -163,6 +165,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
+        processManager = ctx.getBean(ProcessManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
         generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
@@ -211,6 +214,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
             project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
+            project.extensions.add("processManager", processManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("entityManager", entityManager)
             project.extensions.add("generatePiiCommand", generatePiiCommand)

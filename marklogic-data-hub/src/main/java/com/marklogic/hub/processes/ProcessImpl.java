@@ -19,6 +19,7 @@ package com.marklogic.hub.processes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.marklogic.hub.error.DataHubProjectException;
 
 public class ProcessImpl implements Process {
@@ -31,6 +32,7 @@ public class ProcessImpl implements Process {
         this.name = name;
         this.type = type;
         this.version = 1;
+        this.options = JsonNodeFactory.instance.objectNode();
     }
 
     public String getName() {

@@ -72,6 +72,11 @@ abstract class HubTask extends DefaultTask {
     MappingManager getMappingManager() {
         getProject().property("mappingManager")
     }
+
+    @Internal
+    ProcessManager getProcessManager() {
+        getProject().property("processManager")
+    }
     
     @Internal
     EntityManager getEntityManager() {

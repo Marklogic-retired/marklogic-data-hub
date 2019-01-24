@@ -24,13 +24,12 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.processes.Process;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.rest.util.JsonNodeUtil;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -41,11 +40,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,18 +91,23 @@ public class HubProjectImpl implements HubProject {
     public Path getProcessDir(Process.ProcessType type) {
         Path path;
 
-        switch (type) {
-            case CUSTOM:
-                path = this.processesDir.resolve("custom");
-                break;
-            case INGEST:
-                path = this.processesDir.resolve("ingest");
-                break;
-            case MAPPING:
-                path = this.processesDir.resolve("mapping");
-                break;
-            default:
-                throw new DataHubProjectException("Invalid Process path");
+        if (type == null) {
+            throw new DataHubProjectException("Invalid Process type");
+        }
+        else {
+            switch (type) {
+                case CUSTOM:
+                    path = this.processesDir.resolve("custom");
+                    break;
+                case INGEST:
+                    path = this.processesDir.resolve("ingest");
+                    break;
+                case MAPPING:
+                    path = this.processesDir.resolve("mapping");
+                    break;
+                default:
+                    throw new DataHubProjectException("Invalid Process type");
+            }
         }
 
         return path;
