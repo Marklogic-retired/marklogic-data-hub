@@ -20,6 +20,235 @@
     "http"
   ],
   "paths": {
+    "/flows": {
+      "get": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Returns all flows",
+        "description": "Returns all flows",
+        "operationId": "findFlows",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/flow"
+              },
+              "default": [
+                {
+                  "name": "MappingFlow",
+                  "description": "Maps raw values to the canonical model",
+                  "identifier": "cts.collectionQuery('rawContent')",
+                  "steps": [
+                    {
+                      "type": "mapping",
+                      "name": "person-mapping1.json",
+                      "identifier": null,
+                      "retryLimit": 0,
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "flow"
+        ],
+        "summary": "Create flow",
+        "description": "",
+        "operationId": "createFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Flow to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flow",
+              "default": [
+                {
+                  "name": "MappingFlow",
+                  "description": "Maps raw values to the canonical model",
+                  "identifier": "cts.collectionQuery('rawContent')",
+                  "steps": [
+                    {
+                      "type": "mapping",
+                      "name": "person-mapping1.json",
+                      "identifier": null,
+                      "retryLimit": 0,
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid name supplied"
+          },
+          "404": {
+            "description": "flow not found"
+          }
+        }
+      }
+    },
+    "/flows/{flowName}": {
+      "get": {
+        "tags": [
+          "flow"
+        ],
+        "summary": "Find flow by name",
+        "description": "....",
+        "operationId": "getFlowByName",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowName",
+            "in": "path",
+            "description": "Name of flow that needs to be fetched",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/flow",
+              "default": [
+                {
+                  "name": "MappingFlow",
+                  "description": "Maps raw values to the canonical model",
+                  "identifier": "cts.collectionQuery('rawContent')",
+                  "steps": [
+                    {
+                      "type": "mapping",
+                      "name": "person-mapping1.json",
+                      "identifier": null,
+                      "retryLimit": 0,
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Invalid name supplied"
+          },
+          "404": {
+            "description": "flow not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "flow"
+        ],
+        "summary": "Update flow with name",
+        "description": "",
+        "operationId": "updateFlowByName",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowName",
+            "in": "path",
+            "description": "Name of flow that needs to be fetched",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated flow",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flow",
+              "default": [
+                {
+                  "name": "MappingFlow",
+                  "description": "Maps raw values to the canonical model",
+                  "identifier": "cts.collectionQuery('rawContent')",
+                  "steps": [
+                    {
+                      "type": "mapping",
+                      "name": "person-mapping1.json",
+                      "identifier": null,
+                      "retryLimit": 0,
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid name supplied"
+          },
+          "404": {
+            "description": "flow not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "flow"
+        ],
+        "summary": "Delete flow by name",
+        "description": "",
+        "operationId": "deleteFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowName",
+            "in": "path",
+            "description": "ID of the sample that needs to be deleted",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid name supplied"
+          },
+          "404": {
+            "description": "Flow not found"
+          }
+        }
+      }
+    },
     "/samples": {
       "get": {
         "tags": [
@@ -134,6 +363,30 @@
   },
   "securityDefinitions": {},
   "definitions": {
+    "flow": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of flow"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of flow"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identification documents passed through flow"
+        },
+        "steps": {
+          "type": "array",
+          "description": "Steps in flow",
+          "items": {
+            "$ref": "#/definitions/step"
+          }
+        }
+      }
+    },
     "sample": {
       "type": "object",
       "properties": {
@@ -167,6 +420,31 @@
       },
       "xml": {
         "name": "Sample"
+      }
+    },
+    "step":{
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "step type"
+        },
+        "name": {
+          "type": "string",
+          "description": "step name"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identification for documents in step"
+        },
+        "retryLimit": {
+          "type": "integer",
+          "minimum": 0,
+          "format": "int64"
+        },
+        "options": {
+          "type": "object"
+        }
       }
     },
     "tag": {
