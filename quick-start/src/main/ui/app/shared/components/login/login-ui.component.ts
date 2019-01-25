@@ -27,6 +27,7 @@ export class LoginUIComponent {
   @Input() runningPreinstallCheck: boolean;
   @Input() preinstallCheck: any;
   @Input() initSettings: HubSettings;
+  @Input() hubUpdateLink: string;
 
   @Output() onPostInitNext: EventEmitter<any> = new EventEmitter<any>();
   @Output() onChooseProject: EventEmitter<any> = new EventEmitter<any>();
