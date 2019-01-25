@@ -100,8 +100,13 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    LegacyFlowManager getFlowManager() {
+    FlowManager getFlowManager() {
         getProject().property("flowManager")
+    }
+
+    @Internal
+    LegacyFlowManager getLegacyFlowManager() {
+        getProject().property("legacyFlowManager")
     }
 
     @Internal

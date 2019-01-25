@@ -17,15 +17,14 @@
 
 package com.marklogic.gradle
 
-
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import org.gradle.api.GradleException
@@ -48,7 +47,8 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
     private ProcessManagerImpl processManager
-    private LegacyFlowManagerImpl flowManager
+    private FlowManagerImpl flowManager
+    private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
     private GeneratePiiCommand generatePiiCommand
 
@@ -91,8 +91,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
         project.task("hubCreateProcess", group: scaffoldGroup, type: CreateProcessTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
-        project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeFlowTask)
-        project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputFlowTask)
+        project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
+        project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
+        project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputLegacyFlowTask)
         project.task("hubGeneratePii", group: scaffoldGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
@@ -164,7 +165,8 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         processManager = ctx.getBean(ProcessManagerImpl.class)
-        flowManager = ctx.getBean(LegacyFlowManagerImpl.class)
+        flowManager = ctx.getBean(FlowManagerImpl.class)
+        legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
         generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
 
@@ -214,6 +216,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("mappingManager", mappingManager)
             project.extensions.add("processManager", processManager)
             project.extensions.add("flowManager", flowManager)
+            project.extensions.add("legacyFlowManager", legacyFlowManager)
             project.extensions.add("entityManager", entityManager)
             project.extensions.add("generatePiiCommand", generatePiiCommand)
 

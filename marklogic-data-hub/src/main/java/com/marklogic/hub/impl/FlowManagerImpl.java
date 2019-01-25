@@ -52,7 +52,8 @@ public class FlowManagerImpl implements FlowManager {
         try {
             fileInputStream = FileUtils.openInputStream(flowPath.toFile());
         } catch (IOException e) {
-            throw new DataHubProjectException("Unable to read flow: " + e.getMessage());
+            // return null if it doesn't exist, so we can check for it.
+            return null;
         }
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node;
@@ -101,7 +102,7 @@ public class FlowManagerImpl implements FlowManager {
 
     @Override
     public Flow createFlow(String flowName) {
-        Flow flow = new FlowImpl();
+        Flow flow = createFlowFromJSON(getFlowScaffolding());
         flow.setName(flowName);
         return flow;
     }
@@ -168,6 +169,24 @@ public class FlowManagerImpl implements FlowManager {
         catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
         }
+    }
 
+    private JsonNode flowScaffolding = null;
+
+    private JsonNode getFlowScaffolding() {
+        if (flowScaffolding != null) {
+            return flowScaffolding;
+        } else {
+            String flowScaffoldingSrcFile = "scaffolding/flowName.flow.json";
+            InputStream inputStream = FlowManagerImpl.class.getClassLoader()
+                .getResourceAsStream(flowScaffoldingSrcFile);
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                this.flowScaffolding = objectMapper.readTree(inputStream);
+                return this.flowScaffolding;
+            } catch (IOException e) {
+                throw new DataHubProjectException("Unable to parse flow json string : "+ e.getMessage());
+            }
+        }
     }
 }

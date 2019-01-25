@@ -111,7 +111,7 @@ class RunFlowTask extends HubTask {
             throw new HubNotInstalledException()
         }
 
-        LegacyFlowManager fm = getFlowManager()
+        LegacyFlowManager fm = getLegacyFlowManager()
         Flow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
         if (flow == null) {
             throw new FlowNotFoundException(entityName, flowName);
