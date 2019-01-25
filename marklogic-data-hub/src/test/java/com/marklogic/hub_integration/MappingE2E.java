@@ -82,6 +82,7 @@ public class MappingE2E extends HubTestBase {
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
+        new Installer().deleteProjectDir();
         new Installer().setupProject();
     }
 
