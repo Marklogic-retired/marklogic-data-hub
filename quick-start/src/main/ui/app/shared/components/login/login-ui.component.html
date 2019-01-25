@@ -215,14 +215,14 @@
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
               <p>But...your project doesn't seem to match this version of DHF!</p>
-              <p>Please update your project before proceeding onward! <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a></p>
+              <p>Please update your project before proceeding onward! <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a></p>
             </span>
             <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="onUpdateProject.emit()">Update It</button>
               <div class="manual">
                 <p>Curious about what that button does? Prefer to do it yourself?</p>
                 <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
-                <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a>
+                <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a>
               </div>
             </span>
           </section>
@@ -233,7 +233,7 @@
               <span>{{hubUpdateError}}.</span>
             </p>
             <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
-            <a target="_blank" [href]="onHubUpdateUrl.emit()">How to update a Hub Project</a>
+            <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a>
           </section>
         </section>
       </div>
