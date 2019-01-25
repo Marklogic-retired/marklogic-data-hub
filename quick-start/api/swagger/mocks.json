@@ -66,37 +66,37 @@
         ],
         "summary": "Create flow",
         "description": "",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/definitions/flow",
-                "default": [
-                  {
-                    "name": "MappingFlow",
-                    "description": "Maps raw values to the canonical model",
-                    "identifier": "cts.collectionQuery('rawContent')",
-                    "steps": [
-                      {
-                        "type": "mapping",
-                        "name": "person-mapping1.json",
-                        "identifier": null,
-                        "retryLimit": 0,
-                        "options": {}
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        },
         "operationId": "createFlow",
         "produces": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Flow to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flow",
+              "default": [
+                {
+                  "name": "MappingFlow",
+                  "description": "Maps raw values to the canonical model",
+                  "identifier": "cts.collectionQuery('rawContent')",
+                  "steps": [
+                    {
+                      "type": "mapping",
+                      "name": "person-mapping1.json",
+                      "identifier": null,
+                      "retryLimit": 0,
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "successful operation"
@@ -167,32 +167,6 @@
         ],
         "summary": "Update flow with name",
         "description": "",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/definitions/flow",
-                "default": [
-                  {
-                    "name": "MappingFlow",
-                    "description": "Maps raw values to the canonical model",
-                    "identifier": "cts.collectionQuery('rawContent')",
-                    "steps": [
-                      {
-                        "type": "mapping",
-                        "name": "person-mapping1.json",
-                        "identifier": null,
-                        "retryLimit": 0,
-                        "options": {}
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        },
         "operationId": "updateFlowByName",
         "produces": [
           "application/json"
@@ -204,6 +178,31 @@
             "description": "Name of flow that needs to be fetched",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated flow",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flow",
+              "default": [
+                {
+                  "name": "MappingFlow",
+                  "description": "Maps raw values to the canonical model",
+                  "identifier": "cts.collectionQuery('rawContent')",
+                  "steps": [
+                    {
+                      "type": "mapping",
+                      "name": "person-mapping1.json",
+                      "identifier": null,
+                      "retryLimit": 0,
+                      "options": {}
+                    }
+                  ]
+                }
+              ]
+            }
           }
         ],
         "responses": {
