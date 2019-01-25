@@ -22,7 +22,7 @@ import org.gradle.api.tasks.TaskAction
 class DeployUserArtifactsTask extends HubTask {
 
     @TaskAction
-    void deployUserModules() {
+    void deployUserArtifacts() {
         if (!isHubInstalled()) {
             println("Data Hub is not installed.")
             return
