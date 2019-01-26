@@ -21,10 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -119,14 +121,8 @@ class FlowManagerTest extends HubTestBase {
     void deleteFlow() {
         fm.deleteFlow("test-flow");
 
-        try {
-            Flow flow = fm.getFlow("test-flow");
-            Assertions.assertTrue(false);
-        }
-        catch(DataHubProjectException e){
-            Assertions.assertTrue(e.getMessage().contains("Unable to read flow:"));
-        }
-
+        Flow flow = fm.getFlow("test-flow");
+        Assertions.assertNull(flow);
     }
 
     @Test

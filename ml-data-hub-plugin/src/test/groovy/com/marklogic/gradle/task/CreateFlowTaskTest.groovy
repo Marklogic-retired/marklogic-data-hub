@@ -49,7 +49,7 @@ class CreateFlowTaskTest extends BaseTest {
         given:
         propertiesFile << """
             ext {
-                flowName=myTestFlow
+                flowName=myDuplicateFlow
             }
         """
 
