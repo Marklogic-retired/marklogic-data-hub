@@ -83,9 +83,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
         project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
-        // Tasks for deploying/undeploying the amps included in the DHF jar
-        project.task("hubDeployAmps", group: deployGroup, type: DeployHubAmpsTask, description: "Deploy the hub-specific amps contained in DHF")
-        project.task("hubUndeployAmps", group: deployGroup, type: UndeployHubAmpsTask, description: "Undeploy the hub-specific amps container in DHF; currently only supported for MarkLogic version 9.0-5")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
