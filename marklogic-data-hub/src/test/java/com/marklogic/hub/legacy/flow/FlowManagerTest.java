@@ -75,8 +75,8 @@ public class FlowManagerTest extends HubTestBase {
     }
 
     @AfterAll
-    public void removeProjectDir() {
-        deleteProjectDir();
+    public static void removeProjectDir() {
+        new Installer().deleteProjectDir();
     }
 
     private void installModules() {
