@@ -359,6 +359,204 @@
           }
         }
       }
+    },
+    "/process": {
+      "post": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Creates a process",
+        "description": "Create a process",
+        "operationId": "createProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Create Process Parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/process"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/process"
+              },
+              "default": [
+                { "id": 1, "name": "aaa", "status": "new" },
+                { "id": 2, "name": "bbb", "status": "new" },
+                { "id": 3, "name": "ccc", "status": "ready" },
+                { "id": 4, "name": "ddd", "status": "ready" },
+                { "id": 5, "name": "eee", "status": "approved" }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/process/{type}/{name}": {
+      "get": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Get a process",
+        "description": "Get a process",
+        "operationId": "getProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of process to delete",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of process to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "schema": {
+                "$ref": "#/definitions/process"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Update a process",
+        "description": "Update a process",
+        "operationId": "updateProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of  process to delete",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of  process to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update  Process Parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/process"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/process"
+              },
+              "default": [
+                { "id": 1, "name": "aaa", "status": "new" },
+                { "id": 2, "name": "bbb", "status": "new" },
+                { "id": 3, "name": "ccc", "status": "ready" },
+                { "id": 4, "name": "ddd", "status": "ready" },
+                { "id": 5, "name": "eee", "status": "approved" }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "process"
+        ],
+        "summary": "Delete a  process",
+        "description": "Delete a  process",
+        "operationId": "deleteProcess",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of  process to delete",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "name of  process to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/message"
+              },
+              "default": [
+                {
+                  "message": "Process deleted successfully"}
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {},
@@ -456,6 +654,70 @@
         },
         "name": {
           "type": "string"
+        }
+      },
+      "xml": {
+        "name": "Tag"
+      }
+    },
+    "message": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "message"
+      }
+    },
+    "process": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object"
+        },
+        "customHook": {
+          "$ref": "#/definitions/customHook"
+        }
+      },
+      "xml": {
+        "name": "Process"
+      }
+    },
+    "customHook": {
+      "type": "object",
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "user": {
+          "type": "string"
+        },
+        "runBefore": {
+          "type": "boolean"
         }
       },
       "xml": {
