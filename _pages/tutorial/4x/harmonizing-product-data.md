@@ -75,10 +75,4 @@ To explore the harmonized data:
 Congratulations! You just loaded and harmonized your product data. Up next is doing the same thing for the order data.
 
 
-{% include prev-next-nav.html
-  prevtext="Create a Model-to-Model Mapping for Product"
-  prevlink="/tutorial/4x/mapping-product-entity/"
-  increl="tutorial-toc.md"
-  nexttext="Create the Order Entity"
-  nextlink="/tutorial/4x/create-order-entity/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}

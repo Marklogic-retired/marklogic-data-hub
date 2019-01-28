@@ -97,10 +97,4 @@ You should now see Order and Product entity definitions similar to the following
 One of the benefits of having the Data Hub Framework model your data with Entity Services is that it can use the model to create database configuration options automatically. This means it can update the necessary index settings based on how you model your data.
 
 
-{% include prev-next-nav.html
-  prevtext="Load the Raw Orders Data"
-  prevlink="/tutorial/4x/load-raw-orders/"
-  increl="tutorial-toc.md"
-  nexttext="Harmonize the Order Data"
-  nextlink="/tutorial/4x/harmonizing-order-data/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}

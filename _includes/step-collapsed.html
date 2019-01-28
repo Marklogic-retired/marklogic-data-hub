@@ -1,5 +1,7 @@
+{% assign myclass="screenshot" %}
+{% if include.imgclass %}{% assign myclass=include.imgclass %}{% endif %}
 1. <details><summary>{{ include.steptext }}</summary>
 
-     <img src="{{ include.stepimg }}" alt="{{ include.stepalt }}" class="screenshot"/>
+     <img src="{{ include.stepimg }}" alt="{{ include.stepalt }}" class="{{ myclass }}"/>
 
    </details>

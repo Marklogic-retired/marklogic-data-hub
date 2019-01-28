@@ -22,10 +22,4 @@ Pictured here is the Final search endpoint:
 ![Rest Search]({{site.baseurl}}/images/3x/serve-data/rest-screenshot.png){:.screenshot-border}
 
 
-{% include prev-next-nav.html
-  prevtext="Harmonize the Order Data"
-  prevlink="/tutorial/4x/harmonizing-order-data/"
-  increl="tutorial-toc.md"
-  nexttext="Wrapping Up"
-  nextlink="/tutorial/4x/wrapping-up/"
-%}
+{% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}
