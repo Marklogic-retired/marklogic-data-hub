@@ -1,17 +1,33 @@
-{% if include.fullsteps %}
-To configure and run the `{{ include.jobname }}` input flow,
+### 1 - Create an input flow for the **{{ include.entityname }}** entity.
 
-{% assign pref="qs-4x-flows-load-data" %}
-{% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% endif %}
+{% if include.fullsteps %}
+{% assign pref="qs-4x-flows-create-input-flow" %}
+{% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% else %}{% assign suf="" %}{% endif %}
 {% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
-{% include thumbnail.html imgfile=full-imgpath alttext="" imgclass="screenshot" tab="  " %}
+{% include thumbnail.html imgfile=full-imgpath alttext="Create Input Flow form" imgclass="screenshot" tab="  " %}
+
+1. In QuickStart's navigation bar, click **Flows**{:.uimenuitem}.{% endif %}
+1. {% assign full-text = "Expand **" | append: include.entityname | append: "**{:.uilabel} in the left panel." %}{{ full-text }}
+1. Click the **+**{:.uilabel} for **Input Flows**{:.uilabel}.
+1. {% assign full-text = "In the **Create Input Flow**{:.uilabel} dialog, set **Input Flow Name**{:.uilabel} to <code>" | append: include.inputflowname | append: "</code>." %}{{ full-text }}
+1. Click **CREATE**{:.inline-button}.
+{:.ol-steps}
+
+{% if include.fullsteps %}
+**Result**
+
+  - Your new flow appears under **Input Flows**{:.uilabel} in the left panel.
+  - The **Run Input Flow**{:.uilabel} wizard appears on the right.
 {% endif %}
 
-1. {% assign full-text = "Expand **" | append: include.entityname | append: "**{:.uilabel} in the left panel." %}{{ full-text }}
-1. Click **{{ include.jobname }}**{:.uilabel} under **Input Flows**{:.uilabel}.
+
+### 2 - Configure and run the **{{ include.inputflowname }}** flow.
 
 {% if include.fullsteps %}
-    **Result:** The **Run Input Flow**{:.uilabel} wizard appears.
+{% assign pref="qs-4x-flows-load-data" %}
+{% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% else %}{% assign suf="" %}{% endif %}
+{% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
+{% include thumbnail.html imgfile=full-imgpath alttext="" imgclass="screenshot" tab="  " %}
 {% endif %}
 
 {% assign full-imgpath=include.imgpath | append: "qs-4x-flows-load-raw-input-files" | append: suf | append: ".png" %}

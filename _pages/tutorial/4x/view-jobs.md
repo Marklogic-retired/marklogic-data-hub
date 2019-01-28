@@ -11,7 +11,7 @@ permalink: /tutorial/4x/view-jobs/
 
 We use the QuickStart Jobs viewer to view the results of the jobs we just ran.
 
-{% include conrefs/conref-qs-4x-jobs.md imgpath=var-imgpath pickitem="the job for the input flow `Load Products`" %}
+{% include conrefs/conref-qs-4x-jobs.md imgpath=var-imgpath pickitem="the job for the input flow `Load Products`" fullsteps=true %}
 
 ### Result
 
