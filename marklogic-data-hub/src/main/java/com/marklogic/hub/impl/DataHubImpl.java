@@ -850,16 +850,19 @@ public class DataHubImpl implements DataHub {
             if(alreadyInitialized) {
                 Path sourceSchemasDir = project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR + "-" + gradleVersion).resolve("schemas");
                 Path destSchemasDir = project.getUserDatabaseDir().resolve(hubConfig.getStagingSchemasDbName()).resolve("schemas");
-                Files.walk(Paths.get(sourceSchemasDir.toUri()))
-                    .filter(f -> !Files.isDirectory(f))
-                    .forEach(f -> {
-                        try {
-                            FileUtils.copyInputStreamToFile(Files.newInputStream(f), destSchemasDir.resolve(sourceSchemasDir.relativize(f)).toFile());
-                        } catch (IOException e) {
-                            logger.error("Unable to copy file " + f.getFileName());
-                            throw new RuntimeException(e);
-                        }
-                    });
+                if (sourceSchemasDir.toFile().exists()) {
+                    Files.walk(Paths.get(sourceSchemasDir.toUri()))
+                        .filter(f -> !Files.isDirectory(f))
+                        .forEach(f -> {
+                            try {
+                                FileUtils.copyInputStreamToFile(Files.newInputStream(f), destSchemasDir.resolve(sourceSchemasDir.relativize(f)).toFile());
+                            } catch (IOException e) {
+                                logger.error("Unable to copy file " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
+                        });
+
+                }
             }
             
             //now let's try to upgrade the directory structure
