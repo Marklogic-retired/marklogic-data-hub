@@ -178,7 +178,7 @@
         ]
       }
     },
-    "/mapping-process/{name}": {
+    "/mapping-process/{type}/{name}": {
       "get": {
         "tags": [
           "process"
@@ -190,6 +190,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of mapping process to delete",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "name",
             "in": "path",
@@ -226,6 +233,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of mapping process to delete",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "name",
             "in": "path",
@@ -278,6 +292,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "type of mapping process to delete",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "name",
             "in": "path",
