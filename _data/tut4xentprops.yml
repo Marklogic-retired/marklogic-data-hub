@@ -1,0 +1,46 @@
+'Product': [
+  {
+    name: 'sku',
+    type: 'string',
+    indexes: [ 'key' ],
+  },
+  {
+    name: 'price',
+    type: 'decimal',
+  },
+]
+
+'Order': [
+  {
+    name: 'id',
+    type: 'string',
+    indexes: [ 'key', 'element range' ],
+  },
+  {
+    name: 'total',
+    type: 'decimal',
+  },
+  {
+    name: 'products',
+    entitytype: 'Product',
+    cardinality: '1..∞',
+  },
+]
+
+'Customer': [
+  {
+    name: 'id',
+    type: 'string',
+    indexes: [ 'key' ],
+  },
+  {
+    name: 'billing_address',
+    type: 'string',
+    indexes: [ 'pii' ],
+  },
+  {
+    name: 'shipping_address',
+    type: 'string',
+    indexes: [ 'pii' ],
+  },
+]

@@ -15,6 +15,8 @@ To view {{ pickitem }},
     {% include note-in-list.html type="TIP" content="You can filter the list by using the free-text search field or the faceted search filters." %}
 {:.ol-steps}
 
+**Results:** The trace details page is displayed for the document you selected.
+
 {% assign full-imgpath=include.imgpath | append: "qs-4x-traces-content.png" %}
 {% include thumbnail.html imgfile=full-imgpath alttext="Trace detail for the Content plugin" imgclass="screenshot" tab="  " %}
 

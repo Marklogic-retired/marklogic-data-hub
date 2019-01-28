@@ -1,7 +1,7 @@
-{% assign myclass="screenshot" %}
+{% assign myclass="screenshot"- %}
 {% if include.imgclass %}{% assign myclass=include.imgclass %}{% endif %}
-1. <details><summary>{{ include.steptext }}</summary>
-
+{% if include.nonum %}{% else %}1. {% endif %}<details><summary>{{ include.steptext }}</summary>
+     {% if include.preimgtext %}<p>{{ include.preimgtext }}</p>{% endif %}
      <img src="{{ include.stepimg }}" alt="{{ include.stepalt }}" class="{{ myclass }}"/>
-
+     {% if include.postimgtext %}<p>{{ include.postimgtext }}</p>{% endif %}
    </details>

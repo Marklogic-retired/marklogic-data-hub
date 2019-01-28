@@ -13,7 +13,7 @@ At this point, we have only loaded the raw data; therefore, the staging database
 
 In this exercise, we will browse the ingested data in the staging database.
 
-{% include conrefs/conref-qs-4x-browse-data.md imgpath=var-imgpath pickdb="the `STAGING` database" pickitem="the first dataset item" %}
+{% include conrefs/conref-qs-4x-browse-data.md imgpath=var-imgpath pickdb="STAGING" pickitem="the first dataset item" %}
 
 
 ### Result
