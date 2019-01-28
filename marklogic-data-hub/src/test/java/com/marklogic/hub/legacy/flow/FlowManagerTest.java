@@ -27,10 +27,7 @@ import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -75,6 +72,11 @@ public class FlowManagerTest extends HubTestBase {
 
         addStagingDocs();
         installModules();
+    }
+
+    @AfterAll
+    public void removeProjectDir() {
+        deleteProjectDir();
     }
 
     private void installModules() {
