@@ -13,27 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
-public enum CodeFormat {
-    JAVASCRIPT("sjs"), XQUERY("xqy");
-
-    private String name;
-
-    CodeFormat(String name) {
-        this.name = name;
-    }
-
-    public static CodeFormat getCodeFormat(String format) {
-        for (CodeFormat codeFormat : CodeFormat.values()) {
-            if (codeFormat.toString().equals(format)) {
-                return codeFormat;
-            }
-        }
-        return null;
-    }
-
-    public String toString() {
-        return name;
-    }
+public interface FlowItemCompleteListener {
+    /**
+     * Listener interface for each flow item completing successfully
+     * @param jobId - the id of the job as a string
+     * @param itemId - the id of the item as a string
+     */
+    void processCompletion(String jobId, String itemId);
 }

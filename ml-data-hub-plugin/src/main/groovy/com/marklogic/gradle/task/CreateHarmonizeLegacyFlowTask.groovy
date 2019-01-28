@@ -17,10 +17,10 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.flow.FlowType
+import com.marklogic.hub.legacy.flow.FlowType
 import org.gradle.api.tasks.TaskAction
 
-class CreateHarmonizeFlowTask extends CreateFlowTask {
+class CreateHarmonizeLegacyFlowTask extends CreateLegacyFlowTask {
 
     @TaskAction
     void createHarmonizeFlow() {

@@ -40,10 +40,11 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.*;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
@@ -135,7 +136,7 @@ public class HubTestBase {
     protected ProcessManager processManager;
 
     @Autowired
-    protected FlowManagerImpl fm;
+    protected LegacyFlowManagerImpl fm;
 
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'

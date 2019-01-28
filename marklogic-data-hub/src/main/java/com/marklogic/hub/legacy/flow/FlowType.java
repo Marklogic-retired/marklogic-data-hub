@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
-import com.fasterxml.jackson.databind.JsonNode;
+public enum FlowType {
+    INPUT("input"), HARMONIZE("harmonize");
 
-import java.util.List;
+    private String type;
+    FlowType(String type) {
+        this.type = type;
+    }
 
-public class RunFlowResponse {
-    public long totalCount = 0;
-    public long errorCount = 0;
-    public List<String> completedItems;
-    public List<String> failedItems;
-    public List<JsonNode> errors;
+    public static FlowType getFlowType(String type) {
+        for (FlowType flowType : FlowType.values()) {
+            if (flowType.toString().equals(type)) {
+                return flowType;
+            }
+        }
+        return null;
+    }
 
     public String toString() {
-        return "{totalCount: " + totalCount + ", errorCount: " + errorCount + ", completedItems: " + completedItems.size() + ", failedItems: " + failedItems.size() + ", errors: " + errors.size() + "}";
+        return this.type;
     }
 }

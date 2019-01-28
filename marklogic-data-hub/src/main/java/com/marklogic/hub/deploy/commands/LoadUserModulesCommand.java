@@ -30,11 +30,11 @@ import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
-import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.legacy.flow.Flow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -63,7 +63,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private EntityManager entityManager;
 
     @Autowired
-    private FlowManager flowManager;
+    private LegacyFlowManager flowManager;
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;

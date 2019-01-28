@@ -21,9 +21,10 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.LegacyFlowManager;
+import com.marklogic.hub.legacy.flow.Flow;
+import com.marklogic.hub.legacy.flow.FlowRunner;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -68,7 +69,7 @@ public class PiiE2E extends HubTestBase
     protected EntityManager entityManager;
 
     @Autowired
-    protected FlowManager flowManager;
+    protected LegacyFlowManager flowManager;
 
     @Autowired
     private Scaffolding scaffolding;

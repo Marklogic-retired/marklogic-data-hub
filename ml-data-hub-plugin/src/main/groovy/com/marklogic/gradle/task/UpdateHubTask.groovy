@@ -17,14 +17,14 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.DataHub
+
 import org.gradle.api.tasks.TaskAction
 
 class UpdateHubTask extends HubTask {
 
     @TaskAction
     void updateHub() {
-        if (getFlowManager().getLegacyFlows().size() > 0) {
+        if (getLegacyFlowManager().getLegacyFlows().size() > 0) {
             def updatedFlows = new ArrayList<String>()
             getDataHub().upgradeHub(updatedFlows)
 

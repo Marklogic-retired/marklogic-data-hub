@@ -45,6 +45,7 @@ import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
@@ -98,7 +99,7 @@ public class DataHubImpl implements DataHub {
     private Versions versions;
     
     @Autowired
-    private FlowManagerImpl flowManager;
+    private LegacyFlowManagerImpl flowManager;
 
     private AdminManager _adminManager;
 

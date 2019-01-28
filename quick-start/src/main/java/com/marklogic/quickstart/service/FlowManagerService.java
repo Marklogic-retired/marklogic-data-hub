@@ -19,12 +19,11 @@ package com.marklogic.quickstart.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowStatusListener;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.LegacyFlowManager;
+import com.marklogic.hub.legacy.flow.Flow;
+import com.marklogic.hub.legacy.flow.FlowRunner;
+import com.marklogic.hub.legacy.flow.FlowStatusListener;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.quickstart.model.FlowModel;
@@ -50,7 +49,7 @@ public class FlowManagerService {
     private static final String PROJECT_TMP_FOLDER = ".tmp";
 
     @Autowired
-    private FlowManager flowManager;
+    private LegacyFlowManager flowManager;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -180,7 +179,7 @@ public class FlowManagerService {
         runner.start();
     }
 
-    public FlowManager getFlowManager() {
+    public LegacyFlowManager getFlowManager() {
         return flowManager;
     }
 }

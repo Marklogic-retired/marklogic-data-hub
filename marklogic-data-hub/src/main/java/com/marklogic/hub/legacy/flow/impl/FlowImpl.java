@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow.impl;
+package com.marklogic.hub.legacy.flow.impl;
 
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.impl.CollectorImpl;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import org.w3c.dom.Document;

@@ -21,7 +21,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

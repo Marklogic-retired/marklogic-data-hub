@@ -23,7 +23,7 @@ import com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.rest.util.MgmtResponseErrorHandler;
 import org.apache.http.auth.AuthScope;

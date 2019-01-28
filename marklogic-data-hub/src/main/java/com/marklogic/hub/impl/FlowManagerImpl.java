@@ -13,280 +13,180 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.marklogic.hub.impl;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices.ServiceResult;
-import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.util.RequestParameters;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.collector.impl.CollectorImpl;
-import com.marklogic.hub.flow.*;
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.main.impl.MainPluginImpl;
-import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component
-public class FlowManagerImpl extends ResourceManager implements FlowManager {
-
-    private static final String NAME = "ml:flow";
-
-    private DatabaseClient stagingClient;
-
+public class FlowManagerImpl implements FlowManager {
 
     @Autowired
     private HubConfig hubConfig;
 
-    @Autowired
-    private Scaffolding scaffolding;
-
-    public FlowManagerImpl() {
-        super();
-    }
-
-    
-    public void setupClient() {
-        this.stagingClient = hubConfig.newStagingClient();
-        this.stagingClient.init(NAME, this);
-    }
-
-    @Override public List<Flow> getLocalFlows() {
-        List<Flow> flows = new ArrayList<>();
-
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
-        File[] entities = entitiesDir.toFile().listFiles((pathname -> pathname.isDirectory()));
-        if (entities != null) {
-            for (File entity : entities) {
-                String entityName = entity.getName();
-                flows.addAll(getLocalFlowsForEntity(entityName));
-            }
-        }
-        return flows;
-    }
-
-    @Override public List<Flow> getLocalFlowsForEntity(String entityName) {
-        return getLocalFlowsForEntity(entityName, null);
-    }
-
-    @Override public List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
-
-        List<Flow> flows = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
-        Path entityDir = entitiesDir.resolve(entityName);
-        Path inputDir = entityDir.resolve("input");
-        Path harmonizeDir = entityDir.resolve("harmonize");
-        boolean getInputFlows = false;
-        boolean getHarmonizeFlows = false;
-        if (flowType == null) {
-            getInputFlows = getHarmonizeFlows = true;
-        }
-        else if (flowType.equals(FlowType.INPUT)) {
-            getInputFlows = true;
-        }
-        else if (flowType.equals(FlowType.HARMONIZE)) {
-            getHarmonizeFlows = true;
-        }
-
-        if (getInputFlows) {
-            File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-            if (inputFlows != null) {
-                for (File inputFlow : inputFlows) {
-                    Flow flow = getLocalFlow(entityName, inputFlow.toPath(), FlowType.INPUT);
-                    if (flow != null) {
-                        flows.add(flow);
-                    }
-                }
-            }
-        }
-
-        if (getHarmonizeFlows) {
-            File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-            if (harmonizeFlows != null) {
-                for (File harmonizeFlow : harmonizeFlows) {
-                    Flow flow = getLocalFlow(entityName, harmonizeFlow.toPath(), FlowType.HARMONIZE);
-                    if (flow != null) {
-                        flows.add(flow);
-                    }
-
-                }
-            }
-        }
-        return flows;
-    }
-
-    @Override public Flow getFlowFromProperties(Path propertiesFile) {
-        String quotedSeparator = Pattern.quote(File.separator);
-        /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
-         * input|harmonize/<flowName>/flowName.properties
-         */
-        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator 
-                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";        
-        FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
-                ? FlowType.INPUT : FlowType.HARMONIZE;
-
-        String entityName = propertiesFile.toString().replaceAll(floweRegex, "$1");
-        return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
-    }
-
-    private Flow getLocalFlow(String entityName, Path flowDir, FlowType flowType) {
+    @Override
+    public Flow getFlow(String flowName) {
+        Path flowPath = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);
+        FileInputStream fileInputStream = null;
         try {
-            String flowName = flowDir.getFileName().toString();
-            File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
-            if (propertiesFile.exists()) {
-                Properties properties = new Properties();
-                FileInputStream fis = new FileInputStream(propertiesFile);
-                properties.load(fis);
-
-                // trim trailing whitespaces for properties.
-                for (String key : properties.stringPropertyNames()){
-                    properties.put(key, properties.get(key).toString().trim());
-                }
-                fis.close();
-
-                FlowBuilder flowBuilder = FlowBuilder.newFlow()
-                    .withEntityName(entityName)
-                    .withName(flowName)
-                    .withType(flowType)
-                    .withCodeFormat(CodeFormat.getCodeFormat((String) properties.get("codeFormat")))
-                    .withDataFormat(DataFormat.getDataFormat((String) properties.get("dataFormat")))
-                    .withMain(new MainPluginImpl((String) properties.get("mainModule"), CodeFormat.getCodeFormat((String) properties.get("mainCodeFormat"))));
-
-                if (flowType.equals(FlowType.HARMONIZE)) {
-                    flowBuilder.withCollector(new CollectorImpl((String) properties.get("collectorModule"), CodeFormat.getCodeFormat((String) properties.get("collectorCodeFormat"))));
-                }
-
-                return flowBuilder.build();
-            }
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override public List<Flow> getFlows(String entityName) {
-        RequestParameters params = new RequestParameters();
-        params.add("entity-name", entityName);
-        ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
+            fileInputStream = FileUtils.openInputStream(flowPath.toFile());
+        } catch (IOException e) {
+            // return null if it doesn't exist, so we can check for it.
             return null;
         }
-        ServiceResult res = resultItr.next();
-        DOMHandle handle = new DOMHandle();
-        Document parent = res.getContent(handle).get();
-        NodeList children = parent.getDocumentElement().getChildNodes();
-
-        ArrayList<Flow> flows = null;
-        if (children.getLength() > 0) {
-            flows = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode node;
+        try {
+            node = objectMapper.readTree(fileInputStream);
+        } catch (IOException e) {
+            throw new DataHubProjectException("Unable to read flow: " + e.getMessage());
+        }
+        Flow newFlow = createFlowFromJSON(node);
+        if(newFlow != null && newFlow.getName().length() > 0){
+            return newFlow;
+        }
+        else {
+            throw new DataHubProjectException(flowName +" is not a valid flow");
         }
 
-        Node node;
-        for (int i = 0; i < children.getLength(); i++) {
-            node = children.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                flows.add(FlowManager.flowFromXml((Element)children.item(i)));
-            }
+    }
+
+    @Override
+    public String getFlowAsJSON(String flowName) {
+        return getFlow(flowName).serialize();
+    }
+
+    @Override
+    public List<Flow> getFlows() {
+        List<String> flowNames = getFlowNames();
+        List<Flow> flows = new ArrayList<>();
+        for(String flow : flowNames){
+            flows.add(getFlow(flow));
         }
         return flows;
     }
 
-    @Override public Flow getFlow(String entityName, String flowName) {
-        return getFlow(entityName, flowName, null);
+    @Override
+    public List<String> getFlowNames() {
+        // Get all the files with flow.json extension from flows dir
+        List<File> files = (List<File>) FileUtils.listFiles(hubConfig.getFlowsDir().toFile(), new String[] {"flow.json"} , false );
+        List<String> flowNames = files.stream().map(f ->{
+            String fileName = f.getName();
+            fileName = fileName.replaceAll("(.+)\\.flow\\.json" , "$1");
+            return fileName;
+        }).collect(Collectors.toList());
+
+        return flowNames;
     }
 
-    @Override public Flow getFlow(String entityName, String flowName, FlowType flowType) {
-        RequestParameters params = new RequestParameters();
-        params.add("entity-name", entityName);
-        params.add("flow-name", flowName);
-        if (flowType != null) {
-            params.add("flow-type", flowType.toString());
-        }
-        ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
-            return null;
-        }
-        ServiceResult res = resultItr.next();
-        DOMHandle handle = new DOMHandle();
-        Document parent = res.getContent(handle).get();
-        return FlowManager.flowFromXml(parent.getDocumentElement());
+    @Override
+    public Flow createFlow(String flowName) {
+        Flow flow = createFlowFromJSON(getFlowScaffolding());
+        flow.setName(flowName);
+        return flow;
     }
 
-    @Override public List<String> getLegacyFlows() {
-        List<String> oldFlows = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
+    @Override
+    public Flow createFlowFromJSON(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = null;
+        try {
+            node = mapper.readValue(json, JsonNode.class);
+        } catch (JsonParseException e) {
+            throw new DataHubProjectException("Unable to parse flow json string : "+ e.getMessage());
+        } catch (JsonMappingException e1) {
+            throw new DataHubProjectException("Unable to parse flow json string : "+ e1.getMessage());
+        } catch (IOException e2) {
+            throw new DataHubProjectException("Unable to parse flow json string : "+ e2.getMessage());
+        }
+        return createFlowFromJSON(node);
+    }
 
-        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
-        if (entityDirs != null) {
-            for (File entityDir : entityDirs) {
-                Path inputDir = entityDir.toPath().resolve("input");
-                Path harmonizeDir = entityDir.toPath().resolve("harmonize");
+    @Override
+    public Flow createFlowFromJSON(JsonNode json) {
+        Flow flow = new FlowImpl();
+        flow.deserialize(json);
+        return flow;
+    }
 
-                File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                addLegacyFlowToList(oldFlows, entityDir, inputFlows);
-
-                File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                addLegacyFlowToList(oldFlows, entityDir, harmonizeFlows);
+    @Override
+    public void deleteFlow(String flowName) {
+        File flowFile = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
+        if (flowFile.exists()) {
+            try {
+                FileUtils.forceDelete(flowFile);
+            } catch (IOException e){
+                throw new DataHubProjectException("Could not delete flow "+ flowName);
             }
         }
+        else {
+            throw new DataHubProjectException("The specified flow doesn't exist.");
+        }
 
-        return oldFlows;
     }
 
-    private void addLegacyFlowToList(List<String> oldFlows, File entityDir, File[] flows) {
-        if (flows != null) {
-            for (File flow : flows) {
-                File[] mainFiles = flow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-                File[] flowFiles = flow.listFiles((dir, name) -> name.matches(flow.getName() + "\\.xml"));
-                if (mainFiles.length < 1 && flowFiles.length == 1) {
-                    oldFlows.add(entityDir.getName() + " => " + flow.getName());
-                } else if (mainFiles.length == 1 && mainFiles[0].getName().contains(".sjs")) {
-                    try {
-                        String mainFile = FileUtils.readFileToString(mainFiles[0]);
-                        if (mainFile.contains("dhf.xqy")) {
-                            oldFlows.add(entityDir.getName() + " => " + flow.getName());
-                        }
-                    }
-                    catch(IOException e) {}
-                }
-            }
+    @Override
+    public void saveFlow(Flow flow)  {
+        String flowString = flow.serialize();
+        String flowFileName = flow.getName() + FLOW_FILE_EXTENSION;
+        File file = Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();
+        ObjectNode rootNode;
+        FileOutputStream fileOutputStream = null;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            rootNode = (ObjectNode)objectMapper.readTree(flowString);
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode).getBytes());
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }
+        catch (JsonProcessingException e) {
+            throw new DataHubProjectException("Could not serialize flow.");
+        }
+        catch (IOException e) {
+            throw new DataHubProjectException("Could not save flow to disk.");
         }
     }
 
-    @Override public List<String> updateLegacyFlows(String fromVersion) {
+    private JsonNode flowScaffolding = null;
 
-        List<String> updatedFlows = new ArrayList<>();
-        File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());
-        if (entityDirs != null) {
-            for (File entityDir : entityDirs) {
-                updatedFlows.addAll(scaffolding.updateLegacyFlows(fromVersion, entityDir.getName()));
+    private JsonNode getFlowScaffolding() {
+        if (flowScaffolding != null) {
+            return flowScaffolding;
+        } else {
+            String flowScaffoldingSrcFile = "scaffolding/flowName.flow.json";
+            InputStream inputStream = FlowManagerImpl.class.getClassLoader()
+                .getResourceAsStream(flowScaffoldingSrcFile);
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                this.flowScaffolding = objectMapper.readTree(inputStream);
+                return this.flowScaffolding;
+            } catch (IOException e) {
+                throw new DataHubProjectException("Unable to parse flow json string : "+ e.getMessage());
             }
         }
-
-        return updatedFlows;
     }
-
-    @Override public FlowRunner newFlowRunner() {
-        return new FlowRunnerImpl(hubConfig);
-    }
-
 }

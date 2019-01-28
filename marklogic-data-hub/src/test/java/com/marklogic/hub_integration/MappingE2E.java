@@ -29,11 +29,11 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -67,7 +67,7 @@ public class MappingE2E extends HubTestBase {
     private static final int TEST_SIZE = 20;
     private static final int BATCH_SIZE = 10;
     @Autowired
-    private FlowManager flowManager;
+    private LegacyFlowManager flowManager;
     private DataMovementManager stagingDataMovementManager;
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
@@ -82,6 +82,7 @@ public class MappingE2E extends HubTestBase {
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
+        new Installer().deleteProjectDir();
         new Installer().setupProject();
     }
 

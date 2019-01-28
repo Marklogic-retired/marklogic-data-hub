@@ -24,10 +24,10 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -67,7 +67,7 @@ public class StreamCollectorTest extends HubTestBase {
     private String installDocError;
 
     @Autowired
-    private FlowManager fm;
+    private LegacyFlowManager fm;
 
     @Autowired
     private Scaffolding scaffolding;

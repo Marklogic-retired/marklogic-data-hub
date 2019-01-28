@@ -167,6 +167,10 @@ public class HubProjectImpl implements HubProject {
         return getEntityConfigDir().resolve("databases");
     }
 
+    @Override public Path getFlowsDir() {
+        return this.projectDir.resolve("flows");
+    }
+
     @Override public Path getHubStagingModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
@@ -295,6 +299,9 @@ public class HubProjectImpl implements HubProject {
         //scaffold schemas
         getUserDatabaseDir().resolve(customTokens.get("%%mlStagingSchemasDbName%%")).resolve("schemas").toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
+
+        //create flow dir
+        getFlowsDir().toFile().mkdirs();
 
         //create hub triggers
         Path hubTriggersDir = getHubTriggersDir();        

@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.legacy.flow;
 
-public interface FlowItemCompleteListener {
+public interface FlowItemFailureListener {
     /**
-     * Listener interface for each flow item completing successfully
+     * Listener interface for each flow item that failed
      * @param jobId - the id of the job as a string
      * @param itemId - the id of the item as a string
      */
-    void processCompletion(String jobId, String itemId);
+    void processFailure(String jobId, String itemId);
 }

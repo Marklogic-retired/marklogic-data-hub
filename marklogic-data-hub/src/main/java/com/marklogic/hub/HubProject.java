@@ -150,6 +150,13 @@ public interface HubProject {
     Path getEntityDatabaseDir();
 
     /**
+     * Gets the path for the flows directory
+     *
+     * @return the path for the flows directory
+     */
+    Path getFlowsDir();
+
+    /**
      * Gets the path for the hub staging modules
      *
      * @return the path for the hub staging modules
