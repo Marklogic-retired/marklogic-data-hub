@@ -131,14 +131,14 @@
         }
       }
     },
-    "/mapping-process": {
+    "/process": {
       "post": {
         "tags": [
           "process"
         ],
-        "summary": "Create a mapping process",
-        "description": "Create a mapping process",
-        "operationId": "createMappingProcess",
+        "summary": "Creates a process",
+        "description": "Create a process",
+        "operationId": "createProcess",
         "produces": [
           "application/json"
         ],
@@ -146,10 +146,10 @@
           {
             "in": "body",
             "name": "body",
-            "description": "Create Mapping Process Parameters",
+            "description": "Create Process Parameters",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Process"
+              "$ref": "#/definitions/process"
             }
           }
         ],
@@ -159,7 +159,7 @@
             "schema": {
               "type": "object",
               "items": {
-                "$ref": "#/definitions/sample"
+                "$ref": "#/definitions/process"
               },
               "default": [
                 { "id": 1, "name": "aaa", "status": "new" },
@@ -178,14 +178,14 @@
         ]
       }
     },
-    "/mapping-process/{type}/{name}": {
+    "/process/{type}/{name}": {
       "get": {
         "tags": [
           "process"
         ],
-        "summary": "Get a mapping process",
-        "description": "Get a mapping process",
-        "operationId": "getMappingProcess",
+        "summary": "Get a process",
+        "description": "Get a process",
+        "operationId": "getProcess",
         "produces": [
           "application/json"
         ],
@@ -193,14 +193,14 @@
           {
             "name": "type",
             "in": "path",
-            "description": "type of mapping process to delete",
+            "description": "type of process to delete",
             "required": true,
             "type": "string"
           },
           {
             "name": "name",
             "in": "path",
-            "description": "name of mapping process to return",
+            "description": "name of process to return",
             "required": true,
             "type": "string"
           }
@@ -211,7 +211,7 @@
             "schema": {
               "type": "object",
               "schema": {
-                "$ref": "#/definitions/Process"
+                "$ref": "#/definitions/process"
               }
             }
           }
@@ -226,9 +226,9 @@
         "tags": [
           "process"
         ],
-        "summary": "Update a mapping process",
-        "description": "Update a mapping process",
-        "operationId": "updateMappingProcess",
+        "summary": "Update a process",
+        "description": "Update a process",
+        "operationId": "updateProcess",
         "produces": [
           "application/json"
         ],
@@ -236,24 +236,24 @@
           {
             "name": "type",
             "in": "path",
-            "description": "type of mapping process to delete",
+            "description": "type of  process to delete",
             "required": true,
             "type": "string"
           },
           {
             "name": "name",
             "in": "path",
-            "description": "name of mapping process to update",
+            "description": "name of  process to update",
             "required": true,
             "type": "string"
           },
           {
             "in": "body",
             "name": "body",
-            "description": "Update Mapping Process Parameters",
+            "description": "Update  Process Parameters",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Process"
+              "$ref": "#/definitions/process"
             }
           }
         ],
@@ -263,7 +263,7 @@
             "schema": {
               "type": "object",
               "items": {
-                "$ref": "#/definitions/sample"
+                "$ref": "#/definitions/process"
               },
               "default": [
                 { "id": 1, "name": "aaa", "status": "new" },
@@ -285,9 +285,9 @@
         "tags": [
           "process"
         ],
-        "summary": "Delete a mapping process",
-        "description": "Delete a mapping process",
-        "operationId": "deleteMappingProcess",
+        "summary": "Delete a  process",
+        "description": "Delete a  process",
+        "operationId": "deleteProcess",
         "produces": [
           "application/json"
         ],
@@ -295,14 +295,14 @@
           {
             "name": "type",
             "in": "path",
-            "description": "type of mapping process to delete",
+            "description": "type of  process to delete",
             "required": true,
             "type": "string"
           },
           {
             "name": "name",
             "in": "path",
-            "description": "name of mapping process to delete",
+            "description": "name of  process to delete",
             "required": true,
             "type": "string"
           }
@@ -313,14 +313,11 @@
             "schema": {
               "type": "object",
               "items": {
-                "$ref": "#/definitions/sample"
+                "$ref": "#/definitions/message"
               },
               "default": [
-                { "id": 1, "name": "aaa", "status": "new" },
-                { "id": 2, "name": "bbb", "status": "new" },
-                { "id": 3, "name": "ccc", "status": "ready" },
-                { "id": 4, "name": "ddd", "status": "ready" },
-                { "id": 5, "name": "eee", "status": "approved" }
+                {
+                  "message": "Process deleted successfully"}
               ]
             }
           }
@@ -385,7 +382,18 @@
         "name": "Tag"
       }
     },
-    "Process": {
+    "message": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "message"
+      }
+    },
+    "process": {
       "type": "object",
       "required": [
         "name",
