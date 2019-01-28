@@ -2,7 +2,7 @@
 To create an entity named `{{ include.entityname }}`,
 
 {% assign pref="qs-4x-entities-create-complete" %}
-{% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% endif %}
+{% if include.entityname %}{% assign suf="-" | append: include.entityname %}{% else %}{% assign suf="" %}{% endif %}
 {% assign full-imgpath=include.imgpath | append: pref | append: suf | append: ".png" %}
 {% include thumbnail.html imgfile=full-imgpath alttext="New Entities form" imgclass="screenshot" tab="  " %}
 

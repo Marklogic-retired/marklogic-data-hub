@@ -9,38 +9,9 @@ permalink: /tutorial/4x/harmonizing-product-data/
 
 # Tutorial: Harmonize the Product Data
 
-Now that we have modeled the Product entity type and defined a model-to-model mapping for it, we can use the Data Hub Framework to harmonize our source data with our entity model. Harmonization creates canonical entity instances containing the necessary parts of your source data.
 
-Recall from earlier that the Data Hub Framework can use the Entity Services model definition and a mapping to generate harmonization code. In this exercise, we will do the following:
 
-1. Create a harmonize flow that uses a model-to-model mapping to guide harmonization code generation.
-1. Run the flow to create harmonized Product entities in the FINAL database.
 
-To begin, click **Flows** in the top navigation bar.
-
-![Click Flows]({{site.baseurl}}/images/3x/harmonizing-product-data/select-flows.png)
-
-## Create the Harmonize Flow
-
-Use the following procedure to create a Product harmonize flow:
-
-1. Click **+** next to **Harmonize Flows**.
-1. Type **Harmonize Products** in the **Harmonize Flow Name** field.
-1. Click on **ProductMapping** under Mapping Generation.
-1. Click **CREATE**. A new harmonize flow is created.
-
-The following picture summarizes the steps for creating the Harmonize Products flow:
-![Create Product Harmonize Flow]({{site.baseurl}}/images/3x/harmonizing-product-data/create-product-harmonize-flow.png)
-
-When you create the flow, QuickStart generates harmonization code based on the Product entity model and the **ProductMapping** model-to-model mapping, and then deploys the code to MarkLogic.
-
-Though you can customize the harmonization code, it is not necessary. The mapping expressed everything needed to create Product entities. For example, the mapping caused the generated code to include the following assignments for initializing a Product instance:
-```
-/* These mappings were generated using mapping: ProductMapping, version: 1 on ... */
-let sku = !fn.empty(source.xpath('//SKU')) ? xs.string(fn.head(source.xpath('//SKU'))) : null;
-let price = !fn.empty(source.xpath('//price')) ? xs.decimal(fn.head(source.xpath('//price'))) : null;
-```
-We'll dig deeper into the generated code when we work with our second entity later in this tutorial.
 
 ## Run the Flow
 

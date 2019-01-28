@@ -363,6 +363,10 @@ h2 {
   margin-top: 40px;
 }
 
+h3 {
+  font-size: 150%;
+}
+
 .smaller {
   font-size: 80%;
 }
@@ -402,6 +406,11 @@ h2 {
   text-transform: uppercase;
   text-align: center;
   vertical-align: middle;
+}
+
+.bg-gray {
+  background-color: #ccc;
+  color: black;
 }
 
 .inline-button {
@@ -633,6 +642,9 @@ details {
     padding-bottom: 10px;
   }
   > img {
+    padding-bottom: 10px;
+  }
+  > pre {
     padding-bottom: 10px;
   }
 }
