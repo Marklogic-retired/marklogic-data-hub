@@ -553,8 +553,6 @@ public class DataHubImpl implements DataHub {
     public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
         List<Command> commandMap = buildListOfCommands();
-        //Remove this line if CMA supports uninstalling amps
-        commandMap.removeIf(command -> command instanceof DeployAmpsCommand);
 
         AppConfig appConfig = hubConfig.getAppConfig();
         CMASettings.getInstance().setCmaSettings(appConfig);
