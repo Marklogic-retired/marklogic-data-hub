@@ -29,40 +29,6 @@
       "required": ["id", "transactionDateTime", "totalCost"],
       "primaryKey": "id",
       "pathRangeIndex": ["id", "totalCost"]
-    },
-    "Customer": {
-      "properties": {
-        "id": {
-          "datatype": "int"
-        },
-        "name": {
-          "datatype": "string"
-        }
-      },
-      "required": ["id", "name"],
-      "primaryKey": "id",
-      "pii": ["name"],
-      "pathRangeIndex": ["id"]
-    },
-    "Item": {
-      "properties": {
-        "id": {
-          "datatype": "int"
-        },
-        "name": {
-          "datatype": "string"
-        },
-        "description": {
-          "datatype": "string"
-        },
-        "rating": {
-          "datatype": "float"
-        }
-      },
-      "required": ["id", "name"],
-      "primaryKey": "id",
-      "pathRangeIndex": ["id", "rating"],
-      "wordLexicon": ["description"]
     }
   }
 }
