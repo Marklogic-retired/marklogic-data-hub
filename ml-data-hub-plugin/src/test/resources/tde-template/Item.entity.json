@@ -1,0 +1,29 @@
+{
+  "info": {
+    "title": "Item",
+    "description": "DHF Item",
+    "version": "1.0.0"
+  },
+  "definitions": {
+    "Item": {
+      "properties": {
+        "id": {
+          "datatype": "int"
+        },
+        "name": {
+          "datatype": "string"
+        },
+        "description": {
+          "datatype": "string"
+        },
+        "rating": {
+          "datatype": "float"
+        }
+      },
+      "required": ["id", "name"],
+      "primaryKey": "id",
+      "pathRangeIndex": ["id", "rating"],
+      "wordLexicon": ["description"]
+    }
+  }
+}
