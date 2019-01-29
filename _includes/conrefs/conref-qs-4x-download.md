@@ -1,1 +1,1 @@
-[Download the `quick-start-{{ include.warver }}.war` file](https://github.com/marklogic/marklogic-data-hub/releases/download/{{ include.warver }}/quick-start-{{ include.warver }}.war) and place it your project root directory.
+[Download the `quick-start-{{ include.warver }}.war` file](https://github.com/marklogic/marklogic-data-hub/releases/download/{{ include.v }}{{ include.warver }}/quick-start-{{ include.warver }}.war) and place it your project root directory.

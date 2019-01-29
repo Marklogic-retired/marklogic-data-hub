@@ -24,7 +24,7 @@ To delete one or more databases created by this tutorial,
 
 To delete the entire data hub created by this tutorial and to uninstall DHF,
 1. In QuickStart's navigation bar, click **Settings**{:.uimenuitem}.
-1. Select **Uninstall Hub**{.uilabel}.
+1. Select **Uninstall Hub**{:.uilabel}.
 {:.ol-steps}
 
 
