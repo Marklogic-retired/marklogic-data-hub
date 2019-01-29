@@ -23,10 +23,14 @@ import com.marklogic.client.ext.es.CodeGenerationRequest;
 import com.marklogic.client.ext.es.EntityServicesManager;
 import com.marklogic.client.ext.es.GeneratedCode;
 import com.marklogic.hub.HubConfig;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
@@ -70,7 +74,24 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                     entityNameFileMap.keySet(), hubConfig.getAppConfig().getSchemasPath());
 
                 for (File f : entityNameFileMap.values()) {
-                    GeneratedCode code = loadModelDefinition(request, f, mgr);
+                    File esModel;
+                    try {
+                        //Write the ES model to a temp file
+                        esModel = File.createTempFile("", f.getName());
+                        FileUtils.writeStringToFile(esModel, generateModel(f));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Unable to generate ES model");
+                    }
+
+                    GeneratedCode code;
+                    try {
+                        code = loadModelDefinition(request, esModel, mgr);
+                    } catch (RuntimeException e) {
+                        throw new RuntimeException("Unable to read model definition from file: " + f.getAbsolutePath(), e);
+                    }
+                    finally {
+                        FileUtils.deleteQuietly(esModel);
+                    }
                     generateExtractionTemplate(appConfig, code);
                 }
 
@@ -81,6 +102,14 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                 hubConfig.getHubEntitiesDir());
         }
 
+    }
+
+    //Method to obtain es-style model
+    private String generateModel(File f) {
+        String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
+            "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
+            String.format("hent:get-model(\"%s\")", extactEntityNameFromFilename(f.getName()).get());
+        return  hubConfig.newStagingClient().newServerEval().xquery(xquery).eval().next().getString();
     }
 
     public String getEntityNames() {
