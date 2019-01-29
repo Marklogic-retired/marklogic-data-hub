@@ -164,7 +164,6 @@ public class HubProjectImpl implements HubProject {
         File databasesDir = getHubDatabaseDir().toFile();
         File serversDir = getHubServersDir().toFile();
         File securityDir = getHubSecurityDir().toFile();
-        File triggersDir = getHubTriggersDir().toFile();
 
         boolean newConfigInitialized =
             hubConfigDir.exists() &&
@@ -176,9 +175,7 @@ public class HubProjectImpl implements HubProject {
                 serversDir.exists() &&
                 serversDir.isDirectory() &&
                 securityDir.exists() &&
-                securityDir.isDirectory() &&
-                triggersDir.exists() &&
-                triggersDir.isDirectory();
+                securityDir.isDirectory();
 
         return buildGradle.exists() &&
             gradleProperties.exists() &&
