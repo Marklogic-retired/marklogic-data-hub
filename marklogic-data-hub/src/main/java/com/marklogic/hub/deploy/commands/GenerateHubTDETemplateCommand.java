@@ -77,7 +77,9 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                     File esModel;
                     try {
                         //Write the ES model to a temp file
-                        esModel = File.createTempFile("es-", f.getName());
+                        String tempDir = System.getProperty("java.io.tmpdir");
+                        String fileName = f.getName();
+                        esModel = new File(tempDir, fileName);
                         FileUtils.writeStringToFile(esModel, generateModel(f));
                     } catch (IOException e) {
                         throw new RuntimeException("Unable to generate ES model");
