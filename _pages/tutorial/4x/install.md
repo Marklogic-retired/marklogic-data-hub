@@ -11,7 +11,7 @@ permalink: /tutorial/4x/install/
 ## 1 - Set Up the Project Directory and Sample Data
 
 1. Create a directory called `data-hub`. This directory will be referred to as "your project root" or simply "root".
-1. {% include conrefs/conref-qs-4x-download.md warver=site.data.global.hub_version_4x %}
+1. {% include conrefs/conref-qs-4x-download.md warver=site.data.global.hub_version_4x v="v" %}
 1. Under your project root, create a directory called `input`.
 1. Download the [sample data .zip file]({{site.baseurl}}/data/store-data.zip){:target="_blank"}. Expand it, as needed.
 1. Copy the subdirectories (e.g., `campaigns`, `customers`, `orders`) inside the sample data .zip file into the `input` directory.

@@ -4,6 +4,9 @@ title: Jobs and Traces
 permalink: /maintain/jobs-traces/
 ---
 
+{% assign var-imgpath = site.baseurl | append: "/images/4x/" %}
+
+
 # Jobs and Traces
 
 MarkLogic tracks:
@@ -14,11 +17,11 @@ These **Jobs**{:.uilabel} and **Traces**{:.uilabel} logs can help troubleshoot e
 
 
 ## View Job Results
-{% include conrefs/conref-qs-4x-jobs.md imgpath=var-imgpath entityname="" jobname=var-jobname %}
+{% include conrefs/conref-qs-4x-jobs.md imgpath=var-imgpath pickitem="any job" fullsteps=true %}
 
 
 ## View Traces
-{% include conrefs/conref-qs-4x-traces.md imgpath=var-imgpath entityname="" %}
+{% include conrefs/conref-qs-4x-traces.md imgpath=var-imgpath %}
 
 
 <!--
