@@ -68,6 +68,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -808,7 +810,8 @@ public class DataHubImpl implements DataHub {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }
         boolean result = false;
-        boolean alreadyInitialized = project.isInitialized();                
+        boolean alreadyInitialized = project.isInitialized();
+        String gradleVersion = versions.getDHFVersion();
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
              * But since it requires 'hubConfig' and 'versions', for now 
@@ -816,7 +819,7 @@ public class DataHubImpl implements DataHub {
              */
             if(alreadyInitialized) {
                 // The version provided in "mlDHFVersion" property in gradle.properties.
-                String gradleVersion = versions.getDHFVersion();
+
                 File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
                 
                 // Back up the hub-internal-config and user-config directories in versions > 4.0
@@ -839,6 +842,28 @@ public class DataHubImpl implements DataHub {
             }
             
             hubConfig.initHubProject();
+
+            /*  DHFPROD- 1694
+                Copy contents from hub-internal-config-version/schemas to ml-config/databases/<staging_schemas_db_name>/schemas
+                This has to be done in DataHubImpl as we require HubConfigImpl for getting the staging schemas db name
+             */
+            if(alreadyInitialized) {
+                Path sourceSchemasDir = project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR + "-" + gradleVersion).resolve("schemas");
+                Path destSchemasDir = project.getUserDatabaseDir().resolve(hubConfig.getStagingSchemasDbName()).resolve("schemas");
+                if (sourceSchemasDir.toFile().exists()) {
+                    Files.walk(Paths.get(sourceSchemasDir.toUri()))
+                        .filter(f -> !Files.isDirectory(f))
+                        .forEach(f -> {
+                            try {
+                                FileUtils.copyInputStreamToFile(Files.newInputStream(f), destSchemasDir.resolve(sourceSchemasDir.relativize(f)).toFile());
+                            } catch (IOException e) {
+                                logger.error("Unable to copy file " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
+                        });
+
+                }
+            }
             
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
