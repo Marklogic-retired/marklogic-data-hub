@@ -410,6 +410,9 @@ public class HubProjectImpl implements HubProject {
         deleteObsoleteServerFilesFromHubInternalConfig();
         deleteObsoleteDatabaseFilesFromMlConfig();
 
+        //remove hub-internal-config/schemas dir
+        deleteObsoleteDirsFromHubInternalConfig();
+
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {
@@ -717,6 +720,22 @@ public class HubProjectImpl implements HubProject {
                 f.delete();
             }
         }
+    }
+
+    private void deleteObsoleteDirsFromHubInternalConfig() {
+        File dir = getHubConfigDir().resolve("schemas").toFile();
+        if (dir.exists()) {
+            if (logger.isInfoEnabled()) {
+                logger.info("Deleting hub-internal-config/schemas dir because it is no longer used");
+            }
+            try {
+                FileUtils.deleteDirectory(dir);
+            } catch (IOException e) {
+                logger.error("Unable to delete "+ dir.getName());
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     @Override
