@@ -80,6 +80,11 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                         String tempDir = System.getProperty("java.io.tmpdir");
                         String fileName = f.getName();
                         esModel = new File(tempDir, fileName);
+                        String modelString = generateModel(f);
+                        if(modelString == null) {
+                            logger.warn(f.getName() + " is not deployed to the database");
+                            continue;
+                        }
                         FileUtils.writeStringToFile(esModel, generateModel(f));
                     } catch (IOException e) {
                         throw new RuntimeException("Unable to generate ES model");
