@@ -25,7 +25,7 @@ export default function(tmpDir) {
     });
 
     it ('should uninstall the hub', function() {
-      loginPage.isLoadedWithtimeout(200000);
+      loginPage.isLoadedWithtimeout(240000);
     });
 
     it ('should remove the temp folder', function() {
