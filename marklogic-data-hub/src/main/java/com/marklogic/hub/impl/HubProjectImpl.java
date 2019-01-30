@@ -731,7 +731,7 @@ public class HubProjectImpl implements HubProject {
             try {
                 FileUtils.deleteDirectory(dir);
             } catch (IOException e) {
-                logger.error("Unable to delete "+ dir.getName());
+                logger.error("Unable to delete "+ dir.getAbsolutePath());
                 throw new RuntimeException(e);
             }
         }
