@@ -19,6 +19,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.es.GenerateModelArtifactsCommand;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.es.CodeGenerationRequest;
 import com.marklogic.client.ext.es.EntityServicesManager;
 import com.marklogic.client.ext.es.GeneratedCode;
@@ -77,7 +78,14 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                     File esModel;
                     try {
                         //Write the ES model to a temp file
-                        esModel = File.createTempFile("es-", f.getName());
+                        String tempDir = System.getProperty("java.io.tmpdir");
+                        String fileName = f.getName();
+                        esModel = new File(tempDir, fileName);
+                        String modelString = generateModel(f);
+                        if(modelString == null) {
+                            logger.warn(f.getName() + " is not deployed to the database");
+                            continue;
+                        }
                         FileUtils.writeStringToFile(esModel, generateModel(f));
                     } catch (IOException e) {
                         throw new RuntimeException("Unable to generate ES model");
@@ -109,7 +117,11 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
             "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
             String.format("hent:get-model(\"%s\")", extactEntityNameFromFilename(f.getName()).get());
-        return  hubConfig.newStagingClient().newServerEval().xquery(xquery).eval().next().getString();
+        EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
+        if (resp.hasNext()) {
+            return resp.next().getString();
+        }
+        return null ;
     }
 
     public String getEntityNames() {
