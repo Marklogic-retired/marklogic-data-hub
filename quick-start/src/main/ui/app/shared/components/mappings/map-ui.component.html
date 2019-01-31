@@ -121,7 +121,7 @@
           <span class="prop-name">{{prop.name}}</span>
           <span class="prop-type">{{prop.datatype}}</span>
           <span class="entity-icons">
-            <span class="entity-icon" tooltip="Primary Key" container="body"><i class="fa fa-key fa-fw" [ngClass]="prop.name === entityPrimaryKey ? 'entity-icon-selected' : 'icon-hide'"></i></span>
+            <span class="entity-icon" tooltip="Primary Key" container="body"><i class="fa fa-key fa-fw" [ngClass]="isPrimaryKey(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Element Range Index" container="body"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Path Range Index" container="body"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
             <span class="entity-icon" tooltip="Word Lexicon" container="body"><i class="fa fa-krw fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
