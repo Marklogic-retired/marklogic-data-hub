@@ -41,7 +41,8 @@
                  name="{{setting.field}}" *ngIf="isText(setting.type)"
                  [ngModel]="setting.value"
                  (input)="handleValueChanged(setting, $event.target.value)"
-                 [disabled]="setting.readOnly">
+                 [disabled]="setting.readOnly"
+                 class="flow-input">
               </mdl-textfield>
             </span>
             <span

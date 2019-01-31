@@ -99,3 +99,9 @@ button.md-primary[md-mini-fab] {
 .mdl-switch__thumb {
   background: #dedede;
 }
+
+.flow-input {
+  div >  .mdl-textfield__input {
+      background: white;
+    }
+}
