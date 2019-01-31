@@ -358,7 +358,7 @@ export class MapUiComponent implements OnChanges {
   }
 
     /**
-   * Is an entity property personally identifiable information?
+   * Is an entity property the primary key?
    * @param name Name of property
    * @returns {boolean}
    */
