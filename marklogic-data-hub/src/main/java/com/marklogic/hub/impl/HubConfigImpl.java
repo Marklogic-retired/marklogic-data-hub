@@ -1710,8 +1710,10 @@ public class HubConfigImpl implements HubConfig
      * @param config
      */
     private void updateAppConfig(AppConfig config) {
-        // This shouldn't be used for any resource names, but it does appear in logging, and DHF is a better choice than "my-app"
-        config.setName("DHF");
+        // If the user hasn't set the app name then override it to "DHF" instead of "my-app"
+        if ("my-app".equals(config.getName())) {
+            config.setName("DHF");
+        }
 
         // DHF never needs the default REST server provided by ml-gradle
         config.setNoRestServer(true);
