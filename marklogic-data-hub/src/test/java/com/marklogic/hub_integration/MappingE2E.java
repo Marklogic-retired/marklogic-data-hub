@@ -354,7 +354,7 @@ public class MappingE2E extends HubTestBase {
         }
     }
 
-    private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
+    private Tuple<LegacyFlowRunner, JobTicket> runHarmonizeFlow(
         String flowName, DataFormat dataFormat,
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
@@ -370,9 +370,9 @@ public class MappingE2E extends HubTestBase {
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
         getHubFlowRunnerConfig();
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
+        LegacyFlow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
+        LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(BATCH_SIZE)
             .withThreadCount(4)
@@ -412,7 +412,7 @@ public class MappingE2E extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
+        Tuple<LegacyFlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
         if (waitForCompletion) {
             // takes a little time to run.

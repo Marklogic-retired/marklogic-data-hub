@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.legacy.flow.Flow;
-import com.marklogic.hub.legacy.flow.FlowRunner;
-import com.marklogic.hub.legacy.flow.FlowStatusListener;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
+import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.MlcpRunner;
@@ -97,13 +97,13 @@ public class FlowManagerService {
         }).collect(Collectors.toList());
     }
 
-    public Flow getServerFlow(String entityName, String flowName, FlowType flowType) {
+    public LegacyFlow getServerFlow(String entityName, String flowName, FlowType flowType) {
         return flowManager.getFlow(entityName, flowName, flowType);
     }
 
-    public JobTicket runFlow(Flow flow, int batchSize, int threadCount, Map<String, Object> options, FlowStatusListener statusListener) {
+    public JobTicket runFlow(LegacyFlow flow, int batchSize, int threadCount, Map<String, Object> options, LegacyFlowStatusListener statusListener) {
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
+        LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
             .withBatchSize(batchSize)
@@ -173,7 +173,7 @@ public class FlowManagerService {
         return result;
     }
 
-    public void runMlcp(Flow flow, JsonNode json, FlowStatusListener statusListener) {
+    public void runMlcp(LegacyFlow flow, JsonNode json, LegacyFlowStatusListener statusListener) {
         String mlcpPath = json.get("mlcpPath").textValue();
         MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
         runner.start();

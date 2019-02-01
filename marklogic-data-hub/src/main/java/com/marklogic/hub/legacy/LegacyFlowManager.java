@@ -16,10 +16,10 @@
 
 package com.marklogic.hub.legacy;
 
-import com.marklogic.hub.legacy.flow.Flow;
-import com.marklogic.hub.legacy.flow.FlowRunner;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.legacy.flow.impl.FlowImpl;
+import com.marklogic.hub.legacy.flow.impl.LegacyFlowImpl;
 import org.w3c.dom.Element;
 
 import java.nio.file.Path;
@@ -33,24 +33,24 @@ public interface LegacyFlowManager {
     /**
      * Turns an XML document into a flow
      * @param doc - the xml document representing a flow
-     * @return a Flow instance
+     * @return a LegacyFlow instance
      */
-    static Flow flowFromXml(Element doc) {
-        return FlowImpl.fromXml(doc);
+    static LegacyFlow flowFromXml(Element doc) {
+        return LegacyFlowImpl.fromXml(doc);
     }
 
     /**
      * retrieves a list of all the flows on the local files systems
      * @return a list of Flows
      */
-    List<Flow> getLocalFlows();
+    List<LegacyFlow> getLocalFlows();
 
     /**
      * retrieves a list of all the flows on the local files systems
      * @param entityName - string name of the entity for the flow
      * @return a list of Flows
      */
-    List<Flow> getLocalFlowsForEntity(String entityName);
+    List<LegacyFlow> getLocalFlowsForEntity(String entityName);
 
     /**
      * retrieves a list of all the flows on the local files systems
@@ -58,21 +58,21 @@ public interface LegacyFlowManager {
      * @param flowType - the FlowType enum, eg: ingest or harmonize
      * @return a list of Flows
      */
-    List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType);
+    List<LegacyFlow> getLocalFlowsForEntity(String entityName, FlowType flowType);
 
     /**
      * Obtains a flow from a property file
      * @param propertiesFile - the Path to the property file
      * @return - a flow object
      */
-    Flow getFlowFromProperties(Path propertiesFile);
+    LegacyFlow getFlowFromProperties(Path propertiesFile);
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
      * @param entityName - the entity from which to fetch the flows
      * @return - a list of flows for the given entity
      */
-    List<Flow> getFlows(String entityName);
+    List<LegacyFlow> getFlows(String entityName);
 
     /**
      * Retrieves a named flow from a given entity
@@ -81,7 +81,7 @@ public interface LegacyFlowManager {
      * @param flowName - the name of the flow to get
      * @return the flow
      */
-    Flow getFlow(String entityName, String flowName);
+    LegacyFlow getFlow(String entityName, String flowName);
 
     /**
      * Retrieves a named flow from a given entity
@@ -91,7 +91,7 @@ public interface LegacyFlowManager {
      * @param flowType - the type of flow (ingest/harmonize)
      * @return the flow
      */
-    Flow getFlow(String entityName, String flowName, FlowType flowType);
+    LegacyFlow getFlow(String entityName, String flowName, FlowType flowType);
 
     /**
      * Updates the indexes in the database based on the project
@@ -108,8 +108,8 @@ public interface LegacyFlowManager {
     List<String> updateLegacyFlows(String fromVersion);
 
     /**
-     * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
-     * @return FlowRunner object with current hubconfig already set
+     * Creates and returns a new LegacyFlowRunner object using the FlowManager's hubconfig
+     * @return LegacyFlowRunner object with current hubconfig already set
      */
-    FlowRunner newFlowRunner();
+    LegacyFlowRunner newFlowRunner();
 }

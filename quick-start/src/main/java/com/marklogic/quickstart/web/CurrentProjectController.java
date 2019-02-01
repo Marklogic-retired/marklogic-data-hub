@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
-import com.marklogic.hub.Tracing;
+import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -105,8 +105,8 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         envConfig.setInitialized(installed);
         if (installed) {
             if (envConfig.getEnvironment().equals("local")) {
-                Tracing tracing = Tracing.create(envConfig.getStagingClient());
-                tracing.enable();
+                LegacyTracing legacyTracing = LegacyTracing.create(envConfig.getStagingClient());
+                legacyTracing.enable();
             }
             installUserModules(hubConfig, true);
             startProjectWatcher();

@@ -18,8 +18,8 @@ package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.Debugging;
-import com.marklogic.hub.Tracing;
+import com.marklogic.hub.legacy.LegacyDebugging;
+import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,60 +32,60 @@ import java.io.IOException;
 @RequestMapping("/api/settings")
 public class SettingsController {
 
-    private Tracing tracing = null;
-    private Debugging debugging = null;
+    private LegacyTracing legacyTracing = null;
+    private LegacyDebugging legacyDebugging = null;
 
     @Autowired
     private HubConfigImpl hubConfig;
 
-    private Tracing getTracing() {
-        if (tracing == null) {
-            tracing = Tracing.create(hubConfig.newJobDbClient());
+    private LegacyTracing getLegacyTracing() {
+        if (legacyTracing == null) {
+            legacyTracing = LegacyTracing.create(hubConfig.newJobDbClient());
         }
-        return tracing;
+        return legacyTracing;
     }
 
-    private Debugging getDebugging() {
-        if (debugging == null) {
-            debugging = Debugging.create(hubConfig.newStagingClient());
+    private LegacyDebugging getLegacyDebugging() {
+        if (legacyDebugging == null) {
+            legacyDebugging = LegacyDebugging.create(hubConfig.newStagingClient());
         }
-        return debugging;
+        return legacyDebugging;
     }
 
     @RequestMapping(value="/trace/enable", method = RequestMethod.POST)
     public void enableTracing() {
-        Tracing t = getTracing();
+        LegacyTracing t = getLegacyTracing();
         t.enable();
     }
 
     @RequestMapping(value="/trace/disable", method = RequestMethod.POST)
     public void disableTracing() {
-        Tracing t = getTracing();
+        LegacyTracing t = getLegacyTracing();
         t.disable();
     }
 
     @RequestMapping(value="/trace/is-enabled", method = RequestMethod.GET)
     public JsonNode isTracingEnabled() throws IOException {
-        Tracing t = getTracing();
+        LegacyTracing t = getLegacyTracing();
         ObjectMapper om = new ObjectMapper();
         return om.readTree("{\"enabled\":" + t.isEnabled() + "}");
     }
 
     @RequestMapping(value="/debug/enable", method = RequestMethod.POST)
     public void enableDebuging() {
-        Debugging t = getDebugging();
+        LegacyDebugging t = getLegacyDebugging();
         t.enable();
     }
 
     @RequestMapping(value="/debug/disable", method = RequestMethod.POST)
     public void disableDebugging() {
-        Debugging t = getDebugging();
+        LegacyDebugging t = getLegacyDebugging();
         t.disable();
     }
 
     @RequestMapping(value="/debug/is-enabled", method = RequestMethod.GET)
     public JsonNode isDebuggingEnabled() throws IOException {
-        Debugging t = getDebugging();
+        LegacyDebugging t = getLegacyDebugging();
         ObjectMapper om = new ObjectMapper();
         return om.readTree("{\"enabled\":" + t.isEnabled() + "}");
     }

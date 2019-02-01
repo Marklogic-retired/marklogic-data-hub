@@ -34,7 +34,7 @@ import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.error.LegacyFlowsException;
-import com.marklogic.hub.legacy.flow.Flow;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -234,7 +234,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                         throws IOException
                     {
                         if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
-                            Flow flow = flowManager.getFlowFromProperties(file);
+                            LegacyFlow flow = flowManager.getFlowFromProperties(file);
                             StringHandle handle = new StringHandle(flow.serialize());
                             handle.setFormat(Format.XML);
                             documentWriteSet.add(flow.getFlowDbPath(), handle);
