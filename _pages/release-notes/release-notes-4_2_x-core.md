@@ -9,7 +9,7 @@
 
   - Automatic generation and installation of a TDE template in the SCHEMAS database.
 
-  {% include note.html type="IMPORTANT" content="Entities created in earlier versions are still supported by DHF; however, changes might be required for them to appear without errors in Quickstart. For information on how to restructure your entity, see the <a href="...">Entity Services model descriptor syntax documentation</a>." %}
+  {% include note.html type="IMPORTANT" content="Entities created in earlier versions are still supported by DHF; however, changes might be required for them to appear without errors in Quickstart. For information on how to restructure your entity, see the <a href='https://docs.marklogic.com/guide/entity-services/models#id_23063'>Entity Services model descriptor syntax documentation</a>." %}
 
   </div>
 </details>
