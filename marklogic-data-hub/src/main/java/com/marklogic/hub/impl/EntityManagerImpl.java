@@ -400,6 +400,27 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
     }
 
+    private class TDEGenerator extends ResourceManager {
+        private static final String NAME = "ml:tdeGenerator";
+        private RequestParameters params = new RequestParameters();
+
+        TDEGenerator(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        public String tdeGenerate(List<JsonNode> entities) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode node = objectMapper.valueToTree(entities);
+            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
+            if (resultItr == null || !resultItr.hasNext()) {
+                throw new EntityServicesGenerationException("Unable to generate pii config");
+            }
+            ResourceServices.ServiceResult res = resultItr.next();
+            return res.getContent(new StringHandle()).get();
+        }
+
+    }
 
     @Override
     public boolean savePii() {
