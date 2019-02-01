@@ -12,7 +12,9 @@ declare variable $TDE-COLLECTION as xs:string := "http://marklogic.com/entity-se
 declare variable $trgr:uri as xs:string external;
 
 let $entity-def := fn:doc($trgr:uri)
-let $tde-uri := $trgr:uri || ".tde.xml"
+let $entity-title := $entity-def/info/title
+let $entity-version := $entity-def/info/version
+let $tde-uri := "/tde/" || $entity-title || "-" || $entity-version || ".tdex"
 return (
   xdmp:invoke-function(
     function() {

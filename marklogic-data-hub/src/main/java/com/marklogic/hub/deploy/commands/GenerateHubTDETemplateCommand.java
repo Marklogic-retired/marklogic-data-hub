@@ -21,16 +21,16 @@ import com.marklogic.appdeployer.command.es.GenerateModelArtifactsCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.es.CodeGenerationRequest;
-import com.marklogic.client.ext.es.EntityServicesManager;
 import com.marklogic.client.ext.es.GeneratedCode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.es.EntityServicesManager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -45,11 +45,13 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private HubConfig hubConfig;
+    private Path userFinalSchemasTDEs;
 
     private String entityNames;
 
     public GenerateHubTDETemplateCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.userFinalSchemasTDEs = hubConfig.getHubProject().getUserDatabaseDir().resolve(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS)).resolve("schemas").resolve("tde");
     }
 
     @Override
@@ -116,7 +118,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     private String generateModel(File f) {
         String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
             "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
-            String.format("hent:get-model(\"%s\")", extactEntityNameFromFilename(f.getName()).get());
+            String.format("hent:get-model(\"%s\")", extractEntityNameFromFilename(f.getName()).get());
         EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
         if (resp.hasNext()) {
             return resp.next().getString();
@@ -176,7 +178,37 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         return entities;
     }
 
-    protected static Optional<String> extactEntityNameFromFilename(String filename) {
+    // Overriding to insert schemas into the final DB schemas folder.
+    @Override
+    protected void generateExtractionTemplate(AppConfig appConfig, GeneratedCode code) {
+        String template = code.getExtractionTemplate();
+        if (template != null) {
+            File dir = userFinalSchemasTDEs.toFile();
+            dir.mkdirs();
+            File out = new File(dir, code.getTitle() + "-" + code.getVersion() + ".tdex");
+            String logMessage = "Wrote extraction template to: ";
+            if (out.exists()) {
+                if (!fileHasDifferentContent(out, template)) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Extraction template matches file, so not modifying: " + out.getAbsolutePath());
+                    }
+                    return;
+                }
+                out = new File(dir, code.getTitle() + "-" + code.getVersion() + "-GENERATED.tdex");
+                logMessage = "Extraction template does not match existing file, so writing to: ";
+            }
+            try {
+                FileCopyUtils.copy(template.getBytes(), out);
+                if (logger.isInfoEnabled()) {
+                    logger.info(logMessage + out.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to write extraction template to file: " + out.getAbsolutePath(), e);
+            }
+        }
+    }
+
+    protected static Optional<String> extractEntityNameFromFilename(String filename) {
         if (filename==null || filename.trim().isEmpty()) {
             return Optional.of(null);
         }
@@ -190,7 +222,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
     private static Function<File, String> extractEntityNameFunction() {
         Function<File, String> fileName = File::getName;
-        return fileName.andThen(name -> extactEntityNameFromFilename(name).get());
+        return fileName.andThen(name -> extractEntityNameFromFilename(name).get());
     }
 
     private static final CodeGenerationRequest createCodeGenerationRequest() {
