@@ -55,7 +55,7 @@ class GenerateTDETemplateFromEntityTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubGenerateTDETemplates").outcome == SUCCESS
 
-        Path tdePath = Paths.get(testProjectDir.root.toString(), "src", "main", "ml-schemas", "tde")
+        Path tdePath = Paths.get(hubConfig().hubProject.userDatabaseDir.toString(), HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "schemas", "tde")
         tdePath.resolve("Order-1.0.0.tdex").toFile().exists() == true
         tdePath.resolve("Order1-1.0.0.tdex").toFile().exists() == true
         tdePath.resolve("e2eentity-0.0.1.tdex").toFile().exists() == true
