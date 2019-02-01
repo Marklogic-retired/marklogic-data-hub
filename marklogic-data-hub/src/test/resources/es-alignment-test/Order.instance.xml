@@ -1,19 +1,25 @@
-<Order>
-	<id>123</id>
-	<purchasedItems datatype="array">
-		<Item>
-			<id>123</id>
-			<name>some string</name>
-			<description>some string</description>
-			<rating>123</rating>
-		</Item>
-	</purchasedItems>
-	<customer>
-		<Customer>
-			<id>123</id>
-			<name>some string</name>
-		</Customer>
-	</customer>
-	<transactionDateTime>2000-01-23T17:00:26.789186-08:00</transactionDateTime>
-	<totalCost>123</totalCost>
-</Order>
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers></headers>
+  <triples></triples>
+  <instance>
+    <info>
+      <title>Order</title>
+      <version>1.0.0</version>
+    </info>
+    <Order xmlns="">
+      <id>123</id>
+      <purchasedItems datatype="array">
+        <Item>
+          <id>123</id>
+          <name>some string</name>
+          <description>some string</description>
+          <rating>123</rating>
+        </Item>
+      </purchasedItems>
+      <customer>
+      </customer>
+      <transactionDateTime>2000-01-23T17:00:26.789186-08:00</transactionDateTime>
+      <totalCost>123</totalCost>
+    </Order>
+  </instance>
+</envelope>
