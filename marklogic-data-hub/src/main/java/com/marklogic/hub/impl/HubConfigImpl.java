@@ -178,7 +178,8 @@ public class HubConfigImpl implements HubConfig
 
     private ObjectMapper objmapper;
 
-    private String envString;
+    // By default, DHF uses gradle-local.properties for your local environment.
+    private String envString = "local";
 
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
@@ -966,6 +967,7 @@ public class HubConfigImpl implements HubConfig
                         logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
                     }
                     loadPropertiesFromFile(envPropertiesFile, projectProperties);
+                    hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
                 }
             }
         }
