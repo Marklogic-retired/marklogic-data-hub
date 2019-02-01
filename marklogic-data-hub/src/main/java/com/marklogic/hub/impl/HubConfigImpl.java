@@ -1729,6 +1729,12 @@ public class HubConfigImpl implements HubConfig
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(modulePermissions);
 
+        if (envString != null) {
+            String defaultPath = config.getModuleTimestampsPath();
+            int index = defaultPath.lastIndexOf("/") + 1;
+            config.setModuleTimestampsPath(defaultPath.substring(0, index) + envString + "-" + defaultPath.substring(index));
+        }
+
         Map<String, Integer> forestCounts = config.getForestCounts();
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
@@ -1900,6 +1906,7 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
         this.envString = environment;
+        hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
         return this;
     }
 
