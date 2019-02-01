@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "description": "This is a sample of a QuickStart DataHub Swagger doucment defining endpoints to be mocked",
     "version": "1.0.0",
@@ -10,12 +10,7 @@
     }
   },
   "basePath": "/api",
-  "tags": [
-    {
-      "name": "sample",
-      "description": "Sample resource"
-    }
-  ],
+  "tags": [ ],
   "schemes": [
     "http"
   ],
@@ -38,7 +33,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/flow"
+                "$ref": "#/components/schemas/flow"
               },
               "default": [
                 {
@@ -62,7 +57,7 @@
       },
       "post": {
         "tags": [
-          "flow"
+          "flows"
         ],
         "summary": "Create flow",
         "description": "",
@@ -77,8 +72,8 @@
             "description": "Flow to create",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/flow",
-              "default": [
+              "$ref": "#/components/schemas/flow",
+              "default": 
                 {
                   "name": "MappingFlow",
                   "description": "Maps raw values to the canonical model",
@@ -93,8 +88,101 @@
                     }
                   ]
                 }
-              ]
-            }
+            },
+            "examples": {
+              "ingestion": {
+                "summary": "An example flow object for step type: Ingestion",
+                "value": {
+                  "name": "value",
+                  "description": "value",
+                  "identifier": "value",
+                  "steps": [
+                    {
+                      "type": "value",
+                      "name": "value",
+                      "identifier": "value",
+                      "retryLimit": "value",
+                      "options": {
+                        "param1": "value",
+                        "param2": "value",
+                        "param3": "value",
+                        "param4": "value",
+                        "param5": "value"
+                      }
+                    }
+                  ]
+                }
+              },
+              "mapping": {
+                "summary": "An example flow object for step type: Mapping",
+                "value": {
+                  "name": "value",
+                  "description": "value",
+                  "identifier": "value",
+                  "steps": [
+                    {
+                      "type": "value",
+                      "name": "value",
+                      "identifier": "value",
+                      "retryLimit": "value",
+                      "options": {
+                        "param1": "value",
+                        "param2": "value",
+                        "param3": "value",
+                        "param4": "value",
+                        "param5": "value"
+                      }
+                    }
+                  ]
+                }
+              },
+              "mastering": {
+                "summary": "An example flow object for step type: Mastering",
+                "value": {
+                  "name": "value",
+                  "description": "value",
+                  "identifier": "value",
+                  "steps": [
+                    {
+                      "type": "value",
+                      "name": "value",
+                      "identifier": "value",
+                      "retryLimit": "value",
+                      "options": {
+                        "param1": "value",
+                        "param2": "value",
+                        "param3": "value",
+                        "param4": "value",
+                        "param5": "value"
+                      }
+                    }
+                  ]
+                }
+              },
+              "custom": {
+                "summary": "An example flow object for step type: Custom",
+                "value": {
+                  "name": "value",
+                  "description": "value",
+                  "identifier": "value",
+                  "steps": [
+                    {
+                      "type": "value",
+                      "name": "value",
+                      "identifier": "value",
+                      "retryLimit": "value",
+                      "options": {
+                        "param1": "value",
+                        "param2": "value",
+                        "param3": "value",
+                        "param4": "value",
+                        "param5": "value"
+                      }
+                    }
+                  ]
+                }
+              }
+            }            
           }
         ],
         "responses": {
@@ -113,7 +201,7 @@
     "/flows/{flowName}": {
       "get": {
         "tags": [
-          "flow"
+          "flows"
         ],
         "summary": "Find flow by name",
         "description": "....",
@@ -134,7 +222,7 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "$ref": "#/definitions/flow",
+              "$ref": "#/components/schemas/flow",
               "default": [
                 {
                   "name": "MappingFlow",
@@ -163,7 +251,7 @@
       },
       "put": {
         "tags": [
-          "flow"
+          "flows"
         ],
         "summary": "Update flow with name",
         "description": "",
@@ -185,7 +273,7 @@
             "description": "Updated flow",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/flow",
+              "$ref": "#/components/schemas/flow",
               "default": [
                 {
                   "name": "MappingFlow",
@@ -202,6 +290,24 @@
                   ]
                 }
               ]
+            },
+            "examples": {
+              "ingestion": {
+                "summary": "An example flow object for step type: Ingestion",
+                "value": { }
+              },
+              "mapping": {
+                "summary": "An example flow object for step type: Mapping",
+                "value": { }
+              },
+              "mastering": {
+                "summary": "An example flow object for step type: Mastering",
+                "value": { }
+              },
+              "custom": {
+                "summary": "An example flow object for step type: Custom",
+                "value": { }
+              }
             }
           }
         ],
@@ -219,7 +325,7 @@
       },
       "delete": {
         "tags": [
-          "flow"
+          "flows"
         ],
         "summary": "Delete flow by name",
         "description": "",
@@ -249,117 +355,6 @@
         }
       }
     },
-    "/samples": {
-      "get": {
-        "tags": [
-          "sample"
-        ],
-        "summary": "Returns all samples, optionally filtered by one or more criteria",
-        "description": "Returns all samples, optionally filtered by one or more criteria",
-        "operationId": "findSamples",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "object",
-              "items": {
-                "$ref": "#/definitions/sample"
-              },
-              "default": [
-                { "id": 1, "name": "aaa", "status": "new" },
-                { "id": 2, "name": "bbb", "status": "new" },
-                { "id": 3, "name": "ccc", "status": "ready" },
-                { "id": 4, "name": "ddd", "status": "ready" },
-                { "id": 5, "name": "eee", "status": "approved" }
-              ]
-            }
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
-    "/samples/{sampleId}": {
-      "get": {
-        "tags": [
-          "sample"
-        ],
-        "summary": "Find sample by ID",
-        "description": "....",
-        "operationId": "getSampleById",
-        "produces": [
-          "application/xml",
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "sampleId",
-            "in": "path",
-            "description": "ID of sample that needs to be fetched",
-            "required": true,
-            "type": "integer",
-            "maximum": 10.0,
-            "minimum": 1.0,
-            "format": "int64"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/sample",
-              "default": [
-                { "id": 1, "name": "aaa", "status": "new" }
-              ]
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Sample not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "sample"
-        ],
-        "summary": "Delete sample by ID",
-        "description": "...",
-        "operationId": "deleteSample",
-        "produces": [
-          "application/xml",
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "sampleId",
-            "in": "path",
-            "description": "ID of the sample that needs to be deleted",
-            "required": true,
-            "type": "integer",
-            "minimum": 1.0,
-            "format": "int64"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Sample not found"
-          }
-        }
-      }
-    },
     "/process": {
       "post": {
         "tags": [
@@ -378,7 +373,25 @@
             "description": "Create Process Parameters",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/process"
+              "$ref": "#/components/schemas/process"
+            },
+            "examples": {
+              "ingestion": {
+                "summary": "An example process object for step type: Ingestion (?)",
+                "value": { }
+              },
+              "mapping": {
+                "summary": "An example process object for step type: Mapping (?)",
+                "value": { }
+              },
+              "mastering": {
+                "summary": "An example process object for step type: Mastering (?)",
+                "value": { }
+              },
+              "custom": {
+                "summary": "An example process object for step type: Custom (?)",
+                "value": { }
+              }
             }
           }
         ],
@@ -388,7 +401,7 @@
             "schema": {
               "type": "object",
               "items": {
-                "$ref": "#/definitions/process"
+                "$ref": "#/components/schemas/process"
               },
               "default": [
                 { "id": 1, "name": "aaa", "status": "new" },
@@ -440,7 +453,7 @@
             "schema": {
               "type": "object",
               "schema": {
-                "$ref": "#/definitions/process"
+                "$ref": "#/components/schemas/process"
               }
             }
           }
@@ -482,7 +495,25 @@
             "description": "Update  Process Parameters",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/process"
+              "$ref": "#/components/schemas/process"
+            },
+            "examples": {
+              "ingestion": {
+                "summary": "An example process object for step type: Ingestion (?)",
+                "value": { }
+              },
+              "mapping": {
+                "summary": "An example process object for step type: Mapping (?)",
+                "value": { }
+              },
+              "mastering": {
+                "summary": "An example process object for step type: Mastering (?)",
+                "value": { }
+              },
+              "custom": {
+                "summary": "An example process object for step type: Custom (?)",
+                "value": { }
+              }
             }
           }
         ],
@@ -492,7 +523,7 @@
             "schema": {
               "type": "object",
               "items": {
-                "$ref": "#/definitions/process"
+                "$ref": "#/components/schemas/process"
               },
               "default": [
                 { "id": 1, "name": "aaa", "status": "new" },
@@ -542,7 +573,7 @@
             "schema": {
               "type": "object",
               "items": {
-                "$ref": "#/definitions/message"
+                "$ref": "#/components/schemas/message"
               },
               "default": [
                 {
@@ -560,168 +591,120 @@
     }
   },
   "securityDefinitions": {},
-  "definitions": {
-    "flow": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Name of flow"
-        },
-        "description": {
-          "type": "string",
-          "description": "Description of flow"
-        },
-        "identifier": {
-          "type": "string",
-          "description": "Identification documents passed through flow"
-        },
-        "steps": {
-          "type": "array",
-          "description": "Steps in flow",
-          "items": {
-            "$ref": "#/definitions/step"
-          }
-        }
-      }
-    },
-    "sample": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "tags": {
-          "type": "array",
-          "xml": {
-            "name": "tag",
-            "wrapped": true
+  "components": {
+    "schemas": {
+      "flow": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of flow"
           },
-          "items": {
-            "$ref": "#/definitions/tag"
+          "description": {
+            "type": "string",
+            "description": "Description of flow"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Identification documents passed through flow"
+          },
+          "steps": {
+            "type": "array",
+            "description": "Steps in flow",
+            "items": {
+              "$ref": "#/components/schemas/step"
+            }
+          }
+        }
+      },
+      "step":{
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "step type"
+          },
+          "name": {
+            "type": "string",
+            "description": "step name"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Identification for documents in step"
+          },
+          "retryLimit": {
+            "type": "integer",
+            "minimum": 0,
+            "format": "int64"
+          },
+          "options": {
+            "type": "object"
+          }
+        } 
+      },
+      "message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
           }
         },
-        "status": {
-          "type": "string",
-          "description": "Sample Status",
-          "enum": [
-            "new",
-            "ready",
-            "approved"
-          ]
+        "xml": {
+          "name": "message"
         }
       },
-      "xml": {
-        "name": "Sample"
-      }
-    },
-    "step":{
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "step type"
+      "process": {
+        "type": "object",
+        "required": [
+          "name",
+          "type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "options": {
+            "type": "object"
+          },
+          "customHook": {
+            "$ref": "#/components/schemas/customHook"
+          }
         },
-        "name": {
-          "type": "string",
-          "description": "step name"
-        },
-        "identifier": {
-          "type": "string",
-          "description": "Identification for documents in step"
-        },
-        "retryLimit": {
-          "type": "integer",
-          "minimum": 0,
-          "format": "int64"
-        },
-        "options": {
-          "type": "object"
-        }
-      }
-    },
-    "tag": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
+        "xml": {
+          "name": "Process"
         }
       },
-      "xml": {
-        "name": "Tag"
-      }
-    },
-    "message": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
+      "customHook": {
+        "type": "object",
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "user": {
+            "type": "string"
+          },
+          "runBefore": {
+            "type": "boolean"
+          }
+        },
+        "xml": {
+          "name": "Tag"
         }
-      },
-      "xml": {
-        "name": "message"
-      }
-    },
-    "process": {
-      "type": "object",
-      "required": [
-        "name",
-        "type"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "language": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "version": {
-          "type": "string"
-        },
-        "options": {
-          "type": "object"
-        },
-        "customHook": {
-          "$ref": "#/definitions/customHook"
-        }
-      },
-      "xml": {
-        "name": "Process"
-      }
-    },
-    "customHook": {
-      "type": "object",
-      "properties": {
-        "module": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "object"
-        },
-        "user": {
-          "type": "string"
-        },
-        "runBefore": {
-          "type": "boolean"
-        }
-      },
-      "xml": {
-        "name": "Tag"
       }
     }
   },
