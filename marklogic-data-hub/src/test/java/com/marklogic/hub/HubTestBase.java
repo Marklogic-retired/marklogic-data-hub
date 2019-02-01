@@ -40,6 +40,8 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.legacy.LegacyDebugging;
+import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
@@ -380,19 +382,19 @@ public class HubTestBase {
     }
 
     protected void enableDebugging() {
-        Debugging.create(stagingClient).enable();
+        LegacyDebugging.create(stagingClient).enable();
     }
 
     protected void disableDebugging() {
-        Debugging.create(stagingClient).disable();
+        LegacyDebugging.create(stagingClient).disable();
     }
 
     protected void enableTracing() {
-        Tracing.create(stagingClient).enable();
+        LegacyTracing.create(stagingClient).enable();
     }
 
     protected void disableTracing() {
-        Tracing.create(stagingClient).disable();
+        LegacyTracing.create(stagingClient).disable();
     }
 
     protected HubConfig getHubAdminConfig(String projectDir) {

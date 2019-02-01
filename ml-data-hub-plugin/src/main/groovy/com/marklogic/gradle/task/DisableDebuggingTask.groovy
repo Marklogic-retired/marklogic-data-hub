@@ -27,6 +27,6 @@ class DisableDebuggingTask extends HubTask {
         if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
-        getDebugging().disable()
+        getLegacyDebugging().disable()
     }
 }

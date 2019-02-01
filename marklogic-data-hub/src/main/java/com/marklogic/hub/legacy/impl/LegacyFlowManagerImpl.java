@@ -23,9 +23,9 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
-import com.marklogic.hub.legacy.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.legacy.flow.impl.LegacyFlowRunnerImpl;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
@@ -69,8 +69,8 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         this.stagingClient.init(NAME, this);
     }
 
-    @Override public List<Flow> getLocalFlows() {
-        List<Flow> flows = new ArrayList<>();
+    @Override public List<LegacyFlow> getLocalFlows() {
+        List<LegacyFlow> flows = new ArrayList<>();
 
         Path entitiesDir = hubConfig.getHubEntitiesDir();
         File[] entities = entitiesDir.toFile().listFiles((pathname -> pathname.isDirectory()));
@@ -83,13 +83,13 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return flows;
     }
 
-    @Override public List<Flow> getLocalFlowsForEntity(String entityName) {
+    @Override public List<LegacyFlow> getLocalFlowsForEntity(String entityName) {
         return getLocalFlowsForEntity(entityName, null);
     }
 
-    @Override public List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
+    @Override public List<LegacyFlow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
 
-        List<Flow> flows = new ArrayList<>();
+        List<LegacyFlow> flows = new ArrayList<>();
         Path entitiesDir = hubConfig.getHubEntitiesDir();
         Path entityDir = entitiesDir.resolve(entityName);
         Path inputDir = entityDir.resolve("input");
@@ -110,7 +110,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
             File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
             if (inputFlows != null) {
                 for (File inputFlow : inputFlows) {
-                    Flow flow = getLocalFlow(entityName, inputFlow.toPath(), FlowType.INPUT);
+                    LegacyFlow flow = getLocalFlow(entityName, inputFlow.toPath(), FlowType.INPUT);
                     if (flow != null) {
                         flows.add(flow);
                     }
@@ -122,7 +122,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
             File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
             if (harmonizeFlows != null) {
                 for (File harmonizeFlow : harmonizeFlows) {
-                    Flow flow = getLocalFlow(entityName, harmonizeFlow.toPath(), FlowType.HARMONIZE);
+                    LegacyFlow flow = getLocalFlow(entityName, harmonizeFlow.toPath(), FlowType.HARMONIZE);
                     if (flow != null) {
                         flows.add(flow);
                     }
@@ -133,7 +133,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return flows;
     }
 
-    @Override public Flow getFlowFromProperties(Path propertiesFile) {
+    @Override public LegacyFlow getFlowFromProperties(Path propertiesFile) {
         String quotedSeparator = Pattern.quote(File.separator);
         /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
          * input|harmonize/<flowName>/flowName.properties
@@ -147,7 +147,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
     }
 
-    private Flow getLocalFlow(String entityName, Path flowDir, FlowType flowType) {
+    private LegacyFlow getLocalFlow(String entityName, Path flowDir, FlowType flowType) {
         try {
             String flowName = flowDir.getFileName().toString();
             File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
@@ -162,7 +162,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
                 }
                 fis.close();
 
-                FlowBuilder flowBuilder = FlowBuilder.newFlow()
+                LegacyFlowBuilder flowBuilder = LegacyFlowBuilder.newFlow()
                     .withEntityName(entityName)
                     .withName(flowName)
                     .withType(flowType)
@@ -171,7 +171,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
                     .withMain(new MainPluginImpl((String) properties.get("mainModule"), CodeFormat.getCodeFormat((String) properties.get("mainCodeFormat"))));
 
                 if (flowType.equals(FlowType.HARMONIZE)) {
-                    flowBuilder.withCollector(new CollectorImpl((String) properties.get("collectorModule"), CodeFormat.getCodeFormat((String) properties.get("collectorCodeFormat"))));
+                    flowBuilder.withCollector(new LegacyCollectorImpl((String) properties.get("collectorModule"), CodeFormat.getCodeFormat((String) properties.get("collectorCodeFormat"))));
                 }
 
                 return flowBuilder.build();
@@ -183,7 +183,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return null;
     }
 
-    @Override public List<Flow> getFlows(String entityName) {
+    @Override public List<LegacyFlow> getFlows(String entityName) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
         ServiceResultIterator resultItr = this.getServices().get(params);
@@ -195,7 +195,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         Document parent = res.getContent(handle).get();
         NodeList children = parent.getDocumentElement().getChildNodes();
 
-        ArrayList<Flow> flows = null;
+        ArrayList<LegacyFlow> flows = null;
         if (children.getLength() > 0) {
             flows = new ArrayList<>();
         }
@@ -210,11 +210,11 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return flows;
     }
 
-    @Override public Flow getFlow(String entityName, String flowName) {
+    @Override public LegacyFlow getFlow(String entityName, String flowName) {
         return getFlow(entityName, flowName, null);
     }
 
-    @Override public Flow getFlow(String entityName, String flowName, FlowType flowType) {
+    @Override public LegacyFlow getFlow(String entityName, String flowName, FlowType flowType) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
         params.add("flow-name", flowName);
@@ -285,8 +285,8 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return updatedFlows;
     }
 
-    @Override public FlowRunner newFlowRunner() {
-        return new FlowRunnerImpl(hubConfig);
+    @Override public LegacyFlowRunner newFlowRunner() {
+        return new LegacyFlowRunnerImpl(hubConfig);
     }
 
 }

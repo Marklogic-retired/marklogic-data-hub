@@ -17,7 +17,7 @@
 package com.marklogic.quickstart.web;
 
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.job.JobDeleteResponse;
+import com.marklogic.hub.legacy.job.JobDeleteResponse;
 import com.marklogic.quickstart.exception.DataHubException;
 import com.marklogic.quickstart.model.JobExport;
 import com.marklogic.quickstart.model.JobQuery;

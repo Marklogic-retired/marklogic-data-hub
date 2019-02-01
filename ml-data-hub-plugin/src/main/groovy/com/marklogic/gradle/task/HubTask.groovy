@@ -26,8 +26,10 @@ import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
-import com.marklogic.hub.job.JobManager
+import com.marklogic.hub.legacy.LegacyDebugging
 import com.marklogic.hub.legacy.LegacyFlowManager
+import com.marklogic.hub.legacy.LegacyTracing
+import com.marklogic.hub.legacy.job.LegacyJobManager
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -90,13 +92,13 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    Tracing getTracing() {
-        return Tracing.create(getStagingClient())
+    LegacyTracing getLegacyTracing() {
+        return LegacyTracing.create(getStagingClient())
     }
 
     @Internal
-    Debugging getDebugging() {
-        return Debugging.create(getStagingClient())
+    LegacyDebugging getLegacyDebugging() {
+        return LegacyDebugging.create(getStagingClient())
     }
 
     @Internal
@@ -110,8 +112,8 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    JobManager getJobManager() {
-        return JobManager.create(getHubConfig().newJobDbClient());
+    LegacyJobManager getJobManager() {
+        return LegacyJobManager.create(getHubConfig().newJobDbClient());
     }
 
     @Internal

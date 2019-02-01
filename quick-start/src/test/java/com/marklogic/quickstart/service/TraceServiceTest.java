@@ -25,7 +25,7 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
-import com.marklogic.hub.legacy.flow.Flow;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.DataHubApiConfiguration;
@@ -83,7 +83,7 @@ class TraceServiceTest extends AbstractServiceTest {
 
         traceClient = getHubAdminConfig().newJobDbClient();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
-        Flow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
+        LegacyFlow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
     }
 

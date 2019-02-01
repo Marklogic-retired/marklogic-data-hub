@@ -23,8 +23,8 @@ import com.marklogic.hub.HubConfig
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
-import com.marklogic.hub.Tracing;
-import com.marklogic.hub.Debugging;
+import com.marklogic.hub.legacy.LegacyTracing;
+import com.marklogic.hub.legacy.LegacyDebugging;
 
 import java.nio.file.Paths
 
@@ -53,7 +53,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableDebugging").outcome == SUCCESS
-        Debugging d = Debugging.create(hubConfig().newStagingClient())
+        LegacyDebugging d = LegacyDebugging.create(hubConfig().newStagingClient())
         d.isEnabled() == true
     }
 
@@ -64,7 +64,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableDebugging").outcome == SUCCESS
-        Debugging d = Debugging.create(hubConfig().newStagingClient())
+        LegacyDebugging d = LegacyDebugging.create(hubConfig().newStagingClient())
         d.isEnabled() == false
     }
 
@@ -75,7 +75,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubEnableTracing").outcome == SUCCESS
-        Tracing t = Tracing.create(hubConfig().newStagingClient())
+        LegacyTracing t = LegacyTracing.create(hubConfig().newStagingClient())
         t.isEnabled() == true
     }
 
@@ -86,7 +86,7 @@ class InstalledTests extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDisableTracing").outcome == SUCCESS
-        Tracing t = Tracing.create(hubConfig().newStagingClient())
+        LegacyTracing t = LegacyTracing.create(hubConfig().newStagingClient())
         t.isEnabled() == false
     }
 

@@ -22,7 +22,6 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.JobQuery;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, FlowManagerServiceTest.class})
+@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, LegacyFlowManagerServiceTest.class})
 public class JobServiceTest extends HubTestBase {
 
     @BeforeEach

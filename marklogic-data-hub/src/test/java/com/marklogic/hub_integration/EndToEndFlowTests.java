@@ -899,7 +899,7 @@ public class EndToEndFlowTests extends HubTestBase {
         copyFile(srcDir + "triples." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
         copyFile(srcDir + "main-" + flowType.toString() + "-2x." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
 
-        Flow flow = FlowBuilder.newFlow()
+        LegacyFlow flow = LegacyFlowBuilder.newFlow()
             .withEntityName(ENTITY)
             .withName(flowName)
             .withType(flowType)
@@ -1043,7 +1043,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
-        Flow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
+        LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
         String inputPath = getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()).getAbsolutePath();
         String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
         String OS = System.getProperty("os.name").toLowerCase();
@@ -1342,7 +1342,7 @@ public class EndToEndFlowTests extends HubTestBase {
         }
     }
 
-    private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
+    private Tuple<LegacyFlowRunner, JobTicket> runHarmonizeFlow(
         String flowName, DataFormat dataFormat,
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
@@ -1351,7 +1351,7 @@ public class EndToEndFlowTests extends HubTestBase {
         return runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs,waitForCompletion, TEST_SIZE);
     }
 
-    private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
+    private Tuple<LegacyFlowRunner, JobTicket> runHarmonizeFlow(
         String flowName, DataFormat dataFormat,
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
@@ -1367,8 +1367,8 @@ public class EndToEndFlowTests extends HubTestBase {
 
         installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
         getHubFlowRunnerConfig();
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner()
+        LegacyFlow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
+        LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(BATCH_SIZE)
             .withThreadCount(4)
@@ -1415,7 +1415,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple= null;
+        Tuple<LegacyFlowRunner, JobTicket> tuple= null;
         tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion, testSize);
 
         if (waitForCompletion) {
@@ -1504,7 +1504,7 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, true);
+        Tuple<LegacyFlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, true);
 
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
