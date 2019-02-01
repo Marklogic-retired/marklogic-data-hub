@@ -61,6 +61,7 @@ public class HubProjectImpl implements HubProject {
     private Path projectDir;
     private Path pluginsDir;
     private Path processesDir;
+    private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -420,7 +421,12 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public String getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDirString, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+        return Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile).toString();
+    }
+
+    @Override
+    public void setUserModulesDeployTimestampFile(String userModulesDeployTimestampFile) {
+        this.userModulesDeployTimestampFile = userModulesDeployTimestampFile;
     }
 
     /* copying only the required old hub-internal-config db and server files to new locations
