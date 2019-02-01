@@ -19,6 +19,8 @@ module namespace hent = "http://marklogic.com/data-hub/hub-entities";
 
 import module namespace es = "http://marklogic.com/entity-services"
   at "/MarkLogic/entity-services/entity-services.xqy";
+import module namespace tde = "http://marklogic.com/xdmp/tde"
+  at "/MarkLogic/tde.xqy";
 
 declare namespace search = "http://marklogic.com/appservices/search";
 
@@ -149,4 +151,103 @@ declare function hent:dump-indexes($entities as json:array)
       map:put($idx, "path-expression", fn:replace(map:get($idx, "path-expression"), "es:", "*:"))
   return
     xdmp:to-json($o)
+};
+
+declare function hent:dump-tde($entities as json:array)
+{
+  let $entity-values as map:map* := json:array-values($entities)
+  let $uber-model := hent:uber-model($entity-values ! xdmp:to-json(.)/object-node())
+  let $_set-info := $uber-model => map:put("info", fn:head($entity-values) => map:get("info"))
+  let $uber-definitions := $uber-model => map:get("definitions")
+  let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
+  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions)
+};
+
+declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
+declare variable $default-invalid-values as element(tde:invalid-values) := element tde:invalid-values {"ignore"};
+(:
+  this method doctors the TDE output from ES
+:)
+declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map)
+{
+  for $n in $nodes
+  return
+    typeswitch($n)
+      case document-node() return
+        document {
+          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+        }
+      case element(tde:nullabe) return
+        $default-nullable
+      case element(tde:invalid-values) return
+        $default-invalid-values
+      case element(tde:val) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          let $col-name := fn:string($n/../tde:name)
+          return
+            if (fn:starts-with($n, $col-name)) then
+              let $parts := fn:tokenize($n, "/")
+              let $entity-definition := $uber-definitions => map:get(fn:string($parts[2]))
+              return
+                if (fn:exists($entity-definition)) then
+                  fn:string($n) || "/" || ($entity-definition => map:get("primaryKey"))
+                else
+                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+            else
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+        }
+      case element(tde:context) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          if ($n = $entity-model-contexts) then
+            fn:replace(fn:string($n),"^\./", ".//")
+          else
+            $n/node()
+        }
+      case element(tde:template) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          let $context-item :=  fn:replace(fn:string($n/tde:context), "\./", "")
+          let $parent-context-item := fn:replace(fn:string($n/../../tde:context), "\./", "")
+          let $is-join-template := $n/tde:rows/tde:row/tde:view-name = $parent-context-item  || "_" || $context-item
+          let $rows := $n/tde:rows/tde:row
+          return
+            if ($is-join-template) then (
+              hent:fix-tde($n/tde:context, $entity-model-contexts, $uber-definitions),
+              element tde:rows {
+                element tde:row {
+                  $rows/(tde:schema-name|tde:view-name|tde:view-layout),
+                  element tde:columns {
+                    let $join-prefix := $context-item || "_"
+                    for $column in $rows/tde:columns/tde:column
+                    return
+                      element tde:column {
+                        $column/@*,
+                        if (fn:starts-with($column/tde:name, $join-prefix)) then (
+                          hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-definitions),
+                          let $tde-val := fn:string($column/tde:val)
+                          return
+                            element tde:val {
+                              $tde-val || "/" || ($uber-definitions => map:get($tde-val) => map:get("primaryKey"))
+                            },
+                          hent:fix-tde($column/(tde:nullable|tde:default|tde:invalid-values|tde:reindexing|tde:collation), $entity-model-contexts, $uber-definitions)
+                        ) else
+                          hent:fix-tde($column/node(), $entity-model-contexts, $uber-definitions)
+                      }
+                  }
+                }
+              }
+            ) else
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+        }
+      case element() return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-definitions)
+        }
+      case text() return
+        fn:replace($n, "^\.\./(.+)$", "(../$1|parent::array-node()/../$1)")
+      default return $n
 };
