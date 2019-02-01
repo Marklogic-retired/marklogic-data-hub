@@ -134,6 +134,11 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
   {% include ostabs-run-gradle.html grtask="hubDisableTracing" %}
 </dd>
 
+<dt>hubDeployUserArtifacts</dt>
+<dd>Installs user artifacts, such as entities and mappings, to the MarkLogic server. (DHF 4.2+)
+  {% include ostabs-run-gradle.html grtask="hubDeployUserArtifacts" %}
+</dd>
+
 <!-- dt>hubDeployAmps</dt>
 <dd>Deploys the amps included in the DHF .jar file.
   {% include ostabs-run-gradle.html grtask="hubDeployAmps" %}

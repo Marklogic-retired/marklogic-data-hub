@@ -11,6 +11,7 @@ redirect_from: "/docs/release-notes/"
 
 ## Release Notes for Previous DHF Releases
 
+<!-- - [DHF 4.2.x]({{site.baseurl}}/release-notes/release-notes-4_2_x/) -->
 <!-- - [DHF 4.1.x]({{site.baseurl}}/release-notes/release-notes-4_1_x/) -->
 - [DHF 4.0.x]({{site.baseurl}}/release-notes/release-notes-4_0_x/)
 

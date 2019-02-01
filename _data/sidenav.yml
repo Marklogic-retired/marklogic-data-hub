@@ -96,15 +96,6 @@ main:
               { url: '/ingest/rest/', text: 'Using the REST Client API' },
               { url: '/ingest/marklogic-client-api/', text: 'Using the Java Client API' },
               # { url: '/ingest/nifi/', text: 'Using NiFi' },
-              {
-                url: '/govern/pii/',
-                text: 'Protect PII',
-                # childPages: [
-                #   { url: '/govern/pii/designate-property-pii/', text: 'Designate Property as PII' },
-                #   { url: '/govern/pii/generate-pii-config/', text: 'Generate PII Security Config' },
-                #   { url: '/govern/pii/deploy-pii-config/', text: 'Deploy PII Security Config' },
-                # ]
-              }
             ]
           },
           {
@@ -134,6 +125,15 @@ main:
               { absurl: 'https://docs.marklogic.com/guide/admin/odbc', text: 'Using ODBC' },
             ]
           },
+          {
+            url: '/govern/pii/',
+            text: 'Protect PII',
+            # childPages: [
+            #   { url: '/govern/pii/designate-property-pii/', text: 'Designate Property as PII' },
+            #   { url: '/govern/pii/generate-pii-config/', text: 'Generate PII Security Config' },
+            #   { url: '/govern/pii/deploy-pii-config/', text: 'Deploy PII Security Config' },
+            # ]
+          }
           # {
           #   url: '/maintain/',
           #   text: 'Maintain',
