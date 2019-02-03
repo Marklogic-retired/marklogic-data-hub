@@ -238,7 +238,9 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                             element tde:val {
                               $tde-val || "/" || ($uber-definitions => map:get($tde-val) => map:get("primaryKey"))
                             },
-                          hent:fix-tde($column/(tde:nullable|tde:default|tde:invalid-values|tde:reindexing|tde:collation), $entity-model-contexts, $uber-definitions)
+                          $default-nullable,
+                          $default-invalid-values,
+                          hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-definitions)
                         ) else
                           hent:fix-tde($column/node(), $entity-model-contexts, $uber-definitions)
                       }
