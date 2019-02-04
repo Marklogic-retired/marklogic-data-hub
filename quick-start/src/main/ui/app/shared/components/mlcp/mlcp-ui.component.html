@@ -36,13 +36,13 @@
               [tooltip]="setting.description"
               placement="left"
               container="body">
-              <mdl-textfield floating-label type="text"
-                 [label]="setting.label"
-                 name="{{setting.field}}" *ngIf="isText(setting.type)"
-                 [ngModel]="setting.value"
-                 (input)="handleValueChanged(setting, $event.target.value)"
-                 [disabled]="setting.readOnly">
-              </mdl-textfield>
+              <mat-form-field appearance="outline" *ngIf="isText(setting.type)">
+                <mat-label>{{setting.label}}</mat-label>
+                <input matInput 
+                [ngModel]="setting.value"
+                (input)="handleValueChanged(setting, $event.target.value)"
+                [disabled]="setting.readOnly"/>
+              </mat-form-field>
             </span>
             <span
               *ngIf="setting.type === 'type'"
