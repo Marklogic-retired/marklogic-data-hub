@@ -1609,7 +1609,7 @@ public class HubConfigImpl implements HubConfig
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "4.1-SNAPSHOT";
+            version = "4.2.0-rc1";
         }
         return version;
     }
