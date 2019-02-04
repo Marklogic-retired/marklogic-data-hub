@@ -200,6 +200,10 @@ class DataHubPlugin implements Plugin<Project> {
                 hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
             }
 
+            // By default, DHF uses gradle-local.properties for your local environment.
+            def envNameProp = project.hasProperty("environmentName") ? project.property("environmentName") : "local"
+            hubConfig.withPropertiesFromEnvironment(envNameProp.toString())
+
             hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
             hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
             hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))

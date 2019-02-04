@@ -180,7 +180,8 @@ public class HubConfigImpl implements HubConfig
 
     private ObjectMapper objmapper;
 
-    private String envString;
+    // By default, DHF uses gradle-local.properties for your local environment.
+    private String envString = "local";
 
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
@@ -968,6 +969,7 @@ public class HubConfigImpl implements HubConfig
                         logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
                     }
                     loadPropertiesFromFile(envPropertiesFile, projectProperties);
+                    hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
                 }
             }
         }
@@ -1740,6 +1742,12 @@ public class HubConfigImpl implements HubConfig
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(modulePermissions);
 
+        if (envString != null) {
+            String defaultPath = config.getModuleTimestampsPath();
+            int index = defaultPath.lastIndexOf("/") + 1;
+            config.setModuleTimestampsPath(defaultPath.substring(0, index) + envString + "-" + defaultPath.substring(index));
+        }
+
         Map<String, Integer> forestCounts = config.getForestCounts();
         forestCounts.put(jobDbName, jobForestsPerHost);
         forestCounts.put(modulesDbName, modulesForestsPerHost);
@@ -1911,6 +1919,7 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
         this.envString = environment;
+        hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
         return this;
     }
 
