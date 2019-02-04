@@ -24,7 +24,7 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;

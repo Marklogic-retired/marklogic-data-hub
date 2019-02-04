@@ -68,7 +68,8 @@ class BaseTest extends Specification {
     static final int MOD_COUNT = 5
     // this value under good security conditions is 2 because hub-admin-user cannot read options files directly.
     // 2 additional modules have been added for triggers
-    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 111
+    // 5.x modules added
+    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 220
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile

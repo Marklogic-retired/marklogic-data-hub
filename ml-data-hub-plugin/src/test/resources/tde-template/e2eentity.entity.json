@@ -1,0 +1,28 @@
+{
+  "info" : {
+    "title" : "e2eentity",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "e2eentity" : {
+      "required" : [ ],
+      "primaryKey": "id",
+      "rangeIndex" : [ "name" ],
+      "elementRangeIndex": ["id"],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id": {
+          "datatype": "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "salary": {
+          "datatype": "decimal"
+        }
+      }
+    }
+  }
+}

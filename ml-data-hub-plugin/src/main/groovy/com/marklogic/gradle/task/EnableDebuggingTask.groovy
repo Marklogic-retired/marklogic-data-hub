@@ -28,6 +28,6 @@ class EnableDebuggingTask extends HubTask {
             throw new HubNotInstalledException()
         }
 
-        getDebugging().enable()
+        getLegacyDebugging().enable()
     }
 }

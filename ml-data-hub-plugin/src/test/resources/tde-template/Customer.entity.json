@@ -1,0 +1,23 @@
+{
+  "info": {
+    "title": "Customer",
+    "description": "DHF Customer",
+    "version": "1.0.0"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "id": {
+          "datatype": "int"
+        },
+        "name": {
+          "datatype": "string"
+        }
+      },
+      "required": ["id", "name"],
+      "primaryKey": "id",
+      "pii": ["name"],
+      "pathRangeIndex": ["id"]
+    }
+  }
+}

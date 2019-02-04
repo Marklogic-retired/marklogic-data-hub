@@ -1,0 +1,34 @@
+{
+  "info": {
+    "title": "Order",
+    "description": "DHF Order",
+    "version": "1.0.0"
+  },
+  "definitions": {
+    "Order": {
+      "properties": {
+        "id": {
+          "datatype": "int"
+        },
+        "purchasedItems": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "customer": {
+          "$ref": "#/definitions/Customer"
+        },
+        "transactionDateTime": {
+          "datatype": "dateTime"
+        },
+        "totalCost": {
+          "datatype": "double"
+        }
+      },
+      "required": ["id", "transactionDateTime", "totalCost"],
+      "primaryKey": "id",
+      "pathRangeIndex": ["id", "totalCost"]
+    }
+  }
+}

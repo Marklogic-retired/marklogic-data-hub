@@ -24,8 +24,12 @@ import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
-import com.marklogic.hub.FlowManager
-import com.marklogic.hub.flow.*
+import com.marklogic.hub.legacy.LegacyFlowManager
+import com.marklogic.hub.legacy.flow.LegacyFlowItemCompleteListener
+import com.marklogic.hub.legacy.flow.LegacyFlowItemFailureListener
+import com.marklogic.hub.legacy.flow.LegacyFlowRunner
+import com.marklogic.hub.legacy.flow.FlowType
+import com.marklogic.hub.legacy.flow.LegacyFlow
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
@@ -107,8 +111,8 @@ class RunFlowTask extends HubTask {
             throw new HubNotInstalledException()
         }
 
-        FlowManager fm = getFlowManager()
-        Flow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
+        LegacyFlowManager fm = getLegacyFlowManager()
+        LegacyFlow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
         if (flow == null) {
             throw new FlowNotFoundException(entityName, flowName);
         }
@@ -132,20 +136,20 @@ class RunFlowTask extends HubTask {
             }
         }
 
-        FlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
             .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .withSourceClient(sourceClient)
             .withDestinationDatabase(destDB)
-            .onItemComplete(new FlowItemCompleteListener() {
+            .onItemComplete(new LegacyFlowItemCompleteListener() {
                 @Override
                 void processCompletion(String jobId, String itemId) {
                     //TODO in the future, let's figure out a good use of this space
                 }
             })
-            .onItemFailed(new FlowItemFailureListener() {
+            .onItemFailed(new LegacyFlowItemFailureListener() {
                 @Override
                 void processFailure(String jobId, String itemId) {
                     //TODO ditto

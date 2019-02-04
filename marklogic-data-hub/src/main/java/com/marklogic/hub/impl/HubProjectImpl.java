@@ -61,6 +61,7 @@ public class HubProjectImpl implements HubProject {
     private Path projectDir;
     private Path pluginsDir;
     private Path processesDir;
+    private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -167,6 +168,10 @@ public class HubProjectImpl implements HubProject {
         return getEntityConfigDir().resolve("databases");
     }
 
+    @Override public Path getFlowsDir() {
+        return this.projectDir.resolve("flows");
+    }
+
     @Override public Path getHubStagingModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
@@ -192,7 +197,6 @@ public class HubProjectImpl implements HubProject {
         File databasesDir = getHubDatabaseDir().toFile();
         File serversDir = getHubServersDir().toFile();
         File securityDir = getHubSecurityDir().toFile();
-        File triggersDir = getHubTriggersDir().toFile();
 
         boolean newConfigInitialized =
             hubConfigDir.exists() &&
@@ -204,9 +208,7 @@ public class HubProjectImpl implements HubProject {
                 serversDir.exists() &&
                 serversDir.isDirectory() &&
                 securityDir.exists() &&
-                securityDir.isDirectory() &&
-                triggersDir.exists() &&
-                triggersDir.isDirectory();
+                securityDir.isDirectory();
 
         return buildGradle.exists() &&
             gradleProperties.exists() &&
@@ -295,6 +297,9 @@ public class HubProjectImpl implements HubProject {
         //scaffold schemas
         getUserDatabaseDir().resolve(customTokens.get("%%mlStagingSchemasDbName%%")).resolve("schemas").toFile().mkdirs();
         getUserSchemasDir().toFile().mkdirs();
+
+        //create flow dir
+        getFlowsDir().toFile().mkdirs();
 
         //create hub triggers
         Path hubTriggersDir = getHubTriggersDir();        
@@ -406,6 +411,9 @@ public class HubProjectImpl implements HubProject {
         deleteObsoleteServerFilesFromHubInternalConfig();
         deleteObsoleteDatabaseFilesFromMlConfig();
 
+        //remove hub-internal-config/schemas dir
+        deleteObsoleteDirsFromHubInternalConfig();
+
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {
@@ -413,7 +421,12 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public String getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDirString, ".tmp", USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+        return Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile).toString();
+    }
+
+    @Override
+    public void setUserModulesDeployTimestampFile(String userModulesDeployTimestampFile) {
+        this.userModulesDeployTimestampFile = userModulesDeployTimestampFile;
     }
 
     /* copying only the required old hub-internal-config db and server files to new locations
@@ -713,6 +726,22 @@ public class HubProjectImpl implements HubProject {
                 f.delete();
             }
         }
+    }
+
+    private void deleteObsoleteDirsFromHubInternalConfig() {
+        File dir = getHubConfigDir().resolve("schemas").toFile();
+        if (dir.exists()) {
+            if (logger.isInfoEnabled()) {
+                logger.info("Deleting hub-internal-config/schemas dir because it is no longer used");
+            }
+            try {
+                FileUtils.deleteDirectory(dir);
+            } catch (IOException e) {
+                logger.error("Unable to delete "+ dir.getAbsolutePath());
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     @Override

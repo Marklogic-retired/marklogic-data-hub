@@ -21,9 +21,10 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.LegacyFlowManager;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -68,7 +69,7 @@ public class PiiE2E extends HubTestBase
     protected EntityManager entityManager;
 
     @Autowired
-    protected FlowManager flowManager;
+    protected LegacyFlowManager flowManager;
 
     @Autowired
     private Scaffolding scaffolding;
@@ -357,8 +358,8 @@ public class PiiE2E extends HubTestBase
 
     private void runHarmonizeFlow(String flowName, DatabaseClient srcClient, String destDb)
     {
-        Flow harmonizeFlow = flowManager.getFlow("SupportCall", flowName, FlowType.HARMONIZE);
-        FlowRunner flowRunner = flowManager.newFlowRunner().withFlow(harmonizeFlow).withBatchSize(3).withThreadCount(1)
+        LegacyFlow harmonizeFlow = flowManager.getFlow("SupportCall", flowName, FlowType.HARMONIZE);
+        LegacyFlowRunner flowRunner = flowManager.newFlowRunner().withFlow(harmonizeFlow).withBatchSize(3).withThreadCount(1)
             .withSourceClient(srcClient).withDestinationDatabase(destDb)
             .onItemComplete((String jobId, String itemId) -> {
                 logger.debug("Completed item " + itemId);

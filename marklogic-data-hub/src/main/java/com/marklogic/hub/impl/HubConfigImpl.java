@@ -32,6 +32,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.processes.Process;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
@@ -78,7 +79,7 @@ public class HubConfigImpl implements HubConfig
     Properties projectProperties = null;
 
     @Autowired
-    FlowManagerImpl flowManager;
+    LegacyFlowManagerImpl flowManager;
     @Autowired
     DataHubImpl dataHub;
     @Autowired
@@ -179,7 +180,8 @@ public class HubConfigImpl implements HubConfig
 
     private ObjectMapper objmapper;
 
-    private String envString;
+    // By default, DHF uses gradle-local.properties for your local environment.
+    private String envString = "local";
 
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
@@ -967,6 +969,7 @@ public class HubConfigImpl implements HubConfig
                         logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
                     }
                     loadPropertiesFromFile(envPropertiesFile, projectProperties);
+                    hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
                 }
             }
         }
@@ -1581,6 +1584,9 @@ public class HubConfigImpl implements HubConfig
         return hubProject.getEntityDatabaseDir();
     }
 
+    @Override
+    public Path getFlowsDir() { return hubProject.getFlowsDir();   }
+
     @JsonIgnore
     @Override public Path getUserServersDir() {
         return hubProject.getUserServersDir();
@@ -1717,8 +1723,10 @@ public class HubConfigImpl implements HubConfig
      * @param config
      */
     private void updateAppConfig(AppConfig config) {
-        // This shouldn't be used for any resource names, but it does appear in logging, and DHF is a better choice than "my-app"
-        config.setName("DHF");
+        // If the user hasn't set the app name then override it to "DHF" instead of "my-app"
+        if ("my-app".equals(config.getName())) {
+            config.setName("DHF");
+        }
 
         // DHF never needs the default REST server provided by ml-gradle
         config.setNoRestServer(true);
@@ -1733,6 +1741,12 @@ public class HubConfigImpl implements HubConfig
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(modulePermissions);
+
+        if (envString != null) {
+            String defaultPath = config.getModuleTimestampsPath();
+            int index = defaultPath.lastIndexOf("/") + 1;
+            config.setModuleTimestampsPath(defaultPath.substring(0, index) + envString + "-" + defaultPath.substring(index));
+        }
 
         Map<String, Integer> forestCounts = config.getForestCounts();
         forestCounts.put(jobDbName, jobForestsPerHost);
@@ -1905,6 +1919,7 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
         this.envString = environment;
+        hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
         return this;
     }
 

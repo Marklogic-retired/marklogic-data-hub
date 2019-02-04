@@ -4,13 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.FlowType;
-import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.quickstart.DataHubApiConfiguration;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
-import com.marklogic.quickstart.service.EntityManagerServiceTest;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -32,7 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 

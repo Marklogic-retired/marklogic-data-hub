@@ -29,11 +29,11 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -67,7 +67,7 @@ public class MappingE2E extends HubTestBase {
     private static final int TEST_SIZE = 20;
     private static final int BATCH_SIZE = 10;
     @Autowired
-    private FlowManager flowManager;
+    private LegacyFlowManager flowManager;
     private DataMovementManager stagingDataMovementManager;
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
@@ -82,6 +82,7 @@ public class MappingE2E extends HubTestBase {
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
+        new Installer().deleteProjectDir();
         new Installer().setupProject();
     }
 
@@ -353,7 +354,7 @@ public class MappingE2E extends HubTestBase {
         }
     }
 
-    private Tuple<FlowRunner, JobTicket> runHarmonizeFlow(
+    private Tuple<LegacyFlowRunner, JobTicket> runHarmonizeFlow(
         String flowName, DataFormat dataFormat,
         Vector<String> completed, Vector<String> failed,
         Map<String, Object> options,
@@ -369,9 +370,9 @@ public class MappingE2E extends HubTestBase {
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
         getHubFlowRunnerConfig();
-        Flow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
+        LegacyFlow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
-        FlowRunner flowRunner = flowManager.newFlowRunner()
+        LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(BATCH_SIZE)
             .withThreadCount(4)
@@ -411,7 +412,7 @@ public class MappingE2E extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
-        Tuple<FlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
+        Tuple<LegacyFlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
         if (waitForCompletion) {
             // takes a little time to run.

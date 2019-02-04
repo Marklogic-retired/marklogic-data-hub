@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * This application configuration is an entry point to using the DHF from a set property
  */
 @Configuration
-@ComponentScan(basePackages = {"com.marklogic.hub.impl", "com.marklogic.hub.deploy.commands"})
+@ComponentScan(basePackages = {"com.marklogic.hub.impl", "com.marklogic.hub.legacy.impl", "com.marklogic.hub.deploy.commands"})
 @EnableAutoConfiguration
 public class ApplicationConfig {
 

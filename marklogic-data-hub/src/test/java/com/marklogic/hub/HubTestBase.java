@@ -40,10 +40,13 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.flow.CodeFormat;
-import com.marklogic.hub.flow.DataFormat;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.LegacyDebugging;
+import com.marklogic.hub.legacy.LegacyTracing;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.*;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
@@ -135,7 +138,7 @@ public class HubTestBase {
     protected ProcessManager processManager;
 
     @Autowired
-    protected FlowManagerImpl fm;
+    protected LegacyFlowManagerImpl fm;
 
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'
@@ -379,19 +382,19 @@ public class HubTestBase {
     }
 
     protected void enableDebugging() {
-        Debugging.create(stagingClient).enable();
+        LegacyDebugging.create(stagingClient).enable();
     }
 
     protected void disableDebugging() {
-        Debugging.create(stagingClient).disable();
+        LegacyDebugging.create(stagingClient).disable();
     }
 
     protected void enableTracing() {
-        Tracing.create(stagingClient).enable();
+        LegacyTracing.create(stagingClient).enable();
     }
 
     protected void disableTracing() {
-        Tracing.create(stagingClient).disable();
+        LegacyTracing.create(stagingClient).disable();
     }
 
     protected HubConfig getHubAdminConfig(String projectDir) {

@@ -27,6 +27,6 @@ class DisableTracingTask extends HubTask {
         if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
-        getTracing().disable()
+        getLegacyTracing().disable()
     }
 }

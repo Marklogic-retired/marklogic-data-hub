@@ -1,0 +1,14 @@
+{
+  "name": "test-flow",
+  "Description": "this is an example",
+  "Identifier": "(some identifier or search)",
+  "Steps": [{
+    "0": {
+      "type": "mapping",
+      "name": "person-mapping1.json",
+      "identifier": "null",
+      "retryLimit": 0,
+      "options": {}
+    }
+  }]
+}

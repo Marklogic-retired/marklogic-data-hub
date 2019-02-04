@@ -17,8 +17,8 @@
 package com.marklogic.quickstart.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
@@ -156,7 +156,7 @@ class EntitiesController {
 
         ResponseEntity<?> resp;
 
-        Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
+        LegacyFlow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -228,7 +228,7 @@ class EntitiesController {
 
         ResponseEntity<?> resp;
 
-        Flow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
+        LegacyFlow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

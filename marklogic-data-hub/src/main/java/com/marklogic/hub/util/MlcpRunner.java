@@ -20,11 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowStatusListener;
-import com.marklogic.hub.job.Job;
-import com.marklogic.hub.job.JobManager;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
+import com.marklogic.hub.legacy.job.Job;
+import com.marklogic.hub.legacy.job.LegacyJobManager;
+import com.marklogic.hub.legacy.job.JobStatus;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,24 +38,24 @@ import java.util.stream.Collectors;
 public class MlcpRunner extends ProcessRunner {
 
     private static Logger logger = LoggerFactory.getLogger(MlcpRunner.class);
-    private JobManager jobManager;
-    private Flow flow;
+    private LegacyJobManager jobManager;
+    private LegacyFlow flow;
     private JsonNode mlcpOptions;
     private String jobId = UUID.randomUUID().toString();
     private AtomicLong successfulEvents = new AtomicLong(0);
     private AtomicLong failedEvents = new AtomicLong(0);
-    FlowStatusListener flowStatusListener;
+    LegacyFlowStatusListener flowStatusListener;
     private String mlcpPath;
     private String mainClass;
     private DatabaseClient databaseClient;
     private String database = null;
 
-    public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, Flow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, FlowStatusListener statusListener) {
+    public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, LegacyFlow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, LegacyFlowStatusListener statusListener) {
         super();
 
         this.withHubconfig(hubConfig);
 
-        this.jobManager = JobManager.create(hubConfig.newJobDbClient());
+        this.jobManager = LegacyJobManager.create(hubConfig.newJobDbClient());
         this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;

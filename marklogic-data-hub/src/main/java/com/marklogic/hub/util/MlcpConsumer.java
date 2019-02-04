@@ -15,7 +15,7 @@
  */
 package com.marklogic.hub.util;
 
-import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -29,10 +29,10 @@ public class MlcpConsumer implements Consumer<String> {
     private static final Pattern FAILED_EVENTS_PATTERN = Pattern.compile("^.+OUTPUT_RECORDS_FAILED\\s+(\\d+).*$");
     private AtomicLong successfulEvents;
     private AtomicLong failedEvents;
-    private FlowStatusListener statusListener;
+    private LegacyFlowStatusListener statusListener;
     private String jobId;
 
-    public MlcpConsumer(AtomicLong successfulEvents, AtomicLong failedEvents, FlowStatusListener statusListener,
+    public MlcpConsumer(AtomicLong successfulEvents, AtomicLong failedEvents, LegacyFlowStatusListener statusListener,
                         String jobId)
     {
         this.successfulEvents = successfulEvents;

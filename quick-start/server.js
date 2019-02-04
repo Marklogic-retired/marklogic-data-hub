@@ -78,5 +78,7 @@ middleware.init(swaggerMockDocPath, (err) => {
 
   app.listen(8081, () => {
     console.log('Sample Mock API server is now running at http://localhost:8081');
+    console.log('Swagger JSON Doc: http://localhost:4200/api/swagger/doc/');
+    console.log('Swagger UI: http://localhost:4200/api/swagger-ui/');
   });
 });

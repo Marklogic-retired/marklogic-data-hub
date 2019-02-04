@@ -18,7 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.JobIdsRequiredException
-import com.marklogic.hub.job.JobDeleteResponse
+import com.marklogic.hub.legacy.job.JobDeleteResponse
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 

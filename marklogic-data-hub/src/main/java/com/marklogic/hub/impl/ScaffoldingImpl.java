@@ -22,9 +22,9 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -38,7 +38,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -140,7 +139,7 @@ public class ScaffoldingImpl implements Scaffolding {
             writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main." + codeFormat,
                 flowDir.resolve("main." + codeFormat));
 
-            Flow flow = FlowBuilder.newFlow()
+            LegacyFlow flow = LegacyFlowBuilder.newFlow()
                 .withEntityName(entityName)
                 .withName(flowName)
                 .withType(flowType)
@@ -259,7 +258,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
                         file.delete();
 
-                        FlowBuilder flowBuilder = FlowBuilder.newFlow()
+                        LegacyFlowBuilder flowBuilder = LegacyFlowBuilder.newFlow()
                             .withEntityName(entityName)
                             .withName(flowName)
                             .withType(flowType)
@@ -268,14 +267,14 @@ public class ScaffoldingImpl implements Scaffolding {
                             .withMain(new MainPluginImpl("main." + codeFormat, codeFormat));
 
                         if (flowType.equals(FlowType.HARMONIZE)) {
-                            flowBuilder.withCollector(new CollectorImpl("collector/collector." + codeFormat, codeFormat));
+                            flowBuilder.withCollector(new LegacyCollectorImpl("collector/collector." + codeFormat, codeFormat));
 
                             if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                                 updateLegacySjsWriter(flowDir);
                             }
                         }
 
-                        Flow flow = flowBuilder.build();
+                        LegacyFlow flow = flowBuilder.build();
                         try {
                             FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
                             flow.toProperties().store(fw, "");
