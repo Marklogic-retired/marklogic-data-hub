@@ -211,6 +211,8 @@ public interface HubProject {
 
     String getUserModulesDeployTimestampFile();
 
+    void setUserModulesDeployTimestampFile(String userModulesDeployTimestampFile);
+
     Path getEntityDir(String entityName);
 
     Path getMappingDir(String mappingName);
