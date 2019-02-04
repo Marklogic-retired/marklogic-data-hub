@@ -6,5 +6,6 @@ permalink: /whats-new/
 
 # What's New
 
-**2018 December**
-- DHF 4.1 is released! See [the release notes]({{site.baseurl}}/release-notes/) for changes.
+**2019 February**
+- DHF 4.2 is coming soon!
+- See [the new tutorial for 4.x]({{site.baseurl}}/tutorial/4x/) with a section on protecting PII.

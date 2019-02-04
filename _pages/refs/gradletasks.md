@@ -96,10 +96,10 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
   <div markdown="1">
   Before you run the `hubUpdate` task, edit the `build.gradle` file. Under `plugins`, change the value of `'com.marklogic.ml-data-hub' version` to the new DHF version.
 
-  **Example:** If you are updating to DHF 4.1.0,
+  **Example:** If you are updating to DHF {{ site.data.global.hub_version }},
   ```
   plugins {
-      id 'com.marklogic.ml-data-hub' version '4.1.0'
+      id 'com.marklogic.ml-data-hub' version '{{ site.data.global.hub_version }}'
   }
   ```
   </div>
@@ -135,7 +135,7 @@ These tasks are used to configure the Data Hub Framework and manage the data hub
 </dd>
 
 <dt>hubDeployUserArtifacts</dt>
-<dd>Installs user artifacts, such as entities and mappings, to the MarkLogic server. (DHF 4.2+)
+<dd>Installs user artifacts, such as entities and mappings, to the MarkLogic server. (DHF 4.2 or later)
   {% include ostabs-run-gradle.html grtask="hubDeployUserArtifacts" %}
 </dd>
 
