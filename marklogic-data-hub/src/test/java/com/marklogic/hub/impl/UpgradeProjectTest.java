@@ -197,8 +197,8 @@ public class UpgradeProjectTest {
         assertTrue(stagingFile.exists());
         ObjectNode stagingServer = readFile(stagingFile);
         assertEquals("%%mlStagingAppserverName%%", stagingServer.get("server-name").asText());
-        assertEquals("/data-hub/4/rest-api/rewriter.xml", stagingServer.get("url-rewriter").asText());
-        assertEquals("/data-hub/4/rest-api/error-handler.xqy", stagingServer.get("error-handler").asText());
+        assertEquals("/data-hub/5/rest-api/rewriter.xml", stagingServer.get("url-rewriter").asText());
+        assertEquals("/data-hub/5/rest-api/error-handler.xqy", stagingServer.get("error-handler").asText());
         assertEquals("%%mlModulesDbName%%", stagingServer.get("modules-database").asText());
         assertEquals("%%mlStagingDbName%%", stagingServer.get("content-database").asText());
 
