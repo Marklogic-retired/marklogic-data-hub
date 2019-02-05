@@ -513,10 +513,10 @@ public class HubProjectImpl implements HubProject {
                         rootNode = mapper.readTree(jsonFile);
                         //set the url-rewriter and error-handler
                         if(path.toLowerCase().equals("staging-server.json")) {
-                            logger.info("Setting \"url-rewriter\" to \"/data-hub/4/rest-api/rewriter.xml\"");
-                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/rest-api/rewriter.xml");
-                            logger.info("Setting \"error-handler\" to \"/data-hub/4/rest-api/error-handler.xqy\"");
-                            ((ObjectNode) rootNode).put("error-handler", "/data-hub/4/rest-api/error-handler.xqy");
+                            logger.info("Setting \"url-rewriter\" to \"/data-hub/5/rest-api/rewriter.xml\"");
+                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/5/rest-api/rewriter.xml");
+                            logger.info("Setting \"error-handler\" to \"/data-hub/5/rest-api/error-handler.xqy\"");
+                            ((ObjectNode) rootNode).put("error-handler", "/data-hub/5/rest-api/error-handler.xqy");
                         }
                         else {
                             logger.info("Setting \"url-rewriter\" to \"/data-hub/4/tracing/tracing-rewriter.xml\"");
