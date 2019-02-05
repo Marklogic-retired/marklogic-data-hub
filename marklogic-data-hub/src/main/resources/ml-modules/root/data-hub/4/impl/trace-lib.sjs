@@ -202,11 +202,13 @@ function writeErrorTrace(itemContext) {
         }
       };
       let i;
-      for (i = 0; i < currentTrace.traceSteps.length; i++) {
-        let step = currentTrace.traceSteps[i];
-        trace.trace.steps.push(step);
-        if(step.error){
-          trace.trace.hasError = true;
+      if (currentTrace && currentTrace.traceSteps) {
+        for (i = 0; i < currentTrace.traceSteps.length; i++) {
+          let step = currentTrace.traceSteps[i];
+          trace.trace.steps.push(step);
+          if (step.error) {
+            trace.trace.hasError = true;
+          }
         }
       }
     }
@@ -235,67 +237,63 @@ function writeErrorTrace(itemContext) {
           let hasErrors = false;
           nb.startElement("steps");
             let i;
-            for (i = 0; i < currentTrace.traceSteps.length; i++) {
-              let step = currentTrace.traceSteps[i];
-              nb.startElement("step")
+            if (currentTrace && currentTrace.traceSteps) {
+              for (i = 0; i < currentTrace.traceSteps.length; i++) {
+                let step = currentTrace.traceSteps[i];
+                nb.startElement("step")
                 nb.startElement("label");
-                  nb.addText(step.label.toString());
+                nb.addText(step.label.toString());
                 nb.endElement();
                 nb.startElement("input");
-                  if (step.input) {
-                    if (step.input instanceof Sequence) {
-                      for (let i of step.input) {
-                        nb.addNode(i);
-                      }
+                if (step.input) {
+                  if (step.input instanceof Sequence) {
+                    for (let i of step.input ) {
+                      nb.addNode(i);
                     }
-                    else if (isXmlNode(step.input)) {
-                      nb.addNode(step.input);
-                    }
-                    else {
-                      nb.addText(JSON.stringify(step.input));
-                    }
+                  } else if (isXmlNode(step.input)) {
+                    nb.addNode(step.input);
+                  } else {
+                    nb.addText(JSON.stringify(step.input));
                   }
+                }
                 nb.endElement();
                 nb.startElement("output");
-                  if (step.output) {
-                    if (isXmlNode(step.output)) {
-                      nb.addNode(step.output);
-                    }
-                    else if (isString(step.output)) {
-                      nb.addText(step.output.toString());
-                    }
-                    else {
-                      nb.addText(step.output.toString());
-                    }
+                if (step.output) {
+                  if (isXmlNode(step.output)) {
+                    nb.addNode(step.output);
+                  } else if (isString(step.output)) {
+                    nb.addText(step.output.toString());
+                  } else {
+                    nb.addText(step.output.toString());
                   }
+                }
                 nb.endElement();
                 nb.startElement("error");
-                  if (step.error) {
-                    hasErrors = true;
-                    if (isXmlNode(step.error)) {
-                      nb.addNode(step.error);
-                    }
-                    else {
-                      nb.addText(JSON.stringify(step.error));
-                    }
+                if (step.error) {
+                  hasErrors = true;
+                  if (isXmlNode(step.error)) {
+                    nb.addNode(step.error);
+                  } else {
+                    nb.addText(JSON.stringify(step.error));
                   }
+                }
                 nb.endElement();
                 nb.startElement("duration");
-                  if (step.duration) {
-                    nb.addText(step.duration.toString());
-                  }
+                if (step.duration) {
+                  nb.addText(step.duration.toString());
+                }
                 nb.endElement();
                 nb.startElement("options");
-                  if (step.options) {
-                    if (isXmlNode(step.options)) {
-                      nb.addNode(step.options);
-                    }
-                    else {
-                      nb.addText(JSON.stringify(step.options));
-                    }
+                if (step.options) {
+                  if (isXmlNode(step.options)) {
+                    nb.addNode(step.options);
+                  } else {
+                    nb.addText(JSON.stringify(step.options));
                   }
+                }
                 nb.endElement();
-              nb.endElement();
+                nb.endElement();
+              }
             }
           nb.endElement();
           nb.startElement("hasError");
@@ -379,6 +377,7 @@ function errorTrace(itemContext, error, duration) {
   });
   currentTrace.traceSteps = traceSteps;
   writeErrorTrace(itemContext);
+  ts['_has_errors'] = false; //resetting the flag after writing error trace
 }
 
 
