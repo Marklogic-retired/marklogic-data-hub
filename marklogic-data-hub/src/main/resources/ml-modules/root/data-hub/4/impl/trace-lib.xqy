@@ -377,6 +377,7 @@ declare function trace:error-trace(
     )
     let $_ := map:put($current-trace, "traceSteps", $trace-steps)
     let $_ := trace:write-error-trace($item-context)
+    let $_ := map:put($current-trace-settings, "_has_errors", fn:false())
     return ()
   )
 };
