@@ -42,6 +42,7 @@
                 <mat-label>{{setting.label}}</mat-label>
                 <input matInput 
                 [ngModel]="setting.value"
+                [id]="setting.field"
                 (input)="handleValueChanged(setting, $event.target.value)"
                 [readonly]="setting.readOnly"/>
               </mat-form-field>
