@@ -36,12 +36,14 @@
               [tooltip]="setting.description"
               placement="left"
               container="body">
-              <mat-form-field appearance="outline" *ngIf="isText(setting.type)">
+              <mat-form-field appearance="outline" 
+                *ngIf="isText(setting.type)"
+                [ngClass]="setting.readOnly ? 'read-only' : ''">
                 <mat-label>{{setting.label}}</mat-label>
                 <input matInput 
                 [ngModel]="setting.value"
                 (input)="handleValueChanged(setting, $event.target.value)"
-                [disabled]="setting.readOnly"/>
+                [readonly]="setting.readOnly"/>
               </mat-form-field>
             </span>
             <span

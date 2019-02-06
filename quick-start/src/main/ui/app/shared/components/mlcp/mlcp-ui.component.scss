@@ -7,7 +7,7 @@ $duration: 0.25s;
 $easingFunc: ease-in-out;
 
 .content {
-  padding: 0px;
+  padding: 0 15px;
   background-color: #e9eef4;
 }
 
@@ -75,42 +75,6 @@ mat-form-field {
   width: 100%;
   margin-top: 10px;
   font-size: 16px;
-}
-
-/* default and hover color */
-::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-  color: rgb(125, 163, 192);
-}
-
-/* focused color */
-::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
-   color: rgb(42, 67, 86);
-  > .mat-form-field-outline-start, .mat-form-field-outline-gap, .mat-form-field-outline-end {
-    background: white; 
-  }
-}
-::ng-deep .mat-form-field-appearance-outline .mat-form-field-label { 
-  color: black;
-}
-/* floating label color */
-::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label { 
-  color: black; 
-}
-
-/* disabled input color */
-::ng-deep .mat-input-element:disabled {
-  color: black;
-}
-
-::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
-  color: rgba(0,0,0,0.5);
-}
-::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled:hover .mat-form-field-outline{
-  color: rgba(0,0,0,.25);
-}
-
-::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-label {
-  color: black;
 }
 
 @media (min-width: 960px) {
