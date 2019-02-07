@@ -189,7 +189,7 @@ public class UpgradeProjectTest {
         assertTrue(jobFile.exists());
         ObjectNode jobServer = readFile(jobFile);
         assertEquals("%%mlJobAppserverName%%", jobServer.get("server-name").asText());
-        assertEquals("/data-hub/4/tracing/tracing-rewriter.xml", jobServer.get("url-rewriter").asText());
+        assertEquals("/data-hub/5/tracing/tracing-rewriter.xml", jobServer.get("url-rewriter").asText());
         assertEquals("%%mlModulesDbName%%", jobServer.get("modules-database").asText());
         assertEquals("%%mlJobDbName%%", jobServer.get("content-database").asText());
 

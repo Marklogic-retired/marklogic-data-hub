@@ -9,6 +9,6 @@
   "authentication": "%%mlJobAuth%%",
   "default-error-format": "json",
   "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
-  "url-rewriter": "/data-hub/4/tracing/tracing-rewriter.xml",
+  "url-rewriter": "/data-hub/5/tracing/tracing-rewriter.xml",
   "rewrite-resolves-globally": true
 }
