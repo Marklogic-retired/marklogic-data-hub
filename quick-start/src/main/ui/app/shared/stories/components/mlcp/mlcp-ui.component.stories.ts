@@ -5,6 +5,7 @@ import { centered } from '@storybook/addon-centered/angular';
 import { text, object, withKnobs, boolean } from '@storybook/addon-knobs';
 import { moduleMetadata, storiesOf } from '@storybook/angular';
 import {action} from '@storybook/addon-actions';
+import { TooltipModule } from 'ngx-bootstrap';
 
 import { MlcpUiComponent } from '../../../components/mlcp/mlcp-ui.component';
 import { ThemeModule } from '../../../components/theme/theme.module';
@@ -36,7 +37,8 @@ storiesOf('Components|MLCP', module)
       imports: [
         CommonModule,
         ThemeModule,
-        MdlModule
+        MdlModule,
+        TooltipModule.forRoot()
       ],
       schemas: [],
       declarations: [
