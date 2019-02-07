@@ -14,7 +14,7 @@
     "build.prod": "npm run clean.dist && ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "./node_modules/.bin/ng e2e",
+    "e2e": "concurrently --kill-others-on-fail \"npm run kill-ng\" \"npm run kill-express\" \"./node_modules/.bin/ng e2e\" \"npm run mock:apis\"",
     "webdriver-update": "webdriver-manager update",
     "storybook": "start-storybook -p 6006 -s ./src/main/ui/assets",
     "storybook:build": "build-storybook -o site/docs/mlui-storybook -s ./src/main/ui/assets",
