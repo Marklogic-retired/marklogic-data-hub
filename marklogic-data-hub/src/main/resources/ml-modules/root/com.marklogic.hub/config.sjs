@@ -4,5 +4,6 @@ module.exports = {
   TRACEDATABASE: "%%mlJobDbName%%",
   JOBDATABASE: "%%mlJobDbName%%",
   MODULESDATABASE: "%%mlModulesDbName%%",
-  HUBVERSION: "%%mlHubVersion%%"
+  HUBVERSION: "%%mlHubVersion%%",
+  HUBLOGLEVEL: "%%mlHubLogLevel%%"
 };
