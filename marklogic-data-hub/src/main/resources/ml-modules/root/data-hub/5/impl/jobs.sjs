@@ -1,4 +1,3 @@
-// cache buster: 5571f25e-a176-443e-96bc-ba35409fc169
 /**
   Copyright 2012-2019 MarkLogic Corporation
 
