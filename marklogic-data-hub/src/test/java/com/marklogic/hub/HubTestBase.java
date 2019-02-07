@@ -40,6 +40,7 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.job.JobMonitor;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.legacy.flow.CodeFormat;
@@ -140,6 +141,9 @@ public class HubTestBase {
     @Autowired
     protected LegacyFlowManagerImpl fm;
 
+    @Autowired
+    protected JobMonitor jobMonitor;
+
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'
     private static boolean isInstalled = false;
@@ -201,6 +205,8 @@ public class HubTestBase {
             throw new DataHubConfigurationException("Root ca lot loaded", e);
         }
     }
+
+
 
     protected void basicSetup() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -712,6 +718,11 @@ public class HubTestBase {
         finalDocMgr.write(uri, meta, handle);
     }
 
+    protected void installJobDoc(String uri, DocumentMetadataHandle meta, String resource) {
+        FileHandle handle = new FileHandle(getResourceFile(resource));
+        jobDocMgr.write(uri, meta, handle);
+    }
+
     protected void installModules(Map<String, String> modules) {
 
         DocumentWriteSet writeSet = modMgr.newWriteSet();
@@ -1039,13 +1050,14 @@ public class HubTestBase {
         fm.setupClient();
         dataHub.wireClient();
         versions.setupClient();
+        jobMonitor.setupClient();
 
     }
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
         Set<String> s =  Stream.of("hubProject", "environment", "flowManager", 
-                "dataHub", "versions", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
+                "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {
