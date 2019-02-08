@@ -32,7 +32,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.job.JobMonitor;
+import com.marklogic.hub.job.impl.JobMonitorImpl;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.processes.Process;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
@@ -86,7 +86,7 @@ public class HubConfigImpl implements HubConfig
     @Autowired
     Versions versions;
     @Autowired
-    JobMonitor jobMonitor;
+    JobMonitorImpl jobMonitor;
 
 
     protected String host;

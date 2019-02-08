@@ -14,43 +14,27 @@
   limitations under the License.
 */
 'use strict';
-
-const config = require("/com.marklogic.hub/config.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 
 function get(context, params) {
   let jobId = params["jobid"];
-  let status = params["status"];
   let step = params["step"];
   let batchId = params["batchid"];
 
   let resp = null;
 
-  if(fn.exists(jobId) && !fn.exists(status) && !fn.exists(step) && !fn.exists(batchId)) {
-    if (jobs.getJobDocWithId(jobId)){
-      resp = jobs.getJobStatusRest(jobId);
-    }
-    else{
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Job not found"]));
-    }
+  if(fn.exists(jobId) && fn.exists(step) ) {
+    resp = jobs.getBatchDocs(jobId, step);
   }
-  else if(!fn.exists(jobId) && fn.exists(status) && !fn.exists(step) && !fn.exists(batchId)) {
-    resp = jobs.getJobsStatus(status);
-  }
-  else if(fn.exists(jobId) && !fn.exists(status) && fn.exists(batchId)) {
-    if ( ! (jobs.getJobDocWithId(jobId) && jobs.getBatchDoc(batchId))){
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Job or Batch not found"]));
-    }
-    if(fn.exists(step)){
-      resp = jobs.getBatchStatus(jobId, batchId, step);
-    }
-    else{
-      resp = jobs.getBatchUris(jobId, batchId);
-    }
+  else if(fn.exists(jobId) && fn.exists(batchId)) {
+    resp = jobs.getBatchDoc(jobId, batchId);
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
+  }
+  if(fn.empty(resp)){
+    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "No batch document found"]));
   }
   return resp;
 };

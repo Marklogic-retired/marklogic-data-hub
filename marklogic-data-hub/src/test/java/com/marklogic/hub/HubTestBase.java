@@ -40,7 +40,7 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.job.JobMonitor;
+import com.marklogic.hub.job.impl.JobMonitorImpl;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.legacy.flow.CodeFormat;
@@ -142,7 +142,7 @@ public class HubTestBase {
     protected LegacyFlowManagerImpl fm;
 
     @Autowired
-    protected JobMonitor jobMonitor;
+    protected JobMonitorImpl jobMonitor;
 
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'

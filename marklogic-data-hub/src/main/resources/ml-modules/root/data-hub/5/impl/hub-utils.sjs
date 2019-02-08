@@ -16,35 +16,36 @@
 'use strict';
 const config = require("/com.marklogic.hub/config.sjs");
 
-function writeDocument(docUri, job, collections){
-  xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'job,' + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
-  {
-   job: job,
-   docUri:docUri,
-   collections:collections
-  },
-  {
-    database: xdmp.database(config.JOBDATABASE),
-    commit: 'auto',
-    update: 'true',
-    ignoreAmps: true
-  })
+class HubUtils {
+  constructor() {
+    this.config = config;
+  }
+  writeDocument(docUri, job, collections){
+    xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'job,' + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
+    {
+    job: job,
+    docUri:docUri,
+    collections:collections
+    },
+    {
+     database: xdmp.database(config.JOBDATABASE),
+     commit: 'auto',
+     update: 'true',
+     ignoreAmps: true
+    })
+  }
+  deleteDocument(docUri){
+    xdmp.eval('xdmp.documentDelete("' + docUri + '")',
+    {
+      docUri:docUri
+    },
+    {
+      database: xdmp.database(config.JOBDATABASE),
+      commit: 'auto',
+      update: 'true',
+      ignoreAmps: true
+    })
+  }
 }
 
-function deleteDocument(docUri){
-  xdmp.eval('xdmp.documentDelete("' + docUri + '")',
-  {
-    docUri:docUri
-  },
-  {
-    database: xdmp.database(config.JOBDATABASE),
-    commit: 'auto',
-    update: 'true',
-    ignoreAmps: true
-  })
-}
-
-module.exports = {
-  writeDocument:writeDocument,
-  deleteDocument:deleteDocument
-};
+module.exports = new HubUtils()
