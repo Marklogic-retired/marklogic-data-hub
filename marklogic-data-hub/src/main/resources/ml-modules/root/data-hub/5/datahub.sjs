@@ -15,16 +15,14 @@
 */
 
 'use strict';
+import configLib from 'impl/config-lib.sjs';
+
 
 const _requireCache = {};
 const config = require("/com.marklogic.hub/config.sjs");
 
-class DataHub {
+export class DataHub {
   constructor(){
     this.config = config;
   }
 }
-
-module.exports = {
-  datahub: DataHub()
-};
