@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output, Renderer2} from "@angular/core";
 import * as _ from "lodash";
-import {LoginInfo} from "../../../login/login-info.model";
-import {HubSettings} from "../../../environment/hub-settings.model";
+import {LoginInfo} from "../../../components/login/login-info.model";
+import {HubSettings} from "../../../models/hub-settings.model";
 
 @Component({
   selector: 'app-login-ui',

@@ -3,9 +3,9 @@ import { centered } from '@storybook/addon-centered/angular';
 import { object, text, withKnobs } from '@storybook/addon-knobs';
 import { moduleMetadata, storiesOf } from '@storybook/angular';
 
-import { DatePipePipe } from '../../../../date-pipe/date-pipe.pipe';
+import { DatePipePipe } from '../../../../pipes/date-pipe/date-pipe.pipe';
 import { ObjectToArrayPipe } from '../../../../object-to-array.pipe';
-import { TruncateCharactersPipe } from '../../../../truncate/truncate.pipe';
+import { TruncateCharactersPipe } from '../../../../pipes/truncate/truncate.pipe';
 import { PaginationComponent } from '../../../components/pagination';
 import { SelectComponent } from '../../../components/select/select.component';
 import { ThemeModule } from '../../../components/theme/theme.module';

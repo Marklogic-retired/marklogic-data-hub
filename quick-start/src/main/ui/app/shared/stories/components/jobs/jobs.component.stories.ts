@@ -16,8 +16,8 @@ import {FacetsComponent} from '../../../components/facets/facets.component';
 import {PaginationComponent} from '../../../components/pagination';
 import {JobsUiComponent} from "../../../components";
 import { ObjectToArrayPipe } from '../../../../object-to-array.pipe';
-import { TruncateCharactersPipe } from '../../../../truncate';
-import { DatePipePipe } from '../../../../date-pipe/date-pipe.pipe';
+import { TruncateCharactersPipe } from '../../../../pipes/truncate';
+import { DatePipePipe } from '../../../../pipes/date-pipe/date-pipe.pipe';
 
 
 storiesOf('Components|Jobs', module)

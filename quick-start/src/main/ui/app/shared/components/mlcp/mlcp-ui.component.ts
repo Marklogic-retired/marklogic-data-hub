@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import { Flow } from '../../../entities/flow.model';
+import { Flow } from '../../../models/flow.model';
 
 @Component({
   selector: 'app-mlcp-ui',

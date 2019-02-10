@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Trace } from '../../../traces/trace.model';
-import { SearchResponse } from './../../../search/search-response.model';
+import { Trace } from '../../../components/traces/trace.model';
+import { SearchResponse } from '../../../components/search/search-response.model';
 
 @Component({
   selector: 'app-traces-ui',

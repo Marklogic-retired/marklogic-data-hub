@@ -13,8 +13,8 @@ import { StoryCardComponent } from '../../utils';
 import { ThemeModule } from "../../../components";
 import { MappingsUiComponent } from "../../../components";
 import { GridManiaModule } from '../../../components/grid';
-import { Entity } from '../../../../entities';
-import { Mapping } from '../../../../mappings/mapping.model';
+import { Entity } from '../../../../models';
+import { Mapping } from '../../../../components/mappings/mapping.model';
 
 storiesOf('Components|Mappings', module)
   .addDecorator(withKnobs)

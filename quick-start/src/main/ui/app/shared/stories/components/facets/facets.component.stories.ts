@@ -7,7 +7,7 @@ import {centered} from '@storybook/addon-centered/angular';
 import {StoryCardComponent} from '../../utils/story-card/story-card.component';
 import {FacetsComponent} from '../../../components/facets/facets.component';
 import {ObjectToArrayPipe} from '../../../../object-to-array.pipe';
-import {TruncateCharactersPipe} from '../../../../truncate';
+import {TruncateCharactersPipe} from '../../../../pipes/truncate';
 import {ThemeModule} from '../../../components/theme/theme.module';
 import {Component, Input} from '@angular/core';
 

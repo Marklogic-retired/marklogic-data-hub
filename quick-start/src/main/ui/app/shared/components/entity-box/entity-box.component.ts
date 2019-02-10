@@ -9,7 +9,7 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Entity, PropertyType } from '../../../entities';
+import { Entity, PropertyType } from '../../../models';
 import { ResizableComponent } from '../resizable/resizable.component';
 
 @Component({

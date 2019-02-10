@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
-import { Entity } from '../../../entities';
+import { Entity } from '../../../models';
 import { MdlDialogService } from '@angular-mdl/core';
 import { MdlSnackbarService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { Mapping } from "../../../mappings/mapping.model";
+import { Mapping } from "../../../components/mappings/mapping.model";
 
 @Component({
   selector: 'app-map-ui',

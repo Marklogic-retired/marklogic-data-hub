@@ -10,31 +10,31 @@ import {centered} from '@storybook/addon-centered/angular';
 import {StoryCardComponent} from '../utils/story-card/story-card.component';
 import {ThemeModule} from "../../components";
 import {AppUiComponent} from "../../components";
-import {HeaderComponent} from './../../../header/header.component';
+import {HeaderComponent} from '../../../components/header/header.component';
 import {HeaderUiComponent} from './../../../shared/components/header/header-ui.component';
 import {HttpModule} from '@angular/http';
-import { AuthService } from './../../../auth/auth.service';
-import { ProjectService } from './../../../projects';
-import { JobListenerService } from './../../../jobs/job-listener.service';
-import { EnvironmentService } from './../../../environment';
-import { STOMPService } from './../../../stomp';
+import { AuthService } from '../../../services/auth/auth.service';
+import { ProjectService } from '../../../services/projects';
+import { JobListenerService } from '../../../components/jobs/job-listener.service';
+import { EnvironmentService } from '../../../services/environment';
+import { STOMPService } from '../../../services/stomp';
 import * as _ from 'lodash';
 
 
-class MockAuthService { 
+class MockAuthService {
   setAuthenticated() {}
 }
-class MockProjectService { 
+class MockProjectService {
   logout() { }
 }
 class MockSTOMPService { }
-class MockJobListenerService { 
+class MockJobListenerService {
   runningJobCount() {
     return 0;
   }
   totalPercentComplete() {}
 }
-class MockEnvironmentService { 
+class MockEnvironmentService {
   marklogicVersion: '9.0-8'
 }
 
@@ -51,9 +51,9 @@ _.forEach(paths, (path: string) => {
   })
   class DummyComponent { }
   classDefs.push(DummyComponent);
-  
+
   routeDef.push({
-    path, 
+    path,
     component: DummyComponent
   });
 })
@@ -73,9 +73,9 @@ storiesOf('Components|App', module)
             ],
             schemas: [],
             declarations: [
-              AppUiComponent, 
-              StoryCardComponent, 
-              HeaderComponent, 
+              AppUiComponent,
+              StoryCardComponent,
+              HeaderComponent,
               HeaderUiComponent,
               ...classDefs
             ],

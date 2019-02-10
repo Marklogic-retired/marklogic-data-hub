@@ -7,15 +7,15 @@ import { boolean, object, text, withKnobs } from '@storybook/addon-knobs';
 import { moduleMetadata, storiesOf } from '@storybook/angular';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { ClipboardDirective } from '../../../../clipboard';
+import { ClipboardDirective } from '../../../../directives/clipboard';
 import { CodemirrorComponent } from '../../../components/codemirror';
-import { FolderBrowserComponent } from '../../../../folder-browser';
-import { HarmonizeFlowOptionsComponent } from '../../../../harmonize-flow-options';
+import { FolderBrowserComponent } from '../../../../components/folder-browser';
+import { HarmonizeFlowOptionsComponent } from '../../../../components/harmonize-flow-options';
 import { HarmonizeFlowOptionsUiComponent } from '../../../components/harmonize-flow-options';
-import { MlcpComponent } from '../../../../mlcp';
+import { MlcpComponent } from '../../../../components/mlcp';
 import { MlcpUiComponent } from '../../../components/mlcp/';
 import { ObjectToArrayPipe } from '../../../../object-to-array.pipe';
-import { TruncateCharactersPipe } from '../../../../truncate';
+import { TruncateCharactersPipe } from '../../../../pipes/truncate';
 import { FlowsUiComponent } from '../../../components/flows';
 import { GridManiaModule } from '../../../components/grid';
 import { SelectComponent } from '../../../components/select/select.component';
@@ -23,10 +23,10 @@ import { ThemeModule } from '../../../components/theme/theme.module';
 import { StoryCardComponent } from '../../utils/story-card/story-card.component';
 import { SelectKeyValuesComponent } from '../../../components/select-key-values';
 import { FolderBrowserUiComponent } from '../../../components/folder-browser';
-import { EntitiesService } from './../../../../entities/entities.service';
-import { ProjectService } from './../../../../projects/projects.service';
-import { SettingsService } from './../../../../settings/settings.service';
-import { EnvironmentService } from './../../../../environment/environment.service';
+import { EntitiesService } from '../../../../models/entities.service';
+import { ProjectService } from '../../../../services/projects/projects.service';
+import { SettingsService } from '../../../../components/settings/settings.service';
+import { EnvironmentService } from '../../../../services/environment/environment.service';
 
 
 storiesOf('Components|Flows', module)

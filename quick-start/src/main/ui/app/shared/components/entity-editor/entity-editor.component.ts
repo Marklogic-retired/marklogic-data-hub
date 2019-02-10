@@ -11,7 +11,7 @@ import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
 import { ChooseCollationComponent } from '../choose-collation/choose-collation.component';
 import { ExternalDefDialogComponent } from '../externaldef-dialog/externaldef-dialog.component';
 
-import { Cardinality, Entity, PropertyType } from '../../../entities';
+import { Cardinality, Entity, PropertyType } from '../../../models';
 
 import * as _ from 'lodash';
 

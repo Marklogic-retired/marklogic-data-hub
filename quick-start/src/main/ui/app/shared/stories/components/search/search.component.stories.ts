@@ -14,10 +14,10 @@ import {StoryCardComponent} from '../../utils';
 import {ThemeModule} from "../../../components";
 import {FacetsComponent} from '../../../components/facets/facets.component';
 import {PaginationComponent} from '../../../components/pagination';
-import {ClipboardDirective} from '../../../../clipboard/clipboard.directive';
+import {ClipboardDirective} from '../../../../directives/clipboard/clipboard.directive';
 import {ObjectToArrayPipe } from '../../../../object-to-array.pipe';
-import {TruncateCharactersPipe} from '../../../../truncate';
-import {DatePipePipe} from '../../../../date-pipe/date-pipe.pipe';
+import {TruncateCharactersPipe} from '../../../../pipes/truncate';
+import {DatePipePipe} from '../../../../pipes/date-pipe/date-pipe.pipe';
 import {SearchUiComponent} from "../../../components";
 
 

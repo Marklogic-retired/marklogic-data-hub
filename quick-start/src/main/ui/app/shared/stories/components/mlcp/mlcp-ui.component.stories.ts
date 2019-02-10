@@ -10,9 +10,9 @@ import { MlcpUiComponent } from '../../../components/mlcp/mlcp-ui.component';
 import { ThemeModule } from '../../../components/theme/theme.module';
 import { StoryCardComponent } from '../../utils/story-card/story-card.component';
 import { FolderBrowserUiComponent } from '../../../components/folder-browser/folder-browser-ui.component';
-import { FolderBrowserComponent } from '../../../../folder-browser/folder-browser.component';
+import { FolderBrowserComponent } from '../../../../components/folder-browser/folder-browser.component';
 import { SelectComponent } from '../../../components/select/select.component';
-import { ClipboardDirective } from '../../../../clipboard/clipboard.directive';
+import { ClipboardDirective } from '../../../../directives/clipboard/clipboard.directive';
 import { Observable } from 'rxjs/Rx';
 
 class MockHttp {

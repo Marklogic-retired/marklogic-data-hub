@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { Mapping } from "../../../mappings/mapping.model";
+import { Mapping } from "../../../components/mappings/mapping.model";
 import * as _ from 'lodash';
 
 @Component({

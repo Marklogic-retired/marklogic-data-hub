@@ -13,9 +13,9 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { CodemirrorComponent } from '../codemirror';
-import { Entity } from '../../../entities/entity.model';
-import { Flow } from '../../../entities/flow.model';
-import { Plugin } from '../../../entities/plugin.model';
+import { Entity } from '../../../models/entity.model';
+import { Flow } from '../../../models/flow.model';
+import { Plugin } from '../../../models/plugin.model';
 
 
 @Component({
