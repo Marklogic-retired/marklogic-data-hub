@@ -32,12 +32,12 @@
     <match-path matches="^/.*\.(ico|js|css|ttf|eot|woff|woff2|svg)$">
         <add-query-param name="uri">$0</add-query-param>
         <add-query-param name="extension">$1</add-query-param>
-        <dispatch>/data-hub/5/tracing/trace-ui.xqy</dispatch>
+        <dispatch>/data-hub/4/tracing/trace-ui.xqy</dispatch>
     </match-path>
 
     <match-path matches="^/assets/.+$">
         <add-query-param name="uri">$0</add-query-param>
-        <dispatch>/data-hub/5/tracing/trace-ui.xqy</dispatch>
+        <dispatch>/data-hub/4/tracing/trace-ui.xqy</dispatch>
     </match-path>
 
     <!-- REST Client API endpoints -->
@@ -49,7 +49,7 @@
                 <match-query-param name="database">
                     <set-database checked="true">$0</set-database>
                 </match-query-param>
-                <dispatch>/data-hub/5/endpoints/collector.xqy</dispatch>
+                <dispatch>/data-hub/4/endpoints/collector.xqy</dispatch>
             </match-method>
         </match-path>
         <!-- DHF -->
@@ -843,17 +843,17 @@
     <match-path matches="^/hub">
         <match-path matches="^/hub/traces">
             <match-path matches="^/hub/traces/?$">
-                <dispatch>/data-hub/5/tracing/get-traces.xqy</dispatch>
+                <dispatch>/data-hub/4/tracing/get-traces.xqy</dispatch>
             </match-path>
             <match-path matches="^/hub/traces/ids">
-                <dispatch>/data-hub/5/tracing/get-ids.xqy</dispatch>
+                <dispatch>/data-hub/4/tracing/get-ids.xqy</dispatch>
             </match-path>
             <match-path matches="^/hub/traces/search">
-                <dispatch>/data-hub/5/tracing/search.xqy</dispatch>
+                <dispatch>/data-hub/4/tracing/search.xqy</dispatch>
             </match-path>
             <match-path matches="^/hub/traces/(\d+)">
                 <add-query-param name="id">$1</add-query-param>
-                <dispatch>/data-hub/5/tracing/get-trace.xqy</dispatch>
+                <dispatch>/data-hub/4/tracing/get-trace.xqy</dispatch>
             </match-path>
         </match-path>
     </match-path>
