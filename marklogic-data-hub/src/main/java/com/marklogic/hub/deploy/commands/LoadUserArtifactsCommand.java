@@ -23,8 +23,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.Modules;
-import com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -34,14 +33,11 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -86,7 +82,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
         if (forceLoad) {
             pmm.deletePropertiesFile();
-            if (defaultTimestampFile.exists()){
+            if (defaultTimestampFile.exists()) {
                 defaultTimestampFile.delete();
             }
         }
@@ -105,13 +101,18 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path startPath = userModulesPath.resolve("entities");
         Path mappingPath = userModulesPath.resolve("mappings");
 
+        Path projectPath = Paths.get(hubConfig.getProjectDir());
+        Path processesPath = projectPath.resolve("processes");
+        Path flowPath = projectPath.resolve("flows");
+
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
 
         DocumentWriteSet finalEntityDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingEntityDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet stagingProcessDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
 
         try {
@@ -137,7 +138,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 }
                             }
                             return FileVisitResult.CONTINUE;
-                        } else {
+                        }
+                        else {
                             return FileVisitResult.CONTINUE;
                         }
                     }
@@ -160,29 +162,80 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                         InputStream inputStream = r.getInputStream();
                                         StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                         inputStream.close();
-                                        finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                         stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                         propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                     }
                                 }
                                 return FileVisitResult.CONTINUE;
-                            } else {
+                            }
+                            else {
                                 return FileVisitResult.CONTINUE;
                             }
                         }
                     });
                 }
-                if (stagingEntityDocumentWriteSet.size() > 0) {
-                    finalDocMgr.write(finalEntityDocumentWriteSet);
-                    stagingDocMgr.write(stagingEntityDocumentWriteSet);
-                }
-                if (stagingMappingDocumentWriteSet.size() > 0) {
-                    finalDocMgr.write(finalMappingDocumentWriteSet);
-                    stagingDocMgr.write(stagingMappingDocumentWriteSet);
-                }
             }
 
-        } catch (IOException e) {
+            if (processesPath.toFile().exists()) {
+                Files.walkFileTree(processesPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        Modules modules = new ProcessDefModulesFinder().findModules(dir.toString());
+                        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                        meta.getCollections().add("http://marklogic.com/data-hub/process");
+                        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                        for (Resource r : modules.getAssets()) {
+                            if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                InputStream inputStream = r.getInputStream();
+                                StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                inputStream.close();
+                                stagingProcessDocumentWriteSet.add("/processes/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                            }
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            }
+
+            if (flowPath.toFile().exists()) {
+                Files.walkFileTree(flowPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        Modules modules = new FlowDefModulesFinder().findModules(dir.toString());
+                        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                        meta.getCollections().add("http://marklogic.com/data-hub/flow");
+                        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                        for (Resource r : modules.getAssets()) {
+                            if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                InputStream inputStream = r.getInputStream();
+                                StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                inputStream.close();
+                                stagingFlowDocumentWriteSet.add("/flows/" + r.getFilename(), meta, handle);
+                                propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                            }
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            }
+
+            if (stagingEntityDocumentWriteSet.size() > 0) {
+                finalDocMgr.write(finalEntityDocumentWriteSet);
+                stagingDocMgr.write(stagingEntityDocumentWriteSet);
+            }
+            if (stagingMappingDocumentWriteSet.size() > 0) {
+                stagingDocMgr.write(stagingMappingDocumentWriteSet);
+            }
+            if (stagingProcessDocumentWriteSet.size() > 0) {
+                stagingDocMgr.write(stagingProcessDocumentWriteSet);
+            }
+            if (stagingFlowDocumentWriteSet.size() > 0) {
+                stagingDocMgr.write(stagingFlowDocumentWriteSet);
+            }
+
+        }
+        catch (IOException e) {
             e.printStackTrace();
             //throw new RuntimeException(e);
         }
