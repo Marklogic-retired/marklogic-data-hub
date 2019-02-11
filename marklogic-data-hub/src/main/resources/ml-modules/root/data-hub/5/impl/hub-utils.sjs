@@ -20,7 +20,7 @@ class HubUtils {
   constructor() {
     this.config = config;
   }
-  writeDocument(docUri, job, collections){
+  writeJobDocument(docUri, job, collections){
     xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'job,' + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
     {
     job: job,
@@ -34,7 +34,7 @@ class HubUtils {
      ignoreAmps: true
     })
   }
-  deleteDocument(docUri){
+  deleteJobDocument(docUri){
     xdmp.eval('xdmp.documentDelete("' + docUri + '")',
     {
       docUri:docUri
@@ -45,6 +45,32 @@ class HubUtils {
       update: 'true',
       ignoreAmps: true
     })
+  }
+  writeStagingDocument(docUri, collections){
+    xdmp.eval('xdmp.documentInsert("' + docUri + '",'  + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
+      {
+        job: job,
+        docUri:docUri,
+        collections:collections
+      },
+      {
+        database: xdmp.database(config.STAGINGDATABASE),
+        commit: 'auto',
+        update: 'true',
+        ignoreAmps: true
+      })
+  }
+  deleteStagingDocument(docUri){
+    xdmp.eval('xdmp.documentDelete("' + docUri + '")',
+      {
+        docUri:docUri
+      },
+      {
+        database: xdmp.database(config.STAGINGDATABASE),
+        commit: 'auto',
+        update: 'true',
+        ignoreAmps: true
+      })
   }
 }
 

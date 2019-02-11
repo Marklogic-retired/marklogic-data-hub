@@ -13,16 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
 'use strict';
 import configLib from 'impl/config-lib.sjs';
 
-
 const _requireCache = {};
 const config = require("/com.marklogic.hub/config.sjs");
+const HubUtils =  require("/data-hub/5/impl/hub-utils.sjs");
 
 export class DataHub {
   constructor(){
     this.config = config;
+    this.hubUtils = HubUtils();
   }
 }

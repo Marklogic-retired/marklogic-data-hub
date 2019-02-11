@@ -37,7 +37,7 @@ class Jobs {
      }
     };
 
-    hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "'Jobs','Job'");
+    hubutils.writeJobDocument("/jobs/"+job.job.jobId+".json", job, "'Jobs','Job'");
     return job;
   }
 
@@ -59,7 +59,7 @@ class Jobs {
     cts.jsonPropertyValueQuery("jobId", jobId)]));
     for (let doc of uris) {
      if (fn.docAvailable(doc)){
-       hubutils.deleteDocument(doc);
+       hubutils.deleteJobDocument(doc);
      }
     }
   }
@@ -75,7 +75,7 @@ class Jobs {
     if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
       docObj.job.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "'Jobs','Job'");
+    hubutils.writeJobDocument("/jobs/"+ jobId +".json", docObj, "'Jobs','Job'");
   }
 
   getLastStepAttempted(jobId) {
@@ -124,7 +124,7 @@ class Jobs {
       }
     };
 
-    hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "'Jobs','Batch'");
+    hubutils.writeJobDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "'Jobs','Batch'");
     return jobId;
   }
 
@@ -158,7 +158,7 @@ class Jobs {
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "'Jobs','Batch'");
+    hubutils.JobDocument("/jobs/batches/"+ batchId +".json", docObj, "'Jobs','Batch'");
   }
 
   getBatchDoc(jobId, batchId) {
