@@ -7,7 +7,7 @@
 
   - Improved compatibility between Data Hub and Entity Services regarding nested entities and 1-to-many relationships among entities.
 
-  - Automatic generation and installation of a template-driven extraction (TDE) template in the SCHEMAS database. See [the TDE documentation](http://docs.marklogic.com/guide/app-dev/TDE).
+  - Automatic generation and installation of a template-driven extraction (TDE) template in the final SCHEMAS database (`data-hub-final-SCHEMAS`). See [the TDE documentation](http://docs.marklogic.com/guide/app-dev/TDE).
 
   </div>
 </details>
