@@ -159,12 +159,24 @@ declare function hent:dump-indexes($entities as json:array)
     xdmp:to-json($o)
 };
 
+declare variable $generated-primary-key-column as xs:string := "DataHubGeneratedPrimaryKey";
+declare variable $generated-primary-key-expression as xs:string := "xdmp:node-uri(.) || '#' || fn:position(.)";
+
 declare function hent:dump-tde($entities as json:array)
 {
   let $entity-values as map:map* := json:array-values($entities)
   let $uber-model := hent:uber-model($entity-values ! xdmp:to-json(.)/object-node())
   let $_set-info := $uber-model => map:put("info", fn:head($entity-values) => map:get("info"))
   let $uber-definitions := $uber-model => map:get("definitions")
+  (: Primary keys are required for each definition in an entity. If the primary key is missing, we'll help out by using the doc URI and position as the primary key. :)
+  let $_set-primary-keys-for-TDE :=
+    for $definition-type in map:keys($uber-definitions)
+    let $definition := $uber-definitions => map:get($definition-type)
+    where fn:empty($definition => map:get("primaryKey"))
+    return (
+      $definition => map:put("primaryKey", $generated-primary-key-column),
+      $definition => map:get("properties") => map:put($generated-primary-key-column, map:entry("datatype", "string"))
+    )
   let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
   return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions)
 };
@@ -183,25 +195,36 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         document {
           hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
         }
-      case element(tde:nullabe) return
+      case element(tde:nullable) return
         $default-nullable
       case element(tde:invalid-values) return
         $default-invalid-values
       case element(tde:val) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          let $col-name := fn:string($n/../tde:name)
-          return
-            if (fn:starts-with($n, $col-name)) then
-              let $parts := fn:tokenize($n, "/")
-              let $entity-definition := $uber-definitions => map:get(fn:string($parts[2]))
-              return
-                if (fn:exists($entity-definition)) then
-                  fn:string($n) || "/" || ($entity-definition => map:get("primaryKey"))
-                else
-                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
-            else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+          fn:replace(
+            let $col-name := fn:string($n/../tde:name)
+            return
+              if (fn:ends-with($col-name, $generated-primary-key-column)) then
+                $generated-primary-key-expression
+              else if (fn:starts-with($n, $col-name)) then
+                let $parts := fn:tokenize($n, "/")
+                let $entity-definition := $uber-definitions => map:get(fn:string($parts[2]))
+                return
+                  if (fn:exists($entity-definition)) then
+                    let $primary-key := $entity-definition => map:get("primaryKey")
+                    return
+                      if ($primary-key = $generated-primary-key-column) then
+                        $generated-primary-key-expression
+                      else
+                        fn:string($n) || "/" || $primary-key
+                  else
+                    fn:string($n)
+              else
+                fn:string($n),
+              "\./" || $generated-primary-key-column,
+              $generated-primary-key-expression
+          )
         }
       case element(tde:context) return
         element { fn:node-name($n) } {
@@ -210,6 +233,12 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
             fn:replace(fn:string($n),"^\./", ".//")
           else
             $n/node()
+        }
+      case element(tde:subject)|element(tde:predicate)|element(tde:object) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          hent:fix-tde($n/* except $n/tde:invalid-values, $entity-model-contexts, $uber-definitions),
+          $default-invalid-values
         }
       case element(tde:template) return
         element { fn:node-name($n) } {
@@ -234,9 +263,13 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                         if (fn:starts-with($column/tde:name, $join-prefix)) then (
                           hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-definitions),
                           let $tde-val := fn:string($column/tde:val)
+                          let $primary-key := $uber-definitions => map:get($tde-val) => map:get("primaryKey")
                           return
                             element tde:val {
-                              $tde-val || "/" || ($uber-definitions => map:get($tde-val) => map:get("primaryKey"))
+                              if ($primary-key = $generated-primary-key-column) then
+                                $generated-primary-key-expression
+                              else
+                                $tde-val || "/" || $primary-key
                             },
                           $default-nullable,
                           $default-invalid-values,
