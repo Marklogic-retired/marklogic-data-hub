@@ -48,4 +48,4 @@ class HubUtils {
   }
 }
 
-module.exports = new HubUtils()
+module.exports = HubUtils;

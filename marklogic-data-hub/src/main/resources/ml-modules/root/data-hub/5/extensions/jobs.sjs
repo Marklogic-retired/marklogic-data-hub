@@ -14,8 +14,8 @@
   limitations under the License.
 */
 'use strict';
-const jobslib = require("/data-hub/5/impl/jobs.sjs");
-
+const JobsLib = require("/data-hub/5/impl/jobs.sjs");
+const jobslib = new JobsLib();
 
 function get(context, params) {
   let jobId = params["jobid"];
@@ -35,7 +35,7 @@ function get(context, params) {
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
   }
-  if(fn.empty(resp)){
+  if(fn.empty(resp) || resp.length === 0){
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "No job document found"]));
   }
   return resp;

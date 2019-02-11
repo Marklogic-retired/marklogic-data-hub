@@ -14,7 +14,8 @@
   limitations under the License.
 */
 'use strict';
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+const JobsLib = require("/data-hub/5/impl/jobs.sjs");
+const jobs = new JobsLib();
 
 
 function get(context, params) {
@@ -33,7 +34,7 @@ function get(context, params) {
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
   }
-  if(fn.empty(resp)){
+  if(fn.empty(resp) || resp.length === 0){
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "No batch document found"]));
   }
   return resp;
