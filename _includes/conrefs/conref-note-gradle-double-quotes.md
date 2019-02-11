@@ -1,0 +1,1 @@
+{% include note.html type="IMPORTANT" content="If the value of a Gradle parameter contains a blank space, you *must* enclose the value in double quotation marks. If the value does *not* contain a blank space, you *must not* enclose the value in quotation marks." %}

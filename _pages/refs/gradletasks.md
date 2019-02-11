@@ -37,6 +37,8 @@ To pass parameters to Gradle tasks, use the `-P` option.
 
 {% include ostabs-run-gradle.html grtask="taskname ... -PparameterName=parameterValue ..." %}
 
+{% include conrefs/conref-note-gradle-double-quotes.md %}
+
 ### Running ml-gradle Tasks for Different Environments
 
 You can run ml-gradle tasks for a specific environment (e.g., development, QA, production, local).
