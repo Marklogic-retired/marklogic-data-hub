@@ -6,6 +6,7 @@ import {MdlModule} from '@angular-mdl/core';
 import {MdlPopoverModule} from '@angular-mdl/popover';
 import {MdlSelectModule} from '@angular-mdl/select';
 import {BsDropdownModule} from 'ngx-bootstrap';
+import {MaterialModule} from './material.module';
 
 @NgModule({
     imports: [
@@ -14,7 +15,8 @@ import {BsDropdownModule} from 'ngx-bootstrap';
         MdlModule,
         MdlPopoverModule,
         MdlSelectModule,
-        BsDropdownModule.forRoot()
+        BsDropdownModule.forRoot(),
+        MaterialModule
     ],
     declarations: [ThemeComponent],
     exports: [
@@ -24,7 +26,8 @@ import {BsDropdownModule} from 'ngx-bootstrap';
         MdlModule,
         MdlPopoverModule,
         MdlSelectModule,
-        BsDropdownModule
+        BsDropdownModule,
+        MaterialModule
     ]
 })
 export class ThemeModule {

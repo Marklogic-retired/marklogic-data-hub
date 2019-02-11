@@ -184,7 +184,7 @@ export class FlowPage extends AppPage {
   }
 
   mlcpInput(name: string) {
-    return element(by.css(`input[name="${name}"]`));
+    return element(by.id(name));
   }
 
   get toast() {
