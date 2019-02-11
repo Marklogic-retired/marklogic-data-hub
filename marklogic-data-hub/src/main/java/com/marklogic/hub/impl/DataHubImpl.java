@@ -39,7 +39,10 @@ import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
-import com.marklogic.hub.*;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.CMASettings;
@@ -557,6 +560,9 @@ public class DataHubImpl implements DataHub {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
         List<Command> commandMap = buildListOfCommands();
 
+        // Removing this command as databases are deleted by other DatabaseCommands
+        commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
+
         AppConfig appConfig = hubConfig.getAppConfig();
         CMASettings.getInstance().setCmaSettings(appConfig);
 
@@ -582,6 +588,8 @@ public class DataHubImpl implements DataHub {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
         updateDatabaseCommandList(commandMap);
+
+        addDatabaseFieldCommand(commandMap);
 
         updateServerCommandList(commandMap);
 
@@ -616,6 +624,16 @@ public class DataHubImpl implements DataHub {
             }
         }
         commandMap.put("mlDatabaseCommands", dbCommands);
+    }
+
+    /*
+        Adding a custom command to deploy database field using an XML payload because of
+        a bug in the RMA for JSON payload which fails to set the field type as "metadata".
+     */
+    private void addDatabaseFieldCommand(Map<String, List<Command>> commandMap) {
+        List<Command> databaseFieldList = new ArrayList<>();
+        databaseFieldList.add(new DeployDatabaseFieldCommand());
+        commandMap.put("mlDatabaseField", databaseFieldList);
     }
 
     private void updateServerCommandList(Map<String, List<Command>> commandMap) {

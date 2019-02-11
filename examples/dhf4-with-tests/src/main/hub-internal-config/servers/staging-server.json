@@ -8,7 +8,7 @@
   "content-database": "%%mlStagingDbName%%",
   "authentication": "%%mlStagingAuth%%",
   "default-error-format": "json",
-  "error-handler": "/data-hub/4/rest-api/error-handler.xqy",
-  "url-rewriter": "/data-hub/4/rest-api/rewriter.xml",
+  "error-handler": "/data-hub/5/rest-api/error-handler.xqy",
+  "url-rewriter": "/data-hub/5/rest-api/rewriter.xml",
   "rewrite-resolves-globally": true
 }

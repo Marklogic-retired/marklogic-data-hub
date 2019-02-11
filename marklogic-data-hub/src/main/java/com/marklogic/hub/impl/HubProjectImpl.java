@@ -519,8 +519,8 @@ public class HubProjectImpl implements HubProject {
                             ((ObjectNode) rootNode).put("error-handler", "/data-hub/5/rest-api/error-handler.xqy");
                         }
                         else {
-                            logger.info("Setting \"url-rewriter\" to \"/data-hub/4/tracing/tracing-rewriter.xml\"");
-                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");                            
+                            logger.info("Setting \"url-rewriter\" to \"/data-hub/5/tracing/tracing-rewriter.xml\"");
+                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/5/tracing/tracing-rewriter.xml");
                         }
                         String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
                         logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "

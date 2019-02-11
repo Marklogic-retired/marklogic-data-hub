@@ -19,6 +19,9 @@ const swaggerMockDocPath = path.join(__dirname, '/api/swagger/mocks.json');
 const swaggerMockDocument = require(swaggerMockDocPath);
 // const swaggerFullDocPath = path.join(__dirname, '/api/swagger/full.json')
 // const swaggerFullDocument = require(swaggerFullDocPath);
+
+// turn off warnings
+process.env.WARN = 'off';
  
 let app = express();
 let middleware = new Middleware(app);
