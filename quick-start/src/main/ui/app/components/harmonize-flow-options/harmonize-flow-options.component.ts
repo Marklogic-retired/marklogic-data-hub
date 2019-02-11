@@ -12,7 +12,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Flow } from '../../models/flow.model';
 import { EntitiesService } from '../../models/entities.service';
 import { SearchService } from '../search/search.service';
-import { SelectKeyValuesComponent } from '../../shared/components/select-key-values/select-key-values.component';
+import { SelectKeyValuesComponent } from '../select-key-values/select-key-values.component';
 import { MapService } from '../mappings/map.service';
 import { MdlDialogService } from '@angular-mdl/core';
 import { PropertyType } from '../../models/index';

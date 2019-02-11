@@ -8,7 +8,7 @@ import { InstallService } from '../../services/installer';
 import { LoginInfo } from './login-info.model';
 import { HubSettings } from '../../models/hub-settings.model';
 import { MdlDialogService } from '@angular-mdl/core';
-import {LoginUIComponent} from "../../shared/components";
+import {LoginUIComponent} from "../index";
 
 import * as SemVer from 'semver';
 

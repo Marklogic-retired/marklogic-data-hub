@@ -1,44 +1,43 @@
-import { MdlDialogService, MdlSnackbarService } from '@angular-mdl/core';
-import { Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { distanceInWords } from 'date-fns';
+import {MdlDialogService, MdlSnackbarService} from '@angular-mdl/core';
+import {Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {distanceInWords} from 'date-fns';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Rx';
+import {Observable} from 'rxjs/Rx';
 
-import { DeployService } from '../../services/deploy/deploy.service';
-import { EntitiesService } from '../../models/entities.service';
-import { Entity } from '../../models';
-import { Flow } from '../../models/flow.model';
-import { Plugin } from '../../models';
-import { EnvironmentService } from '../../services/environment';
-import { HarmonizeFlowOptionsComponent } from '../harmonize-flow-options';
-import { JobListenerService } from '../jobs';
-import { NewFlowComponent } from '../new-flow/new-flow.component';
-import { HasBugsDialogComponent } from '../../shared/components/index';
-import { CodemirrorComponent } from '../../shared/components/codemirror';
-import { NewEntityComponent } from '../../shared/components/new-entity/new-entity.component';
+import {DeployService} from '../../services/deploy/deploy.service';
+import {EntitiesService} from '../../models/entities.service';
+import {Entity, Plugin} from '../../models';
+import {Flow} from '../../models/flow.model';
+import {EnvironmentService} from '../../services/environment';
+import {HarmonizeFlowOptionsComponent} from '../harmonize-flow-options';
+import {JobListenerService} from '../jobs';
+import {NewFlowComponent} from '../new-flow/new-flow.component';
+import {HasBugsDialogComponent} from '..';
+import {CodemirrorComponent} from '../codemirror';
+import {NewEntityComponent} from '../new-entity/new-entity.component';
 
 @Component({
   selector: 'app-flows',
   template: `
-  <app-flows-ui
-    [hasErrors] = "hasErrorsInput"
-    [markLogicVersion] = "markLogicVersionInput"
-    [lastDeployed] = "lastDeployedInput"
-    [entities] = "entities"
-    [entity] = "entity"
-    [errors] = "errorsInput"
-    [flowType] = "flowType"
-    [flow] = "flow"
-    [mlcpOptions] = "mlcpOptions"
-    (deleteFlowClicked) = "deleteFlow($event)"
-    (showNewFlowClicked) = "showNewFlow($event)"
-    (redeployClicked) = "redeployModules()"
-    (runImportClicked) = "runInputFlow($event)"
-    (runHarmonizeClicked) = "runHarmonizeFlow($event)"
-    (savePluginClicked) = "savePlugin($event)"
-  >
-  </app-flows-ui>
+    <app-flows-ui
+      [hasErrors]="hasErrorsInput"
+      [markLogicVersion]="markLogicVersionInput"
+      [lastDeployed]="lastDeployedInput"
+      [entities]="entities"
+      [entity]="entity"
+      [errors]="errorsInput"
+      [flowType]="flowType"
+      [flow]="flow"
+      [mlcpOptions]="mlcpOptions"
+      (deleteFlowClicked)="deleteFlow($event)"
+      (showNewFlowClicked)="showNewFlow($event)"
+      (redeployClicked)="redeployModules()"
+      (runImportClicked)="runInputFlow($event)"
+      (runHarmonizeClicked)="runHarmonizeFlow($event)"
+      (savePluginClicked)="savePlugin($event)"
+    >
+    </app-flows-ui>
   `
 })
 export class FlowsComponent implements OnInit, OnDestroy {
@@ -149,13 +148,13 @@ export class FlowsComponent implements OnInit, OnDestroy {
       this.snackbar.showSnackbar({
         message: `Job ${jobId} Finished.`,
         action: {
-          handler: () => {},
+          handler: () => {
+          },
           text: 'OK'
         }
       });
     }, 0);
   }
-
 
 
   getLastDeployed() {
@@ -230,26 +229,29 @@ export class FlowsComponent implements OnInit, OnDestroy {
 
   toggleEntity(entity: Entity): void {
     const collapsed: boolean = this.isCollapsed(entity);
-    _.each(this.entities, e => { this.setCollapsed(e, true); });
+    _.each(this.entities, e => {
+      this.setCollapsed(e, true);
+    });
     this.setCollapsed(entity, !collapsed);
   }
 
-  deleteFlow({flow, flowType}: {flow: Flow, flowType: string}): void {
+  deleteFlow({flow, flowType}: { flow: Flow, flowType: string }): void {
     var resetView = (this.flow === undefined) || (
       flow.flowName === this.flow.flowName &&
       flowType === this.getFlowType(this.flow, this.flow.entityName)
     );
     this.dialogService.confirm(`Really delete ${flow.flowName}`, 'Cancel', 'Delete').subscribe(() => {
-      this.entitiesService.deleteFlow(flow, flowType).subscribe(() => {
-        if (flowType.toUpperCase() === 'HARMONIZE') {
-          this.deleteHarmonizeSettings(flow.flowName);
-        }
-        if (resetView) {
-          this.router.navigate(['/flows']);
-        }
+        this.entitiesService.deleteFlow(flow, flowType).subscribe(() => {
+          if (flowType.toUpperCase() === 'HARMONIZE') {
+            this.deleteHarmonizeSettings(flow.flowName);
+          }
+          if (resetView) {
+            this.router.navigate(['/flows']);
+          }
+        });
+      },
+      () => {
       });
-    },
-    () => {});
   }
 
   setFlow(flow: Flow, flowType: string): void {
@@ -275,7 +277,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     }
   }
 
-  savePlugin({plugin}: {plugin: Plugin}): void {
+  savePlugin({plugin}: { plugin: Plugin }): void {
     if (plugin.$dirty) {
       this.isSaving = true;
       this.entitiesService
@@ -308,22 +310,22 @@ export class FlowsComponent implements OnInit, OnDestroy {
   showNewEntity(ev: Event): void {
     const actions = {
       save: (newEntity: Entity) => {
-      this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
-        this.entities.splice(_.sortedIndexBy(this.entities, entity, 'name'), 0, entity);
-        this.toggleEntity(entity);
-      });
+        this.entitiesService.createEntity(newEntity).subscribe((entity: Entity) => {
+          this.entities.splice(_.sortedIndexBy(this.entities, entity, 'name'), 0, entity);
+          this.toggleEntity(entity);
+        });
       }
     };
     this.dialogService.showCustomDialog({
       component: NewEntityComponent,
       providers: [
-        { provide: 'actions', useValue: actions }
+        {provide: 'actions', useValue: actions}
       ],
       isModal: true
     });
   }
 
-  showNewFlow({entity, flowType}: {entity: Entity, flowType: string}): void {
+  showNewFlow({entity, flowType}: { entity: Entity, flowType: string }): void {
     const actions = {
       save: (newFlow: Flow) => {
         this.entitiesService.createFlow(entity, flowType.toUpperCase(), newFlow).subscribe((flow: Flow) => {
@@ -339,10 +341,10 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.dialogService.showCustomDialog({
       component: NewFlowComponent,
       providers: [
-        { provide: 'flowType', useValue: flowType },
-        { provide: 'actions', useValue: actions },
-        { provide: 'entity', useValue: entity },
-        { provide: 'flows', useValue: this.getFlows(entity, flowType) }
+        {provide: 'flowType', useValue: flowType},
+        {provide: 'actions', useValue: actions},
+        {provide: 'entity', useValue: entity},
+        {provide: 'flows', useValue: this.getFlows(entity, flowType)}
       ],
       isModal: true
     });
@@ -354,7 +356,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
 
   getFlowType(flow: Flow, entityName: string) {
     var flowType = null;
-    var entity = this.entities.find(function(entity){
+    var entity = this.entities.find(function (entity) {
       return (entity.name === entityName)
     });
     if (this.entity.inputFlows.indexOf(flow) > -1) {
@@ -381,13 +383,13 @@ export class FlowsComponent implements OnInit, OnDestroy {
     this.dialogService.showCustomDialog({
       component: HasBugsDialogComponent,
       providers: [
-        { provide: 'errors', useValue: this.getErrors()[flow.entityName][flow.flowName] }
+        {provide: 'errors', useValue: this.getErrors()[flow.entityName][flow.flowName]}
       ],
       isModal: true
     });
   }
 
-  runInputFlow({flow, options}: {flow: Flow, options: any}): void {
+  runInputFlow({flow, options}: { flow: Flow, options: any }): void {
     this.entitiesService.runInputFlow(flow, options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',
@@ -395,7 +397,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     });
   }
 
-  runHarmonizeFlow({flow, options}: {flow: Flow, options: any}): void {
+  runHarmonizeFlow({flow, options}: { flow: Flow, options: any }): void {
     this.entitiesService.runHarmonizeFlow(flow, options.batchSize, options.threadCount, options.options);
     this.snackbar.showSnackbar({
       message: flow.entityName + ': ' + flow.flowName + ' starting...',

@@ -1,4 +1,4 @@
-import { CodemirrorComponent } from '../shared/components/codemirror';
+import {CodemirrorComponent} from '../components/codemirror';
 
 export class Plugin {
   $dirty: boolean;
@@ -13,7 +13,8 @@ export class Plugin {
     undone: []
   }
 
-  constructor() {}
+  constructor() {
+  }
 
   fromJSON(json) {
     this.pluginType = json.pluginType;

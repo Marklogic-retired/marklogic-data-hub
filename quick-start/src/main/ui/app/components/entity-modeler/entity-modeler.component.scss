@@ -1,4 +1,4 @@
-@import '../../shared/components/theme/styles/variables';
+@import '../theme/styles/variables';
 
 $title-color: unquote("rgb(#{$palette-datahub-100})");
 $selected-color: unquote("rgb(#{$palette-datahub-500})");

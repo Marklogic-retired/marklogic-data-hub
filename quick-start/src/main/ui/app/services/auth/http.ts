@@ -1,9 +1,15 @@
 import {
-  Http, Request, RequestOptionsArgs, Response,
-  RequestOptions, ConnectionBackend, Headers, XHRBackend
+  ConnectionBackend,
+  Headers,
+  Http,
+  Request,
+  RequestOptions,
+  RequestOptionsArgs,
+  Response,
+  XHRBackend
 } from '@angular/http';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import {Router} from '@angular/router';
+import {Observable} from 'rxjs/Rx';
 
 import * as _ from 'lodash';
 
@@ -50,11 +56,11 @@ class HttpInterceptor extends Http {
 
   intercept(observable: Observable<Response>): Observable<Response> {
     return observable.catch((err, source) => {
-      if (err.status  === 401 && !_.endsWith(err.url, '/login')) {
-          this._router.navigate(['login']);
-          return Observable.empty(null);
-        } else {
-          return Observable.throw(err);
+      if (err.status === 401 && !_.endsWith(err.url, '/login')) {
+        this._router.navigate(['login']);
+        return Observable.empty(null);
+      } else {
+        return Observable.throw(err);
       }
     });
 
@@ -62,10 +68,10 @@ class HttpInterceptor extends Http {
 }
 
 export function interceptorFactory(
-    xhrBackend: XHRBackend,
-    requestOptions: RequestOptions,
-    router: Router
-  ) {
+  xhrBackend: XHRBackend,
+  requestOptions: RequestOptions,
+  router: Router
+) {
   return new HttpInterceptor(xhrBackend, requestOptions, router);
 }
 
@@ -73,4 +79,4 @@ export const HTTP_PROVIDER = {
   provide: Http,
   useFactory: interceptorFactory,
   deps: [XHRBackend, RequestOptions, Router]
- };
+};

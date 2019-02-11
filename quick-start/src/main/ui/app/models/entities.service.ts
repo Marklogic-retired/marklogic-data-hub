@@ -1,20 +1,20 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { ProjectService } from '../services/projects';
-import { Subject } from 'rxjs/Subject';
-import { SettingsService } from '../components/settings';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Http, Response} from '@angular/http';
+import {ProjectService} from '../services/projects';
+import {Subject} from 'rxjs/Subject';
+import {SettingsService} from '../components/settings';
 
-import { DefinitionsType } from './definitions.model';
-import { Entity } from './entity.model';
-import { Flow } from './flow.model';
-import { Plugin } from './plugin.model';
-import { PropertyType } from './property.model';
+import {DefinitionsType} from './definitions.model';
+import {Entity} from './entity.model';
+import {Flow} from './flow.model';
+import {Plugin} from './plugin.model';
+import {PropertyType} from './property.model';
 
-import { MdlDialogService, MdlDialogReference } from '@angular-mdl/core';
+import {MdlDialogReference, MdlDialogService} from '@angular-mdl/core';
 
-import { EntityEditorComponent } from '../shared/components/';
+import {EntityEditorComponent} from '../components/';
 
-import { EntityConsts } from './entity-consts';
+import {EntityConsts} from './entity-consts';
 
 import * as _ from 'lodash';
 
@@ -34,7 +34,8 @@ export class EntitiesService {
     private projectService: ProjectService,
     private dialogService: MdlDialogService,
     private settingsService: SettingsService
-  ) {}
+  ) {
+  }
 
   getEntities() {
     this.http.get(this.url('/entities/')).map((res: Response) => {
@@ -65,7 +66,7 @@ export class EntitiesService {
       return new Entity().fromJSON(res.json());
     }).share();
     resp.subscribe((newEntity: Entity) => {
-      const index = _.findIndex(this.entities, { 'name': newEntity.name });
+      const index = _.findIndex(this.entities, {'name': newEntity.name});
       if (index >= 0) {
         this.entities[index] = newEntity;
       } else {
@@ -114,7 +115,7 @@ export class EntitiesService {
   }
 
   findEntityByName(entityName: string): Entity {
-    return _.find(this.entities, { 'name': entityName });
+    return _.find(this.entities, {'name': entityName});
   }
 
   editEntity(entity: Entity) {
@@ -132,13 +133,13 @@ export class EntitiesService {
     const editDialog = this.dialogService.showCustomDialog({
       component: EntityEditorComponent,
       providers: [
-        { provide: 'entity', useValue: entity },
-        { provide: 'actions', useValue: actions },
-        { provide: 'dataTypes', useValue: this.getDataTypes() }
+        {provide: 'entity', useValue: entity},
+        {provide: 'actions', useValue: actions},
+        {provide: 'dataTypes', useValue: this.getDataTypes()}
       ],
       isModal: true
     });
-    editDialog.subscribe( (dialogReference: MdlDialogReference) => {
+    editDialog.subscribe((dialogReference: MdlDialogReference) => {
     });
     return result.asObservable();
   }
@@ -156,13 +157,13 @@ export class EntitiesService {
   deleteEntity(entityToDelete: Entity) {
     // remove references to this entity
     this.entities.forEach((entity: Entity) => {
-     this.entityReferencesInEntity(entity).forEach((prop: PropertyType) => {
-       if (prop.$ref && prop.$ref.endsWith(entityToDelete.name)) {
+      this.entityReferencesInEntity(entity).forEach((prop: PropertyType) => {
+        if (prop.$ref && prop.$ref.endsWith(entityToDelete.name)) {
           prop.$ref = null;
-       } else if (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entityToDelete.name)) {
-         prop.items.$ref = null;
-       }
-     });
+        } else if (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entityToDelete.name)) {
+          prop.items.$ref = null;
+        }
+      });
 
       const connectionName = `${entity.name}-${entityToDelete.name}`;
       if (entity.hubUi && entity.hubUi.vertices && entity.hubUi.vertices[connectionName]) {
@@ -170,9 +171,10 @@ export class EntitiesService {
       }
     });
 
-    _.remove(this.entities, { 'name': entityToDelete.name });
+    _.remove(this.entities, {'name': entityToDelete.name});
     this.saveEntities(this.entities);
-    this.http.delete(this.url(`/entities/${entityToDelete.name}`)).subscribe(() => {});
+    this.http.delete(this.url(`/entities/${entityToDelete.name}`)).subscribe(() => {
+    });
     return this.entities;
   }
 
@@ -204,7 +206,8 @@ export class EntitiesService {
   }
 
   saveEntitiesUiState(entities: Array<Entity>) {
-    return this.http.post(this.url('/entities/ui/'), entities).subscribe(() => {});
+    return this.http.post(this.url('/entities/ui/'), entities).subscribe(() => {
+    });
   }
 
   createFlow(entity: Entity, flowType: string, flow: Flow) {
@@ -242,17 +245,25 @@ export class EntitiesService {
       mlcpPath: this.settingsService.mlcpPath,
       mlcpOptions: mlcpOptions
     };
-    return this.http.post(url, options).subscribe(() => {});
+    return this.http.post(url, options).subscribe(() => {
+    });
   }
 
   saveHarmonizeFlowOptions(flow: Flow, batchSize: number, threadCount: number, mapping: any, options: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/save-harmonize-options`);
-    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount, mapping: mapping, options: options }).subscribe(() => {});
+    return this.http.post(url, {
+      batchSize: batchSize,
+      threadCount: threadCount,
+      mapping: mapping,
+      options: options
+    }).subscribe(() => {
+    });
   }
 
   runHarmonizeFlow(flow: Flow, batchSize: number, threadCount: number, options: any) {
     const url = this.url(`/entities/${flow.entityName}/flows/harmonize/${flow.flowName}/run`);
-    return this.http.post(url, { batchSize: batchSize, threadCount: threadCount, options: options }).subscribe(() => {});
+    return this.http.post(url, {batchSize: batchSize, threadCount: threadCount, options: options}).subscribe(() => {
+    });
   }
 
   private extractTypes() {

@@ -4,7 +4,7 @@ import { Entity } from '../../models';
 import { EntitiesService } from '../../models/entities.service';
 import { SearchService } from '../search/search.service';
 import { MapService } from './map.service';
-import { MapUiComponent } from '../../shared/components/index';
+import { MapUiComponent } from '../index';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';

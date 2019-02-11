@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { NgTranscludeDirective } from './common';
-import { TooltipContainerUiComponent } from '../../shared/components/index';
+import { TooltipContainerUiComponent } from '../index';
 import { TooltipContainerComponent } from './tooltip-container.component';
 import { TooltipDirective } from './tooltip.directive';
 import { ComponentsHelper } from './components-helper.service';

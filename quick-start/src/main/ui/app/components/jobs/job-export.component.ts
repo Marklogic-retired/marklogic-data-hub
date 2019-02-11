@@ -1,6 +1,6 @@
 import {Component, Inject, ViewChild} from '@angular/core';
 import {JobService} from './jobs.service';
-import {JobExportUiComponent} from '../../shared/components';
+import {JobExportUiComponent} from '../index';
 
 @Component({
   selector: 'job-export-dialog',
