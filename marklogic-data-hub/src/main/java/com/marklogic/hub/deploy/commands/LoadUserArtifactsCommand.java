@@ -144,36 +144,36 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                         }
                     }
                 });
+            }
 
-                //now let's do the mappings path
-                if (mappingPath.toFile().exists()) {
-                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                            String currentDir = dir.normalize().toAbsolutePath().toString();
+            //now let's do the mappings path
+            if (mappingPath.toFile().exists()) {
+                Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        String currentDir = dir.normalize().toAbsolutePath().toString();
 
-                            if (isArtifactDir(dir, mappingPath.toAbsolutePath())) {
-                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
-                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
-                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                                for (Resource r : modules.getAssets()) {
-                                    if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                        InputStream inputStream = r.getInputStream();
-                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                        inputStream.close();
-                                        stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                    }
+                        if (isArtifactDir(dir, mappingPath.toAbsolutePath())) {
+                            Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
+                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                            meta.getCollections().add("http://marklogic.com/data-hub/mappings");
+                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                            for (Resource r : modules.getAssets()) {
+                                if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                    InputStream inputStream = r.getInputStream();
+                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                    inputStream.close();
+                                    stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                    propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
-                                return FileVisitResult.CONTINUE;
                             }
-                            else {
-                                return FileVisitResult.CONTINUE;
-                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                    });
-                }
+                        else {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    }
+                });
             }
 
             if (processesPath.toFile().exists()) {
