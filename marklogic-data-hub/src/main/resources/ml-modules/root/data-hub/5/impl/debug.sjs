@@ -15,10 +15,10 @@
 */
 'use strict';
 
-export class Debug {
+class Debug {
     constructor(config) {
-      this.logLevel   = config && config.logLevel || 'default';
       this.logLevels  = ['default','notice','trace','info'];
+      this.logLevel   = config && config.logLevel || 'default';
       this.logTypes   = ['error','warning','notice','trace','info'];
     }
   
@@ -78,3 +78,5 @@ export class Debug {
 //      })
     }
 }
+
+module.exports = Debug
