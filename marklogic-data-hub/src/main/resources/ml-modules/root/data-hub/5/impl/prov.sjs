@@ -24,11 +24,11 @@ class Prov {
      */
     constructor(config) {
       if(!config) {
-        config = defaultConfig; 
+        config = defaultConfig;
       }
       this.granularityLevels  = ['fine','coarse'];
       this.granularityLevel   = config && config.granularityLevel || 'coarse';
-      this.jobsDatabase       = hubConfig.JOBDATABASE;
+      this.jobsDatabase       = config.JOBDATABASE;
     }
 
     /**

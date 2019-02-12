@@ -85,6 +85,16 @@ class Process {
     return doc;
   }
 
+  deleteProcess(name, type) {
+    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/processes/"),cts.collectionQuery('http://marklogic.com/data-hub/process'),
+      cts.jsonPropertyValueQuery("name", name), cts.jsonPropertyValueQuery("type", type)]));
+    for (let doc of uris) {
+      if (fn.docAvailable(doc)){
+        this.hubUtils.deleteStagingDocument(doc);
+      }
+    }
+  }
+
 }
 
 

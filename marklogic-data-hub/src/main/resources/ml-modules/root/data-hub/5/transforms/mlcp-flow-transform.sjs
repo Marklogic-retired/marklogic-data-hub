@@ -40,7 +40,7 @@ function transform(content, context) {
     params[parts[0]] = parts[1];
   }
 
-  let jobId = params["job-id"] || '';
+  let jobId = params["job-id"] || null;
   let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
   let flowName = params['flow-name'] ?  xdmp.urlDecode(params['flow-name']) : null;
   let flow = datahub.flow.getFlow(flowName);
@@ -64,6 +64,8 @@ function transform(content, context) {
   }
 
   content.value = document;
+  //let's set some metadata content for our createdOn datetime field
+  context.metadata.createdOn = fn.currentDateTime();
   return content;
 }
 
