@@ -28,6 +28,8 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowImpl;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -169,6 +171,10 @@ public class FlowManagerImpl implements FlowManager {
         catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
         }
+    }
+
+    @Override public FlowRunner newFlowRunner() {
+        return new FlowRunnerImpl(hubConfig);
     }
 
     private JsonNode flowScaffolding = null;

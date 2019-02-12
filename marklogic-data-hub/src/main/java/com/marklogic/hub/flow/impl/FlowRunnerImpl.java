@@ -204,8 +204,11 @@ public class FlowRunnerImpl implements FlowRunner {
             return new JobTicketImpl(((CollectorImpl) c).getJobId(), JobTicket.JobType.QUERY_BATCHER);
         }
 
+        // Get the jobId from the collector and set it to the in-memory object for further access.
+        job.withJobId(((CollectorImpl) c).getJobId());
+
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-            listener.onStatusChange(((CollectorImpl) c).getJobId(), 0, "starting harmonization");
+            listener.onStatusChange(job.getJobId(), 0, "starting harmonization");
         });
         Vector<String> errorMessages = new Vector<>();
 
@@ -223,7 +226,7 @@ public class FlowRunnerImpl implements FlowRunner {
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
-            .withJobId(((CollectorImpl) c).getJobId())
+            .withJobId(job.getJobId())
             .onUrisReady((QueryBatch batch) -> {
                 try {
                     FlowResource flowResource;
@@ -236,7 +239,7 @@ public class FlowRunnerImpl implements FlowRunner {
                     }
                     options.put("uri", batch.getItems());
 
-                    RunFlowResponse response = flowResource.run(((CollectorImpl) c).getJobId(), step, options);
+                    RunFlowResponse response = flowResource.run(job.getJobId(), step, options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
@@ -256,14 +259,14 @@ public class FlowRunnerImpl implements FlowRunner {
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
                         previousPercentComplete = percentComplete;
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChange(((CollectorImpl) c).getJobId(), percentComplete, "");
+                            listener.onStatusChange(job.getJobId(), percentComplete, "");
                         });
                     }
 
                     if (flowItemCompleteListeners.size() > 0) {
                         response.completedItems.forEach((String item) -> {
                             flowItemCompleteListeners.forEach((FlowItemCompleteListener listener) -> {
-                                listener.processCompletion(((CollectorImpl) c).getJobId(), item);
+                                listener.processCompletion(job.getJobId(), item);
                             });
                         });
                     }
@@ -271,7 +274,7 @@ public class FlowRunnerImpl implements FlowRunner {
                     if (flowItemFailureListeners.size() > 0) {
                         response.failedItems.forEach((String item) -> {
                             flowItemFailureListeners.forEach((FlowItemFailureListener listener) -> {
-                                listener.processFailure(((CollectorImpl) c).getJobId(), item);
+                                listener.processFailure(job.getJobId(), item);
                             });
                         });
                     }
@@ -303,7 +306,7 @@ public class FlowRunnerImpl implements FlowRunner {
             queryBatcher.awaitCompletion();
 
             flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                listener.onStatusChange(((CollectorImpl) c).getJobId(), 100, "");
+                listener.onStatusChange(job.getJobId(), 100, "");
             });
 
             flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));

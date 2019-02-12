@@ -19,6 +19,7 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
 
 import java.util.List;
 
@@ -91,4 +92,9 @@ public interface FlowManager {
     void saveFlow(Flow flow);
 
 
+    /**
+     * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
+     * @return FlowRunner object with current hubconfig already set
+     */
+    public FlowRunner newFlowRunner();
 }
