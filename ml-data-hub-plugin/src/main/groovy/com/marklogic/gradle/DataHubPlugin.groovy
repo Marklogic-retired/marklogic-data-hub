@@ -142,6 +142,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
 
         String flowGroup = "MarkLogic Data Hub LegacyFlow Management"
+        project.task("hubRunLegacyFlow", group: flowGroup, type: RunLegacyFlowTask)
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
         project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask)
         project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask)
