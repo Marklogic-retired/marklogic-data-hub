@@ -21,12 +21,15 @@ const Flow = require("/data-hub/5/impl/flow.sjs");
 const Process = require("/data-hub/5/impl/process.sjs");
 const Prov = require("/data-hub/5/impl/prov.sjs");
 const Debug = require("/data-hub/5/impl/debug.sjs");
-const config = require("/com.marklogic.hub/config.sjs");
+const defaultConfig = require("/com.marklogic.hub/config.sjs");
 const _requireCache = {};
 
 class DataHub {
 
-  constructor(){
+  constructor(config){
+    if(!config) {
+      config = defaultConfig;
+    }
     this.config = config;
     this.hubUtils = new HubUtils(config);
     this.flow = new Flow();

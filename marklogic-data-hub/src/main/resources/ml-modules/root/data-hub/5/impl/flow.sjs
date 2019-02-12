@@ -15,6 +15,8 @@
 */
 'use strict';
 
+const debug = require("/data-hub/5/impl/debug.sjs");
+
 class Flow {
 
   constructor() {
@@ -49,7 +51,12 @@ class Flow {
     }
   }
 
-  runFlow(name, options, jobId, step) {
+  runFlow(flowName, options, jobId, step) {
+    let flow = this.getFlow(flowName);
+    if(!flow) {
+      debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
+      throw Error()
+    }
 
   }
 }

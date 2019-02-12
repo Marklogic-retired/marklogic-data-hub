@@ -14,9 +14,13 @@
   limitations under the License.
 */
 'use strict';
+const defaultConfig = require("/com.marklogic.hub/config.sjs");
 
 class HubUtils {
   constructor(config) {
+    if(!config) {
+      config = defaultConfig;
+    }
     this.config = config;
   }
   getConfig() {

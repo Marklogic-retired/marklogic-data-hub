@@ -14,6 +14,8 @@
   limitations under the License.
 */
 'use strict';
+const defaultConfig = require("/com.marklogic.hub/config.sjs");
+
 class Prov {
     /**
      * @desc Provenance Class constructor
@@ -21,6 +23,9 @@ class Prov {
      * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
      */
     constructor(config) {
+      if(!config) {
+        config = defaultConfig; 
+      }
       this.granularityLevels  = ['fine','coarse'];
       this.granularityLevel   = config && config.granularityLevel || 'coarse';
       this.jobsDatabase       = hubConfig.JOBDATABASE;

@@ -14,9 +14,13 @@
  limitations under the License.
  */
 'use strict';
+const defaultConfig = require("/com.marklogic.hub/config.sjs");
 
 class Debug {
   constructor(config) {
+    if(!config) {
+      config = defaultConfig;
+    }
     this.logLevel   = config && config.HUBLOGLEVEL || 'default';
     this.logLevels  = ['default','notice','trace','info'];
     this.logTypes   = ['error','warning','notice','trace','info'];
