@@ -22,6 +22,15 @@
                 <dispatch>/data-hub/4/endpoints/collector.xqy</dispatch>
             </match-method>
         </match-path>
+
+      <match-path matches="^/(v1|LATEST)/internal/hubcollector5/?$">
+        <match-method any-of="GET">
+          <match-query-param name="database">
+            <set-database checked="true">$0</set-database>
+          </match-query-param>
+          <dispatch>/data-hub/5/endpoints/collector.xqy</dispatch>
+        </match-method>
+      </match-path>
         <!-- DHF -->
 
         <match-path matches="^/(v1|LATEST)/alert/rules/?$">
