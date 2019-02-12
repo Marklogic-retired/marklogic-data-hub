@@ -116,25 +116,33 @@ class Prov {
      * @param {Object} options - provenance record options (see individual type requirements below)
      */
     _createRecord(id, options) {
-      xdmp.securityAssert("http://marklogic.com//xdmp/privileges/provenance/ps-user", "execute");
+      xdmp.eval(`
+        const ps = require('/MarkLogic/provenance');
+        xdmp.securityAssert("http://marklogic.com//xdmp/privileges/provenance/ps-user", "execute");
 
-      options = options || {};
-      options.dateTime = String(fn.currentDateTime());
-      options.namespaces = { "dhf":"http://marklogic.com/dhf" }; // for user defined provenance types
+        options = options || {};
+        options.dateTime = String(fn.currentDateTime());
+        options.namespaces = { "dhf":"http://marklogic.com/dhf" }; // for user defined provenance types
 
-      // relations
-      options.relations = options.relations || {};
-      options.relations.attributedTo = xdmp.getCurrentUser();
+        // relations
+        options.relations = options.relations || {};
+        options.relations.attributedTo = xdmp.getCurrentUser();
 
-      // attributes
-      options.attributes = options.attributes || {};
-      options.attributes.roles = xdmp.getCurrentRoles().toArray().join(',');
-      options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r)).join(',');
-      
-      var record = ps.provenanceRecord(id, options);
-      ps.provenanceRecordInsert(record);
+        // attributes
+        options.attributes = options.attributes || {};
+        options.attributes.roles = xdmp.getCurrentRoles().toArray().join(',');
+        options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r)).join(',');
 
-      // TODO: eval with this.jobsDatabase used as target  
+        var record = ps.provenanceRecord(id, options);
+        ps.provenanceRecordInsert(record);
+        `,
+        { id, options },
+        {
+          database: xdmp.database(this.config.JOBDATABASE),
+          commit: 'auto',
+          update: 'true',
+          ignoreAmps: true
+      })
     }
 
     /**
@@ -359,22 +367,38 @@ class Prov {
      * @param docURI - The URI of the document
      * @param {Object} [info]
      */
-    queryDocRecords(docURI) { 
-      var match = {
-        "attributes":{
-          "location": docURI
-        }
-      };
-      // TODO: change "out" so output for a single prov record is combined into a single Object in the Array
-      var out = {
-        "dateTime": "?",
-        "provTypes": "?",  
-        "attributes" : {"location" : "?"}
-      };
-      let kvPattern = ps.opTriplePattern(match, out);
-      return op.fromTriples(kvPattern).result().toArray();  
+    queryDocRecords(docURI, info) { 
+      let resp;
+      if (docURI)
+        resp = xdmp.eval(`
+          const ps = require('/MarkLogic/provenance');
+          const op = require('/MarkLogic/optic');
+          var match = {
+            "attributes":{
+              "location": docURI
+            }
+          };
+          // TODO: change "out" so output for a single prov record is combined into a single Object in the Array
+          var out = {
+            "dateTime": "?",
+            "provTypes": "?",  
+            "attributes" : {"location" : "?"}
+          };
+          let kvPattern = ps.opTriplePattern(match, out);
+          op.fromTriples(kvPattern).result().toArray();  
+          `,
+          { docURI },
+          {
+            database: xdmp.database(this.config.JOBDATABASE),
+            commit: 'auto',
+            update: 'true',
+            ignoreAmps: true
+        })
+      else 
+         resp = new Error(`Function requires param 'docURI' to be defined.`);
+      
+      return resp;
     }
-
 }
 
 module.exports = Prov
