@@ -51,14 +51,14 @@ Since 2.0.0 you can [URL encode](https://en.wikipedia.org/wiki/Percent-encoding)
 
 ## MLCP Example
 
-This is how you would run a flow named "My Awesome Flow" for the entity named "YourEntityName".
+This is how you would run a flow named "MyAwesomeFlow" for the entity named "MyAwesomeEntity".
 
   ```
   /path/to/mlcp import \
   ... \
   -transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy" \
   -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" \
-  -transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
+  -transform_param 'entity-name=MyAwesomeEntity,flow-name=MyAwesomeFlow,job-id=someString,options={"your":"options"}'
   ```
 
 If your flow is implemented with JavaScript, use this module:
@@ -67,7 +67,7 @@ If your flow is implemented with JavaScript, use this module:
   /path/to/mlcp import \
   ... \
   -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" \
-  -transform_param 'entity-name=YourEntityName,flow-name=My%20Awesome%20Flow,job-id=someString,options={"your":"options"}'
+  -transform_param 'entity-name=MyAwesomeEntity,flow-name=MyAwesomeFlow,job-id=someString,options={"your":"options"}'
   ```
 
 ## See Also

@@ -107,7 +107,7 @@ If your endpoints are publicly available, you can use any machine that is set up
 
     **NOTE:** If you use a different name for the properties file,
       - The filename must be in the format `gradle-{env}.properties`, where `{env}` is any string you want to represent an environment. For example, you can store the settings for your development environment in `gradle-dev.properties`.
-      - Remember to update the value of the \"-PenvironmentName\" parameter to `{env}` in the Gradle commands in the following steps."
+      - Remember to update the value of the `-PenvironmentName` parameter to `{env}` in the Gradle commands in the following steps.
 
     a. Copy the following to the new file:
 
@@ -173,7 +173,7 @@ If your endpoints are publicly available, you can use any machine that is set up
       - [Apache NiFi](https://developer.marklogic.com/code/apache-nifi) <!-- TODO: After DHFPROD-1542, replace this link. -->
 
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
-   {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=harmonize  -PenvironmentName=DHS" %}
+   {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize -PenvironmentName=DHS" %}
 
    {% include conrefs/conref-note-gradle-double-quotes.md %}
 1. Verify that your documents are in the databases.

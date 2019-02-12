@@ -14,12 +14,12 @@ Entities are the high-level business objects in your enterprise. They can be thi
 
 To create an entity, you simply issue this gradle command:
 
-{% include ostabs.html linux="./gradlew hubCreateEntity -PentityName=\"My Awesome Entity\"" windows="gradlew.bat hubCreateEntity -PentityName=\"My Awesome Entity\"" %}
+{% include ostabs.html linux="./gradlew hubCreateEntity -PentityName=MyAwesomeEntity" windows="gradlew.bat hubCreateEntity -PentityName=MyAwesomeEntity" %}
 
-The command will generate an empty directory: `$project-dir/plugins/entities/My Awesome Entity`
+The command creates an entity file (`$project-dir/plugins/entities/MyAwesomeEntity/MyAwesomeEntity.entity.json`), which you can modify to add properties as needed.
 
 ## Creating a Harmonize Flow
-{% include ostabs.html linux="./gradlew hubCreateHarmonizeFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\"" windows="gradlew.bat hubCreateHarmonizeFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\"" %}
+{% include ostabs.html linux="./gradlew hubCreateHarmonizeFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow" windows="gradlew.bat hubCreateHarmonizeFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow" %}
 
 ## Running your Harmonize Flow
-{% include ostabs.html linux="./gradlew hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=harmonize" windows="gradlew.bat hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=harmonize" %}
+{% include ostabs.html linux="./gradlew hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize" windows="gradlew.bat hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize" %}
