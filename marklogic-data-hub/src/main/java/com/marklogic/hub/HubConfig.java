@@ -512,6 +512,12 @@ public interface HubConfig {
     String getDHFVersion();
 
     /**
+     * Gets the current level of logging set for the data hub
+     * @return Log level of the data hub config
+     */
+    String getHubLogLevel();
+
+    /**
      * Gets a new DatabaseClient that queries the staging database and appserver
      * @return A client that accesses the hub's staging appserver and staging database.
      */

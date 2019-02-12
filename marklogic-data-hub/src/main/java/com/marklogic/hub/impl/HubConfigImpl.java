@@ -1645,6 +1645,11 @@ public class HubConfigImpl implements HubConfig
         return this.DHFVersion;
     }
 
+    @Override public String getHubLogLevel() {
+
+        return this.hubLogLevel;
+    }
+
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getAppConfig();
 
