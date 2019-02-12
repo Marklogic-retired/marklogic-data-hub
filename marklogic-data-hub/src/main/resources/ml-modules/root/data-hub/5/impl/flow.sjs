@@ -15,16 +15,34 @@
 */
 'use strict';
 
-const debug = require("/data-hub/5/impl/debug.sjs");
+const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const Debug = require("/data-hub/5/impl/debug.sjs");
 
 class Flow {
 
-  constructor() {
-
+  constructor(config) {
+    if(!config) {
+      config = defaultConfig;
+    }
+    this.config = config;
+    this.debug = new Debug(config);
+    this.hubUtils = new HubUtils(config);
   }
 
   getFlowNames() {
+    let names = [];
+    let query = [cts.directoryQuery("/flows/"), cts.collectionQuery('http://marklogic.com/data-hub/flow')];
+    let docs = cts.search(cts.andQuery(query));
+    if(docs) {
+      for(let doc of docs) {
+        let name = doc.xpath('/name');
+        if(name) {
+          names.push(name);
+        }
+      }
+    }
 
+    return names;
   }
 
   getFlows(){
@@ -35,6 +53,16 @@ class Flow {
       docs.push(cts.doc(doc).toObject());
     }
     return docs;
+  }
+
+  deleteFlow(flowName) {
+    let uris = cts.uris("", null ,cts.andQuery([cts.orQuery([cts.directoryQuery("/flows/"),cts.collectionQuery("http://marklogic.com/data-hub/flow")]),
+      cts.jsonPropertyValueQuery("name", flowName)]));
+    for (let doc of uris) {
+      if (fn.docAvailable(doc)){
+        this.hubUtils.deleteStagingDocument(doc);
+      }
+    }
   }
 
   //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
@@ -55,7 +83,19 @@ class Flow {
     let flow = this.getFlow(flowName);
     if(!flow) {
       debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
-      throw Error()
+      throw Error('The flow with the name '+flowName+' could not be found.')
+    }
+
+    if(jobId){
+
+    } else {
+
+    }
+
+    if(step){
+
+    } else {
+
     }
 
   }

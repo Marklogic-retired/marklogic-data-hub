@@ -32,9 +32,9 @@ class DataHub {
     }
     this.config = config;
     this.hubUtils = new HubUtils(config);
-    this.flow = new Flow();
-    this.process = new Process();
-    this.jobs = new Jobs();
+    this.flow = new Flow(config);
+    this.process = new Process(config);
+    this.jobs = new Jobs(config);
     this.prov = new Prov(config);
     this.debug = new Debug(config);
   }

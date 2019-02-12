@@ -14,12 +14,17 @@
   limitations under the License.
 */
 'use strict';
+const defaultConfig = require("/com.marklogic.hub/config.sjs");
 const HubUtils =  require("/data-hub/5/impl/hub-utils.sjs");
 const hubutils = new HubUtils();
 
 class Jobs {
 
-  constructor() {
+  constructor(config) {
+    if(!config) {
+      config = defaultConfig;
+    }
+    this.config = config;
   }
 
   createJob(flowName, id = null ) {

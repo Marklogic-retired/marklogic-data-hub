@@ -14,9 +14,15 @@
   limitations under the License.
 */
 
+const defaultConfig = require("/com.marklogic.hub/config.sjs");
+
 class Process {
 
-  constructor() {
+  constructor(config) {
+    if(!config) {
+      config = defaultConfig;
+    }
+    this.config = config;
   }
 
 }
