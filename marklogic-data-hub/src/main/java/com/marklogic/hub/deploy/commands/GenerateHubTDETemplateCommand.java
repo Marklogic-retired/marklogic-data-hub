@@ -48,6 +48,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     private Path userFinalSchemasTDEs;
 
     private String entityNames;
+    private List<String> entityNamesList = Collections.EMPTY_LIST;
 
     public GenerateHubTDETemplateCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -70,25 +71,27 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
             logger.debug("Found the following entities->files: {} " + entityNameFileMap);
 
-            filterEntities(entityNameFileMap);
+            //filterEntities(entityNameFileMap);
 
             if (!entityNameFileMap.isEmpty()) {
                 logger.warn("About to generate a template for the following entities: {} into directory {} ",
-                    entityNameFileMap.keySet(), hubConfig.getAppConfig().getSchemasPath());
-
+                    this.entityNamesList.isEmpty() ? entityNameFileMap.keySet() : this.entityNamesList, hubConfig.getAppConfig().getSchemasPath());
+                List<GeneratedCode> generatedCodes = new ArrayList<>();
                 for (File f : entityNameFileMap.values()) {
                     File esModel;
+                    String modelName;
                     try {
                         //Write the ES model to a temp file
                         String tempDir = System.getProperty("java.io.tmpdir");
                         String fileName = f.getName();
+                        modelName = EntityServicesManager.extractEntityNameFromURI(fileName).get();
                         esModel = new File(tempDir, fileName);
                         String modelString = generateModel(f);
                         if(modelString == null) {
                             logger.warn(f.getName() + " is not deployed to the database");
                             continue;
                         }
-                        FileUtils.writeStringToFile(esModel, generateModel(f));
+                        FileUtils.writeStringToFile(esModel, modelString);
                     } catch (IOException e) {
                         throw new RuntimeException("Unable to generate ES model");
                     }
@@ -102,9 +105,13 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                     finally {
                         FileUtils.deleteQuietly(esModel);
                     }
+                    if (this.entityNamesList.isEmpty() || this.entityNamesList.contains(modelName)) {
+                        generatedCodes.add(code);
+                    }
+                }
+                for (GeneratedCode code: generatedCodes) {
                     generateExtractionTemplate(appConfig, code);
                 }
-
             }
 
         } else {
@@ -132,6 +139,9 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
     public void setEntityNames(String entityNames) {
         this.entityNames = entityNames;
+        if (entityNames != null) {
+            this.entityNamesList = Arrays.asList(entityNames.split(","));
+        }
     }
 
     protected void filterEntities(Map<String,File> entityNameFileMap) {
@@ -209,15 +219,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     }
 
     protected static Optional<String> extractEntityNameFromFilename(String filename) {
-        if (filename==null || filename.trim().isEmpty()) {
-            return Optional.of(null);
-        }
-        int index = filename.indexOf(ENTITY_FILE_EXTENSION);
-        if (index<0) {
-            //not found
-            return Optional.of(null);
-        }
-        return Optional.of(filename.substring(0,index));
+        return EntityServicesManager.extractEntityNameFromURI(filename);
     }
 
     private static Function<File, String> extractEntityNameFunction() {
