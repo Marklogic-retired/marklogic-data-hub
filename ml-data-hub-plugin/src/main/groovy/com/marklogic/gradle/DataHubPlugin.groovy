@@ -141,13 +141,15 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.hubPreInstallCheck.getDependsOn().add("hubDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
 
-        String flowGroup = "MarkLogic Data Hub LegacyFlow Management"
-        project.task("hubRunLegacyFlow", group: flowGroup, type: RunLegacyFlowTask)
-        project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
-        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask)
-        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask)
+        String legacyFlowGroup = "MarkLogic Data Hub LegacyFlow Management"
+        project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask)
+        project.task("hubDeleteJobs", group: legacyFlowGroup, type: DeleteJobsTask)
+        project.task("hubExportJobs", group: legacyFlowGroup, type: ExportJobsTask)
         // This task is undocumented, so don't let it appear in the list
         project.task("hubImportJobs", group: null, type: ImportJobsTask)
+
+        String flowGroup = "MarkLogic Data Hub Flow Management"
+        project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
         logger.info("Finished initializing ml-data-hub\n")
     }
