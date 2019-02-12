@@ -20,7 +20,7 @@ const hubutils = new HubUtils();
 
 class Jobs {
 
-  constructor(config) {
+  constructor(config = null) {
     if(!config) {
       config = defaultConfig;
     }
@@ -30,6 +30,7 @@ class Jobs {
   createJob(flowName, id = null ) {
     let job = null;
     if(id == null){
+      //todo find a better way to create a UUID
      id = xdmp.random();
     }
     job = {

@@ -17,7 +17,7 @@
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
 
 class Debug {
-  constructor(config) {
+  constructor(config = null) {
     if(!config) {
       config = defaultConfig;
     }

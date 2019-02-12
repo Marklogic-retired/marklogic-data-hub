@@ -40,7 +40,7 @@ function transform(content, context) {
     params[parts[0]] = parts[1];
   }
 
-  let jobId = params["job-id"] || null;
+  let jobId = params["job-id"] || sem.uuidString();
   let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
   let flowName = params['flow-name'] ?  xdmp.urlDecode(params['flow-name']) : null;
   let flow = datahub.flow.getFlow(flowName);
@@ -56,7 +56,7 @@ function transform(content, context) {
   }
 
   //don't catch any exception here, let it slip through to mlcp
-  let document = datahub.flow.runFlow(flowName, options, jobId, step);
+  let document = datahub.flow.runFlow(flowName, jobId, uri, content.value, options, step);
 
   if(!document) {
     datahub.debug.log({message: params, type: 'error'});

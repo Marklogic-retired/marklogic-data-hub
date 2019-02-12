@@ -26,7 +26,7 @@ const _requireCache = {};
 
 class DataHub {
 
-  constructor(config){
+  constructor(config = null){
     if(!config) {
       config = defaultConfig;
     }

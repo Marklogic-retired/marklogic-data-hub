@@ -22,7 +22,7 @@ class Prov {
      * @param {Object} [config] 
      * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
      */
-    constructor(config) {
+    constructor(config = null) {
       if(!config) {
         config = defaultConfig;
       }

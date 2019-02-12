@@ -20,7 +20,7 @@ const defaultConfig = require("/com.marklogic.hub/config.sjs");
 
 class Process {
 
-  constructor(config) {
+  constructor(config = null) {
     if(!config) {
       config = defaultConfig;
     }
