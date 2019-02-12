@@ -36,6 +36,9 @@ class Flow {
     this.globalContext = {
       flow : {},
       jobId: '',
+      attemptStep: 1,
+      lastCompletedStep: 0,
+      lastAttemptedStep: 0,
       targetDb: config.FINALDATABASE,
       sourceDb: config.STAGINGDATABASE
     };
@@ -102,10 +105,10 @@ class Flow {
       }
   }
 
-  runFlow(flowName, jobId, uri, content, options, stepNumber = 1) {
+  runFlow(flowName, jobId, uri, content, options, stepNumber) {
     let flow = this.getFlow(flowName);
     if(!flow) {
-      debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
+      this.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
       throw Error('The flow with the name '+flowName+' could not be found.')
     }
     //set the flow in the context
@@ -117,11 +120,21 @@ class Flow {
     }
     //set the jobid in the context based on the jobdoc response
     this.globalContext.jobId = jobDoc.jobId;
+    this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
+    this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
+
+    //grab the step, or the first if its null/not set
+    if(!stepNumber) {
+      stepNumber = 1;
+    }
+
+    //set the context for the attempted step
+    this.globalContext.attemptStep = stepNumber;
 
     let step = this.globalContext.flow.steps[stepNumber];
     if(!step) {
-      debug.log({message: 'Step '+stepNumber+' for the flow:'+flowName+' could not be found.', type: 'error'});
-      throw Error('Step '+stepNumber+' for the flow:'+flowName+' could not be found.')
+      this.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
+      throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')
     }
 
     if(step.targetDb) {
@@ -136,7 +149,7 @@ class Flow {
 
     let processMainFunc = this.makeFunction("main", process.modulePath);
     if(!processMainFunc) {
-      debug.log({message: 'Could not find main() function for process '+step.type+'/'+step.name+' for step # '+stepNumber+' for the flow:'+flowName+' could not be found.', type: 'error'});
+      this.debug.log({message: 'Could not find main() function for process '+step.type+'/'+step.name+' for step # '+stepNumber+' for the flow:'+flowName+' could not be found.', type: 'error'});
       throw Error('Could not find main() function for process '+step.type+'/'+step.name+' for step # '+stepNumber+' for the flow:'+flowName+' could not be found.')
     }
 
@@ -145,6 +158,9 @@ class Flow {
 
     let result = this.runMain(uri, content, combinedOptions, processMainFunc);
 
+    //let's update our jobdoc now, assuming success
+    //this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
+
     return result;
   }
 
@@ -152,9 +168,11 @@ class Flow {
   runMain(uri, content, options, func) {
     let resp;
     try {
-        resp = func(id, content, options);
+        resp = func(uri, content, options);
     }
     catch(ex) {
+        //ruh roh, time to log our failure :(
+        //this.jobs.updateJob(this.globalContext.jobId, this.globalContext.attemptStep, this.globalContext.lastCompletedStep, "failed");
         throw(ex);
     }
     if (resp instanceof Sequence) {

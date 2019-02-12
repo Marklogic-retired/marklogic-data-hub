@@ -22,6 +22,8 @@ function transform(content, context) {
   let params = {};
   let optionsString = null;
   let parsedTransformParam = null;
+  //let's set some metadata content for our createdOn datetime field
+  context.metadata = {"createdOn" : fn.currentDateTime()};
   let transformString = context.transform_param;
   let pattern = '^.*(options=\{.*\}).*$';
   let match = new RegExp(pattern).exec(transformString);
@@ -64,8 +66,6 @@ function transform(content, context) {
   }
 
   content.value = document;
-  //let's set some metadata content for our createdOn datetime field
-  context.metadata.createdOn = fn.currentDateTime();
   return content;
 }
 

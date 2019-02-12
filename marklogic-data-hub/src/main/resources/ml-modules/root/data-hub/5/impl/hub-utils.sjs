@@ -34,7 +34,7 @@ class HubUtils {
     collections:collections
     },
     {
-     database: xdmp.database(config.JOBDATABASE),
+     database: xdmp.database(this.config.JOBDATABASE),
      commit: 'auto',
      update: 'true',
      ignoreAmps: true
@@ -46,7 +46,7 @@ class HubUtils {
       docUri:docUri
     },
     {
-      database: xdmp.database(config.JOBDATABASE),
+      database: xdmp.database(this.config.JOBDATABASE),
       commit: 'auto',
       update: 'true',
       ignoreAmps: true
@@ -60,7 +60,7 @@ class HubUtils {
         collections:collections
       },
       {
-        database: xdmp.database(config.STAGINGDATABASE),
+        database: xdmp.database(this.config.STAGINGDATABASE),
         commit: 'auto',
         update: 'true',
         ignoreAmps: true
@@ -72,7 +72,7 @@ class HubUtils {
         docUri:docUri
       },
       {
-        database: xdmp.database(config.STAGINGDATABASE),
+        database: xdmp.database(this.config.STAGINGDATABASE),
         commit: 'auto',
         update: 'true',
         ignoreAmps: true

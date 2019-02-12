@@ -3,7 +3,7 @@ function main(id, rawContent, options) {
       "envelope" : {
         "triples": {},
         "headers": {
-          "createdOn": xdmp.currentDateTime(),
+          "createdOn": fn.currentDateTime(),
           "optionsTest" : options.test
         },
         "content": rawContent
