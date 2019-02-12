@@ -202,29 +202,25 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
       case element(tde:val) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          fn:replace(
-            let $col-name := fn:string($n/../tde:name)
-            return
-              if (fn:ends-with($col-name, $generated-primary-key-column)) then
-                $generated-primary-key-expression
-              else if (fn:starts-with($n, $col-name)) then
-                let $parts := fn:tokenize($n, "/")
-                let $entity-definition := $uber-definitions => map:get(fn:string($parts[2]))
-                return
-                  if (fn:exists($entity-definition)) then
-                    let $primary-key := $entity-definition => map:get("primaryKey")
-                    return
-                      if ($primary-key = $generated-primary-key-column) then
-                        $generated-primary-key-expression
-                      else
-                        fn:string($n) || "/" || $primary-key
-                  else
-                    fn:string($n)
-              else
-                fn:string($n),
-              "\./" || $generated-primary-key-column,
+          let $col-name := fn:string($n/../tde:name)
+          return
+            if (fn:ends-with($col-name, $generated-primary-key-column)) then
               $generated-primary-key-expression
-          )
+            else if (fn:starts-with($n, $col-name)) then
+              let $parts := fn:tokenize($n, "/")
+              let $entity-definition := $uber-definitions => map:get(fn:string($parts[2]))
+              return
+                if (fn:exists($entity-definition)) then
+                  let $primary-key := $entity-definition => map:get("primaryKey")
+                  return
+                    if ($primary-key = $generated-primary-key-column) then
+                      $generated-primary-key-expression
+                    else
+                      fn:string($n) || "/" || $primary-key
+                else
+                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+            else
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
         }
       case element(tde:context) return
         element { fn:node-name($n) } {
@@ -233,6 +229,14 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
             fn:replace(fn:string($n),"^\./", ".//")
           else
             $n/node()
+        }
+      case element(tde:column) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          hent:fix-tde($n/* except $n/(tde:nullable|tde:invalid-values), $entity-model-contexts, $uber-definitions),
+          $default-nullable,
+          $default-invalid-values
         }
       case element(tde:subject)|element(tde:predicate)|element(tde:object) return
         element { fn:node-name($n) } {
@@ -289,6 +293,10 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-definitions)
         }
       case text() return
-        fn:replace($n, "^\.\./(.+)$", "(../$1|parent::array-node()/../$1)")
+        fn:replace(
+          fn:replace($n, "^\.\./(.+)$", "(../$1|parent::array-node()/../$1)"),
+          "\./" || $generated-primary-key-column,
+          $generated-primary-key-expression
+        )
       default return $n
 };
