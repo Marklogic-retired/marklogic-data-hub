@@ -54,12 +54,9 @@ public interface Collector {
 
     /**
      * Obtains and grabs a list of uris that match the collector code
-     * @param jobId - id of the job this is to have
-     * @param entity - name of which entity is this being run against
      * @param flow - name of which flow
-     * @param threadCount - how many threads to use for the operation
-     * @param options - string/object map of options you want to pass to the collector
+     * @param step - step of the flow
      * @return a list of uris as strings in a diskqueue object
      */
-    DiskQueue<String> run(String flow);
+    DiskQueue<String> run(String flow, String step);
 }

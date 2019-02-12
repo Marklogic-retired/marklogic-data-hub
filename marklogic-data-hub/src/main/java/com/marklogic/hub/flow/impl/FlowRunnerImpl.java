@@ -59,6 +59,9 @@ public class FlowRunnerImpl implements FlowRunner {
     private int previousPercentComplete;
     private boolean stopOnFailure = false;
 
+
+    private int step = 1;
+
     private List<FlowItemCompleteListener> flowItemCompleteListeners = new ArrayList<>();
     private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
@@ -77,6 +80,12 @@ public class FlowRunnerImpl implements FlowRunner {
         this.flow = flow;
         return this;
     }
+
+    public FlowRunner withStep(int step) {
+        this.step = step;
+        return this;
+    }
+
 
     @Override
     public FlowRunner withBatchSize(int batchSize) {
@@ -173,6 +182,8 @@ public class FlowRunnerImpl implements FlowRunner {
         }
         options.put("flow", this.flow.getName());
 
+        //The job id is not set until collector completes. Hence the value here would be null, so it is not set here
+
 /*        flowStatusListeners.forEach((FlowStatusListener listener) -> {
             listener.onStatusChange(((CollectorImpl) c).getJobId(), 0, "running collector");
         });*/
@@ -180,7 +191,7 @@ public class FlowRunnerImpl implements FlowRunner {
        // jobManager.saveJob(job.withStatus(JobStatus.RUNNING_COLLECTOR));
         final DiskQueue<String> uris;
         try {
-            uris = c.run(this.flow.getName());
+            uris = c.run(this.flow.getName(),  String.valueOf(step));
         } catch (Exception e) {
             job.setCounts(0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED)
@@ -194,7 +205,7 @@ public class FlowRunnerImpl implements FlowRunner {
         }
 
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-            listener.onStatusChange(jobId, 0, "starting harmonization");
+            listener.onStatusChange(((CollectorImpl) c).getJobId(), 0, "starting harmonization");
         });
         Vector<String> errorMessages = new Vector<>();
 
@@ -212,7 +223,7 @@ public class FlowRunnerImpl implements FlowRunner {
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
-            .withJobId(jobId)
+            .withJobId(((CollectorImpl) c).getJobId())
             .onUrisReady((QueryBatch batch) -> {
                 try {
                     FlowResource flowResource;
@@ -223,8 +234,9 @@ public class FlowRunnerImpl implements FlowRunner {
                         flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
                         databaseClientMap.put(batch.getClient(), flowResource);
                     }
+                    options.put("uri", batch.getItems());
 
-                    RunFlowResponse response = flowResource.run(jobId, batch.getItems(), options);
+                    RunFlowResponse response = flowResource.run(((CollectorImpl) c).getJobId(), step, options);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
@@ -244,14 +256,14 @@ public class FlowRunnerImpl implements FlowRunner {
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
                         previousPercentComplete = percentComplete;
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChange(jobId, percentComplete, "");
+                            listener.onStatusChange(((CollectorImpl) c).getJobId(), percentComplete, "");
                         });
                     }
 
                     if (flowItemCompleteListeners.size() > 0) {
                         response.completedItems.forEach((String item) -> {
                             flowItemCompleteListeners.forEach((FlowItemCompleteListener listener) -> {
-                                listener.processCompletion(jobId, item);
+                                listener.processCompletion(((CollectorImpl) c).getJobId(), item);
                             });
                         });
                     }
@@ -259,7 +271,7 @@ public class FlowRunnerImpl implements FlowRunner {
                     if (flowItemFailureListeners.size() > 0) {
                         response.failedItems.forEach((String item) -> {
                             flowItemFailureListeners.forEach((FlowItemFailureListener listener) -> {
-                                listener.processFailure(jobId, item);
+                                listener.processFailure(((CollectorImpl) c).getJobId(), item);
                             });
                         });
                     }
@@ -285,13 +297,13 @@ public class FlowRunnerImpl implements FlowRunner {
 
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
         ticketWrapper.put("jobTicket", jobTicket);
-        jobManager.saveJob(job.withStatus(JobStatus.RUNNING_HARMONIZE));
+        job.withStatus(JobStatus.RUNNING);
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
 
             flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                listener.onStatusChange(jobId, 100, "");
+                listener.onStatusChange(((CollectorImpl) c).getJobId(), 100, "");
             });
 
             flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
@@ -319,7 +331,7 @@ public class FlowRunnerImpl implements FlowRunner {
             if (errorMessages.size() > 0) {
                 job.withJobOutput(errorMessages);
             }
-            jobManager.saveJob(job);
+            //jobManager.saveJob(job);
         });
         runningThread.start();
 
@@ -349,17 +361,16 @@ public class FlowRunnerImpl implements FlowRunner {
             this.srcClient.init("ml:runFlow" , this);
         }
 
-        public RunFlowResponse run(String jobId, String[] items) {
+ /*       public RunFlowResponse run(String jobId, String[] items) {
             return run(jobId, items, null);
-        }
+        }*/
 
-        public RunFlowResponse run(String jobId, String[] items, Map<String, Object> options) {
+        public RunFlowResponse run(String jobId, int step, Map<String, Object> options) {
             RunFlowResponse resp;
             try {
                 RequestParameters params = new RequestParameters();
                 params.add("flow-name", flow.getName());
                 params.put("job-id", jobId);
-                params.put("identifiers", items);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
                     ObjectMapper objectMapper = new ObjectMapper();

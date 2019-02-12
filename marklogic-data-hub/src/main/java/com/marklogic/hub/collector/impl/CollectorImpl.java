@@ -69,6 +69,7 @@ public class CollectorImpl implements Collector {
 
     private Flow flow = null;
 
+
     public String getJobId() {
         return jobId;
     }
@@ -105,7 +106,7 @@ public class CollectorImpl implements Collector {
 
 
     @Override
-    public DiskQueue<String> run(String flow) {
+    public DiskQueue<String> run(String flow, String step) {
         try {
             DiskQueue<String> results = new DiskQueue<>(5000);
 
@@ -117,14 +118,15 @@ public class CollectorImpl implements Collector {
 
             RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
-                "%s://%s:%d%s?flow-name=%s&database=%s",
+                "%s://%s:%d%s?flow-name=%s&database=%s&step=%s",
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
-                "/v1/internal/hubcollector",
+                "/v1/internal/hubcollector5",
 
                 URLEncoder.encode(flow, "UTF-8"),
-                URLEncoder.encode(client.getDatabase(), "UTF-8")
+                URLEncoder.encode(client.getDatabase(), "UTF-8"),
+                URLEncoder.encode(step, "UTF-8")
             );
 
             URI uri = new URI(uriString);

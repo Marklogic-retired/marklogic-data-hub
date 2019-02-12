@@ -42,6 +42,14 @@ public interface FlowRunner {
     FlowRunner withBatchSize(int batchSize);
 
     /**
+     * Sets the batch size for the flow runner
+     * @param step - the step to be run in the flow
+     * @return the flow runner object
+     */
+
+    FlowRunner withStep(int step) ;
+
+    /**
      * Sets the thread count for the flowrunner
      * @param threadCount - the number of threads for the flow runner to use
      * @return the flow runner object
