@@ -25,9 +25,10 @@ class Prov {
      * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
      */
     constructor(config = null) {
-      this.granularityLevels  = ['fine','coarse'];
-      this.granularityLevel   = config && config.granularityLevel || 'coarse';
-      this.jobsDatabase       = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
+      this.granularityLevels          = ['fine','coarse'];
+      this.config = {};
+      this.config.granularityLevel    = config && config.granularityLevel || 'coarse';
+      this.config.JOBDATABASE         = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
     }
 
     /**
