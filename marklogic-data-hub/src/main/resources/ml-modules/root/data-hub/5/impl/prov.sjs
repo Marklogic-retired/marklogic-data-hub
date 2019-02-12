@@ -15,6 +15,8 @@
 */
 'use strict';
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
+const ps = require('/MarkLogic/provenance');
+const op = require('/MarkLogic/optic');
 
 class Prov {
     /**
@@ -23,13 +25,26 @@ class Prov {
      * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
      */
     constructor(config = null) {
-      if(!config) {
-        config = defaultConfig;
-      }
       this.granularityLevels  = ['fine','coarse'];
       this.granularityLevel   = config && config.granularityLevel || 'coarse';
-      this.jobsDatabase       = config.JOBDATABASE;
+      this.jobsDatabase       = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
     }
+
+    /**
+     * Generate and return a UUID for provenance document creation
+     */
+    _uuid() {
+      var uuid = "", i, random;
+      for (i = 0; i < 32; i++) {
+        random = Math.random() * 16 | 0;
+
+        if (i == 8 || i == 12 || i == 16 || i == 20) {
+          uuid += "-"
+        }
+        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+      }
+      return uuid;
+    }    
 
     /**
      * Get array of provTypes for a given step type for provenance record creation
@@ -53,16 +68,16 @@ class Prov {
       };
       let provTypes = {
         'ingest': function () {
-          return rquiredInfoParams['ingest'].every(val => Object.keys(info).includes(val)) || Error('');
+          return requiredInfoParams['ingest'].every(val => Object.keys(info).includes(val)) || Error('');
         },
         'mapping': function () {
-          return rquiredInfoParams['mapping'].every(val => Object.keys(info).includes(val));
+          return requiredInfoParams['mapping'].every(val => Object.keys(info).includes(val));
         },
         'mastering': function () {
-          return rquiredInfoParams['mastering'].every(val => Object.keys(info).includes(val));
+          return requiredInfoParams['mastering'].every(val => Object.keys(info).includes(val));
         },
         'custom': function () {
-          return rquiredInfoParams['custom'].every(val => Object.keys(info).includes(val));
+          return requiredInfoParams['custom'].every(val => Object.keys(info).includes(val));
         }
       };
       return provTypes[stepType]() ? 
@@ -112,8 +127,8 @@ class Prov {
 
       // attributes
       options.attributes = options.attributes || {};
-      options.attributes.roles = xdmp.getCurrentRoles().toArray();
-      options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r));
+      options.attributes.roles = xdmp.getCurrentRoles().toArray().join(',');
+      options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r)).join(',');
       
       var record = ps.provenanceRecord(id, options);
       ps.provenanceRecordInsert(record);
@@ -140,6 +155,7 @@ class Prov {
      *      - location (doc URI)
      */
     _createIngestStepRecord(jobId, flowId, stepType, docURI, info) {
+      let provId = this._uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -177,6 +193,7 @@ class Prov {
      *      - location (doc URI)
      */
     _createMappingStepRecord(jobId, flowId, stepType, docURI, info) {
+      let provId = this._uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -215,6 +232,7 @@ class Prov {
      *      - location (doc URI)
      */
     _createMasteringStepRecord(jobId, flowId, stepType, docURI, info) {
+      let provId = this._uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -250,6 +268,7 @@ class Prov {
      *    - location (doc URI)
      */
     _createCustomStepRecord(jobId, flowId, stepType, docURI, info) {
+      let provId = this._uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -278,7 +297,7 @@ class Prov {
     createStepRecord(jobId, flowId, stepType, docURI, info) {
       let resp;
       // check required params passed
-      if (jobId && flowId && stepType && docURI) {
+      if (jobId && flowId && stepType && docURI && info) {
         // check step type valid
         if (this._validStepType(stepType)) {
           let isProvInfoValid = this._validProvInfoForStepType(stepType, info);
@@ -319,11 +338,41 @@ class Prov {
     /**
      * @desc Create a provenance record when a Flow is created
      * @param flowId - the name of the flow (unique)
-     * @param {Object} [options] - The employee who is responsible for the project.
-     * @param {string} [options.metadata] - key/value pairs to document with the provenance record
+     * @param {Object} [info]
+     * @param {string} [info.metadata] - key/value pairs to document with the provenance record
      * ! AFAIK - there is no requirement to create provenance information for Flows themselves, just their steps
      */
-    createFlowRecord(flowId, options) { }
+    createFlowRecord(flowId, info) { }
+
+    /**
+     * @desc Create a provenance record when a Flow is created
+     * @param docURI - The URI of the document
+     * ! TBD: Unsure how this relates to the provenance API
+     */
+    createTombstoreRecord(docURI) { 
+      // Goal: Add provenance document that records deletion
+    }
+
+    /**
+     * @desc Create a provenance record when a Flow is created
+     * @param docURI - The URI of the document
+     * @param {Object} [info]
+     */
+    queryDocRecords(docURI) { 
+      var match = {
+        "attributes":{
+          "location": docURI
+        }
+      };
+      // TODO: change "out" so output for a single prov record is combined into a single Object in the Array
+      var out = {
+        "dateTime": "?",
+        "provTypes": "?",  
+        "attributes" : {"location" : "?"}
+      };
+      let kvPattern = ps.opTriplePattern(match, out);
+      return op.fromTriples(kvPattern).result().toArray();  
+    }
 
 }
 
