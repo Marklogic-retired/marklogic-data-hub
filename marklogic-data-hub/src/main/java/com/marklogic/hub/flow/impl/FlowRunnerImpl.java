@@ -370,6 +370,7 @@ public class FlowRunnerImpl implements FlowRunner {
             try {
                 RequestParameters params = new RequestParameters();
                 params.add("flow-name", flow.getName());
+                params.put("step", String.valueOf(step));
                 params.put("job-id", jobId);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
