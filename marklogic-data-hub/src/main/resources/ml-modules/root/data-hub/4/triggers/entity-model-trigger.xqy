@@ -56,7 +56,7 @@ return (
         let $definiton-name := fn:QName("", fn:substring-after($ref, "#/definitions/"))
         where fn:empty($entity-def/definitions/object-node()[fn:node-name(.) eq $definiton-name])
         return
-          fn:resolve-uri(fn:string($definiton-name) || "-" || $entity-version, $entity-base-uri)
+          fn:resolve-uri(fn:string($definiton-name) || "-" || $entity-version, fn:head(($entity-base-uri, "http://marklogic.com/data-hub/")[. ne '']))
       else
         fn:string($ref)
     where fn:exists($entity-uri)
@@ -71,7 +71,9 @@ return (
           cts:and-query((
             cts:json-property-value-query("title", $entity-name, "exact"),
             cts:json-property-value-query("version", $entity-version, "exact"),
-            cts:json-property-value-query("baseUri", $base-uri, "exact")
+            if (fn:exists($entity-base-uri[. ne ''])) then
+              cts:json-property-value-query("baseUri", $base-uri, "exact")
+            else ()
           ))
         )[1]/object-node()
       return
