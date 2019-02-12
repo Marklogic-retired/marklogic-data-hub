@@ -27,12 +27,17 @@ public class ProcessImpl implements Process {
     private ProcessType type;
     private int version;
     private JsonNode options;
+    private JsonNode customHook;
+    private String language = "zxx";
+    private String modulePath;
 
     ProcessImpl(String name, ProcessType type) {
         this.name = name;
         this.type = type;
         this.version = 1;
         this.options = JsonNodeFactory.instance.objectNode();
+        this.modulePath = "/path/to/custom/plugins/main.sjs";
+        this.customHook = JsonNodeFactory.instance.objectNode();
     }
 
     public String getName() {
@@ -67,6 +72,18 @@ public class ProcessImpl implements Process {
         this.options = options;
     }
 
+    public String getModulePath() { return modulePath; }
+
+    public void setModulePath(String path) { this.modulePath = path; }
+
+    public JsonNode getCustomHook() {
+        return customHook;
+    }
+
+    public void setCustomHook(JsonNode hookObj) {
+        this.customHook = hookObj;
+    }
+
     @Override
     public String serialize() {
         ObjectMapper mapper = new ObjectMapper();
@@ -94,6 +111,14 @@ public class ProcessImpl implements Process {
 
         if (json.has("options")) {
             setOptions(json.get("options"));
+        }
+
+        if (json.has("modulePath")) {
+            setModulePath(json.get("modulePath").asText());
+        }
+
+        if (json.has("customHook")) {
+            setCustomHook(json.get("customHook"));
         }
     }
 }
