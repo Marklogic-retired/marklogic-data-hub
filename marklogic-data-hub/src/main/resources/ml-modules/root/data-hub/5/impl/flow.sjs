@@ -13,7 +13,45 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+'use strict';
 
-export class Flow {
+class Flow {
 
+  constructor() {
+
+  }
+
+  getFlowNames() {
+
+  }
+
+  getFlows(){
+    let docs = [];
+    let query = cts.directoryQuery("/flows/");
+    let uris = cts.uris("", null ,query);
+    for (let doc of uris) {
+      docs.push(cts.doc(doc).toObject());
+    }
+    return docs;
+  }
+
+  //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
+  getFlow(name) {
+    let uriMatches = cts.uriMatch('/flows/'+name+'.flow.json', ['case-insensitive']);
+    if(fn.count(uriMatches) === 1){
+      return cts.doc(fn.head(uriMatches)).toObject();
+    } else if (fn.count(uriMatches) > 1){
+      for(let uri of uriMatches) {
+        if(uri === '/flows/'+name+'.flow.json'){
+          return cts.doc(uriMatches).toObject();
+        }
+      }
+    }
+  }
+
+  runFlow(name, options, jobId, step) {
+
+  }
 }
+
+module.exports = Flow;

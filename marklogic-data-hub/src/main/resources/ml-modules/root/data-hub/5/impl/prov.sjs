@@ -14,8 +14,6 @@
   limitations under the License.
 */
 'use strict';
-const hubConfig = require("/com.marklogic.hub/config.sjs");
-
 class Prov {
     /**
      * @desc Provenance Class constructor

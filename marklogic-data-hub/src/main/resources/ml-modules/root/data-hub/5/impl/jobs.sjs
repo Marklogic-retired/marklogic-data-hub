@@ -19,6 +19,9 @@ const hubutils = new HubUtils();
 
 class Jobs {
 
+  constructor() {
+  }
+
   createJob(flowName, id = null ) {
     let job = null;
     if(id == null){

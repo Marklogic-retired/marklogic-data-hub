@@ -14,15 +14,31 @@
   limitations under the License.
 */
 'use strict';
-import configLib from 'impl/config-lib.sjs';
 
-const _requireCache = {};
+const Jobs = require("/data-hub/5/impl/jobs.sjs");
+const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const Flow = require("/data-hub/5/impl/flow.sjs");
+const Process = require("/data-hub/5/impl/process.sjs");
+const Prov = require("/data-hub/5/impl/prov.sjs");
+const Debug = require("/data-hub/5/impl/debug.sjs");
 const config = require("/com.marklogic.hub/config.sjs");
-const HubUtils =  require("/data-hub/5/impl/hub-utils.sjs");
+const _requireCache = {};
 
-export class DataHub {
+class DataHub {
+
   constructor(){
     this.config = config;
-    this.hubUtils = HubUtils();
+    this.hubUtils = new HubUtils(config);
+    this.flow = new Flow();
+    this.process = new Process();
+    this.jobs = new Jobs();
+    this.prov = new Prov(config);
+    this.debug = new Debug(config);
   }
+  getConfig() {
+    return this.hubUtils.getConfig();
+  }
+
 }
+
+module.exports = DataHub;

@@ -14,11 +14,13 @@
   limitations under the License.
 */
 'use strict';
-const config = require("/com.marklogic.hub/config.sjs");
 
 class HubUtils {
-  constructor() {
+  constructor(config) {
     this.config = config;
+  }
+  getConfig() {
+    return this.config;
   }
   writeJobDocument(docUri, job, collections){
     xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'job,' + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
