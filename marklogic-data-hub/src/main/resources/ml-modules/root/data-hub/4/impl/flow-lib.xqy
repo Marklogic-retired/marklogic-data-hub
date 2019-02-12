@@ -98,15 +98,28 @@ declare function flow:get-flow-nocache(
 {
 
   hul:run-in-modules(function() {
-    /hub:flow[
-      hub:entity = $entity-name and
+    let $flow := /hub:flow[
+    fn:lower-case(hub:entity) = fn:lower-case($entity-name) and
       hub:name = $flow-name]
-      [
+    [
+    if (fn:exists($flow-type)) then
+      hub:type = $flow-type
+    else
+      fn:true()
+    ]
+    return
+      if ((fn:count($flow)) > 1) then
+        /hub:flow[
+        hub:entity = $entity-name and
+          hub:name = $flow-name]
+        [
         if (fn:exists($flow-type)) then
           hub:type = $flow-type
         else
           fn:true()
-      ]
+        ]
+      else
+        $flow
   }) ! hul:deep-copy(.)
 };
 

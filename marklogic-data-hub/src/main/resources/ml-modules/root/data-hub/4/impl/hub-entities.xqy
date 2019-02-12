@@ -33,7 +33,13 @@ declare function hent:get-model($entity-name as xs:string)
 
 declare function hent:get-model($entity-name as xs:string, $used-models as xs:string*)
 {
-  let $model := fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
+  let $model :=
+    let $_ := fn:collection($ENTITY-MODEL-COLLECTION)[lower-case(info/title) = lower-case($entity-name)]
+    return
+      if (fn:count($_) > 1) then
+        fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
+      else
+        $_
   where fn:exists($model)
   return
     let $model-map as map:map? := $model
