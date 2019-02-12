@@ -160,7 +160,7 @@ declare function hent:dump-indexes($entities as json:array)
 };
 
 declare variable $generated-primary-key-column as xs:string := "DataHubGeneratedPrimaryKey";
-declare variable $generated-primary-key-expression as xs:string := "xdmp:node-uri(.) || '#' || fn:position(.)";
+declare variable $generated-primary-key-expression as xs:string := "xdmp:node-uri(.) || '#' || fn:position()";
 
 declare function hent:dump-tde($entities as json:array)
 {
