@@ -54,6 +54,8 @@ declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:validate",               "validate");
 
 declare private variable $system-resource-extensions-50 := map:map()
+    =>map:with("ml:runFlow",    "runFlow")
+    =>map:with("ml:flows",      "flows")
     =>map:with("ml:jobs",       "jobs")
     =>map:with("ml:batches",    "batches")
     =>map:with("ml:hubstats",   "hubstats")
