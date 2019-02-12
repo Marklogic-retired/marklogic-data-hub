@@ -71,6 +71,7 @@ public interface HubConfig {
     Integer DEFAULT_JOB_PORT = 8013;
 
     String DEFAULT_AUTH_METHOD = "digest";
+    String DEFAULT_HUB_LOG_LEVEL = "default";
 
     String DEFAULT_SCHEME = "http";
 
