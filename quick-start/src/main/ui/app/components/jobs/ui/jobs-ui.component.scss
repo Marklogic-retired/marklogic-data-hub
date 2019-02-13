@@ -1,0 +1,103 @@
+@import '../../theme/styles/variables';
+
+$bg-color: unquote("rgb(#{$palette-datahub-500})");
+
+.job-output-dialog {
+  height: 500px;
+}
+
+.job-status-dialog {
+  min-width: 500px;
+  width: 70%;
+  max-height: 95%;
+  pre {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+  }
+
+  .mdl-dialog__content {
+    overflow: scroll;
+  }
+}
+
+.fa-close {
+  color: white;
+}
+
+.search-box {
+  width: 60%;
+  margin-bottom: 1rem;
+  flex: none; // IE fix
+}
+
+pagination {
+  margin: 1rem 0px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+input[type="search"] {
+  margin-right: 10px;
+  font-size: 14px;
+  box-sizing: border-box;
+  border: none;
+  box-shadow: none;
+  // background: 0 0;
+  width: 100%;
+  padding: 0 15px;
+  line-height: 40px;
+  height: 40px;
+  background: rgb(250,250,250);
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12);
+}
+
+.results {
+  width: 90%;
+}
+
+.mdl-data-table {
+  width: 100%;
+
+  thead {
+    tr {
+      background: $bg-color;
+      th {
+        padding: 12px 8px 12px 8px;
+        color: white;
+      }
+
+      th.job-actions {
+        button {
+          color: white;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        padding: 12px 8px 12px 8px;
+        max-width: 400px;
+
+        &:last-of-type {
+          padding-right: 0px;
+        }
+      }
+      td.job-delete-checkbox {
+        text-align: center;
+        .mdl-checkbox {
+          width: 24px;
+        }
+      }
+    }
+  }
+}
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}

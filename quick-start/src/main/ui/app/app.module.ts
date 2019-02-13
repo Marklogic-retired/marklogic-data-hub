@@ -1,96 +1,88 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TruncateCharactersPipe } from './truncate';
-import { ListFilterPipe } from './shared/components/mappings/listfilter.pipe';
-import { AppComponent } from './app.component';
-import { AppUiComponent } from './shared/components';
-import { FlowsComponent } from './flows';
-import { HasBugsDialogComponent } from './shared/components';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
+import {RouterModule} from '@angular/router';
+import {TruncateCharactersPipe} from './pipes/truncate';
+import {ListFilterPipe} from './components/mappings/ui/listfilter.pipe';
+import {AppComponent} from './app.component';
 import {
-  EntityModelerComponent
-} from './entity-modeler';
-import { LoginComponent } from './login';
-import { LoginUIComponent } from './shared/components'
-import { SettingsComponent } from './settings';
-import { SettingsUiComponent } from './shared/components';
-
-import { MdlModule } from '@angular-mdl/core';
-import { MdlPopoverModule } from '@angular-mdl/popover';
-import { MdlSelectModule } from '@angular-mdl/select';
-import { GridManiaModule } from './shared/components/grid';
-import { BsDropdownModule, TooltipModule } from 'ngx-bootstrap';
-
-import { ROUTES } from './app.routes';
-import { AUTH_PROVIDERS } from './auth';
-import { CodemirrorComponent } from './shared/components/codemirror';
-import { FolderBrowserComponent } from './folder-browser/folder-browser.component';
-import { FolderBrowserUiComponent } from './shared/components';
-import { HeaderComponent } from './header/header.component';
-import { HeaderUiComponent } from './shared/components';
-import { JobsComponent, JobOutputComponent } from './jobs';
-import { JobsUiComponent, JobOutputUiComponent, JobExportUiComponent } from './shared/components/jobs';
-import { MlcpComponent } from './mlcp';
-import { MlcpUiComponent } from './shared/components/mlcp';
-import { MlErrorComponent } from './shared/components/ml-error';
-import { NewEntityComponent } from './shared/components/new-entity/new-entity.component';
-import { NewFlowComponent } from './new-flow/new-flow.component';
-import { NewFlowUiComponent } from './shared/components/new-flow/new-flow-ui.component';
-import { NoContentComponent } from './no-content';
-import { PaginationComponent } from './shared/components/pagination';
-import { ResizableComponent } from './shared/components';
-import { SelectComponent } from './shared/components';
-import { SelectListComponent } from './shared/components';
-import { TracesComponent, TraceViewerComponent } from './traces';
-import { TracesUiComponent } from './shared/components/traces';
-import { SearchComponent, SearchViewerComponent } from './search';
-import { SearchUiComponent } from './shared/components/search';
-import { SearchViewerUiComponent } from './shared/components/search';
-
-import { DeployService } from './deploy/deploy.service';
-import { EntitiesService } from './entities/entities.service';
-import { InstallService } from './installer';
-import { JobService } from './jobs/jobs.service';
-import { JobListenerService } from './jobs/job-listener.service';
-import { MapService } from './mappings/map.service';
-import { ProjectService } from './projects';
-import { SettingsService } from './settings';
-import { STOMPService } from './stomp';
-import { ClipboardDirective } from './clipboard/clipboard.directive';
-import { FocusElementDirective } from './shared/directives/focus-element/focus-element.directive';
-import { TraceService } from './traces/trace.service';
-import { SearchService } from './search/search.service';
-import { HarmonizeFlowOptionsComponent } from './harmonize-flow-options';
-import { HarmonizeFlowOptionsUiComponent } from './shared/components';
-import { DashboardComponent } from './dashboard';
-import { DashboardUiComponent } from './shared/components';
-import { TitlecasePipe } from './titlecase.pipe';
-import { InlineEditComponent } from './shared/components';
-import { FacetsComponent } from './shared/components/facets/facets.component';
-import { ObjectToArrayPipe } from './object-to-array.pipe';
-import { DatePipeModule } from './date-pipe/date-pipe.module';
-
-import { SelectKeyValuesComponent } from './shared/components';
-import { JobExportDialogComponent } from './jobs';
-
-import { MapComponent } from './mappings';
-import { MapUiComponent } from "./shared/components";
-import { MappingsComponent } from "./mappings";
-import { MappingsUiComponent } from "./shared/components";
-import { NewMapComponent } from "./mappings/new-map.component";
-import { NewMapUiComponent } from "./shared/components";
-import { ThemeModule } from "./shared/components";
-import { FlowsUiComponent } from './shared/components/flows';
-import {
+  AppUiComponent,
   ChooseCollationComponent,
+  DashboardUiComponent,
   EntityBoxComponent,
-  TraceViewerUiComponent,
   EntityEditorComponent,
-  ExternalDefDialogComponent
-} from './shared/components';
+  ExternalDefDialogComponent,
+  FolderBrowserUiComponent,
+  HarmonizeFlowOptionsUiComponent,
+  HasBugsDialogComponent,
+  HeaderUiComponent,
+  InlineEditComponent,
+  LoginUIComponent,
+  MappingsUiComponent,
+  MapUiComponent,
+  NewMapUiComponent,
+  ResizableComponent,
+  SelectComponent,
+  SelectKeyValuesComponent,
+  SelectListComponent,
+  SettingsUiComponent,
+  ThemeModule,
+  TraceViewerUiComponent
+} from './components/index';
+import {FlowsComponent} from './components/flows';
+import {EntityModelerComponent} from './components/entity-modeler';
+import {LoginComponent} from './components/login';
+import {SettingsComponent, SettingsService} from './components/settings';
+
+import {MdlModule} from '@angular-mdl/core';
+import {MdlPopoverModule} from '@angular-mdl/popover';
+import {MdlSelectModule} from '@angular-mdl/select';
+import {GridManiaModule} from './components/grid';
+import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
+
+import {ROUTES} from './app.routes';
+import {AUTH_PROVIDERS} from './services/auth';
+import {CodemirrorComponent} from './components/codemirror';
+import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
+import {HeaderComponent} from './components/header/header.component';
+import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
+import {JobExportUiComponent, JobOutputUiComponent, JobsUiComponent} from './components/jobs/ui';
+import {MlcpComponent} from './components/mlcp';
+import {MlcpUiComponent} from './components/mlcp/ui';
+import {MlErrorComponent} from './components/ml-error';
+import {NewEntityComponent} from './components/new-entity/new-entity.component';
+import {NewFlowComponent} from './components/new-flow/new-flow.component';
+import {NewFlowUiComponent} from './components/new-flow/ui/new-flow-ui.component';
+import {NoContentComponent} from './components/no-content';
+import {PaginationComponent} from './components/pagination';
+import {TracesComponent, TraceViewerComponent} from './components/traces';
+import {TracesUiComponent} from './components/traces/ui';
+import {SearchComponent, SearchViewerComponent} from './components/search';
+import {SearchUiComponent, SearchViewerUiComponent} from './components/search/ui';
+
+import {DeployService} from './services/deploy/deploy.service';
+import {EntitiesService} from './models/entities.service';
+import {InstallService} from './services/installer';
+import {JobService} from './components/jobs/jobs.service';
+import {JobListenerService} from './components/jobs/job-listener.service';
+import {MapService} from './components/mappings/map.service';
+import {ProjectService} from './services/projects';
+import {STOMPService} from './services/stomp';
+import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
+import {FocusElementDirective} from './directives/focus-element/focus-element.directive';
+import {TraceService} from './components/traces/trace.service';
+import {SearchService} from './components/search/search.service';
+import {HarmonizeFlowOptionsComponent} from './components/harmonize-flow-options';
+import {DashboardComponent} from './components/dashboard';
+import {TitlecasePipe} from './titlecase.pipe';
+import {FacetsComponent} from './components/facets/facets.component';
+import {ObjectToArrayPipe} from './object-to-array.pipe';
+import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
+
+import {MapComponent, MappingsComponent} from './components/mappings';
+import {NewMapComponent} from "./components/mappings/new-map.component";
+import {FlowsUiComponent} from './components/flows/ui';
 
 @NgModule({
   declarations: [
@@ -174,7 +166,6 @@ import {
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
     MdlModule,

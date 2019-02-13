@@ -3,17 +3,17 @@ import { Component, ViewEncapsulation,
 
 import { Router } from '@angular/router';
 
-import { AuthService } from './auth';
+import { AuthService } from './services/auth';
 
-import { EnvironmentService } from './environment';
+import { EnvironmentService } from './services/environment';
 
-import { JobService } from './jobs';
+import { JobService } from './components/jobs';
 
-import { ProjectService } from './projects';
+import { ProjectService } from './services/projects';
 
-import { STOMPService } from './stomp';
+import { STOMPService } from './services/stomp';
 
-import { TraceService } from './traces/trace.service';
+import { TraceService } from './components/traces/trace.service';
 
 interface CustomWindow {
   BASE_URL: string;
