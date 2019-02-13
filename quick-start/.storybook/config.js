@@ -75,7 +75,7 @@ setOptions({
 
 
 // automatically import all files ending in *.stories.ts
-const req = require.context('../src/main/ui/app/shared/stories', true, /.stories.ts$/);
+const req = require.context('../src/main/ui/app', true, /.stories.ts$/);
 
 function loadStories() {
   req.keys().forEach(filename => req(filename));

@@ -400,7 +400,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
     }
 
-
     @Override
     public boolean savePii() {
         try {
