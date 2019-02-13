@@ -39,7 +39,7 @@ declare function hent:get-model($entity-name as xs:string, $used-models as xs:st
     let $_ := fn:collection($ENTITY-MODEL-COLLECTION)[lower-case(info/title) = lower-case($entity-name)]
     return
       if (fn:count($_) > 1) then
-        fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name]
+        fn:head(fn:collection($ENTITY-MODEL-COLLECTION)[info/title = $entity-name])
       else
         $_
   where fn:exists($model)
