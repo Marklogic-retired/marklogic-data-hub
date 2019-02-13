@@ -1,0 +1,14 @@
+{
+  "batch": {
+    "jobId": "10584668255644629399",
+    "batchId": "11345653515268525918",
+    "processor": "Mapping",
+    "step": "1",
+    "batchStatus": "failed",
+    "timeStarted": "2019-02-05T21:39:37.284127-08:00",
+    "timeEnded": "N/A",
+    "uris": [
+      "Error:Unable to write"
+    ]
+  }
+}

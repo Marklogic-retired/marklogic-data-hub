@@ -1,0 +1,12 @@
+{
+	"job": {
+		"jobId": "1442529761390935690",
+		"flow": "hub1",
+		"user": "hub-admin-user",
+		"lastAttemptedStep": 0,
+		"lastCompletedStep": 0,
+		"jobStatus": "started",
+		"timeStarted": "2019-02-05T21:39:00.776209-08:00",
+		"timeEnded": "N/A"
+	}
+}

@@ -4,6 +4,7 @@ import {moduleMetadata, storiesOf} from '@storybook/angular';
 import {centered} from '@storybook/addon-centered/angular';
 import {boolean, object, text, withKnobs} from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
+import {TooltipModule} from 'ngx-bootstrap';
 import {StoryCardComponent} from '../../../utils';
 import {MapUiComponent, ThemeModule} from "../..";
 import {FocusElementDirective} from '../../../directives/focus-element/focus-element.directive';
@@ -16,7 +17,8 @@ storiesOf('Components|Mappings', module)
       imports: [
         CommonModule,
         ThemeModule,
-        RouterModule.forRoot([], {useHash: true})
+        RouterModule.forRoot([], { useHash: true }),
+        TooltipModule.forRoot()
       ],
       schemas: [],
       declarations: [

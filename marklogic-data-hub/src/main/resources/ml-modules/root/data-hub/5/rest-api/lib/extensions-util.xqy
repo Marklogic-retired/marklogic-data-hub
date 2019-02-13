@@ -26,7 +26,7 @@ declare variable $extut:trace-id := "restapi.extensions";
 
 declare private variable $is-untraced := ();
 
-declare private variable $system-transforms := map:map()
+declare private variable $system-transforms-40 := map:map()
     =>map:with("ml:extractContent",       "get-content")
     =>map:with("ml:inputFlow",            "run-flow")
     =>map:with("ml:sjsInputFlow",         "run-sjs-flow")
@@ -35,7 +35,9 @@ declare private variable $system-transforms := map:map()
     =>map:with("ml:traceUISearchResults", "trace-json")
     =>map:with("ml:prettifyXML",          "prettify");
 
-declare private variable $system-resource-extensions := map:map()
+declare private variable $system-transforms-50 := map:map();
+
+declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:dbConfigs",              "db-configs")
     =>map:with("ml:debug",                  "debug")
     =>map:with("ml:deleteJobs",             "delete-jobs")
@@ -49,6 +51,10 @@ declare private variable $system-resource-extensions := map:map()
     =>map:with("ml:searchOptionsGenerator", "search-options-generator")
     =>map:with("ml:tracing",                "tracing")
     =>map:with("ml:validate",               "validate");
+
+declare private variable $system-resource-extensions-50 := map:map()
+=>map:with("ml:jobs",   "jobs")
+=>map:with("ml:batches","batches");
 
 declare function extut:check-untraced() as xs:boolean {
     if (exists($is-untraced)) then ()
@@ -488,8 +494,18 @@ declare private function extut:get-extension-function(
         else
             let $system-module :=
                 if ($extension-type eq "transform")
-                then map:get($system-transforms,$extension-name)
-                else map:get($system-resource-extensions,$extension-name)
+                then
+                  let $_ := map:get($system-transforms-40,$extension-name)
+                  return
+                    if (fn:empty($_)) then
+                      ("5", map:get($system-transforms-50,$extension-name))
+                    else ("4", $_)
+                else
+                  let $_ := map:get($system-resource-extensions-40,$extension-name)
+                  return
+                    if (fn:empty($_)) then
+                      ("5" , map:get($system-resource-extensions-50,$extension-name))
+                    else ("4", $_)
             let $function    :=
                 if (empty($system-module))
                 then xdmp:function(
@@ -502,12 +518,12 @@ declare private function extut:get-extension-function(
                     )
                 else if ($extension-type eq "transform")
                 then xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/transform/",$system-module), $function-name),
-                    concat("/data-hub/5/transforms/",$system-module,".xqy")
+                    QName(concat("http://marklogic.com/rest-api/transform/",$system-module[2]), $function-name),
+                    concat("/data-hub/", $system-module[1] , "/transforms/",$system-module[2],".xqy")
                     )
                 else  xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/extensions/",$system-module), $function-name),
-                    concat("/data-hub/5/extensions/",$system-module,".xqy")
+                    QName(concat("http://marklogic.com/rest-api/extensions/",$system-module[2]), $function-name),
+                    concat("/data-hub/", $system-module[1]  , "/extensions/",$system-module[2],".xqy")
                     )
             return (
                 if (empty($function)) then ()

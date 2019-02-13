@@ -21,16 +21,16 @@ import com.marklogic.appdeployer.command.es.GenerateModelArtifactsCommand;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.ext.es.CodeGenerationRequest;
-import com.marklogic.client.ext.es.EntityServicesManager;
 import com.marklogic.client.ext.es.GeneratedCode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.es.EntityServicesManager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -45,11 +45,14 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private HubConfig hubConfig;
+    private Path userFinalSchemasTDEs;
 
     private String entityNames;
+    private List<String> entityNamesList = Collections.EMPTY_LIST;
 
     public GenerateHubTDETemplateCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.userFinalSchemasTDEs = hubConfig.getHubProject().getUserDatabaseDir().resolve(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS)).resolve("schemas").resolve("tde");
     }
 
     @Override
@@ -68,25 +71,27 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
             logger.debug("Found the following entities->files: {} " + entityNameFileMap);
 
-            filterEntities(entityNameFileMap);
+            //filterEntities(entityNameFileMap);
 
             if (!entityNameFileMap.isEmpty()) {
                 logger.warn("About to generate a template for the following entities: {} into directory {} ",
-                    entityNameFileMap.keySet(), hubConfig.getAppConfig().getSchemasPath());
-
+                    this.entityNamesList.isEmpty() ? entityNameFileMap.keySet() : this.entityNamesList, hubConfig.getAppConfig().getSchemasPath());
+                List<GeneratedCode> generatedCodes = new ArrayList<>();
                 for (File f : entityNameFileMap.values()) {
                     File esModel;
+                    String modelName;
                     try {
                         //Write the ES model to a temp file
                         String tempDir = System.getProperty("java.io.tmpdir");
                         String fileName = f.getName();
+                        modelName = EntityServicesManager.extractEntityNameFromURI(fileName).get();
                         esModel = new File(tempDir, fileName);
                         String modelString = generateModel(f);
                         if(modelString == null) {
                             logger.warn(f.getName() + " is not deployed to the database");
                             continue;
                         }
-                        FileUtils.writeStringToFile(esModel, generateModel(f));
+                        FileUtils.writeStringToFile(esModel, modelString);
                     } catch (IOException e) {
                         throw new RuntimeException("Unable to generate ES model");
                     }
@@ -100,9 +105,13 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                     finally {
                         FileUtils.deleteQuietly(esModel);
                     }
+                    if (this.entityNamesList.isEmpty() || this.entityNamesList.contains(modelName)) {
+                        generatedCodes.add(code);
+                    }
+                }
+                for (GeneratedCode code: generatedCodes) {
                     generateExtractionTemplate(appConfig, code);
                 }
-
             }
 
         } else {
@@ -116,7 +125,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     private String generateModel(File f) {
         String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
             "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
-            String.format("hent:get-model(\"%s\")", extactEntityNameFromFilename(f.getName()).get());
+            String.format("hent:get-model(\"%s\")", extractEntityNameFromFilename(f.getName()).get());
         EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
         if (resp.hasNext()) {
             return resp.next().getString();
@@ -130,6 +139,9 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
     public void setEntityNames(String entityNames) {
         this.entityNames = entityNames;
+        if (entityNames != null) {
+            this.entityNamesList = Arrays.asList(entityNames.split(","));
+        }
     }
 
     protected void filterEntities(Map<String,File> entityNameFileMap) {
@@ -176,21 +188,43 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         return entities;
     }
 
-    protected static Optional<String> extactEntityNameFromFilename(String filename) {
-        if (filename==null || filename.trim().isEmpty()) {
-            return Optional.of(null);
+    // Overriding to insert schemas into the final DB schemas folder.
+    @Override
+    protected void generateExtractionTemplate(AppConfig appConfig, GeneratedCode code) {
+        String template = code.getExtractionTemplate();
+        if (template != null) {
+            File dir = userFinalSchemasTDEs.toFile();
+            dir.mkdirs();
+            File out = new File(dir, code.getTitle() + "-" + code.getVersion() + ".tdex");
+            String logMessage = "Wrote extraction template to: ";
+            if (out.exists()) {
+                if (!fileHasDifferentContent(out, template)) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Extraction template matches file, so not modifying: " + out.getAbsolutePath());
+                    }
+                    return;
+                }
+                out = new File(dir, code.getTitle() + "-" + code.getVersion() + "-GENERATED.tdex");
+                logMessage = "Extraction template does not match existing file, so writing to: ";
+            }
+            try {
+                FileCopyUtils.copy(template.getBytes(), out);
+                if (logger.isInfoEnabled()) {
+                    logger.info(logMessage + out.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to write extraction template to file: " + out.getAbsolutePath(), e);
+            }
         }
-        int index = filename.indexOf(ENTITY_FILE_EXTENSION);
-        if (index<0) {
-            //not found
-            return Optional.of(null);
-        }
-        return Optional.of(filename.substring(0,index));
+    }
+
+    protected static Optional<String> extractEntityNameFromFilename(String filename) {
+        return EntityServicesManager.extractEntityNameFromURI(filename);
     }
 
     private static Function<File, String> extractEntityNameFunction() {
         Function<File, String> fileName = File::getName;
-        return fileName.andThen(name -> extactEntityNameFromFilename(name).get());
+        return fileName.andThen(name -> extractEntityNameFromFilename(name).get());
     }
 
     private static final CodeGenerationRequest createCodeGenerationRequest() {

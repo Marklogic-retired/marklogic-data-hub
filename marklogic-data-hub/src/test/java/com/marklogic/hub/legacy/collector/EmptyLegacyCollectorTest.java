@@ -50,6 +50,8 @@ public class EmptyLegacyCollectorTest extends HubTestBase {
         XMLUnit.setIgnoreWhitespace(true);
 
         createProjectDir();
+        resetProperties();
+        adminHubConfig.refreshProject();
 
         scaffolding.createEntity(ENTITY);
         scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
