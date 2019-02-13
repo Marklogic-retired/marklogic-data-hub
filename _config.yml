@@ -118,6 +118,7 @@ assets:
     - assets/css
     - assets/fonts
     - assets/images
+    - assets/videos
     - assets/javascript
     - assets/image
     - assets/img
@@ -126,6 +127,7 @@ assets:
     - _assets/css
     - _assets/fonts
     - _assets/images
+    - _assets/videos
     - _assets/javascript
     - _assets/image
     - _assets/img
@@ -134,6 +136,7 @@ assets:
     - css
     - fonts
     - images
+    - videos
     - javascript
     - image
     - img

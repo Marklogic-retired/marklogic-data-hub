@@ -9,6 +9,7 @@
 
   - Automatic generation and installation of a template-driven extraction (TDE) template in the final SCHEMAS database (`data-hub-final-SCHEMAS`). See [the TDE documentation](http://docs.marklogic.com/guide/app-dev/TDE).
 
+  *[View a demo of the TDE template generation. (video)]({{site.baseurl}}/videos/TDE_template_video.mp4){:target="_blank"}*
   </div>
 </details>
 
