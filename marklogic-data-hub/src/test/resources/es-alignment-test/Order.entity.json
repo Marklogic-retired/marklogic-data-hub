@@ -1,5 +1,5 @@
 { "info": { 
-    "title": "DHExample", 
+    "title": "Order",
     "description": "Data Hub Example",
     "version": "1.0.0",
     "baseUri": "http://marklogic.com/data-hub/"
