@@ -6,6 +6,7 @@ import {centered} from '@storybook/addon-centered/angular';
 import {boolean, object, text, withKnobs} from '@storybook/addon-knobs';
 import {moduleMetadata, storiesOf} from '@storybook/angular';
 import {RouterTestingModule} from '@angular/router/testing';
+import {TooltipModule} from 'ngx-bootstrap';
 
 import {ClipboardDirective} from '../../../directives/clipboard';
 import {CodemirrorComponent} from "../../codemirror";
@@ -39,7 +40,8 @@ storiesOf('Components|Flows', module)
         MdlModule,
         CommonModule,
         RouterTestingModule,
-        HttpModule
+        HttpModule,
+        TooltipModule.forRoot()
       ],
       declarations: [
         FlowsUiComponent,
@@ -264,6 +266,7 @@ const SampleEntities = [
         'flowName': 'hl7',
         'codeFormat': 'XQUERY',
         'dataFormat': 'XML',
+        'transformModulePath': () => action('cancel/close clicked'),
         'plugins': [
           {
             'hasShown': false,
