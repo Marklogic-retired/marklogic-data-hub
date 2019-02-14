@@ -23,61 +23,56 @@ class HubUtils {
     }
     this.config = config;
   }
+
   getConfig() {
     return this.config;
   }
-  writeJobDocument(docUri, job, collections){
-    xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'job,' + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
+
+  writeDocument(docUri, content, permissions, collections, database){
+    xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'content,' + '{permissions:' + permissions + ',collections:[' + collections +']})',
     {
-    job: job,
+    content: content,
     docUri:docUri,
+    permissions:permissions,
     collections:collections
     },
     {
-     database: xdmp.database(this.config.JOBDATABASE),
+     database: xdmp.database(database),
      commit: 'auto',
      update: 'true',
      ignoreAmps: true
     })
   }
-  deleteJobDocument(docUri){
+
+  deleteDocument(docUri, database){
     xdmp.eval('xdmp.documentDelete("' + docUri + '")',
     {
       docUri:docUri
     },
     {
-      database: xdmp.database(this.config.JOBDATABASE),
+      database: xdmp.database(database),
       commit: 'auto',
       update: 'true',
       ignoreAmps: true
     })
   }
-  writeStagingDocument(docUri, collections){
-    xdmp.eval('xdmp.documentInsert("' + docUri + '",'  + '{permissions:xdmp.defaultPermissions(),collections:[' + collections +']})',
-      {
-        job: job,
-        docUri:docUri,
-        collections:collections
-      },
-      {
-        database: xdmp.database(this.config.STAGINGDATABASE),
-        commit: 'auto',
-        update: 'true',
-        ignoreAmps: true
-      })
+
+  /**
+  * Generate and return a UUID
+  */
+  uuid() {
+    var uuid = "", i, random;
+    for (i = 0; i < 32; i++) {
+      random = Math.random() * 16 | 0;
+
+      if (i == 8 || i == 12 || i == 16 || i == 20) {
+        uuid += "-"
+      }
+      uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+    }
+    return uuid;
   }
-  deleteStagingDocument(docUri){
-    xdmp.eval('xdmp.documentDelete("' + docUri + '")',
-      {
-        docUri:docUri
-      },
-      {
-        database: xdmp.database(this.config.STAGINGDATABASE),
-        commit: 'auto',
-        update: 'true',
-        ignoreAmps: true
-      })
-  }
+
 }
 
 module.exports = HubUtils;

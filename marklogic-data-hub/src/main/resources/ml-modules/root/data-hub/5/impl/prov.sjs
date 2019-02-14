@@ -17,6 +17,8 @@
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
 const ps = require('/MarkLogic/provenance');
 const op = require('/MarkLogic/optic');
+const HubUtils =  require("/data-hub/5/impl/hub-utils.sjs");
+const hubutils = new HubUtils();
 
 class Prov {
     /**
@@ -29,23 +31,7 @@ class Prov {
       this.config = {};
       this.config.granularityLevel    = config && config.granularityLevel || 'coarse';
       this.config.JOBDATABASE         = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
-    }
-
-    /**
-     * Generate and return a UUID for provenance document creation
-     */
-    _uuid() {
-      var uuid = "", i, random;
-      for (i = 0; i < 32; i++) {
-        random = Math.random() * 16 | 0;
-
-        if (i == 8 || i == 12 || i == 16 || i == 20) {
-          uuid += "-"
-        }
-        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
-      }
-      return uuid;
-    }    
+    }  
 
     /**
      * Get array of provTypes for a given step type for provenance record creation
@@ -164,7 +150,7 @@ class Prov {
      *      - location (doc URI)
      */
     _createIngestStepRecord(jobId, flowId, stepType, docURI, info) {
-      let provId = this._uuid();
+      let provId = hubutils.uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -202,7 +188,7 @@ class Prov {
      *      - location (doc URI)
      */
     _createMappingStepRecord(jobId, flowId, stepType, docURI, info) {
-      let provId = this._uuid();
+      let provId = hubutils.uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -241,7 +227,7 @@ class Prov {
      *      - location (doc URI)
      */
     _createMasteringStepRecord(jobId, flowId, stepType, docURI, info) {
-      let provId = this._uuid();
+      let provId = hubutils.uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
@@ -277,7 +263,7 @@ class Prov {
      *    - location (doc URI)
      */
     _createCustomStepRecord(jobId, flowId, stepType, docURI, info) {
-      let provId = this._uuid();
+      let provId = hubutils.uuid();
       let recordOpts = {
         provTypes : this._getProvTypesByStep(stepType),
         relations: {
