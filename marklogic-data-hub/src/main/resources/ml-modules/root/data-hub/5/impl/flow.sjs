@@ -75,7 +75,7 @@ class Flow {
       cts.jsonPropertyValueQuery("name", flowName)]));
     for (let doc of uris) {
       if (fn.docAvailable(doc)){
-        this.hubUtils.deleteStagingDocument(doc);
+        this.hubUtils.deleteDocument(doc, this.config.STAGINGDATABASE);
       }
     }
   }

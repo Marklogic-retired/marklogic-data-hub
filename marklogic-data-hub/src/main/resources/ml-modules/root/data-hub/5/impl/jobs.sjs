@@ -29,9 +29,8 @@ class Jobs {
 
   createJob(flowName, id = null ) {
     let job = null;
-    if(id == null){
-      //todo find a better way to create a UUID
-     id = xdmp.random();
+    if(!id) {
+     id = hubutils.uuid();
     }
     job = {
      job: {
@@ -46,7 +45,7 @@ class Jobs {
      }
     };
 
-    hubutils.writeJobDocument("/jobs/"+job.job.jobId+".json", job, "'Jobs','Job'");
+    hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "xdmp.defaultPermissions()",  "'Jobs','Job'", this.config.JOBDATABASE);
     return job;
   }
 
@@ -68,7 +67,7 @@ class Jobs {
     cts.jsonPropertyValueQuery("jobId", jobId)]));
     for (let doc of uris) {
      if (fn.docAvailable(doc)){
-       hubutils.deleteJobDocument(doc);
+       hubutils.deleteDocument(doc, this.config.JOBDATABASE);
      }
     }
   }
@@ -84,7 +83,7 @@ class Jobs {
     if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
       docObj.job.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeJobDocument("/jobs/"+ jobId +".json", docObj, "'Jobs','Job'");
+    hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "xdmp.defaultPermissions()", "'Jobs','Job'", this.config.JOBDATABASE);
   }
 
   getLastStepAttempted(jobId) {
@@ -123,7 +122,7 @@ class Jobs {
     batch = {
       batch: {
         jobId: jobId,
-        batchId: xdmp.random(),
+        batchId: hubutils.uuid(),
         processor: processor,
         step: step,
         batchStatus: "started",
@@ -133,14 +132,14 @@ class Jobs {
       }
     };
 
-    hubutils.writeJobDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "'Jobs','Batch'");
+    hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", "'Jobs','Batch'", this.config.JOBDATABASE);
     return jobId;
   }
 
   getBatchDocs(jobId, step=null) {
     let docs = [];
     let query = [cts.directoryQuery("/jobs/batches/"),cts.jsonPropertyValueQuery("jobId", jobId)];
-    if(step != null) {
+    if(step) {
       query.push(cts.jsonPropertyValueQuery("step", step));
     }
     let uris = cts.uris("", null ,cts.andQuery(query));
@@ -167,7 +166,7 @@ class Jobs {
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
-    hubutils.JobDocument("/jobs/batches/"+ batchId +".json", docObj, "'Jobs','Batch'");
+    hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "xdmp.defaultPermissions()", "'Jobs','Batch'", this.config.JOBDATABASE);
   }
 
   getBatchDoc(jobId, batchId) {

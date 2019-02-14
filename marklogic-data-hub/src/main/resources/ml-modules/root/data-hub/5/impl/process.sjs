@@ -90,7 +90,7 @@ class Process {
       cts.jsonPropertyValueQuery("name", name), cts.jsonPropertyValueQuery("type", type)]));
     for (let doc of uris) {
       if (fn.docAvailable(doc)){
-        this.hubUtils.deleteStagingDocument(doc);
+        this.hubUtils.deleteDocument(doc, this.config.STAGINGDATABASE);
       }
     }
   }
