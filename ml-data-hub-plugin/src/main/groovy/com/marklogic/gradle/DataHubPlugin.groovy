@@ -114,6 +114,12 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
         project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
 
+        /*
+            DHF has triggers that generate TDE and entity file in the schemas database so finalizing by
+            "hubDeployUserArtifacts" which will refresh these files after "mlReloadSchemas" clears them.
+        */
+        project.tasks.mlReloadSchemas.finalizedBy(["hubDeployUserArtifacts"])
+
         project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
             description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
             .mustRunAfter(["mlClearModulesDatabase"])
