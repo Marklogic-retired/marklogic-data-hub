@@ -1,5 +1,42 @@
 # Change Log
 
+## [v4.2.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v4.2.0) (2019-02-14)
+
+
+Bug
+
+    [DHFPROD-1619] - Ran into writeTraceError when running harmonization flow for 2.0.4 project upgraded to 4.1 
+    [DHFPROD-1643] - Entity name and case-sensitive issue while running flow
+    [DHFPROD-1662] - Don't override app name if a user has set it
+    [DHFPROD-1667] - 4.1.0 RunWriters errors are not properly accounted
+    [DHFPROD-1680] - Javascript trace errorCount stuck at 1
+    [DHFPROD-1730] - QuickStart: In "Congratulations on updating ...", "How to update..." link points to localhost:8080/null
+    [DHFPROD-1745] - Primary key is not displayed on mapping entity table
+    [DHFPROD-1746] - hubGenerateTDETemplates fails when there are relations between entities
+    [DHFPROD-1754] - Quickstart install, uninstall, and redeploy hub take a long time
+    [DHFPROD-1760] - module deploy timestamp is not environment specific
+    [DHFPROD-1774] - Cannot upgrade from 4.1.0 to 4.x
+    [DHFPROD-1788] - Triggers from es-alignment do not generate tde for already nested entity
+
+
+Improvement
+
+    [DHFPROD-1428] - Improve the usability of text input elements
+
+Sub-task
+
+
+    [DHFPROD-1688] - Add Mock API framework for node.js
+
+Story
+
+
+    [DHFPROD-1553] - Make DHF reliant on Entity Services for entity model generation
+    [DHFPROD-1692] - Technical story: Update ml-gradle to 3.11
+    [DHFPROD-1734] - Address high security vulnerability from github
+    [DHFPROD-1758] - Document new 'hubDeployUserArtifacts' ml-gradle command
+
+
 ## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0) (2018-12-19)
 
 Bug
