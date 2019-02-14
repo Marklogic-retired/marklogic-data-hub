@@ -134,6 +134,7 @@ Bug
     [DHFPROD-1746] - hubGenerateTDETemplates fails when there are relations between entities
     [DHFPROD-1754] - Quickstart install, uninstall, and redeploy hub take a long time
     [DHFPROD-1760] - module deploy timestamp is not environment specific
+    [DHFPROD-1772] - Example :Single Step Ingest has error on DHF 4.1.x
     [DHFPROD-1774] - Cannot upgrade from 4.1.0 to 4.x
     [DHFPROD-1788] - Triggers from es-alignment do not generate tde for already nested entity
 
@@ -151,6 +152,7 @@ Story
 
 
     [DHFPROD-1553] - Make DHF reliant on Entity Services for entity model generation
+    [DHFPROD-1604] - Update Quickstart tutorial for DHF 4.x
     [DHFPROD-1692] - Technical story: Update ml-gradle to 3.11
     [DHFPROD-1734] - Address high security vulnerability from github
     [DHFPROD-1758] - Document new 'hubDeployUserArtifacts' ml-gradle command
