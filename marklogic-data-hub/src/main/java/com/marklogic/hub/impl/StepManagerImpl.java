@@ -131,7 +131,7 @@ public class StepManagerImpl implements StepManager {
 
     @Override
     public Step createStepFromJSON(JsonNode json) {
-        Step step = Step.create("default", Step.StepType.INGEST);
+        Step step = Step.create("default", Step.StepType.CUSTOM);
         step.deserialize(json);
         return step;
     }
