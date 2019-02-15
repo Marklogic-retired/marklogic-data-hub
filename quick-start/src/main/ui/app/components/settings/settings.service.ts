@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class SettingsService {
@@ -73,8 +74,8 @@ export class SettingsService {
   }
 
   validateMlcpPath(path: string) {
-    return this.http.get(`/api/utils/validatePath?path=${encodeURIComponent(path)}`)
-      .map(this.extractData);
+    return this.http.get(`/api/utils/validatePath?path=${encodeURIComponent(path)}`).pipe(
+      map(this.extractData));
   }
 
   private extractData = (res: Response) => {
@@ -82,6 +83,6 @@ export class SettingsService {
   }
 
   private get(url: string) {
-    return this.http.get(url).map(this.extractData);
+    return this.http.get(url).pipe(map(this.extractData));
   }
 }

@@ -1,5 +1,3 @@
-import 'rxjs/add/observable/of';
-
 import {CommonModule} from '@angular/common';
 import {centered} from '@storybook/addon-centered/angular';
 import {moduleMetadata, storiesOf} from '@storybook/angular';

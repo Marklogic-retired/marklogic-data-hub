@@ -4,6 +4,7 @@ import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp';
 import { ProjectService } from '../projects';
 import { parse } from 'date-fns';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class DeployService {
@@ -46,7 +47,7 @@ export class DeployService {
 
   private updateLastDeployed() {
     const url = `/api/current-project/last-deployed`;
-    this.http.get(url).map((res: Response) => { return res.json(); }).subscribe((resp: any) => {
+    this.http.get(url).pipe(map((res: Response) => { return res.json(); })).subscribe((resp: any) => {
       this._lastDeployed = (resp.deployed) ? parse(resp.lastModified) : null;
     });
   }

@@ -9,7 +9,8 @@ import {
   XHRBackend
 } from '@angular/http';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs/Rx';
+import {throwError as observableThrowError, empty as observableEmpty, Observable} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
@@ -55,14 +56,14 @@ class HttpInterceptor extends Http {
   }
 
   intercept(observable: Observable<Response>): Observable<Response> {
-    return observable.catch((err, source) => {
+    return observable.pipe(catchError((err, source) => {
       if (err.status === 401 && !_.endsWith(err.url, '/login')) {
         this._router.navigate(['login']);
-        return Observable.empty(null);
+        return observableEmpty(null);
       } else {
-        return Observable.throw(err);
+        return observableThrowError(err);
       }
-    });
+    }));
 
   }
 }
