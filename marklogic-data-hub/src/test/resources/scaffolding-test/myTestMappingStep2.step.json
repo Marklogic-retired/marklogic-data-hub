@@ -1,6 +1,6 @@
 {
-  "name": "myTestIngestProcess",
-  "type": "INGEST",
+  "name": "myTestMappingStep2",
+  "type": "MAPPING",
   "version": 1,
   "options": {
     "key": "val",

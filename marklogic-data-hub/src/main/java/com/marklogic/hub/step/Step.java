@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.processes;
+package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public interface Process {
+public interface Step {
 
-    enum ProcessType {
+    enum StepType {
         INGEST("ingest"),
         MAPPING("mapping"),
         CUSTOM("custom");
 
         private String type;
 
-        ProcessType(String type) {
+        StepType(String type) {
             this.type = type;
         }
 
-        public static ProcessType getProcessType(String type) {
-            for (ProcessType processType : ProcessType.values()) {
-                if (processType.toString().equalsIgnoreCase(type)) {
-                    return processType;
+        public static StepType getStepType(String type) {
+            for (StepType stepType : StepType.values()) {
+                if (stepType.toString().equalsIgnoreCase(type)) {
+                    return stepType;
                 }
             }
             return null;
         }
 
-        public static ArrayList<ProcessType> getProcessTypes() {
-            return new ArrayList<>(Arrays.asList(ProcessType.values()));
+        public static ArrayList<StepType> getStepTypes() {
+            return new ArrayList<>(Arrays.asList(StepType.values()));
         }
 
         public String toString() {
@@ -53,43 +53,43 @@ public interface Process {
     }
 
     /**
-     * Creates an in-memory default instance of a Process given a name and a type
+     * Creates an in-memory default instance of a Step given a name and a type
      *
-     * @param name - the name of the Process
+     * @param name - the name of the Step
      * @param type - the type of the mapping
-     * @return a Process object
+     * @return a Step object
      */
-    static Process create(String name, ProcessType type) {
-        return new ProcessImpl(name, type);
+    static Step create(String name, StepType type) {
+        return new StepImpl(name, type);
     }
 
     /**
-     * Returns the name of the processes
+     * Returns the name of the step
      *
-     * @return a processes name
+     * @return a step name
      */
     String getName();
 
     /**
-     * Sets the name of the processes
+     * Sets the name of the step
      *
-     * @param name - a processes name
+     * @param name - a step name
      */
     void setName(String name);
 
     /**
-     * Returns the type of the Process
+     * Returns the type of the Step
      *
-     * @return - a processes type
+     * @return - a step type
      */
-    ProcessType getType();
+    StepType getType();
 
     /**
-     * Sets the type of the processes
+     * Sets the type of the step
      *
-     * @param type - a processes type
+     * @param type - a step type
      */
-    void setType(ProcessType type);
+    void setType(StepType type);
 
     /**
      * Serializes the mapping as a json string

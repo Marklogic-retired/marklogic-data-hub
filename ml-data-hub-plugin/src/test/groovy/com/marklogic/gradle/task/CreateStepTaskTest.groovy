@@ -26,61 +26,61 @@ import java.nio.file.Paths
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class CreateProcessTaskTest extends BaseTest {
+class CreateStepTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
-    def "create process with no name"() {
+    def "create step with no name"() {
         when:
-        def result = runFailTask('hubCreateProcess')
+        def result = runFailTask('hubCreateStep')
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('processName property is required')
-        result.task(":hubCreateProcess").outcome == FAILED
+        result.output.contains('stepName property is required')
+        result.task(":hubCreateStep").outcome == FAILED
     }
 
-    def "create process with valid name only"() {
+    def "create step with valid name only"() {
         given:
         propertiesFile << """
             ext {
-                processName=my-test-process
+                stepName=my-test-step
             }
         """
 
         when:
-        def result = runTask('hubCreateProcess')
+        def result = runTask('hubCreateStep')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateProcess").outcome == SUCCESS
+        result.task(":hubCreateStep").outcome == SUCCESS
 
         // It should default to "CUSTOM" type when none specified
-        File processDir = Paths.get(testProjectDir.root.toString(), "processes", "custom", "my-test-process").toFile()
-        println processDir.toString()
-        processDir.isDirectory()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "step", "custom", "my-test-step").toFile()
+        println stepDir.toString()
+        stepDir.isDirectory()
     }
 
-    def "create process with valid name and type"() {
+    def "create step with valid name and type"() {
         given:
         propertiesFile << """
             ext {
-                processName=my-new-process
-                processType=mapping
+                stepName=my-new-step
+                stepType=mapping
             }
         """
 
         when:
-        def result = runTask('hubCreateProcess')
+        def result = runTask('hubCreateStep')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateProcess").outcome == SUCCESS
+        result.task(":hubCreateStep").outcome == SUCCESS
 
-        File processDir = Paths.get(testProjectDir.root.toString(), "processes", "mapping", "my-new-process").toFile()
-        processDir.isDirectory()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "step", "mapping", "my-new-step").toFile()
+        stepDir.isDirectory()
     }
 }
