@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ dependencies {
     compile (project(':marklogic-data-hub')) {
         exclude group: 'ch.qos.logback'
     }
-    compile ('com.marklogic:ml-gradle:3.10.2') {
+    compile ('com.marklogic:ml-gradle:3.12.0') {
         exclude group: 'ch.qos.logback'
     }
     testCompile localGroovy()

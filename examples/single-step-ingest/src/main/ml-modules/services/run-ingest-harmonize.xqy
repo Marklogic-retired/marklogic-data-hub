@@ -38,8 +38,10 @@ declare %rapi:transaction-mode("update") function runIngestHarmonize:put(
   )[1]
   let $_ := flow:set-default-options($options, $flow)
 
+  let $mainFunction := flow:get-main($flow/hub:main)
+
   (: this can throw, but we want the REST API to know about the problems, so let it :)
-  let $envelope := runIngestHarmonize:run-flow($job-id, $flow, $uri, $content, $options)
+  let $envelope := runIngestHarmonize:run-flow($job-id, $flow, $uri, $content, $options, $mainFunction)
 
   (: Insert the document into the STAGING database :)
   let $permissions := (xdmp:default-permissions(), xdmp:permission("rest-reader", "read"), xdmp:permission("rest-writer", "update"))
@@ -72,16 +74,27 @@ declare %rapi:transaction-mode("update") function runIngestHarmonize:put(
     flow:set-default-options($options, $flow),
     map:put($options, "target-database", $target-database)
   )
-  let $error :=
+  let $mainFunction := flow:get-main($flow/hub:main)
+  let $errors := json:array()
+  let $_ :=
     try {
-      runIngestHarmonize:run-flow($job-id, $flow, $uri, (), $options)
+      flow:run-flow($job-id, $flow, $uri, (), $options, $mainFunction)
     }
     catch($ex) {
       xdmp:log(("caught error in run-ingest-harmonize.xqy")),
       xdmp:log($ex/error:format-string),
-      $ex/error:format-string
+      json:array-push($errors, $ex/error:format-string)
     }
-
+  (: Run the writers :)
+  let $_ :=
+    try {
+      flow:run-writers($uri)
+    }
+    catch($ex) {
+      xdmp:log(("caught error in run-ingest-harmonize.xqy when running the writers")),
+      xdmp:log($ex/error:format-string),
+      json:array-push($errors, $ex/error:format-string)
+    }
   return
     document {
       element response {
@@ -89,14 +102,14 @@ declare %rapi:transaction-mode("update") function runIngestHarmonize:put(
           $envelope
         },
         element harmonization {
-          if (fn:empty($error)) then (
+          if (fn:empty(map:keys($errors))) then (
             element harmonizationSuccessful {fn:true()},
             element errorFound {fn:false()}
           )
           else (
             element harmonizationSuccessful {fn:false()},
             element errorFound {fn:true()},
-            element errorMessage {$error}
+            element errorMessage {$errors}
           )
         }
       }
@@ -107,8 +120,9 @@ declare private function runIngestHarmonize:run-flow(
   $job-id as xs:string,
   $flow as element(hub:flow),
   $uri as xs:string,
-  $content as node()?,
-  $options as map:map)
+  $content as item()?,
+  $options as map:map,
+  $mainFunction)
 {
   (: The PUT command runs in update mode, so we need to eval in query mode :)
   xdmp:eval('
@@ -120,15 +134,17 @@ declare private function runIngestHarmonize:run-flow(
     declare variable $uri external;
     declare variable $content external;
     declare variable $options external;
+    declare variable $mainFunction external;
 
-    flow:run-flow($job-id, $flow, $uri, $content, $options)
+    flow:run-flow($job-id, $flow, $uri, $content, $options, $mainFunction)
   ',
   map:new((
     map:entry("job-id", $job-id),
     map:entry("flow", $flow),
     map:entry("uri", $uri),
     map:entry("content", $content),
-    map:entry("options", $options)
+    map:entry("options", $options),
+    map:entry("mainFunction", $mainFunction)
   )))
 };
 

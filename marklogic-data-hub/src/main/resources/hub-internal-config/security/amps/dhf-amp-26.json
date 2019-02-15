@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/models/document-model-update",
+  "local-name" : "put",
+  "document-uri" : "/data-hub/4/rest-api/models/document-model-update.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-writer-internal" ]
+}

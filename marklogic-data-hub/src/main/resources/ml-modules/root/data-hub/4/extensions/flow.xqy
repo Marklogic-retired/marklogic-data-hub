@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2018 MarkLogic Corporation
+  Copyright 2012-2019 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/data-hub/4/impl/trace-lib.xqy";
 
-declare namespace rapi = "http://marklogic.com/rest-api";
+declare namespace error = "http://marklogic.com/xdmp/error";
 
 declare namespace hub = "http://marklogic.com/data-hub";
 
@@ -130,13 +130,32 @@ declare function post(
               json:array-push($errors, $ex/err:error-to-json(.))
             }
         (: run writers :)
+        let $before := xdmp:elapsed-time()
         let $_ :=
           try {
             flow:run-writers($identifiers)
           }
           catch($ex) {
             xdmp:log(("error in run-writers", $ex)),
-            json:array-push($errors, $ex/err:error-to-json(.))
+            json:array-push($errors, $ex/err:error-to-json(.)),
+
+            let $batch-error :=
+              let $msg := $ex/error:message
+              let $stack := $ex/error:stack
+              return <error:error>{$ex/@*,
+              $msg/preceding-sibling::*,
+              <error:message>{fn:concat("BATCH-FAILED: ", $ex//error:message/fn:string())}</error:message>,
+              $msg/following-sibling::* intersect $stack/preceding-sibling::*,
+              <error:stack>{fn:concat("BATCH-FAILED: ", $ex//error:stack/fn:string())}</error:stack>,
+              $stack/following-sibling::*}
+              </error:error>
+
+            for $identifier in $identifiers
+            let $item-context := map:get($flow:context-queue, $identifier)
+            let $datum := $ex//error:data/error:datum/fn:string()
+            return if (fn:not($datum = $identifier))
+            then trace:error-trace($item-context, $batch-error, xdmp:elapsed-time() - $before)
+            else trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before)
           }
         let $resp :=
           document {

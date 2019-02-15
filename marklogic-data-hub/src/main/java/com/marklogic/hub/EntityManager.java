@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.impl.EntityManagerImpl;
+import com.marklogic.hub.entity.HubEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Manages existing entities' MarkLogic Server database index settings and query options.
@@ -57,4 +59,10 @@ public interface EntityManager {
     boolean deployFinalQueryOptions();
 
     boolean deployStagingQueryOptions();
+
+    List<HubEntity> getEntities();
+
+    HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException;
+
+    void deleteEntity(String entity) throws IOException;
 }

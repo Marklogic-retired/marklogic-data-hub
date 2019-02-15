@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2018 MarkLogic Corporation
+  Copyright 2012-2019 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -338,6 +338,9 @@ service:generate-lets($model, $entity-type-name, $mapping, $entity)
     let $properties := map:get($entity-type, "properties")
     let $required-properties := (
       map:get($entity-type, "primaryKey"),
+    if (fn:empty(map:get($entity-type, "required"))) then 
+      ()
+    else 
       json:array-values(map:get($entity-type, "required"))
     )
     for $property-name in map:keys($properties)

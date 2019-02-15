@@ -1,17 +1,12 @@
 package com.marklogic.hub.core;
 
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -42,6 +37,7 @@ public class HubProjectTest extends HubTestBase {
         resetProperties();
         createProjectDir();
         adminHubConfig.createProject(PROJECT_PATH);
+        adminHubConfig.withPropertiesFromEnvironment("local");
         adminHubConfig.refreshProject();
     }
 
@@ -152,6 +148,18 @@ public class HubProjectTest extends HubTestBase {
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
     }
+
+   @Test
+    public void testUserModulesDeployTimestampFilePath() {
+        String envName = "dev";
+
+        adminHubConfig.withPropertiesFromEnvironment(envName);
+        adminHubConfig.refreshProject();
+
+        String expectedPath = Paths.get(PROJECT_PATH, ".tmp", envName + "-" + adminHubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+
+        assertEquals(expectedPath, adminHubConfig.getHubProject().getUserModulesDeployTimestampFile());
+    }
     
     @Test
     public void upgrade300To403ToCurrentVersion() throws Exception {
@@ -166,7 +174,7 @@ public class HubProjectTest extends HubTestBase {
         adminHubConfig.refreshProject();
 
         dataHub.upgradeHub();
-        
+
         // Confirm that the directories have been backed up
         Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
                 .resolve("src/main/hub-internal-config-4.0.3").toFile().exists());

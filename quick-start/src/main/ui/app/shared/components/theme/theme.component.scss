@@ -2,6 +2,7 @@
 @import 'styles/variables';
 @import 'styles/dialog';
 @import 'styles/tooltip';
+@import 'styles/material2-theme';
 
 div.main {
   position: absolute;
@@ -94,4 +95,8 @@ button.md-primary[md-raised-button],
 button.md-primary[md-fab],
 button.md-primary[md-mini-fab] {
   background-color: $button-color;
+}
+
+.mdl-switch__thumb {
+  background: #dedede;
 }

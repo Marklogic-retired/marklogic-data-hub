@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ class TlsTest extends BaseTest {
         '''
 
         def result = runTask("hubInit")
-        runTask("mlDeploySecurity")
+        runTask("hubDeploySecurity")
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"),
@@ -226,7 +226,7 @@ class TlsTest extends BaseTest {
     
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
-        runTask("mlDeploySecurity")
+        runTask("hubDeploySecurity")
         runTask("disableSSL")
         //runTask("mlUnDeploySecurity")
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
 import com.marklogic.mgmt.ManageClient;
@@ -91,7 +92,7 @@ public class DataHubImpl implements DataHub {
     private LoadUserModulesCommand loadUserModulesCommand;
 
     @Autowired
-    private DeployHubAmpsCommand deployHubAmpsCommand;
+    private LoadUserArtifactsCommand loadUserArtifactsCommand;
     
     @Autowired
     private Versions versions;
@@ -491,10 +492,12 @@ public class DataHubImpl implements DataHub {
                 throw new DataHubConfigurationException(e);
             }
         }
+        AppConfig appConfig = hubConfig.getAppConfig();
+        CMASettings.getInstance().setCmaSettings(appConfig);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.deploy(hubConfig.getAppConfig());
+        finalDeployer.deploy(appConfig);
     }
 
     /**
@@ -549,10 +552,14 @@ public class DataHubImpl implements DataHub {
     @Override
     public void uninstall(HubDeployStatusListener listener) {
         logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
+        List<Command> commandMap = buildListOfCommands();
+
+        AppConfig appConfig = hubConfig.getAppConfig();
+        CMASettings.getInstance().setCmaSettings(appConfig);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.undeploy(hubConfig.getAppConfig());
+        finalDeployer.setCommands(commandMap);
+        finalDeployer.undeploy(appConfig);
     }
 
     private void runInDatabase(String query, String databaseName) {
@@ -570,14 +577,6 @@ public class DataHubImpl implements DataHub {
 
     public Map<String, List<Command>> buildCommandMap() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
-
-        /**
-         * This kept separate from mlSecurityCommands because hub amps are stored in the DHF jar, while the commands
-         * in the mlSecurityCommands list deploy resources defined by users.
-         */
-        List<Command> hubAmpsCommands = new ArrayList<>();
-        hubAmpsCommands.add(deployHubAmpsCommand);
-        commandMap.put("mlHubAmpsCommand", hubAmpsCommands);
 
         updateDatabaseCommandList(commandMap);
 
@@ -665,6 +664,7 @@ public class DataHubImpl implements DataHub {
         List<Command> commands = new ArrayList();
         commands.add(loadHubModulesCommand);
         commands.add(loadUserModulesCommand);
+        commands.add(loadUserArtifactsCommand);
 
         for (Command c : commandsMap.get("mlModuleCommands")) {
             if (c instanceof LoadModulesCommand) {

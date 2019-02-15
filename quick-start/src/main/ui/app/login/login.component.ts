@@ -32,6 +32,7 @@ import * as SemVer from 'semver';
       [initSettings]="this.initSettings"
       [hubUpdateFailed]="this.hubUpdateFailed"
       [hubUpdating]="this.hubUpdating"
+      [hubUpdateLink]="this.hubUpdateLink"
       
       (onInstall)="this.install()"
       (onUninstall)="this.unInstall()"
@@ -72,6 +73,7 @@ export class LoginComponent implements OnInit {
   hubUpdating: boolean = false;
   hubUpdateFailed: boolean = false;
   hubUpdateError: string = '';
+  hubUpdateLink: string = 'https://marklogic.github.io/marklogic-data-hub/upgrade/';
 
   loginError: string = null;
   loggingIn: boolean = false;

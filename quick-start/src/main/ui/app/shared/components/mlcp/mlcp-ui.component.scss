@@ -7,7 +7,7 @@ $duration: 0.25s;
 $easingFunc: ease-in-out;
 
 .content {
-  padding: 0px;
+  padding: 0px 15px;
   background-color: #e9eef4;
 }
 
@@ -70,6 +70,11 @@ $easingFunc: ease-in-out;
   &.collapsed {
     max-height: 0px;
   }
+}
+mat-form-field {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 16px;
 }
 
 @media (min-width: 960px) {

@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/lib/extensions-util",
+  "local-name" : "do-list-extension-metadata",
+  "document-uri" : "/data-hub/4/rest-api/lib/extensions-util.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-admin-internal" ]
+}

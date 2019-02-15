@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -38,6 +39,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
     // this is for the telemetry hook to use mlUsername/mlPassword
     private DatabaseClient databaseClient;
 
+    private String mlVersion = null;
     // Keeps track of completion percentage
     private int completed = 0;
 
@@ -52,7 +54,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     public void deploy(AppConfig appConfig) {
         this.completed = 0;
-
         onStatusChange(0, "Installing...");
         super.deploy(appConfig);
         onStatusChange(100, "Installation Complete");
@@ -81,7 +82,6 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     public void undeploy(AppConfig appConfig) {
         this.completed = 0;
-
         onStatusChange(0, "Uninstalling...");
         super.undeploy(appConfig);
         onStatusChange(100, "Installation Complete");

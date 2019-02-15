@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -109,10 +109,9 @@ public class DefinitionType extends JsonPojo {
         this.properties = properties;
     }
 
-    public static DefinitionType fromJson(String name, JsonNode defs) {
+    public static DefinitionType fromJson(String name, JsonNode node) {
         DefinitionType definitionType = new DefinitionType();
         definitionType.setName(name);
-        JsonNode node = defs.get(name);
 
         definitionType.setDescription(getValue(node, "description"));
         definitionType.setPrimaryKey(getValue(node, "primaryKey"));

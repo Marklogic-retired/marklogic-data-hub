@@ -184,7 +184,7 @@ export class FlowPage extends AppPage {
   }
 
   mlcpInput(name: string) {
-    return element(by.css(`input[name="${name}"]`));
+    return element(by.id(name));
   }
 
   get toast() {
@@ -231,6 +231,10 @@ export class FlowPage extends AppPage {
 
   readFileContent(filepath: string) {
     return fs.readFileSync(filepath, 'utf8');
+  }
+
+  get duplicateFlowNameAlertText() {
+    return element(by.className('alert-text'));
   }
 
   /*

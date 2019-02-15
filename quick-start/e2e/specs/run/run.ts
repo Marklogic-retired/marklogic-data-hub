@@ -6,6 +6,7 @@ import jobsPage from '../../page-objects/jobs/jobs';
 import browsePage from '../../page-objects/browse/browse';
 import viewerPage from '../../page-objects/viewer/viewer';
 import appPage from '../../page-objects/appPage';
+import { AngularWaitBarrier } from 'blocking-proxy/built/lib/angular_wait_barrier';
 const fs = require('fs-extra');
 
 export default function(tmpDir) {
@@ -39,6 +40,17 @@ export default function(tmpDir) {
       //verify on browse data page
       await appPage.browseDataTab.click();
       browsePage.isLoaded();
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
+      // verify entity only checkbox
+      await browsePage.entitiesOnlyChkBox().click();
+      browser.sleep(5000);
+      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      // verify it's returning the entities only result
+      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 450');
+      // clear the checkbox, results should include non-entities
+      await browsePage.entitiesOnlyChkBox().click();
+      browser.sleep(5000);
       browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 456');
       await browsePage.databaseDropDown().click();

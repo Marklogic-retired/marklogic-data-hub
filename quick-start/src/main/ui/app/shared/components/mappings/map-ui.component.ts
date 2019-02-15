@@ -357,4 +357,13 @@ export class MapUiComponent implements OnChanges {
     return _.includes(this.chosenEntity.definition.pii, name);
   }
 
+    /**
+   * Is an entity property the primary key?
+   * @param name Name of property
+   * @returns {boolean}
+   */
+  isPrimaryKey(name) {
+    return _.includes(this.chosenEntity.definition.primaryKey, name);
+  }
+
 }

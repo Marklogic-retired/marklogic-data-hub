@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2018 MarkLogic Corporation
+  Copyright 2012-2019 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -98,15 +98,28 @@ declare function flow:get-flow-nocache(
 {
 
   hul:run-in-modules(function() {
-    /hub:flow[
-      hub:entity = $entity-name and
+    let $flow := /hub:flow[
+    fn:lower-case(hub:entity) = fn:lower-case($entity-name) and
       hub:name = $flow-name]
-      [
+    [
+    if (fn:exists($flow-type)) then
+      hub:type = $flow-type
+    else
+      fn:true()
+    ]
+    return
+      if ((fn:count($flow)) > 1) then
+        /hub:flow[
+        hub:entity = $entity-name and
+          hub:name = $flow-name]
+        [
         if (fn:exists($flow-type)) then
           hub:type = $flow-type
         else
           fn:true()
-      ]
+        ]
+      else
+        $flow
   }) ! hul:deep-copy(.)
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle.task
 
+import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
@@ -29,6 +30,7 @@ class CreateMappingTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     def "create mapping with no name"() {
@@ -46,18 +48,21 @@ class CreateMappingTaskTest extends BaseTest {
         propertiesFile << """
             ext {
                 mappingName=my-new-mapping
+                entityName=my-new-entity
             }
         """
 
         when:
-        def result = runTask('hubCreateMapping')
+        def result = runTask('hubCreateEntity', 'hubCreateMapping', 'hubDeployUserArtifacts' )
 
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateMapping").outcome == SUCCESS
+        result.task(":hubDeployUserArtifacts").outcome == SUCCESS
 
         File mappingDir = Paths.get(testProjectDir.root.toString(), "plugins", "mappings", "my-new-mapping").toFile()
         mappingDir.isDirectory() == true
+        getStagingDocCount("http://marklogic.com/data-hub/mappings") == 1
     }
 
 }

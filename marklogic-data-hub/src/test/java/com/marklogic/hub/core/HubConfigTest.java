@@ -150,6 +150,21 @@ public class HubConfigTest extends HubTestBase {
         assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
     }
 
+    @Test
+    public void testConfigAppName() {
+        deleteProp("mlAppName");
+        resetProperties();
+        adminHubConfig.refreshProject();
+        // When not set, app name should default to "DHF"
+        assertEquals("DHF", adminHubConfig.getAppConfig().getName());
+
+        String appName = "data-hub";
+        writeProp("mlAppName", appName);
+        resetProperties();
+        adminHubConfig.refreshProject();
+        assertEquals(appName, adminHubConfig.getAppConfig().getName());
+    }
+
 
     @Test
     public void testHubInfo() {

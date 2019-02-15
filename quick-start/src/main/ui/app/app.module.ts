@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TruncateCharactersPipe } from './truncate';
 import { ListFilterPipe } from './shared/components/mappings/listfilter.pipe';
 import { AppComponent } from './app.component';
@@ -173,6 +174,7 @@ import {
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
     MdlModule,

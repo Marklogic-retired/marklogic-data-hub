@@ -97,8 +97,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       expect(entityPage.getEntityBox('Order').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
@@ -120,8 +120,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
@@ -166,8 +166,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should add properties to Order entity', async function() {
@@ -207,8 +207,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should verify properties to Product entity', async function() {
@@ -266,59 +266,6 @@ export default function(tmpDir) {
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
-    // commenting out, there is another test on removing properties
-    /*it ('should remove some properties on Order entity', async function() {
-      console.log('verify remove properties on Order entity');
-      let lastProperty = entityPage.lastProperty;
-      await entityPage.clickEditEntity('Order');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
-      //add some additional properties
-      console.log('add additional properties');
-      await entityPage.addProperty.click();
-      await entityPage.getPropertyName(lastProperty).sendKeys('remove-prop1');
-      await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'dateTime')).click();
-      await entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop1 description');
-      await entityPage.addProperty.click();
-      await entityPage.getPropertyName(lastProperty).sendKeys('remove-prop2');
-      await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'integer')).click();
-      await entityPage.getPropertyDescription(lastProperty).sendKeys('remove-prop2 description');
-      await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
-      await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
-      //remove the additional properties
-      console.log('remove additional properties');
-      await entityPage.clickEditEntity('Order');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
-      let removeProp1 = entityPage.getPropertyByPosition(4);
-      let removeProp2 = entityPage.getPropertyByPosition(5);
-      await entityPage.getPropertyCheckBox(removeProp1).click();
-      await entityPage.getPropertyCheckBox(removeProp2).click();
-      await entityPage.deleteProperty.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
-      await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
-      await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
-      //verify that the properties are removed
-      console.log('verify properties are removed');
-      await entityPage.clickEditEntity('Order');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
-      //console.log('verify properties count');
-      //entityPage.getPropertiesCount().then(function(props){expect(props).toEqual(3)});
-      await entityPage.cancelEntity.click();
-      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
-    });*/
-
     it ('should remove a created entity', async function() {
       browser.get('http://localhost:8080/#/entities');
       //create removeEntity entity
@@ -335,8 +282,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('removeEntity')));
       await entityPage.toolsButton.click();
       //remove removeEntity entity
@@ -519,8 +466,8 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.presenceOf(entityPage.toast));
-      browser.wait(EC.stalenessOf(entityPage.toast));
+      //browser.wait(EC.presenceOf(entityPage.toast));
+      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it ('should verify pii property to PII entity', async function() {
@@ -589,6 +536,19 @@ export default function(tmpDir) {
       expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
       // verify if the Save button is disabled on white space
       expect(entityPage.saveEntity.isEnabled()).toBe(false);
+      await entityPage.cancelEntity.click();
+      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+    });
+
+    it ('should not be able to use invalid character and space as title', async function() {
+      browser.get('http://localhost:8080/#/entities');
+      await entityPage.clickEditEntity('PIIEntity');
+      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
+      await entityPage.entityTitle.sendKeys('$%# myTitle^&%*');
+      await entityPage.saveEntity.click();
+      // verify the error message on invalid character on title
+      expect(entityPage.errorInvalidTitleMessage.isDisplayed()).toBe(true);
       await entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
@@ -800,6 +760,32 @@ export default function(tmpDir) {
       await flowPage.setKeyValueFlowOptionsByPosition(3, 'myDate', '2017-03-07');
     });
 
+    it ('should not create duplicate input flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
+      //create duplicate input flow
+      await flowPage.inputFlowButton('Product').click();
+      browser.wait(EC.visibilityOf(flowPage.newFlowDialog));
+      expect(flowPage.newFlowDialog.isDisplayed()).toBe(true);
+      await flowPage.newFlowName.sendKeys('Load Products');
+      await flowPage.createFlowButton.click();
+      expect(flowPage.duplicateFlowNameAlertText.getText()).toBe('Flow names must be unique. Entity "Product" already contains an Input flow named "Load Products"');
+      await flowPage.cancelFlowButton.click();
+      browser.wait(EC.stalenessOf(flowPage.newFlowDialog));
+    });
+
+    it ('should not create duplicate harmonize flow', async function() {
+      browser.get('http://localhost:8080/#/flows');
+      //create duplicate input flow
+      await flowPage.harmonizeFlowButton('Product').click();
+      browser.wait(EC.visibilityOf(flowPage.newFlowDialog));
+      expect(flowPage.newFlowDialog.isDisplayed()).toBe(true);
+      await flowPage.newFlowName.sendKeys('Harmonize Products');
+      await flowPage.createFlowButton.click();
+      expect(flowPage.duplicateFlowNameAlertText.getText()).toBe('Flow names must be unique. Entity "Product" already contains a Harmonize flow named "Harmonize Products"');
+      await flowPage.cancelFlowButton.click();
+      browser.wait(EC.stalenessOf(flowPage.newFlowDialog));
+    });
+
     it ('should redeploy modules', async function() {
       browser.get('http://localhost:8080/#/flows');
       flowPage.redeployButton.click();
@@ -809,75 +795,5 @@ export default function(tmpDir) {
       await appPage.flowsTab.click();
       flowPage.isLoaded();
     });
-
-    /*it ('should retain flow options when moving around', function() {
-      //move to other tab and go back to flows tab
-      console.log('going to the other tab and back');
-      appPage.entitiesTab.click();
-      entityPage.isLoaded();
-      appPage.flowsTab.click();
-      flowPage.isLoaded();
-      flowPage.clickEntityDisclosure('Product');
-      browser.wait(EC.visibilityOf(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      //verify the options are retained
-      console.log('verify the flow options');
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.visibilityOf(flowPage.tabs));
-      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('value')).toEqual('hello');
-      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('value')).toEqual('world');
-      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('value')).toEqual('myNumber');
-      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('value')).toEqual('250.456');
-      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
-      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
-      //move to other harmonize flow and go back to the flow
-      console.log('going to the other flow and back');
-      flowPage.clickEntityDisclosure('TestEntity');
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE')));
-      expect(flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').isDisplayed()).toBe(true);
-      flowPage.getFlow('TestEntity', 'sjs json HARMONIZE', 'HARMONIZE').click();
-      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
-      flowPage.clickEntityDisclosure('Product');
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true);
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
-      //verify the options are retained
-      console.log('verify the flow options');
-      browser.wait(EC.visibilityOf(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
-      expect(flowPage.getKeyFlowOptionsByPosition(1).getAttribute('value')).toEqual('hello');
-      expect(flowPage.getValueFlowOptionsByPosition(1).getAttribute('value')).toEqual('world');
-      expect(flowPage.getKeyFlowOptionsByPosition(2).getAttribute('value')).toEqual('myNumber');
-      expect(flowPage.getValueFlowOptionsByPosition(2).getAttribute('value')).toEqual('250.456');
-      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
-      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
-    });
-
-    it ('should remove the flow options', function() {
-      //add one option
-      console.log('add one option');
-      flowPage.addFlowOptionsButton().click();
-      flowPage.setKeyValueFlowOptionsByPosition(4, 'removeMe', 'gone');
-      flowPage.removeFlowOptionsByPositionButton(4).click();
-      //verify the removed option
-      console.log('verify the removed option');
-      appPage.entitiesTab.click();
-      entityPage.isLoaded();
-      appPage.flowsTab.click();
-      flowPage.isLoaded();
-      flowPage.clickEntityDisclosure('Product');
-      browser.wait(EC.elementToBeClickable(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE')));
-      expect(flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').isDisplayed()).toBe(true);
-      flowPage.getFlow('Product', 'Harmonize Products', 'HARMONIZE').click();
-      browser.wait(EC.elementToBeClickable(flowPage.runHarmonizeButton()));
-      expect(flowPage.runHarmonizeButton().isDisplayed()).toBe(true);
-      expect(flowPage.getKeyFlowOptionsByPosition(3).getAttribute('value')).toEqual('myDate');
-      expect(flowPage.getValueFlowOptionsByPosition(3).getAttribute('value')).toEqual('2017-03-07');
-      //verify the flow options count
-      console.log('verify the flow options count');
-      flowPage.getFlowOptionsCount().then(function(flowOptions){expect(flowOptions).toEqual(3)});
-    });*/
   });
 }

@@ -1,5 +1,5 @@
 (:
-  Copyright 2012-2018 MarkLogic Corporation
+  Copyright 2012-2019 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -377,6 +377,7 @@ declare function trace:error-trace(
     )
     let $_ := map:put($current-trace, "traceSteps", $trace-steps)
     let $_ := trace:write-error-trace($item-context)
+    let $_ := map:put($current-trace-settings, "_has_errors", fn:false())
     return ()
   )
 };

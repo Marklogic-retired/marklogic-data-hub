@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.DataHub
+import com.marklogic.hub.deploy.util.CMASettings
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 
@@ -26,6 +27,8 @@ class PreinstallCheckTask extends HubTask {
     @TaskAction
     void runPreinstallCheck() {
         DataHub dh = getDataHub();
+        // Set CMA properties properly before
+        CMASettings.getInstance().setCmaSettings(getCommandContext().getAppConfig());
         def preInstallCheck = dh.runPreInstallCheck()
         if (preInstallCheck.get("safeToInstall")) {
             print("PreInstall check: [PASSED]")

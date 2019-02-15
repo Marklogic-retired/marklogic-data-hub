@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,7 +67,8 @@ class BaseTest extends Specification {
     static final int MOD_COUNT_WITH_TRACE_MODULES = 26
     static final int MOD_COUNT = 5
     // this value under good security conditions is 2 because hub-admin-user cannot read options files directly.
-    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 109
+    // 2 additional modules have been added for triggers
+    static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 111
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile

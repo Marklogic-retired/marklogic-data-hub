@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/lib/search-util",
+  "local-name" : "search-to-json",
+  "document-uri" : "/MarkLogic/rest-api/lib/search-util.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

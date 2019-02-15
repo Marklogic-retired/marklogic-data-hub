@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 MarkLogic Corporation
+ * Copyright 2012-2019 MarkLogic Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.impl.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -43,6 +44,7 @@ class DataHubPlugin implements Plugin<Project> {
     private HubConfigImpl hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
     private LoadUserModulesCommand loadUserModulesCommand
+    private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
     private FlowManagerImpl flowManager
     private EntityManagerImpl entityManager
@@ -81,9 +83,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
         project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
-        // Tasks for deploying/undeploying the amps included in the DHF jar
-        project.task("hubDeployAmps", group: deployGroup, type: DeployHubAmpsTask, description: "Deploy the hub-specific amps contained in DHF")
-        project.task("hubUndeployAmps", group: deployGroup, type: UndeployHubAmpsTask, description: "Undeploy the hub-specific amps container in DHF; currently only supported for MarkLogic version 9.0-5")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
@@ -111,12 +110,23 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
         project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
 
+        /*
+            DHF has triggers that generate TDE and entity file in the schemas database so finalizing by
+            "hubDeployUserArtifacts" which will refresh these files after "mlReloadSchemas" clears them.
+        */
+        project.tasks.mlReloadSchemas.finalizedBy(["hubDeployUserArtifacts"])
+
         project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
             description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
             .mustRunAfter(["mlClearModulesDatabase"])
 
         // This isn't likely to be used, but it's being kept for regression purposes for now
-        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask, description: "Installs user modules from the plugins and src/main/entity-config directories.")
+        project.task("hubDeployUserModules", group: deployGroup, type: DeployUserModulesTask,
+            description: "Installs user modules from the plugins and src/main/entity-config directories.")
+            .finalizedBy(["hubDeployUserArtifacts"])
+
+        project.task("hubDeployUserArtifacts", group: deployGroup, type: DeployUserArtifactsTask,
+            description: "Installs user artifacts such as entities and mappings.")
 
         // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
         project.tasks.replace("mlWatch", HubWatchTask)
@@ -154,6 +164,7 @@ class DataHubPlugin implements Plugin<Project> {
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
+        loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
@@ -189,6 +200,10 @@ class DataHubPlugin implements Plugin<Project> {
                 hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
             }
 
+            // By default, DHF uses gradle-local.properties for your local environment.
+            def envNameProp = project.hasProperty("environmentName") ? project.property("environmentName") : "local"
+            hubConfig.withPropertiesFromEnvironment(envNameProp.toString())
+
             hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
             hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
             hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
@@ -201,6 +216,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("scaffolding", scaffolding)
             project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
+            project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("entityManager", entityManager)

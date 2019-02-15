@@ -37,6 +37,7 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.CodeFormat;
@@ -122,6 +123,9 @@ public class HubTestBase {
     protected LoadUserModulesCommand loadUserModulesCommand;
 
     @Autowired
+    protected LoadUserArtifactsCommand loadUserArtifactsCommand;
+
+    @Autowired
     protected Scaffolding scaffolding;
 
     @Autowired
@@ -157,6 +161,7 @@ public class HubTestBase {
     public  DatabaseClient flowRunnerClient = null;
     // this is needed for some evals in the test suite that are not mainline tests.
     public  DatabaseClient stagingModulesClient = null;
+    public  DatabaseClient finalSchemasClient = null;
     public  DatabaseClient finalClient = null;
     public  DatabaseClient finalFlowRunnerClient = null;
     public  DatabaseClient jobClient = null;
@@ -287,6 +292,7 @@ public class HubTestBase {
             stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             // NOTE finalClient must use staging port and final database to use DHF enode code.
             finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
+            finalSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, user, password, finalAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         }
@@ -780,6 +786,9 @@ public class HubTestBase {
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = jobClient.newServerEval();
                 break;
+            case HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME:
+                eval = finalSchemasClient.newServerEval();
+                break;
             default:
                 eval = stagingClient.newServerEval();
                 break;
@@ -884,6 +893,8 @@ public class HubTestBase {
         LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
         commands.add(loadModulesCommand);
 
+        loadUserArtifactsCommand.setForceLoad(force);
+        commands.add(loadUserArtifactsCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
