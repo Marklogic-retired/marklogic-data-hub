@@ -73,6 +73,13 @@ class HubUtils {
     return uuid;
   }
 
+  /**
+  * Capitalize first letter of a string
+  */
+ capitalize(str) {
+  return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+ }
+ 
 }
 
 module.exports = HubUtils;
