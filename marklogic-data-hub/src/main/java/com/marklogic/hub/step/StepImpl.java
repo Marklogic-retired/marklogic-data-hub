@@ -36,10 +36,10 @@ public class StepImpl implements Step {
         this.type = type;
         this.version = 1;
         this.options = JsonNodeFactory.instance.objectNode();
-        this.modulePath = "/path/to/custom/plugins/main.sjs";
+        this.modulePath = "/path/to/your/step/module/main.sjs";
         this.customHook = JsonNodeFactory.instance.objectNode();
     }
-
+    
     public String getName() {
         return name;
     }
@@ -51,6 +51,12 @@ public class StepImpl implements Step {
     public StepType getType() {
         return type;
     }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage() { this.language = "zxx"; }
 
     public void setType(StepType type) {
         this.type = type;
