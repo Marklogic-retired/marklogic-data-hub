@@ -34,7 +34,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.job.impl.JobMonitorImpl;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
-import com.marklogic.hub.processes.Process;
+import com.marklogic.hub.step.Step;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -1540,8 +1540,8 @@ public class HubConfigImpl implements HubConfig
 
     @JsonIgnore
     @Override
-    public Path getProcessDir(Process.ProcessType type) {
-        return hubProject.getProcessDir(type);
+    public Path getStepDirByType(Step.StepType type) {
+        return hubProject.getStepDirByType(type);
     }
 
     @JsonIgnore

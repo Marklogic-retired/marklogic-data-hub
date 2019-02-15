@@ -77,8 +77,8 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    ProcessManager getProcessManager() {
-        getProject().property("processManager")
+    StepManager getStepManager() {
+        getProject().property("stepManager")
     }
     
     @Internal

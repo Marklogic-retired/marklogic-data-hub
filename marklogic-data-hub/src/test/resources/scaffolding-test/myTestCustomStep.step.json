@@ -1,5 +1,5 @@
 {
-  "name": "myTestCustomProcess",
+  "name": "myTestCustomStep",
   "type": "CUSTOM",
   "version": 1,
   "options": {

@@ -19,8 +19,8 @@ package com.marklogic.gradle.exception
 
 import org.gradle.api.GradleException
 
-class ProcessNameRequiredException extends GradleException {
-    ProcessNameRequiredException() {
-        super("processName property is required. Supply the parameter with -PprocessName=YourProcess")
+class StepNameRequiredException extends GradleException {
+    StepNameRequiredException() {
+        super("stepName property is required. Supply the parameter with -PstepName=YourStep")
     }
 }

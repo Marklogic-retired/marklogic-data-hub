@@ -17,12 +17,12 @@ package com.marklogic.client.ext.modulesloader.impl;
 
 import com.marklogic.client.ext.modulesloader.Modules;
 
-public class ProcessDefModulesFinder extends BaseModulesFinder {
+public class StepDefModulesFinder extends BaseModulesFinder {
 
     @Override
     protected Modules findModulesWithResolvedBaseDir(String baseDir) {
         Modules modules = new Modules();
-        modules.setAssets(findResources("Process Def", baseDir, "*.processes.json"));
+        modules.setAssets(findResources("Step Def", baseDir, "*.step.json"));
         return modules;
     }
 }
