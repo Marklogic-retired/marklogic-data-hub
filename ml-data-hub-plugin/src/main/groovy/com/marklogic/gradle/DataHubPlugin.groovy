@@ -46,7 +46,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
-    private ProcessManagerImpl processManager
+    private StepManagerImpl stepManager
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
@@ -89,7 +89,7 @@ class DataHubPlugin implements Plugin<Project> {
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
-        project.task("hubCreateProcess", group: scaffoldGroup, type: CreateProcessTask)
+        project.task("hubCreateStep", group: scaffoldGroup, type: CreateStepTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
@@ -113,6 +113,12 @@ class DataHubPlugin implements Plugin<Project> {
         // DHF has custom logic for clearing the modules database
         project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
         project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
+
+        /*
+            DHF has triggers that generate TDE and entity file in the schemas database so finalizing by
+            "hubDeployUserArtifacts" which will refresh these files after "mlReloadSchemas" clears them.
+        */
+        project.tasks.mlReloadSchemas.finalizedBy(["hubDeployUserArtifacts"])
 
         project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
             description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
@@ -167,7 +173,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
-        processManager = ctx.getBean(ProcessManagerImpl.class)
+        stepManager = ctx.getBean(StepManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
@@ -221,7 +227,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
             project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
-            project.extensions.add("processManager", processManager)
+            project.extensions.add("stepManager", stepManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("legacyFlowManager", legacyFlowManager)
             project.extensions.add("entityManager", entityManager)

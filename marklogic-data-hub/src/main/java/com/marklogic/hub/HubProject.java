@@ -16,7 +16,7 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.processes.Process;
+import com.marklogic.hub.step.Step;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -47,7 +47,12 @@ public interface HubProject {
      */
     Path getHubPluginsDir();
 
-    Path getProcessesDir();
+    /**
+     * Gets the path for the hub step directory
+     *
+     * @return the path for the hub step directory
+     */
+    Path getStepDir();
 
     /**
      * Gets the path for the hub entities directory
@@ -63,7 +68,13 @@ public interface HubProject {
      */
     Path getHubMappingsDir();
 
-    Path getProcessDir(Process.ProcessType type);
+    /**
+     * Gets the path for the hub step directory by step type
+     *
+     * @param type - a Step type
+     * @return the path for the hub step directory
+     */
+    Path getStepDirByType(Step.StepType type);
 
     /**
      * Gets the path for the hub's config directory

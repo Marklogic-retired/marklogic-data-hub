@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.processes;
+package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,16 +22,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.marklogic.hub.error.DataHubProjectException;
 
-public class ProcessImpl implements Process {
+public class StepImpl implements Step {
     private String name;
-    private ProcessType type;
+    private StepType type;
     private int version;
     private JsonNode options;
     private JsonNode customHook;
     private String language = "zxx";
     private String modulePath;
 
-    ProcessImpl(String name, ProcessType type) {
+    StepImpl(String name, StepType type) {
         this.name = name;
         this.type = type;
         this.version = 1;
@@ -48,11 +48,11 @@ public class ProcessImpl implements Process {
         this.name = name;
     }
 
-    public ProcessType getType() {
+    public StepType getType() {
         return type;
     }
 
-    public void setType(ProcessType type) {
+    public void setType(StepType type) {
         this.type = type;
     }
 
@@ -91,7 +91,7 @@ public class ProcessImpl implements Process {
             return mapper.writeValueAsString(this);
         }
         catch (JsonProcessingException e) {
-            throw new DataHubProjectException("Unable to serialize processes object.");
+            throw new DataHubProjectException("Unable to serialize step object.");
         }
     }
 
@@ -102,7 +102,7 @@ public class ProcessImpl implements Process {
         }
 
         if (json.has("type")) {
-            setType(ProcessType.getProcessType(json.get("type").asText()));
+            setType(StepType.getStepType(json.get("type").asText()));
         }
 
         if (json.has("version")) {

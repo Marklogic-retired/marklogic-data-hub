@@ -102,7 +102,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path mappingPath = userModulesPath.resolve("mappings");
 
         Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path processesPath = projectPath.resolve("processes");
+        Path processesPath = projectPath.resolve("step");
         Path flowPath = projectPath.resolve("flows");
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
@@ -180,16 +180,16 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 Files.walkFileTree(processesPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        Modules modules = new ProcessDefModulesFinder().findModules(dir.toString());
+                        Modules modules = new StepDefModulesFinder().findModules(dir.toString());
                         DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                        meta.getCollections().add("http://marklogic.com/data-hub/process");
+                        meta.getCollections().add("http://marklogic.com/data-hub/step");
                         documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
                         for (Resource r : modules.getAssets()) {
                             if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
                                 InputStream inputStream = r.getInputStream();
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
-                                stagingProcessDocumentWriteSet.add("/processes/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                stagingProcessDocumentWriteSet.add("/step/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
