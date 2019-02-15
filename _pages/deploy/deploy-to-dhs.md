@@ -107,7 +107,7 @@ If your endpoints are publicly available, you can use any machine that is set up
 
     **NOTE:** If you use a different name for the properties file,
       - The filename must be in the format `gradle-{env}.properties`, where `{env}` is any string you want to represent an environment. For example, you can store the settings for your development environment in `gradle-dev.properties`.
-      - Remember to update the value of the \"-PenvironmentName\" parameter to `{env}` in the Gradle commands in the following steps."
+      - Remember to update the value of the `-PenvironmentName` parameter to `{env}` in the Gradle commands in the following steps.
 
     a. Copy the following to the new file:
 
@@ -160,11 +160,11 @@ If your endpoints are publicly available, you can use any machine that is set up
       | ml*Port | The ports that your DHS project is configured with, if not the defaults. |
       {:.table-b1gray}
 1. Install the DHF core modules.
-   {% include ostabs-run-gradle.html grtask="hubInstallModules -PenvironmentName=\"DHS\"" %}
+   {% include ostabs-run-gradle.html grtask="hubInstallModules -PenvironmentName=DHS" %}
 1. Install the plugins for your project.
-   {% include ostabs-run-gradle.html grtask="mlLoadModules -PenvironmentName=\"DHS\"" %}
+   {% include ostabs-run-gradle.html grtask="mlLoadModules -PenvironmentName=DHS" %}
 1. If you are using DHF 4.0.2 or later, load the indexes in the DHS databases.
-   {% include ostabs-run-gradle.html grtask="mlUpdateIndexes -PenvironmentName=\"DHS\"" %}
+   {% include ostabs-run-gradle.html grtask="mlUpdateIndexes -PenvironmentName=DHS" %}
 1. [Run the input flows using MarkLogic Content Pump (MLCP).](https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/)
 
     You can also use any of the following:
@@ -173,7 +173,9 @@ If your endpoints are publicly available, you can use any machine that is set up
       - [Apache NiFi](https://developer.marklogic.com/code/apache-nifi) <!-- TODO: After DHFPROD-1542, replace this link. -->
 
 1. Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ -->
-   {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=\"My Awesome Entity\" -PflowName=\"My Harmonize Flow\" -PflowType=\"harmonize\"  -PenvironmentName=\"DHS\"" %}
+   {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize -PenvironmentName=DHS" %}
+
+   {% include conrefs/conref-note-gradle-double-quotes.md %}
 1. Verify that your documents are in the databases.
 
     a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.

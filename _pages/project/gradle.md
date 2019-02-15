@@ -37,6 +37,8 @@ Once the wrapper is installed, you must run gradle on your DHF project using the
 
 {% include ostabs.html linux="./gradlew ..." windows="gradlew.bat ..." %}
 
+{% include conrefs/conref-note-gradle-double-quotes.md %}
+
 ## Create a DHF Project
 The first step in using ml-data-hub is to create your DHF project. Start by creating a project directory (henceforth referred to as $project-dir).
 
@@ -55,7 +57,7 @@ plugins {
 
     // This gradle plugin extends the ml-gradle plugin with
     // commands that make the Data Hub Framework do its magic
-    id 'com.marklogic.ml-data-hub' version '4.0.1'
+    id 'com.marklogic.ml-data-hub' version '{{ site.data.global.hub_version }}'
 }
 ```
 

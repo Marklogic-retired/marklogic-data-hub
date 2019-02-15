@@ -1,7 +1,7 @@
 <div id="DHF400to410" class="tabcontent" markdown="1">
 
 The notes and steps in this tab are for the following upgrade paths:
-- DHF 4.0.0 » 4.1.0
+- DHF 4.0.0 » 4.1.x or 4.2.x
 
 
 ### Upgrade Notes

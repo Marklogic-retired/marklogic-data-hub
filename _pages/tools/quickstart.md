@@ -20,7 +20,7 @@ To use DHF QuickStart,
 1. [Download the latest `quick-start-*.war` file](https://github.com/marklogic/marklogic-data-hub/releases/) and place it your project root directory.
 1. Run the downloaded file. Example:
     ```
-    java -jar quick-start-4.0.3.war
+    java -jar quick-start-{{ site.data.global.hub_version }}.war
     ```
 1. [Create a project using QuickStart]({{site.baseurl}}/project/quickstart/) or browse to an existing project's root directory.
 1. [Ingest your data using QuickStart.]({{site.baseurl}}/ingest/quickstart/)
