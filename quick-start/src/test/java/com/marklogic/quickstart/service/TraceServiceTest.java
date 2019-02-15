@@ -64,7 +64,7 @@ class TraceServiceTest extends AbstractServiceTest {
 
 
     @BeforeEach
-    public void setUp() throws IOException {
+    public void setUp() throws IOException, InterruptedException {
         deleteProjectDir();
         //envConfig.checkIfInstalled();
         setEnvConfig();
@@ -79,6 +79,8 @@ class TraceServiceTest extends AbstractServiceTest {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         installUserModules(getHubAdminConfig(), true);
+        // Thread.sleep(3000);
+        Thread.currentThread().join(3000);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         traceClient = getHubAdminConfig().newJobDbClient();
