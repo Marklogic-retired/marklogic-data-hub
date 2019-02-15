@@ -123,7 +123,7 @@ declare function rfc:get-flow() as element(hub:flow)
 
 declare function rfc:get-flow-name() as xs:string
 {
-  let $flow as hub:flow := rfc:get-flow()
+  let $flow as element(hub:flow) := rfc:get-flow()
   return $flow/hub:name
 };
 
