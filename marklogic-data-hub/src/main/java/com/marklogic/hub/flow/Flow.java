@@ -44,6 +44,90 @@ public interface Flow {
     void setName(String flowName);
 
     /**
+     * Returns the description of the flow
+     *
+     * @return a flow description
+     */
+    String getDescription();
+
+    /**
+     * Sets the description of the flow
+     *
+     * @param description - a flow description
+     */
+    void setDescription(String description);
+
+    /**
+     * Returns the identifier of the flow
+     *
+     * @return a flow identifier
+     */
+    String getIdentifier();
+
+    /**
+     * Sets the identifier of the flow
+     *
+     * @param identifier - a flow identifier
+     */
+    void setIdentifier(String identifier);
+
+    /**
+     * Returns the language of the flow
+     *
+     * @return a flow language
+     */
+    String getLanguage();
+
+    /**
+     * Sets the language of the flow
+     *
+     * @param language - a flow language
+     */
+    void setLanguage(String language);
+
+    /**
+     * Returns the version number of the flow
+     *
+     * @return a flow version number
+     */
+    int getVersion();
+
+    /**
+     * Sets the version number of the flow
+     *
+     * @param versionNumber - a flow version number
+     */
+    void setVersion(int versionNumber);
+
+    /**
+     * Returns the options of the flow
+     *
+     * @return flow options
+     */
+    JsonNode getOptions();
+
+    /**
+     * Sets the options of the flow
+     *
+     * @param optionsNode - flow options
+     */
+    void setOptions(JsonNode optionsNode);
+
+    /**
+     * Returns the steps of the flow
+     *
+     * @return flow steps
+     */
+    JsonNode getSteps();
+
+    /**
+     * Sets the steps of the flow
+     *
+     * @param steps - flow steps
+     */
+    void setSteps(JsonNode steps);
+
+    /**
      * Serializes the flow as a json string
      *
      * @return the serialized JSON string

@@ -12,8 +12,12 @@ class CreateFlowTask extends HubTask {
     void createFlow() {
         def propName = "flowName"
         def propDesc = "description"
+        def propIdentifier = "identifier"
+
         def flowName = project.hasProperty(propName) ? project.property(propName) : null
-        def flowDesc= project.hasProperty(propDesc) ? project.property(propDesc) : null
+        def flowDesc = project.hasProperty(propDesc) ? project.property(propDesc) : null
+        def flowIdentifier = project.hasProperty(propIdentifier) ? project.property(propIdentifier) : null
+
         if (flowName == null) {
             throw new FlowNameRequiredException()
         }
@@ -21,9 +25,14 @@ class CreateFlowTask extends HubTask {
         FlowManager flowManager = getFlowManager()
         if (flowManager.getFlow(flowName.toString()) == null) {
             Flow flow = flowManager.createFlow(flowName.toString())
-            if(flowDesc) {
+
+            if (flowDesc) {
                 flow.setDescription(flowDesc.toString())
             }
+            if (flowIdentifier) {
+                flow.setIdentifier(flowIdentifier.toString())
+            }
+
             flowManager.saveFlow(flow)
         } else {
             throw new FlowAlreadyPresentException()
