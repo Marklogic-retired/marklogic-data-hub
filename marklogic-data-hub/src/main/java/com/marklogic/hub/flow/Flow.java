@@ -18,6 +18,17 @@ package com.marklogic.hub.flow;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public interface Flow {
+
+    /**
+     * Creates an in-memory default instance of a flow
+     *
+     * @param name - the name of the Flow
+     * @return a Flow object
+     */
+    static Flow create(String name) {
+        return new FlowImpl(name);
+    }
+
     /**
      * Returns the name of the flow
      *

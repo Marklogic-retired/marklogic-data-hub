@@ -18,46 +18,88 @@ package com.marklogic.hub.flow;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.error.DataHubProjectException;
 
 public class FlowImpl implements Flow {
     private String name;
-    // Storing the entire JSON node for serialization;
-    private JsonNode rawValue;
+    private String description;
+    private String identifier;
+    private String langauge;
+    private JsonNode steps;
+    private String language = "zxx";
+    private int version;
+    private JsonNode options;
 
     public String getName() { return this.name; }
 
     public void setName(String flowName) { this.name = flowName; }
 
+    public String getDescription() { return this.description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public String getIdentifier() { return this.identifier; }
+
+    public void setIdentifier(String identifier) { this.identifier = identifier; }
+
+    public String getLanguage() { return this.language; }
+
+    public void setLanguage(String language) { this.language = language; }
+
+    public int getVersion() { return this.version; }
+
+    public void setVersion(int versionNumber) { this.version = versionNumber; }
+
+    public JsonNode getOptions() { return this.options; }
+
+    public void setOptions(JsonNode optionsNode) { this.options = optionsNode; }
+
+    public JsonNode getSteps() { return this.steps; }
+
+    public void setSteps(JsonNode steps) { this.steps = steps; }
+
+    FlowImpl(String name) {
+        this.name = name;
+        this.description = "This is a description of what this flow's purpose.";
+        this.version = 1;
+        this.identifier = "cts.collectionQquery('entity', '"+name+"')";
+        this.options = JsonNodeFactory.instance.objectNode();
+        this.steps = JsonNodeFactory.instance.arrayNode();
+    }
+
+
+
     @Override
     public String serialize() {
         ObjectMapper mapper = new ObjectMapper();
-        // Using this approach, as we aren't de-serializing all data into Java Objects
-        if (rawValue != null) {
-            ObjectNode objNode = mapper.createObjectNode();
-            rawValue.fields().forEachRemaining((field) -> {
-                objNode.set(field.getKey(), field.getValue());
-            });
-            // Setters should be serialized into JSON
-            objNode.put("name", this.name);
-            return objNode.toString();
-        } else {
-            try {
-                return mapper.writeValueAsString(this);
-            }
-            catch (JsonProcessingException e) {
-                throw new DataHubProjectException("Unable to serialize flow object.");
-            }
+        try {
+            return mapper.writeValueAsString(this);
+        }
+        catch (JsonProcessingException e) {
+            throw new DataHubProjectException("Unable to serialize the flow object.");
         }
     }
 
     @Override
     public Flow deserialize(JsonNode json) {
-        this.rawValue = json;
         if (json.has("name")) {
             setName(json.get("name").asText());
         }
+
+        if (json.has("description")) {
+            setDescription(json.get("description").asText());
+        }
+
+        if (json.has("version")) {
+            setVersion(json.get("version").asInt());
+        }
+
+        if (json.has("options")) {
+            setOptions(json.get("options"));
+        }
+        //TODO all the rest of the fields here
         return this;
     }
 }
