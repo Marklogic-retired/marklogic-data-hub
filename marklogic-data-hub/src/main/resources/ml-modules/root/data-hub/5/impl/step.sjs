@@ -18,7 +18,7 @@
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
 
-class Process {
+class Step {
 
   constructor(config = null) {
     if(!config) {
@@ -26,17 +26,17 @@ class Process {
     }
     this.config = config;
     this.hubUtils= new HubUtils(config);
-    this.processTypes = ['ingest', 'mapping', 'custom'];
+    this.stepTypes = ['ingest', 'mapping', 'custom'];
   }
 
-  getProcessTypes() {
-    return this.processTypes;
+  getStepTypes() {
+    return this.stepTypes;
   }
 
-  getProcessNames(){
+  getStepNames(){
     let names = {};
-    for(let type of this.getProcessTypes()){
-      let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/process')];
+    for(let type of this.getStepTypes()){
+      let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/step')];
       let docs = cts.search(cts.andQuery(query));
       names[type] = [];
       if(docs) {
@@ -51,14 +51,14 @@ class Process {
     return names;
   }
 
-  getProcesses() {
-    let query = [cts.directoryQuery('/processes/', 'infinity'),  cts.collectionQuery('http://marklogic.com/data-hub/process')];
+  getSteps() {
+    let query = [cts.directoryQuery('/steps/', 'infinity'),  cts.collectionQuery('http://marklogic.com/data-hub/step')];
     return cts.search(cts.andQuery(query)).toArray();
   }
 
-  getProcessNamesByType(type = 'custom') {
+  getStepNamesByType(type = 'custom') {
     let names = [];
-    let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/process')];
+    let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/step')];
     let docs = cts.search(cts.andQuery(query));
     if(docs) {
       for(let doc of docs) {
@@ -71,22 +71,23 @@ class Process {
   return names;
   }
 
-  getProcessesByType(type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/process'), cts.jsonPropertyValueQuery('type', type)];
+  getStepsByType(type = 'custom') {
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('type', type)];
     return cts.search(cts.andQuery(query)).toArray();
   }
 
-  getProcess(name, type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/process'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
+  getStepProcessor(name, type = 'custom') {
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
     let doc = fn.head(cts.search(cts.andQuery(query)));
     if(doc){
       doc = doc.toObject();
+      doc.run = this.makeFunction("main", doc.modulePath);
     }
     return doc;
   }
 
-  deleteProcess(name, type) {
-    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/processes/"),cts.collectionQuery('http://marklogic.com/data-hub/process'),
+  deleteSteps(name, type) {
+    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/steps/"),cts.collectionQuery('http://marklogic.com/data-hub/step'),
       cts.jsonPropertyValueQuery("name", name), cts.jsonPropertyValueQuery("type", type)]));
     for (let doc of uris) {
       if (fn.docAvailable(doc)){
@@ -95,8 +96,13 @@ class Process {
     }
   }
 
+  //grab the module and require it
+  makeFunction(funcName, moduleUri) {
+    return this.hubUtils.retrieveModuleLibrary(moduleUri)[funcName];
+  };
+
 }
 
 
 
-module.exports = Process;
+module.exports = Step;

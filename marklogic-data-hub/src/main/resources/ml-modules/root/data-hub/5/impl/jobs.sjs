@@ -45,7 +45,7 @@ class Jobs {
      }
     };
 
-    hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "xdmp.defaultPermissions()",  "'Jobs','Job'", this.config.JOBDATABASE);
+    hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "xdmp.defaultPermissions()",  ['Jobs','Job'], this.config.JOBDATABASE);
     return job;
   }
 
@@ -83,7 +83,7 @@ class Jobs {
     if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
       docObj.job.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "xdmp.defaultPermissions()", "'Jobs','Job'", this.config.JOBDATABASE);
+    hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Job'], this.config.JOBDATABASE);
   }
 
   getLastStepAttempted(jobId) {
@@ -132,7 +132,7 @@ class Jobs {
       }
     };
 
-    hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", "'Jobs','Batch'", this.config.JOBDATABASE);
+    hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
     return jobId;
   }
 
@@ -166,7 +166,7 @@ class Jobs {
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "xdmp.defaultPermissions()", "'Jobs','Batch'", this.config.JOBDATABASE);
+    hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
   }
 
   getBatchDoc(jobId, batchId) {
