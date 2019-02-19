@@ -60,7 +60,7 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
-    private Path stepDir;
+    private Path stepsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -76,7 +76,7 @@ public class HubProjectImpl implements HubProject {
         this.projectDirString = projectDirString;
         this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
-        this.stepDir = this.projectDir.resolve("step");
+        this.stepsDir = this.projectDir.resolve("steps");
     }
 
     @Override public Path getHubPluginsDir() {
@@ -84,12 +84,12 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getStepDir() {
-        return this.stepDir;
+    public Path getStepsDir() {
+        return this.stepsDir;
     }
 
     @Override
-    public Path getStepDirByType(Step.StepType type) {
+    public Path getStepsDirByType(Step.StepType type) {
         Path path;
 
         if (type == null) {
@@ -98,13 +98,13 @@ public class HubProjectImpl implements HubProject {
         else {
             switch (type) {
                 case CUSTOM:
-                    path = this.stepDir.resolve("custom");
+                    path = this.stepsDir.resolve("custom");
                     break;
                 case INGEST:
-                    path = this.stepDir.resolve("ingest");
+                    path = this.stepsDir.resolve("ingest");
                     break;
                 case MAPPING:
-                    path = this.stepDir.resolve("mapping");
+                    path = this.stepsDir.resolve("mapping");
                     break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
@@ -217,7 +217,7 @@ public class HubProjectImpl implements HubProject {
 
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
-        this.stepDir.toFile().mkdirs();
+        this.stepsDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();

@@ -1540,8 +1540,8 @@ public class HubConfigImpl implements HubConfig
 
     @JsonIgnore
     @Override
-    public Path getStepDirByType(Step.StepType type) {
-        return hubProject.getStepDirByType(type);
+    public Path getStepsDirByType(Step.StepType type) {
+        return hubProject.getStepsDirByType(type);
     }
 
     @JsonIgnore
