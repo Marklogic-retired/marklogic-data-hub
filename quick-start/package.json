@@ -7,6 +7,7 @@
     "rimraf": "rimraf",
     "kill-express": "lsof -t -i tcp:8081 -sTCP:LISTEN | xargs kill -9",
     "kill-ng": "lsof -t -i tcp:4200 -sTCP:LISTEN | xargs kill -9",
+    "kill-all": "npm run kill-ng && npm run kill-express",
     "mock:apis": "node server",
     "start:ui": "ng serve --proxy-config proxy.config.json --host 0.0.0.0 --disable-host-check",
     "start": "concurrently --kill-others-on-fail \"npm run kill-ng\" \"npm run kill-express\" \"npm run start:ui\" \"npm run mock:apis\"",
