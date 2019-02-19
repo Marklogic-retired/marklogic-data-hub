@@ -18,7 +18,7 @@
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const Flow = require("/data-hub/5/impl/flow.sjs");
-const Process = require("/data-hub/5/impl/process.sjs");
+const Step = require("/data-hub/5/impl/step.sjs");
 const Prov = require("/data-hub/5/impl/prov.sjs");
 const Debug = require("/data-hub/5/impl/debug.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
@@ -33,7 +33,7 @@ class DataHub {
     this.config = config;
     this.hubUtils = new HubUtils(config);
     this.flow = new Flow(config);
-    this.process = new Process(config);
+    this.process = new Step(config);
     this.jobs = new Jobs(config);
     this.prov = new Prov(config);
     this.debug = new Debug(config);

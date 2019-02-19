@@ -21,16 +21,17 @@ const datahub = new DataHub();
 function get(context, params) {
   let flowName = params["flowName"];
 
-  let resp = null;
+  let flow = null;
 
   if(!fn.exists(flowName)) {
       fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   }
   else{
-    //run flow here, todo
-    resp = datahub.flow.getFlow(flowName);
+    flow = datahub.flow.getFlow(flowName);
+    let uris = params['identifier'];
+
   }
-  return resp;
+  return flow;
 };
 
 

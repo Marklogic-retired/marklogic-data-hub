@@ -51,14 +51,14 @@ function transform(content, context) {
     datahub.debug.log({message: params, type: 'error'});
     fn.error(null, "RESTAPI-SRVEXERR", "The specified flow " + flowName + " is missing.");
   }
-  let options = {};
+  let options = { noWrite: true };
   if (optionsString) {
     let splits = optionsString.split("=");
     options = JSON.parse(splits[1]);
   }
 
   //don't catch any exception here, let it slip through to mlcp
-  let document = datahub.flow.runFlow(flowName, jobId, uri, content.value, options, step);
+  let document = fn.head(datahub.flow.runFlow(flowName, jobId, [uri], { [uri]: content.value}, options, step));
 
   if(!document) {
     datahub.debug.log({message: params, type: 'error'});

@@ -15,6 +15,7 @@
 */
 'use strict';
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
+const cachedModules = {};
 
 class HubUtils {
   constructor(config = null) {
@@ -28,13 +29,13 @@ class HubUtils {
     return this.config;
   }
 
-  writeDocument(docUri, content, permissions, collections, database){
-    xdmp.eval('xdmp.documentInsert("' + docUri + '",' + 'content,' + '{permissions:' + permissions + ',collections:[' + collections +']})',
+  writeDocument(docUri, content, permissions, collections, database) {
+    xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections })`,
     {
     content: content,
     docUri:docUri,
     permissions:permissions,
-    collections:collections
+    collections: this.normalizeToSequence(collections)
     },
     {
      database: xdmp.database(database),
@@ -42,6 +43,24 @@ class HubUtils {
      update: 'true',
      ignoreAmps: true
     })
+  }
+
+  writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
+    xdmp.eval(`
+    for (let docUri in writeQueue) {
+      xdmp.documentInsert(docUri, writeQueue[docUri], {permissions: ${permissions}, collections});
+    }`,
+      {
+        writeQueue,
+        permissions,
+        collections
+      },
+      {
+        database: xdmp.database(database),
+        commit: 'auto',
+        update: 'true',
+        ignoreAmps: true
+      })
   }
 
   deleteDocument(docUri, database){
@@ -78,6 +97,23 @@ class HubUtils {
   */
  capitalize(str) {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+ }
+
+ retrieveModuleLibrary(moduleLibraryURI) {
+   if (!cachedModules[moduleLibraryURI]) {
+     cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
+   }
+   return cachedModules[moduleLibraryURI];
+ }
+
+  normalizeToSequence(value) {
+   if (value instanceof Sequence) {
+     return value;
+   } else if (Array.isArray(value)) {
+     return Sequence.from(value);
+   } else {
+     return Sequence.from([value]);
+   }
  }
  
 }
