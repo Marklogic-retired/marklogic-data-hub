@@ -68,6 +68,7 @@ import {InstallService} from './services/installer';
 import {JobService} from './components/jobs/jobs.service';
 import {JobListenerService} from './components/jobs/job-listener.service';
 import {MapService} from './components/mappings/map.service';
+import {ManageFlowsService} from './components/manage-flows/manage-flows.service';
 import {ProjectService} from './services/projects';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
@@ -82,6 +83,8 @@ import {ObjectToArrayPipe} from './object-to-array.pipe';
 import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
 
 import {MapComponent, MappingsComponent} from './components/mappings';
+import {ManageFlowsComponent} from './components/manage-flows/manage-flows.component';
+import {ManageFlowsUiComponent} from './components/manage-flows/ui/manage-flows-ui.component';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
 
@@ -110,6 +113,8 @@ import {FlowsUiComponent} from './components/flows/ui';
     JobOutputUiComponent,
     LoginComponent,
     MlcpComponent,
+    ManageFlowsComponent,
+    ManageFlowsUiComponent,
     MapComponent,
     MappingsComponent,
     MappingsUiComponent,
@@ -188,6 +193,7 @@ import {FlowsUiComponent} from './components/flows/ui';
     JobService,
     JobListenerService,
     MapService,
+    ManageFlowsService,
     ProjectService,
     SettingsService,
     STOMPService,

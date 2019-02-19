@@ -4,6 +4,7 @@ import { FlowsComponent } from './components/flows';
 import { EntityModelerComponent } from './components/entity-modeler/entity-modeler.component';
 import { MapComponent } from './components/mappings';
 import { MappingsComponent } from './components/mappings';
+import { ManageFlowsComponent } from './components/manage-flows/manage-flows.component';
 import { LoginComponent } from './components/login';
 import { JobsComponent } from './components/jobs';
 import { SettingsComponent } from './components/settings';
@@ -26,6 +27,11 @@ export const ROUTES: Routes = [
         component: MapComponent
       }
     ]
+  },
+  {
+    path: 'manage-flows',
+    component: ManageFlowsComponent,
+    canActivate: [AuthGuard]
   },
   { path: 'mappings/map', component: MapComponent, canActivate: [AuthGuard] },
   { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
