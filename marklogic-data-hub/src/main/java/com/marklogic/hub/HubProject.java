@@ -50,9 +50,9 @@ public interface HubProject {
     /**
      * Gets the path for the hub step directory
      *
-     * @return the path for the hub step directory
+     * @return the path for the hub steps directory
      */
-    Path getStepDir();
+    Path getStepsDir();
 
     /**
      * Gets the path for the hub entities directory
@@ -72,9 +72,9 @@ public interface HubProject {
      * Gets the path for the hub step directory by step type
      *
      * @param type - a Step type
-     * @return the path for the hub step directory
+     * @return the path for the hub steps directory
      */
-    Path getStepDirByType(Step.StepType type);
+    Path getStepsDirByType(Step.StepType type);
 
     /**
      * Gets the path for the hub's config directory

@@ -44,7 +44,7 @@ public class StepManagerImpl implements StepManager {
     public void saveStep(Step step) {
         try {
             String stepString = step.serialize();
-            Path dir = resolvePath(hubConfig.getStepDirByType(step.getType()), step.getName());
+            Path dir = resolvePath(hubConfig.getStepsDirByType(step.getType()), step.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -69,7 +69,7 @@ public class StepManagerImpl implements StepManager {
 
     @Override
     public void deleteStep(Step step) {
-        Path dir = resolvePath(hubConfig.getStepDirByType(step.getType()), step.getName());
+        Path dir = resolvePath(hubConfig.getStepsDirByType(step.getType()), step.getName());
         if (dir.toFile().exists()) {
             try {
                 FileUtils.deleteDirectory(dir.toFile());
@@ -93,7 +93,7 @@ public class StepManagerImpl implements StepManager {
 
     @Override
     public Step getStep(String name, Step.StepType type) {
-        Path stepPath = resolvePath(hubConfig.getStepDirByType(type), name);
+        Path stepPath = resolvePath(hubConfig.getStepsDirByType(type), name);
 
         try {
             String targetFileName = name + STEP_FILE_EXTENSION;
@@ -126,7 +126,7 @@ public class StepManagerImpl implements StepManager {
 
     @Override
     public ArrayList<String> getStepNamesByType(Step.StepType type) {
-        return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepDirByType(type));
+        return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepsDirByType(type));
     }
 
     @Override
