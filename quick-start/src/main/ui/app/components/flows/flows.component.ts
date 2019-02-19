@@ -3,8 +3,7 @@ import {Component, EventEmitter, OnDestroy, OnInit, QueryList, ViewChild, ViewCh
 import {ActivatedRoute, Router} from '@angular/router';
 import {distanceInWords} from 'date-fns';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Rx';
-
+import {timer as observableTimer, Observable} from 'rxjs';
 import {DeployService} from '../../services/deploy/deploy.service';
 import {EntitiesService} from '../../models/entities.service';
 import {Entity, Plugin} from '../../models';
@@ -129,7 +128,7 @@ export class FlowsComponent implements OnInit, OnDestroy {
     }
 
     this.markLogicVersionInput = this.getMarkLogicVersion();
-    Observable.timer(300).subscribe(() => {
+    observableTimer(300).subscribe(() => {
       this.lastDeployedInput = this.getLastDeployed();
     });
   }

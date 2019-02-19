@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class TraceService {
@@ -31,10 +32,10 @@ export class TraceService {
   }
 
   private get(url: string) {
-    return this.http.get(url).map(this.extractData);
+    return this.http.get(url).pipe(map(this.extractData));
   }
 
   private post(url: string, data: any) {
-    return this.http.post(url, data).map(this.extractData);
+    return this.http.post(url, data).pipe(map(this.extractData));
   }
 }

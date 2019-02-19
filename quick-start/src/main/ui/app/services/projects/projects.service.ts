@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Http, Response, Headers, RequestOptions} from '@angular/http';
 import { HubSettings } from '../../models/hub-settings.model';
+import {share, map} from 'rxjs/operators';
 
 @Injectable()
 export class ProjectService {
@@ -40,7 +41,7 @@ export class ProjectService {
   login(projectId: string, environment: string, loginInfo: any) {
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    let resp = this.http.post(`/api/login`, loginInfo, options).share();
+    let resp = this.http.post(`/api/login`, loginInfo, options).pipe(share());
     resp.subscribe(() => {
       this.authenticated = true;
     },
@@ -79,11 +80,11 @@ export class ProjectService {
   }
 
   private get(url: string) {
-    return this.http.get(url).map(this.extractData);
+    return this.http.get(url).pipe(map(this.extractData));
   }
 
   private post(url: string, data: any) {
-    return this.http.post(url, data).map(this.extractData);
+    return this.http.post(url, data).pipe(map(this.extractData));
   }
 
 }

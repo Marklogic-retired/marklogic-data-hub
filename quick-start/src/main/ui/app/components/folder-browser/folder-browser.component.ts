@@ -2,6 +2,7 @@ import { Component, Input, Output, OnInit,
   OnChanges, ViewChild, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { MdlTextFieldComponent } from '@angular-mdl/core';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-folder-browser',
@@ -63,8 +64,8 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
   getFolders(path: string): void {
     if (path) {
       this.isLoading = true;
-      this.http.get(`/api/utils/searchPath?path=${encodeURIComponent(path)}`)
-      .map(this.extractData)
+      this.http.get(`/api/utils/searchPath?path=${encodeURIComponent(path)}`).pipe(
+      map(this.extractData))
       .subscribe(resp => {
         this.folders = resp.folders;
         this.files = resp.files;

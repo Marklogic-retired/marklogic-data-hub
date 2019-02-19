@@ -1,7 +1,8 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {ProjectService} from '../services/projects';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
+import {map, share} from 'rxjs/operators';
 import {SettingsService} from '../components/settings';
 
 import {DefinitionsType} from './definitions.model';
@@ -38,12 +39,12 @@ export class EntitiesService {
   }
 
   getEntities() {
-    this.http.get(this.url('/entities/')).map((res: Response) => {
+    this.http.get(this.url('/entities/')).pipe(map((res: Response) => {
       const entities: Array<any> = res.json();
       return entities.map((entity) => {
         return new Entity().fromJSON(entity);
       });
-    }).subscribe((entities: Array<Entity>) => {
+    })).subscribe((entities: Array<Entity>) => {
       this.entities = entities;
       this.entitiesChange.emit(this.entities);
       this.extractTypes();
@@ -55,16 +56,16 @@ export class EntitiesService {
   // }
 
   createEntity(entity: Entity) {
-    return this.http.post(this.url('/entities/create'), entity).map((res: Response) => {
+    return this.http.post(this.url('/entities/create'), entity).pipe(map((res: Response) => {
       return new Entity().fromJSON(res.json());
-    });
+    }));
   }
 
   saveEntity(entity: Entity) {
     const expandedEntity = this.expandEntity(entity);
-    const resp = this.http.put(this.url(`/entities/${expandedEntity.name}`), expandedEntity).map((res: Response) => {
+    const resp = this.http.put(this.url(`/entities/${expandedEntity.name}`), expandedEntity).pipe(map((res: Response) => {
       return new Entity().fromJSON(res.json());
-    }).share();
+    }),share(),);
     resp.subscribe((newEntity: Entity) => {
       const index = _.findIndex(this.entities, {'name': newEntity.name});
       if (index >= 0) {
@@ -179,7 +180,7 @@ export class EntitiesService {
   }
 
   deleteFlow(flow: Flow, flowType: string) {
-    const resp = this.http.delete(this.url(`/entities/${flow.entityName}/flows/${flow.flowName}/${flowType}`)).share();
+    const resp = this.http.delete(this.url(`/entities/${flow.entityName}/flows/${flow.flowName}/${flowType}`)).pipe(share());
     resp.subscribe(() => {
       this.entities.forEach((entity: Entity) => {
         if (entity.name === flow.entityName) {
@@ -342,11 +343,11 @@ export class EntitiesService {
   }
 
   private get(url: string) {
-    return this.http.get(url).map(this.extractData);
+    return this.http.get(url).pipe(map(this.extractData));
   }
 
   private post(url: string, data: any) {
-    return this.http.post(url, data).map(this.extractData);
+    return this.http.post(url, data).pipe(map(this.extractData));
   }
 
   private url(u: string): string {
