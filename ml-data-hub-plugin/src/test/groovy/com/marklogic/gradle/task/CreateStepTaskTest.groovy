@@ -59,7 +59,7 @@ class CreateStepTaskTest extends BaseTest {
         result.task(":hubCreateStep").outcome == SUCCESS
 
         // It should default to "CUSTOM" type when none specified
-        File stepDir = Paths.get(testProjectDir.root.toString(), "step", "custom", "my-test-step").toFile()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "steps", "custom", "my-test-step").toFile()
         println stepDir.toString()
         stepDir.isDirectory()
     }
@@ -80,7 +80,7 @@ class CreateStepTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateStep").outcome == SUCCESS
 
-        File stepDir = Paths.get(testProjectDir.root.toString(), "step", "mapping", "my-new-step").toFile()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "steps", "mapping", "my-new-step").toFile()
         stepDir.isDirectory()
     }
 }
