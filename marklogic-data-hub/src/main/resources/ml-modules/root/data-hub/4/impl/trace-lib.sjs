@@ -196,6 +196,7 @@ function writeErrorTrace(itemContext) {
           traceId: currentTrace.traceId,
           created: currentTrace.created,
           identifier: rfc.getId(itemContext),
+          flowName: rfc.getFlowName(),
           flowType: rfc.getFlowType(),
           hasError: false,
           steps: []
@@ -230,6 +231,9 @@ function writeErrorTrace(itemContext) {
           nb.endElement();
           nb.startElement("identifier");
             nb.addText(rfc.getId(itemContext).toString());
+          nb.endElement();
+          nb.startElement("flowName");
+            nb.addText(rfc.getFlowName().toString());
           nb.endElement();
           nb.startElement("flowType");
             nb.addText(rfc.getFlowType().toString());
