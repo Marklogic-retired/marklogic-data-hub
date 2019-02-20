@@ -19,27 +19,28 @@ const datahub = new DataHub();
 
 //todo flush this out
 function get(context, params) {
-  let flowName = params["flowName"];
+  let flowName = params.flowName;
 
-  let flow = null;
-
-  if(!fn.exists(flowName)) {
+  if (!fn.exists(flowName)) {
       fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   }
-  else{
-    flow = datahub.flow.getFlow(flowName);
-    let uris = params['identifier'];
-
+  else {
+    let options = params.options ? JSON.parse(params.options) : {};
+    let jobId = params.jobId || datahub.hubUtils.uuid();
+    let uris = datahub.hubUtils.normalizeToArray(params.uri);
+    let content = {};
+    for (let doc of cts.search(cts.documentUriQuery(uris),  cts.indexOrder(cts.uriReference()))) {
+      content[xdmp.nodeUri(doc)] = doc;
+    }
+    return datahub.flow.runFlow(flowName, jobId, uris, content, options, params.stepNumber);
   }
-  return flow;
-};
+}
 
+function post(context, params, input) {}
 
-function post(context, params, input) {};
+function put(context, params, input) {}
 
-function put(context, params, input) {};
-
-function deleteFunction(context, params) {};
+function deleteFunction(context, params) {}
 
 exports.GET = get;
 exports.POST = post;

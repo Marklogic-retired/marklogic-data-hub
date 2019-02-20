@@ -132,6 +132,9 @@ class Flow {
     if(!jobDoc){
       jobDoc = this.jobs.createJob(flowName, jobId);
     }
+    if (jobDoc && jobDoc.job) {
+      jobDoc = jobDoc.job;
+    }
     //set the jobid in the context based on the jobdoc response
     this.globalContext.jobId = jobDoc.jobId;
     this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
@@ -145,11 +148,14 @@ class Flow {
     //set the context for the attempted step
     this.globalContext.attemptStep = stepNumber;
 
-    let step = this.globalContext.flow.steps[stepNumber];
+    let step = this.globalContext.flow.steps[stepNumber - 1];
     if(!step) {
       this.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')
     }
+
+    let batchDoc = this.jobs.createBatch(jobDoc.jobId, step, stepNumber);
+    this.globalContext.batchId = batchDoc.batch.batchId;
 
     if(step.targetDb) {
       this.globalContext.targetDb = step.targetDb;
@@ -165,24 +171,12 @@ class Flow {
       throw Error('Could not find main() function for process '+step.type+'/'+step.name+' for step # '+stepNumber+' for the flow:'+flowName+' could not be found.')
     }
 
-    let results = [];
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign(processor.options, step.options, options);
+    let combinedOptions = Object.assign({}, processor.options, step.options, options);
     if (this.isContextDB(this.globalContext.sourceDb)) {
-      declareUpdate({explicitCommit: true});
-      try {
-        for (let uri of uris) {
-          let result = this.runMain(uri, content, combinedOptions, processor.run);
-          results.push(result);
-          this.addToWriteQueue(uri, result, this.globalContext);
-        }
-        xdmp.commit();
-      } catch (e) {
-        this.globalContext.batchError = e;
-        xdmp.rollback();
-      }
+      this.runStep(uris, content, combinedOptions, processor);
     } else {
-      results = xdmp.invoke('invoke-step.sjs', { flow: this, uris, content, flowName, jobId, options, stepNumber}, { database: xdmp.database(this.globalContext.sourceDb)});
+      xdmp.invoke('invoke-step.sjs', { flow: this, uris, content, combinedOptions, processor}, { database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb): xdmp.database(), ignoreAmps: true });
     }
 
     //let's update our jobdoc now
@@ -190,22 +184,38 @@ class Flow {
       if (!combinedOptions.noWrite && this.isContextDB(this.globalContext.targetDb)) {
         declareUpdate({explicitCommit: true});
         for (let uri of this.writeQueue) {
-          xdmp.documentInsert(uri, this.writeQueue[uri], { permissions: xdmp.defaultPermissions()});
+          xdmp.documentInsert(uri, this.writeQueue[uri].content, { permissions: xdmp.defaultPermissions(), collections: combinedOptions.collections});
         }
         xdmp.commit();
       } else if (!combinedOptions.noWrite && !this.isContextDB(this.globalContext.targetDb)) {
         this.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
-      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
+//      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
+      this.jobs.updateBatch(batchDoc.batch.jobId, batchDoc.batch.batchId, "finished", uris);
+      return this.writeQueue;
     } else {
-      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
+      this.jobs.updateBatch(batchDoc.batch.jobId, batchDoc.batch.batchId, "failed", uris);
+//      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
+      return this.globalContext.batchError;
     }
+  }
 
-    return Sequence.from(results);
+  runStep(uris, content, combinedOptions, processor) {
+    declareUpdate({explicitCommit: true});
+    try {
+      for (let uri of uris) {
+        let result = this.runMain(uri, content[uri], combinedOptions, processor.run);
+        this.addToWriteQueue(uri, result, this.globalContext);
+      }
+      xdmp.commit();
+    } catch (e) {
+      this.globalContext.batchError = e;
+      xdmp.rollback();
+    }
   }
 
   isContextDB(databaseName) {
-    return xdmp.database() === xdmp.database(databaseName);
+    return !databaseName || fn.string(xdmp.database()) === fn.string(xdmp.database(databaseName));
   }
 
   runMain(uri, content, options, func) {

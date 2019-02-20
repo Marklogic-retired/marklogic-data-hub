@@ -1,5 +1,5 @@
 'use strict';
 
-let flow, uris, content, flowName, jobId, options, stepNumber;
+let flow, uris, content, combinedOptions, processor;
 
-flow.runFlow(flowName, jobId, uris, content, options, stepNumber);
+flow.runStep(uris, content, combinedOptions, processor);
