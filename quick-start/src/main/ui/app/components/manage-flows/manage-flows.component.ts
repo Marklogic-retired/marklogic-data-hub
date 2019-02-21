@@ -8,6 +8,8 @@ import * as _ from 'lodash';
   template: `
   <app-manage-flows-ui
     [flows]="this.flows"
+    (createFlow)="this.createFlow($event)"
+    (deleteFlow)="this.deleteFlow($event)"
   ></app-manage-flows-ui>
   `
 })
@@ -20,11 +22,23 @@ export class ManageFlowsComponent {
   ) {}
 
   ngOnInit() {
-    let obs = this.manageFlowsService.getFlows().subscribe(resp => {
+    this.manageFlowsService.getFlows().subscribe(resp => {
       resp.forEach(flow => {
         let flowParsed = new Flow().fromJSON(flow);
         this.flows.push(flowParsed);
       })
+    });
+  }
+
+  createFlow(newFlow): void {
+    this.manageFlowsService.createFlow(newFlow).subscribe(resp => {
+      //
+    });
+  }
+
+  deleteFlow(flowId): void {
+    this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
+      //
     });
   }
 

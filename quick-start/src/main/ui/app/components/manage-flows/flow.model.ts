@@ -19,7 +19,7 @@ export class Flow {
   constructor() {}
 
   get status(): string {
-    return this.latestJob.status;
+    return this.latestJob['status'];
   }
 
   get targetEntity(): string {
