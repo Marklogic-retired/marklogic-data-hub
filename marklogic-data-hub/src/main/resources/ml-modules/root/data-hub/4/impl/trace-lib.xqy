@@ -240,6 +240,7 @@ declare %private function trace:write-error-trace(
                 map:entry("traceId", map:get($current-trace, "traceId")),
                 map:entry("created", map:get($current-trace, "created")),
                 map:entry("identifier", rfc:get-id($item-context)),
+                map:entry("flowName", rfc:get-flow-name() ),
                 map:entry("flowType", rfc:get-flow-type()),
                 map:entry("hasError", trace:has-errors()),
                 let $steps := json:array()
@@ -260,6 +261,7 @@ declare %private function trace:write-error-trace(
               element traceId { map:get($current-trace, "traceId") },
               element created { map:get($current-trace, "created") },
               element identifier { rfc:get-id($item-context) },
+              element flowName { rfc:get-flow-name() },
               element flowType { rfc:get-flow-type() },
               element hasError { trace:has-errors() },
               element steps {
