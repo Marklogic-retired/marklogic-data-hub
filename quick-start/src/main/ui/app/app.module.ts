@@ -45,6 +45,8 @@ import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {ROUTES} from './app.routes';
 import {AUTH_PROVIDERS} from './services/auth';
 import {CodemirrorComponent} from './components/codemirror';
+import {EditFlowComponent} from './components/edit-flow/';
+import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/edit-flow/ui/';
 import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
 import {HeaderComponent} from './components/header/header.component';
 import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
@@ -98,6 +100,8 @@ import {FlowsUiComponent} from './components/flows/ui';
     FlowsComponent,
     FlowsUiComponent,
     ChooseCollationComponent,
+    EditFlowComponent,
+    EditFlowUiComponent,
     EntityBoxComponent,
     EntityEditorComponent,
     EntityModelerComponent,
@@ -152,7 +156,9 @@ import {FlowsUiComponent} from './components/flows/ui';
     MapComponent,
     MapUiComponent,
     MappingsComponent,
-    SettingsUiComponent
+    SettingsUiComponent,
+    NewStepDialogComponent,
+    RunFlowDialogComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
@@ -163,7 +169,9 @@ import {FlowsUiComponent} from './components/flows/ui';
     NewFlowComponent,
     NewMapComponent,
     JobOutputComponent,
-    JobExportDialogComponent
+    JobExportDialogComponent,
+    NewStepDialogComponent,
+    RunFlowDialogComponent
   ],
   imports: [
     BrowserModule,
