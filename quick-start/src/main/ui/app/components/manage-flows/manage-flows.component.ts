@@ -1,6 +1,6 @@
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ManageFlowsService } from './manage-flows.service';
+import { Flow } from "./flow.model";
 
 import * as _ from 'lodash';
 
@@ -13,16 +13,19 @@ import * as _ from 'lodash';
 })
 export class ManageFlowsComponent {
 
-  flows: Array<Object> = new Array<Object>();
+  public flows: Array<Flow> = new Array<Flow>();
 
   constructor(
     private manageFlowsService: ManageFlowsService
   ) {}
 
   ngOnInit() {
-    this.flows = this.manageFlowsService.getFlows();
+    let obs = this.manageFlowsService.getFlows().subscribe(resp => {
+      resp.forEach(flow => {
+        let flowParsed = new Flow().fromJSON(flow);
+        this.flows.push(flowParsed);
+      })
+    });
   }
-
-  // TODO
 
 }

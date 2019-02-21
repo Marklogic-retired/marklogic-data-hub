@@ -1,8 +1,5 @@
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-
-import * as _ from 'lodash';
-
+import { Component, Input } from '@angular/core';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-manage-flows-ui',
@@ -13,6 +10,8 @@ export class ManageFlowsUiComponent {
 
   @Input() flows: Array<Object> = new Array<Object>();
 
-  //@Output() showNewMapping = new EventEmitter();
+  friendlyDate(dt): string {
+    return moment(dt).fromNow();
+  }
 
 }
