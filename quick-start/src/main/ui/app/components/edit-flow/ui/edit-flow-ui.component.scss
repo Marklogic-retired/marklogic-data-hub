@@ -1,0 +1,81 @@
+h2 {
+  margin-left: 5%;
+}
+h3 {
+  margin: 0 30px 0 0;
+}
+a {
+  color: blue;
+}
+.steps-container {
+  background: white;
+  border: 1px solid black;
+  width: 90%;
+  margin: auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  padding: 8px;
+}
+
+.steps-header {
+  display: flex;
+}
+
+header > .steps-header:last-child {
+  width: 40%;
+  justify-content: space-between;
+}
+
+.steps-body {
+  min-height: 250px;
+  > p {
+    font-size: 24px;
+    text-align: center;
+    line-height: 12;
+    
+    > span {
+      font-weight: bold;
+    }
+  }
+}
+
+.text {
+  padding-top: 1.5%;
+  white-space: nowrap;
+}
+
+button {
+  height: 35px;
+}
+
+mat-progress-bar {
+  padding-top: 1%;
+  width: 100px;
+  height: 30px;
+}
+
+.flow-menu-icon {
+  padding: 1%;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.steps-container.step {
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.steps-body.step {
+  min-height: 300px;
+}
+.step > button:last-child {
+  margin-left: 8px;
+}
+header > .step:last-child {
+  width: 40%;
+  justify-content: flex-end;
+}
+

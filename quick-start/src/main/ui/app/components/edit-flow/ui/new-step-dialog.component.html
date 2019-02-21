@@ -1,0 +1,52 @@
+<h1 mat-dialog-title>New Step</h1>
+<div mat-dialog-content class="content">
+  <mat-form-field>
+      <mat-select placeholder="Step Type">
+        <mat-option value="option">Mapping</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select placeholder="Place in Flow">
+        <mat-option value="option">Option</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Name">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Description">
+      <mat-hint>Optional</mat-hint>
+    </mat-form-field>
+    <div>
+        <label>Source Type: </label>
+        <mat-radio-group>
+          <mat-radio-button value="1">Collection</mat-radio-button>
+          <mat-radio-button value="2">Query</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Advanced Settings (optional)
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+      
+          <mat-form-field>
+              <mat-select placeholder="Source Database">
+                <mat-option value="option">datahub-staging</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select placeholder="Target Database">
+                <mat-option value="option">datahub-final</mat-option>
+              </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
+</div>
+<div mat-dialog-actions class="bottom">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button cdkFocusInitial>Save</button>
+</div>
