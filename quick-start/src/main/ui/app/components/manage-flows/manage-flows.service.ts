@@ -1,5 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
+import {map} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
@@ -14,17 +15,9 @@ export class ManageFlowsService {
   }
 
   getFlows() {
-    this.flows.push({
-      name: 'Flow 1',
-      description: 'A dummy flow.'
-    });
-    this.flows.push({
-      name: 'Flow 2',
-      description: 'Another dummy flow.'
-    });
-    console.log('Getting flows', this.flows);
-    // TODO
-    return this.flows;
+    return this.http.get('http://localhost:4200/api/flows').pipe(map((res: Response) => {
+      return res.json();
+    }));
   }
 
 }
