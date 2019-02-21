@@ -79,6 +79,14 @@ class HubUtils {
   queryLatest(queryFunction, database) {
     return xdmp.invokeFunction(queryFunction, { commit: 'auto', update: 'false', ignoreAmps: true, database: database ? xdmp.database(database): xdmp.database()})
   }
+
+  invoke(moduleUri, parameters, user = xdmp.getCurrentUser(), database) {
+    xdmp.invoke(moduleUri, parameters, {
+      ignoreAmps: true,
+      database: database ? xdmp.database(database): xdmp.database(),
+      user: xdmp.user(user)
+    })
+  }
   /**
   * Generate and return a UUID
   */

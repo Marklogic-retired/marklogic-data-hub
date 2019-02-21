@@ -19,24 +19,42 @@ const datahub = new DataHub();
 
 //todo flush this out
 function get(context, params) {
+  post(context, params, null);
+}
+
+function post(context, params, input) {
   let flowName = params.flowName;
 
   if (!fn.exists(flowName)) {
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
+    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   }
   else {
     let options = params.options ? JSON.parse(params.options) : {};
     let jobId = params.jobId || datahub.hubUtils.uuid();
-    let uris = datahub.hubUtils.normalizeToArray(params.uri);
-    let content = {};
-    for (let doc of cts.search(cts.documentUriQuery(uris),  cts.indexOrder(cts.uriReference()))) {
-      content[xdmp.nodeUri(doc)] = doc;
+    let flow = datahub.flow.getFlow(flowName);
+    let query = null;
+    let uris = null;
+    if (params.uri) {
+      uris = datahub.hubUtils.normalizeToArray(params.uri);
+      query = cts.documentUriQuery(uris);
+    } else {
+      query = flow.identifier ? cts.query(flow.identifier) : cts.orQuery([]);
+    }
+    let content = null;
+    if (input) {
+      content = input.toObject();
+    } else {
+      content = {};
+      datahub.hubUtils.queryLatest(function() {
+        for (let doc of cts.search(query, cts.indexOrder(cts.uriReference()))) {
+          content[xdmp.nodeUri(doc)] = doc;
+        }
+      }, flow.sourceDb || datahub.flow.globalContext.sourceDb);
+      uris = Object.keys(content);
     }
     return datahub.flow.runFlow(flowName, jobId, uris, content, options, params.stepNumber);
   }
 }
-
-function post(context, params, input) {}
 
 function put(context, params, input) {}
 

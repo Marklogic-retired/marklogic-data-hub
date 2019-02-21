@@ -45,7 +45,7 @@ class Flow {
         lastAttemptedStep: 0,
         targetDb: config.FINALDATABASE,
         sourceDb: config.STAGINGDATABASE,
-        batchError: null
+        batchErrors: []
       };
     }
     this.globalContext = globalContext;
@@ -153,7 +153,6 @@ class Flow {
       this.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')
     }
-
     let batchDoc = this.jobs.createBatch(jobDoc.jobId, step, stepNumber);
     this.globalContext.batchId = batchDoc.batch.batchId;
 
@@ -180,7 +179,7 @@ class Flow {
     }
 
     //let's update our jobdoc now
-    if (!this.globalContext.batchError) {
+    if (!this.globalContext.batchErrors.length) {
       if (!combinedOptions.noWrite && this.isContextDB(this.globalContext.targetDb)) {
         declareUpdate({explicitCommit: true});
         for (let uri of this.writeQueue) {
@@ -191,25 +190,52 @@ class Flow {
         this.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
-      this.jobs.updateBatch(batchDoc.batch.jobId, batchDoc.batch.batchId, "finished", uris);
-      return this.writeQueue;
+      this.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
     } else {
-      this.jobs.updateBatch(batchDoc.batch.jobId, batchDoc.batch.batchId, "failed", uris);
+      this.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
-      return this.globalContext.batchError;
     }
+    return {
+      "totalCount": uris.length,
+      // TODO should error counts, completedItems, etc. be all or nothing?
+      "errorCount": this.globalContext.batchErrors.length ? uris.length: 0,
+      "completedItems": this.globalContext.batchErrors.length ? []: uris,
+      "failedItems": this.globalContext.batchErrors.length ? uris: [],
+      "errors": this.globalContext.batchErrors,
+      "documents": this.writeQueue
+    };
   }
 
   runStep(uris, content, combinedOptions, processor) {
     declareUpdate({explicitCommit: true});
     try {
+      let hookOperation = function() {};
+      let hook = processor.customHook;
+      if (hook && hook.module) {
+        let parameters = Object.assign({uris}, processor.customHook.parameters);
+        hookOperation = function () {
+          this.hubUtils.invoke(
+            hook.module,
+            parameters,
+            hook.user || xdmp.getCurrentUser(),
+            hook.runBefore ? this.globalContext.sourceDb : this.globalContext.targetDb
+          );
+        }
+      }
+      if (hook && hook.runBefore) {
+        hookOperation();
+      }
       for (let uri of uris) {
         let result = this.runMain(uri, content[uri], combinedOptions, processor.run);
         this.addToWriteQueue(uri, result, this.globalContext);
       }
+      if (hook && !hook.runBefore) {
+        hookOperation();
+      }
       xdmp.commit();
+
     } catch (e) {
-      this.globalContext.batchError = e;
+      this.globalContext.batchErrors.push(e);
       xdmp.rollback();
     }
   }
