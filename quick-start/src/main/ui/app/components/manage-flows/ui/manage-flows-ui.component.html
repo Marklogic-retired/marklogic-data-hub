@@ -1,5 +1,7 @@
 <h1>Manage Flows</h1>
 
+<p><button (click)="onCreateFlow('foo')">New Flow</button></p>
+
 <!-- <ul>
   <li *ngFor="let flow of flows; let i = index;">
     Flow #{{i+1}} is "{{flow.name}}"
@@ -29,7 +31,7 @@
       <td>{{friendlyDate(flow.latestJob.endTime)}}</td>
       <td align="right">{{flow.latestJob.successfulEvents | number}}</td>
       <td align="right">{{flow.latestJob.failedEvents | number}}</td>
-      <td><button>Run</button></td>
+      <td><button>Run</button> <button (click)="onDeleteFlow(flow.flowId)">Delete</button></td>
     </tr>
   </tbody>
 </table>

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import * as moment from 'moment';
 
 @Component({
@@ -10,8 +10,18 @@ export class ManageFlowsUiComponent {
 
   @Input() flows: Array<Object> = new Array<Object>();
 
+  @Output() deleteFlow = new EventEmitter();
+  @Output() createFlow = new EventEmitter();
+
   friendlyDate(dt): string {
     return moment(dt).fromNow();
   }
 
+  onCreateFlow(newFlow) {
+    this.createFlow.emit(newFlow);
+  }
+
+  onDeleteFlow(flowId) {
+    this.deleteFlow.emit(flowId);
+  }
 }
