@@ -44,7 +44,7 @@
               "default": [
                 {
                   "id": "flow-1",
-                  "name": "Order Flow 01",
+                  "name": "Flow 01",
                   "description": "My Flow01 flow desc",
                   "batchSize": 100,
                   "threadCount": 4,
@@ -138,8 +138,8 @@
                 },
                 {
                   "id": "flow-2",
-                  "name": "Order Flow 2",
-                  "description": "My Flow2 flow desc",
+                  "name": "Flow 02",
+                  "description": "My Flow02 flow desc",
                   "batchSize": 100,
                   "threadCount": 4,
                   "options": {
@@ -322,7 +322,7 @@
                   "version": 1
                 },
                 {
-                  "id": "flow-3",
+                  "id": "flow-4",
                   "name": "Product Ingestion",
                   "description": "My Product Ingestion Flow flow desc",
                   "batchSize": 100,
@@ -351,7 +351,7 @@
                   ],
                   "jobs": [],
                   "latestJob": null,
-                  "isValid": false,
+                  "isValid": true,
                   "isRunning": false,
                   "version": 1
                 }                      
@@ -411,10 +411,75 @@
                   "key2": "value1",
                   "key3": "value1"
                 },
-                "steps": [],
-                "jobs": [],
-                "latestJob": null,
-                "isValid": false,
+                "steps": [
+                  {
+                    "id": "step-1-flow-1",
+                    "name": "Flow 01 Ingest Step",
+                    "description": "My Step 1 description",
+                    "type": "ingestion",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-2-flow-1",
+                    "name": "Flow 01 Mapping Step",
+                    "description": "My Step 2 description",
+                    "type": "mapping",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-3-flow-1",
+                    "name": "Flow 01 Mastering Step",
+                    "description": "My Step 3 description",
+                    "type": "mastering",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-4-flow-1",
+                    "name": "Flow 01 Custom Step",
+                    "description": "My Step 4 description",
+                    "type": "custom",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  }
+                ],
+                "jobs": [
+                  "job-1-flow-1",
+                  "job-2-flow-1",
+                  "job-3-flow-1",
+                  "job-4-flow-1"
+                ],
+                "isValid": true,
                 "isRunning": false,
                 "version": 1
               }
@@ -464,7 +529,7 @@
               },
               "default": {
                 "id": "flow-1",
-                "name": "Order Flow 01",
+                "name": "Flow 01",
                 "description": "My Flow01 flow desc",
                 "batchSize": 100,
                 "threadCount": 4,
