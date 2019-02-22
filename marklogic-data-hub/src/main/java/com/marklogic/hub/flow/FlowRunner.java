@@ -17,6 +17,7 @@ package com.marklogic.hub.flow;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.hub.job.Job;
 
 
 import java.util.Map;
@@ -50,6 +51,14 @@ public interface FlowRunner {
     FlowRunner withStep(int step) ;
 
     /**
+     * Sets the batch size for the flow runner
+     * @param jobId - the id of the job
+     * @return the flow runner object
+     */
+
+    FlowRunner withJobId(String jobId) ;
+
+    /**
      * Sets the thread count for the flowrunner
      * @param threadCount - the number of threads for the flow runner to use
      * @return the flow runner object
@@ -64,8 +73,8 @@ public interface FlowRunner {
     FlowRunner withSourceClient(DatabaseClient sourceClient);
 
     /**
-     * Sets the database where flow output data will be presisted to
-     * @param destinationDatabase - the name of the database
+     * Sets the database where flow output data will be persisted to
+     * @param destinationDatabase - the name of the destination database
      * @return the flow runner object
      */
     FlowRunner withDestinationDatabase(String destinationDatabase);
@@ -131,5 +140,5 @@ public interface FlowRunner {
      * Runs the flow and creates the job
      * @return jobticket object for the flow that is run
      */
-    JobTicket run();
+    Job run();
 }

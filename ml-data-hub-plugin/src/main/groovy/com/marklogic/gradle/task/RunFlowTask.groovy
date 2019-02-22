@@ -18,7 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
-import com.marklogic.client.datamovement.JobTicket
+
 import com.marklogic.client.io.JacksonHandle
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
@@ -28,6 +28,8 @@ import com.marklogic.hub.flow.Flow
 import com.marklogic.hub.flow.FlowItemCompleteListener
 import com.marklogic.hub.flow.FlowItemFailureListener
 import com.marklogic.hub.flow.FlowRunner
+import com.marklogic.hub.job.Job
+import groovy.json.JsonBuilder
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
@@ -59,7 +61,10 @@ class RunFlowTask extends HubTask {
     public Boolean failHard
 
     @Input
-    public Integer step;
+    public Integer step
+
+    @Input
+    public String jobId
 
     @TaskAction
     void runFlow() {
@@ -72,6 +77,10 @@ class RunFlowTask extends HubTask {
 
         if (entityName == null) {
             entityName = project.hasProperty("entityName") ? project.property("entityName") : null
+        }
+
+        if (jobId == null) {
+            jobId = project.hasProperty("jobId") ? project.property("jobId") : null
         }
 
         if (batchSize == null) {
@@ -130,7 +139,7 @@ class RunFlowTask extends HubTask {
                 options.put(key, value)
             }
         }
-        println("Running Flow: [" + entityName + ":" + flowName + "]" +
+        println("Running Flow: [" + flowName + ":" + step + "]" +
             "\n\twith batch size: " + batchSize +
             "\n\twith thread count: " + threadCount +
             "\n\twith Source DB: " + sourceClient.database +
@@ -151,6 +160,7 @@ class RunFlowTask extends HubTask {
             .withThreadCount(threadCount)
             .withSourceClient(sourceClient)
             .withDestinationDatabase(destDB)
+            .withJobId(jobId)
             .onItemComplete(new FlowItemCompleteListener() {
                 @Override
                 void processCompletion(String jobId, String itemId) {
@@ -163,14 +173,13 @@ class RunFlowTask extends HubTask {
                     //TODO ditto
                 }
             })
-        JobTicket jobTicket = flowRunner.run()
+        Job job = flowRunner.run()
         flowRunner.awaitCompletion()
 
-        def jobDocMgr = getHubConfig().newJobDbClient().newDocumentManager()
-        def job = jobDocMgr.read("/jobs/" + jobTicket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        def jobOutput = job.get("jobOutput")
+        JsonBuilder jobResp = new JsonBuilder(job);
+        def jobOutput = job.jobOutput;
         if (jobOutput != null && jobOutput.size() > 0) {
-            def output = prettyPrint(jobOutput.get(0).asText())
+            def output = prettyPrint(jobOutput.get(0))
             if (failHard) {
                 throw new TaskExecutionException(this, new Throwable(output))
             } else {
@@ -180,7 +189,7 @@ class RunFlowTask extends HubTask {
 
         } else {
             println("\n\nOutput:")
-            println(prettyPrint(job))
+            println(jobResp.toPrettyString())
         }
     }
 }

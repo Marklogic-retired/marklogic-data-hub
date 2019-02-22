@@ -25,23 +25,16 @@ import java.util.List;
 
 public class Job {
     private String jobId;
-    private String flowType;
     private String flowName;
 
-    private String jobName;
-    private Date startTime;
-    private Date endTime;
     private List<String> jobOutput;
-    private JobStatus status = JobStatus.STARTED;
+    private String status ;
 
     private long successfulEvents = 0;
     private long failedEvents = 0;
     private long successfulBatches = 0;
     private long failedBatches = 0;
 
-    private Job() {
-        this.startTime = new Date();
-    }
 
     public Job withJobId(String jobId) {
         this.jobId = jobId;
@@ -52,11 +45,6 @@ public class Job {
         Job job = new Job();
         job.flowName = flow.getName();
         return job;
-    }
-
-    public Job withJobName(String jobName) {
-        this.jobName = jobName;
-        return this;
     }
 
     public Job withJobOutput(List<String> jobOutput) {
@@ -72,17 +60,7 @@ public class Job {
         return this;
     }
 
-    public Job withStartTime(Date startTime) {
-        this.startTime = startTime;
-        return this;
-    }
-
-    public Job withEndTime(Date endTime) {
-        this.endTime = endTime;
-        return this;
-    }
-
-    public Job withStatus(JobStatus status) {
+    public Job withStatus(String status) {
         this.status = status;
         return this;
     }
@@ -100,27 +78,14 @@ public class Job {
         return jobId;
     }
 
-    public String getFlowType() {
-        return flowType;
-    }
+
 
     public String getFlowName() {
         return flowName;
     }
 
-    public String getJobName() {
-        return jobName;
-    }
 
-    public Date getStartTime() {
-        return this.startTime;
-    }
-
-    public Date getEndTime() {
-        return this.endTime;
-    }
-
-    public JobStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 

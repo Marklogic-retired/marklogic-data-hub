@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
-import com.marklogic.client.datamovement.impl.JobTicketImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
@@ -35,7 +34,6 @@ import com.marklogic.hub.flow.*;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.flow.FlowItemFailureListener;
 import com.marklogic.hub.job.JobStatus;
-
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -58,6 +56,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private Map<String, Object> options;
     private int previousPercentComplete;
     private boolean stopOnFailure = false;
+    private String jobId;
 
 
     private int step = 1;
@@ -86,6 +85,10 @@ public class FlowRunnerImpl implements FlowRunner {
         return this;
     }
 
+    public FlowRunner withJobId(String jobId) {
+        this.jobId = jobId;
+        return this;
+    }
 
     @Override
     public FlowRunner withBatchSize(int batchSize) {
@@ -163,12 +166,13 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     @Override
-    public JobTicket run() {
-
+    public Job run() {
         Job job = Job.withFlow(flow);
-
-
-        Collector c = new CollectorImpl(this.flow);
+        if(this.jobId == null) {
+            jobId = UUID.randomUUID().toString();
+        }
+        job.withJobId(jobId);
+        Collector c = new CollectorImpl(this.flow, jobId);
         c.setHubConfig(hubConfig);
         c.setClient(stagingClient);
 
@@ -182,39 +186,29 @@ public class FlowRunnerImpl implements FlowRunner {
         }
         options.put("flow", this.flow.getName());
 
-        //The job id is not set until collector completes. Hence the value here would be null, so it is not set here
+        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+            listener.onStatusChange(this.jobId, 0, "running collector");
+        });
 
-/*        flowStatusListeners.forEach((FlowStatusListener listener) -> {
-            listener.onStatusChange(((CollectorImpl) c).getJobId(), 0, "running collector");
-        });*/
-
-       // jobManager.saveJob(job.withStatus(JobStatus.RUNNING_COLLECTOR));
         final DiskQueue<String> uris;
         try {
-            uris = c.run(this.flow.getName(),  String.valueOf(step));
+            uris = c.run(this.flow.getName(),  String.valueOf(step), this.jobId, options);
         } catch (Exception e) {
             job.setCounts(0, 0, 0, 0)
-                .withStatus(JobStatus.FAILED)
-                .withEndTime(new Date());
+                .withStatus(JobStatus.FAILED.toString());
 
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             job.withJobOutput(errors.toString());
-
-            return new JobTicketImpl(((CollectorImpl) c).getJobId(), JobTicket.JobType.QUERY_BATCHER);
+            return job;
         }
 
-        // Get the jobId from the collector and set it to the in-memory object for further access.
-        job.withJobId(((CollectorImpl) c).getJobId());
-
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-            listener.onStatusChange(job.getJobId(), 0, "starting harmonization");
+            listener.onStatusChange(job.getJobId(), 0, "starting step execution");
         });
         Vector<String> errorMessages = new Vector<>();
 
         DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
-
-        int uriCount = uris.size();
 
         double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
 
@@ -300,7 +294,6 @@ public class FlowRunnerImpl implements FlowRunner {
 
         JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
         ticketWrapper.put("jobTicket", jobTicket);
-        job.withStatus(JobStatus.RUNNING);
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
@@ -313,32 +306,28 @@ public class FlowRunnerImpl implements FlowRunner {
 
             dataMovementManager.stopJob(queryBatcher);
 
-            JobStatus status;
+            String status;
+            JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+
             if (failedEvents.get() > 0 && stopOnFailure) {
-                status = JobStatus.STOP_ON_ERROR;
-            } else if (failedEvents.get() + successfulEvents.get() != uriCount) {
-                status = JobStatus.CANCELED;
+                status = JobStatus.STOP_ON_ERROR.toString();
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                status = JobStatus.FINISHED_WITH_ERRORS;
+                status = JobStatus.FINISHED_WITH_ERRORS.toString();
             } else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
-                status = JobStatus.FINISHED;
+                status = "completed step " + step ;
             } else {
-                status = JobStatus.FAILED;
+                status = JobStatus.FAILED.toString();
             }
-
-            // store the thing in MarkLogic
-            job.setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get())
-                .withStatus(status)
-                .withEndTime(new Date());
-
+            job.setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
+            job.withStatus(status);
+            jobUpdate.postJobs(jobId, status, step);
             if (errorMessages.size() > 0) {
                 job.withJobOutput(errorMessages);
             }
-            //jobManager.saveJob(job);
         });
         runningThread.start();
 
-        return jobTicket;
+        return job;
     }
 
     private String jsonToString(JsonNode node) {
@@ -364,9 +353,6 @@ public class FlowRunnerImpl implements FlowRunner {
             this.srcClient.init("ml:runFlow" , this);
         }
 
- /*       public RunFlowResponse run(String jobId, String[] items) {
-            return run(jobId, items, null);
-        }*/
 
         public RunFlowResponse run(String jobId, int step, Map<String, Object> options) {
             RunFlowResponse resp;
@@ -375,6 +361,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 params.add("flow-name", flow.getName());
                 params.put("step", String.valueOf(step));
                 params.put("job-id", jobId);
+                params.put("identifiers", (String) null);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
                     ObjectMapper objectMapper = new ObjectMapper();
@@ -401,5 +388,32 @@ public class FlowRunnerImpl implements FlowRunner {
             }
             return resp;
         }
+
+    }
+
+    class JobUpdate extends ResourceManager {
+        private static final String NAME = "ml:jobs";
+
+        private RequestParameters params;
+
+        public JobUpdate(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+        }
+
+        private void postJobs(String jobId, String status, int step) {
+            params = new RequestParameters();
+            params.put("jobid", jobId);
+            params.put("status", status);
+            params.put("step", String.valueOf(step));
+            try {
+                this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Unable to update the job document");
+            }
+
+        }
+
     }
 }

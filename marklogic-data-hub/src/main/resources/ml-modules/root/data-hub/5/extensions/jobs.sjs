@@ -14,8 +14,8 @@
   limitations under the License.
 */
 'use strict';
-const JobsLib = require("/data-hub/5/impl/jobs.sjs");
-const jobslib = new JobsLib();
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
 
 function get(context, params) {
   let jobId = params["jobid"];
@@ -27,10 +27,10 @@ function get(context, params) {
       fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request"]));
   }
   else if(fn.exists(jobId)) {
-    resp = jobslib.getJobDocWithId(jobId);
+    resp = datahub.jobs.getJobDocWithId(jobId);
   }
   else if(fn.exists(status)) {
-    resp = jobslib.getJobDocs(status);
+    resp = datahub.jobs.getJobDocs(status);
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
@@ -42,7 +42,42 @@ function get(context, params) {
 };
 
 
-function post(context, params, input) {};
+function post(context, params, input) {
+  let jobId = params["jobid"];
+  let status = params["status"];
+  let flow = params["flow-name"];
+  let step = params["step"];
+
+  let resp = null;
+  let jobDoc = datahub.jobs.getJobDocWithId(jobId);
+  if(jobDoc) {
+    jobDoc.job.lastAttemptedStep = step;
+    jobDoc.job.jobStatus = status;
+    if(status === "finished") {
+      jobDoc.job.lastCompletedStep = step;
+    }
+    else {
+      if(status === "finished_with_errors" || status === "failed" ) {
+        jobDoc.job.timeEnded = fn.currentDateTime();
+      }
+    }
+    //Update the job doc
+    datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, "xdmp.defaultPermissions()", ['Jobs','Job'], datahub.config.JOBDATABASE);
+  }
+  else {
+    if(fn.exists(jobId) && fn.exists(flow)) {
+      datahub.jobs.createJob(flow, jobId);
+    }
+    else {
+      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
+    }
+
+  }
+
+
+
+
+};
 
 function put(context, params, input) {};
 
