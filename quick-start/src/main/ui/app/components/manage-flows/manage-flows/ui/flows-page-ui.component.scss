@@ -1,9 +1,4 @@
-$carded-header-height: 200px !default;
-$carded-toolbar-height: 64px !default;
-$header-height: 120px !default;
-
-// Calculate toolbar-less carded header height
-$carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-height;
+$header-height: 100px !default;
 
 .page-layout {
   position: relative;
@@ -24,7 +19,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
       top: 0;
       right: 0;
       left: 0;
-      height: $carded-header-height;
     }
 
     // Fullwidth
@@ -45,9 +39,9 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
         max-height: 100%;
 
         > .header {
-          height: $carded-header-height-without-toolbar !important;
-          min-height: $carded-header-height-without-toolbar !important;
-          max-height: $carded-header-height-without-toolbar !important;
+          height: $header-height !important;
+          min-height: $header-height !important;
+          max-height: $header-height!important;
         }
 
         > .content-card {
@@ -61,16 +55,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
           }
         }
       }
-    }
-  }
-}
-
-#flows-page {
-
-  > .center {
-
-    > .header {
-
     }
   }
 }
