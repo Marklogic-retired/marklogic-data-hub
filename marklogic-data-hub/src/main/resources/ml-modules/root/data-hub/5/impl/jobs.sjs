@@ -51,15 +51,20 @@ class Jobs {
 
   getJobDocWithId(jobId) {
     let jobUri = "/jobs/" + jobId + ".json";
-    if (cts.contains(cts.doc(jobUri), cts.jsonPropertyValueQuery("jobId",jobId))) {
-      return this.getJobDocWithUri(jobUri);
-    }
+    return hubutils.queryLatest(function() {
+        let jobDoc = cts.doc(jobUri);
+        if (cts.contains(jobDoc, cts.jsonPropertyValueQuery("jobId", jobId))) {
+          return jobDoc.toObject();
+        }
+      }, this.config.JOBDATABASE);
   }
 
   getJobDocWithUri(jobUri) {
-    if (xdmp.documentGetCollections(jobUri).includes("Job")) {
-      return cts.doc(jobUri).toObject();
-    }
+    return hubutils.queryLatest(function() {
+        if (xdmp.documentGetCollections(jobUri).includes("Job")) {
+          return cts.doc(jobUri).toObject();
+        }
+      }, this.config.JOBDATABASE);
   }
 
   deleteJob(jobId) {
@@ -110,21 +115,23 @@ class Jobs {
   getJobDocs(status) {
     let docs = [];
     let query = [cts.directoryQuery("/jobs/"), cts.jsonPropertyWordQuery("jobStatus", status.toString().toLowerCase())];
-    let uris = cts.uris("", null ,cts.andQuery(query));
-    for (let doc of uris) {
-      docs.push(cts.doc(doc).toObject());
-    }
+    hubutils.queryLatest(function() {
+      let uris = cts.uris("", null ,cts.andQuery(query));
+      for (let doc of uris) {
+        docs.push(cts.doc(doc).toObject());
+      }
+    }, this.config.JOBDATABASE);
     return docs;
   }
 
-  createBatch(jobId, processor, step) {
+  createBatch(jobId, step, stepNumber) {
     let batch = null;
     batch = {
       batch: {
         jobId: jobId,
         batchId: hubutils.uuid(),
-        processor: processor,
         step: step,
+        stepNumber: stepNumber,
         batchStatus: "started",
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
@@ -133,28 +140,31 @@ class Jobs {
     };
 
     hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
-    return jobId;
+    return batch;
   }
 
   getBatchDocs(jobId, step=null) {
     let docs = [];
-    let query = [cts.directoryQuery("/jobs/batches/"),cts.jsonPropertyValueQuery("jobId", jobId)];
-    if(step) {
+    let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)];
+    if (step) {
       query.push(cts.jsonPropertyValueQuery("step", step));
     }
-    let uris = cts.uris("", null ,cts.andQuery(query));
-    for (let doc of uris) {
-      docs.push(cts.doc(doc).toObject());
-    }
+    hubutils.queryLatest(function () {
+      let uris = cts.uris("", null, cts.andQuery(query));
+      for (let doc of uris) {
+        docs.push(cts.doc(doc).toObject());
+      }
+    }, this.config.JOBDATABASE);
     return docs;
   }
 
   getBatchDocWithUri(batchUri) {
-     if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
-       return cts.doc(batchUri).toObject();
-     }
+     return fn.head(hubutils.queryLatest(function() {
+       if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
+         return cts.doc(batchUri).toObject();
+       }
+     }, this.config.JOBDATABASE));
   }
-
 
   updateBatch(jobId, batchId, batchStatus, uris) {
     let docObj = this.getBatchDoc(jobId, batchId);
@@ -172,10 +182,12 @@ class Jobs {
   getBatchDoc(jobId, batchId) {
     let query = [cts.directoryQuery("/jobs/batches/"),cts.jsonPropertyValueQuery("jobId", jobId)
     ,cts.jsonPropertyValueQuery("batchId", batchId)];
-    let uri = cts.uris("", null ,cts.andQuery(query));
-    if(!fn.empty(uri)){
-      return cts.doc(uri).toObject()
-    }
+    return fn.head(hubutils.queryLatest(function() {
+      let uri = cts.uris("", null ,cts.andQuery(query));
+      if(!fn.empty(uri)){
+        return cts.doc(uri).toObject();
+      }
+    }, this.config.JOBDATABASE));
   }
 }
 

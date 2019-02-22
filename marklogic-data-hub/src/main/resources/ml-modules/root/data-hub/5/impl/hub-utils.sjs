@@ -76,6 +76,17 @@ class HubUtils {
     })
   }
 
+  queryLatest(queryFunction, database) {
+    return xdmp.invokeFunction(queryFunction, { commit: 'auto', update: 'false', ignoreAmps: true, database: database ? xdmp.database(database): xdmp.database()})
+  }
+
+  invoke(moduleUri, parameters, user = xdmp.getCurrentUser(), database) {
+    xdmp.invoke(moduleUri, parameters, {
+      ignoreAmps: true,
+      database: database ? xdmp.database(database): xdmp.database(),
+      user: xdmp.user(user)
+    })
+  }
   /**
   * Generate and return a UUID
   */
@@ -115,6 +126,16 @@ class HubUtils {
      return Sequence.from([value]);
    }
  }
+
+  normalizeToArray(value) {
+    if (value instanceof Sequence) {
+      return value.toArray();
+    } else if (Array.isArray(value)) {
+      return value;
+    } else {
+      return [value];
+    }
+  }
  
 }
 

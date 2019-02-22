@@ -42,7 +42,7 @@ function transform(content, context) {
     params[parts[0]] = parts[1];
   }
 
-  let jobId = params["job-id"] || sem.uuidString();
+  let jobId = params["job-id"] || datahub.hubUtils.uuid();
   let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
   let flowName = params['flow-name'] ?  xdmp.urlDecode(params['flow-name']) : null;
   let flow = datahub.flow.getFlow(flowName);
@@ -51,14 +51,16 @@ function transform(content, context) {
     datahub.debug.log({message: params, type: 'error'});
     fn.error(null, "RESTAPI-SRVEXERR", "The specified flow " + flowName + " is missing.");
   }
-  let options = { noWrite: true };
+  let options = { };
   if (optionsString) {
     let splits = optionsString.split("=");
     options = JSON.parse(splits[1]);
   }
+  options.noWrite = true;
 
   //don't catch any exception here, let it slip through to mlcp
-  let document = fn.head(datahub.flow.runFlow(flowName, jobId, [uri], { [uri]: content.value}, options, step));
+  let flowResponse =  datahub.flow.runFlow(flowName, jobId, [uri], { [uri]: content.value}, options, step);
+  let document = flowResponse.documents[uri].content;
 
   if(!document) {
     datahub.debug.log({message: params, type: 'error'});
