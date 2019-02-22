@@ -29,7 +29,6 @@ export class FlowsPageService implements Resolve<any> {
    */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
     return new Promise((resolve, reject) => {
-
       Promise.all([
         this.getFlows()
       ]).then(
@@ -48,7 +47,7 @@ export class FlowsPageService implements Resolve<any> {
    */
   getFlows(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this._httpClient.get('api/e-commerce-products')
+      this._httpClient.get('api/flows')
         .subscribe((response: any) => {
           this.flows = response;
           this.onProductsChanged.next(this.flows);
