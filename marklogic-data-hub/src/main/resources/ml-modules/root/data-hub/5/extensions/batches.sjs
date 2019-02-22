@@ -14,8 +14,8 @@
   limitations under the License.
 */
 'use strict';
-const JobsLib = require("/data-hub/5/impl/jobs.sjs");
-const jobs = new JobsLib();
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
 
 
 function get(context, params) {
@@ -26,10 +26,10 @@ function get(context, params) {
   let resp = null;
 
   if(fn.exists(jobId) && fn.exists(step) ) {
-    resp = jobs.getBatchDocs(jobId, step);
+    resp = datahub.jobs.getBatchDocs(jobId, step);
   }
   else if(fn.exists(jobId) && fn.exists(batchId)) {
-    resp = jobs.getBatchDoc(jobId, batchId);
+    resp = datahub.jobs.getBatchDoc(jobId, batchId);
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));

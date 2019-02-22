@@ -28,7 +28,7 @@
           <match-query-param name="database">
             <set-database checked="true">$0</set-database>
           </match-query-param>
-          <dispatch>/data-hub/5/endpoints/collector.xqy</dispatch>
+          <dispatch>/data-hub/5/endpoints/collector.sjs</dispatch>
         </match-method>
       </match-path>
         <!-- DHF -->

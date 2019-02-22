@@ -81,8 +81,9 @@ public class CollectorImpl implements Collector {
 
     public CollectorImpl() {}
 
-    public CollectorImpl(Flow flow) {
+    public CollectorImpl(Flow flow, String jobId) {
         this.flow = flow;
+        this.jobId = jobId;
     }
 
 
@@ -106,7 +107,7 @@ public class CollectorImpl implements Collector {
 
 
     @Override
-    public DiskQueue<String> run(String flow, String step) {
+    public DiskQueue<String> run(String flow, String step, String jobId, Map<String, Object> options) {
         try {
             DiskQueue<String> results = new DiskQueue<>(5000);
 
@@ -118,7 +119,7 @@ public class CollectorImpl implements Collector {
 
             RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
-                "%s://%s:%d%s?flow-name=%s&database=%s&step=%s",
+                "%s://%s:%d%s?flow-name=%s&database=%s&step=%s&job-id=%s",
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
@@ -126,8 +127,13 @@ public class CollectorImpl implements Collector {
 
                 URLEncoder.encode(flow, "UTF-8"),
                 URLEncoder.encode(client.getDatabase(), "UTF-8"),
-                URLEncoder.encode(step, "UTF-8")
+                URLEncoder.encode(step, "UTF-8"),
+                URLEncoder.encode(jobId, "UTF-8")
             );
+            if (options != null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                uriString += "&options=" + URLEncoder.encode(objectMapper.writeValueAsString(options), "UTF-8");
+            }
 
             URI uri = new URI(uriString);
 
