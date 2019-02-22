@@ -1,0 +1,6 @@
+{
+  "name" : "default-ingest",
+  "type" : "INGEST",
+  "version" : 1,
+  "options" : { }
+}
