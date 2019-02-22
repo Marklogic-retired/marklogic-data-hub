@@ -61,11 +61,11 @@ class Jobs {
   }
 
   getJobDocWithUri(jobUri) {
-    return hubutils.queryLatest(function() {
+    return fn.head(hubutils.queryLatest(function() {
         if (xdmp.documentGetCollections(jobUri).includes("Job")) {
           return cts.doc(jobUri).toObject();
         }
-      }, this.config.JOBDATABASE);
+      }, this.config.JOBDATABASE));
   }
 
   deleteJob(jobId) {
