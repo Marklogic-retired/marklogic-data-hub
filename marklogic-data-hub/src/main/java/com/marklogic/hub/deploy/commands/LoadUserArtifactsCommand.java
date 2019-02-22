@@ -102,7 +102,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path mappingPath = userModulesPath.resolve("mappings");
 
         Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path processesPath = projectPath.resolve("step");
+        Path stepPath = projectPath.resolve("step");
         Path flowPath = projectPath.resolve("flows");
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
@@ -111,7 +111,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DocumentWriteSet finalEntityDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingEntityDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet stagingProcessDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
+        DocumentWriteSet stagingStepDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
 
@@ -163,6 +164,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
+                                    finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                     stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                     propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
@@ -176,8 +178,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
 
-            if (processesPath.toFile().exists()) {
-                Files.walkFileTree(processesPath, new SimpleFileVisitor<Path>() {
+            // let's do steps
+            if (stepPath.toFile().exists()) {
+                Files.walkFileTree(stepPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                         Modules modules = new StepDefModulesFinder().findModules(dir.toString());
@@ -189,7 +192,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 InputStream inputStream = r.getInputStream();
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
-                                stagingProcessDocumentWriteSet.add("/step/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                stagingStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
@@ -198,6 +201,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
 
+
+            // let's do flows
             if (flowPath.toFile().exists()) {
                 Files.walkFileTree(flowPath, new SimpleFileVisitor<Path>() {
                     @Override
@@ -226,9 +231,10 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
             if (stagingMappingDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingMappingDocumentWriteSet);
+                finalDocMgr.write(finalMappingDocumentWriteSet);
             }
-            if (stagingProcessDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingProcessDocumentWriteSet);
+            if (stagingStepDocumentWriteSet.size() > 0) {
+                stagingDocMgr.write(stagingStepDocumentWriteSet);
             }
             if (stagingFlowDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingFlowDocumentWriteSet);
