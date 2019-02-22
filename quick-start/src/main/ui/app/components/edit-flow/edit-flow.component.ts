@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
   selector: 'app-edit-flow',
   template: `
   <app-edit-flow-ui
-    [flow]="flow"
   ></app-edit-flow-ui>
 `
 })

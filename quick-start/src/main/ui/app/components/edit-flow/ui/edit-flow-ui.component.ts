@@ -9,8 +9,6 @@ import { RunFlowDialogComponent } from './run-flow-dialog.component';
   styleUrls: ['./edit-flow-ui.component.scss'],
 })
 export class EditFlowUiComponent {
-
-  @Input() flow: any;
   stepName: string;
   stepType: string;
   steps: [];
