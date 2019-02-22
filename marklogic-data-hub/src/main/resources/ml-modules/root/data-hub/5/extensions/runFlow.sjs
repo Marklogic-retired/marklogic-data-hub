@@ -36,7 +36,7 @@ function post(context, params, input) {
     let uris = null;
     if (params.uri) {
       uris = datahub.hubUtils.normalizeToArray(params.uri);
-      query = cts.documentUriQuery(uris);
+      query = cts.documentQuery(uris);
     } else {
       query = flow.identifier ? cts.query(flow.identifier) : cts.orQuery([]);
     }

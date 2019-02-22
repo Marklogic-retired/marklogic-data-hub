@@ -51,12 +51,13 @@ class Jobs {
 
   getJobDocWithId(jobId) {
     let jobUri = "/jobs/" + jobId + ".json";
-    return hubutils.queryLatest(function() {
+    return fn.head(hubutils.queryLatest(function() {
         let jobDoc = cts.doc(jobUri);
         if (cts.contains(jobDoc, cts.jsonPropertyValueQuery("jobId", jobId))) {
           return jobDoc.toObject();
         }
-      }, this.config.JOBDATABASE);
+      }, this.config.JOBDATABASE)
+    );
   }
 
   getJobDocWithUri(jobUri) {
