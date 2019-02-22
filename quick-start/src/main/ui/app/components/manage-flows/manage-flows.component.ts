@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ManageFlowsService } from './manage-flows.service';
+import { ManageFlowsService } from './services/manage-flows.service';
 import { Flow } from "./flow.model";
 
 import * as _ from 'lodash';
