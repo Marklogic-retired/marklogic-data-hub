@@ -45,8 +45,8 @@ import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {ROUTES} from './app.routes';
 import {AUTH_PROVIDERS} from './services/auth';
 import {CodemirrorComponent} from './components/codemirror';
-import {EditFlowComponent} from './components/edit-flow/';
-import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/edit-flow/ui/';
+import {EditFlowComponent} from './components/manage-flows/edit-flow/';
+import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/manage-flows/edit-flow/ui/';
 import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
 import {HeaderComponent} from './components/header/header.component';
 import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
@@ -70,7 +70,7 @@ import {InstallService} from './services/installer';
 import {JobService} from './components/jobs/jobs.service';
 import {JobListenerService} from './components/jobs/job-listener.service';
 import {MapService} from './components/mappings/map.service';
-import {ManageFlowsService} from './components/manage-flows/manage-flows.service';
+import {ManageFlowsService} from './components/manage-flows/services/manage-flows.service';
 import {ProjectService} from './services/projects';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
@@ -89,6 +89,7 @@ import {ManageFlowsComponent} from './components/manage-flows/manage-flows.compo
 import {ManageFlowsUiComponent} from './components/manage-flows/ui/manage-flows-ui.component';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
+import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page.module";
 
 @NgModule({
   declarations: [
@@ -191,7 +192,8 @@ import {FlowsUiComponent} from './components/flows/ui';
     DatePipeModule,
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
-    ThemeModule
+    ThemeModule,
+    FlowsPageModule
   ],
   providers: [
     AUTH_PROVIDERS,

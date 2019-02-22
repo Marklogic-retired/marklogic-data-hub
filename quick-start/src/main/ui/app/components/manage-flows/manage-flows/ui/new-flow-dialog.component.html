@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>New Flow</h1>
+<mat-dialog-content>
+  <mat-form-field appearance="outline" layout-fill>
+    <mat-label>Flow name</mat-label>
+    <input matInput
+    />
+  </mat-form-field>
+  <mat-form-field appearance="outline" layout-fill>
+    <mat-label>Description</mat-label>
+    <input matInput
+    />
+  </mat-form-field>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Advanced Settings
+      </mat-panel-title>
+      <mat-panel-description>
+        (optional)
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-form-field appearance="outline" layout-fill>
+      <mat-label>Batch Size</mat-label>
+      <input matInput
+      />
+    </mat-form-field>
+    <mat-form-field appearance="outline" layout-fill>
+      <mat-label>Thread Count</mat-label>
+      <input matInput
+      />
+    </mat-form-field>
+  </mat-expansion-panel>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-button [mat-dialog-close]="true" autofocus>Create</button>
+</mat-dialog-actions>

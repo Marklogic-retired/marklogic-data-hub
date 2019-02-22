@@ -8,7 +8,7 @@ import {
   withKnobs
 } from '@storybook/addon-knobs';
 import {action} from '@storybook/addon-actions';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoryCardComponent} from '../../../utils/stories/story-card.component';
 import {ThemeModule} from '../../../components/theme/theme.module';
 
