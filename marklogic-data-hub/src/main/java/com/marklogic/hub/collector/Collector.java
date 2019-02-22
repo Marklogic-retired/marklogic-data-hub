@@ -56,6 +56,7 @@ public interface Collector {
      * Obtains and grabs a list of uris that match the collector code
      * @param flow - name of which flow
      * @param step - step of the flow
+     * @param options - options Map for running the step
      * @return a list of uris as strings in a diskqueue object
      */
     DiskQueue<String> run(String flow, String step, String jobId, Map<String, Object> options);

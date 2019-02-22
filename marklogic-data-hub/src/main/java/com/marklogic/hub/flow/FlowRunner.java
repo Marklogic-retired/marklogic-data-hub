@@ -138,7 +138,7 @@ public interface FlowRunner {
 
     /**
      * Runs the flow and creates the job
-     * @return jobticket object for the flow that is run
+     * @return Job object for the flow that is run
      */
     Job run();
 }
