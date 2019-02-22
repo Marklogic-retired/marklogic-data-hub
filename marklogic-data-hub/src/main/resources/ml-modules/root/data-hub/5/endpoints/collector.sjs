@@ -40,7 +40,7 @@ case 'GET':
   }
   const jobId = requestParams["job-id"];
   const database = requestParams.database;
-  const options = requestParams.options;
+  let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
   let jobDoc = datahub.jobs.getJobDocWithId(jobId);
   try {

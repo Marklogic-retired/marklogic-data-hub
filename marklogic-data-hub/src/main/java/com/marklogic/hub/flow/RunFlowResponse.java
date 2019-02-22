@@ -28,6 +28,6 @@ public class RunFlowResponse {
     public List<String> documents;
 
     public String toString() {
-        return "{totalCount: " + totalCount + ", errorCount: " + errorCount + ", completedItems: " + completedItems.size() + ", failedItems: " + failedItems.size() + ", errors: " + errors.size() + ", documents: " + documents.size() + "}";
+        return String.format("{totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}", totalCount, errorCount, completedItems.size(), failedItems.size(), errors.size(), documents.size());
     }
 }
