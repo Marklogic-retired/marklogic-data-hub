@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Mapping } from './mapping.model';
+import {map} from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import {Entity} from "../../models";
@@ -26,12 +27,12 @@ export class MapService {
   }
 
   getMappings() {
-    return this.http.get(this.url('/mappings')).map((res: Response) => {
+    return this.http.get(this.url('/mappings')).pipe(map((res: Response) => {
       let mappings: Array<any> = res.json();
       return mappings.map((map) => {
         return new Mapping().fromJSON(map);
       });
-    }).subscribe((mappings: Array<Mapping>) => {
+    })).subscribe((mappings: Array<Mapping>) => {
       this.maps = mappings;
       this.mappingsChange.emit(this.maps);
     });
@@ -49,28 +50,28 @@ export class MapService {
   }
 
   getMap(mapName) {
-    return this.http.get(this.url('/mappings/' + mapName)).map((res: Response) => {
+    return this.http.get(this.url('/mappings/' + mapName)).pipe(map((res: Response) => {
       let map: Array<any> = res.json();
       console.log('GET /mappings/' + mapName, map);
       return map;
-    })
+    }))
   }
 
   saveMap(mapName, map) {
     let parsedMap = JSON.parse(map);
-    return this.http.post(this.url('/mappings/' + mapName), parsedMap).map((res: Response) => {
+    return this.http.post(this.url('/mappings/' + mapName), parsedMap).pipe(map((res: Response) => {
       console.log('POST /mappings/' + mapName, map);
       return res;
-    })
+    }))
   }
 
   deleteMap(mapping: Mapping) {
     _.remove(this.maps, { 'name': mapping.name });
     this.mappingsChange.emit(this.maps);
-    return  this.http.delete(this.url('/mappings/' + mapping.name)).map((res: Response) => {
+    return  this.http.delete(this.url('/mappings/' + mapping.name)).pipe(map((res: Response) => {
       console.log('DELETE /mappings/' + mapping.name);
       return res;
-    })
+    }))
   }
 
   private url(u: string): string {

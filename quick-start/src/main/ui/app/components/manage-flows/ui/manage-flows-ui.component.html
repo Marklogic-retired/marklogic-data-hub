@@ -1,0 +1,37 @@
+<h1>Manage Flows</h1>
+
+<p><button (click)="onCreateFlow('foo')">New Flow</button></p>
+
+<!-- <ul>
+  <li *ngFor="let flow of flows; let i = index;">
+    Flow #{{i+1}} is "{{flow.name}}"
+  </li>
+</ul> -->
+
+<table border="1" cellpadding="10">
+  <thead>
+    <tr>
+      <!-- TODO add step icons -->
+      <th>Name <!-- (# steps) --></th>
+      <th>Target Entity</th>
+      <th>Status</th>
+      <th>Jobs</th>
+      <th>Last Job Finished</th>
+      <th>Docs Committed</th>
+      <th>Docs Failed</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let flow of flows; let i = index;">
+      <td>{{flow.name}} <!-- ({{flow.steps.length}})--></td>
+      <td>{{flow.targetEntity}}</td>
+      <td>{{flow.status}}</td>
+      <td align="right">{{flow.jobs.length}}</td>
+      <td>{{friendlyDate(flow.latestJob.endTime)}}</td>
+      <td align="right">{{flow.latestJob.successfulEvents | number}}</td>
+      <td align="right">{{flow.latestJob.failedEvents | number}}</td>
+      <td><button>Run</button> <button (click)="onDeleteFlow(flow.flowId)">Delete</button></td>
+    </tr>
+  </tbody>
+</table>

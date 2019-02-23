@@ -2,6 +2,7 @@ import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Message } from 'stompjs/lib/stomp.min';
 import { STOMPService } from '../stomp';
+import {map, share} from 'rxjs/operators';
 
 @Injectable()
 export class InstallService {
@@ -21,13 +22,13 @@ export class InstallService {
       unsubscribeId = msgId;
     });
     return this.ngZone.runOutsideAngular(() => {
-      let resp = this.http.put(`/api/current-project/install`, '').share();
+      let resp = this.http.put(`/api/current-project/install`, '').pipe(share());
       resp.subscribe(() => {
         this.ngZone.run(() => {
           this.stomp.unsubscribe(unsubscribeId);
         });
       });
-      return resp.map(this.extractData);
+      return resp.pipe(map(this.extractData));
     });
   }
 
@@ -41,13 +42,13 @@ export class InstallService {
       unsubscribeId = msgId;
     });
     return this.ngZone.runOutsideAngular(() => {
-      let resp = this.http.delete(`/api/current-project/uninstall`).share();
+      let resp = this.http.delete(`/api/current-project/uninstall`).pipe(share());
       resp.subscribe(() => {
         this.ngZone.run(() => {
           this.stomp.unsubscribe(unsubscribeId);
         });
       });
-      return resp.map(this.extractData);
+      return resp.pipe(map(this.extractData));
     });
   }
 

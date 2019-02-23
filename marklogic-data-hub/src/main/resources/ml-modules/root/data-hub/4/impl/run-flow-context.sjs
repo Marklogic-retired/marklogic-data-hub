@@ -109,6 +109,10 @@ function getFlow() {
   return getGlobalContext().flow;
 }
 
+function getFlowName() {
+  return getFlow().name;
+}
+
 function getFlowType() {
   return getGlobalContext()['flow-type'];
 }
@@ -170,6 +174,7 @@ module.exports = {
   withOptions: withOptions,
   withTrace: withTrace,
   getFlow: getFlow,
+  getFlowName: getFlowName,
   getFlowType: getFlowType,
   getModuleUri: getModuleUri,
   getCodeFormat: getCodeFormat,

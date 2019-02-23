@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import {map} from 'rxjs/operators';
 import { Http, Response } from '@angular/http';
 import { Router } from '@angular/router';
 import { HubSettings } from '../../models/hub-settings.model';
@@ -15,7 +16,7 @@ export class EnvironmentService {
 
   public getEnvironment(): Observable<boolean> {
     const uri = `/api/current-project/`;
-    return this.http.get(uri).map((res: Response) => {
+    return this.http.get(uri).pipe(map((res: Response) => {
       const json = res.json();
       this.settings = json.mlSettings;
       this.marklogicVersion = json.marklogicVersion;
@@ -30,6 +31,6 @@ export class EnvironmentService {
       return result;
     }, () => {
       return false;
-    });
+    }));
   }
 }

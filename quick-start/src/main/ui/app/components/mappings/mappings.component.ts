@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import {Mapping} from "./mapping.model";
 import {SearchService} from "../search/search.service";
 import {NewMapComponent} from "./new-map.component";
-import {Subscriber} from "rxjs/Subscriber";
+import {Subscription} from 'rxjs';
 
 @Component({
   template: `
@@ -24,7 +24,7 @@ import {Subscriber} from "rxjs/Subscriber";
 })
 export class MappingsComponent implements OnInit, OnDestroy {
 
-  public subscribers: Map<string, Subscriber<any>> = new Map();
+  public subscribers: Map<string, Subscription> = new Map();
 
   private activeEntity: Entity;
   private activeMapping: Mapping;

@@ -1,9 +1,7 @@
 // borrowed from https://github.com/sjmf/ng2-stompjs-demo
 
 import { Injectable } from '@angular/core';
-
-import { Subject } from 'rxjs/Rx';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subject ,  BehaviorSubject } from 'rxjs';
 
 import * as SockJS from 'sockjs-client';
 

@@ -9,11 +9,17 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "basePath": "/api",
   "tags": [ ],
   "schemes": [
     "http"
   ],
+  "servers": [
+    {
+      "url": "http://localhost:4200/api",
+      "variables": {}
+    }
+  ],
+  "basePath": "/api",
   "paths": {
     "/flows": {
       "get": {
@@ -22,7 +28,7 @@
         ],
         "summary": "Returns all flows",
         "description": "Returns all flows",
-        "operationId": "findFlows",
+        "operationId": "getFlows",
         "produces": [
           "application/json"
         ],
@@ -37,19 +43,318 @@
               },
               "default": [
                 {
-                  "name": "MappingFlow",
-                  "description": "Maps raw values to the canonical model",
-                  "identifier": "cts.collectionQuery('rawContent')",
+                  "id": "flow-1",
+                  "name": "Order Flow 01",
+                  "description": "My Flow01 flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
                   "steps": [
                     {
+                      "id": "step-1-flow-1",
+                      "name": "Flow 01 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-2-flow-1",
+                      "name": "Flow 01 Mapping Step",
+                      "description": "My Step 2 description",
                       "type": "mapping",
-                      "name": "person-mapping1.json",
-                      "identifier": null,
-                      "retryLimit": 0,
-                      "options": {}
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-3-flow-1",
+                      "name": "Flow 01 Mastering Step",
+                      "description": "My Step 3 description",
+                      "type": "mastering",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-4-flow-1",
+                      "name": "Flow 01 Custom Step",
+                      "description": "My Step 4 description",
+                      "type": "custom",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
                     }
-                  ]
-                }
+                  ],
+                  "jobs": [
+                    "job-1-flow-1",
+                    "job-2-flow-1",
+                    "job-3-flow-1",
+                    "job-4-flow-1"
+                  ],
+                  "latestJob": {
+                    "id": "job-4-flow-1",
+                    "flowId": "flow-1",
+                    "startTime": "2019-01-31 12:10:00",
+                    "endTime": "2019-01-31 13:10:00",
+                    "output": [],
+                    "status": "running",
+                    "runningPercent": 85, 
+                    "successfulEvents": 500,
+                    "failedEvents": 0
+                  },
+                  "isValid": true,
+                  "isRunning": false,
+                  "version": 1
+                },
+                {
+                  "id": "flow-2",
+                  "name": "Order Flow 2",
+                  "description": "My Flow2 flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-2",
+                      "name": "Flow 02 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-2-flow-2",
+                      "name": "Flow 02 Mapping Step",
+                      "description": "My Step 2 description",
+                      "type": "mapping",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mapping": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-3-flow-2",
+                      "name": "Flow 02 Mastering Step",
+                      "description": "My Step 3 description",
+                      "type": "mastering",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mastering": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-4-flow-2",
+                      "name": "Flow 02 Custom Step",
+                      "description": "My Step 4 description",
+                      "type": "custom",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "custom": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [
+                    "job-1-flow-2",
+                    "job-2-flow-2",
+                    "job-3-flow-2",
+                    "job-4-flow-2"
+                  ],
+                  "latestJob": {
+                    "id": "job-4-flow-2",
+                    "flowId": "flow-2",
+                    "startTime": "2019-02-01 12:10:00",
+                    "endTime": "2019-02-01 16:10:00",
+                    "output": [],
+                    "status": "finished",
+                    "runningPercent": null, 
+                    "successfulEvents": 13429,
+                    "failedEvents": 63
+                  },
+                  "isValid": true,
+                  "isRunning": false,
+                  "version": 1
+                },
+                {
+                  "id": "flow-3",
+                  "name": "Customer Flow",
+                  "description": "My Customer Flow flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-3",
+                      "name": "Flow 3 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-2-flow-3",
+                      "name": "Flow 3 Mapping Step",
+                      "description": "My Step 2 description",
+                      "type": "mapping",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mapping": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-3-flow-3",
+                      "name": "Flow 3 Mastering Step",
+                      "description": "My Step 3 description",
+                      "type": "mastering",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "mastering": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-4-flow-3",
+                      "name": "Flow 3 Custom Step",
+                      "description": "My Step 4 description",
+                      "type": "custom",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "custom": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [
+                    "job-1-flow-3"
+                  ],
+                  "latestJob": {
+                    "id": "job-1-flow-3",
+                    "flowId": "flow-3",
+                    "startTime": "2019-02-02 12:10:00",
+                    "endTime": "2019-02-02 16:10:00",
+                    "output": [],
+                    "status": "errored",
+                    "runningPercent": null, 
+                    "successfulEvents": 0,
+                    "failedEvents": 500
+                  },
+                  "isValid": true,
+                  "isRunning": false,
+                  "version": 1
+                },
+                {
+                  "id": "flow-3",
+                  "name": "Product Ingestion",
+                  "description": "My Product Ingestion Flow flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-3",
+                      "name": "Flow 3 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": false,
+                      "isRunning": false,
+                      "config": {
+                        "mlcp": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [],
+                  "latestJob": null,
+                  "isValid": false,
+                  "isRunning": false,
+                  "version": 1
+                }                      
               ]
             }
           }
@@ -72,200 +377,219 @@
             "description": "Flow to create",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/flow",
-              "default": 
-                {
-                  "name": "MappingFlow",
-                  "description": "Maps raw values to the canonical model",
-                  "identifier": "cts.collectionQuery('rawContent')",
-                  "steps": [
-                    {
-                      "type": "mapping",
-                      "name": "person-mapping1.json",
-                      "identifier": null,
-                      "retryLimit": 0,
-                      "options": {}
-                    }
-                  ]
-                }
+              "$ref": "#/components/schemas/flow"
             },
             "examples": {
-              "ingestion": {
-                "summary": "An example flow object for step type: Ingestion",
-                "value": {
-                  "name": "value",
-                  "description": "value",
-                  "identifier": "value",
-                  "steps": [
-                    {
-                      "type": "value",
-                      "name": "value",
-                      "identifier": "value",
-                      "retryLimit": "value",
-                      "options": {
-                        "param1": "value",
-                        "param2": "value",
-                        "param3": "value",
-                        "param4": "value",
-                        "param5": "value"
-                      }
-                    }
-                  ]
-                }
-              },
-              "mapping": {
-                "summary": "An example flow object for step type: Mapping",
-                "value": {
-                  "name": "value",
-                  "description": "value",
-                  "identifier": "value",
-                  "steps": [
-                    {
-                      "type": "value",
-                      "name": "value",
-                      "identifier": "value",
-                      "retryLimit": "value",
-                      "options": {
-                        "param1": "value",
-                        "param2": "value",
-                        "param3": "value",
-                        "param4": "value",
-                        "param5": "value"
-                      }
-                    }
-                  ]
-                }
-              },
-              "mastering": {
-                "summary": "An example flow object for step type: Mastering",
-                "value": {
-                  "name": "value",
-                  "description": "value",
-                  "identifier": "value",
-                  "steps": [
-                    {
-                      "type": "value",
-                      "name": "value",
-                      "identifier": "value",
-                      "retryLimit": "value",
-                      "options": {
-                        "param1": "value",
-                        "param2": "value",
-                        "param3": "value",
-                        "param4": "value",
-                        "param5": "value"
-                      }
-                    }
-                  ]
-                }
-              },
-              "custom": {
-                "summary": "An example flow object for step type: Custom",
-                "value": {
-                  "name": "value",
-                  "description": "value",
-                  "identifier": "value",
-                  "steps": [
-                    {
-                      "type": "value",
-                      "name": "value",
-                      "identifier": "value",
-                      "retryLimit": "value",
-                      "options": {
-                        "param1": "value",
-                        "param2": "value",
-                        "param3": "value",
-                        "param4": "value",
-                        "param5": "value"
-                      }
-                    }
-                  ]
-                }
+              "name": "Flow Name",
+              "description": "My flow desc",
+              "batchSize": 100,
+              "threadCount": 4,
+              "options": {
+                "key": "value",
+                "key2": "value1",
+                "key3": "value1"
               }
-            }            
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Invalid name supplied"
-          },
-          "404": {
-            "description": "flow not found"
-          }
-        }
-      }
-    },
-    "/flows/{flowName}": {
-      "get": {
-        "tags": [
-          "flows"
-        ],
-        "summary": "Find flow by name",
-        "description": "....",
-        "operationId": "getFlowByName",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "flowName",
-            "in": "path",
-            "description": "Name of flow that needs to be fetched",
-            "required": true,
-            "type": "string"
+            }          
           }
         ],
         "responses": {
           "200": {
             "description": "successful operation",
             "schema": {
-              "$ref": "#/components/schemas/flow",
-              "default": [
-                {
-                  "name": "MappingFlow",
-                  "description": "Maps raw values to the canonical model",
-                  "identifier": "cts.collectionQuery('rawContent')",
-                  "steps": [
-                    {
-                      "type": "mapping",
-                      "name": "person-mapping1.json",
-                      "identifier": null,
-                      "retryLimit": 0,
-                      "options": {}
-                    }
-                  ]
-                }
-              ]
+              "type": "object",
+              "items": {
+                "$ref": "#/components/schemas/flow"
+              },
+              "default": {
+                "id": "flow-1",
+                "name": "Flow 01",
+                "description": "My Flow01 flow desc",
+                "batchSize": 100,
+                "threadCount": 4,
+                "options": {
+                  "key": "value",
+                  "key2": "value1",
+                  "key3": "value1"
+                },
+                "steps": [],
+                "jobs": [],
+                "latestJob": null,
+                "isValid": false,
+                "isRunning": false,
+                "version": 1
+              }
             }
           },
           "400": {
-            "description": "Invalid name supplied"
-          },
-          "404": {
-            "description": "flow not found"
+            "description": "Invalid parameter supplied"
           }
-        }
-      },
-      "put": {
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+
+    "/flows/{flowId}": {
+      "get": {
         "tags": [
           "flows"
         ],
-        "summary": "Update flow with name",
-        "description": "",
-        "operationId": "updateFlowByName",
+        "summary": "Find flow by Id",
+        "description": "....",
+        "operationId": "getFlow",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "flowName",
+            "name": "flowId",
             "in": "path",
-            "description": "Name of flow that needs to be fetched",
+            "description": "Id of flow to be fetched",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/components/schemas/flow"
+              },
+              "default": {
+                "id": "flow-1",
+                "name": "Order Flow 01",
+                "description": "My Flow01 flow desc",
+                "batchSize": 100,
+                "threadCount": 4,
+                "options": {
+                  "key": "value",
+                  "key2": "value1",
+                  "key3": "value1"
+                },
+                "steps": [
+                  {
+                    "id": "step-1-flow-1",
+                    "name": "Flow 01 Ingest Step",
+                    "description": "My Step 1 description",
+                    "type": "ingestion",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-2-flow-1",
+                    "name": "Flow 01 Mapping Step",
+                    "description": "My Step 2 description",
+                    "type": "mapping",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-3-flow-1",
+                    "name": "Flow 01 Mastering Step",
+                    "description": "My Step 3 description",
+                    "type": "mastering",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-4-flow-1",
+                    "name": "Flow 01 Custom Step",
+                    "description": "My Step 4 description",
+                    "type": "custom",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  }
+                ],
+                "jobs": [
+                  "job-1-flow-1",
+                  "job-2-flow-1",
+                  "job-3-flow-1",
+                  "job-4-flow-1"
+                ],
+                "latestJob": {
+                  "id": "job-4-flow-1",
+                  "flowId": "flow-1",
+                  "startTime": "2019-01-31 12:10:00",
+                  "endTime": "2019-01-31 13:10:00",
+                  "output": [],
+                  "status": "running",
+                  "runningPercent": 85, 
+                  "successfulEvents": 500,
+                  "failedEvents": 0
+                },
+                "isValid": true,
+                "isRunning": false,
+                "version": 1
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "flow not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Update flow by Id",
+        "description": "",
+        "operationId": "updateFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of the flow that needs to be updated",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "body",
@@ -273,61 +597,129 @@
             "description": "Updated flow",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/flow",
-              "default": [
-                {
-                  "name": "MappingFlow",
-                  "description": "Maps raw values to the canonical model",
-                  "identifier": "cts.collectionQuery('rawContent')",
-                  "steps": [
-                    {
-                      "type": "mapping",
-                      "name": "person-mapping1.json",
-                      "identifier": null,
-                      "retryLimit": 0,
-                      "options": {}
-                    }
-                  ]
-                }
-              ]
-            },
-            "examples": {
-              "ingestion": {
-                "summary": "An example flow object for step type: Ingestion",
-                "value": { }
+              "type": "object",
+              "items": {
+                "$ref": "#/components/schemas/flow"
               },
-              "mapping": {
-                "summary": "An example flow object for step type: Mapping",
-                "value": { }
-              },
-              "mastering": {
-                "summary": "An example flow object for step type: Mastering",
-                "value": { }
-              },
-              "custom": {
-                "summary": "An example flow object for step type: Custom",
-                "value": { }
+              "default": {
+                "id": "flow-1",
+                "name": "Order Flow 01",
+                "description": "My Flow01 flow desc",
+                "batchSize": 100,
+                "threadCount": 4,
+                "options": {
+                  "key": "value",
+                  "key2": "value1",
+                  "key3": "value1"
+                },
+                "steps": [
+                  {
+                    "id": "step-1-flow-1",
+                    "name": "Flow 01 Ingest Step",
+                    "description": "My Step 1 description",
+                    "type": "ingestion",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-2-flow-1",
+                    "name": "Flow 01 Mapping Step",
+                    "description": "My Step 2 description",
+                    "type": "mapping",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-3-flow-1",
+                    "name": "Flow 01 Mastering Step",
+                    "description": "My Step 3 description",
+                    "type": "mastering",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-4-flow-1",
+                    "name": "Flow 01 Custom Step",
+                    "description": "My Step 4 description",
+                    "type": "custom",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "mlcp": "options"
+                    },
+                    "language": "en",
+                    "version": 1
+                  }
+                ],
+                "jobs": [
+                  "job-1-flow-1",
+                  "job-2-flow-1",
+                  "job-3-flow-1",
+                  "job-4-flow-1"
+                ],
+                "latestJob": {
+                  "id": "job-4-flow-1",
+                  "flowId": "flow-1",
+                  "startTime": "2019-01-31 12:10:00",
+                  "endTime": "2019-01-31 13:10:00",
+                  "output": [],
+                  "status": "running",
+                  "runningPercent": 85, 
+                  "successfulEvents": 500,
+                  "failedEvents": 0
+                },
+                "isValid": true,
+                "isRunning": false,
+                "version": 2
               }
             }
           }
         ],
         "responses": {
-          "204": {
+          "200": {
             "description": "successful operation"
           },
           "400": {
-            "description": "Invalid name supplied"
+            "description": "Invalid parameter supplied"
           },
           "404": {
             "description": "flow not found"
           }
-        }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
       },
       "delete": {
         "tags": [
           "flows"
         ],
-        "summary": "Delete flow by name",
+        "summary": "Delete flow by Id",
         "description": "",
         "operationId": "deleteFlow",
         "produces": [
@@ -335,82 +727,24 @@
         ],
         "parameters": [
           {
-            "name": "flowName",
+            "name": "flowId",
             "in": "path",
-            "description": "ID of the sample that needs to be deleted",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "successful operation"
-          },
-          "400": {
-            "description": "Invalid name supplied"
-          },
-          "404": {
-            "description": "Flow not found"
-          }
-        }
-      }
-    },
-    "/process": {
-      "post": {
-        "tags": [
-          "process"
-        ],
-        "summary": "Creates a process",
-        "description": "Create a process",
-        "operationId": "createProcess",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Create Process Parameters",
+            "description": "Id of the flow that needs to be deleted",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/process"
-            },
-            "examples": {
-              "ingestion": {
-                "summary": "An example process object for step type: Ingestion (?)",
-                "value": { }
-              },
-              "mapping": {
-                "summary": "An example process object for step type: Mapping (?)",
-                "value": { }
-              },
-              "mastering": {
-                "summary": "An example process object for step type: Mastering (?)",
-                "value": { }
-              },
-              "custom": {
-                "summary": "An example process object for step type: Custom (?)",
-                "value": { }
-              }
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "object",
-              "items": {
-                "$ref": "#/components/schemas/process"
-              },
-              "default": [
-                { "id": 1, "name": "aaa", "status": "new" },
-                { "id": 2, "name": "bbb", "status": "new" },
-                { "id": 3, "name": "ccc", "status": "ready" },
-                { "id": 4, "name": "ddd", "status": "ready" },
-                { "id": 5, "name": "eee", "status": "approved" }
-              ]
-            }
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Flow not found"
           }
         },
         "security": [
@@ -420,42 +754,107 @@
         ]
       }
     },
-    "/process/{type}/{name}": {
+
+    "/flows/{flowId}/steps": {
       "get": {
         "tags": [
-          "process"
+          "flows"
         ],
-        "summary": "Get a process",
-        "description": "Get a process",
-        "operationId": "getProcess",
+        "summary": "Find all Steps accociated with a Flow",
+        "description": "",
+        "operationId": "getFlowSteps",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "type",
+            "name": "flowId",
             "in": "path",
-            "description": "type of process to delete",
+            "description": "Id of flow that the step is associated with",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "description": "name of process to return",
-            "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
+            "type": "array",
             "description": "successful operation",
             "schema": {
               "type": "object",
-              "schema": {
-                "$ref": "#/components/schemas/process"
-              }
+              "items": {
+                "$ref": "#/components/schemas/step"
+              },
+              "default": [
+                {
+                  "id": "step-1-flow-1",
+                  "name": "Flow 01 Ingest Step",
+                  "description": "My Step 1 description",
+                  "type": "ingestion",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mlcp": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                },
+                {
+                  "id": "step-2-flow-1",
+                  "name": "Flow 01 Mapping Step",
+                  "description": "My Step 2 description",
+                  "type": "mapping",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mlcp": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                },
+                {
+                  "id": "step-3-flow-1",
+                  "name": "Flow 01 Mastering Step",
+                  "description": "My Step 3 description",
+                  "type": "mastering",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mlcp": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                },
+                {
+                  "id": "step-4-flow-1",
+                  "name": "Flow 01 Custom Step",
+                  "description": "My Step 4 description",
+                  "type": "custom",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mlcp": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
+              ]
             }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "flow not found"
           }
         },
         "security": [
@@ -464,55 +863,123 @@
           }
         ]
       },
-      "put": {
+
+      "post": {
         "tags": [
-          "process"
+          "flows"
         ],
-        "summary": "Update a process",
-        "description": "Update a process",
-        "operationId": "updateProcess",
+        "summary": "Create Step for a Flow",
+        "description": "",
+        "operationId": "createFlowStep",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "type",
+            "name": "flowId",
             "in": "path",
-            "description": "type of  process to delete",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "description": "name of  process to update",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Update  Process Parameters",
+            "description": "Id of flow that the step is associated with",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/process"
+              "type": "string"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Step to create",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/step",
+              "default": {
+                "id": "step-2-flow-2",
+                "name": "Flow 02 Mapping Step",
+                "description": "My Step 2 description",
+                "type": "mapping",
+                "sourceDatabase": null,
+                "targetDatabase": "staging",
+                "isValid": true,
+                "isRunning": false,
+                "config": {
+                  "mapping": "options"
+                },
+                "language": "en",
+                "version": 1
+              }
             },
             "examples": {
               "ingestion": {
-                "summary": "An example process object for step type: Ingestion (?)",
-                "value": { }
+                "summary": "An example step object for step type: Ingestion",
+                "value": {
+                  "id": "step-1-flow-2",
+                  "name": "Flow 02 Ingestion Step",
+                  "description": "My Step 1 description",
+                  "type": "ingestion",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "ingestion": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
               },
               "mapping": {
-                "summary": "An example process object for step type: Mapping (?)",
-                "value": { }
+                "summary": "An example step object for step type: Mapping",
+                "value": {
+                  "id": "step-2-flow-2",
+                  "name": "Flow 02 Mapping Step",
+                  "description": "My Step 2 description",
+                  "type": "mapping",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mapping": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
               },
               "mastering": {
-                "summary": "An example process object for step type: Mastering (?)",
-                "value": { }
+                "summary": "An example step object for step type: Mastering",
+                "value": {
+                  "id": "step-3-flow-2",
+                  "name": "Flow 02 Mastering Step",
+                  "description": "My Step 3 description",
+                  "type": "mastering",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mastering": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
               },
               "custom": {
-                "summary": "An example process object for step type: Custom (?)",
-                "value": { }
+                "summary": "An example step object for step type: Custom",
+                "value": {
+                  "id": "step-4-flow-2",
+                  "name": "Flow 02 Custom Step",
+                  "description": "My Step 4 description",
+                  "type": "custom",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "custom": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
               }
             }
           }
@@ -522,17 +989,197 @@
             "description": "successful operation",
             "schema": {
               "type": "object",
-              "items": {
-                "$ref": "#/components/schemas/process"
-              },
-              "default": [
-                { "id": 1, "name": "aaa", "status": "new" },
-                { "id": 2, "name": "bbb", "status": "new" },
-                { "id": 3, "name": "ccc", "status": "ready" },
-                { "id": 4, "name": "ddd", "status": "ready" },
-                { "id": 5, "name": "eee", "status": "approved" }
-              ]
+              "$ref": "#/components/schemas/step",
+              "default": {
+                "id": "step-2-flow-2",
+                "name": "Flow 02 Mapping Step",
+                "description": "My Step 2 description",
+                "type": "mapping",
+                "sourceDatabase": null,
+                "targetDatabase": "staging",
+                "isValid": true,
+                "isRunning": false,
+                "config": {
+                  "mapping": "options"
+                },
+                "language": "en",
+                "version": 1
+              }
             }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Step not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+
+    "/flows/{flowId}/steps/{stepId}": {
+      "put": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Update a Flow's step by Id",
+        "description": "",
+        "operationId": "updateFlowStep",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow that the step is associated with",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "description": "Id of step that needs to be updated",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated step",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/step",
+              "default": {
+                "id": "step-2-flow-2",
+                "name": "Flow 02 Mapping Step",
+                "description": "My Step 2 description",
+                "type": "mapping",
+                "sourceDatabase": null,
+                "targetDatabase": "staging",
+                "isValid": true,
+                "isRunning": false,
+                "config": {
+                  "mapping": "options"
+                },
+                "language": "en",
+                "version": 1
+              }
+            },
+            "examples": {
+              "ingestion": {
+                "summary": "An example step object for step type: Ingestion (?)",
+                "value": {
+                  "id": "step-1-flow-2",
+                  "name": "Flow 02 Ingestion Step",
+                  "description": "My Step 1 description",
+                  "type": "ingestion",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "ingestion": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
+              },
+              "mapping": {
+                "summary": "An example step object for step type: Mapping",
+                "value": {
+                  "id": "step-2-flow-2",
+                  "name": "Flow 02 Mapping Step",
+                  "description": "My Step 2 description",
+                  "type": "mapping",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mapping": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
+              },
+              "mastering": {
+                "summary": "An example step object for step type: Mastering",
+                "value": {
+                  "id": "step-3-flow-2",
+                  "name": "Flow 02 Mastering Step",
+                  "description": "My Step 3 description",
+                  "type": "mastering",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "mastering": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
+              },
+              "custom": {
+                "summary": "An example step object for step type: Custom",
+                "value": {
+                  "id": "step-4-flow-2",
+                  "name": "Flow 02 Custom Step",
+                  "description": "My Step 4 description",
+                  "type": "custom",
+                  "sourceDatabase": null,
+                  "targetDatabase": "staging",
+                  "isValid": true,
+                  "isRunning": false,
+                  "config": {
+                    "custom": "options"
+                  },
+                  "language": "en",
+                  "version": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/step",
+              "default": {
+                "id": "step-2-flow-2",
+                "name": "Flow 02 Mapping Step",
+                "description": "My Step 2 description",
+                "type": "mapping",
+                "sourceDatabase": null,
+                "targetDatabase": "staging",
+                "isValid": true,
+                "isRunning": false,
+                "config": {
+                  "mapping": "options"
+                },
+                "language": "en",
+                "version": 1
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Step not found"
           }
         },
         "security": [
@@ -543,43 +1190,43 @@
       },
       "delete": {
         "tags": [
-          "process"
+          "flows"
         ],
-        "summary": "Delete a  process",
-        "description": "Delete a  process",
-        "operationId": "deleteProcess",
+        "summary": "Delete a Flow's step by Id",
+        "description": "",
+        "operationId": "deleteFlowStep",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "type",
+            "name": "flowId",
             "in": "path",
-            "description": "type of  process to delete",
+            "description": "Id of flow that the step is associated with",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           },
           {
-            "name": "name",
+            "name": "stepId",
             "in": "path",
-            "description": "name of  process to delete",
+            "description": "Id of step that needs to be deleted",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "object",
-              "items": {
-                "$ref": "#/components/schemas/message"
-              },
-              "default": [
-                {
-                  "message": "Process deleted successfully"}
-              ]
-            }
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Step not found"
           }
         },
         "security": [
@@ -596,90 +1243,177 @@
       "flow": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of a flow"
+          },
           "name": {
             "type": "string",
-            "description": "Name of flow"
+            "description": "Name of a flow"
           },
           "description": {
             "type": "string",
             "description": "Description of flow"
           },
-          "identifier": {
-            "type": "string",
-            "description": "Identification documents passed through flow"
-          },
-          "steps": {
-            "type": "array",
-            "description": "Steps in flow",
-            "items": {
-              "$ref": "#/components/schemas/step"
-            }
-          }
-        }
-      },
-      "step":{
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "step type"
-          },
-          "name": {
-            "type": "string",
-            "description": "step name"
-          },
-          "identifier": {
-            "type": "string",
-            "description": "Identification for documents in step"
-          },
-          "retryLimit": {
+          "batchSize": {
             "type": "integer",
+            "description": "The # of documents to process in a single batch",
+            "minimum": 0,
+            "format": "int64"
+          },
+          "threadCount": {
+            "type": "integer",
+            "description": "",
             "minimum": 0,
             "format": "int64"
           },
           "options": {
+            "description": "TBD: Likely metadata ",
             "type": "object"
+          },
+          "steps": {
+            "type": "array",
+            "description": "Array of Step objects associated with this flow",
+            "items": {
+              "$ref": "#/components/schemas/step"
+            }
+          },
+          "jobs": {
+            "type": "array",
+            "description": "Array of Job IDs generated by this flow",
+            "items": {
+              "$ref": "#/components/schemas/job"
+            }
+          },
+          "latestJob": {
+            "description": "Data related to the last job run for this Flow",
+            "type": "object"
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "Boolean flag used for UI to tell whether all Steps associated with this Flow are valid, making the Flow valid"
+          },
+          "isRunning": {
+            "type": "boolean",
+            "description": "(shouldn't this be on the job level? Flows don't run)"
+          },
+          "version": {
+            "type": "integer",
+            "description": "(Is this valid?)",
+            "minimum": 0,
+            "format": "int64"
           }
-        } 
-      },
-      "message": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        },
-        "xml": {
-          "name": "message"
         }
       },
-      "process": {
+      "step": {
         "type": "object",
         "required": [
           "name",
           "type"
         ],
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of a step"
+          },
           "name": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "language": {
-            "type": "string"
+            "type": "string",
+            "description": "Name of a step"
           },
           "description": {
+            "type": "string",
+            "description": "Description of a step"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of a step",
+            "enum": [
+              "ingestion",
+              "mapping",
+              "mastering",
+              "custom"
+            ]
+          },
+          "sourceDatabase": {
+            "type": "string"
+          },
+          "targetDatabase": {
+            "type": "string"
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "Boolean flag to tell whether a Step is valid"
+          },
+          "isRunning": {
+            "type": "boolean",
+            "description": "Boolean flag to tell whether a Step is running"
+          },
+          "config": {
+            "type": "object"
+          },
+          "language": {
             "type": "string"
           },
           "version": {
             "type": "string"
           },
-          "options": {
-            "type": "object"
-          },
           "customHook": {
             "$ref": "#/components/schemas/customHook"
+          }
+        },
+        "xml": {
+          "name": "Process"
+        }
+      },
+
+      "job": {
+        "type": "object",
+        "required": [
+          "id",
+          "flowId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the job"
+          },
+          "flowId": {
+            "type": "string",
+            "description": "Id of the flow associated with this job"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp job started"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp job started"
+          },
+          "output": {
+            "type": "array",
+            "description": "Array of strings relating to output (TODO)"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of a job",
+            "enum": [
+              "running",
+              "canceled",
+              "failed",
+              "completed"
+            ]
+          },
+          "successfulEvents": {
+            "type": "integer",
+            "minimum": 0,
+            "format": "int64"
+          },
+          "failedEvents": {
+            "type": "integer",
+            "minimum": 0,
+            "format": "int64"
           }
         },
         "xml": {

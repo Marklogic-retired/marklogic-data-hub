@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http, RequestOptions, Response, ResponseContentType} from '@angular/http';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class JobService {
@@ -47,6 +48,6 @@ export class JobService {
   }
 
   private post(url: string, data: any) {
-    return this.http.post(url, data).map(this.extractData);
+    return this.http.post(url, data).pipe(map(this.extractData));
   }
 }

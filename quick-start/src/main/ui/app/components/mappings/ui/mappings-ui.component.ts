@@ -5,7 +5,7 @@ import { MdlDialogService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import {Mapping} from "../mapping.model";
-import {Subscriber} from "rxjs/Subscriber";
+import {Subscriber} from "rxjs";
 
 
 @Component({

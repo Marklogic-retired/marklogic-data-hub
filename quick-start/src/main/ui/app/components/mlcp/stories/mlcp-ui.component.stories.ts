@@ -6,6 +6,7 @@ import {boolean, object, text, withKnobs} from '@storybook/addon-knobs';
 import {moduleMetadata, storiesOf} from '@storybook/angular';
 import {action} from '@storybook/addon-actions';
 import { TooltipModule } from 'ngx-bootstrap';
+import {of as observableOf, Observable} from 'rxjs';
 
 import {MlcpUiComponent} from '../ui';
 import {ThemeModule} from '../..';
@@ -14,14 +15,13 @@ import {FolderBrowserUiComponent} from '../../folder-browser/ui';
 import {FolderBrowserComponent} from '../../folder-browser';
 import {SelectComponent} from '../..';
 import {ClipboardDirective} from '../../../directives/clipboard';
-import {Observable} from 'rxjs/Rx';
 
 class MockHttp {
   get(uri: string) {
     if (uri.startsWith('/api/utils/searchPath')) {
       const mockJson = JSON.parse('{"currentAbsolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare","folders":[{"name":"..","relativePath":"../examples","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples"},{"name":"input","relativePath":"../examples/healthcare/input","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/input"},{"name":"plugins","relativePath":"../examples/healthcare/plugins","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/plugins"},{"name":"gradle","relativePath":"../examples/healthcare/gradle","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/gradle"},{"name":"src","relativePath":"../examples/healthcare/src","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/src"}],"files":[{"name":"README.md","relativePath":"../examples/healthcare/README.md","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/README.md"},{"name":"gradle-local.properties","relativePath":"../examples/healthcare/gradle-local.properties","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/gradle-local.properties"},{"name":"build.gradle","relativePath":"../examples/healthcare/build.gradle","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/build.gradle"},{"name":"gradle.properties","relativePath":"../examples/healthcare/gradle.properties","absolutePath":"/Users/pzhou/Documents/Projects/marklogic-data-hub/examples/healthcare/gradle.properties"}],"currentPath":"../examples/healthcare"}'
       );
-      return Observable.of({
+      return observableOf({
         json: () => {
           return mockJson;
         }
