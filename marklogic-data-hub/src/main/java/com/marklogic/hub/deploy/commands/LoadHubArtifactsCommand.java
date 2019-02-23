@@ -23,7 +23,9 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.Modules;
-import com.marklogic.client.ext.modulesloader.impl.*;
+import com.marklogic.client.ext.modulesloader.impl.FlowDefModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.modulesloader.impl.StepDefModulesFinder;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -40,13 +42,13 @@ import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
-import java.util.regex.Pattern;
+import java.util.Objects;
 
 /**
  * Loads user artifacts like mappings and entities. This will be deployed after triggers
  */
 @Component
-public class LoadUserArtifactsCommand extends AbstractCommand {
+public class LoadHubArtifactsCommand extends AbstractCommand {
 
     @Autowired
     private HubConfig hubConfig;
@@ -59,20 +61,15 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     private boolean forceLoad = false;
 
-    public LoadUserArtifactsCommand() {
+    public LoadHubArtifactsCommand() {
         super();
-        setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 1);
-    }
 
-    boolean isArtifactDir(Path dir, Path startPath) {
-        String dirStr = dir.toString();
-        String startPathStr = Pattern.quote(startPath.toString());
-        String regex = startPathStr + "[/\\\\][^/\\\\]+$";
-        return dirStr.matches(regex);
+        // Sort order for this command must be more than LoadUserArtifactsCommand
+        setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 10);
     }
 
     private PropertiesModuleManager getModulesManager() {
-        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
 
         // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
@@ -96,87 +93,24 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DatabaseClient stagingClient = hubConfig.newStagingClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
-        Path userModulesPath = hubConfig.getHubPluginsDir();
-        String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
-        Path startPath = userModulesPath.resolve("entities");
-        Path mappingPath = userModulesPath.resolve("mappings");
-
-        Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path stepPath = projectPath.resolve("step");
-        Path flowPath = projectPath.resolve("flows");
+        String baseDir = Objects.requireNonNull(getClass().getClassLoader().getResource("hub-internal-artifacts"))
+            .getFile();
+        Path basePath = Paths.get(baseDir);
+        Path flowPath = basePath.resolve("flows");
+        Path stepPath = basePath.resolve("steps");
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
 
-        DocumentWriteSet finalEntityDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingEntityDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
+        DocumentWriteSet finalStepDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingStepDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet finalFlowDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
+
+
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
 
         try {
-            if (startPath.toFile().exists()) {
-                //first let's do the entities
-                Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        String currentDir = dir.normalize().toAbsolutePath().toString();
-                        if (isArtifactDir(dir, startPath.toAbsolutePath())) {
-                            Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
-                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                            meta.getCollections().add("http://marklogic.com/entity-services/models");
-                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                            for (Resource r : modules.getAssets()) {
-                                if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                    InputStream inputStream = r.getInputStream();
-                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                    inputStream.close();
-                                    finalEntityDocumentWriteSet.add("/entities/" + r.getFilename(), meta, handle);
-                                    stagingEntityDocumentWriteSet.add("/entities/" + r.getFilename(), meta, handle);
-                                    propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                }
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-                });
-            }
-
-            //now let's do the mappings path
-            if (mappingPath.toFile().exists()) {
-                Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        String currentDir = dir.normalize().toAbsolutePath().toString();
-
-                        if (isArtifactDir(dir, mappingPath.toAbsolutePath())) {
-                            Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
-                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                            meta.getCollections().add("http://marklogic.com/data-hub/mappings");
-                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                            for (Resource r : modules.getAssets()) {
-                                if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                    InputStream inputStream = r.getInputStream();
-                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                    inputStream.close();
-                                    finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                    stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                    propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                }
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-                });
-            }
 
             // let's do steps
             if (stepPath.toFile().exists()) {
@@ -193,6 +127,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
                                 stagingStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                finalStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
@@ -217,6 +152,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
                                 stagingFlowDocumentWriteSet.add("/flows/" + r.getFilename(), meta, handle);
+                                finalFlowDocumentWriteSet.add("/flows/" + r.getFilename(), meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
@@ -225,19 +161,13 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
 
-            if (stagingEntityDocumentWriteSet.size() > 0) {
-                finalDocMgr.write(finalEntityDocumentWriteSet);
-                stagingDocMgr.write(stagingEntityDocumentWriteSet);
-            }
-            if (stagingMappingDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingMappingDocumentWriteSet);
-                finalDocMgr.write(finalMappingDocumentWriteSet);
-            }
             if (stagingStepDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingStepDocumentWriteSet);
+                finalDocMgr.write(stagingStepDocumentWriteSet);
             }
             if (stagingFlowDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingFlowDocumentWriteSet);
+                finalDocMgr.write(stagingFlowDocumentWriteSet);
             }
 
         }
