@@ -22,7 +22,7 @@ export class ManageFlowsComponent {
   ) {}
 
   ngOnInit() {
-    this.manageFlowsService.getFlows().subscribe(resp => {
+    this.manageFlowsService.getFlows().subscribe((resp: Array<Object>) => {
       resp.forEach(flow => {
         let flowParsed = new Flow().fromJSON(flow);
         this.flows.push(flowParsed);

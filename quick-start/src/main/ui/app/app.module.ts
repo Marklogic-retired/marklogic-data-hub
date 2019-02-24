@@ -2,6 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import {RouterModule} from '@angular/router';
 import {TruncateCharactersPipe} from './pipes/truncate';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -184,6 +185,7 @@ import {FlowsPageModule} from "./components/flows-new/manage-flows/flows-page.mo
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
+    HttpClientModule,
     MdlModule,
     MdlPopoverModule,
     MdlSelectModule,
