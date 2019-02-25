@@ -1,4 +1,4 @@
-<!-- Copyright 2011-2018 MarkLogic Corporation.  All Rights Reserved. -->
+<!-- Copyright 2011-2019 MarkLogic Corporation.  All Rights Reserved. -->
 <rewriter xmlns="http://marklogic.com/xdmp/rewriter">
     <!-- XDBC -->
       <match-path  any-of="/eval /invoke /spawn /insert">
