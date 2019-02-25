@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
+import {Flow} from "../models/flow.model";
 
 
 @Component({
@@ -13,6 +14,8 @@ import { Router } from '@angular/router';
 export class EditFlowComponent implements OnInit {
   constructor(
   ) { }
+
+  @Input() flow: Flow;
 
   ngOnInit() {
 
