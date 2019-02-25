@@ -5,7 +5,7 @@ import {moduleMetadata, storiesOf} from '@storybook/angular';
 import {ManageFlowsModule} from "../../manage-flows.module";
 import {ThemeModule} from "../../../index";
 import {StoryCardComponent} from "../../../../utils";
-import {FlowsPageUiComponent} from "../ui/flows-page-ui.component";
+import {ManageFlowsUiComponent} from "../ui/manage-flows-ui.component";
 import {
   MatButtonModule,
   MatChipsModule,
@@ -22,7 +22,7 @@ import {
   MatTabsModule
 } from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {flowsModelArray} from "./flows-page.data";
+import {flowsModelArray} from "./manage-flows.data";
 
 storiesOf('Components|Flows', module)
   .addDecorator(withKnobs)
@@ -48,7 +48,7 @@ storiesOf('Components|Flows', module)
         ManageFlowsModule
       ],
       declarations: [
-        FlowsPageUiComponent,
+        ManageFlowsUiComponent,
         StoryCardComponent
       ]
     })

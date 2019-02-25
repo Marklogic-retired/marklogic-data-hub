@@ -1,16 +1,15 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../../common";
-import {FlowModel} from "../../models/flow.model";
 import {NewFlowDialogComponent} from "./new-flow-dialog.component";
 import {Flow} from "../../models/flow.model";
 
 @Component({
   selector: 'flows-page-ui',
-  templateUrl: './flows-page-ui.component.html',
-  styleUrls: ['./flows-page-ui.component.scss']
+  templateUrl: './manage-flows-ui.component.html',
+  styleUrls: ['./manage-flows-ui.component.scss']
 })
-export class FlowsPageUiComponent implements OnInit, AfterViewInit {
+export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'targetEntity', 'status', 'jobsNumber', 'lastJobFinished', 'docsCommitted', 'docsFailed', 'actions'];
   @Input() flows: Array<Flow> = [];
   @Output() deleteFlow = new EventEmitter();
@@ -45,7 +44,7 @@ export class FlowsPageUiComponent implements OnInit, AfterViewInit {
 
   openPlayDialog() {}
 
-  openConfirmDialog(flow: FlowModel): void {
+  openConfirmDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '250px',
       data: {title: 'Flow Deletion', confirmationMessage: `You are about to delete "${flow.name}" flow. Are you sure?`}
