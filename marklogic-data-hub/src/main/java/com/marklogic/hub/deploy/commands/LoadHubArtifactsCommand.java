@@ -22,10 +22,7 @@ import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
-import com.marklogic.client.ext.modulesloader.Modules;
-import com.marklogic.client.ext.modulesloader.impl.FlowDefModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
-import com.marklogic.client.ext.modulesloader.impl.StepDefModulesFinder;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -33,16 +30,12 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * Loads user artifacts like mappings and entities. This will be deployed after triggers
@@ -93,12 +86,6 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
         DatabaseClient stagingClient = hubConfig.newStagingClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
-        String baseDir = Objects.requireNonNull(getClass().getClassLoader().getResource("hub-internal-artifacts"))
-            .getFile();
-        Path basePath = Paths.get(baseDir);
-        Path flowPath = basePath.resolve("flows");
-        Path stepPath = basePath.resolve("steps");
-
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
 
@@ -110,75 +97,53 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
 
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
 
-        try {
+        File defaultFlowFile = new File("/flows/default-flow.flow.json");
+        File defaultStepIngestFile = new File("/steps/ingest/marklogic/default-ingest.step.json");
+        File defaultStepMappingFile = new File("/steps/mapping/marklogic/default-mapping.step.json");
 
-            // let's do steps
-            if (stepPath.toFile().exists()) {
-                Files.walkFileTree(stepPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        Modules modules = new StepDefModulesFinder().findModules(dir.toString());
-                        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                        meta.getCollections().add("http://marklogic.com/data-hub/step");
-                        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                        for (Resource r : modules.getAssets()) {
-                            if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                InputStream inputStream = r.getInputStream();
-                                StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                inputStream.close();
-                                stagingStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                finalStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                            }
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-            }
+        // let's do flows
+        InputStream inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/flows/default-flow.flow.json");
+        addToWriteSet(inputStream, "http://marklogic.com/data-hub/flow", defaultFlowFile, stagingFlowDocumentWriteSet, finalFlowDocumentWriteSet, propertiesModuleManager);
 
+        // let's do steps
+        inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json");
+        addToWriteSet(inputStream, "http://marklogic.com/data-hub/step", defaultStepIngestFile, stagingStepDocumentWriteSet, finalStepDocumentWriteSet, propertiesModuleManager);
 
-            // let's do flows
-            if (flowPath.toFile().exists()) {
-                Files.walkFileTree(flowPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        Modules modules = new FlowDefModulesFinder().findModules(dir.toString());
-                        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                        meta.getCollections().add("http://marklogic.com/data-hub/flow");
-                        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                        for (Resource r : modules.getAssets()) {
-                            if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                InputStream inputStream = r.getInputStream();
-                                StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                inputStream.close();
-                                stagingFlowDocumentWriteSet.add("/flows/" + r.getFilename(), meta, handle);
-                                finalFlowDocumentWriteSet.add("/flows/" + r.getFilename(), meta, handle);
-                                propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                            }
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-            }
+        inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json");
+        addToWriteSet(inputStream, "http://marklogic.com/data-hub/step", defaultStepMappingFile, stagingStepDocumentWriteSet, finalStepDocumentWriteSet, propertiesModuleManager);
 
-            if (stagingStepDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingStepDocumentWriteSet);
-                finalDocMgr.write(stagingStepDocumentWriteSet);
-            }
-            if (stagingFlowDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingFlowDocumentWriteSet);
-                finalDocMgr.write(stagingFlowDocumentWriteSet);
-            }
-
+        if (stagingStepDocumentWriteSet.size() > 0) {
+            stagingDocMgr.write(stagingStepDocumentWriteSet);
+            finalDocMgr.write(stagingStepDocumentWriteSet);
         }
-        catch (IOException e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
+        if (stagingFlowDocumentWriteSet.size() > 0) {
+            stagingDocMgr.write(stagingFlowDocumentWriteSet);
+            finalDocMgr.write(stagingFlowDocumentWriteSet);
         }
+
     }
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
 
+
+    private void addToWriteSet(InputStream inputStream, String docCollection, File file, DocumentWriteSet stagingDocumentWriteSet, DocumentWriteSet finalDocumentWriteSet, PropertiesModuleManager propertiesModuleManager) {
+        try {
+            StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+            inputStream.close();
+
+            DocumentMetadataHandle meta = new DocumentMetadataHandle();
+            meta.getCollections().add(docCollection);
+
+            if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(file)) {
+                stagingDocumentWriteSet.add(file.getPath(), meta, handle);
+                finalDocumentWriteSet.add(file.getPath(), meta, handle);
+                propertiesModuleManager.saveLastLoadedTimestamp(file, new Date());
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
