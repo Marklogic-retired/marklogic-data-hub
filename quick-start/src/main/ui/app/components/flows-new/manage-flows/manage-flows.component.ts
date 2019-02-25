@@ -1,7 +1,7 @@
 import {Component, ViewChild} from "@angular/core";
 import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
-import {FlowsPageUiComponent} from "./ui/flows-page-ui.component";
+import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
 
 @Component({
   selector: 'flows-page',
@@ -14,10 +14,10 @@ import {FlowsPageUiComponent} from "./ui/flows-page-ui.component";
     </flows-page-ui>
   `
 })
-export class FlowsPageComponent {
+export class ManageFlowsComponent {
 
-  @ViewChild(FlowsPageUiComponent)
-  flowsPageUi: FlowsPageUiComponent;
+  @ViewChild(ManageFlowsUiComponent)
+  flowsPageUi: ManageFlowsUiComponent;
 
   flows = [];
 

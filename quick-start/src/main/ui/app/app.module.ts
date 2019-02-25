@@ -45,8 +45,8 @@ import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {ROUTES} from './app.routes';
 import {AUTH_PROVIDERS} from './services/auth';
 import {CodemirrorComponent} from './components/codemirror';
-import {EditFlowComponent} from './components/manage-flows/edit-flow/';
-import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/manage-flows/edit-flow/ui/';
+import {EditFlowComponent} from './components/flows-new/edit-flow/';
+import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/flows-new/edit-flow/ui/';
 import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
 import {HeaderComponent} from './components/header/header.component';
 import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
@@ -70,7 +70,7 @@ import {InstallService} from './services/installer';
 import {JobService} from './components/jobs/jobs.service';
 import {JobListenerService} from './components/jobs/job-listener.service';
 import {MapService} from './components/mappings/map.service';
-import {ManageFlowsService} from './components/manage-flows/services/manage-flows.service';
+import {ManageFlowsService} from './components/flows-new/services/manage-flows.service';
 import {ProjectService} from './services/projects';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
@@ -87,7 +87,7 @@ import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
 import {MapComponent, MappingsComponent} from './components/mappings';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
-import {ManageFlowsModule} from "./components/manage-flows";
+import {ManageFlowsModule} from "./components/flows-new";
 
 @NgModule({
   declarations: [
