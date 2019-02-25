@@ -81,7 +81,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
-              {{flow.lastJobFinished}}
+              {{friendlyDate(flow.lastJobFinished)}}
             </a>
           </mat-cell>
         </ng-container>
