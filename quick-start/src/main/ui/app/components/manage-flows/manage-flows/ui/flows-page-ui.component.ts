@@ -3,7 +3,7 @@ import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@a
 import {ConfirmationDialogComponent} from "../../../common";
 import {FlowModel} from "../../models/flow.model";
 import {NewFlowDialogComponent} from "./new-flow-dialog.component";
-import {Flow} from "../../flow.model";
+import {Flow} from "../../models/flow.model";
 
 @Component({
   selector: 'flows-page-ui',

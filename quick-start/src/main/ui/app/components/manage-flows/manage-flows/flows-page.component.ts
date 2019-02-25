@@ -1,5 +1,5 @@
 import {Component, ViewChild} from "@angular/core";
-import {Flow} from "../flow.model";
+import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {FlowsPageUiComponent} from "./ui/flows-page-ui.component";
 
@@ -30,7 +30,7 @@ export class FlowsPageComponent {
         let flowParsed = Flow.fromJSON(flow);
         console.log(flowParsed);
         this.flows.push(flowParsed);
-      })
+      });
       this.flowsPageUi.renderRows();
     });
   }

@@ -5,6 +5,7 @@ import {MaterialModule} from "../theme/material.module";
 import {FlowsPageUiComponent} from "./manage-flows/ui/flows-page-ui.component";
 import {ConfirmationDialogComponent} from "../common";
 import {NewFlowDialogComponent} from "./manage-flows/ui/new-flow-dialog.component";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import {NewFlowDialogComponent} from "./manage-flows/ui/new-flow-dialog.componen
   ],
   imports     : [
     MaterialModule,
-    RouterModule
+    RouterModule,
+    HttpClientModule
   ],
   providers   : [
   ],

@@ -1,8 +1,7 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 
-import * as _ from 'lodash';
 
 @Injectable()
 export class ManageFlowsService {
@@ -10,27 +9,23 @@ export class ManageFlowsService {
   flows: Array<Object> = new Array<Object>();
 
   constructor(
-    private http: Http,
+    private http: HttpClient,
   ) {
   }
 
   getFlows() {
-    return this.http.get('http://localhost:4200/api/flows').pipe(map((res: Response) => {
-      console.log('GET /api/flows');
-      return res.json();
-    }));
+    console.log('GET /api/flows');
+    return this.http.get<Array<Object>>('api/flows');
   }
 
   createFlow(newFlow: Object) {
-    return this.http.post('http://localhost:4200/api/flows', newFlow).pipe(map((res: Response) => {
-      console.log('POST /api/flows');
-    }));
+    console.log('POST /api/flows');
+    return this.http.post('api/flows', newFlow);
   }
 
   deleteFlow(flowId: string) {
-    return this.http.delete('http://localhost:4200/api/flows/' + flowId).pipe(map((res: Response) => {
-      console.log('DELETE /api/flows/' + flowId);
-    }));
+    console.log('DELETE /api/flows/' + flowId);
+    return this.http.delete('api/flows/' + flowId);
   }
 
 }
