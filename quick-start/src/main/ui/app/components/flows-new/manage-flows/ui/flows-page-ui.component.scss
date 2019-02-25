@@ -98,7 +98,7 @@ $header-height: 100px !default;
   }
 
   .mat-column-lastJobFinished {
-    flex: 0 1 240px;
+    flex: 0 1 220px;
   }
 
   .mat-column-docsCommitted {
@@ -110,7 +110,11 @@ $header-height: 100px !default;
   }
 
   .mat-column-actions {
-    flex: 0 1 100px;
+    flex: 0 1 150px;
+  }
+
+  .mat-header-cell .mat-icon {
+    cursor: pointer;
   }
 
   .quantity-indicator {
@@ -134,4 +138,20 @@ $header-height: 100px !default;
 
 .fill-space {
   flex: 1 1 auto;
+}
+
+.logo {
+  padding-right: 30px;
+}
+
+.run-flow-button {
+  margin: 0 15px 0 7px;
+}
+
+.actions-menu-icon {
+  margin-left: 10px;
+}
+
+.mat-column-actions {
+  justify-content: center;
 }
