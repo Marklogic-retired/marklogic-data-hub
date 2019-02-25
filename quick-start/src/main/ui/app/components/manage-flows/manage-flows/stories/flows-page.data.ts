@@ -1,3 +1,5 @@
+import {FlowModel} from "../../models/flow.model";
+
 export const flowsModelArray = [
   {
     id: 'flow1',

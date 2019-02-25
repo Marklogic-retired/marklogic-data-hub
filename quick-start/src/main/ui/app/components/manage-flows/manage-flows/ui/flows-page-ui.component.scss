@@ -65,6 +65,14 @@ $header-height: 100px !default;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
+  a {
+    color: black;
+  }
+
+  a:hover {
+    text-decoration-color: blue;
+  }
+
   .mat-header-row {
     min-height: 64px;
   }
@@ -98,7 +106,7 @@ $header-height: 100px !default;
   }
 
   .mat-column-lastJobFinished {
-    flex: 0 1 240px;
+    flex: 0 1 220px;
   }
 
   .mat-column-docsCommitted {
@@ -110,7 +118,23 @@ $header-height: 100px !default;
   }
 
   .mat-column-actions {
-    flex: 0 1 100px;
+    flex: 0 1 150px;
+  }
+
+  .mat-header-cell .mat-icon {
+    cursor: pointer;
+  }
+
+  .logo {
+    padding-right: 30px;
+  }
+
+  .run-flow-button {
+    margin: 0 15px 0 7px;
+  }
+
+  .actions-menu-icon {
+    margin-left: 10px;
   }
 
   .quantity-indicator {

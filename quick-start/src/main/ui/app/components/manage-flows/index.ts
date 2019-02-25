@@ -1,1 +1,1 @@
-export * from './manage-flows.component';
+export * from './manage-flows.module';

@@ -30,7 +30,7 @@ import {
   SettingsUiComponent,
   ThemeModule,
   TraceViewerUiComponent
-} from './components/index';
+} from './components';
 import {FlowsComponent} from './components/flows';
 import {EntityModelerComponent} from './components/entity-modeler';
 import {LoginComponent} from './components/login';
@@ -85,11 +85,9 @@ import {ObjectToArrayPipe} from './object-to-array.pipe';
 import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
 
 import {MapComponent, MappingsComponent} from './components/mappings';
-import {ManageFlowsComponent} from './components/manage-flows/manage-flows.component';
-import {ManageFlowsUiComponent} from './components/manage-flows/ui/manage-flows-ui.component';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
-import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page.module";
+import {ManageFlowsModule} from "./components/manage-flows";
 
 @NgModule({
   declarations: [
@@ -118,8 +116,6 @@ import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page
     JobOutputUiComponent,
     LoginComponent,
     MlcpComponent,
-    ManageFlowsComponent,
-    ManageFlowsUiComponent,
     MapComponent,
     MappingsComponent,
     MappingsUiComponent,
@@ -193,7 +189,7 @@ import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     ThemeModule,
-    FlowsPageModule
+    ManageFlowsModule
   ],
   providers: [
     AUTH_PROVIDERS,
