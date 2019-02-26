@@ -1,6 +1,8 @@
 {
+  "language" : "zxx",
   "name" : "default-mapping",
   "type" : "MAPPING",
   "version" : 1,
-  "options" : { }
+  "modulePath" : "/data-hub/5/builtins/steps/mappings/default/main.sjs",
+  "options" : {}
 }

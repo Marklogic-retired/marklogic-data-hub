@@ -15,6 +15,8 @@
 */
 'use strict';
 
+const consts = require("/data-hub/5/impl/consts.sjs");
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const Debug = require("/data-hub/5/impl/debug.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
@@ -31,7 +33,9 @@ class Flow {
       config = defaultConfig;
     }
     this.config = config;
+    this.consts = consts;
     this.debug = new Debug(config);
+    this.flowUtils = new flowUtils(config);
     this.hubUtils = new HubUtils(config);
     this.Step = new Step(config);
     this.jobs = new Jobs(config);
@@ -148,7 +152,7 @@ class Flow {
     //set the context for the attempted step
     this.globalContext.attemptStep = stepNumber;
 
-    let step = this.globalContext.flow.steps[stepNumber - 1];
+    let step = this.globalContext.flow.steps[stepNumber];
     if(!step) {
       this.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')

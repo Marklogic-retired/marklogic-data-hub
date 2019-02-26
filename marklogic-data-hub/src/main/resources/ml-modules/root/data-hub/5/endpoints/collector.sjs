@@ -59,6 +59,10 @@ case 'GET':
     let stepDoc =  flowDoc.Steps[step];
     if(stepDoc) {
       let query = stepDoc.identifier;
+      // check to see if the user has overriden the identifier on runtime
+      if(options.identifier) {
+        query = options.identifier;
+      }
       if(query) {
         try {
           resp = xdmp.eval(query, {options:options}, {database: xdmp.database(database)});

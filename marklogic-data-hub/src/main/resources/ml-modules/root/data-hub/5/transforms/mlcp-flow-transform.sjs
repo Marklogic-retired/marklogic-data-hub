@@ -24,7 +24,7 @@ function transform(content, context) {
   let parsedTransformParam = null;
   //let's set some metadata content for our createdOn datetime field
   context.metadata = {"createdOn" : fn.currentDateTime()};
-  let transformString = context.transform_param;
+  let transformString = context.transform_param ? context.transform_param :  '';
   let pattern = '^.*(options=\{.*\}).*$';
   let match = new RegExp(pattern).exec(transformString);
   if (match === null){
@@ -44,7 +44,10 @@ function transform(content, context) {
 
   let jobId = params["job-id"] || datahub.hubUtils.uuid();
   let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
-  let flowName = params['flow-name'] ?  xdmp.urlDecode(params['flow-name']) : null;
+  let flowName = params['flow-name'] ?  xdmp.urlDecode(params['flow-name']) : "default-ingest";
+  if(flowName === 'default-ingest') {
+    context.collections.push('default-ingest');
+  }
   let flow = datahub.flow.getFlow(flowName);
 
   if (!flow) {
@@ -65,6 +68,10 @@ function transform(content, context) {
   if(!document) {
     datahub.debug.log({message: params, type: 'error'});
     fn.error(null, "RESTAPI-SRVEXERR", "The content was null in the flow " + flowName + " for "+uri+".");
+  }
+  if(document.type && document.type === 'error' && document.message){
+    datahub.debug.log(document);
+    fn.error(null, "RESTAPI-SRVEXERR", document.message);
   }
 
   content.value = document;

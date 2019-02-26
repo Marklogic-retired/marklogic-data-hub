@@ -1,6 +1,11 @@
 {
+  "language" : "zxx",
   "name" : "default-ingest",
   "type" : "INGEST",
   "version" : 1,
-  "options" : { }
+  "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
+  "customHook": {},
+  "options" : {
+    "outputFormat": "json"
+  }
 }
