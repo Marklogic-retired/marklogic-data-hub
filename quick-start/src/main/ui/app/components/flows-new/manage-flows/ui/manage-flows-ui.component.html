@@ -40,10 +40,10 @@
             <div class="name-container">
               <a [routerLink]="['/edit-flow', flow.flowId]">
                 {{flow.name}}
+                <step-icons-ui
+                  [steps]="flow.steps"
+                ></step-icons-ui>
               </a>
-              <step-icons-ui
-                [steps]="flow.steps"
-              ></step-icons-ui>
             </div>
           </mat-cell>
         </ng-container>
