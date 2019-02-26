@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../../common";
-import {NewFlowDialogComponent} from "./new-flow-dialog.component";
+import {FlowSettingsDialogComponent} from "./flow-settings-dialog.component";
 import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
 
@@ -59,8 +59,9 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   }
 
   openNewFlowDialog(): void {
-    const dialogRef = this.dialog.open(NewFlowDialogComponent, {
-      width: '500px'
+    const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
+      width: '500px',
+      data: {flow: null}
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Result: ${!!result}`);
