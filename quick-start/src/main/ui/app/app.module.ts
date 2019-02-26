@@ -45,8 +45,6 @@ import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {ROUTES} from './app.routes';
 import {AUTH_PROVIDERS} from './services/auth';
 import {CodemirrorComponent} from './components/codemirror';
-import {EditFlowComponent} from './components/flows-new/edit-flow/';
-import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/flows-new/edit-flow/ui/';
 import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
 import {HeaderComponent} from './components/header/header.component';
 import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
@@ -87,7 +85,7 @@ import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
 import {MapComponent, MappingsComponent} from './components/mappings';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
-import {ManageFlowsModule} from "./components/flows-new";
+import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
 
 @NgModule({
   declarations: [
@@ -102,8 +100,6 @@ import {ManageFlowsModule} from "./components/flows-new";
     FlowsComponent,
     FlowsUiComponent,
     ChooseCollationComponent,
-    EditFlowComponent,
-    EditFlowUiComponent,
     EntityBoxComponent,
     EntityEditorComponent,
     EntityModelerComponent,
@@ -158,9 +154,7 @@ import {ManageFlowsModule} from "./components/flows-new";
     MapComponent,
     MapUiComponent,
     MappingsComponent,
-    SettingsUiComponent,
-    NewStepDialogComponent,
-    RunFlowDialogComponent
+    SettingsUiComponent
   ],
   entryComponents: [
     HasBugsDialogComponent,
@@ -171,9 +165,7 @@ import {ManageFlowsModule} from "./components/flows-new";
     NewFlowComponent,
     NewMapComponent,
     JobOutputComponent,
-    JobExportDialogComponent,
-    NewStepDialogComponent,
-    RunFlowDialogComponent
+    JobExportDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -189,7 +181,8 @@ import {ManageFlowsModule} from "./components/flows-new";
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     ThemeModule,
-    ManageFlowsModule
+    ManageFlowsModule,
+    EditFlowModule
   ],
   providers: [
     AUTH_PROVIDERS,

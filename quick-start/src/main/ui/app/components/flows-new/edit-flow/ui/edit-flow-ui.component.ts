@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
@@ -20,7 +20,7 @@ export class EditFlowUiComponent {
     public dialog: MatDialog
   ) {}
 
-  openDialog(): void {
+  openStepDialog(): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
       data: {stepName: this.stepName, stepType: this.stepType}
@@ -30,10 +30,10 @@ export class EditFlowUiComponent {
       console.log('The dialog was closed');
     });
   }
-  openRunDialog(): void {
+  openRunDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: this.steps}
+      data: {steps: flow.steps.map(step => step.name)}
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -1,0 +1,21 @@
+<div *ngIf="step" class="steps-container step">
+  <div class="bar {{step.type}}"></div>
+    <header>
+      <div class="steps-header step">
+        <h3>{{step.name}}</h3>
+        <button mat-raised-button color="primary">Save</button>
+        <button mat-raised-button color="primary">Reset</button>
+      </div>
+      <div class="steps-header step">
+        <mat-icon class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
+        <mat-icon class="flow-menu-icon">arrow_drop_down</mat-icon>
+      </div>
+    </header>
+    <div class="steps-body step">
+        <p>{{step.type}}</p>
+      <p>{{step.description}}</p>
+    </div>
+</div>
+<mat-menu #flowSubMenu="matMenu">
+    <div mat-menu-item>Edit Settings</div>
+</mat-menu>
