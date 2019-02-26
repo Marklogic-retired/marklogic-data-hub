@@ -27,7 +27,7 @@ export class Flow {
   constructor() {}
 
   get status(): string {
-    return (this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
+    return (this.latestJob && this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
   }
 
   get jobsNumber(): number {
