@@ -19,7 +19,7 @@ const datahub = new DataHub();
 
 //todo flush this out
 function get(context, params) {
-  post(context, params, null);
+  return post(context, params, null);
 }
 
 function post(context, params, input) {
@@ -35,17 +35,12 @@ function post(context, params, input) {
 
     let query = null;
     let uris = null;
-    if (params["identifiers"]) {
-      //TODO override default identifier
-    }
-
-    if (options.uri) {
-      uris = datahub.hubUtils.normalizeToArray(options.uri);
+    if (params.uri || options.uris) {
+      uris = datahub.hubUtils.normalizeToArray(params.uri || options.uris);
       query = cts.documentQuery(uris);
-    }
-
-    if(!uris || uris.length === 0) {
-      query = flow.identifier ? flow.identifier : cts.orQuery([]);
+    } else {
+      let identifier = options.identifier || flow.identifier;
+      query = identifier ? cts.query(identifier) : cts.orQuery([]);
     }
     let content = null;
     if (Object.keys(input).length === 0 && input.constructor === Object) {

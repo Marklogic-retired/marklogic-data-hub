@@ -24,7 +24,6 @@ const Jobs = require("/data-hub/5/impl/jobs.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
 // define constants for caching expensive operations
 const cachedFlows = {};
-const cachedModules = {};
 
 class Flow {
 
@@ -37,7 +36,7 @@ class Flow {
     this.debug = new Debug(config);
     this.flowUtils = new flowUtils(config);
     this.hubUtils = new HubUtils(config);
-    this.Step = new Step(config);
+    this.step = new Step(config);
     this.jobs = new Jobs(config);
     this.writeQueue = {};
     if (!globalContext) {
@@ -123,7 +122,7 @@ class Flow {
       }
   }
 
-  runFlow(flowName, jobId, uris, content, options, stepNumber) {
+  runFlow(flowName, jobId, uris, content = {}, options, stepNumber) {
     let flow = this.getFlow(flowName);
     if(!flow) {
       this.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
@@ -166,31 +165,24 @@ class Flow {
     if(step.sourceDb) {
       this.globalContext.sourceDb = step.sourceDb;
     }
-
-    let processor = this.Step.getStepProcessor(step.name, step.type);
-
-    if(!(processor && processor.run)) {
-      this.debug.log({message: 'Could not find main() function for process '+step.type+'/'+step.name+' for step # '+stepNumber+' for the flow:'+flowName+' could not be found.', type: 'error'});
-      throw Error('Could not find main() function for process '+step.type+'/'+step.name+' for step # '+stepNumber+' for the flow:'+flowName+' could not be found.')
-    }
-
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, processor.options, step.options, options);
-    if (this.isContextDB(this.globalContext.sourceDb)) {
-      this.runStep(uris, content, combinedOptions, processor);
+    let combinedOptions = Object.assign({}, step.options, options);
+    let stepResult = fn.head(
+      xdmp.invoke(
+        '/data-hub/5/impl/invoke-step.sjs',
+        { globalContext: this.globalContext, uris, content, options: combinedOptions, flowName, step, stepNumber},
+        { database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb): xdmp.database(), ignoreAmps: true }
+      )
+    );
+    if (Array.isArray(stepResult)) {
+      this.globalContext.batchErrors = this.globalContext.batchErrors.concat(stepResult);
     } else {
-      xdmp.invoke('invoke-step.sjs', { flow: this, uris, content, combinedOptions, processor}, { database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb): xdmp.database(), ignoreAmps: true });
+      this.writeQueue = stepResult;
     }
 
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
-      if (!combinedOptions.noWrite && this.isContextDB(this.globalContext.targetDb)) {
-          declareUpdate({explicitCommit: true});
-        for (let uri of this.writeQueue) {
-          xdmp.documentInsert(uri, this.writeQueue[uri].content, { permissions: xdmp.defaultPermissions(), collections: combinedOptions.collections});
-        }
-        xdmp.commit();
-      } else if (!combinedOptions.noWrite && !this.isContextDB(this.globalContext.targetDb)) {
+      if (!combinedOptions.noWrite) {
         this.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
@@ -210,18 +202,28 @@ class Flow {
     };
   }
 
-  runStep(uris, content, combinedOptions, processor) {
+  runStep(uris, content, options, flowName, stepNumber, step) {
+    // declareUpdate({explicitCommit: true});
+    let flowInstance = this;
+    let processor = flowInstance.step.getStepProcessor(flowInstance, step.name, step.type);
+    if(!(processor && processor.run)) {
+      let errorMsq = `Could not find main() function for process ${step.type}/${step.name} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
+      flowInstance.debug.log({message: errorMsq, type: 'error'});
+      throw Error(errorMsq);
+    }
+
+    let combinedOptions = Object.assign({}, processor.options, options);
     try {
       let hookOperation = function() {};
       let hook = processor.customHook;
       if (hook && hook.module) {
         let parameters = Object.assign({uris}, processor.customHook.parameters);
         hookOperation = function () {
-          this.hubUtils.invoke(
+          flowInstance.hubUtils.invoke(
             hook.module,
             parameters,
             hook.user || xdmp.getCurrentUser(),
-            hook.runBefore ? this.globalContext.sourceDb : this.globalContext.targetDb
+            hook.runBefore ? flowInstance.globalContext.sourceDb : this.globalContext.targetDb
           );
         }
       }
@@ -229,17 +231,27 @@ class Flow {
         hookOperation();
       }
       for (let uri of uris) {
-        let result = this.runMain(uri, content[uri], combinedOptions, processor.run);
-        this.addToWriteQueue(uri, result, this.globalContext);
+        let result = flowInstance.runMain(uri, content[uri], combinedOptions, processor.run);
+        flowInstance.addToWriteQueue(uri, result, flowInstance.globalContext);
       }
       if (hook && !hook.runBefore) {
         hookOperation();
       }
-      xdmp.commit();
-
+//      xdmp.commit();
+      return flowInstance.writeQueue;
     } catch (e) {
-      this.globalContext.batchErrors.push(e);
-      xdmp.rollback();
+      flowInstance.globalContext.batchErrors.push({
+        "stack": e.stack,
+        "code": e.code,
+        "data": e.data,
+        "message": e.message,
+        "name": e.name,
+        "retryable": e.retryable,
+        "stackFrames": e.stackFrames
+      });
+      flowInstance.debug.log({message: `Error running step: ${e.toString()}.`, type: 'error'});
+ //     xdmp.rollback();
+      return flowInstance.globalContext.batchErrors;
     }
   }
 
@@ -249,14 +261,7 @@ class Flow {
 
   runMain(uri, content, options, func) {
     let resp;
-    try {
-        resp = func(uri, content, options);
-    }
-    catch(ex) {
-        //ruh roh, time to log our failure :(
-        this.jobs.updateJob(this.globalContext.jobId, this.globalContext.attemptStep, this.globalContext.lastCompletedStep, "failed");
-        throw(ex);
-    }
+    resp = func(uri, content, options);
     if (resp instanceof Sequence) {
       resp = fn.head(resp);
     }

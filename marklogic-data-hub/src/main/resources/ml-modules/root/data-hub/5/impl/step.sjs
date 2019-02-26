@@ -76,12 +76,12 @@ class Step {
     return cts.search(cts.andQuery(query)).toArray();
   }
 
-  getStepProcessor(name, type = 'custom') {
+  getStepProcessor(flow, name, type = 'custom') {
     let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
     let doc = fn.head(cts.search(cts.andQuery(query)));
     if(doc){
       doc = doc.toObject();
-      doc.run = this.makeFunction("main", doc.modulePath);
+      doc.run = this.makeFunction(flow, "main", doc.modulePath);
     }
     return doc;
   }
@@ -97,8 +97,10 @@ class Step {
   }
 
   //grab the module and require it
-  makeFunction(funcName, moduleUri) {
-    return this.hubUtils.retrieveModuleLibrary(moduleUri)[funcName];
+  makeFunction(flow, funcName, moduleUri) {
+    let stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
+    stepModule.flow = flow;
+    return stepModule[funcName];
   };
 
 }

@@ -42,7 +42,7 @@ function transform(content, context) {
     params[parts[0]] = parts[1];
   }
 
-  let jobId = params["job-id"] || datahub.hubUtils.uuid();
+  let jobId = params["job-id"] ||  `mlcp-${xdmp.transaction()}`;
   let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
   let flowName = params['flow-name'] ?  xdmp.urlDecode(params['flow-name']) : "default-ingest";
   if(flowName === 'default-ingest') {
@@ -63,6 +63,10 @@ function transform(content, context) {
 
   //don't catch any exception here, let it slip through to mlcp
   let flowResponse =  datahub.flow.runFlow(flowName, jobId, [uri], { [uri]: content.value}, options, step);
+  // if an array is returned, then it is an array of errors
+  if (Array.isArray(flowResponse) && flowResponse.length) {
+    fn.error(null, flowResponse[0].message, flowResponse[0]);
+  }
   let document = flowResponse.documents[uri].content;
 
   if(!document) {

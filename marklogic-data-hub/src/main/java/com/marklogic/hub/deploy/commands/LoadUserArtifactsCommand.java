@@ -102,7 +102,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path mappingPath = userModulesPath.resolve("mappings");
 
         Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path stepPath = projectPath.resolve("step");
+        Path stepPath = projectPath.resolve("steps");
         Path flowPath = projectPath.resolve("flows");
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
