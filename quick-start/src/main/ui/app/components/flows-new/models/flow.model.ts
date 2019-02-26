@@ -27,7 +27,7 @@ export class Flow {
   constructor() {}
 
   get status(): string {
-    return this.latestJob['status'];
+    return (this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
   }
 
   get jobsNumber(): number {
@@ -39,9 +39,10 @@ export class Flow {
   }
 
   get targetEntity(): string {
-    // TODO return target entity associated with
-    // mapping if it exists
-    return '';
+    let step = this.steps.find(function(step) {
+      return step.config['targetEntity'] !== undefined && step.config['targetEntity'] !== '';
+    })
+    return (step) ? step.config['targetEntity'] : '';
   }
 
   static fromJSON(json) {

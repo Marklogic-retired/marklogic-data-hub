@@ -79,7 +79,9 @@
                       "isValid": true,
                       "isRunning": false,
                       "config": {
-                        "mlcp": "options"
+                        "sourceCollection": "Flow 01 Ingest Step",
+                        "sourceQuery": "",
+                        "targetEntity": "Order"
                       },
                       "language": "en",
                       "version": 1
@@ -128,7 +130,7 @@
                     "endTime": "2019-01-31 13:10:00",
                     "output": [],
                     "status": "running",
-                    "runningPercent": 85, 
+                    "runningPercent": 85,
                     "successfulEvents": 500,
                     "failedEvents": 0
                   },
@@ -173,7 +175,9 @@
                       "isValid": true,
                       "isRunning": false,
                       "config": {
-                        "mapping": "options"
+                        "sourceCollection": "Flow 02 Ingest Step",
+                        "sourceQuery": "",
+                        "targetEntity": "Order"
                       },
                       "language": "en",
                       "version": 1
@@ -222,7 +226,7 @@
                     "endTime": "2019-02-01 16:10:00",
                     "output": [],
                     "status": "finished",
-                    "runningPercent": null, 
+                    "runningPercent": null,
                     "successfulEvents": 13429,
                     "failedEvents": 63
                   },
@@ -267,7 +271,9 @@
                       "isValid": true,
                       "isRunning": false,
                       "config": {
-                        "mapping": "options"
+                        "sourceCollection": "Flow 3 Ingest Step",
+                        "sourceQuery": "",
+                        "targetEntity": "Customer"
                       },
                       "language": "en",
                       "version": 1
@@ -313,7 +319,7 @@
                     "endTime": "2019-02-02 16:10:00",
                     "output": [],
                     "status": "errored",
-                    "runningPercent": null, 
+                    "runningPercent": null,
                     "successfulEvents": 0,
                     "failedEvents": 500
                   },
@@ -354,7 +360,7 @@
                   "isValid": false,
                   "isRunning": false,
                   "version": 1
-                }                      
+                }
               ]
             }
           }
@@ -389,7 +395,7 @@
                 "key2": "value1",
                 "key3": "value1"
               }
-            }          
+            }
           }
         ],
         "responses": {
@@ -499,7 +505,9 @@
                     "isValid": true,
                     "isRunning": false,
                     "config": {
-                      "mlcp": "options"
+                      "sourceCollection": "Flow 01 Ingest Step",
+                      "sourceQuery": "",
+                      "targetEntity": "Order"
                     },
                     "language": "en",
                     "version": 1
@@ -548,7 +556,7 @@
                   "endTime": "2019-01-31 13:10:00",
                   "output": [],
                   "status": "running",
-                  "runningPercent": 85, 
+                  "runningPercent": 85,
                   "successfulEvents": 500,
                   "failedEvents": 0
                 },
@@ -687,7 +695,7 @@
                   "endTime": "2019-01-31 13:10:00",
                   "output": [],
                   "status": "running",
-                  "runningPercent": 85, 
+                  "runningPercent": 85,
                   "successfulEvents": 500,
                   "failedEvents": 0
                 },
