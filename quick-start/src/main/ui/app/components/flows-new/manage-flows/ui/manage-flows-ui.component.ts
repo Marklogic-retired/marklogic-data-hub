@@ -13,8 +13,10 @@ import * as moment from 'moment';
 export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'targetEntity', 'status', 'jobsNumber', 'lastJobFinished', 'docsCommitted', 'docsFailed', 'actions'];
   @Input() flows: Array<Flow> = [];
+
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
+  @Output() saveFlow = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
 
@@ -53,18 +55,24 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        console.log(`Flow "${flow.name}" is ready to be deleted`);
+        this.deleteFlow.emit(result);
       }
     });
   }
 
-  openFlowsettingsDialog(flowToEdit: Flow): void {
+  openFlowSettingsDialog(flowToEdit: Flow): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
       data: {flow: flowToEdit}
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Result: ${!!result}`);
+      if (!!result) {
+        if (flowToEdit) {
+          this.saveFlow.emit(result);
+        }else{
+          this.createFlow.emit(result);
+        }
+      }
     });
   }
 

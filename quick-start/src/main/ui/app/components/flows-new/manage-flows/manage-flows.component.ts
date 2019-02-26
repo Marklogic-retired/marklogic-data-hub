@@ -10,6 +10,7 @@ import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
       [flows]="this.flows"
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
+      (saveFlow)="this.saveFlow($event)"
     >
     </flows-page-ui>
   `
@@ -43,6 +44,12 @@ export class ManageFlowsComponent {
 
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
+      //
+    });
+  }
+
+  saveFlow(flow): void {
+    this.manageFlowsService.saveFlow(flow).subscribe(resp => {
       //
     });
   }
