@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2002-2018 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2002-2019 MarkLogic Corporation.  All Rights Reserved. :)
 module namespace logger="http://marklogic.com/rest-api/logger_DELETE_IF_UNUSED";
 
 import module namespace rest-impl="http://marklogic.com/appservices/rest-impl"
