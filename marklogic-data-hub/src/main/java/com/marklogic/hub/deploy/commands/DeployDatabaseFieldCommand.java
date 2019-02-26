@@ -19,11 +19,16 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
+import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
 
@@ -42,14 +47,30 @@ public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
     private List<DeployDatabaseCommand> buildDatabaseCommands() {
         List<DeployDatabaseCommand> dbCommands = new ArrayList<>();
 
-        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("ml-database-field"))
-            .getFile();
-        File databaseFieldDir = new File(filePath);
+        InputStream inputStream = null;
+        try {
+            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+            Resource[] resources = resolver.getResources("classpath*:/ml-database-field/*.xml");
+            for (Resource r : resources) {
+                inputStream = r.getInputStream();
+                File databaseFile = File.createTempFile("db-field-", ".xml");
+                databaseFile.deleteOnExit();
+                FileUtils.copyInputStreamToFile(inputStream, databaseFile);
 
-        if (databaseFieldDir.exists()) {
-            for (File databaseFile : listFilesInDirectory(databaseFieldDir)) {
                 logger.info("Will process file: " + databaseFile);
                 dbCommands.add(new DeployDatabaseCommand(databaseFile));
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                }
+                catch (IOException e) {
+                }
             }
         }
 
