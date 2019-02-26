@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-edit-flow-ui',
@@ -18,7 +19,7 @@ export class EditFlowUiComponent {
     public dialog: MatDialog
   ) {}
 
-  openDialog(): void {
+  openStepDialog(): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
       data: {stepName: this.stepName, stepType: this.stepType}
