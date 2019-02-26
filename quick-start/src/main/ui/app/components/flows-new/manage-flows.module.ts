@@ -8,6 +8,7 @@ import {FlowSettingsDialogComponent} from "./manage-flows/ui/flow-settings-dialo
 import {StepIconsUiComponent} from "./manage-flows/ui/step-icons-ui.component";
 import {HttpClientModule} from "@angular/common/http";
 import {CommonModule} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -21,7 +22,9 @@ import {CommonModule} from '@angular/common';
     MaterialModule,
     RouterModule,
     HttpClientModule,
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers   : [
   ],
