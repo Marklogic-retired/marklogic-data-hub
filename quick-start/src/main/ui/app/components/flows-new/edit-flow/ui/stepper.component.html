@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
+  <ng-container *ngIf="flow" [ngTemplateOutlet]="selected.content"></ng-container>
 
   <mat-menu #flowMenu="matMenu">
       <div mat-menu-item>Edit Settings</div>

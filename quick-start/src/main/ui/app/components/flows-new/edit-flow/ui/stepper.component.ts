@@ -11,9 +11,6 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class StepperComponent extends CdkStepper {
 
-  // stepName: string;
-  // stepType: string;
-  // stepIndex: number;
   @Input() flow: any;
   @Output() newStep = new EventEmitter();
   @Output() run = new EventEmitter();
