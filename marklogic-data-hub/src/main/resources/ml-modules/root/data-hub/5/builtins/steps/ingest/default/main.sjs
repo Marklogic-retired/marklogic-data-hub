@@ -19,7 +19,7 @@ function main(id, content, options) {
   let headers = {};
 
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-  
+
   return envelope;
 }
 

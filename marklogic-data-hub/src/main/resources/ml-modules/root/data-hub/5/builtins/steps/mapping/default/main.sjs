@@ -68,7 +68,7 @@ function main(id, content, options) {
   }
 
   //Then we obtain the document from the source context
-  instance = lib.processInstance(entityModel, instance);
+  instance = lib.processInstance(entityModel, mapping, instance);
 
   let triples = [];
   let headers = {};
