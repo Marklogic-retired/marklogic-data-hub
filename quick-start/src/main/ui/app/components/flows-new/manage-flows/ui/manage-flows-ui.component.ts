@@ -46,10 +46,10 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.flows
   }
 
-  openRunDialog() {
+  openRunDialog(flow: Flow) {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: ['My Ingest Step', 'My Mapping Step', 'Smart Mastering Step']}
+      data: {steps: flow.steps.map(step => step.name)}
     });
 
     dialogRef.afterClosed().subscribe(result => {
