@@ -1,40 +1,25 @@
-if(typeof flow === 'undefined'){
-  flow = module.exports.flow;
-}
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
 
-function getInstance(instance) {
-
-  if (instance instanceof Element || instance instanceof ObjectNode) {
-    let instancePath = '/';
-    if(instance instanceof Element) {
-      //make sure we grab content root only
-      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
-    }
-    instance = new NodeBuilder().addNode(fn.head(instance.xpath(instancePath))).toNode();
-  }
-  else{
-    instance = new NodeBuilder().addNode(fn.head(instance)).toNode();
-  }
-
-  return instance;
-}
-
-function main(id, rawContent, options) {
+function main(id, content, options) {
+  let lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 
   //let's set our output format, so we know what we're exporting
-  let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : this.flow.consts.DEFAULT_FORMAT;
-  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : this.flow.consts.DEFAULT_FORMAT;
-  if(outputFormat !== this.flow.consts.JSON && outputFormat !== this.flow.consts.XML) {
-    this.flow.debug.log({message: 'The output format of type '+outputFormat+' is invalid. Valid options are '+this.flow.consts.XML+' or '+this.flow.consts.JSON+'.', type: 'error'});
-    throw Error('The output format of type '+outputFormat+' is invalid. Valid options are '+this.flow.consts.XML+' or '+this.flow.consts.JSON+'.');
+  let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+  if(outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
+    datahub.flow.debug.log({message: 'The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.', type: 'error'});
+    throw Error('The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.');
   }
 
-  let instance = getInstance(rawContent);
+  //TODO: make this work with xml, json, AND binary data coming in, for now it's just json
+
+  let instance = content;
   let triples = [];
   let headers = {};
 
-  let envelope = this.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-
+  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  
   return envelope;
 }
 

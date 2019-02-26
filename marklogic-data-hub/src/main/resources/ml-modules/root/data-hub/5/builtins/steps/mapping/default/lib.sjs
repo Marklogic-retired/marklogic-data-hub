@@ -15,15 +15,26 @@ function getMappingWithVersion(mappingName, version) {
   return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName,['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
 }
 
-function processInstance(model, instance) {
+function processInstance(model, content) {
+  let instance = {};
+  instance['$attachments'] = content;
+  if(model.info) {
+    instance['$type'] = model.info.title;
+    instance['$version'] = model.info.version;
+  }
 
+  let mainModel = model.definitions[model.info.title];
+
+  return instance;
+}
+
+function extractInstanceFromModel(model, content) {
   //first let's get our required props and PK
   let required = model.required;
-  if(model.required.indexOf(model.primaryKey) === -1) {
+  if(model.primaryKey && model.required.indexOf(model.primaryKey) === -1) {
     model.required.push(model.primaryKey);
   }
 
-  return instance;
 }
 
 function getInstance(doc) {
@@ -45,6 +56,7 @@ function getInstance(doc) {
 }
 
 module.exports = {
+  extractInstanceFromModel: extractInstanceFromModel,
   getInstance: getInstance,
   getMapping: getMapping,
   getMappingWithVersion: getMappingWithVersion,

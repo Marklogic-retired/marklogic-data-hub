@@ -60,9 +60,17 @@ function transform(content, context) {
     options = JSON.parse(splits[1]);
   }
   options.noWrite = true;
+  let contentObj = null;
+  if(content.value) {
+    contentObj = {};
+    contentObj[uri] = content.value
+  } else {
+    datahub.debug.log({message: params, type: 'error'});
+    fn.error(null, "RESTAPI-SRVEXERR", "The content was null provided to the flow " + flowName + " for "+uri+".");
+  }
 
   //don't catch any exception here, let it slip through to mlcp
-  let flowResponse =  datahub.flow.runFlow(flowName, jobId, [uri], { [uri]: content.value}, options, step);
+  let flowResponse = datahub.flow.runFlow(flowName, jobId, [uri], contentObj, options, step);
   // if an array is returned, then it is an array of errors
   if (Array.isArray(flowResponse) && flowResponse.length) {
     fn.error(null, flowResponse[0].message, flowResponse[0]);
