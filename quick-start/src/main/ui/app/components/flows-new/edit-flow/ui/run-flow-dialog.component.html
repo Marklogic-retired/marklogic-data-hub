@@ -1,10 +1,7 @@
 <h1 mat-dialog-title>Run Flow</h1>
 <div mat-dialog-content class="content">
-  <div>
-    <mat-checkbox>Run All</mat-checkbox>
-  </div>
-  <div>
-    <mat-checkbox>Run Mapping 1</mat-checkbox>
+  <div *ngFor="let step of data.steps">
+    <mat-checkbox>{{step}}</mat-checkbox>
   </div>
 </div>
 <div mat-dialog-actions class="bottom">

@@ -4,6 +4,7 @@ import {ConfirmationDialogComponent} from "../../../common";
 import {FlowSettingsDialogComponent} from "./flow-settings-dialog.component";
 import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
+import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.component";
 
 @Component({
   selector: 'flows-page-ui',
@@ -45,7 +46,16 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.flows
   }
 
-  openPlayDialog() {}
+  openRunDialog() {
+    const dialogRef = this.dialog.open(RunFlowDialogComponent, {
+      width: '600px',
+      data: {steps: ['My Ingest Step', 'My Mapping Step', 'Smart Mastering Step']}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The run dialog was closed');
+    });
+  }
 
   openConfirmDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
