@@ -13,7 +13,7 @@
         </div>
         <button mat-raised-button
                 class="new-flow-button"
-                (click)="openNewFlowDialog()"
+                (click)="openFlowsettingsDialog(null)"
         >
           <span>NEW FLOW</span>
         </button>
@@ -141,7 +141,7 @@
 
 <mat-menu #flowMenu="matMenu">
   <ng-template matMenuContent let-flow="flow">
-    <div mat-menu-item>Edit Settings</div>
+    <div mat-menu-item (click)="openFlowsettingsDialog(flow)">Edit Settings</div>
     <div mat-menu-item (click)="openConfirmDialog(flow)">Delete</div>
   </ng-template>
 </mat-menu>
