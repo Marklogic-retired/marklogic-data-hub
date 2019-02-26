@@ -64,6 +64,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private int previousPercentComplete;
     private boolean stopOnFailure = false;
     private String jobId;
+    private boolean isFullOutput = false;
 
 
     private int step = 1;
@@ -191,6 +192,11 @@ public class FlowRunnerImpl implements FlowRunner {
         if (options == null) {
             options = new HashMap<>();
         }
+        else {
+            if(options.get("fullOutput") != null) {
+                isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
+            }
+        }
         options.put("flow", this.flow.getName());
 
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
@@ -222,6 +228,7 @@ public class FlowRunnerImpl implements FlowRunner {
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
+        List<String> fullResponse = new ArrayList<>();
 
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
@@ -246,6 +253,9 @@ public class FlowRunnerImpl implements FlowRunner {
                         if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                             errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
                         }
+                    }
+                    if(isFullOutput) {
+                        fullResponse.addAll(response.documents.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
                     }
 
                     if (response.errorCount < response.totalCount) {
@@ -328,6 +338,9 @@ public class FlowRunnerImpl implements FlowRunner {
             jobUpdate.postJobs(jobId, status, step);
             if (errorMessages.size() > 0) {
                 job.withJobOutput(errorMessages);
+            }
+            if(isFullOutput) {
+                job.withFullOutput(fullResponse);
             }
         });
 

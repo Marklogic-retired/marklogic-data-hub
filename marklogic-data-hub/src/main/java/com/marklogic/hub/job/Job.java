@@ -28,6 +28,7 @@ public class Job {
     private String flowName;
 
     private List<String> jobOutput;
+    private List<String> fullOutput;
     private String status ;
 
     private long successfulEvents = 0;
@@ -49,6 +50,11 @@ public class Job {
 
     public Job withJobOutput(List<String> jobOutput) {
         this.jobOutput = jobOutput;
+        return this;
+    }
+
+    public Job withFullOutput(List<String> fullOutput) {
+        this.fullOutput = fullOutput;
         return this;
     }
 

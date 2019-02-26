@@ -20,14 +20,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
 public class RunFlowResponse {
+    public String jobId;
     public long totalCount = 0;
     public long errorCount = 0;
     public List<String> completedItems;
     public List<String> failedItems;
     public List<JsonNode> errors;
-    public List<String> documents;
+    public List<JsonNode> documents;
 
     public String toString() {
-        return String.format("{totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}", totalCount, errorCount, completedItems.size(), failedItems.size(), errors.size(), documents.size());
+        return String.format("{jobId: %d, totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}", jobId, totalCount, errorCount, completedItems.size(), failedItems.size(), errors.size(), documents.size());
     }
 }
