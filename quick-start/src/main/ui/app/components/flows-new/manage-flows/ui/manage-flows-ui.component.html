@@ -48,7 +48,7 @@
 
         <!-- Target Entity -->
         <ng-container matColumnDef="targetEntity">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Target Entinty</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Target Entity</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
               {{flow.targetEntity}}
@@ -71,7 +71,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Jobs</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
-              {{flow.jobsNumber}}
+              {{flow.jobsNumber | number}}
             </a>
           </mat-cell>
         </ng-container>
@@ -91,7 +91,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Docs Committed</mat-header-cell>
           <mat-cell *matCellDef="let flow" fxHide fxShow.gt-md>
             <a>
-              {{flow.docsCommitted}}
+              {{flow.docsCommitted | number}}
             </a>
           </mat-cell>
         </ng-container>
@@ -101,7 +101,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Docs Failed</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
-              {{flow.docsFailed}}
+              {{flow.docsFailed | number}}
             </a>
           </mat-cell>
         </ng-container>
@@ -144,8 +144,4 @@
     <div mat-menu-item (click)="openFlowSettingsDialog(flow)">Edit Settings</div>
     <div mat-menu-item (click)="openConfirmDialog(flow)">Delete</div>
   </ng-template>
-</mat-menu>
-
-<mat-menu #actionsMenu="matMenu">
-  <div mat-menu-item>Redeploy</div>
 </mat-menu>

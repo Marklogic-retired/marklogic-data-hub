@@ -50,7 +50,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   openConfirmDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
-      data: {title: 'Flow Deletion', confirmationMessage: `You are about to delete "${flow.name}" flow. Are you sure?`}
+      data: {title: 'Delete Flow', confirmationMessage: `Delete the flow "${flow.name}"?`}
     });
 
     dialogRef.afterClosed().subscribe(result => {
