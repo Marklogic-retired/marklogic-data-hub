@@ -1,9 +1,15 @@
+button {
+  outline: none;
+}
+
 mat-form-field {
   width: 100%;
 }
+
 mat-radio-group {
   margin-left: 10px;
 }
+
 mat-radio-button {
   margin-left: 10px;
 }
@@ -25,4 +31,10 @@ h1.mat-dialog-title {
 
 .mat-dialog-content {
   padding: 10px 15px 20px 20px;
+}
+
+.key-value-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
