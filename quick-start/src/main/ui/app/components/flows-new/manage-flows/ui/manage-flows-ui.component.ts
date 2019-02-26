@@ -1,8 +1,10 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../../common";
-import {NewFlowDialogComponent} from "./new-flow-dialog.component";
+import {FlowSettingsDialogComponent} from "./flow-settings-dialog.component";
 import {Flow} from "../../models/flow.model";
+import * as moment from 'moment';
+import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.component";
 
 @Component({
   selector: 'flows-page-ui',
@@ -12,8 +14,10 @@ import {Flow} from "../../models/flow.model";
 export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'targetEntity', 'status', 'jobsNumber', 'lastJobFinished', 'docsCommitted', 'docsFailed', 'actions'];
   @Input() flows: Array<Flow> = [];
+
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
+  @Output() saveFlow = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
 
@@ -42,27 +46,43 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.flows
   }
 
-  openPlayDialog() {}
+  openRunDialog(flow: Flow) {
+    const dialogRef = this.dialog.open(RunFlowDialogComponent, {
+      width: '600px',
+      data: {steps: flow.steps.map(step => step.name)}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The run dialog was closed');
+    });
+  }
 
   openConfirmDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '250px',
-      data: {title: 'Flow Deletion', confirmationMessage: `You are about to delete "${flow.name}" flow. Are you sure?`}
+      width: '350px',
+      data: {title: 'Delete Flow', confirmationMessage: `Delete the flow "${flow.name}"?`}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        console.log(`Flow "${flow.name}" is ready to be deleted`);
+        this.deleteFlow.emit(result);
       }
     });
   }
 
-  openNewFlowDialog(): void {
-    const dialogRef = this.dialog.open(NewFlowDialogComponent, {
-      width: '500px'
+  openFlowSettingsDialog(flowToEdit: Flow): void {
+    const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
+      width: '500px',
+      data: {flow: flowToEdit}
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Result: ${!!result}`);
+      if (!!result) {
+        if (flowToEdit) {
+          this.saveFlow.emit(result);
+        }else{
+          this.createFlow.emit(result);
+        }
+      }
     });
   }
 
@@ -70,4 +90,9 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     this.updateDataSource();
     this.table.renderRows();
   }
+
+  friendlyDate(dt): string {
+    return moment(dt).fromNow();
+  }
+
 }

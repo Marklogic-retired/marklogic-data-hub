@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2018 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2019 MarkLogic Corporation.  All Rights Reserved. :)
 
 module namespace docmoddel = "http://marklogic.com/rest-api/models/document-model-update-delete";
 

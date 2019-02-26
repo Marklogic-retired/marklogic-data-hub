@@ -1,6 +1,6 @@
 xquery version "1.0"; (: MUST NOT BE "1.0-ml" -- requires strict behaviours :)
 
-(: Copyright 2011-2018 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2011-2019 MarkLogic Corporation.  All Rights Reserved. :)
 
 module namespace strict = "http://marklogic.com/rest-api/lib/strict-util";
 

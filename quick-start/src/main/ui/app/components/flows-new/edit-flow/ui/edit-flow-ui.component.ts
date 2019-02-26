@@ -2,7 +2,7 @@ import { Component, Input, OnInit, EventEmitter, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { Flow } from "../../models/flow.model";
 
 @Component({
   selector: 'app-edit-flow-ui',
@@ -11,10 +11,11 @@ import { moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class EditFlowUiComponent {
 
-  @Input() flow: any;
+  @Input() flow: Flow;
   stepName: string;
   stepType: string;
   steps: [];
+
   constructor(
     public dialog: MatDialog
   ) {}

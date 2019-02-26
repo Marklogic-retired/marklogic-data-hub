@@ -4,7 +4,7 @@ import {Job} from "../../jobs/job.model";
 export class Flow {
 
   public flowId: string;
-  public name: string;
+  public name: string = '';
   public description: string;
   public batchSize: number;
   public threadCount: number;

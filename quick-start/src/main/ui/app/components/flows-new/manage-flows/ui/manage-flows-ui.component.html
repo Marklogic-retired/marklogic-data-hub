@@ -11,12 +11,17 @@
             Manage Flows
           </span>
         </div>
-        <span class="fill-space"></span>
         <button mat-raised-button
-                class="add-flow-button"
-                (click)="openNewFlowDialog()"
+                class="new-flow-button"
+                (click)="openFlowSettingsDialog(null)"
         >
           <span>NEW FLOW</span>
+        </button>
+        <span class="fill-space"></span>
+        <button mat-raised-button
+                class="redeploy-button"
+        >
+          <span>REDEPLOY</span>
         </button>
       </mat-toolbar>
     </div>
@@ -25,20 +30,27 @@
     <div class="content-card">
 
       <mat-table class="flows-table"
-                 #table [dataSource]="flows"
+                 #table [dataSource]="dataSource"
                  matSort>
 
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
           <mat-cell *matCellDef="let flow">
-            <a routerLink="/edit-flow/{{flow.flowId}}">{{flow.name}}</a>
+            <div class="name-container">
+              <a [routerLink]="['/edit-flow', flow.flowId]">
+                {{flow.name}}
+              </a>
+              <step-icons-ui
+                [steps]="flow.steps"
+              ></step-icons-ui>
+            </div>
           </mat-cell>
         </ng-container>
 
         <!-- Target Entity -->
         <ng-container matColumnDef="targetEntity">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Target Entinty</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Target Entity</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
               {{flow.targetEntity}}
@@ -60,8 +72,8 @@
         <ng-container matColumnDef="jobsNumber">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Jobs</mat-header-cell>
           <mat-cell *matCellDef="let flow">
-            <a>
-              {{flow.jobsNumber}}
+            <a [routerLink]="['/jobs']">
+              {{flow.jobsNumber | number}}
             </a>
           </mat-cell>
         </ng-container>
@@ -71,7 +83,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
-              {{flow.lastJobFinished}}
+              {{friendlyDate(flow.lastJobFinished)}}
             </a>
           </mat-cell>
         </ng-container>
@@ -80,8 +92,8 @@
         <ng-container matColumnDef="docsCommitted">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Docs Committed</mat-header-cell>
           <mat-cell *matCellDef="let flow" fxHide fxShow.gt-md>
-            <a>
-              {{flow.docsCommitted}}
+            <a [routerLink]="['/traces']">
+              {{flow.docsCommitted | number}}
             </a>
           </mat-cell>
         </ng-container>
@@ -90,19 +102,19 @@
         <ng-container matColumnDef="docsFailed">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Docs Failed</mat-header-cell>
           <mat-cell *matCellDef="let flow">
-            <a>
-              {{flow.docsFailed}}
+            <a [routerLink]="['/traces']">
+              {{flow.docsFailed | number}}
             </a>
           </mat-cell>
         </ng-container>
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <button mat-raised-button
                     class="run-flow-button"
-                    (click)="openPlayDialog()"
+                    (click)="openRunDialog(flow)"
             >
               <span>RUN</span>
             </button>
@@ -121,8 +133,8 @@
       <mat-paginator #paginator
                      [length]="flows.length"
                      [pageIndex]="0"
-                     [pageSize]="10"
-                     [pageSizeOptions]="[5, 10, 25, 100]">
+                     [pageSize]="5"
+                     [pageSizeOptions]="[3, 5, 15, 30]">
       </mat-paginator>
 
     </div>
@@ -131,11 +143,7 @@
 
 <mat-menu #flowMenu="matMenu">
   <ng-template matMenuContent let-flow="flow">
-    <div mat-menu-item>Edit Settings</div>
+    <div mat-menu-item (click)="openFlowSettingsDialog(flow)">Edit Settings</div>
     <div mat-menu-item (click)="openConfirmDialog(flow)">Delete</div>
   </ng-template>
-</mat-menu>
-
-<mat-menu #actionsMenu="matMenu">
-  <div mat-menu-item>Redeploy</div>
 </mat-menu>

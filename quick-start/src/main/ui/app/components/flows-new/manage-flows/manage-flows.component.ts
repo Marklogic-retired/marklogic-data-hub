@@ -6,10 +6,11 @@ import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
 @Component({
   selector: 'flows-page',
   template: `
-    <flows-page-ui 
+    <flows-page-ui
       [flows]="this.flows"
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
+      (saveFlow)="this.saveFlow($event)"
     >
     </flows-page-ui>
   `
@@ -28,7 +29,6 @@ export class ManageFlowsComponent {
     this.manageFlowsService.getFlows().subscribe(resp => {
       resp.forEach(flow => {
         let flowParsed = Flow.fromJSON(flow);
-        console.log(flowParsed);
         this.flows.push(flowParsed);
       });
       this.flowsPageUi.renderRows();
@@ -43,6 +43,12 @@ export class ManageFlowsComponent {
 
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
+      //
+    });
+  }
+
+  saveFlow(flow): void {
+    this.manageFlowsService.saveFlow(flow).subscribe(resp => {
       //
     });
   }
