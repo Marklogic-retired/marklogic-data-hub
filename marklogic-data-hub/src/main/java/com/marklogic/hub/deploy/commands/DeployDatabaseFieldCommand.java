@@ -49,7 +49,7 @@ public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
 
         InputStream inputStream = null;
         try {
-            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DeployDatabaseFieldCommand.class.getClassLoader());
             Resource[] resources = resolver.getResources("classpath*:/ml-database-field/*.xml");
             for (Resource r : resources) {
                 inputStream = r.getInputStream();
