@@ -37,16 +37,20 @@ export class EntitiesService {
   ) {}
 
   getEntities() {
-    this.http.get(this.url('/entities/')).map((res: Response) => {
+    let resp = this.http.get(this.url('/entities/')).map((res: Response) => {
       const entities: Array<any> = res.json();
       return entities.map((entity) => {
         return new Entity().fromJSON(entity);
       });
-    }).subscribe((entities: Array<Entity>) => {
+    }).share();
+    
+    resp.subscribe((entities: Array<Entity>) => {
       this.entities = entities;
       this.entitiesChange.emit(this.entities);
       this.extractTypes();
     });
+
+    return resp;
   }
 
   // getEntity(entityName: string) {
