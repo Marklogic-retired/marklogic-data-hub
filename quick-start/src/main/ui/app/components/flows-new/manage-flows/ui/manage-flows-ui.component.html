@@ -11,12 +11,17 @@
             Manage Flows
           </span>
         </div>
-        <span class="fill-space"></span>
         <button mat-raised-button
-                class="add-flow-button"
+                class="new-flow-button"
                 (click)="openNewFlowDialog()"
         >
           <span>NEW FLOW</span>
+        </button>
+        <span class="fill-space"></span>
+        <button mat-raised-button
+                class="redeploy-button"
+        >
+          <span>REDEPLOY</span>
         </button>
       </mat-toolbar>
     </div>
@@ -32,7 +37,12 @@
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
           <mat-cell *matCellDef="let flow">
-            <a routerLink="/edit-flow">{{flow.name}}</a>
+            <div class="name-container">
+              <a routerLink="/edit-flow">{{flow.name}}</a>
+              <step-icons-ui
+                [steps]="flow.steps"
+              ></step-icons-ui>
+            </div>
           </mat-cell>
         </ng-container>
 
@@ -71,7 +81,7 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <a>
-              {{flow.lastJobFinished}}
+              {{friendlyDate(flow.lastJobFinished)}}
             </a>
           </mat-cell>
         </ng-container>
@@ -98,7 +108,7 @@
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <button mat-raised-button
                     class="run-flow-button"

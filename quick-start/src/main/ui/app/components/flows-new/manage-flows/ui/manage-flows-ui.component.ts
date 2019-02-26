@@ -3,6 +3,7 @@ import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@a
 import {ConfirmationDialogComponent} from "../../../common";
 import {NewFlowDialogComponent} from "./new-flow-dialog.component";
 import {Flow} from "../../models/flow.model";
+import * as moment from 'moment';
 
 @Component({
   selector: 'flows-page-ui',
@@ -70,4 +71,9 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     this.updateDataSource();
     this.table.renderRows();
   }
+
+  friendlyDate(dt): string {
+    return moment(dt).fromNow();
+  }
+
 }
