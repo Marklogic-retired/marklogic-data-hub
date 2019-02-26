@@ -72,7 +72,7 @@
         <ng-container matColumnDef="jobsNumber">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Jobs</mat-header-cell>
           <mat-cell *matCellDef="let flow">
-            <a>
+            <a [routerLink]="['/jobs']">
               {{flow.jobsNumber | number}}
             </a>
           </mat-cell>
@@ -92,7 +92,7 @@
         <ng-container matColumnDef="docsCommitted">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Docs Committed</mat-header-cell>
           <mat-cell *matCellDef="let flow" fxHide fxShow.gt-md>
-            <a>
+            <a [routerLink]="['/traces']">
               {{flow.docsCommitted | number}}
             </a>
           </mat-cell>
@@ -102,7 +102,7 @@
         <ng-container matColumnDef="docsFailed">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Docs Failed</mat-header-cell>
           <mat-cell *matCellDef="let flow">
-            <a>
+            <a [routerLink]="['/traces']">
               {{flow.docsFailed | number}}
             </a>
           </mat-cell>
@@ -114,7 +114,7 @@
           <mat-cell *matCellDef="let flow">
             <button mat-raised-button
                     class="run-flow-button"
-                    (click)="openPlayDialog()"
+                    (click)="openRunDialog()"
             >
               <span>RUN</span>
             </button>
