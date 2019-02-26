@@ -17,15 +17,8 @@ function getMappingWithVersion(mappingName, version) {
 
 function processInstance(model, mapping, content) {
   let instance = {};
-  instance['$attachments'] = content;
-  if (model.info) {
-    instance['$type'] = model.info.title;
-    instance['$version'] = model.info.version;
-  }
 
-  let mainInstance = extractInstanceFromModel(model, model.info.title, mapping, content);
-
-  instance = Object.assign(mainInstance, instance)
+  instance = extractInstanceFromModel(model, model.info.title, mapping, content);
 
   return instance;
 }
@@ -34,29 +27,66 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
   let mappingProperties = mapping.properties;
   let instance = {};
+  if (model.info && model.info.title === modelName) {
+    instance['$type'] = model.info.title;
+    instance['$version'] = model.info.version;
+    instance['$attachments'] = content;
+  } else {
+    instance['$type'] = modelName;
+    instance['$version'] = '0.0.1';
+  }
+
+
   //grab the model definition
-  let definition = model.definitions[model.info.title];
+  let definition = model.definitions[modelName];
   //first let's get our required props and PK
   let required = definition.required;
   if (definition.primaryKey && definition.required.indexOf(definition.primaryKey) === -1) {
     definition.required.push(definition.primaryKey);
   }
-  for (let prop in definition.properties) {
+  let properties = definition.properties;
+  for (let property in properties) {
+    let prop = properties[property];
     let dataType = prop["datatype"];
     let valueSource = null;
-    if (mappingProperties.hasOwnProperty(prop)) {
-      valueSource = fn.head(content.xpath(sourceContext + mappingProperties[prop].sourcedFrom));
-    } else {
-      valueSource = fn.head(content.xpath('/' + prop));
+    if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
+      valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
+    } else{
+      valueSource = content.xpath('/' + property);
+    }
+    if (dataType !== 'array') {
+        valueSource = fn.head(valueSource);
     }
     let value = null;
     if (!dataType && prop['$ref']) {
       let refArr = prop['$ref'].split('/');
       let refModelName = refArr[refArr.length - 1];
-      value = extractInstanceFromModel(model, refModelName, mapping, content);
-    } else if (dataType === 'Array') {
+      if(valueSource) {
+        let itemSource = new NodeBuilder();
+        itemSource.addNode(valueSource);
+        value = { refModelName : extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
+      } else {
+        value = null;
+      }
+    } else if (dataType === 'array') {
       let items = prop['items'];
-
+      let itemsDatatype = items['datatype'];
+      let valueArray = [];
+      if(!itemsDatatype && items['$ref']) {
+        let refArr = items['$ref'].split('/');
+        let refModelName = refArr[refArr.length - 1];
+        for (const item of Sequence.from(valueSource)) {
+          // let's create and pass the node
+          let itemSource = new NodeBuilder();
+          itemSource.addNode(item);
+          valueArray.push(extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode()));
+        }
+      } else {
+        for(const val of Sequence.from(valueSource)){
+          valueArray.push(castDataType(dataType, val.valueOf()));
+        }
+      }
+      value = valueArray;
       //Todo implement arrays so it employs recursion
 
     } else {
@@ -64,7 +94,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
         value = castDataType(dataType, valueSource)
       }
     }
-    instance[prop] = value;
+    instance[property] = value;
   }
 
   return instance;
