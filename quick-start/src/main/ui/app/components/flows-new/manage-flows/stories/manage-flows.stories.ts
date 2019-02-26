@@ -2,10 +2,10 @@ import {action} from '@storybook/addon-actions';
 import {centered} from '@storybook/addon-centered/angular';
 import {boolean, object, text, withKnobs} from '@storybook/addon-knobs';
 import {moduleMetadata, storiesOf} from '@storybook/angular';
-import {FlowsPageModule} from "../flows-page.module";
+import {ManageFlowsModule} from "../../manage-flows.module";
 import {ThemeModule} from "../../../index";
-import {StoryCardComponent} from "../../../../utils/index";
-import {FlowsPageUiComponent} from "../ui/flows-page-ui.component";
+import {StoryCardComponent} from "../../../../utils";
+import {ManageFlowsUiComponent} from "../ui/manage-flows-ui.component";
 import {
   MatButtonModule,
   MatChipsModule,
@@ -21,21 +21,8 @@ import {
   MatTableModule,
   MatTabsModule
 } from "@angular/material";
-import {RouterModule, Routes} from "@angular/router";
-import {FlowsPageService} from "../../services/flow-page.service";
-import {FlowsPageComponent} from "../flows-page.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {flowsModelArray} from "./flows-page.data";
-
-const routes: Routes = [
-  {
-    path: 'flows',
-    component: FlowsPageComponent,
-    resolve: {
-      data: FlowsPageService
-    }
-  }
-];
+import {flowsModelArray} from "./manage-flows.data";
 
 storiesOf('Components|Flows', module)
   .addDecorator(withKnobs)
@@ -58,10 +45,10 @@ storiesOf('Components|Flows', module)
         MatSnackBarModule,
         MatTableModule,
         MatTabsModule,
-        FlowsPageModule
+        ManageFlowsModule
       ],
       declarations: [
-        FlowsPageUiComponent,
+        ManageFlowsUiComponent,
         StoryCardComponent
       ]
     })

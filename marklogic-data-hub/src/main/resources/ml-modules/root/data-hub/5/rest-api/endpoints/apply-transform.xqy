@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2018 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2019 MarkLogic Corporation.  All Rights Reserved. :)
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
     at "../lib/endpoint-util.xqy";

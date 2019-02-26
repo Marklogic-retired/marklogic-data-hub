@@ -1,19 +1,17 @@
-import { Routes } from '@angular/router';
-import { DashboardComponent } from './components/dashboard';
-import { FlowsComponent } from './components/flows';
-import { EntityModelerComponent } from './components/entity-modeler/entity-modeler.component';
-import { MapComponent } from './components/mappings';
-import { MappingsComponent } from './components/mappings';
-import { ManageFlowsComponent } from './components/manage-flows/manage-flows.component';
-import { LoginComponent } from './components/login';
-import { JobsComponent } from './components/jobs';
-import { SettingsComponent } from './components/settings';
-import { TracesComponent, TraceViewerComponent } from './components/traces';
-import { SearchComponent, SearchViewerComponent } from './components/search';
-import { NoContentComponent } from './components/no-content';
-import { EditFlowComponent } from './components/manage-flows/edit-flow/edit-flow.component';
-import { AuthGuard } from './services/auth/auth-guard.service';
-import {FlowsPageComponent} from "./components/manage-flows/manage-flows/flows-page.component";
+import {Routes} from '@angular/router';
+import {DashboardComponent} from './components/dashboard';
+import {FlowsComponent} from './components/flows';
+import {EntityModelerComponent} from './components/entity-modeler/entity-modeler.component';
+import {MapComponent, MappingsComponent} from './components/mappings';
+import {LoginComponent} from './components/login';
+import {JobsComponent} from './components/jobs';
+import {SettingsComponent} from './components/settings';
+import {TracesComponent, TraceViewerComponent} from './components/traces';
+import {SearchComponent, SearchViewerComponent} from './components/search';
+import {NoContentComponent} from './components/no-content';
+import {EditFlowComponent} from './components/flows-new/edit-flow/edit-flow.component';
+import {AuthGuard} from './services/auth/auth-guard.service';
+import {ManageFlowsComponent} from "./components/flows-new/manage-flows/manage-flows.component";
 
 export const ROUTES: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
@@ -30,14 +28,9 @@ export const ROUTES: Routes = [
       }
     ]
   },
-  {
-    path: 'manage-flows',
-    component: ManageFlowsComponent,
-    canActivate: [AuthGuard]
-  },
   { path: 'mappings/map', component: MapComponent, canActivate: [AuthGuard] },
   { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
-  { path: 'flows-page', component: FlowsPageComponent, canActivate: [AuthGuard]},
+  { path: 'manage-flows', component: ManageFlowsComponent, canActivate: [AuthGuard]},
   { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'edit-flow', component: EditFlowComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },

@@ -30,7 +30,7 @@ import {
   SettingsUiComponent,
   ThemeModule,
   TraceViewerUiComponent
-} from './components/index';
+} from './components';
 import {FlowsComponent} from './components/flows';
 import {EntityModelerComponent} from './components/entity-modeler';
 import {LoginComponent} from './components/login';
@@ -45,8 +45,8 @@ import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {ROUTES} from './app.routes';
 import {AUTH_PROVIDERS} from './services/auth';
 import {CodemirrorComponent} from './components/codemirror';
-import {EditFlowComponent} from './components/manage-flows/edit-flow/';
-import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/manage-flows/edit-flow/ui/';
+import {EditFlowComponent} from './components/flows-new/edit-flow/';
+import {EditFlowUiComponent, NewStepDialogComponent, RunFlowDialogComponent} from './components/flows-new/edit-flow/ui/';
 import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
 import {HeaderComponent} from './components/header/header.component';
 import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
@@ -70,7 +70,7 @@ import {InstallService} from './services/installer';
 import {JobService} from './components/jobs/jobs.service';
 import {JobListenerService} from './components/jobs/job-listener.service';
 import {MapService} from './components/mappings/map.service';
-import {ManageFlowsService} from './components/manage-flows/services/manage-flows.service';
+import {ManageFlowsService} from './components/flows-new/services/manage-flows.service';
 import {ProjectService} from './services/projects';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
@@ -85,11 +85,9 @@ import {ObjectToArrayPipe} from './object-to-array.pipe';
 import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
 
 import {MapComponent, MappingsComponent} from './components/mappings';
-import {ManageFlowsComponent} from './components/manage-flows/manage-flows.component';
-import {ManageFlowsUiComponent} from './components/manage-flows/ui/manage-flows-ui.component';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
-import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page.module";
+import {ManageFlowsModule} from "./components/flows-new";
 
 @NgModule({
   declarations: [
@@ -118,8 +116,6 @@ import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page
     JobOutputUiComponent,
     LoginComponent,
     MlcpComponent,
-    ManageFlowsComponent,
-    ManageFlowsUiComponent,
     MapComponent,
     MappingsComponent,
     MappingsUiComponent,
@@ -193,7 +189,7 @@ import {FlowsPageModule} from "./components/manage-flows/manage-flows/flows-page
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     ThemeModule,
-    FlowsPageModule
+    ManageFlowsModule
   ],
   providers: [
     AUTH_PROVIDERS,

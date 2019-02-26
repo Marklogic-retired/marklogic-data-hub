@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2011-2018 MarkLogic Corporation.    All Rights Reserved. :)
+(: Copyright 2011-2019 MarkLogic Corporation.    All Rights Reserved. :)
 
 (: This /v1/forestinfo endpoint is not public or documented.    It is used by
  : Data Movement SDK (DMSDK) QueryHostBatcher to know about forests associated
