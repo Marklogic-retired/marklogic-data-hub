@@ -63,10 +63,6 @@ public class CollectorImpl implements Collector {
     private DatabaseClient client = null;
     private HubConfig hubConfig = null;
 
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
-
     private Flow flow = null;
 
 
@@ -143,12 +139,7 @@ public class CollectorImpl implements Collector {
             // Streams the response instead of loading it all in memory
             ResponseExtractor<Void> responseExtractor = response -> {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody()));
-                String id;
-                if((id = bufferedReader.readLine()) != null){
-                    setJobId(id);
-                }
                 String line;
-
                 while((line = bufferedReader.readLine()) != null) {
                     results.add(line);
                 }

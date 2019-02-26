@@ -35,28 +35,22 @@ function post(context, params, input) {
     let targetDatabase = params["target-database"] ? xdmp.database(params["target-database"]) : xdmp.database(datahub.config.FINALDATABASE);
 
     let query = null;
-    let uris = null;
-    if (params.uri) {
-      uris = datahub.hubUtils.normalizeToArray(params.uri);
-      query = cts.documentQuery(uris);
-
-    if (params["identifiers"]) {
-      //TODO override default identifier
-    }
-    else {
-      uris = options.uris;
-    }
-
+    let uris = options.uri;
     if (uris) {
       uris = datahub.hubUtils.normalizeToArray(uris);
-      query = cts.documentUriQuery(uris);
-    } else {
+      query = cts.documentQuery(uris);
+      if (params["identifiers"]) {
+        //TODO override default identifier
+      }
+    }
+    else {
       query = flow.identifier ? cts.query(flow.identifier) : cts.orQuery([]);
     }
     let content = null;
     if (input) {
       content = input.toObject();
-    } else {
+    }
+    else {
       content = {};
       datahub.hubUtils.queryLatest(function() {
         for (let doc of cts.search(query, cts.indexOrder(cts.uriReference()))) {

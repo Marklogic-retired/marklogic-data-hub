@@ -56,7 +56,7 @@ case 'GET':
     resp = fn.error(null,"RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
   }
   else{
-    let stepDoc =  flowDoc.Steps[step];
+    let stepDoc =  flowDoc.steps[step];
     if(stepDoc) {
       let query = stepDoc.identifier;
       // check to see if the user has overriden the identifier on runtime
