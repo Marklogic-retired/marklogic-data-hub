@@ -93,6 +93,18 @@ return (
   xdmp:invoke-function(
     function() {
       xdmp:document-insert(
+        fn:replace($trgr:uri, "\.json$", ".xsd"),
+        es:schema-generate($uber-model),
+        $default-permissions,
+        "ml-data-hub-xml-schema"
+      ),
+      xdmp:document-insert(
+        fn:replace($trgr:uri, "\.json$", ".schema.json"),
+        hent:json-schema-generate($entity-title, $uber-model),
+        $default-permissions,
+        "ml-data-hub-json-schema"
+      ),
+      xdmp:document-insert(
         $trgr:uri,
         $valid-entity-model,
         $default-permissions,
