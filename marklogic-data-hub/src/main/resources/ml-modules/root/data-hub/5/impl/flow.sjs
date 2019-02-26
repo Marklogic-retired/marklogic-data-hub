@@ -21,6 +21,7 @@ const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const Debug = require("/data-hub/5/impl/debug.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
+const Provenance = require("/data-hub/5/impl/prov.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
 // define constants for caching expensive operations
 const cachedFlows = {};
@@ -38,6 +39,7 @@ class Flow {
     this.hubUtils = new HubUtils(config);
     this.step = new Step(config);
     this.jobs = new Jobs(config);
+    this.prov = new Provenance(config);
     this.writeQueue = {};
     if (!globalContext) {
       globalContext = {
@@ -185,6 +187,17 @@ class Flow {
       if (!combinedOptions.noWrite) {
         this.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
+      for (let uri in this.writeQueue) {
+        if (this.writeQueue.hasOwnProperty(uri)) {
+          let info = {
+            derivedFrom: uri,
+            influencedBy: step.name,
+            status: (flow.type === 'ingest') ? 'created' : 'updated',
+            metadata: {}
+          };
+          this.prov.createStepRecord(jobId, flowName, step.type, uri, info);
+        }
+      }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
       this.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
     } else {
@@ -192,6 +205,7 @@ class Flow {
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
     return {
+      "jobId": this.globalContext.jobId,
       "totalCount": uris.length,
       // TODO should error counts, completedItems, etc. be all or nothing?
       "errorCount": this.globalContext.batchErrors.length ? uris.length: 0,
