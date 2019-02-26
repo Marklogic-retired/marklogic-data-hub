@@ -139,7 +139,7 @@ class RunFlowTask extends HubTask {
                 options.put(key, value)
             }
         }
-        println("Running Flow: [" + flowName + ":" + step + "]" +
+        println("Running Flow: [" + flowName + "], Step: [" + step + "]" +
             "\n\twith batch size: " + batchSize +
             "\n\twith thread count: " + threadCount +
             "\n\twith Source DB: " + sourceClient.database +
@@ -176,8 +176,8 @@ class RunFlowTask extends HubTask {
         Job job = flowRunner.run()
         flowRunner.awaitCompletion()
 
-        JsonBuilder jobResp = new JsonBuilder(job);
-        def jobOutput = job.jobOutput;
+        JsonBuilder jobResp = new JsonBuilder(job)
+        def jobOutput = job.jobOutput
         if (jobOutput != null && jobOutput.size() > 0) {
             def output = prettyPrint(jobOutput.get(0))
             if (failHard) {

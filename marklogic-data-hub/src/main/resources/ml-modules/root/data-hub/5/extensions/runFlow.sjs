@@ -1,18 +1,18 @@
 /**
-  Copyright 2012-2019 MarkLogic Corporation
+ Copyright 2012-2019 MarkLogic Corporation
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 'use strict';
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
@@ -26,40 +26,35 @@ function post(context, params, input) {
   let flowName = params["flow-name"];
 
   if (!fn.exists(flowName)) {
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
-  }
-  else {
-    let options = params.options ? JSON.parse(params.options) : {};
+    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
+  } else {
+    let options = params["options"] ? JSON.parse(params["options"]) : {};
     let jobId = params["job-id"];
     let flow = datahub.flow.getFlow(flowName);
     let targetDatabase = params["target-database"] ? xdmp.database(params["target-database"]) : xdmp.database(datahub.config.FINALDATABASE);
 
     let query = null;
     let uris = null;
-    if (params.uri) {
-      uris = datahub.hubUtils.normalizeToArray(params.uri);
-      query = cts.documentQuery(uris);
-
     if (params["identifiers"]) {
       //TODO override default identifier
     }
-    else {
-      uris = options.uris;
+
+    if (options.uri) {
+      uris = datahub.hubUtils.normalizeToArray(options.uri);
+      query = cts.documentQuery(uris);
     }
 
-    if (uris) {
-      uris = datahub.hubUtils.normalizeToArray(uris);
-      query = cts.documentUriQuery(uris);
-    } else {
-      query = flow.identifier ? cts.query(flow.identifier) : cts.orQuery([]);
+    if(!uris || uris.length === 0) {
+      query = flow.identifier ? flow.identifier : cts.orQuery([]);
     }
     let content = null;
-    if (input) {
-      content = input.toObject();
+    if (Object.keys(input).length === 0 && input.constructor === Object) {
+      content = input;
     } else {
-      content = {};
-      datahub.hubUtils.queryLatest(function() {
-        for (let doc of cts.search(query, cts.indexOrder(cts.uriReference()))) {
+      datahub.hubUtils.queryLatest(function () {
+        content = {};
+        let results =  cts.search(query, cts.indexOrder(cts.uriReference()));
+        for (let doc of results) {
           content[xdmp.nodeUri(doc)] = doc;
         }
       }, flow.sourceDb || datahub.flow.globalContext.sourceDb);
@@ -69,9 +64,11 @@ function post(context, params, input) {
   }
 }
 
-function put(context, params, input) {}
+function put(context, params, input) {
+}
 
-function deleteFunction(context, params) {}
+function deleteFunction(context, params) {
+}
 
 exports.GET = get;
 exports.POST = post;

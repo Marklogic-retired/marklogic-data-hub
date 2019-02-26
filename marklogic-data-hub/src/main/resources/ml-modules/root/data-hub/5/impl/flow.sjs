@@ -185,7 +185,7 @@ class Flow {
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
       if (!combinedOptions.noWrite && this.isContextDB(this.globalContext.targetDb)) {
-        declareUpdate({explicitCommit: true});
+          declareUpdate({explicitCommit: true});
         for (let uri of this.writeQueue) {
           xdmp.documentInsert(uri, this.writeQueue[uri].content, { permissions: xdmp.defaultPermissions(), collections: combinedOptions.collections});
         }
@@ -211,7 +211,6 @@ class Flow {
   }
 
   runStep(uris, content, combinedOptions, processor) {
-    declareUpdate({explicitCommit: true});
     try {
       let hookOperation = function() {};
       let hook = processor.customHook;

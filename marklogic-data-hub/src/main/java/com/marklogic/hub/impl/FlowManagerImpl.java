@@ -32,6 +32,8 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -50,17 +52,21 @@ public class FlowManagerImpl implements FlowManager {
     @Override
     public Flow getFlow(String flowName) {
         Path flowPath = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = FileUtils.openInputStream(flowPath.toFile());
-        } catch (IOException e) {
-            // return null if it doesn't exist, so we can check for it.
-            return null;
+        InputStream inputStream = null;
+        // first, let's check our resources
+        inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/flows/"+ flowName + FLOW_FILE_EXTENSION);
+        if(inputStream == null) {
+            try {
+                inputStream = FileUtils.openInputStream(flowPath.toFile());
+            } catch (IOException e) {
+                // return null if it doesn't exist, so we can check for it.
+                return null;
+            }
         }
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node;
         try {
-            node = objectMapper.readTree(fileInputStream);
+            node = objectMapper.readTree(inputStream);
         } catch (IOException e) {
             throw new DataHubProjectException("Unable to read flow: " + e.getMessage());
         }
