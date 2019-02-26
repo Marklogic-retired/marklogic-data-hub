@@ -32,7 +32,7 @@ export const ROUTES: Routes = [
   { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'manage-flows', component: ManageFlowsComponent, canActivate: [AuthGuard]},
   { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },
-  { path: 'edit-flow', component: EditFlowComponent, canActivate: [AuthGuard] },
+  { path: 'edit-flow/:flowId', component: EditFlowComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },
   { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
   { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },

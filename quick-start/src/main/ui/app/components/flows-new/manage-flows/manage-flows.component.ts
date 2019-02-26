@@ -6,7 +6,7 @@ import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
 @Component({
   selector: 'flows-page',
   template: `
-    <flows-page-ui 
+    <flows-page-ui
       [flows]="this.flows"
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
@@ -29,7 +29,6 @@ export class ManageFlowsComponent {
     this.manageFlowsService.getFlows().subscribe(resp => {
       resp.forEach(flow => {
         let flowParsed = Flow.fromJSON(flow);
-        console.log(flowParsed);
         this.flows.push(flowParsed);
       });
       this.flowsPageUi.renderRows();

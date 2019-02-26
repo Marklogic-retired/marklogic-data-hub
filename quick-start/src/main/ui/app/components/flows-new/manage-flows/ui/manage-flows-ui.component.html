@@ -38,7 +38,9 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <div class="name-container">
-              <a routerLink="/edit-flow">{{flow.name}}</a>
+              <a [routerLink]="['/edit-flow', flow.flowId]">
+                {{flow.name}}
+              </a>
               <step-icons-ui
                 [steps]="flow.steps"
               ></step-icons-ui>
