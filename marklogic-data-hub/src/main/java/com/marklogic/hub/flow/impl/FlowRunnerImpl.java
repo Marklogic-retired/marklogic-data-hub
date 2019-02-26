@@ -237,7 +237,7 @@ public class FlowRunnerImpl implements FlowRunner {
                         flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
                         databaseClientMap.put(batch.getClient(), flowResource);
                     }
-                    options.put("uri", batch.getItems());
+                    options.put("uris", batch.getItems());
 
                     RunFlowResponse response = flowResource.run(job.getJobId(), step, options);
                     failedEvents.addAndGet(response.errorCount);

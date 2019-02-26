@@ -212,7 +212,7 @@ class Flow {
       throw Error(errorMsq);
     }
 
-    let combinedOptions = Object.assign({}, processor.options, options);
+    let combinedOptions = Object.assign({}, processor.options, step.options, options);
     try {
       let hookOperation = function() {};
       let hook = processor.customHook;

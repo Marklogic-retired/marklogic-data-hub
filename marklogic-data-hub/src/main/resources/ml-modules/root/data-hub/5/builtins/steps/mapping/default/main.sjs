@@ -1,6 +1,83 @@
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
+
 function main(id, content, options) {
-  return {'envelope':'test'};
+  let lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+  //let's set our output format, so we know what we're exporting
+  let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+  if(outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
+    datahub.flow.debug.log({message: 'The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.', type: 'error'});
+    throw Error('The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.');
+  }
+
+  //let's see if our doc is in the cluster at update time
+  if(!fn.docAvailable) {
+    datahub.flow.debug.log({message: 'The document with the uri: '+id+' could not be found.', type: 'error'});
+    throw Error('The document with the uri: '+id+' could not be found.')
+  }
+
+  //grab the doc
+  // let doc = cts.doc(id);
+  let doc = content;
+
+  // for json we need to return the instance
+  if(doc && doc instanceof Document) {
+    doc = fn.head(doc.root);
+  }
+
+  //let's prep the instance of the document
+  let instance = lib.getInstance(doc);
+
+  //then we grab our mapping
+  let mapping = null;
+  if(options.mapping && options.mapping.name && options.mapping.version) {
+    mapping = lib.getMappingWithVersion(options.mapping.name, options.mapping.version);
+  } else if(options.mapping && options.mapping.name) {
+    mapping = lib.getMapping(options.mapping.name);
+  } else {
+    datahub.flow.debug.log({message: 'You must specify a mapping name.', type: 'error'});
+    throw Error('You must specify a mapping name.');
+  }
+
+  if(mapping) {
+    mapping = mapping.toObject();
+  } else {
+    let mapError = 'Could not find mapping: '+options.mapping.name;
+    if(options.mapping.version) {
+      mapError += ' with version #' + options.mapping.version;
+    }
+    datahub.flow.debug.log({message: mapError, type: 'error'});
+    throw Error(mapError);
+  }
+
+  //and lastly we get our model definition
+    let targetArr = mapping.targetEntityType.split('/');
+    let modelName = targetArr[targetArr.length-1];
+    let tVersion = targetArr[targetArr.length-2].split('-');
+    let modelVersion = tVersion[tVersion.length-1];
+    let entity = fn.head(lib.getModel(modelName, modelVersion));
+    if (entity) {
+      entity = entity.toObject();
+    } else {
+      datahub.flow.debug.log({message: 'Could not find a target entity: '+ mapping.targetEntityType, type: 'error'});
+      throw Error('Could not find a target entity: '+ mapping.targetEntityType);
+    }
+
+  //Now let's get our main model definition
+  let mainModel = entity.definitions[entity.info.title];
+
+  //Then we obtain the document from the source context
+  instance = lib.processInstance(mainModel, instance);
+
+  let triples = [];
+  let headers = {};
+
+  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+
+  return envelope;
 }
+
 
 module.exports = {
   main: main

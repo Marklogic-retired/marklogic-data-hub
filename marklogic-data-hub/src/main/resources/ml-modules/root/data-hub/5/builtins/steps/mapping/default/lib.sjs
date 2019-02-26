@@ -1,4 +1,3 @@
-
 function getModel(targetEntity, version = '0.0.1') {
   return xdmp.eval("cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', '" + targetEntity + "',['case-insensitive']), cts.jsonPropertyValueQuery('version', '" + version + "',['case-insensitive'])]))]))", null,
     {
@@ -12,11 +11,9 @@ function getMapping(mappingName) {
   return  fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName,['case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
 }
 
-function getMapping(mappingName, version) {
+function getMappingWithVersion(mappingName, version) {
   return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName,['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
 }
-
-
 
 function processInstance(model, instance) {
 
@@ -50,6 +47,7 @@ function getInstance(doc) {
 module.exports = {
   getInstance: getInstance,
   getMapping: getMapping,
+  getMappingWithVersion: getMappingWithVersion,
   processInstance: processInstance,
   getModel: getModel
 }
