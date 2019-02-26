@@ -23,8 +23,8 @@ export class FlowSettingsDialogComponent implements OnInit{
     this.form = this.fb.group({
       name: [this.data.flow ? this.data.flow.name : '', Validators.required],
       description: [this.data.flow ? this.data.flow.description : ''],
-      batchSize: [this.data.flow ? this.data.flow.batchSize : 100, CustomFieldValidator.number({min: 100})],
-      threadCount: [this.data.flow ? this.data.flow.threadCount : 4, CustomFieldValidator.number({min: 4})]
+      batchSize: [this.data.flow ? this.data.flow.batchSize : 100, CustomFieldValidator.number({min: 1})],
+      threadCount: [this.data.flow ? this.data.flow.threadCount : 4, CustomFieldValidator.number({min: 1})]
     })
   }
 

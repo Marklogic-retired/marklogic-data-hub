@@ -1,5 +1,9 @@
 $header-height: 100px !default;
 
+button {
+  outline: none;
+}
+
 .page-layout {
   position: relative;
   overflow: hidden;
