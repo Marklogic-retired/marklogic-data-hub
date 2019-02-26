@@ -21,13 +21,15 @@
             [ngClass]="{'active': selectedIndex === i}"
             (click)="stepClicked(i)"
             cdkDrag
-          >
+            >
+          <div class="bar {{flow.steps[i].type}}"></div>
           <div class="move-icon" cdkDragHandle>
-            <svg width="18px" fill="black" viewBox="0 0 24 24">
+            <svg width="18px" fill="white" viewBox="0 0 24 24">
               <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
               <path d="M0 0h24v24H0z" fill="none"></path>
             </svg>
           </div>
+          <div class="step-title {{flow.steps[i].type}}">{{flow.steps[i].type}}</div>
           <span>{{step.label}}</span>
           </div>
             <div *ngIf="i !== (steps.length-1)" class="line">&rarr;</div>
@@ -39,7 +41,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="flow" [ngTemplateOutlet]="selected.content"></ng-container>
+  <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
 
   <mat-menu #flowMenu="matMenu">
       <div mat-menu-item>Edit Settings</div>

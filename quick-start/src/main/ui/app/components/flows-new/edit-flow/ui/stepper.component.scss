@@ -56,8 +56,43 @@ header {
     border: 1px solid black;  
     width: 200px;
     height: 200px;
+    position: relative;
+    .bar {
+      height: 23px;
+    }
+    .bar.mapping {
+      background: #3F51B5;
+    }
+    .bar.mastering {
+      background: #009688;
+    }
+    .bar.ingestion {
+      background: #AD1457;
+    }
+    .bar.custom {
+      background: #F4511E;
+    }
+    .step-title {
+      text-transform: uppercase;
+      font-size: 16px;
+      margin: 3px 0 15px 5px;
+    }
+    .step-title.mapping {
+      color: #3F51B5;
+    }
+    .step-title.mastering {
+      color: #009688;
+    }
+    .step-title.ingestion {
+      color: #AD1457;
+    }
+    .step-title.custom {
+      color: #F4511E;
+    }
   }
   .move-icon {
+    position: absolute;
+    top: 0;
     cursor: move;
     width: 18px;
     height: 18px;

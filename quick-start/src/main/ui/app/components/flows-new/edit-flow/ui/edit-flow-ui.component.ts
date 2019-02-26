@@ -30,10 +30,10 @@ export class EditFlowUiComponent {
       console.log('The dialog was closed');
     });
   }
-  openRunDialog(): void {
+  openRunDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: this.steps}
+      data: {steps: flow.steps.map(step => step.name)}
     });
 
     dialogRef.afterClosed().subscribe(result => {
