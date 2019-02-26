@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2017-2018 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2017-2019 MarkLogic Corporation.  All Rights Reserved. :)
 
 import module namespace urimod = "http://marklogic.com/rest-api/models/uris-model"
     at "../models/internal-uris-model.xqy";

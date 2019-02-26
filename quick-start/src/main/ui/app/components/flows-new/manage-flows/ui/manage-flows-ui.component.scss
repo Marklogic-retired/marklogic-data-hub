@@ -159,3 +159,16 @@ $header-height: 100px !default;
 .fill-space {
   flex: 1 1 auto;
 }
+
+.name-container {
+  position: relative;
+  width: 240px;
+}
+
+.logo {
+  padding-right: 30px;
+}
+
+.mat-column-actions .mat-icon {
+  cursor: pointer;
+}

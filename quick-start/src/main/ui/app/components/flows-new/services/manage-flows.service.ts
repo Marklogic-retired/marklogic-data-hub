@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {Flow} from "../models/flow.model";
 
 
 @Injectable()
@@ -30,6 +31,11 @@ export class ManageFlowsService {
   deleteFlow(flowId: string) {
     console.log('DELETE /api/flows/' + flowId);
     return this.http.delete('api/flows/' + flowId);
+  }
+
+  saveFlow(flow: Flow) {
+    console.log(`PUT /api/flows/${flow.flowId}`);
+    return this.http.put(`/api/flows/${flow.flowId}`, flow);
   }
 
 }

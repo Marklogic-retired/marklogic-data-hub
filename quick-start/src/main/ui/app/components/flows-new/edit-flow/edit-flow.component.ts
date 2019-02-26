@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import {ManageFlowsService} from '../services/manage-flows.service';
+import {Flow} from "../models/flow.model";
 
 
 @Component({
@@ -20,6 +21,8 @@ export class EditFlowComponent implements OnInit {
    private manageFlowsService: ManageFlowsService,
    private route: ActivatedRoute
   ) { }
+
+  // @Input() flow: Flow;
 
   ngOnInit() {
     this.flows = this.manageFlowsService.flows;
