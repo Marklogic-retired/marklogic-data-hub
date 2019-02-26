@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2011-2018 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2011-2019 MarkLogic Corporation.  All Rights Reserved. :)
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";

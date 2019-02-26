@@ -2,7 +2,7 @@
 
 Last updated: November 26, 2018
 
-Copyright © 2018 MarkLogic Corporation. MarkLogic and the MarkLogic logo are trademarks or registered trademarks of MarkLogic Corporation in the United States and other countries.  All other trademarks are the property of their respective owners.
+Copyright © 2019 MarkLogic Corporation. MarkLogic and the MarkLogic logo are trademarks or registered trademarks of MarkLogic Corporation in the United States and other countries.  All other trademarks are the property of their respective owners.
 
 
 This project is licensed under the Apache License, Version 2.0 (the "License"); you may not use this project except in compliance with the License. You may obtain a copy of the License at
