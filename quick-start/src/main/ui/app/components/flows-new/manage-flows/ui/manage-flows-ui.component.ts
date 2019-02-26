@@ -92,7 +92,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   }
 
   friendlyDate(dt): string {
-    return moment(dt).fromNow();
+    return (dt) ? moment(dt).fromNow() : '';
   }
 
 }
