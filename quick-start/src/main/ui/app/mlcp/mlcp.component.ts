@@ -537,7 +537,9 @@ export class MlcpComponent implements OnChanges {
 
   updateSetting(): void {
     // use setTimeout to solve ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(this.updateMlcpCommand(), 0);
+    setTimeout(() => {
+      this.updateMlcpCommand()
+    }, 0);
   }
 
   updateMlcpCommand(): string {
