@@ -18,6 +18,11 @@ export class ManageFlowsService {
     return this.http.get<Array<Object>>('api/flows');
   }
 
+  getFlow(flowId) {
+    console.log('GET /api/flows/{flowId}');
+    return this.http.get<Object>('api/flows/' + flowId);
+  }
+
   createFlow(newFlow: Object) {
     console.log('POST /api/flows');
     return this.http.post('api/flows', newFlow);

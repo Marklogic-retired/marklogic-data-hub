@@ -2,7 +2,7 @@
 <div class="steps-container">
   <header>
     <div class="steps-header">
-      <h3>My Flow 1</h3>
+      <h3>{{flow.name}}</h3>
       <button mat-raised-button color="primary" (click)="openDialog()">New Step</button>
     </div>
     <div class="steps-header ">
@@ -33,7 +33,7 @@
     <div class="steps-body step">
     </div>
   </div>
-  
+
 <mat-menu #flowMenu="matMenu">
   <div mat-menu-item>Edit Settings</div>
   <div mat-menu-item>Redeploy</div>

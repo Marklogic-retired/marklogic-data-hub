@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
+import { Flow } from "../../models/flow.model";
 
 @Component({
   selector: 'app-edit-flow-ui',
@@ -10,10 +11,11 @@ import { RunFlowDialogComponent } from './run-flow-dialog.component';
 })
 export class EditFlowUiComponent {
 
-  @Input() flow: any;
+  @Input() flow: Flow;
   stepName: string;
   stepType: string;
   steps: [];
+
   constructor(
     public dialog: MatDialog
   ) {}
