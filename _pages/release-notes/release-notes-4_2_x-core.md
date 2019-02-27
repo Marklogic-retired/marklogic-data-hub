@@ -14,12 +14,12 @@
 </details>
 
 
-<details open><summary class="relnote-summary">ml-gradle is upgraded and a new task added.</summary>
+<details open><summary class="relnote-summary">ml-gradle is upgraded and the new `hubDeployUserArtifacts` task is added.</summary>
   <div markdown="1">
 
   - ml-gradle in DHF has been upgraded to version 3.12.
 
-  - The new ml-gradle task `hubDeployUserArtifacts` is added. It installs user artifacts (such as entities and mappings) to the MarkLogic server. See [Gradle Tasks in DHF]({{site.baseurl}}/refs/gradle-tasks/) for the list of tasks you can use.
+  - The new DHF Gradle task `hubDeployUserArtifacts` is added. It installs user artifacts (such as entities and mappings) to the MarkLogic server. See [Gradle Tasks in DHF]({{site.baseurl}}/refs/gradle-tasks/) for the list of tasks you can use.
 
   </div>
 </details>
