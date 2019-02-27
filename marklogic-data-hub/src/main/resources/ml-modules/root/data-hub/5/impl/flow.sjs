@@ -204,16 +204,20 @@ class Flow {
       this.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
-    return {
+    let resp =
+    {
       "jobId": this.globalContext.jobId,
       "totalCount": uris.length,
       // TODO should error counts, completedItems, etc. be all or nothing?
       "errorCount": this.globalContext.batchErrors.length ? uris.length: 0,
       "completedItems": this.globalContext.batchErrors.length ? []: uris,
       "failedItems": this.globalContext.batchErrors.length ? uris: [],
-      "errors": this.globalContext.batchErrors,
-      "documents": this.writeQueue
+      "errors": this.globalContext.batchErrors
     };
+    if (combinedOptions.fullOutput == 'true') {
+      resp["documents"] = this.writeQueue;
+    }
+    return resp;
   }
 
   runStep(uris, content, options, flowName, stepNumber, step) {

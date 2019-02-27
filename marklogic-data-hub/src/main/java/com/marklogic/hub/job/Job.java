@@ -17,10 +17,9 @@ package com.marklogic.hub.job;
 
 import com.marklogic.client.pojo.annotation.Id;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.JobStatus;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Map;
 import java.util.List;
 
 public class Job {
@@ -28,7 +27,7 @@ public class Job {
     private String flowName;
 
     private List<String> jobOutput;
-    private List<String> fullOutput;
+    private Map<String, Object> fullOutput;
     private String status ;
 
     private long successfulEvents = 0;
@@ -53,7 +52,7 @@ public class Job {
         return this;
     }
 
-    public Job withFullOutput(List<String> fullOutput) {
+    public Job withFullOutput(Map<String,Object>  fullOutput) {
         this.fullOutput = fullOutput;
         return this;
     }
@@ -84,7 +83,9 @@ public class Job {
         return jobId;
     }
 
-
+    public Map<String, Object> getFullOutput() {
+        return fullOutput;
+    }
 
     public String getFlowName() {
         return flowName;

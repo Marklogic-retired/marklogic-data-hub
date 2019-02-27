@@ -228,8 +228,8 @@ public class FlowRunnerImpl implements FlowRunner {
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
-        List<String> fullResponse = new ArrayList<>();
-
+        Map<String,Object> fullResponse = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
@@ -255,7 +255,7 @@ public class FlowRunnerImpl implements FlowRunner {
                         }
                     }
                     if(isFullOutput) {
-                        fullResponse.addAll(response.documents.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
+                        response.documents.forEach((k, v) -> fullResponse.putAll(mapper.convertValue(v, Map.class)));
                     }
 
                     if (response.errorCount < response.totalCount) {
