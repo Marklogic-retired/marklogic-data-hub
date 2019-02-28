@@ -8,6 +8,10 @@
 - QuickStart - mlcp transform_param shows the wrong entity when defining input flow [\#1858](https://github.com/marklogic/marklogic-data-hub/issues/1858)
 - flow name no longer stored for errors [\#1845](https://github.com/marklogic/marklogic-data-hub/issues/1845)
 
+**Improvement**
+-  [DHFPROD-1819] - Generate ES-created entity schema
+
+
 
 # [v4.2.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.0) (2019-02-14)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v4.1.1...v4.2.0)
