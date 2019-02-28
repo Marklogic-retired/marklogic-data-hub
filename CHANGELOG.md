@@ -12,7 +12,6 @@
 -  [DHFPROD-1819] - Generate ES-created entity schema
 
 
-
 # [v4.2.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.0) (2019-02-14)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v4.1.1...v4.2.0)
 
