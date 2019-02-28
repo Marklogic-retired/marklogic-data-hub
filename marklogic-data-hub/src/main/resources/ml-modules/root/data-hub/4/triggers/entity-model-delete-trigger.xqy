@@ -15,6 +15,8 @@ let $entity-def := fn:doc($trgr:uri)
 let $entity-title := $entity-def/info/title
 let $entity-version := $entity-def/info/version
 let $tde-uri := "/tde/" || $entity-title || "-" || $entity-version || ".tdex"
+let $schema-xml-uri := fn:replace($trgr:uri, "\.json$", ".xsd")
+let $schema-json-uri := fn:replace($trgr:uri, "\.json$", ".schema.json")
 return (
   xdmp:invoke-function(
     function() {
@@ -23,6 +25,12 @@ return (
       else (),
       if (fn:doc-available($tde-uri)) then
         xdmp:document-delete($tde-uri)
+      else (),
+      if (fn:doc-available($schema-xml-uri)) then
+        xdmp:document-delete($schema-xml-uri)
+      else (),
+      if (fn:doc-available($schema-json-uri)) then
+        xdmp:document-delete($schema-json-uri)
       else ()
     }, map:entry("database", xdmp:schema-database())
   )

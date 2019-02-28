@@ -300,3 +300,60 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         )
       default return $n
 };
+
+declare variable $number-types as xs:string+ := ("byte","decimal","double","float","int","integer","long","negativeInteger","nonNegativeInteger","nonPositiveInteger","positiveInteger","short","unsignedLong","unsignedInt","unsignedShort","unsignedByte");
+declare variable $string-types as xs:string+ := "dateTime";
+
+declare function hent:json-schema-generate($entity-title as xs:string, $uber-model as map:map)
+{
+  let $uber-model := map:new((
+  (: Ensure we're not change a map for anyone else :)
+  map:map(document{$uber-model}/*),
+  map:entry("language", "zxx"),
+  map:entry("$schema", "http://json-schema.org/draft-07/schema#")
+  ))
+  let $definitions := $uber-model => map:get("definitions")
+  (: JSON Schema needs an extra level of wrapping to account for Entity Model label wrapping it. :)
+  let $_nest-refs :=
+    for $definition-type in map:keys($definitions)
+    let $definition-properties := $definitions => map:get($definition-type) => map:get("properties")
+    for $property-name in map:keys($definition-properties)
+    let $property := $definition-properties => map:get($property-name)
+    let $property-items := $property => map:get("items")
+    let $datatype := $property => map:get("datatype")
+    let $_set-types := (
+      $property => map:put("type", if ($datatype = $number-types) then "number" else if ($datatype = $string-types) then "string" else $datatype),
+      $property => map:delete("datatype"),
+      if ($property-items instance of map:map) then (
+        let $items-datatype := $property => map:get("datatype")
+        return (
+          $property-items => map:put("type", if ($items-datatype = $number-types) then "number" else if ($items-datatype = $string-types) then "string" else $datatype),
+          $property-items => map:delete("datatype"))
+      ) else ()
+    )
+    return
+    (: references can be in the property or in items for arrays :)
+      if ($property => map:contains("$ref")) then
+        map:put($definition-properties, $property-name,
+          map:new((
+            map:entry("type", "object"),
+            map:entry("properties",
+              map:entry(fn:tokenize(map:get($property,"$ref"),"/")[fn:last()], $property)
+            )
+          ))
+        )
+      else if ($property-items instance of map:map and $property-items => map:contains("$ref")) then
+        map:put($property, "items",
+          map:new((
+            map:entry("type", "object"),
+            map:entry("properties",
+              map:entry(fn:tokenize(map:get($property-items,"$ref"),"/")[fn:last()], $property-items)
+            )
+          ))
+        )
+      else ()
+  let $_set-info := (
+    $uber-model => map:put("properties", map:entry($entity-title, map:entry("$ref", "#/definitions/"||$entity-title)))
+  )
+  return xdmp:to-json($uber-model)
+};
