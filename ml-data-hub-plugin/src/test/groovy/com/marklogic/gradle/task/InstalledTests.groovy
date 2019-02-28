@@ -99,13 +99,13 @@ class InstalledTests extends BaseTest {
                 }
             """
 
-        when: "hubRunFlow is Run"
-        def result = runFailTask('hubRunFlow', '-i')
+        when: "hubRunLegacyFlow is Run"
+        def result = runFailTask('hubRunLegacyFlow', '-i')
 
         then: "it should run with errors"
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('The requested flow was not found')
-        result.task(":hubRunFlow").outcome == FAILED
+        result.task(":hubRunLegacyFlow").outcome == FAILED
     }
 
     def "runHarmonizeFlow with default src and dest"() {
@@ -128,7 +128,7 @@ class InstalledTests extends BaseTest {
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
-        println(runTask('hubRunFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
+        println(runTask('hubRunLegacyFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
 
         then:
         notThrown(UnexpectedBuildFailure)
@@ -158,7 +158,7 @@ class InstalledTests extends BaseTest {
 
         when:
         println(runTask(
-            'hubRunFlow',
+            'hubRunLegacyFlow',
             '-PentityName=my-new-entity',
             '-PflowName=my-new-harmonize-flow',
             '-PsourceDB=data-hub-FINAL',
@@ -246,11 +246,11 @@ class InstalledTests extends BaseTest {
                 sourceDB=12345678
             }
         """
-        def result = runTask('hubRunFlow', '-i')
+        def result = runTask('hubRunLegacyFlow', '-i')
 
         then:
         notThrown(UnexpectedBuildFailure)
         result.getOutput().contains('No such database 12345678')
-        result.task(":hubRunFlow").outcome == SUCCESS
+        result.task(":hubRunLegacyFlow").outcome == SUCCESS
     }
 }

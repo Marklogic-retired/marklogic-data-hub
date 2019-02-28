@@ -24,7 +24,7 @@ import com.marklogic.hub.HubConfig
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class ExportJobsTaskTest extends BaseTest {
+class ExportLegacyJobsTaskTest extends BaseTest {
     private final int JOB_COUNT = 3
 
     private final String FILENAME = 'testExportJobs.zip'
@@ -57,7 +57,7 @@ class ExportJobsTaskTest extends BaseTest {
 
 
         for (int i = 0; i < JOB_COUNT; i++) {
-            println(runTask('hubRunFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-i'))
+            println(runTask('hubRunLegacyFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-i'))
         }
     }
 
@@ -86,12 +86,12 @@ class ExportJobsTaskTest extends BaseTest {
         EvalResult res = resultItr.next()
         String jobId = res.getString()
 
-        def result = runTask('hubExportJobs', '-PjobIds=' + jobId, '-Pfilename=' + FILENAME)
+        def result = runTask('hubLegacyExportJobs', '-PjobIds=' + jobId, '-Pfilename=' + FILENAME)
 
         then:
         result.output.contains(jobId)
         result.output.contains(FILENAME)
-        result.task(":hubExportJobs").outcome == SUCCESS
+        result.task(":hubLegacyExportJobs").outcome == SUCCESS
         def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
@@ -99,12 +99,12 @@ class ExportJobsTaskTest extends BaseTest {
 
     def "export all jobs"() {
         when:
-        def result = runTask('hubExportJobs', '-Pfilename=' + FILENAME)
+        def result = runTask('hubLegacyExportJobs', '-Pfilename=' + FILENAME)
 
         then:
         result.output.contains("all jobs")
         result.output.contains(FILENAME)
-        result.task(":hubExportJobs").outcome == SUCCESS
+        result.task(":hubLegacyExportJobs").outcome == SUCCESS
         def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
