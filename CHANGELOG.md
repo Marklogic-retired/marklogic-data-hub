@@ -1,6 +1,6 @@
 # Change Log
 
-# [v4.2.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.0) (2019-02-27)
+# [v4.2.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.1) (2019-02-27)
 
 
 **Fixed bugs:**
