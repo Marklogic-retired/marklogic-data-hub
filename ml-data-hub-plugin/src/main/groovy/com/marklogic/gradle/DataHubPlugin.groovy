@@ -155,7 +155,7 @@ class DataHubPlugin implements Plugin<Project> {
         String legacyFlowGroup = "MarkLogic Data Hub LegacyFlow Management"
         project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask)
         project.task("hubDeleteJobs", group: legacyFlowGroup, type: DeleteJobsTask)
-        project.task("hubExportJobs", group: legacyFlowGroup, type: ExportJobsTask)
+        project.task("hubExportLegacyJobs", group: legacyFlowGroup, type: ExportLegacyJobsTask)
         // This task is undocumented, so don't let it appear in the list
         project.task("hubImportJobs", group: null, type: ImportJobsTask)
 
