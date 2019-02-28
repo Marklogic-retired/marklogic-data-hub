@@ -32,6 +32,7 @@ class DeployHubArtifactTaskTest extends BaseTest {
     def "deploy hub artifacts"() {
         given:
         getStagingDocCount("http://marklogic.com/data-hub/step") == 0
+        getStagingDocCount("http://marklogic.com/data-hub/flow") == 0
         def modCount = getModulesDocCount();
         when:
         def result = runTask('hubDeployArtifacts')
@@ -41,6 +42,7 @@ class DeployHubArtifactTaskTest extends BaseTest {
         result.task(":hubDeployArtifacts").outcome == SUCCESS
 
         getStagingDocCount("http://marklogic.com/data-hub/step") == 2
+        getStagingDocCount("http://marklogic.com/data-hub/flow") == 1
         getModulesDocCount() == modCount
     }
 
