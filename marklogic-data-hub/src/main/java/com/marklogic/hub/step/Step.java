@@ -71,6 +71,13 @@ public interface Step {
     String getName();
 
     /**
+     * Returns the language setting of the step
+     *
+     * @return 'zxx', the default setting
+     */
+    String getLanguage();
+
+    /**
      * Sets the name of the step
      *
      * @param name - a step name

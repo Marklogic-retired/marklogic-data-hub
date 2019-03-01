@@ -22,4 +22,8 @@ public class FlowNotFoundException extends Exception {
         super("Flow Not Found: [" + entityName + ":" + flowName + "]");
     }
 
+    FlowNotFoundException(String flowName) {
+        super("Flow Not Found: [" + flowName + "]");
+    }
+
 }

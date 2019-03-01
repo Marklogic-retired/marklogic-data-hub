@@ -54,7 +54,7 @@ class JobDeleteTaskTest extends BaseTest {
 
 
         for (int i = 0; i < JOB_COUNT; i++) {
-            println(runTask('hubRunFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-i'))
+            println(runTask('hubRunLegacyFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-i'))
         }
     }
 

@@ -159,6 +159,8 @@ public class HubConfigImpl implements HubConfig
 
     private String DHFVersion;
 
+    private String hubLogLevel;
+
     // these hold runtime credentials for flows.
     private String mlUsername = null;
     private String mlPassword = null;
@@ -1313,6 +1315,14 @@ public class HubConfigImpl implements HubConfig
 
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
 
+        //make sure we include a log level here
+        if (hubLogLevel == null) {
+            hubLogLevel = getEnvPropString(projectProperties, "mlHugLogLevel", environment.getProperty("mlHugLogLevel"));
+        }
+        else {
+            projectProperties.setProperty("mlHubLogLevel", hubLogLevel);
+        }
+
         // this is a runtime username/password for running flows
         // could be factored away with FlowRunner
         if (mlUsername == null) {
@@ -1635,6 +1645,11 @@ public class HubConfigImpl implements HubConfig
         return this.DHFVersion;
     }
 
+    @Override public String getHubLogLevel() {
+
+        return this.hubLogLevel;
+    }
+
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getAppConfig();
 
@@ -1697,6 +1712,9 @@ public class HubConfigImpl implements HubConfig
 
         //version of DHF the user INTENDS to use
         customTokens.put("%%mlDHFVersion%%", getJarVersion());
+
+        //logging level of hub debug messages
+        customTokens.put("%%mlHubLogLevel%%", hubLogLevel == null ? environment.getProperty("mlHubLogLevel") : hubLogLevel);
 
         // in a load-from-properties situation we don't want a random string...
         if (projectProperties.containsKey("mlHubUserPassword")) {

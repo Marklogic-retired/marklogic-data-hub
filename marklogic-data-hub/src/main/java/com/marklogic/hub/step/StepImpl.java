@@ -27,14 +27,19 @@ public class StepImpl implements Step {
     private StepType type;
     private int version;
     private JsonNode options;
+    private JsonNode customHook;
+    private String language = "zxx";
+    private String modulePath;
 
     StepImpl(String name, StepType type) {
         this.name = name;
         this.type = type;
         this.version = 1;
         this.options = JsonNodeFactory.instance.objectNode();
+        this.modulePath = "/path/to/your/step/module/main.sjs";
+        this.customHook = JsonNodeFactory.instance.objectNode();
     }
-
+    
     public String getName() {
         return name;
     }
@@ -46,6 +51,12 @@ public class StepImpl implements Step {
     public StepType getType() {
         return type;
     }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage() { this.language = "zxx"; }
 
     public void setType(StepType type) {
         this.type = type;
@@ -65,6 +76,18 @@ public class StepImpl implements Step {
 
     public void setOptions(JsonNode options) {
         this.options = options;
+    }
+
+    public String getModulePath() { return modulePath; }
+
+    public void setModulePath(String path) { this.modulePath = path; }
+
+    public JsonNode getCustomHook() {
+        return customHook;
+    }
+
+    public void setCustomHook(JsonNode hookObj) {
+        this.customHook = hookObj;
     }
 
     @Override
@@ -94,6 +117,14 @@ public class StepImpl implements Step {
 
         if (json.has("options")) {
             setOptions(json.get("options"));
+        }
+
+        if (json.has("modulePath")) {
+            setModulePath(json.get("modulePath").asText());
+        }
+
+        if (json.has("customHook")) {
+            setCustomHook(json.get("customHook"));
         }
     }
 }

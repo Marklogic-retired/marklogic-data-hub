@@ -22,6 +22,7 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
@@ -43,6 +44,7 @@ class DataHubPlugin implements Plugin<Project> {
     private HubProjectImpl hubProject
     private HubConfigImpl hubConfig
     private LoadHubModulesCommand loadHubModulesCommand
+    private LoadHubArtifactsCommand loadHubArtifactsCommand
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
@@ -129,6 +131,9 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Installs user modules from the plugins and src/main/entity-config directories.")
             .finalizedBy(["hubDeployUserArtifacts"])
 
+        project.task("hubDeployArtifacts", group: deployGroup, type: DeployHubArtifactsTask,
+            description: "Installs hub artifacts such as default mappings and default flows.")
+
         project.task("hubDeployUserArtifacts", group: deployGroup, type: DeployUserArtifactsTask,
             description: "Installs user artifacts such as entities and mappings.")
 
@@ -147,12 +152,15 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.hubPreInstallCheck.getDependsOn().add("hubDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
 
-        String flowGroup = "MarkLogic Data Hub LegacyFlow Management"
-        project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
-        project.task("hubDeleteJobs", group: flowGroup, type: DeleteJobsTask)
-        project.task("hubExportJobs", group: flowGroup, type: ExportJobsTask)
+        String legacyFlowGroup = "MarkLogic Data Hub LegacyFlow Management"
+        project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask)
+        project.task("hubDeleteJobs", group: legacyFlowGroup, type: DeleteJobsTask)
+        project.task("hubExportLegacyJobs", group: legacyFlowGroup, type: ExportLegacyJobsTask)
         // This task is undocumented, so don't let it appear in the list
         project.task("hubImportJobs", group: null, type: ImportJobsTask)
+
+        String flowGroup = "MarkLogic Data Hub Flow Management"
+        project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
         logger.info("Finished initializing ml-data-hub\n")
     }
@@ -167,6 +175,7 @@ class DataHubPlugin implements Plugin<Project> {
         dataHub = ctx.getBean(DataHubImpl.class)
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
+        loadHubArtifactsCommand = ctx.getBean(LoadHubArtifactsCommand.class)
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
@@ -221,6 +230,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("dataHub", dataHub)
             project.extensions.add("scaffolding", scaffolding)
             project.extensions.add("loadHubModulesCommand", loadHubModulesCommand)
+            project.extensions.add("loadHubArtifactsCommand", loadHubArtifactsCommand)
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
             project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)

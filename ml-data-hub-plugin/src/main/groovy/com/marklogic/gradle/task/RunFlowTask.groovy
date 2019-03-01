@@ -18,18 +18,18 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
-import com.marklogic.client.datamovement.JobTicket
+
 import com.marklogic.client.io.JacksonHandle
-import com.marklogic.gradle.exception.EntityNameRequiredException
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
-import com.marklogic.hub.legacy.LegacyFlowManager
-import com.marklogic.hub.legacy.flow.LegacyFlowItemCompleteListener
-import com.marklogic.hub.legacy.flow.LegacyFlowItemFailureListener
-import com.marklogic.hub.legacy.flow.LegacyFlowRunner
-import com.marklogic.hub.legacy.flow.FlowType
-import com.marklogic.hub.legacy.flow.LegacyFlow
+import com.marklogic.hub.FlowManager
+import com.marklogic.hub.flow.Flow
+import com.marklogic.hub.flow.FlowItemCompleteListener
+import com.marklogic.hub.flow.FlowItemFailureListener
+import com.marklogic.hub.flow.FlowRunner
+import com.marklogic.hub.job.Job
+import groovy.json.JsonBuilder
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
@@ -60,24 +60,34 @@ class RunFlowTask extends HubTask {
     @Input
     public Boolean failHard
 
+    @Input
+    public Integer step
+
+    @Input
+    public String jobId
+
     @TaskAction
     void runFlow() {
-        if (entityName == null) {
-            entityName = project.hasProperty("entityName") ? project.property("entityName") : null
-        }
-        if (entityName == null) {
-            throw new EntityNameRequiredException()
-        }
         if (flowName == null) {
             flowName = project.hasProperty("flowName") ? project.property("flowName") : null
         }
         if (flowName == null) {
             throw new FlowNameRequiredException()
         }
+
+        if (entityName == null) {
+            entityName = project.hasProperty("entityName") ? project.property("entityName") : null
+        }
+
+        if (jobId == null) {
+            jobId = project.hasProperty("jobId") ? project.property("jobId") : null
+        }
+
         if (batchSize == null) {
             batchSize = project.hasProperty("batchSize") ?
                 Integer.parseInt(project.property("batchSize")) : 100
         }
+
         if (threadCount == null) {
             threadCount = project.hasProperty("threadCount") ?
                 Integer.parseInt(project.property("threadCount")) : 4
@@ -87,34 +97,40 @@ class RunFlowTask extends HubTask {
 
         if (sourceDB != null && !sourceDB.isAllWhitespace()) {
             sourceClient = hubConfig.newStagingClient(sourceDB)
-        }
-        else if (project.hasProperty("sourceDB")) {
+        } else if (project.hasProperty("sourceDB")) {
             sourceClient = hubConfig.newStagingClient(project.property("sourceDB"))
-        }
-        else {
+        } else {
             sourceClient = hubConfig.newStagingClient()
         }
+
         if (destDB == null) {
             destDB = project.hasProperty("destDB") ?
                 project.property("destDB") : hubConfig.finalDbName
         }
+
         if (showOptions == null) {
             showOptions = project.hasProperty("showOptions") ?
                 Boolean.parseBoolean(project.property("showOptions")) : false
         }
+
         if (failHard == null) {
             failHard = project.hasProperty("failHard") ?
                 Boolean.parseBoolean(project.property("failHard")) : false
+        }
+
+        if (step == null) {
+            step = project.hasProperty("step") ?
+                Integer.parseInt(project.property("step")) : 1
         }
 
         if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
 
-        LegacyFlowManager fm = getLegacyFlowManager()
-        LegacyFlow flow = fm.getFlow(entityName, flowName, FlowType.HARMONIZE)
+        FlowManager fm = getFlowManager()
+        Flow flow = fm.getFlow(flowName)
         if (flow == null) {
-            throw new FlowNotFoundException(entityName, flowName);
+            throw new FlowNotFoundException(flowName);
         }
 
         Map<String, Object> options = new HashMap<>()
@@ -123,7 +139,7 @@ class RunFlowTask extends HubTask {
                 options.put(key, value)
             }
         }
-        println("Running Flow: [" + entityName + ":" + flowName + "]" +
+        println("Running Flow: [" + flowName + "], Step: [" + step + "]" +
             "\n\twith batch size: " + batchSize +
             "\n\twith thread count: " + threadCount +
             "\n\twith Source DB: " + sourceClient.database +
@@ -136,45 +152,44 @@ class RunFlowTask extends HubTask {
             }
         }
 
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        FlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
+            .withStep(step)
             .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .withSourceClient(sourceClient)
             .withDestinationDatabase(destDB)
-            .onItemComplete(new LegacyFlowItemCompleteListener() {
+            .withJobId(jobId)
+            .onItemComplete(new FlowItemCompleteListener() {
                 @Override
                 void processCompletion(String jobId, String itemId) {
                     //TODO in the future, let's figure out a good use of this space
                 }
             })
-            .onItemFailed(new LegacyFlowItemFailureListener() {
+            .onItemFailed(new FlowItemFailureListener() {
                 @Override
                 void processFailure(String jobId, String itemId) {
                     //TODO ditto
                 }
             })
-        JobTicket jobTicket = flowRunner.run()
+        Job job = flowRunner.run()
         flowRunner.awaitCompletion()
 
-        def jobDocMgr = getHubConfig().newJobDbClient().newDocumentManager()
-        def job = jobDocMgr.read("/jobs/" + jobTicket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
-        def jobOutput = job.get("jobOutput")
+        JsonBuilder jobResp = new JsonBuilder(job)
+        def jobOutput = job.jobOutput
         if (jobOutput != null && jobOutput.size() > 0) {
-            def output = prettyPrint(jobOutput.get(0).asText())
+            def output = prettyPrint(jobOutput.get(0))
             if (failHard) {
                 throw new TaskExecutionException(this, new Throwable(output))
-            }
-            else {
+            } else {
                 println("\n\nERROR Output:")
                 println(output)
             }
 
-        }
-        else {
+        } else {
             println("\n\nOutput:")
-            println(prettyPrint(job))
+            println(jobResp.toPrettyString())
         }
     }
 }
