@@ -3,6 +3,7 @@ package com.marklogic.gradle.task
 import com.marklogic.hub.HubConfig
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
+import org.junit.Assume
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -17,6 +18,7 @@ class GenerateTDETemplateFromEntityTaskTest extends BaseTest {
     }
 
     def "GenerateTDETEmplates"() {
+        Assume.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         given:
         def pluginDir = Paths.get(hubConfig().hubProject.projectDirString).resolve("plugins")
 

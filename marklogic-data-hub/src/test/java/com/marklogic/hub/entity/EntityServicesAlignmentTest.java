@@ -13,6 +13,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,6 +78,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
 
     @Test
     public void testDeployTDE() throws Exception {
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         installEntities();
 
         getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);

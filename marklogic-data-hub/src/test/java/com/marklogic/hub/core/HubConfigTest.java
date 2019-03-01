@@ -11,6 +11,7 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +54,8 @@ public class HubConfigTest extends HubTestBase {
 
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
-        
+
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         AppConfig config = adminHubConfig.getAppConfig();
 
         assertEquals(new Integer(8011), config.getRestPort(),
