@@ -92,16 +92,8 @@ class InstalledTests extends BaseTest {
     }
 
     def "test run flow with invalid flow"() {
-        setup: "append properties for task name and flow name"
-        propertiesFile << """
-                ext {
-                    entityName=my-entity
-                    flowName=my-flow-not-found
-                }
-            """
-
         when: "hubRunLegacyFlow is Run"
-        def result = runFailTask('hubRunLegacyFlow', '-i')
+        def result = runFailTask('hubRunLegacyFlow', '-PentityName=my-new-entity', '-PflowName=my-flow-not-found', '-i')
 
         then: "it should run with errors"
         notThrown(UnexpectedBuildSuccess)
