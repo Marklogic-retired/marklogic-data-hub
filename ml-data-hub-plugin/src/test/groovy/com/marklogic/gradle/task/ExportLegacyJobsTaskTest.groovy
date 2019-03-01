@@ -86,12 +86,12 @@ class ExportLegacyJobsTaskTest extends BaseTest {
         EvalResult res = resultItr.next()
         String jobId = res.getString()
 
-        def result = runTask('hubLegacyExportJobs', '-PjobIds=' + jobId, '-Pfilename=' + FILENAME)
+        def result = runTask('hubExportLegacyJobs', '-PjobIds=' + jobId, '-Pfilename=' + FILENAME)
 
         then:
         result.output.contains(jobId)
         result.output.contains(FILENAME)
-        result.task(":hubLegacyExportJobs").outcome == SUCCESS
+        result.task(":hubExportLegacyJobs").outcome == SUCCESS
         def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
@@ -99,12 +99,12 @@ class ExportLegacyJobsTaskTest extends BaseTest {
 
     def "export all jobs"() {
         when:
-        def result = runTask('hubLegacyExportJobs', '-Pfilename=' + FILENAME)
+        def result = runTask('hubExportLegacyJobs', '-Pfilename=' + FILENAME)
 
         then:
         result.output.contains("all jobs")
         result.output.contains(FILENAME)
-        result.task(":hubLegacyExportJobs").outcome == SUCCESS
+        result.task(":hubExportLegacyJobs").outcome == SUCCESS
         def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
