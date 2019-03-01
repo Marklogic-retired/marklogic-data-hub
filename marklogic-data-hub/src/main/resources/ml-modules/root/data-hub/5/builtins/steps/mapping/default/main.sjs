@@ -15,7 +15,7 @@ function main(id, content, options) {
   }
 
   //let's see if our doc is in the cluster at update time
-  if (!fn.docAvailable) {
+  if (!fn.docAvailable(id)) {
     datahub.flow.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
     throw Error('The document with the uri: ' + id + ' could not be found.')
   }
