@@ -238,7 +238,7 @@ class SslTest extends BaseTest {
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
-        println(runTask('hubRunFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
+        println(runTask('hubRunLegacyFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
 
         then:
         notThrown(UnexpectedBuildFailure)
@@ -274,7 +274,7 @@ class SslTest extends BaseTest {
 
         when:
         println(runTask(
-            'hubRunFlow',
+            'hubRunLegacyFlow',
             '-PentityName=my-new-entity',
             '-PflowName=my-new-harmonize-flow',
             '-PsourceDB=data-hub-FINAL',
