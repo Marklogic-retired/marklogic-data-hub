@@ -28,7 +28,6 @@ import com.marklogic.hub.legacy.LegacyDebugging;
 
 import java.nio.file.Paths
 
-import static junit.framework.Assert.assertTrue
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -128,8 +127,8 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         getStagingDocCount() == 2
         getFinalDocCount() == 2
-        assertTrue(result.contains("key = value"))
-        assertTrue(! result.contains("dhf.key = value"))
+        assert(result.contains("key = value"))
+        assert(! result.contains("dhf.key = value"))
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
