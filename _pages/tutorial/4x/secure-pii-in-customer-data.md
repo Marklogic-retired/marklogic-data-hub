@@ -52,7 +52,7 @@ Because the information can easily be mapped between the source dataset and the 
 
 ## 3 - Create and Run the Harmonize Flow
 
-Harmonization uses the data in your **STAGING** database to generate canonical entity instances in **FINAL** database.
+Harmonization uses the data in your **STAGING** database to generate canonical entity instances in the **FINAL** database.
 
 {% include conrefs/conref-qs-4x-create-run-harmonize-flow.md imgpath=var-imgpath entityname="Customer" harmonizeflowname="Harmonize Customers" mappingname="Customer Mapping" create=true run=true fullsteps=true %}
 

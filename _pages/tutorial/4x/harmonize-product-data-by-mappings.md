@@ -56,7 +56,7 @@ For the **Product** entity, we define the following simple mappings:
 
 ## 3 - Create and Run the Harmonize Flow
 
-Harmonization uses the data in your **STAGING** database to generate canonical entity instances in **FINAL** database.
+Harmonization uses the data in your **STAGING** database to generate canonical entity instances in the **FINAL** database.
 
 {% include conrefs/conref-qs-4x-create-run-harmonize-flow.md imgpath=var-imgpath entityname="Product" harmonizeflowname="Harmonize Products" mappingname="Product Mapping" create=true run=true fullsteps=true %}
 
