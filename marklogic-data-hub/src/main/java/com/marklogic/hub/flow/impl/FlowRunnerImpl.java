@@ -318,7 +318,8 @@ public class FlowRunnerImpl implements FlowRunner {
             else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
                 status = JobStatus.FINISHED_WITH_ERRORS;
             }
-            else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
+            //empty collector or no failure events => JobStatus.FINISHED
+            else if ((failedEvents.get() == 0 && successfulEvents.get() > 0) || uriCount == 0) {
                 status = JobStatus.FINISHED;
             }
             else {
