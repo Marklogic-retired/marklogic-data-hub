@@ -37,7 +37,7 @@
                 <div class="step-title {{flow.steps[i].type}}">{{flow.steps[i].type}}</div>
                 <div class="header-icons">
                   <mat-icon class="check-icon">check_circle</mat-icon>
-                  <mat-icon class="delete-icon">delete</mat-icon>
+                  <mat-icon (click)="deleteStepClicked(flow.steps[i])" class="delete-icon">delete</mat-icon>
                   <!-- <mat-spinner diameter="20"></mat-spinner> -->
                 </div>            
               </div>

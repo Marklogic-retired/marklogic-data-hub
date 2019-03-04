@@ -14,28 +14,8 @@ export class StepperComponent extends CdkStepper {
   @Input() flow: any;
   @Output() newStep = new EventEmitter();
   @Output() run = new EventEmitter();
+  @Output() delete = new EventEmitter();
 
-  addStep(): void {
-    const newStep = {
-      id: 'new-step',
-      name: 'New Step',
-      description: 'New Step description',
-      type: 'ingestion',
-      sourceDatabase: '',
-      targetDatabase: 'staging',
-      isValid: true,
-      isRunning: false,
-      config: {
-        mlcp: 'options'
-      },
-      language: 'en',
-      version: '1'
-    };
-    this.flow.steps.push(newStep);
-  }
-  deleteStep() {
-    this.flow.steps.splice(this.selectedIndex, 1);
-  }
   dropped(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.flow.steps, event.previousIndex, event.currentIndex);
     this.selectedIndex = event.currentIndex;
@@ -49,5 +29,8 @@ export class StepperComponent extends CdkStepper {
   }
   runClicked(): void {
     this.run.emit();
+  }
+  deleteStepClicked(step) {
+    this.delete.emit(step);
   }
 }
