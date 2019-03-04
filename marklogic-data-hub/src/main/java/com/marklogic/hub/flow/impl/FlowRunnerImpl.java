@@ -255,7 +255,7 @@ public class FlowRunnerImpl implements FlowRunner {
                         }
                     }
                     if(isFullOutput) {
-                        response.documents.forEach((k, v) -> fullResponse.putAll(mapper.convertValue(v, Map.class)));
+                        fullResponse.putAll(mapper.convertValue(response.documents, Map.class));
                     }
 
                     if (response.errorCount < response.totalCount) {
@@ -328,7 +328,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 status = JobStatus.STOP_ON_ERROR.toString();
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
                 status = JobStatus.FINISHED_WITH_ERRORS.toString();
-            } else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
+            } else if ((failedEvents.get() == 0 && successfulEvents.get() > 0) || uris.size() == 0) {
                 status = "completed step " + step ;
             } else {
                 status = JobStatus.FAILED.toString();
