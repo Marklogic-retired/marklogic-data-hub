@@ -14,23 +14,28 @@
   limitations under the License.
 */
 'use strict';
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
-const HubUtils =  require("/data-hub/5/impl/hub-utils.sjs");
-const hubutils = new HubUtils();
+// Batch documents can be cached because they should never be altered across transactions
+const cachedBatchDocuments = {};
 
 class Jobs {
 
-  constructor(config = null) {
+  constructor(config = null, datahub = null) {
     if(!config) {
-      config = defaultConfig;
+      config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
+    if (datahub) {
+      this.hubutils = datahub.hubUtils;
+    } else {
+      const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+      this.hubutils = new HubUtils(config);
+    }
   }
 
   createJob(flowName, id = null ) {
     let job = null;
     if(!id) {
-     id = hubutils.uuid();
+     id = this.hubutils.uuid();
     }
     job = {
      job: {
@@ -45,13 +50,13 @@ class Jobs {
      }
     };
 
-    hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "xdmp.defaultPermissions()",  ['Jobs','Job'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "xdmp.defaultPermissions()",  ['Jobs','Job'], this.config.JOBDATABASE);
     return job;
   }
 
   getJobDocWithId(jobId) {
     let jobUri = "/jobs/" + jobId + ".json";
-    return fn.head(hubutils.queryLatest(function() {
+    return fn.head(this.hubutils.queryLatest(function() {
         let jobDoc = cts.doc(jobUri);
         if (cts.contains(jobDoc, cts.jsonPropertyValueQuery("jobId", jobId))) {
           return jobDoc.toObject();
@@ -61,7 +66,7 @@ class Jobs {
   }
 
   getJobDocWithUri(jobUri) {
-    return fn.head(hubutils.queryLatest(function() {
+    return fn.head(this.hubutils.queryLatest(function() {
         if (xdmp.documentGetCollections(jobUri).includes("Job")) {
           return cts.doc(jobUri).toObject();
         }
@@ -73,7 +78,7 @@ class Jobs {
     cts.jsonPropertyValueQuery("jobId", jobId)]));
     for (let doc of uris) {
      if (fn.docAvailable(doc)){
-       hubutils.deleteDocument(doc, this.config.JOBDATABASE);
+       this.hubutils.deleteDocument(doc, this.config.JOBDATABASE);
      }
     }
   }
@@ -89,7 +94,7 @@ class Jobs {
     if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
       docObj.job.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Job'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Job'], this.config.JOBDATABASE);
   }
 
   getLastStepAttempted(jobId) {
@@ -116,7 +121,7 @@ class Jobs {
   getJobDocs(status) {
     let docs = [];
     let query = [cts.directoryQuery("/jobs/"), cts.jsonPropertyWordQuery("jobStatus", status.toString().toLowerCase())];
-    hubutils.queryLatest(function() {
+    this.hubutils.queryLatest(function() {
       let uris = cts.uris("", null ,cts.andQuery(query));
       for (let doc of uris) {
         docs.push(cts.doc(doc).toObject());
@@ -130,7 +135,7 @@ class Jobs {
     batch = {
       batch: {
         jobId: jobId,
-        batchId: hubutils.uuid(),
+        batchId: this.hubutils.uuid(),
         step: step,
         stepNumber: stepNumber,
         batchStatus: "started",
@@ -140,7 +145,7 @@ class Jobs {
       }
     };
 
-    hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
     return batch;
   }
 
@@ -150,7 +155,7 @@ class Jobs {
     if (step) {
       query.push(cts.jsonPropertyValueQuery("step", step));
     }
-    hubutils.queryLatest(function () {
+    this.hubutils.queryLatest(function () {
       let uris = cts.uris("", null, cts.andQuery(query));
       for (let doc of uris) {
         docs.push(cts.doc(doc).toObject());
@@ -160,7 +165,7 @@ class Jobs {
   }
 
   getBatchDocWithUri(batchUri) {
-     return fn.head(hubutils.queryLatest(function() {
+     return fn.head(this.hubutils.queryLatest(function() {
        if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
          return cts.doc(batchUri).toObject();
        }
@@ -177,18 +182,25 @@ class Jobs {
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
-    hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
+    let cacheId = jobId + "-" + batchId;
+    cachedBatchDocuments[cacheId] = docObj;
+    this.hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
+
   }
 
   getBatchDoc(jobId, batchId) {
-    let query = [cts.directoryQuery("/jobs/batches/"),cts.jsonPropertyValueQuery("jobId", jobId)
-    ,cts.jsonPropertyValueQuery("batchId", batchId)];
-    return fn.head(hubutils.queryLatest(function() {
-      let uri = cts.uris("", null ,cts.andQuery(query));
-      if(!fn.empty(uri)){
-        return cts.doc(uri).toObject();
-      }
-    }, this.config.JOBDATABASE));
+    let cacheId = jobId + "-" + batchId;
+    if (!cachedBatchDocuments[cacheId]) {
+      let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)
+        , cts.jsonPropertyValueQuery("batchId", batchId)];
+      cachedBatchDocuments[cacheId] = fn.head(this.hubutils.queryLatest(function () {
+        let uri = cts.uris("", null, cts.andQuery(query));
+        if (!fn.empty(uri)) {
+          return cts.doc(uri).toObject();
+        }
+      }, this.config.JOBDATABASE));
+    }
+    return cachedBatchDocuments[cacheId];
   }
 }
 
