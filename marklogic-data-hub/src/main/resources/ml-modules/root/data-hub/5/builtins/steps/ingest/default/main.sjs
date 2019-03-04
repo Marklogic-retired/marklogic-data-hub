@@ -1,3 +1,4 @@
+const sem = require("/MarkLogic/semantics.xqy");
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
@@ -7,15 +8,25 @@ function main(id, content, options) {
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
-  if(outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
-    datahub.debug.log({message: 'The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.', type: 'error'});
-    throw Error('The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.');
+  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
+    datahub.debug.log({
+      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',
+      type: 'error'
+    });
+    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
   }
 
   //TODO: make this work with xml, json, AND binary data coming in, for now it's just json
 
   let instance = content;
+
   let triples = [];
+  if (options.triples && Array.isArray(options.triples)) {
+    for (let triple of options.triples) {
+      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+    }
+  }
+
   let headers = {};
 
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
