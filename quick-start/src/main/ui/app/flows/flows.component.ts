@@ -224,8 +224,8 @@ export class FlowsComponent implements OnInit, OnDestroy {
     localStorage.setItem(entity.name + '-collapsed', collapsed.toString());
   }
 
-  getEntities(): void {
-    this.entitiesService.getEntities();
+  getEntities(): Observable<Entity[]> {
+    return this.entitiesService.getEntities();
   }
 
   toggleEntity(entity: Entity): void {
@@ -327,12 +327,9 @@ export class FlowsComponent implements OnInit, OnDestroy {
     const actions = {
       save: (newFlow: Flow) => {
         this.entitiesService.createFlow(entity, flowType.toUpperCase(), newFlow).subscribe((flow: Flow) => {
-          if (flowType.toUpperCase() === 'INPUT') {
-            entity.inputFlows.push(flow);
-          } else if (flowType.toUpperCase() === 'HARMONIZE') {
-            entity.harmonizeFlows.push(flow);
-          }
-          this.setFlow(flow, flowType.toUpperCase());
+          this.getEntities().subscribe(() => {
+            this.setFlow(flow, flowType.toUpperCase());
+          });
         });
       }
     };
