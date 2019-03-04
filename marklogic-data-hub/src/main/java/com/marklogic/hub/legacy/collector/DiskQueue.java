@@ -163,7 +163,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
 
     private void openFile() throws IOException {
         if (fileQueue == null) {
-            fileQueue = File.createTempFile(com.marklogic.hub.collector.DiskQueue.class.getSimpleName() + "-backingstore-", null, tempDir);
+            fileQueue = File.createTempFile(com.marklogic.hub.legacy.collector.DiskQueue.class.getSimpleName() + "-backingstore-", null, tempDir);
             fileQueue.deleteOnExit();
             LOG.log(Level.INFO, "created backing store {0}", fileQueue.getAbsolutePath());
             fileOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileQueue), StandardCharsets.UTF_8));
