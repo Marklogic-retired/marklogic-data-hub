@@ -25,6 +25,7 @@
 package com.marklogic.hub.collector;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.AbstractQueue;
@@ -165,12 +166,14 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
             fileQueue = File.createTempFile(DiskQueue.class.getSimpleName() + "-backingstore-", null, tempDir);
             fileQueue.deleteOnExit();
             LOG.log(Level.INFO, "created backing store {0}", fileQueue.getAbsolutePath());
-            fileOut = new BufferedWriter(new FileWriter(fileQueue));
+            fileOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileQueue), StandardCharsets.UTF_8));
 
             // Flush output file, so there's something written when we open the input stream.
             fileOut.flush();
 
-            fileIn = new BufferedReader(new FileReader(fileQueue));
+            fileIn = new BufferedReader( new InputStreamReader(
+                new FileInputStream(fileQueue), StandardCharsets.UTF_8)
+            );
         }
     }
 
