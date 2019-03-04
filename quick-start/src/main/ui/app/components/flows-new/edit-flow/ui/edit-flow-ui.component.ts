@@ -1,8 +1,10 @@
-import { Component, Input, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
-import { Flow } from "../../models/flow.model";
+import { ConfirmationDialogComponent } from '../../../common';
+import { Flow } from '../../models/flow.model';
+import { Step } from '../../models/step.model';
 
 @Component({
   selector: 'app-edit-flow-ui',
@@ -12,9 +14,8 @@ import { Flow } from "../../models/flow.model";
 export class EditFlowUiComponent {
 
   @Input() flow: Flow;
-  stepName: string;
-  stepType: string;
-  steps: [];
+  @Input() databases: any;
+  newFlow: Flow;
 
   constructor(
     public dialog: MatDialog
@@ -23,11 +24,14 @@ export class EditFlowUiComponent {
   openStepDialog(): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
-      data: {stepName: this.stepName, stepType: this.stepType}
+      data: {databases: this.databases}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        // TODO Add Step to backend
+        this.flow.steps.push(response);
+      }
     });
   }
   openRunDialog(flow: Flow): void {
@@ -40,5 +44,21 @@ export class EditFlowUiComponent {
       console.log('The run dialog was closed');
     });
   }
+  deleteStepDialog(step: Step): void {
+    console.log('delete step', step);
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Delete Step?', confirmationMessage: `Delete ${step.name}?`}
+    });
 
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        // TODO Delete from backend and remove by step id
+        const index = this.flow.steps.findIndex(object => object.name === step.name);
+        this.flow.steps.splice(index, 1);
+      }
+    });
+
+
+  }
 }

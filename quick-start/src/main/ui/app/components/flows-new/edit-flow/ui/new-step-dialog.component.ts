@@ -1,10 +1,10 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { EditFlowUiComponent } from './edit-flow-ui.component';
+import { Step } from '../../models/step.model';
 
 export interface DialogData {
-  stepName: string;
-  stepType: string;
+  databases: any;
 }
 
 @Component({
@@ -13,13 +13,16 @@ export interface DialogData {
   styleUrls: ['./new-step-dialog.component.scss'],
 })
 export class NewStepDialogComponent {
+  public newStep: Step = new Step;
+  readonly stepOptions = ['ingestion', 'mapping', 'mastering', 'custom'];
+  selectedSource: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<EditFlowUiComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
 }
