@@ -1,0 +1,11 @@
+{
+  "language" : "zxx",
+  "name" : "default-mapping",
+  "type" : "MAPPING",
+  "version" : 1,
+  "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs",
+  "identifier" : "cts.uris(null, null, cts.collectionQuery('defaultIngest'))",
+  "options" : {
+    "collections": ["defaultMapping"]
+  }
+}

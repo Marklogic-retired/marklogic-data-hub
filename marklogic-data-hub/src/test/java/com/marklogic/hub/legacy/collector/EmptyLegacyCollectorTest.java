@@ -88,7 +88,7 @@ public class EmptyLegacyCollectorTest extends HubTestBase {
         assertEquals(0, node.get("successfulEvents").asInt());
         assertEquals(0, node.get("failedEvents").asInt());
         assertEquals(0, node.get("failedBatches").asInt());
-        assertEquals("FAILED", node.get("status").asText());
+        assertEquals("FINISHED", node.get("status").asText());
 
     }
 }

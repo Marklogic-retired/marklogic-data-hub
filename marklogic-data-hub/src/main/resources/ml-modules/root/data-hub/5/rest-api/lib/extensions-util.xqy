@@ -35,7 +35,8 @@ declare private variable $system-transforms-40 := map:map()
     =>map:with("ml:traceUISearchResults", "trace-json")
     =>map:with("ml:prettifyXML",          "prettify");
 
-declare private variable $system-transforms-50 := map:map();
+declare private variable $system-transforms-50 := map:map()
+    =>map:with("ml:runFlow",              "run-flow");
 
 declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:dbConfigs",              "db-configs")
@@ -53,8 +54,12 @@ declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:validate",               "validate");
 
 declare private variable $system-resource-extensions-50 := map:map()
-=>map:with("ml:jobs",   "jobs")
-=>map:with("ml:batches","batches");
+    =>map:with("ml:runFlow",    "runFlow")
+    =>map:with("ml:flows",      "flows")
+    =>map:with("ml:jobs",       "jobs")
+    =>map:with("ml:batches",    "batches")
+    =>map:with("ml:hubstats",   "hubstats")
+    =>map:with("ml:hubversion", "hubversion");
 
 declare function extut:check-untraced() as xs:boolean {
     if (exists($is-untraced)) then ()

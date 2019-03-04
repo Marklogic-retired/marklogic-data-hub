@@ -102,7 +102,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path mappingPath = userModulesPath.resolve("mappings");
 
         Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path processesPath = projectPath.resolve("step");
+        Path stepPath = projectPath.resolve("steps");
         Path flowPath = projectPath.resolve("flows");
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
@@ -111,7 +111,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DocumentWriteSet finalEntityDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingEntityDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet stagingProcessDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
+        DocumentWriteSet stagingStepDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
 
@@ -144,40 +145,42 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                         }
                     }
                 });
-
-                //now let's do the mappings path
-                if (mappingPath.toFile().exists()) {
-                    Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                            String currentDir = dir.normalize().toAbsolutePath().toString();
-
-                            if (isArtifactDir(dir, mappingPath.toAbsolutePath())) {
-                                Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
-                                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                                meta.getCollections().add("http://marklogic.com/data-hub/mappings");
-                                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                                for (Resource r : modules.getAssets()) {
-                                    if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                        InputStream inputStream = r.getInputStream();
-                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                        inputStream.close();
-                                        stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
-                                    }
-                                }
-                                return FileVisitResult.CONTINUE;
-                            }
-                            else {
-                                return FileVisitResult.CONTINUE;
-                            }
-                        }
-                    });
-                }
             }
 
-            if (processesPath.toFile().exists()) {
-                Files.walkFileTree(processesPath, new SimpleFileVisitor<Path>() {
+            //now let's do the mappings path
+            if (mappingPath.toFile().exists()) {
+                Files.walkFileTree(mappingPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        String currentDir = dir.normalize().toAbsolutePath().toString();
+
+                        if (isArtifactDir(dir, mappingPath.toAbsolutePath())) {
+                            Modules modules = new MappingDefModulesFinder().findModules(dir.toString());
+                            DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                            meta.getCollections().add("http://marklogic.com/data-hub/mappings");
+                            documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                            for (Resource r : modules.getAssets()) {
+                                if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+                                    InputStream inputStream = r.getInputStream();
+                                    StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                    inputStream.close();
+                                    finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                    stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                    propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                }
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                        else {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    }
+                });
+            }
+
+            // let's do steps
+            if (stepPath.toFile().exists()) {
+                Files.walkFileTree(stepPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                         Modules modules = new StepDefModulesFinder().findModules(dir.toString());
@@ -189,7 +192,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 InputStream inputStream = r.getInputStream();
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
-                                stagingProcessDocumentWriteSet.add("/step/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                stagingStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
@@ -198,6 +201,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
 
+
+            // let's do flows
             if (flowPath.toFile().exists()) {
                 Files.walkFileTree(flowPath, new SimpleFileVisitor<Path>() {
                     @Override
@@ -226,9 +231,10 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
             if (stagingMappingDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingMappingDocumentWriteSet);
+                finalDocMgr.write(finalMappingDocumentWriteSet);
             }
-            if (stagingProcessDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingProcessDocumentWriteSet);
+            if (stagingStepDocumentWriteSet.size() > 0) {
+                stagingDocMgr.write(stagingStepDocumentWriteSet);
             }
             if (stagingFlowDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingFlowDocumentWriteSet);

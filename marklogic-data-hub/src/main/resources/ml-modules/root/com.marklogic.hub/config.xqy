@@ -10,3 +10,4 @@ declare variable $TRACE-DATABASE := "%%mlJobDbName%%";
 declare variable $JOB-DATABASE := "%%mlJobDbName%%";
 declare variable $MODULES-DATABASE := "%%mlModulesDbName%%";
 declare variable $HUB-VERSION := "%%mlHubVersion%%";
+declare variable $HUB-LOG-LEVEL := "%%mlHubLogLevel%%";

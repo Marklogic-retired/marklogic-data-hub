@@ -57,12 +57,12 @@ class NotInstalledTests extends BaseTest {
 
     def "test run flow with no entity"() {
         when:
-        def result = runFailTask('hubRunFlow')
+        def result = runFailTask('hubRunLegacyFlow')
 
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('entityName property is required')
-        result.task(":hubRunFlow").outcome == FAILED
+        result.task(":hubRunLegacyFlow").outcome == FAILED
     }
 
     def "test run flow with no flow"() {
@@ -74,12 +74,12 @@ class NotInstalledTests extends BaseTest {
         """
 
         when:
-        def result = runFailTask('hubRunFlow')
+        def result = runFailTask('hubRunLegacyFlow')
 
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('flowName property is required')
-        result.task(":hubRunFlow").outcome == FAILED
+        result.task(":hubRunLegacyFlow").outcome == FAILED
     }
 
     def "test run flow when hub not installed"() {
@@ -92,12 +92,12 @@ class NotInstalledTests extends BaseTest {
             """
 
         when:
-        def result = runFailTask('hubRunFlow')
+        def result = runFailTask('hubRunLegacyFlow')
 
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('Data Hub is not installed')
-        result.task(":hubRunFlow").outcome == FAILED
+        result.task(":hubRunLegacyFlow").outcome == FAILED
     }
 
 }

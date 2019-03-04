@@ -2,7 +2,7 @@
   <database-name>%%mlJobDbName%%</database-name>
   <fields>
     <field>
-      <field-name>datahubCreateOn</field-name>
+      <field-name>datahubCreatedOn</field-name>
       <metadata/>
       <stemmed-searches>off</stemmed-searches>
       <word-searches>false</word-searches>
@@ -21,7 +21,7 @@
     <range-field-index>
       <scalar-type>dateTime</scalar-type>
       <collation/>
-      <field-name>datahubCreateOn</field-name>
+      <field-name>datahubCreatedOn</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>

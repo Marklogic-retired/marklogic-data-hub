@@ -71,6 +71,7 @@ public interface HubConfig {
     Integer DEFAULT_JOB_PORT = 8013;
 
     String DEFAULT_AUTH_METHOD = "digest";
+    String DEFAULT_HUB_LOG_LEVEL = "default";
 
     String DEFAULT_SCHEME = "http";
 
@@ -509,6 +510,12 @@ public interface HubConfig {
      * @return Version of DHF that the project properties file is targetting
      */
     String getDHFVersion();
+
+    /**
+     * Gets the current level of logging set for the data hub
+     * @return Log level of the data hub config
+     */
+    String getHubLogLevel();
 
     /**
      * Gets a new DatabaseClient that queries the staging database and appserver

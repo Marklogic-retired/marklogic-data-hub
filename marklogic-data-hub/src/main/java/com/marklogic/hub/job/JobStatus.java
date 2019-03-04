@@ -6,6 +6,7 @@ public enum JobStatus {
     FINISHED_WITH_ERRORS("finished_with_errors"),
     RUNNING("running"),
     FAILED("failed"),
+    STOP_ON_ERROR("stop-on-error"),
     CANCELED("canceled");
 
     private String type;

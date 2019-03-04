@@ -91,21 +91,13 @@ class InstalledTests extends BaseTest {
     }
 
     def "test run flow with invalid flow"() {
-        setup: "append properties for task name and flow name"
-        propertiesFile << """
-                ext {
-                    entityName=my-entity
-                    flowName=my-flow-not-found
-                }
-            """
-
-        when: "hubRunFlow is Run"
-        def result = runFailTask('hubRunFlow', '-i')
+        when: "hubRunLegacyFlow is Run"
+        def result = runFailTask('hubRunLegacyFlow', '-PentityName=my-new-entity', '-PflowName=my-flow-not-found', '-i')
 
         then: "it should run with errors"
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('The requested flow was not found')
-        result.task(":hubRunFlow").outcome == FAILED
+        result.task(":hubRunLegacyFlow").outcome == FAILED
     }
 
     def "runHarmonizeFlow with default src and dest"() {
@@ -124,16 +116,19 @@ class InstalledTests extends BaseTest {
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
         assert (getStagingDocCount() == 2)
         assert (getFinalDocCount() == 0)
-
+        String result;
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
-        println(runTask('hubRunFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
+        result = runTask('hubRunLegacyFlow', '-Pdhf.key=value', '-PshowOptions=true','-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput()
+        println(result)
 
         then:
         notThrown(UnexpectedBuildFailure)
         getStagingDocCount() == 2
         getFinalDocCount() == 2
+        assert(result.contains("key = value"))
+        assert(! result.contains("dhf.key = value"))
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
@@ -158,7 +153,7 @@ class InstalledTests extends BaseTest {
 
         when:
         println(runTask(
-            'hubRunFlow',
+            'hubRunLegacyFlow',
             '-PentityName=my-new-entity',
             '-PflowName=my-new-harmonize-flow',
             '-PsourceDB=data-hub-FINAL',
@@ -246,11 +241,11 @@ class InstalledTests extends BaseTest {
                 sourceDB=12345678
             }
         """
-        def result = runTask('hubRunFlow', '-i')
+        def result = runTask('hubRunLegacyFlow', '-i')
 
         then:
         notThrown(UnexpectedBuildFailure)
         result.getOutput().contains('No such database 12345678')
-        result.task(":hubRunFlow").outcome == SUCCESS
+        result.task(":hubRunLegacyFlow").outcome == SUCCESS
     }
 }
