@@ -12,12 +12,12 @@
         <a href="#" class="text item">View Jobs</a>
         <div class="icon-container">
           <mat-icon class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
-          <mat-icon class="flow-menu-icon item">arrow_drop_down</mat-icon>
+          <mat-icon class="flow-menu-icon item" (click)="this.toggleBody()">arrow_drop_down</mat-icon>
         </div>
     </div>
   </header>
 
-    <div *ngIf="flow.steps.length > 0" class="steps-body">
+    <div *ngIf="flow.steps.length > 0 && showBody" class="steps-body">
         <section class="step-navigation-bar" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropped($event)" >
           <div class="stepper-container" *ngFor="let step of steps; let i = index;">
             <div
@@ -56,7 +56,7 @@
   <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
 
   <mat-menu #flowMenu="matMenu">
-      <div mat-menu-item>Edit Settings</div>
-      <div mat-menu-item>Redeploy</div>
-      <div mat-menu-item>Delete</div>
+      <div mat-menu-item (click)="this.editSettingsClicked()">Edit Settings</div>
+      <div mat-menu-item (click)="this.redeployClicked()">Redeploy</div>
+      <div mat-menu-item (click)="this.deleteFlowClicked()">Delete</div>
   </mat-menu>

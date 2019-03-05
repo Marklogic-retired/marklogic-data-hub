@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
 import { ConfirmationDialogComponent } from '../../../common';
+import { FlowSettingsDialogComponent } from '../../manage-flows/ui/flow-settings-dialog.component';
 import { Flow } from '../../models/flow.model';
 import { Step } from '../../models/step.model';
 
@@ -58,7 +59,44 @@ export class EditFlowUiComponent {
         this.flow.steps.splice(index, 1);
       }
     });
+  }
+  openFlowSettingsDialog(flowToEdit: Flow): void {
+    const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
+      width: '500px',
+      data: {flow: flowToEdit}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        if (flowToEdit) {
+          // this.saveFlow.emit(result);
+        }else{
+          // this.createFlow.emit(result);
+        }
+      }
+    });
+  }
+  redeployDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Redeploy Flow?', confirmationMessage: `Redeploy ${this.flow.name} to database?`}
+    });
 
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
 
+      }
+    });
+  }
+  deleteFlowDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Delete Flow?', confirmationMessage: `Delete ${this.flow.name}?`}
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+
+      }
+    });
   }
 }
