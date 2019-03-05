@@ -13,10 +13,32 @@ export class MatchThresholds {
     return result;
   }
 
+  /**
+   * Add a new match threshold.
+   */
+  addThreshold(thr) {
+    this.thresholds.push(new MatchThreshold(thr));
+  }
+
+  /**
+   * Update a match threshold.
+   */
+  updateThreshold(thr, index) {
+    let mThr = new MatchThreshold(thr);
+    this.thresholds.splice(index, 1, mThr);
+  }
+
+  /**
+   * Delete a match threshold.
+   */
+  deleteThreshold(index) {
+    this.thresholds.splice(index, 1);
+  }
+
 }
 
 export class MatchThreshold {
-  public label: Array<string>;
+  public label: string;
   public above: string;
   public action: string;
 

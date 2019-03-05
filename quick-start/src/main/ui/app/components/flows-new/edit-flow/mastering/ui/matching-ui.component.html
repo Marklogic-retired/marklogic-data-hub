@@ -7,29 +7,11 @@
     (deleteOption)="this.onDeleteOption($event)"
   ></app-match-options-ui>
 
-<h2>Match Thresholds</h2>
-
-<button>
-  <span>ADD</span>
-</button>
-
-<table border=1>
-  <thead>
-    <tr>
-      <th>Threshold Name</th>
-      <th>Weight</th>
-      <th>Action</th>
-      <td>&nbsp;</td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let mThr of matchThresholds.thresholds; let i = index;">
-      <td>{{mThr.label}}</td>
-      <td>{{mThr.above}}</td>
-      <td>{{mThr.action}}</td>
-      <td>...</td>
-    </tr>
-  </tbody>
-</table>
+<app-match-thresholds-ui
+    [matchThresholds]="matchThresholds"
+    (createThreshold)="this.onCreateThreshold($event)"
+    (saveThreshold)="this.onSaveThreshold($event)"
+    (deleteThreshold)="this.onDeleteThreshold($event)"
+  ></app-match-thresholds-ui>
 
 </div>

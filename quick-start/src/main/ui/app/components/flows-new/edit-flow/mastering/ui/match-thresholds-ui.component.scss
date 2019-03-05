@@ -2,7 +2,7 @@
   padding: 10px 40px;
 }
 
-#match-options {
+#match-thresholds {
   margin-bottom: 40px;
 }
 
@@ -106,7 +106,7 @@ button {
     align-items: center;
   }
 
-  /* .mat-column-propertyName {
+  .mat-column-propertyName {
     flex: 0 1 200px;
   }
 
@@ -116,15 +116,15 @@ button {
 
   .mat-column-weight {
     flex: 0 1 100px;
-  } */
+  }
 
   .mat-column-other {
     flex: 0 1 480px;
   }
 
-  /* .mat-column-actions {
+  .mat-column-actions {
     flex: 0 1 80px;
-  } */
+  }
 
   .mat-header-cell .mat-icon {
     cursor: pointer;
