@@ -8,14 +8,14 @@
       </div>
       <div class="steps-header">
         <mat-icon class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
-        <mat-icon class="flow-menu-icon">arrow_drop_down</mat-icon>
+        <mat-icon class="flow-menu-icon" (click)="this.toggleBody()">arrow_drop_down</mat-icon>
       </div>
     </header>
-    <div class="steps-body">
+    <div *ngIf="showBody" class="steps-body">
         <p>{{step.type}}</p>
       <p>{{step.description}}</p>
     </div>
 </div>
 <mat-menu #flowSubMenu="matMenu">
-    <div mat-menu-item>Edit Settings</div>
+    <div mat-menu-item (click)="this.editSettingsClicked()">Edit Settings</div>
 </mat-menu>
