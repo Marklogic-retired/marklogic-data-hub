@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { MatchingUiComponent } from "./ui/matching-ui.component";
+import { MatchOptionsUiComponent } from "./ui/match-options-ui.component";
 import { matchingData } from "../../models/matching.data";
 import { Matching } from "../../models/matching.model";
 import { MatchOptions } from "../../models/match-options.model";
@@ -60,7 +61,7 @@ export class MatchingComponent implements OnInit {
   }
 
   deleteOption(index): void {
-    console.log(index);
+    console.log('deleteOption');
     this.matchOptions.deleteOption(index);
     this.matchingUi.renderRows();
   }

@@ -1,0 +1,151 @@
+<div id="matching-page" class="page-layout carded fullwidth">
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HEADER -->
+    <div class="header accent">
+      <mat-toolbar style="background: transparent">
+        <div class="logo">
+          <span class="logo-text h1">
+            Match Options
+          </span>
+        </div>
+        <button mat-raised-button
+                class="new-option-button"
+                (click)="openMatchOptionDialog(null, null)"
+        >
+          <span>ADD</span>
+        </button>
+        <span class="fill-space"></span>
+      </mat-toolbar>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content-card">
+
+      <mat-table class="matching-table"
+                 #table [dataSource]="dataSource" matSort>
+
+        <!-- Property to Match Column -->
+        <ng-container matColumnDef="propertyName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Property to Match</mat-header-cell>
+          <mat-cell *matCellDef="let mOpt">
+            <a>
+              {{mOpt.propertyName.join(', ')}}
+          </a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Match Type Column -->
+        <ng-container matColumnDef="matchType">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Match Type</mat-header-cell>
+          <mat-cell *matCellDef="let mOpt">
+            <a class="capitalize">
+              {{mOpt.matchType}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="weight">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
+          <mat-cell *matCellDef="let mOpt">
+            <a>
+              {{mOpt.weight}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Other Column -->
+        <ng-container matColumnDef="other">
+          <mat-header-cell *matHeaderCellDef>Other</mat-header-cell>
+          <mat-cell *matCellDef="let mOpt">
+
+            <div *ngIf="mOpt.matchType === 'exact'">
+              <div>&nbsp;</div>
+            </div>
+            <div *ngIf="mOpt.matchType === 'reduce'">
+              <div>&nbsp;</div>
+            </div>
+            <div *ngIf="mOpt.matchType === 'synonym'">
+              <div>
+                <span class="otherLabel">Thesaurus:</span>
+                <a>{{truncate(mOpt.thesaurus, 40)}}</a>
+              </div>
+              <div>
+                <span class="otherLabel">Filter:</span>
+                <a>{{mOpt.filter}}</a>
+              </div>
+            </div>
+            <div *ngIf="mOpt.matchType === 'double metaphone'">
+              <div>
+                <span class="otherLabel">Dictionary:</span> <a>{{truncate(mOpt.dictionary, 40)}}</a>
+              </div>
+              <div>
+                <span class="otherLabel">Distance Threshold:</span>
+                <a>{{mOpt.distanceThreshold}}</a>
+              </div>
+              <div>
+                <span class="otherLabel">Collation:</span>
+                <a title="{{mOpt.collation}}">
+                  {{truncate(mOpt.collation, 40)}}
+                </a>
+              </div>
+            </div>
+            <div *ngIf="mOpt.matchType === 'custom'">
+              <div>
+                <span class="otherLabel">URI:</span>
+                <a>{{truncate(mOpt.customUri, 40)}}</a>
+              </div>
+              <div>
+                <span class="otherLabel">Function:</span>
+                <a>{{mOpt.customFunction}}</a>
+              </div>
+            </div>
+            <div *ngIf="mOpt.matchType === 'zip'">
+              <div>
+                <span class="otherLabel">5-matches-9 Boost:</span>
+                <a>{{mOpt.zip5match9}}</a>
+              </div>
+              <div>
+                <span class="otherLabel">9-matches-5 Weight:</span>
+                <a>{{mOpt.zip9match5}}</a>
+              </div>
+            </div>
+
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let mOpt; let i = index">
+            <mat-icon class="match-menu-icon" [matMenuTriggerFor]="matchMenu" [matMenuTriggerData]="{mOpt: mOpt, i: paginator.pageIndex * paginator.pageSize + i}"
+                      disableRipple>more_vert</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let mOpt; columns: displayedColumns;">
+        </mat-row>
+
+      </mat-table>
+
+      <mat-paginator #paginator
+                     [length]="matchOptions.length"
+                     [pageIndex]="0"
+                     [pageSize]="5"
+                     [pageSizeOptions]="[3, 5, 15, 30]">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+<mat-menu #matchMenu="matMenu">
+  <ng-template matMenuContent let-mOpt="mOpt" let-i="i">
+    <div mat-menu-item (click)="openMatchOptionDialog(mOpt, i)">Edit Settings {{index}}</div>
+    <div mat-menu-item (click)="openConfirmDialog(i)">Delete</div>
+  </ng-template>
+</mat-menu>

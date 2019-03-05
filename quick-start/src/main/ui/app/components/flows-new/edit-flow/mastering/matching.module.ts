@@ -6,6 +6,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {MatchingComponent} from './matching.component';
 import {MatchingUiComponent} from './ui/matching-ui.component';
+import {MatchOptionsUiComponent} from './ui/match-options-ui.component';
 
 import {AddMatchOptionDialogComponent} from './ui/add-match-option-dialog.component';
 
@@ -13,6 +14,7 @@ import {AddMatchOptionDialogComponent} from './ui/add-match-option-dialog.compon
   declarations: [
     MatchingComponent,
     MatchingUiComponent,
+    MatchOptionsUiComponent,
     AddMatchOptionDialogComponent
   ],
   imports     : [
