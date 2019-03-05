@@ -15,10 +15,13 @@
 */
 'use strict';
 
+const consts = require("/data-hub/5/impl/consts.sjs");
+
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const Flow = require("/data-hub/5/impl/flow.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
+const Perf = require("/data-hub/5/impl/perf.sjs");
 const Prov = require("/data-hub/5/impl/prov.sjs");
 const Debug = require("/data-hub/5/impl/debug.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
@@ -29,14 +32,23 @@ class DataHub {
   constructor(config = null){
     if(!config) {
       config = defaultConfig;
+    } else {
+      config = Object.assign({}, defaultConfig, config);
     }
     this.config = config;
-    this.hubUtils = new HubUtils(config);
-    this.flow = new Flow(config);
-    this.process = new Step(config);
-    this.jobs = new Jobs(config);
-    this.prov = new Prov(config);
+
+    this.consts = consts;
+
     this.debug = new Debug(config);
+    this.performance = new Perf(config, this);
+    this.hubUtils = new HubUtils(config, this);
+    this.flow = new Flow(config, null, this);
+    this.jobs = new Jobs(config, this);
+    this.prov = new Prov(config, this);
+    this.debug = new Debug(config, this);
+    if (this.performance.performanceMetricsOn()) {
+      this.performance.instrumentDataHub(this);
+    }
   }
   getConfig() {
     return this.hubUtils.getConfig();

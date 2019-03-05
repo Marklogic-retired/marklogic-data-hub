@@ -14,14 +14,13 @@
  limitations under the License.
  */
 'use strict';
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const json = require('/MarkLogic/json/json.xqy');
 
 class FlowUtils {
   constructor(config = null) {
     if (!config) {
-      config = defaultConfig;
+      config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
   }

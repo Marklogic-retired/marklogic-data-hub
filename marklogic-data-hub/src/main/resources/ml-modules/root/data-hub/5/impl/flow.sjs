@@ -14,32 +14,28 @@
   limitations under the License.
 */
 'use strict';
-
-const consts = require("/data-hub/5/impl/consts.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const Debug = require("/data-hub/5/impl/debug.sjs");
+const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
-const Jobs = require("/data-hub/5/impl/jobs.sjs");
-const Provenance = require("/data-hub/5/impl/prov.sjs");
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
+
 // define constants for caching expensive operations
 const cachedFlows = {};
 
 class Flow {
 
-  constructor(config = null, globalContext = null) {
+  constructor(config = null, globalContext = null, datahub = null) {
     if (!config) {
-      config = defaultConfig;
+      config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
-    this.consts = consts;
-    this.debug = new Debug(config);
-    this.flowUtils = new flowUtils(config);
-    this.hubUtils = new HubUtils(config);
-    this.step = new Step(config);
-    this.jobs = new Jobs(config);
-    this.prov = new Provenance(config);
+
+    if (!datahub) {
+      let DataHub = require("/data-hub/5/datahub.sjs");
+      datahub = new DataHub(config);
+    }
+    this.datahub = datahub;
+    this.step = new Step(config, datahub);
+    this.flowUtils = new FlowUtils(config);
+    this.consts = datahub.consts;
     this.writeQueue = {};
     if (!globalContext) {
       globalContext = {
@@ -127,15 +123,15 @@ class Flow {
   runFlow(flowName, jobId, uris, content = {}, options, stepNumber) {
     let flow = this.getFlow(flowName);
     if(!flow) {
-      this.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
+      this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
       throw Error('The flow with the name '+flowName+' could not be found.')
     }
     //set the flow in the context
     this.globalContext.flow = flow;
 
-    let jobDoc = this.jobs.getJobDocWithId(jobId);
+    let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
     if(!jobDoc){
-      jobDoc = this.jobs.createJob(flowName, jobId);
+      jobDoc = this.datahub.jobs.createJob(flowName, jobId);
     }
     if (jobDoc && jobDoc.job) {
       jobDoc = jobDoc.job;
@@ -155,10 +151,10 @@ class Flow {
 
     let step = this.globalContext.flow.steps[stepNumber];
     if(!step) {
-      this.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
+      this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')
     }
-    let batchDoc = this.jobs.createBatch(jobDoc.jobId, step, stepNumber);
+    let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, step, stepNumber);
     this.globalContext.batchId = batchDoc.batch.batchId;
 
     if(step.targetDb) {
@@ -169,10 +165,17 @@ class Flow {
     }
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, step.options, options);
+    //let stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    if (this.datahub.flow) {
+      //clone and remove flow to avoid circular references
+      this.datahub = this.datahub.hubUtils.cloneInstance(this.datahub);
+      delete this.datahub.flow;
+    }
+    let flowInstance = this;
     let stepResult = fn.head(
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        { globalContext: this.globalContext, uris, content, options: combinedOptions, flowName, step, stepNumber},
+        { flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber },
         { database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb): xdmp.database(), ignoreAmps: true }
       )
     );
@@ -185,7 +188,7 @@ class Flow {
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
       if (!combinedOptions.noWrite) {
-        this.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
+        this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
       for (let uri in this.writeQueue) {
         if (this.writeQueue.hasOwnProperty(uri)) {
@@ -195,13 +198,13 @@ class Flow {
             status: (flow.type === 'ingest') ? 'created' : 'updated',
             metadata: {}
           };
-          this.prov.createStepRecord(jobId, flowName, step.type, uri, info);
+          this.datahub.prov.createStepRecord(jobId, flowName, step.type, uri, info);
         }
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
-      this.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
+      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
     } else {
-      this.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
+      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
     let resp =
@@ -217,6 +220,9 @@ class Flow {
     if (combinedOptions.fullOutput == 'true') {
       resp["documents"] = this.writeQueue;
     }
+    if (this.datahub.performance.performanceMetricsOn()) {
+      resp.performanceMetrics = this.datahub.performance.stepMetrics;
+    }
     return resp;
   }
 
@@ -226,7 +232,7 @@ class Flow {
     let processor = flowInstance.step.getStepProcessor(flowInstance, step.name, step.type);
     if(!(processor && processor.run)) {
       let errorMsq = `Could not find main() function for process ${step.type}/${step.name} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
-      flowInstance.debug.log({message: errorMsq, type: 'error'});
+      flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});
       throw Error(errorMsq);
     }
 
@@ -237,7 +243,7 @@ class Flow {
       if (hook && hook.module) {
         let parameters = Object.assign({uris}, processor.customHook.parameters);
         hookOperation = function () {
-          flowInstance.hubUtils.invoke(
+          flowInstance.datahub.hubUtils.invoke(
             hook.module,
             parameters,
             hook.user || xdmp.getCurrentUser(),
@@ -249,9 +255,11 @@ class Flow {
         hookOperation();
       }
       for (let uri of uris) {
+        flowInstance.globalContext.uri = uri;
         let result = flowInstance.runMain(uri, content[uri], combinedOptions, processor.run);
         flowInstance.addToWriteQueue(uri, result, flowInstance.globalContext);
       }
+      flowInstance.globalContext.uri = null;
       if (hook && !hook.runBefore) {
         hookOperation();
       }
@@ -267,7 +275,7 @@ class Flow {
         "retryable": e.retryable,
         "stackFrames": e.stackFrames
       });
-      flowInstance.debug.log({message: `Error running step: ${e.toString()}.`, type: 'error'});
+      flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}.`, type: 'error'});
  //     xdmp.rollback();
       return flowInstance.globalContext.batchErrors;
     }

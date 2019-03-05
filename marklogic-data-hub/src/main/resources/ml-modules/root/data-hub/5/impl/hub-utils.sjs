@@ -14,13 +14,12 @@
   limitations under the License.
 */
 'use strict';
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
 const cachedModules = {};
 
 class HubUtils {
   constructor(config = null) {
     if(!config) {
-      config = defaultConfig;
+      config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
   }
@@ -135,6 +134,16 @@ class HubUtils {
     } else {
       return [value];
     }
+  }
+
+  cloneInstance(instance) {
+     let prototype = Object.getPrototypeOf(instance);
+     let keys = Object.getOwnPropertyNames(instance).concat(Object.getOwnPropertyNames(prototype));
+     let newInstance = {};
+     for (let key of keys) {
+       newInstance[key] = instance[key];
+     }
+     return newInstance;
   }
  
 }
