@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>{{getDialogTitle()}}</h1>
+<div mat-dialog-content [formGroup]="form" class="content">
+  <mat-form-field layout-fill>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="label"/>
+  </mat-form-field>
+  <mat-form-field layout-fill>
+    <mat-label>Weight</mat-label>
+    <input matInput formControlName="above"/>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Action" formControlName="action">
+      <mat-option value="merge">Merge</mat-option>
+      <mat-option value="notify">Notify</mat-option>
+      <mat-option value="custom">Custom</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- <div *ngIf="getMatchType() === 'synonym'">
+    <mat-form-field layout-fill>
+      <mat-label>Thesaurus URI</mat-label>
+      <input matInput formControlName="thesaurus"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Filter</mat-label>
+      <input matInput formControlName="filter"/>
+    </mat-form-field>
+  </div> -->
+
+</div>
+<mat-dialog-actions class="bottom">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+</mat-dialog-actions>
