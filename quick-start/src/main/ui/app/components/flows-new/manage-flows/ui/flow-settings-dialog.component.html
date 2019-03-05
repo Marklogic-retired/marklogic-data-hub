@@ -32,7 +32,7 @@
     </button>
     <div
       formArrayName="options"
-      *ngFor="let option of form.get('options').controls; let i = index;">
+      *ngFor="let option of this.options.controls; let i = index;">
       <div [formGroupName]="i" class="key-value-group">
         <mat-form-field>
           <mat-label>Key</mat-label>

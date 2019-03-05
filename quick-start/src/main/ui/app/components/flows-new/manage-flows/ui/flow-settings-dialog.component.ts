@@ -13,6 +13,7 @@ import {forOwn, forEach} from 'lodash';
 export class FlowSettingsDialogComponent implements OnInit {
 
   form: FormGroup;
+  options: FormArray;
 
   constructor(
     private fb: FormBuilder,
@@ -28,6 +29,7 @@ export class FlowSettingsDialogComponent implements OnInit {
       threadCount: [this.data.flow ? this.data.flow.threadCount : 4, CustomFieldValidator.number({min: 1})]
     });
     this.form.setControl('options', this.createOptions());
+    this.options = this.form.get('options') as FormArray;
   }
 
   onCancel(): void {
