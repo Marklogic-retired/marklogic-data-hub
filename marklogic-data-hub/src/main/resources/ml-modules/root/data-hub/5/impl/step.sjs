@@ -15,17 +15,22 @@
 */
 'use strict';
 
-const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
-
 class Step {
 
-  constructor(config = null) {
+  constructor(config = null, datahub = null) {
     if(!config) {
-      config = defaultConfig;
+      config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
-    this.hubUtils= new HubUtils(config);
+    if (!datahub) {
+      const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+      this.hubUtils = new HubUtils(config);
+      const Perf = require("/data-hub/5/impl/perf.sjs");
+      this.performance = new Perf(config);
+    } else {
+      this.hubUtils = datahub.hubUtils;
+      this.performance = datahub.performance;
+    }
     this.stepTypes = ['ingest', 'mapping', 'custom'];
   }
 
@@ -100,6 +105,9 @@ class Step {
   makeFunction(flow, funcName, moduleUri) {
     let stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
     stepModule.flow = flow;
+    if (this.performance.performanceMetricsOn())  {
+      return this.performance.instrumentStep(stepModule, stepModule[funcName], flow.globalContext.jobId, flow.globalContext.batchId, flow.globalContext.flow.name, moduleUri, flow.globalContext.uri);
+    }
     return stepModule[funcName];
   };
 

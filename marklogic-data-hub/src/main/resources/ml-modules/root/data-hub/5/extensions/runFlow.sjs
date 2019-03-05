@@ -15,7 +15,6 @@
  */
 'use strict';
 const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
 
 //todo flush this out
 function get(context, params) {
@@ -29,6 +28,7 @@ function post(context, params, input) {
     fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   } else {
     let options = params["options"] ? JSON.parse(params["options"]) : {};
+    const datahub = new DataHub({ performanceMetrics: !!options.performanceMetrics });
     let jobId = params["job-id"];
     let flow = datahub.flow.getFlow(flowName);
     let targetDatabase = params["target-database"] ? xdmp.database(params["target-database"]) : xdmp.database(datahub.config.FINALDATABASE);
