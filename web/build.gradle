@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
 	id 'java'
     id 'eclipse'
     id 'idea'
@@ -17,6 +17,11 @@ repositories {
 
 dependencies {
     compile project(":marklogic-data-hub")
+    // Needed for the Upload feature using mlcp
+    compile("com.marklogic:mlcp:9.0.8") {
+        exclude group: 'org.apache.avro', module: 'avro-tools'
+    }
+    implementation 'com.marklogic:marklogic-spring-web:1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
