@@ -18,5 +18,9 @@ module.exports = {
   JAVASCRIPT: "sjs",
   XML: "xml",
   JSON: "json",
-  DEFAULT_FORMAT: "json"
+  DEFAULT_FORMAT: "json",
+
+  //fields that can be valuated at runtime
+  CURRENT_DATE_TIME: "currentDateTime",
+  CURRENT_USER: "currentUser"
 };

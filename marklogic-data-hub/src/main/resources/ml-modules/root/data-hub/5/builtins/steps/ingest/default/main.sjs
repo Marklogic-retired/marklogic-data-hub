@@ -8,16 +8,12 @@ function main(id, content, options) {
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
-  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
-    datahub.debug.log({
-      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',
-      type: 'error'
-    });
-    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
+  if(outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
+    var errMsg = 'The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.';
+    datahub.flow.debug.log({message: errMsg, type: 'error'});
+    throw Error(errMsg);
   }
-
   //TODO: make this work with xml, json, AND binary data coming in, for now it's just json
-
   let instance = content;
 
   let triples = [];
@@ -27,11 +23,23 @@ function main(id, content, options) {
     }
   }
 
-  let headers = {};
-
+  let headers = createHeaders(id, content, options);
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   return envelope;
+}
+
+function createHeaders(id, content, options) {
+  let headers = {};
+  for (let key in options.headers) {
+    headers[key] = options.headers[key];
+    if (headers[key] == datahub.flow.consts.CURRENT_DATE_TIME) {
+      headers[key] = fn.currentDateTime;
+    } else if (headers[key] == datahub.flow.consts.CURRENT_USER) {
+      headers[key] = xdmp.getCurrentUser();
+    }
+  }
+  return headers;
 }
 
 module.exports = {
