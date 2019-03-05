@@ -217,8 +217,8 @@ class Flow {
       "failedItems": this.globalContext.batchErrors.length ? uris: [],
       "errors": this.globalContext.batchErrors
     };
-    if (combinedOptions.fullOutput == 'true') {
-      resp["documents"] = this.writeQueue;
+    if (combinedOptions.fullOutput) {
+      resp.documents = this.writeQueue;
     }
     if (this.datahub.performance.performanceMetricsOn()) {
       resp.performanceMetrics = this.datahub.performance.stepMetrics;
