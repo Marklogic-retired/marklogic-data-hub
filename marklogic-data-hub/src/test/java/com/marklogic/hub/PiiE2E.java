@@ -108,6 +108,7 @@ public class PiiE2E extends HubTestBase
     public void setup()
     {
         Assumptions.assumeTrue(!(isCertAuth() || isSslRun()));
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         installHubModules();
         installUserModules(getHubAdminConfig(), true);

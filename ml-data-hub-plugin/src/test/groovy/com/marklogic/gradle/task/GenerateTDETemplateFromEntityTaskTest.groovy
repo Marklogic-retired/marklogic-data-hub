@@ -3,6 +3,7 @@ package com.marklogic.gradle.task
 import com.marklogic.hub.HubConfig
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
+import spock.lang.IgnoreIf
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -16,6 +17,7 @@ class GenerateTDETemplateFromEntityTaskTest extends BaseTest {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
+    @IgnoreIf({ System.getProperty('mlIsProvisionedEnvironment') })
     def "GenerateTDETEmplates"() {
         given:
         def pluginDir = Paths.get(hubConfig().hubProject.projectDirString).resolve("plugins")
