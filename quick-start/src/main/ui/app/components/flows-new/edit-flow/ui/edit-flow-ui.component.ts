@@ -91,6 +91,7 @@ export class EditFlowUiComponent {
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
         // TODO Redeploy endpoint
+        console.log('redeploy');
       }
     });
   }
