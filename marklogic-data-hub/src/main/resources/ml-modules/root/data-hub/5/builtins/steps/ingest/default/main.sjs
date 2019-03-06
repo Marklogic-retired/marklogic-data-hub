@@ -23,21 +23,17 @@ function main(id, content, options) {
     }
   }
 
-  let headers = createHeaders(id, content, options);
+  let headers = createHeaders(options);
+
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   return envelope;
 }
 
-function createHeaders(id, content, options) {
+function createHeaders(options) {
   let headers = {};
   for (let key in options.headers) {
-    headers[key] = options.headers[key];
-    if (headers[key] == datahub.flow.consts.CURRENT_DATE_TIME) {
-      headers[key] = fn.currentDateTime;
-    } else if (headers[key] == datahub.flow.consts.CURRENT_USER) {
-      headers[key] = xdmp.getCurrentUser();
-    }
+    headers[key] = datahub.hubUtils.evalVal(options.headers[key]);
   }
   return headers;
 }
