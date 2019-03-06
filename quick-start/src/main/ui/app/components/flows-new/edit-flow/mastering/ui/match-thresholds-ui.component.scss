@@ -6,7 +6,7 @@
   margin-bottom: 40px;
 }
 
-.otherLabel {
+.actionLabel {
   display: inline-block;
   width: 160px;
 }
@@ -106,19 +106,15 @@ button {
     align-items: center;
   }
 
-  .mat-column-propertyName {
-    flex: 0 1 200px;
-  }
-
-  .mat-column-matchType {
+  /* .mat-column-label {
     flex: 0 1 180px;
   }
 
-  .mat-column-weight {
+  .mat-column-above {
     flex: 0 1 100px;
-  }
+  } */
 
-  .mat-column-other {
+  .mat-column-action {
     flex: 0 1 480px;
   }
 

@@ -11,6 +11,12 @@
   width: 160px;
 }
 
+.otherContent {
+  width: 480px;
+  min-width: 480px;
+  max-width: 480px;
+}
+
 $header-height: 80px !default;
 
 button {
@@ -122,9 +128,9 @@ button {
     flex: 0 1 480px;
   }
 
-  /* .mat-column-actions {
+  .mat-column-actions {
     flex: 0 1 80px;
-  } */
+  }
 
   .mat-header-cell .mat-icon {
     cursor: pointer;

@@ -9,24 +9,20 @@
     <input matInput formControlName="above"/>
   </mat-form-field>
   <mat-form-field>
-    <mat-select placeholder="Action" formControlName="action">
+    <mat-select placeholder="Action" formControlName="action" [(value)]="selectedAction">
       <mat-option value="merge">Merge</mat-option>
       <mat-option value="notify">Notify</mat-option>
       <mat-option value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
-
-  <!-- <div *ngIf="getMatchType() === 'synonym'">
-    <mat-form-field layout-fill>
-      <mat-label>Thesaurus URI</mat-label>
-      <input matInput formControlName="thesaurus"/>
-    </mat-form-field>
-    <mat-form-field layout-fill>
-      <mat-label>Filter</mat-label>
-      <input matInput formControlName="filter"/>
-    </mat-form-field>
-  </div> -->
-
+  <mat-form-field *ngIf="selectedAction === 'custom'" layout-fill>
+    <mat-label>URI</mat-label>
+    <input matInput formControlName="customUri"/>
+  </mat-form-field>
+  <mat-form-field *ngIf="selectedAction === 'custom'" layout-fill>
+    <mat-label>Function</mat-label>
+    <input matInput formControlName="customFunction"/>
+  </mat-form-field>
 </div>
 <mat-dialog-actions class="bottom">
   <button mat-button (click)="onCancel()">Cancel</button>

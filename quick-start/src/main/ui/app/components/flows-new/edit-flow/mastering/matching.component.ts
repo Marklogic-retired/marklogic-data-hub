@@ -48,7 +48,7 @@ export class MatchingComponent implements OnInit {
     this.matchOptions = MatchOptions.fromMatching(matching);
     console.log(this.matchOptions);
 
-    this.matchThresholds = MatchThresholds.fromJSON(matching);
+    this.matchThresholds = MatchThresholds.fromMatching(matching);
     console.log(this.matchThresholds);
   }
 

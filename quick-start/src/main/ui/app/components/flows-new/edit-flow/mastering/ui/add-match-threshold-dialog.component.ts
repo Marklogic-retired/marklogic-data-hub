@@ -17,6 +17,7 @@ export interface DialogData {
 export class AddMatchThresholdDialogComponent {
 
   form: FormGroup;
+  selectedAction: string;
 
   constructor(
     private fb: FormBuilder,
@@ -26,11 +27,14 @@ export class AddMatchThresholdDialogComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      label: [this.data.option ? this.data.option.label : '', Validators.required],
+      label: [this.data.option ? this.data.option.label : ''],
       above: [this.data.option ? this.data.option.above : ''],
       action: [this.data.option ? this.data.option.action : ''],
+      customUri: [this.data.option ? this.data.option.customUri : ''],
+      customFunction: [this.data.option ? this.data.option.customFunction : ''],
       index: this.data.index
     })
+    this.selectedAction = this.data.option.action;
   }
 
   onNoClick(): void {
@@ -50,7 +54,6 @@ export class AddMatchThresholdDialogComponent {
   }
 
   onSave() {
-    console.log('onSave', this.form);
     this.dialogRef.close(this.form.value);
   }
 

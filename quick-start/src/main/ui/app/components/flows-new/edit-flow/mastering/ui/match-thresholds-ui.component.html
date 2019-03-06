@@ -27,7 +27,7 @@
       <mat-table class="matching-table"
                  #table [dataSource]="dataSource" matSort>
 
-        <!-- Property to Match Column -->
+        <!-- Threshold Name Column -->
         <ng-container matColumnDef="label">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Threshold Name</mat-header-cell>
           <mat-cell *matCellDef="let mThr">
@@ -37,7 +37,7 @@
           </mat-cell>
         </ng-container>
 
-        <!-- Match Type Column -->
+        <!-- Weight Column -->
         <ng-container matColumnDef="above">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
           <mat-cell *matCellDef="let mThr">
@@ -47,13 +47,25 @@
           </mat-cell>
         </ng-container>
 
-        <!-- Weight Column -->
+        <!-- Action Column -->
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
           <mat-cell *matCellDef="let mThr">
-            <a class="capitalize">
-              {{mThr.action}}
-            </a>
+            <div *ngIf="mThr.action !== 'custom'">
+              <a class="capitalize">
+                {{mThr.action}}
+              </a>
+            </div>
+            <div *ngIf="mThr.action === 'custom'">
+              <div>
+                <span class="actionLabel">URI:</span>
+                <a>{{mThr.customUri}}</a>
+              </div>
+              <div>
+                <span class="actionLabel">Function:</span>
+                <a>{{mThr.customFunction}}</a>
+              </div>
+            </div>
           </mat-cell>
         </ng-container>
 
@@ -75,7 +87,7 @@
       <mat-paginator #paginator
                      [length]="matchThresholds.length"
                      [pageIndex]="0"
-                     [pageSize]="5"
+                     [pageSize]="15"
                      [pageSizeOptions]="[3, 5, 15, 30]">
       </mat-paginator>
 
@@ -85,7 +97,7 @@
 
 <mat-menu #matchMenu="matMenu">
   <ng-template matMenuContent let-mThr="mThr" let-i="i">
-    <div mat-menu-item (click)="openMatchThresholdDialog(mThr, i)">Edit Settings {{index}}</div>
+    <div mat-menu-item (click)="openMatchThresholdDialog(mThr, i)">Edit Settings</div>
     <div mat-menu-item (click)="openConfirmDialog(i)">Delete</div>
   </ng-template>
 </mat-menu>
