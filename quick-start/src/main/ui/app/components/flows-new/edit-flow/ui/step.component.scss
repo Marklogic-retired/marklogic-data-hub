@@ -66,3 +66,7 @@ button {
 .custom {
   background: $color-custom;
 }
+
+mat-icon {
+  user-select: none;
+}

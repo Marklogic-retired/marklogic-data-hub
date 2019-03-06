@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>New Step</h1>
+<h1 mat-dialog-title>{{data.title}}</h1>
 <div mat-dialog-content class="content">
   <mat-form-field>
     <mat-select class="type-select" placeholder="Step Type" [(value)]="newStep.type">
@@ -21,13 +21,20 @@
   </div>
   <!-- TODO: Add Source Collection Information -->
   <mat-form-field *ngIf="selectedSource === 'collection'">
-    <mat-select class="type-select" placeholder="Source Collection" >
+    <mat-select class="type-select" placeholder="Source Collection">
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field *ngIf="selectedSource === 'query'" >
-      <textarea matInput placeholder="Source Query" [(ngModel)]="newStep.sourceQuery"></textarea>
-    </mat-form-field>
+    <textarea matInput placeholder="Source Query" [(ngModel)]="newStep.sourceQuery"></textarea>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select class="" placeholder="Target Entity" [(value)]="newStep.targetEntity">
+      <mat-option class="" *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
   <mat-accordion>
     <mat-expansion-panel>
       <mat-expansion-panel-header>

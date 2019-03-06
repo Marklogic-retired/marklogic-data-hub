@@ -14,7 +14,6 @@ import { RunFlowDialogComponent } from './ui/run-flow-dialog.component';
 import { StepComponent } from './ui/step.component';
 import { StepperComponent } from './ui/stepper.component';
 
-
 @NgModule({
   declarations: [
     EditFlowComponent,

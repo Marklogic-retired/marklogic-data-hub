@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
@@ -16,6 +16,9 @@ export class EditFlowUiComponent {
 
   @Input() flow: Flow;
   @Input() databases: any;
+  @Input() entities: any;
+  @Output() saveFlow = new EventEmitter();
+  @Output() deleteFlow = new EventEmitter();
   newFlow: Flow;
 
   constructor(
@@ -25,13 +28,15 @@ export class EditFlowUiComponent {
   openStepDialog(): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
-      data: {databases: this.databases}
+      data: {title: 'New Step', databases: this.databases, entities: this.entities, step: null}
     });
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        // TODO Add Step to backend
+        // TODO when adding step, need endpoint to generate step id
         this.flow.steps.push(response);
+        console.log('flow after adding step', this.flow);
+        this.saveFlow.emit(this.flow);
       }
     });
   }
@@ -42,6 +47,7 @@ export class EditFlowUiComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      // TODO add run all option and interface to backend
       console.log('The run dialog was closed');
     });
   }
@@ -54,24 +60,25 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        // TODO Delete from backend and remove by step id
+        // TODO remove by step id
         const index = this.flow.steps.findIndex(object => object.name === step.name);
         this.flow.steps.splice(index, 1);
+        this.saveFlow.emit(this.flow);
       }
     });
   }
-  openFlowSettingsDialog(flowToEdit: Flow): void {
+  openFlowSettingsDialog(): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
-      data: {flow: flowToEdit}
+      data: {flow: this.flow}
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (!!result) {
-        if (flowToEdit) {
-          // this.saveFlow.emit(result);
-        }else{
-          // this.createFlow.emit(result);
-        }
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.flow.name = response.name;
+        this.flow.description = response.description;
+        this.flow.batchSize = response.batchSize;
+        this.flow.threadCount = response.threadCount;
+        this.saveFlow.emit(this.flow);
       }
     });
   }
@@ -83,7 +90,7 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-
+        // TODO Redeploy endpoint
       }
     });
   }
@@ -95,8 +102,17 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-
+        this.deleteFlow.emit(this.flow.flowId);
       }
     });
+  }
+  updateFlow(): void {
+    this.saveFlow.emit(this.flow);
+  }
+  updateStep(step): void {
+    // TODO update by step id
+    const index = this.flow.steps.findIndex(object => object.name === step.name);
+    this.flow.steps[index] = step;
+    this.saveFlow.emit(this.flow);
   }
 }

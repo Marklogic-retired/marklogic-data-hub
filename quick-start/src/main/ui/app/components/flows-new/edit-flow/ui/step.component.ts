@@ -10,6 +10,7 @@ import { NewStepDialogComponent } from './new-step-dialog.component';
 export class StepComponent {
   @Input() step: any;
   @Input() databases: any;
+  @Output() updateStep = new EventEmitter();
 
   showBody = true;
   constructor(
@@ -21,13 +22,12 @@ export class StepComponent {
   editSettingsClicked() {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
-      data: {databases: this.databases}
+      data: {title: 'Edit Step', databases: this.databases, step: this.step}
     });
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        // TODO Add Step to backend
-        // this.flow.steps.push(response);
+        this.updateStep.emit(response);
       }
     });
   }

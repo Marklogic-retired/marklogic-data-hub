@@ -4,7 +4,10 @@ import { EditFlowUiComponent } from './edit-flow-ui.component';
 import { Step } from '../../models/step.model';
 
 export interface DialogData {
+  title: string;
   databases: any;
+  entities: any;
+  step: any;
 }
 
 @Component({
@@ -12,7 +15,7 @@ export interface DialogData {
   templateUrl: './new-step-dialog.component.html',
   styleUrls: ['./new-step-dialog.component.scss'],
 })
-export class NewStepDialogComponent {
+export class NewStepDialogComponent implements OnInit {
   public newStep: Step = new Step;
   readonly stepOptions = ['ingestion', 'mapping', 'mastering', 'custom'];
   selectedSource: string = '';
@@ -21,6 +24,11 @@ export class NewStepDialogComponent {
     public dialogRef: MatDialogRef<EditFlowUiComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
+  ngOnInit() {
+    if (this.data.step) {
+      this.newStep = this.data.step;
+    }
+  }
   onNoClick(): void {
     this.dialogRef.close(false);
   }
