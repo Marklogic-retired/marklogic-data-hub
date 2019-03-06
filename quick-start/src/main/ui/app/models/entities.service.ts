@@ -51,6 +51,15 @@ export class EntitiesService {
     });
   }
 
+  getAllEntities() {
+    return this.http.get(this.url('/entities/')).pipe(map((res: Response) => {
+      const entities: Array<any> = res.json();
+      return entities.map((entity) => {
+        return new Entity().fromJSON(entity);
+      });
+    }));
+  }
+
   // getEntity(entityName: string) {
   //   return this.get(this.url(`/entities/${entityName}`));
   // }

@@ -3,6 +3,8 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Flow } from "../models/flow.model";
 import { ProjectService } from '../../../services/projects';
 import { ManageFlowsService } from "../services/manage-flows.service";
+import { EntitiesService } from '../../../models/entities.service';
+import { Entity } from '../../../models/entity.model';
 
 @Component({
   selector: 'app-edit-flow',
@@ -10,6 +12,9 @@ import { ManageFlowsService } from "../services/manage-flows.service";
   <app-edit-flow-ui
     [flow]="flow"
     [databases]="databases"
+    [entities]="entities"
+    (saveFlow)="saveFlow($event)"
+    (deleteFlow)="deleteFlow($event)"
   ></app-edit-flow-ui>
 `
 })
@@ -18,16 +23,19 @@ export class EditFlowComponent implements OnInit {
   flows: any;
   flow: Flow;
   databases: string[] = [];
+  entities: Array<Entity> = new Array<Entity>();
 
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
+   private entitiesService: EntitiesService,
    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.getFlow();
     this.getDbInfo();
+    this.getEntities();
   }
   getFlow() {
     this.flows = this.manageFlowsService.flows;
@@ -48,6 +56,21 @@ export class EditFlowComponent implements OnInit {
       this.databases.push(stats.finalDb);
       this.databases.push(stats.jobDb);
       this.databases.push(stats.stagingDb);
+    });
+  }
+  getEntities() {
+    this.entitiesService.getAllEntities().subscribe( resp => {
+      this.entities = resp;
+    });
+  }
+  saveFlow(flow): void {
+    this.manageFlowsService.saveFlow(flow).subscribe(resp => {
+      console.log('save response', resp);
+    });
+  }
+  deleteFlow(flowId): void {
+    this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
+      console.log('delete response', resp);
     });
   }
 }

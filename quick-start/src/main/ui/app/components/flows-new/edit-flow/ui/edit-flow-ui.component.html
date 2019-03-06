@@ -4,11 +4,12 @@
   [flow]="flow"
   (newStep)="openStepDialog()" 
   (run)="openRunDialog(flow)" 
-  (delete)="deleteStepDialog($event)"
+  (deleteStep)="deleteStepDialog($event)"
   (editFlow)="openFlowSettingsDialog()" 
   (redeploy)="redeployDialog()" 
-  (deleteFlow)="deleteFlowDialog()">
+  (deleteFlow)="deleteFlowDialog()"
+  (updateFlow)="updateFlow()">
   <cdk-step *ngFor="let step of flow.steps; let i = index" label="{{flow.steps[i].name}}">
-    <app-step [step]="step" [databases]="databases"></app-step>
+    <app-step [step]="step" [databases]="databases" (updateStep)="updateStep($event)"></app-step>
   </cdk-step>
 </app-stepper>

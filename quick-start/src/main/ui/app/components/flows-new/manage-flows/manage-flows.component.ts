@@ -2,6 +2,7 @@ import {Component, ViewChild} from "@angular/core";
 import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
+import { ResponseType } from '@angular/http';
 
 @Component({
   selector: 'flows-page',
