@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{getDialogTitle()}}</h1>
 <div mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field>
-    <mat-select placeholder="Match Type" formControlName="matchType">
+    <mat-select placeholder="Match Type" formControlName="matchType" [(value)]="selectedType">
       <mat-option value="exact">Exact</mat-option>
       <mat-option value="synonym">Synonym</mat-option>
       <mat-option value="double metaphone">Double Metaphone</mat-option>
@@ -13,12 +13,13 @@
     <mat-label>Property to Match</mat-label>
     <input matInput formControlName="propertyName"/>
   </mat-form-field>
-  <mat-form-field layout-fill>
+
+  <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
     <input matInput formControlName="weight"/>
   </mat-form-field>
 
-  <div *ngIf="getMatchType() === 'synonym'">
+  <div *ngIf="selectedType === 'synonym'">
     <mat-form-field layout-fill>
       <mat-label>Thesaurus URI</mat-label>
       <input matInput formControlName="thesaurus"/>
@@ -29,7 +30,7 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="getMatchType() === 'double metaphone'">
+  <div *ngIf="selectedType === 'double metaphone'">
     <mat-form-field layout-fill>
       <mat-label>Dictionary URI</mat-label>
       <input matInput formControlName="dictionary"/>
@@ -44,7 +45,7 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="getMatchType() === 'zip'">
+  <div *ngIf="selectedType === 'zip'">
     <mat-form-field layout-fill>
       <mat-label>5-matches-9 Boost</mat-label>
       <input matInput formControlName="zip5match9"/>
@@ -55,7 +56,7 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="getMatchType() === 'custom'">
+  <div *ngIf="selectedType === 'custom'">
     <mat-form-field layout-fill>
       <mat-label>URI</mat-label>
       <input matInput formControlName="customUri"/>
