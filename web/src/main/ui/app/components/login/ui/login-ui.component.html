@@ -1,0 +1,384 @@
+<div class="credentials-prompt">
+  <div class="marklogic-logo" id="mla-marklogic-logo">
+    <img src="/img/logo.svg">
+  </div>
+  <div class="login-wrapper" layout="row" layout-align="center start">
+    <section layout="column" layout-align="center center" class="left-pane">
+      <h1 id="mla-loginPage-Text">Data Hub QuickStart</h1>
+      <img class="odh-icon" src="/img/odh.svg">
+      <section flex layout-padding class="install-status" *ngIf="installationStatus">
+        <pre>{{installationStatus}}</pre>
+      </section>
+
+    </section>
+    <div flex></div>
+    <div class="tab-group">
+      <div id="ProjectDirTab" class="tab-content" [hidden]="!tabs.ProjectDir">
+        <section class="init-box" layout="column" layout-align="center center">
+          <div class="project-browser" layout="column" layout-align="center center" *ngIf="projects && projects.length > 0">
+            <h3>Choose an existing project</h3>
+            <div class="shrinkable shrinky" [ngClass]="{'collapsed': !showFolderBrowser}" layout="column" layout-align="center center">
+              <button type="button" mdl-button (click)="showFolderBrowser = !showFolderBrowser">Choose</button>
+            </div>
+            <app-select-list
+              class="shrinky project-list"
+              [ngClass]="{'collapsed': showFolderBrowser}"
+              [items]="projects"
+              [initialSelectedItem]="lastProject"
+              [allowRemove]="true"
+              (selectedItem)="this.onProjectSelected.emit($event)"
+              (removedItem)="this.onRemoveProject.emit($event.item)"
+              label="path" identifier="id"
+              md-whiteframe-2dp></app-select-list>
+            <p>or</p>
+          </div>
+
+          <div layout="column">
+            <h3>Browse for a Project Folder</h3>
+            <div class="shrinkable shrinky" [ngClass]="{'collapsed': showFolderBrowser}" layout="column" layout-align="center center">
+              <button type="button" mdl-button (click)="this.clickShowFolderBrowser()" class="shrink-me">Browse</button>
+            </div>
+
+            <ng-content select=".app-folder-browser" *ngIf="showFolderBrowser"></ng-content>
+
+          </div>
+
+          <div layout="row" layout-align="end center" class="init-buttons">
+            <button type="button" mdl-button mdl-button-type="raised" (click)="onChooseProject.emit()" >Next</button>
+          </div>
+        </section>
+      </div>
+
+
+      <div id="InitIfNeededTab" class="tab-content" [hidden]="!tabs.InitIfNeeded">
+        <section layout="row" layout-align="center center" *ngIf="currentProject">
+          <section class="init-box" flex layout="column" layout-align="center center">
+            <h3>This project needs to be initialized</h3>
+            <p>The project located at {{currentProject.path}} needs to be initialized.</p>
+
+            <form class="initForm" (submit)="onInitProject.emit()">
+              <div flex layout="column" class="scroller">
+                <div class="sub-section">
+                  <mdl-textfield floating-label label="DataHub Name" type="text" name="name" [(ngModel)]="initSettings.name" (input)="onHubNameChanged.emit()"  required="required"></mdl-textfield>
+                  <mdl-textfield floating-label label="MarkLogic Host" type="text" name="host" [(ngModel)]="initSettings.host" required="required"></mdl-textfield>
+                </div>
+                <div class="sub-section advanced-section">
+                  <button id="advanced-toggler" type="button" mdl-button (click)="showInitAdvanced = !showInitAdvanced">
+                    Advanced Settings
+                    <i class="fa fa-caret-right" [ngClass]="showInitAdvanced ? '' : 'collapsed'"></i>
+                  </button>
+                </div>
+                <div class="advanced shrinky" [ngClass]="{'collapsed': !showInitAdvanced}">
+                  <h3 class="md-primary">Staging</h3>
+                  <section class="sub-section" layout="column">
+                    <mdl-textfield floating-label label="Staging Appserver Name" type="text" name="stagingHttpName" [(ngModel)]="initSettings.stagingHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Appserver Port" type="number" name="stagingPort" [(ngModel)]="initSettings.stagingPort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Database Name" type="text" name="stagingDbName" [(ngModel)]="initSettings.stagingDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Triggers Database Name" type="text" name="stagingTriggersDbName" [(ngModel)]="initSettings.stagingTriggersDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Schemas Database Name" type="text" name="stagingSchemasDbName" [(ngModel)]="initSettings.stagingSchemasDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Staging Forests Per Host" type="number" name="stagingForestsPerHost" [(ngModel)]="initSettings.stagingForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="digest">digest</mdl-radio>
+                      &nbsp;&nbsp;<mdl-radio name="stagingAuthMethod" [(ngModel)]="initSettings.stagingAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
+                  </section>
+                  <h3 class="md-primary">Final</h3>
+                  <section class="sub-section" layout="column">
+                    <mdl-textfield floating-label label="Final Appserver Name" type="text" name="finalHttpName" [(ngModel)]="initSettings.finalHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Appserver Port" type="number" name="finalPort" [(ngModel)]="initSettings.finalPort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Database Name" type="text" name="finalDbName" [(ngModel)]="initSettings.finalDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Triggers Database Name" type="text" name="finalTriggersDbName" [(ngModel)]="initSettings.finalTriggersDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Schemas Database Name" type="text" name="finalSchemasDbName" [(ngModel)]="initSettings.finalSchemasDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Final Forests Per Host" type="number" name="finalForestsPerHost" [(ngModel)]="initSettings.finalForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="digest">digest</mdl-radio>
+                      &nbsp;&nbsp;<mdl-radio name="finalAuthMethod" [(ngModel)]="initSettings.finalAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
+                  </section>
+                  <h3 class="md-primary">Job</h3>
+                  <section class="sub-section" layout="column">
+                    <mdl-textfield floating-label label="Job Appserver Name" type="text" name="jobHttpName" [(ngModel)]="initSettings.jobHttpName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Job Appserver Port" type="number" name="jobPort" [(ngModel)]="initSettings.jobPort" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Job Database Name" type="text" name="jobDbName" [(ngModel)]="initSettings.jobDbName" required="required"></mdl-textfield>
+                    <mdl-textfield floating-label label="Job Forests Per Host" type="number" name="jobForestsPerHost" [(ngModel)]="initSettings.jobForestsPerHost" required="required"></mdl-textfield>
+                    <div class="auth">
+                      <div><label>Authentication Method</label></div>
+                      <mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="digest">digest</mdl-radio>
+                      &nbsp;&nbsp;<mdl-radio name="jobAuthMethod" [(ngModel)]="initSettings.jobAuthMethod" value="basic">basic</mdl-radio>
+                    </div>
+                  </section>
+                  <h3 class="md-primary">Other</h3>
+                  <section class="sub-section" layout="column">
+                    <mdl-textfield floating-label label="Modules Database Name" type="text" name="modulesDbName" [(ngModel)]="initSettings.modulesDbName" required="required"></mdl-textfield>
+                  </section>
+                </div>
+              </div>
+              <div layout="row" layout-align="end center" class="init-buttons">
+                <button type="button" mdl-button (click)="back()">&lt; Back</button>
+                <button
+                  type="button"
+                  mdl-button
+                  (click)="this.onRestoreInitDefaults.emit()">Restore Defaults</button>
+                <button type="submit" mdl-button mdl-button-type="raised">Initialize</button>
+              </div>
+            </form>
+
+          </section>
+        </section>
+      </div>
+
+      <div id="PostInit" class="tab-content" [hidden]="!tabs.PostInit">
+        <section layout="column" layout-align="center center" *ngIf="currentProject">
+          <h3>Project Initialized <i class="fa fa-thumbs-up"></i></h3>
+          <p>Project files have been created in</p>
+          <p class="project-path">{{currentProject.path}}</p>
+          <p>Read more about the project structure in the <a target="_blank" href="https://marklogic.github.io/marklogic-data-hub/understanding/project-structure/">DHF Documentation</a>.</p>
+        </section>
+        <div layout="row" layout-align="end center" class="init-buttons">
+          <button type="button" mdl-button (click)="back()">&lt; Back</button>
+          <button type="button" mdl-button mdl-button-type="raised" (click)="onPostInitNext.emit()">Next</button>
+        </div>
+      </div>
+
+
+      <div id="EnvironmentTab" class="tab-content" [hidden]="!tabs.Environment">
+        <section layout="row" layout-align="center center" *ngIf="currentProject">
+          <section class="init-box" layout-fill layout="column" layout-align="center center">
+            <h3>Choose Your Project Environment</h3>
+
+            <p class="help-text">Each Hub Project can be deployed to multiple environments. Environments are
+            determined by the presence of a gradle-env.properties file in your hub project
+            directory. By default QuickStart only creates a local environment file.
+            <!-- DHFPROD-663 TODO no content here
+            Read more <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/wiki/Data-Hub-QuickStart-Project-Environments">on the Data Hub Framework Wiki</a>.
+            -->
+            </p>
+            <app-select-list
+              [items]="currentProject.environments"
+              [initialSelectedItem]="currentProject.environments[0]"
+              (selectedItem)="setCurrentEvironmentString($event);"
+              md-whiteframe-2dp
+              class="shrink-me"></app-select-list>
+
+            <div layout="row" layout-align="end center" class="init-buttons">
+              <button type="button" mdl-button (click)="back()">&lt; Back</button>
+              <button type="button" mdl-button mdl-button-type="raised" [disabled]="!currentEnvironmentString" (click)="environmentNext()">Next &gt;</button>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="LoginTab" class="tab-content" [hidden]="!tabs.Login">
+        <section layout="row" layout-align="center center">
+          <section class="login-box" flex layout="column" layout-align="center center">
+            <h3>Login to the Data Hub</h3>
+            <form class="loginForm" (submit)="onLogin.emit()">
+              <div flex layout-fill layout-padding layout="column">
+                <div class="center-text" [hidden]="!loggingIn">
+                  <mdl-spinner single-color active></mdl-spinner>
+                </div>
+                <div class="error" *ngIf="loginError">{{loginError}}</div>
+                <mdl-textfield label="MarkLogic User Name" id="username" name="username" type="text" [(ngModel)]="loginInfo.username" required="required" floating-label></mdl-textfield>
+                <mdl-textfield label="MarkLogic Password" name="password" type="password" [(ngModel)]="loginInfo.password" required="required" floating-label></mdl-textfield>
+                <div layout="row" layout-align="end center" class="init-buttons">
+                  <button mdl-button type="button" (click)="back()">&lt; Back</button>
+                  <button mdl-button mdl-button-type="raised" type="submit" [disabled]="loggingIn || !loginInfo.username">Login</button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </section>
+      </div>
+
+      <div id="InstalledCheckTab" class="tab-content" [hidden]="!tabs.InstalledCheck">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center">
+            <h3>Checking Project...</h3>
+            <div class="center-text">
+              <mdl-spinner single-color active></mdl-spinner>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div id="RequiresUpdateUpdateTab" class="tab-content" [hidden]="!tabs.RequiresUpdate">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center" *ngIf="hubUpdating">
+            <h3>Updating Your Project...</h3>
+            <div class="center-text">
+              <mdl-spinner single-color active></mdl-spinner>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
+            <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
+            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+              <p>But...your project doesn't seem to match this version of DHF!</p>
+              <p>Please update your project before proceeding onward! <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a></p>
+            </span>
+            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
+              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="onUpdateProject.emit()">Update It</button>
+              <div class="manual">
+                <p>Curious about what that button does? Prefer to do it yourself?</p>
+                <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
+                <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a>
+              </div>
+            </span>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
+            <h3>Automatic Hub Update Failed!</h3>
+            <p *ngIf="currentEnvironment" class="error">
+              Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
+              <span>{{hubUpdateError}}.</span>
+            </p>
+            <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
+            <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a>
+          </section>
+        </section>
+      </div>
+
+      <div id="PreInstallCheck" class="tab-content" [hidden]="!tabs.PreInstallCheck">
+        <section layout="row" layout-align="center center">
+          <section flex layout="column" layout-align="center center" *ngIf="runningPreinstallCheck">
+            <h3>Running Pre-install check...</h3>
+            <div class="center-text">
+              <mdl-spinner single-color active></mdl-spinner>
+            </div>
+          </section>
+          <section flex layout="column" layout-align="center center" *ngIf="preinstallCheck && !preinstallCheck.safeToInstall && !runningPreinstallCheck">
+            <h3>Pre-install check Failed!</h3>
+            <mdl-list class="precheck-list">
+              <mdl-list-item lines="3" *ngIf="!preinstallCheck.serverVersionOk">
+                <mdl-list-item-primary-content>
+                  <mdl-icon mdl-list-item-avatar>error</mdl-icon>
+                  <span>Incompatible MarkLogic Server Version</span>
+                  <mdl-list-item-text-body>The Data Hub Framework is not compatible with MarkLogic <strong>{{preinstallCheck.serverVersion}}</strong>.</mdl-list-item-text-body>
+                  <mdl-list-item-text-body class="fix">
+                    <strong class="solution">SOLUTION:</strong> Upgrade your MarkLogic installation to a compatible version.
+                  </mdl-list-item-text-body>
+                </mdl-list-item-primary-content>
+              </mdl-list-item>
+              <ng-template [ngIf]="preinstallCheck.serverVersionOk">
+                <ng-template ngFor let-server [ngForOf]="appServers">
+                  <mdl-list-item lines="3" *ngIf="preinstallCheck[server + 'PortInUseBy']">
+                    <mdl-list-item-primary-content>
+                      <mdl-icon mdl-list-item-avatar>error</mdl-icon>
+                      <span>{{server | titlecase}} Port Already In Use</span>
+                      <mdl-list-item-text-body>The {{server | titlecase}} port <strong>{{currentEnvironment.mlSettings[server + 'Port']}}</strong> is already in use by the App Server <strong>{{preinstallCheck[server + 'PortInUseBy']}}</strong>.</mdl-list-item-text-body>
+                      <mdl-list-item-text-body class="fix">
+                        <strong class="solution">SOLUTION:</strong> Change the <strong>ml{{server | titlecase}}Port</strong> property in <strong>gradle.properties</strong> to a free port.
+                      </mdl-list-item-text-body>
+                    </mdl-list-item-primary-content>
+                  </mdl-list-item>
+                </ng-template>
+              </ng-template>
+            </mdl-list>
+          </section>
+        </section>
+      </div>
+
+      <div id="InstallerTab" class="tab-content" [hidden]="!tabs.Installer" *ngIf="currentEnvironment">
+        <div layout="column" layout-align="center center">
+          <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
+            <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
+              <h3>Installation Needed</h3>
+              <p>In order to continue you must install the Data Hub Framework into
+              MarkLogic server.
+              </p>
+              <div class="center-text">
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
+              </div>
+            </div>
+            <div class="partial-install" *ngIf="currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
+              <h3>You Have a Partially Installed Hub</h3>
+              <p>You must either re-install, uninstall, or fix the issues to continue</p>
+
+              <h4>Install Status</h4>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Staging AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Job AppServer Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobAppServerExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Job Database Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Triple Index Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTripleIndexOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Collection Lexicon Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingCollectionLexiconOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Triple Index Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalTripleIndexOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Collection Lexicon Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalCollectionLexiconOn)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingForestsExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Final Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.finalForestsExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Job Forests Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.jobForestsExist)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Modules DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingModulesDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Schemas DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingSchemasDbExists)"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Staging Triggers DB Installed:</td><td><i class="fa" [ngClass]="getInstalledIcon(currentEnvironment.installInfo.stagingTriggersDbExists)"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="action-button center-text">
+                <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
+              </div>
+              <div class="action-button center-text">
+                <button type="button" id="uninstaller-button" mdl-button mdl-button-type="raised" (click)="onUninstall.emit()">UnInstall</button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
+            <h3>DHF Project Version Mismatch!</h3>
+            <p>Your project ({{currentEnvironment.dhfversion}}) does not match the DHF version running ({{currentEnvironment.runningVersion}}). Please upgrade your project first before
+              attempting to install DHF.
+            </p>
+          </div>
+          <div id="install-progress" class="install-progress shrinky" *ngIf="(installing || uninstalling)" layout="column" layout-align="center center">
+            <mdl-progress [progress]="percentComplete"></mdl-progress>
+            <div id="installing-message" *ngIf="installing">Installing...</div>
+            <div id="uninstalling-message" *ngIf="uninstalling">Uninstalling...</div>
+            <div>{{percentComplete}}% complete</div>
+          </div>
+          <div class="install-complete shrinky" [ngClass]="currentEnvironment.installInfo.installed ? '' : 'collapsed'" layout="column" layout-align="center center">
+            <i class="fa fa-thumbs-up"></i>
+            <p>Installation into MarkLogic is complete!</p>
+          </div>
+
+          <div layout="row" layout-align="end center" class="init-buttons">
+            <button type="button" mdl-button (click)="back()">&lt; Back</button>
+            <button id="finished-button" type="button" mdl-button mdl-button-type="raised" [disabled]="percentComplete!=100" (click)="onFinished.emit()">Finished</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1"></div>
+  </div>
+</div>

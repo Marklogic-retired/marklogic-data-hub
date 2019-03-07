@@ -1,0 +1,33 @@
+.mdl-dialog {
+  padding: 0px;
+  max-width: 90%;
+}
+
+.mdl-dialog__title {
+
+  font-size: 1.25rem;
+
+  .mdl-button--fab.mdl-button--mini-fab {
+    height: 30px;
+    min-width: 30px;
+    width: 30px;
+  }
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  background-color: unquote("rgb(#{$color-primary})");
+  padding: 6px 24px 6px;
+
+  color: white;
+}
+
+.mdl-dialog__content {
+  padding: 6px 24px 6px 24px;
+  background-color: white;
+}
+
+.mdl-dialog__actions {
+  background-color: white;
+}
