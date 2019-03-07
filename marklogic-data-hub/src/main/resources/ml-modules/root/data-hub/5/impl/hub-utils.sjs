@@ -15,6 +15,7 @@
 */
 'use strict';
 const cachedModules = {};
+const consts = require("/data-hub/5/impl/consts.sjs");
 
 class HubUtils {
   constructor(config = null) {
@@ -145,7 +146,15 @@ class HubUtils {
      }
      return newInstance;
   }
- 
+
+  evalVal(value) {
+    if (value == consts.CURRENT_DATE_TIME) {
+      return fn.currentDateTime();
+    } else if (value == consts.CURRENT_USER) {
+      return xdmp.getCurrentUser();
+    }
+    return value;
+  }
 }
 
 module.exports = HubUtils;
