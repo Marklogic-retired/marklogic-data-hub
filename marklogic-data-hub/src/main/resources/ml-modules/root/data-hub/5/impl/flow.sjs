@@ -120,6 +120,22 @@ class Flow {
       }
   }
 
+  putMetadata(uri, flowName, stepName) {
+    let metaData = {};
+    metaData[this.consts.CREATED_ON] = this.datahub.hubUtils.evalVal(this.consts.CREATED_ON);
+    metaData[this.consts.CREATED_BY] = this.datahub.hubUtils.evalVal(this.consts.CREATED_BY);
+    metaData[this.consts.CREATED_IN_FLOW] = flowName;
+    metaData[this.consts.CREATED_BY_STEP] = stepName;
+
+    xdmp.eval('declareUpdate(); xdmp.documentPutMetadata(uri, metaData)', {
+      uri: uri,
+      metaData: metaData,
+    },{
+      isolation: 'different-transaction',
+      commit: 'auto'
+    });
+  }
+
   runFlow(flowName, jobId, uris, content = {}, options, stepNumber) {
     let flow = this.getFlow(flowName);
     if(!flow) {
@@ -128,6 +144,7 @@ class Flow {
     }
     //set the flow in the context
     this.globalContext.flow = flow;
+
 
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
     if(!jobDoc){
@@ -223,8 +240,10 @@ class Flow {
     if (this.datahub.performance.performanceMetricsOn()) {
       resp.performanceMetrics = this.datahub.performance.stepMetrics;
     }
+
     return resp;
   }
+
 
   runStep(uris, content, options, flowName, stepNumber, step) {
     // declareUpdate({explicitCommit: true});
@@ -258,6 +277,7 @@ class Flow {
         flowInstance.globalContext.uri = uri;
         let result = flowInstance.runMain(uri, content[uri], combinedOptions, processor.run);
         flowInstance.addToWriteQueue(uri, result, flowInstance.globalContext);
+        this.putMetadata(uri, flowName, step.name);
       }
       flowInstance.globalContext.uri = null;
       if (hook && !hook.runBefore) {
