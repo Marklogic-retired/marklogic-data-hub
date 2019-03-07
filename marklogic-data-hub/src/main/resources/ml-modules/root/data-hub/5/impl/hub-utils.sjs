@@ -46,8 +46,8 @@ class HubUtils {
 
   writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
     xdmp.eval(`
-    for (let docUri in writeQueue) {
-      xdmp.documentInsert(docUri, writeQueue[docUri].content, {permissions: ${permissions}, collections});
+    for (let content of writeQueue) {
+      xdmp.documentInsert(content.uri, content.value, {permissions: ${permissions}, collections});
     }`,
       {
         writeQueue,

@@ -1,7 +1,7 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
-function main(id, content, options) {
+function main(content, options) {
   let lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 
   //let's set our output format, so we know what we're exporting
@@ -12,15 +12,15 @@ function main(id, content, options) {
     throw Error('The output format of type '+outputFormat+' is invalid. Valid options are '+datahub.flow.consts.XML+' or '+datahub.flow.consts.JSON+'.');
   }
 
-  //TODO: make this work with xml, json, AND binary data coming in, for now it's just json
-
-  let instance = content;
-  let triples = [];
-  let headers = {};
-
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-
-  return envelope;
+  let instance = content.value.root || content.value;
+  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY) {
+    return content;
+  } else {
+    let triples = [];
+    let headers = {};
+    content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+    return content;
+  }
 }
 
 module.exports = {

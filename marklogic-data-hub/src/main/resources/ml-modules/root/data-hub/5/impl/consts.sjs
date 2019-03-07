@@ -18,5 +18,6 @@ module.exports = {
   JAVASCRIPT: "sjs",
   XML: "xml",
   JSON: "json",
+  BINARY: "binary",
   DEFAULT_FORMAT: "json"
 };

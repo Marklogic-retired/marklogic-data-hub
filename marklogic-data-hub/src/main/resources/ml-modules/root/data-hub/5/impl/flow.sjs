@@ -36,7 +36,7 @@ class Flow {
     this.step = new Step(config, datahub);
     this.flowUtils = new FlowUtils(config);
     this.consts = datahub.consts;
-    this.writeQueue = {};
+    this.writeQueue = [];
     if (!globalContext) {
       globalContext = {
         flow : {},
@@ -113,14 +113,15 @@ class Flow {
     this.globalContext.flow = flowObj;
   }
 
-  addToWriteQueue(uri, content, context) {
-      this.writeQueue[uri] = {
+  addToWriteQueue(content, context) {
+      this.writeQueue.push({
         content: content,
-        context: context
-      }
+        globalContext: Object.assign({}, context)
+      });
   }
 
-  runFlow(flowName, jobId, uris, content = {}, options, stepNumber) {
+  runFlow(flowName, jobId, content = [], options, stepNumber) {
+    let uris = content.map((contentItem) => contentItem.uri);
     let flow = this.getFlow(flowName);
     if(!flow) {
       this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
@@ -172,13 +173,22 @@ class Flow {
       delete this.datahub.flow;
     }
     let flowInstance = this;
-    let stepResult = fn.head(
-      xdmp.invoke(
-        '/data-hub/5/impl/invoke-step.sjs',
-        { flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber },
-        { database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb): xdmp.database(), ignoreAmps: true }
-      )
-    );
+    let stepResult = null;
+    if (this.isContextDB(combinedOptions.sourceDb) && !options.stepUpdate) {
+      stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    } else {
+      stepResult = fn.head(
+        xdmp.invoke(
+          '/data-hub/5/impl/invoke-step.sjs',
+          {flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber},
+          {
+            database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
+            update: !options.stepUpdate,
+            ignoreAmps: true
+          }
+        )
+      );
+    }
     if (Array.isArray(stepResult)) {
       this.globalContext.batchErrors = this.globalContext.batchErrors.concat(stepResult);
     } else {
@@ -190,16 +200,14 @@ class Flow {
       if (!combinedOptions.noWrite) {
         this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
-      for (let uri in this.writeQueue) {
-        if (this.writeQueue.hasOwnProperty(uri)) {
-          let info = {
-            derivedFrom: uri,
-            influencedBy: step.name,
-            status: (flow.type === 'ingest') ? 'created' : 'updated',
-            metadata: {}
-          };
-          this.datahub.prov.createStepRecord(jobId, flowName, step.type, uri, info);
-        }
+      for (let content of this.writeQueue) {
+        let info = {
+          derivedFrom: content.uri,
+          influencedBy: step.name,
+          status: (flow.type === 'ingest') ? 'created' : 'updated',
+          metadata: {}
+        };
+        this.datahub.prov.createStepRecord(jobId, flowName, step.type, content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
       this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
@@ -254,10 +262,10 @@ class Flow {
       if (hook && hook.runBefore) {
         hookOperation();
       }
-      for (let uri of uris) {
-        flowInstance.globalContext.uri = uri;
-        let result = flowInstance.runMain(uri, content[uri], combinedOptions, processor.run);
-        flowInstance.addToWriteQueue(uri, result, flowInstance.globalContext);
+      for (let contentItem of content) {
+        flowInstance.globalContext.uri = contentItem.uri;
+        let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
+        flowInstance.addToWriteQueue(result, flowInstance.globalContext);
       }
       flowInstance.globalContext.uri = null;
       if (hook && !hook.runBefore) {
@@ -285,9 +293,9 @@ class Flow {
     return !databaseName || fn.string(xdmp.database()) === fn.string(xdmp.database(databaseName));
   }
 
-  runMain(uri, content, options, func) {
+  runMain(content, options, func) {
     let resp;
-    resp = func(uri, content, options);
+    resp = func(content, options);
     if (resp instanceof Sequence) {
       resp = fn.head(resp);
     }

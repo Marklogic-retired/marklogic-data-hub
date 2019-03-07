@@ -73,7 +73,7 @@ function transform(content, context) {
     }
     options.noWrite = true;
     options.fullOutput = true;
-    let contentObj = {};
+    let contentObjs = [];
     for (let uri in urisToContent) {
       if (urisToContent.hasOwnProperty(uri)) {
         let content = urisToContent[uri];
@@ -86,7 +86,7 @@ function transform(content, context) {
       }
     }
     //don't catch any exception here, let it slip through to mlcp
-    let flowResponse = datahub.flow.runFlow(flowName, jobId, urisInBatch, contentObj, options, step);
+    let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObj, options, step);
     // if an array is returned, then it is an array of errors
     if (Array.isArray(flowResponse) && flowResponse.length) {
       fn.error(null, flowResponse[0].message, flowResponse[0]);
