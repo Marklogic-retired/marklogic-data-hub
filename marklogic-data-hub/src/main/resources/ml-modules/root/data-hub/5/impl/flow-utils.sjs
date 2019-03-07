@@ -113,9 +113,9 @@ class FlowUtils {
     } else if (inputFormat === dataFormat) {
       instance = content;
     } else if (dataFormat === consts.XML && inputFormat === consts.JSON) {
-      instance = this.xmlToJson(content);
-    } else if (dataFormat === consts.JSON && inputFormat === consts.XML) {
       instance = this.jsonToXml(content);
+    } else if (dataFormat === consts.JSON && inputFormat === consts.XML) {
+      instance = this.xmlToJson(content);
     }
 
     if (dataFormat === consts.JSON) {
@@ -362,8 +362,14 @@ class FlowUtils {
   }
 
   xmlNodeToJson(content) {
-    if (content && content.hasChildNodes()) {
+    if (content && (content.hasChildNodes() || (content.attributes && content.attributes.length))) {
       let organizedOutput = {};
+      let attributes = content.attributes;
+      for (let i = 0; i < attributes.length; i++) {
+        let childNode = attributes[i];
+        organizedOutput[`@${childNode.localName}`] = organizedOutput[childNode.localName] || [];
+        organizedOutput[`@${childNode.localName}`].push(this.xmlNodeToJson(childNode));
+      }
       let childNodes = content.childNodes;
       for (let i = 0; i < childNodes.length; i++) {
         let childNode = childNodes[i];

@@ -40,22 +40,28 @@ function post(context, params, input) {
       query = cts.documentQuery(uris);
     } else {
       let identifier = options.identifier || flow.identifier;
-      query = identifier ? cts.query(identifier) : cts.orQuery([]);
+      query = identifier ? cts.query(identifier) : null;
     }
-    let content = null;
-    if (Object.keys(input).length === 0 && input.constructor === Object) {
-      content = input;
+    let content = [];
+    if (!query && input && fn.count(input) === uris.length) {
+      content = datahub.hubUtils.normalizeToArray(input).map((inputDoc, i) => { return { uri: uris[i],  value: inputDoc }; });
     } else {
       datahub.hubUtils.queryLatest(function () {
-        content = {};
-        let results =  cts.search(query, cts.indexOrder(cts.uriReference()));
+        let results = cts.search(query, cts.indexOrder(cts.uriReference()));
         for (let doc of results) {
-          content[xdmp.nodeUri(doc)] = doc;
+          content.push({
+            uri: xdmp.nodeUri(doc),
+            value: doc,
+            context: {
+              collections: xdmp.nodeCollections(doc),
+              permissions: xdmp.nodePermissions(doc),
+              metadata: xdmp.nodeMetadata(doc)
+            }
+          });
         }
       }, flow.sourceDb || datahub.flow.globalContext.sourceDb);
-      uris = Object.keys(content);
     }
-    return datahub.flow.runFlow(flowName, jobId, uris, content, options, params.step);
+    return datahub.flow.runFlow(flowName, jobId, content, options, params.step);
   }
 }
 

@@ -78,7 +78,7 @@ function transform(content, context) {
       if (urisToContent.hasOwnProperty(uri)) {
         let content = urisToContent[uri];
         if (content.value) {
-          contentObj[uri] = content.value
+          contentObjs.push(content);
         } else {
           datahub.debug.log({message: params, type: 'error'});
           fn.error(null, "RESTAPI-SRVEXERR", "The content was null provided to the flow " + flowName + " for " + uri + ".");
@@ -86,31 +86,26 @@ function transform(content, context) {
       }
     }
     //don't catch any exception here, let it slip through to mlcp
-    let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObj, options, step);
+    let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObjs, options, step);
     // if an array is returned, then it is an array of errors
     if (Array.isArray(flowResponse) && flowResponse.length) {
       fn.error(null, flowResponse[0].message, flowResponse[0]);
     }
     let documents = flowResponse.documents;
-    let transformedContent = [];
-    for (let uri in urisToContent) {
-      if (urisToContent.hasOwnProperty(uri)) {
-        let content = urisToContent[uri];
-        content.value = documents[uri];
-        if (content.value) {
-          if (content.value.type && content.value.type === 'error' && content.value.message) {
-            datahub.debug.log(content.value);
-            fn.error(null, "RESTAPI-SRVEXERR", content.value.message);
-          } else {
-            transformedContent.push(content);
-          }
-        } else {
-          datahub.debug.log({message: params, type: 'error'});
-          fn.error(null, "RESTAPI-SRVEXERR", "The content was null in the flow " + flowName + " for " + uri + ".");
-        }
+    if (documents.type && documents.type === 'error' && documents.message) {
+      datahub.debug.log(documents);
+      fn.error(null, "RESTAPI-SRVEXERR", documents.message);
+    }
+    for (let doc of documents) {
+      if (doc.type && doc.type === 'error' && doc.message) {
+        datahub.debug.log(doc);
+        fn.error(null, "RESTAPI-SRVEXERR", doc.message);
+      } else if (!doc.value) {
+        datahub.debug.log({message: params, type: 'error'});
+        fn.error(null, "RESTAPI-SRVEXERR", "The content was null in the flow " + flowName + " for " + doc.uri + ".");
       }
     }
-    return Sequence.from(transformedContent);
+    return Sequence.from(documents);
   } else {
     return Sequence.from([]);
   }

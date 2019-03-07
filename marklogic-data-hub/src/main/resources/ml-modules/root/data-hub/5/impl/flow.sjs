@@ -113,11 +113,8 @@ class Flow {
     this.globalContext.flow = flowObj;
   }
 
-  addToWriteQueue(content, context) {
-      this.writeQueue.push({
-        content: content,
-        globalContext: Object.assign({}, context)
-      });
+  addToWriteQueue(content) {
+      this.writeQueue.push(content);
   }
 
   runFlow(flowName, jobId, content = [], options, stepNumber) {
@@ -175,24 +172,17 @@ class Flow {
     let flowInstance = this;
     let stepResult = null;
     if (this.isContextDB(combinedOptions.sourceDb) && !options.stepUpdate) {
-      stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+      this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
     } else {
-      stepResult = fn.head(
-        xdmp.invoke(
-          '/data-hub/5/impl/invoke-step.sjs',
-          {flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber},
-          {
-            database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
-            update: !options.stepUpdate,
-            ignoreAmps: true
-          }
-        )
+      xdmp.invoke(
+        '/data-hub/5/impl/invoke-step.sjs',
+        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber},
+        {
+          database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
+          update: !options.stepUpdate,
+          ignoreAmps: true
+        }
       );
-    }
-    if (Array.isArray(stepResult)) {
-      this.globalContext.batchErrors = this.globalContext.batchErrors.concat(stepResult);
-    } else {
-      this.writeQueue = stepResult;
     }
 
     //let's update our jobdoc now
@@ -215,8 +205,7 @@ class Flow {
       this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
-    let resp =
-    {
+    let resp = {
       "jobId": this.globalContext.jobId,
       "totalCount": uris.length,
       // TODO should error counts, completedItems, etc. be all or nothing?
@@ -283,7 +272,7 @@ class Flow {
         "retryable": e.retryable,
         "stackFrames": e.stackFrames
       });
-      flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}.`, type: 'error'});
+      flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
  //     xdmp.rollback();
       return flowInstance.globalContext.batchErrors;
     }
