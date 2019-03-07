@@ -12,8 +12,23 @@
       </div>
     </header>
     <div *ngIf="showBody" class="steps-body">
+      <div *ngIf="step.type === 'ingestion'">
         <p>{{step.type}}</p>
-      <p>{{step.description}}</p>
+        <p>{{step.description}}</p>
+      </div>
+      <div *ngIf="step.type === 'mapping'">
+        <p>{{step.type}}</p>
+        <p>{{step.description}}</p>
+      </div>
+      <div *ngIf="step.type === 'mastering'">
+        <app-matching
+          [step]="step"
+        ></app-matching>
+      </div>
+      <div *ngIf="step.type === 'custom'">
+        <p>{{step.type}}</p>
+        <p>{{step.description}}</p>
+      </div>
     </div>
 </div>
 <mat-menu #flowSubMenu="matMenu">

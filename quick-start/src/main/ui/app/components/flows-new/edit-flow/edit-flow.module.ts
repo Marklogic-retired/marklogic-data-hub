@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from '../../theme/material.module';
 import { EditFlowComponent } from './edit-flow.component';
@@ -14,6 +14,13 @@ import { RunFlowDialogComponent } from './ui/run-flow-dialog.component';
 import { StepComponent } from './ui/step.component';
 import { StepperComponent } from './ui/stepper.component';
 
+import { MatchingComponent } from './mastering/matching.component';
+import { MatchingUiComponent } from './mastering/ui/matching-ui.component';
+import { MatchOptionsUiComponent } from './mastering/ui/match-options-ui.component';
+import { MatchThresholdsUiComponent } from "./mastering/ui/match-thresholds-ui.component";
+import { AddMatchOptionDialogComponent } from './mastering/ui/add-match-option-dialog.component';
+import { AddMatchThresholdDialogComponent } from './mastering/ui/add-match-threshold-dialog.component';
+
 @NgModule({
   declarations: [
     EditFlowComponent,
@@ -21,7 +28,13 @@ import { StepperComponent } from './ui/stepper.component';
     NewStepDialogComponent,
     RunFlowDialogComponent,
     StepComponent,
-    StepperComponent
+    StepperComponent,
+    MatchingComponent,
+    MatchingUiComponent,
+    MatchOptionsUiComponent,
+    MatchThresholdsUiComponent,
+    AddMatchOptionDialogComponent,
+    AddMatchThresholdDialogComponent
   ],
   imports     : [
     CommonModule,
@@ -30,13 +43,16 @@ import { StepperComponent } from './ui/stepper.component';
     DragDropModule,
     RouterModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers   : [
   ],
   entryComponents: [
     NewStepDialogComponent,
-    RunFlowDialogComponent
+    RunFlowDialogComponent,
+    AddMatchOptionDialogComponent,
+    AddMatchThresholdDialogComponent
   ]
 })
 export class EditFlowModule {}

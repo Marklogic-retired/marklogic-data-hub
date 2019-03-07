@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
+import { MatchingComponent } from '../mastering/matching.component';
 
 @Component({
   selector: 'app-step',
