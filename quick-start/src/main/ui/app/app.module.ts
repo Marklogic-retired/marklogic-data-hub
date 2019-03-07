@@ -86,7 +86,6 @@ import {MapComponent, MappingsComponent} from './components/mappings';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
 import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
-import {MatchingModule} from "./components/flows-new/edit-flow/mastering/matching.module";
 
 @NgModule({
   declarations: [
@@ -183,8 +182,7 @@ import {MatchingModule} from "./components/flows-new/edit-flow/mastering/matchin
     TooltipModule.forRoot(),
     ThemeModule,
     ManageFlowsModule,
-    EditFlowModule,
-    MatchingModule
+    EditFlowModule
   ],
   providers: [
     AUTH_PROVIDERS,
