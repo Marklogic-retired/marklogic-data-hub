@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { MatchingUiComponent } from "./ui/matching-ui.component";
 import { MatchOptionsUiComponent } from "./ui/match-options-ui.component";
 import { MatchThresholdsUiComponent } from "./ui/match-thresholds-ui.component";
-import { matchingData } from "../../models/matching.data";
 import { Matching } from "../../models/matching.model";
 import { MatchOptions } from "../../models/match-options.model";
 import { MatchThresholds } from "../../models/match-thresholds.model";
@@ -27,7 +26,9 @@ export class MatchingComponent implements OnInit {
 
   @ViewChild(MatchingUiComponent) matchingUi: MatchingUiComponent;
 
+  @Input() step: any;
   public stepId: string;
+  public matching: Matching;
   public matchOptions: MatchOptions;
   public matchThresholds: MatchThresholds;
 
@@ -38,18 +39,13 @@ export class MatchingComponent implements OnInit {
   ngOnInit() {
 
     this.stepId = this.activatedRoute.snapshot.paramMap.get('stepId');
-    console.log('stepId:', this.stepId);
 
-    // TODO Retrieve matching data from the backend based on stepId
-    let matching = Matching.fromConfig(matchingData);
-    console.log(matching);
+    this.matching = Matching.fromConfig(this.step.config.matchOptions);
 
     // Parse matching data and instantiate models for UI
-    this.matchOptions = MatchOptions.fromMatching(matching);
-    console.log(this.matchOptions);
+    this.matchOptions = MatchOptions.fromMatching(this.matching);
+    this.matchThresholds = MatchThresholds.fromMatching(this.matching);
 
-    this.matchThresholds = MatchThresholds.fromMatching(matching);
-    console.log(this.matchThresholds);
   }
 
   createOption(event): void {

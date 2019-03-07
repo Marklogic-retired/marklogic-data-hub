@@ -3,12 +3,19 @@
 }
 
 #match-options {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+
+  .center .header .mat-toolbar-single-row {
+    padding: 0;
+  }
 }
 
 .otherLabel {
   display: inline-block;
-  width: 160px;
+  width: 140px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 .otherContent {
@@ -17,7 +24,7 @@
   max-width: 480px;
 }
 
-$header-height: 80px !default;
+$header-height: 70px !default;
 
 button {
   outline: none;
@@ -54,7 +61,7 @@ button {
         flex: 1 0 auto;
         position: relative;
         z-index: 2;
-        padding: 0 32px;
+        padding: 0;
         width: 100%;
         min-width: 0;
         max-width: 100%;

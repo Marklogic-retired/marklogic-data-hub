@@ -7,7 +7,7 @@
     <div class="header accent">
       <mat-toolbar style="background: transparent">
         <div class="logo">
-          <span class="logo-text h1">
+          <span class="logo-text h2">
             Match Options
           </span>
         </div>
@@ -70,24 +70,24 @@
             </div>
             <div *ngIf="mOpt.matchType === 'synonym'">
               <div>
-                <span class="otherLabel">Thesaurus:</span>
+                <span class="otherLabel">Thesaurus</span>
                 <a>{{truncate(mOpt.thesaurus, 40)}}</a>
               </div>
               <div>
-                <span class="otherLabel">Filter:</span>
+                <span class="otherLabel">Filter</span>
                 <a>{{mOpt.filter}}</a>
               </div>
             </div>
             <div *ngIf="mOpt.matchType === 'double metaphone'">
               <div>
-                <span class="otherLabel">Dictionary:</span> <a>{{truncate(mOpt.dictionary, 40)}}</a>
+                <span class="otherLabel">Dictionary</span> <a>{{truncate(mOpt.dictionary, 40)}}</a>
               </div>
               <div>
-                <span class="otherLabel">Distance Threshold:</span>
+                <span class="otherLabel">Distance Threshold</span>
                 <a>{{mOpt.distanceThreshold}}</a>
               </div>
               <div>
-                <span class="otherLabel">Collation:</span>
+                <span class="otherLabel">Collation</span>
                 <a title="{{mOpt.collation}}">
                   {{truncate(mOpt.collation, 40)}}
                 </a>
@@ -95,21 +95,21 @@
             </div>
             <div *ngIf="mOpt.matchType === 'custom'">
               <div>
-                <span class="otherLabel">URI:</span>
+                <span class="otherLabel">URI</span>
                 <a>{{truncate(mOpt.customUri, 40)}}</a>
               </div>
               <div>
-                <span class="otherLabel">Function:</span>
+                <span class="otherLabel">Function</span>
                 <a>{{mOpt.customFunction}}</a>
               </div>
             </div>
             <div *ngIf="mOpt.matchType === 'zip'">
               <div>
-                <span class="otherLabel">5-matches-9 Boost:</span>
+                <span class="otherLabel">5-matches-9 Boost</span>
                 <a>{{mOpt.zip5match9}}</a>
               </div>
               <div>
-                <span class="otherLabel">9-matches-5 Weight:</span>
+                <span class="otherLabel">9-matches-5 Weight</span>
                 <a>{{mOpt.zip9match5}}</a>
               </div>
             </div>
