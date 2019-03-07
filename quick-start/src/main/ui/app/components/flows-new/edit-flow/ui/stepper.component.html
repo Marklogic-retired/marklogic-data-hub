@@ -6,9 +6,15 @@
     </div>
     <div class="spacer"></div>
     <div class="flow-container">
-        <button class="item" mat-raised-button color="primary" (click)="this.runClicked()">Run</button>
-        <mat-progress-bar class="item" mode="determinate" value="40"></mat-progress-bar>
-        <div class="text item">Started: 2019-02-07 13:01:45</div>
+        <button *ngIf="!flow.isRunning; else elseStop" class="item" mat-raised-button color="primary" (click)="this.runClicked()">Run</button>
+        <ng-template #elseStop><button class="item" mat-raised-button color="primary" (click)="this.stopClicked()">Stop</button></ng-template>
+        <mat-progress-bar  *ngIf="flow.isRunning; else finished" class="item" mode="determinate" value="40"></mat-progress-bar>
+        <!--  TODO Add flow status -->
+        <ng-template #finished>
+          <!-- <a href="#">Finished</a> -->
+          <div></div>
+        </ng-template>
+        <div [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: 2019-02-07 13:01:45</div>
         <a href="#" class="text item">View Jobs</a>
         <div class="icon-container">
           <mat-icon class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
@@ -36,9 +42,12 @@
               <div class="header">
                 <div class="step-title {{flow.steps[i].type}}">{{flow.steps[i].type}}</div>
                 <div class="header-icons">
-                  <mat-icon class="check-icon">check_circle</mat-icon>
-                  <mat-icon (click)="deleteStepClicked(flow.steps[i])" class="delete-icon">delete</mat-icon>
-                  <!-- <mat-spinner diameter="20"></mat-spinner> -->
+                  <mat-icon *ngIf="flow.steps[i].isValid && !flow.steps[i].isRunning" class="check-icon">check_circle</mat-icon>
+                  <mat-icon *ngIf="!flow.steps[i].isValid && !flow.steps[i].isRunning"  class="grey-icon">lens</mat-icon>
+                  <mat-icon *ngIf="!flow.steps[i].isRunning && !flow.isRunning" (click)="deleteStepClicked(flow.steps[i])" class="delete-icon">delete</mat-icon>
+                  <div *ngIf="flow.steps[i].isRunning" class="spinner-container">
+                    <mat-spinner diameter="20"></mat-spinner>
+                  </div>
                 </div>            
               </div>
               <span>{{step.label}}</span>

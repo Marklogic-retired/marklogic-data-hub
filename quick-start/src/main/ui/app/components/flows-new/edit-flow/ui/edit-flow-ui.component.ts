@@ -19,7 +19,6 @@ export class EditFlowUiComponent {
   @Input() entities: any;
   @Output() saveFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
-  newFlow: Flow;
 
   constructor(
     public dialog: MatDialog
@@ -46,9 +45,9 @@ export class EditFlowUiComponent {
       data: {steps: flow.steps.map(step => step.name)}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      // TODO add run all option and interface to backend
-      console.log('The run dialog was closed');
+    dialogRef.afterClosed().subscribe(response => {
+      // TODO add endpoint to run
+      console.log('The run dialog was closed', response);
     });
   }
   deleteStepDialog(step: Step): void {

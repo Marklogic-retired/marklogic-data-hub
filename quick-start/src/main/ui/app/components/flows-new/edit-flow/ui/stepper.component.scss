@@ -40,6 +40,12 @@ header {
     cursor: pointer;
     margin: 0;
   }
+  .show-running {
+    visibility: visible;
+  }
+  .hide-running {
+    visibility: hidden;
+  }
 }
 
 .steps-header {
@@ -123,12 +129,18 @@ header {
     .check-icon {
       color: #00e600;
     }
+    .grey-icon {
+      color: rgba(169,169,169,.5);
+    }
     .delete-icon {
       cursor: pointer;
       color: rgba(169,169,169,.5);
     }
     .delete-icon:hover {
       color: #f5403d;
+    }
+    .spinner-container {
+      margin: 2px;
     }
   }
   .spacer {

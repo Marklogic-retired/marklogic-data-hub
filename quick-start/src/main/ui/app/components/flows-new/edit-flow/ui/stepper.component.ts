@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -9,7 +9,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./stepper.component.scss'],
   providers: [{ provide: CdkStepper, useExisting: StepperComponent }]
 })
-export class StepperComponent extends CdkStepper {
+export class StepperComponent extends CdkStepper  implements OnInit {
 
   @Input() flow: any;
   @Output() newStep = new EventEmitter();
@@ -21,6 +21,15 @@ export class StepperComponent extends CdkStepper {
   @Output() updateFlow = new EventEmitter();
 
   showBody = true;
+
+  // For State Verification only
+  ngOnInit() {
+    this.flow.isRunning = false;
+    this.flow.isValid = false;
+    this.flow.steps[1].isRunning = false;
+    this.flow.steps[1].isValid = false;
+    this.flow.steps[0].isValid = false;
+  }
   toggleBody() {
     this.showBody = !this.showBody;
   }
@@ -37,6 +46,9 @@ export class StepperComponent extends CdkStepper {
   }
   runClicked(): void {
     this.run.emit();
+  }
+  stopClicked(): void {
+    console.log('stop clicked');
   }
   deleteStepClicked(step): void {
     this.deleteStep.emit(step);

@@ -13,6 +13,7 @@ import { NewStepDialogComponent } from './ui/new-step-dialog.component';
 import { RunFlowDialogComponent } from './ui/run-flow-dialog.component';
 import { StepComponent } from './ui/step.component';
 import { StepperComponent } from './ui/stepper.component';
+import { CheckAllComponent } from '../../common';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { StepperComponent } from './ui/stepper.component';
     NewStepDialogComponent,
     RunFlowDialogComponent,
     StepComponent,
-    StepperComponent
+    StepperComponent,
+    CheckAllComponent
   ],
   imports     : [
     CommonModule,
