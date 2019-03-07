@@ -13,6 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+
 module.exports = {
   XQUERY: "xqy",
   JAVASCRIPT: "sjs",
@@ -20,7 +21,21 @@ module.exports = {
   JSON: "json",
   DEFAULT_FORMAT: "json",
 
-  //fields that can be valuated at runtime
+  //predefined option headers that can be evaluated at run-time
   CURRENT_DATE_TIME: "currentDateTime",
-  CURRENT_USER: "currentUser"
+  CURRENT_USER: "currentUser",
+
+  //predefined metadata
+  CREATED_ON: "createdOn",
+  CREATED_BY: "createdBy",
+
+  CREATED_IN_FLOW: "createdInFlow",
+  CREATED_BY_STEP: "createdByStep",
+
+  PROPERY_KEY_MAP: new Map([
+    ["currentDateTime", "currentDateTime"],
+    ["createdOn", "currentDateTime"],
+    ["currentUser", "currentUser"],
+    ["createdBy", "currentUser"]
+  ])
 };
