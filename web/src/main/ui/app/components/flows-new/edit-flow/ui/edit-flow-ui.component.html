@@ -1,0 +1,6 @@
+<h2>Edit Flow</h2>
+<app-stepper *ngIf="flow" (newStep)="openStepDialog()" (run)="openRunDialog(flow)" [flow]="flow">
+  <cdk-step *ngFor="let step of flow.steps; let i = index" label="{{flow.steps[i].name}}">
+    <app-step [step]="step"></app-step>
+  </cdk-step>
+</app-stepper>

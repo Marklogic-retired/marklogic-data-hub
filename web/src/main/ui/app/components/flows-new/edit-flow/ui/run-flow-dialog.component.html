@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Run Flow</h1>
+<div mat-dialog-content class="content">
+  <div *ngFor="let step of data.steps">
+    <mat-checkbox>{{step}}</mat-checkbox>
+  </div>
+</div>
+<div mat-dialog-actions class="bottom">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button cdkFocusInitial>Run</button>
+</div>

@@ -1,0 +1,306 @@
+.map-container2 {
+  width: 1000px;
+  padding: 0;
+}
+
+#map-heading {
+  height: 70px;
+}
+
+#map-heading h1 {
+  font-size: 34px;
+  font-weight: normal;
+  margin: 10px 0;
+  padding: 0;
+  width: 651px;
+  position: relative;
+  float: left;
+}
+
+#save-map {
+  padding-top: 15px;
+  padding-left: 30px;
+  mdl-button {
+    margin-right: 5px;
+  }
+}
+
+div.item-title {
+  div.item-type {
+    display: inline-block;
+    margin: 5px 10px 10px 0;
+    font-size: 24px;
+    font-weight: 200;
+  }
+  span.help-icon {
+    position: relative;
+    top: -3px;
+    i.fa-question-circle {
+      cursor: pointer;
+    }
+    a, a:hover {
+      color: #212529;
+    }
+  }
+}
+
+p.item-identifying-info {
+  font-weight: bold;
+  margin: 0 0 14px 2px;
+  font-size: 15px;
+}
+
+.sample-doc-uri {
+  padding-right: 7px;
+}
+
+#source, #harmonized, #save-map {
+  position: relative;
+  float: left;
+  margin: 0;
+}
+
+#source {
+  width: 470px;
+}
+
+#harmonized {
+  width: 430px;
+}
+
+#src-heading, #harm-heading {
+  height: 55px;
+}
+
+.entity-prop-container, .src-prop-container {
+  height: 45px;
+  border: solid 2px #5b8db3;
+  margin: 10px 0;
+  padding: 0;
+  display: flex;
+  align-items: center; /* align vertical */
+  justify-content: center;
+}
+
+#source .src-prop-container {
+  width: 470px;
+}
+
+#harmonized .entity-prop-container {
+  width: 430px;
+  border-left: 0;
+}
+
+.prop-select {
+  background-color: transparent;
+  display: flex;
+  align-items: center; /* align vertical */
+  height: 32px;
+  text-align: left;
+  border: solid 1px #5b8db3;
+  padding: 0 10px;
+}
+
+.prop-select-content {
+  width: 409px;
+}
+.prop-clear-control {
+  width: 11px;
+  font-size: 11px;
+  margin-right: 3px;
+  color: #999;
+}
+.prop-select-control {
+  width: 11px;
+  font-size: 15px;
+  float: right;
+  color: #999;
+}
+
+.prop-name, .prop-type, .prop-val {
+  display: inline-block;
+  padding: 8px 10px;
+}
+
+.prop-name {
+  width: 170px;
+  font-size: 14px;
+  cursor: default;
+}
+
+.prop-val {
+  width: 130px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.prop-type {
+  width: 100px;
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  cursor: default;
+}
+
+#harmonized .prop-type {
+  width: 120px; /* entities have greater variety of types */
+}
+
+.prop-select-content .prop-name,
+.prop-select-content .prop-val,
+.prop-select-content .prop-type {
+  padding: 0 10px;
+}
+
+.prop-select-content .prop-name {
+  width: 170px;
+}
+
+.prop-select-content .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.dropdown-item .prop-name {
+  width: 170px;
+  cursor: pointer;
+}
+
+.dropdown-item .prop-type {
+  width: 100px;
+  cursor: pointer;
+}
+
+.dropdown-item .prop-val {
+  cursor: pointer;
+}
+
+.unselected {
+  color: #999;
+  font-style: italic;
+  padding-left: 8px;
+}
+
+.dropdown-filter {
+  position:fixed;
+  background-color: #b7cae2;
+}
+
+.dropdown-filter input {
+  width: 405px;
+  margin: 6px 26px;
+  border: 1px solid #2A4356;
+  padding: 3px 6px;
+}
+
+.dropdown-menu {
+  padding: 0;
+}
+
+.dropdown-menu .prop-type {
+  font-size: 12px;
+  color: #666;
+}
+
+.dropdown-menu ul {
+  overflow-y: scroll;
+  list-style: none;
+  max-height: 280px;
+  margin: 40px 0 0 0;
+  padding: 0;
+  cursor:pointer;
+}
+
+.entity-icons {
+  width: 120px;
+  margin-left: 5px;
+}
+
+.entity-icon {
+  cursor: default;
+  margin-left: 1px;
+  padding: 0;
+  color: #aaa;
+}
+
+.entity-icon-selected {
+  color: #000;
+}
+
+.icon-hide {
+  color: #ccc;
+}
+
+.edit-item {
+  font-size: 16px;
+  padding-left: 0;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.edit-save, .edit-cancel {
+  padding-left: 7px;
+  cursor: pointer;
+}
+
+.edit-save {
+  color: green;
+}
+
+.edit-cancel {
+  color: red;
+}
+
+p.edit-uri {
+  margin: 0 0 6px 2px;
+}
+
+span.uri-label {
+  font-weight: bold;
+  margin: 0 4px 0 0;
+  font-size: 15px;
+}
+
+.edit-desc {
+  font-size: 16px;
+  padding-left: 0;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.edit-uri-val, .edit-desc-val {
+  width: 376px;
+  padding: 3px 1px;
+  height: 28px;
+}
+
+.edit-desc-val {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.desc {
+  font-size: 14px;
+  padding-right: 7px;
+}
+
+.no-desc {
+  font-size: 14px;
+  color: #AAA;
+  font-style: italic;
+  padding-right: 7px;
+}
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}
+
+/* Widen tooltip container for long phrases */
+/deep/ .tooltip .tooltip-inner {
+  max-width: 350px;
+}

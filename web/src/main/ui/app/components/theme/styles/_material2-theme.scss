@@ -1,0 +1,71 @@
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+// TODO: Create color theme for application. This theme is for demonstration purposes only.
+$md-blue: (
+    50 : #e2eaf2,
+    100 : #b6cbdf,
+    200 : #85a9ca,
+    300 : #5487b4,
+    400 : #306da4,
+    500 : #0b5394,
+    600 : #0a4c8c,
+    700 : #084281,
+    800 : #063977,
+    900 : #032965,
+    A100 : #95b6ff,
+    A200 : #6294ff,
+    A400 : #2f71ff,
+    A700 : #155fff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$dhf-app-primary: mat-palette($md-blue);
+$dhf-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$dhf-app-warn:    mat-palette($mat-red);
+
+$dhf-app-theme: mat-light-theme($dhf-app-primary, $dhf-app-accent, $dhf-app-warn);
+@include angular-material-theme($dhf-app-theme);
+
+/* Outline Input */
+.mat-form-field-outline, .mat-form-field-appearance-outline .mat-form-field-outline-thick, .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgb(125, 163, 192);
+  > .mat-form-field-outline-start, .mat-form-field-outline-gap, .mat-form-field-outline-end {
+    background: #fefefe; 
+  }
+}
+
+/* Outline Input focused */
+.mat-form-field-appearance-outline.mat-focused {
+   color: rgb(42, 67, 86);
+}
+
+.mat-form-field-label { 
+  color: black;
+}
+
+/* Outline read only input */
+.read-only > .mat-form-field-wrapper > .mat-form-field-flex {
+  .mat-form-field-outline {
+    // color: rgb(125, 163, 192);
+    > .mat-form-field-outline-start, .mat-form-field-outline-gap, .mat-form-field-outline-end {
+      background: rgba(217, 217, 217, 0.65);  
+    }
+  }
+}

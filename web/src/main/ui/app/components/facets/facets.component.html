@@ -1,0 +1,30 @@
+<div class="facet-list" *ngIf="facets">
+  <div class="chiclets" *ngIf="activeFacets">
+    <div *ngFor="let facet of (activeFacets | objectToArray)">
+      <button
+        mdl-colored="primary" mdl-button mdl-button-type="raised"
+        *ngFor="let value of facet.values"
+        (click)="toggle(facet.__key, value)">
+        <span class="chiclet-name" title="{{ value }}">{{ facet.__key }}: {{ value | truncate : 20 }}</span>
+        <span class="fa fa-remove"></span>
+      </button>
+    </div>
+  </div>
+  <ng-template ngFor let-facet [ngForOf]="(facets | objectToArray)">
+    <div class="facet" *ngIf="isVisible(facet)" mdl-shadow="4">
+      <div (click)="toggleCollapsed(facet.__key)" class="facet-name">{{ facet.__key }}<i class="fa" [ngClass]="getCollapsedIcon(facet.__key)"></i></div>
+      <ng-template [ngIf]="!isToggleCollapsed(facet.__key)">
+        <div *ngFor="let value of facet.facetValues" class="facet-value" (click)="toggle(facet.__key, value.name)">
+          <i class="fa fa-plus-circle facet-right-padding facet-add-pos"></i>
+          <span *ngIf="!!value.name" title="{{ value.name }}" [ngClass]='{"facet-small-name": value.name.length > 17}'>{{ value.name | truncate : 30 }}</span>
+          <em *ngIf="!value.name">blank</em>
+          <span class="badge" [mdl-badge]="value.count">.</span>
+          <i class="fa fa-ban facet-add-neg" *ngIf="shouldNegate" (click)="negate({facet: facet.__key, value: value.name})" title="{{ value.name }}"></i>
+        </div>
+        <div *ngIf="shouldShowMore &amp;&amp; !facet.displayingAll">
+          <a href (click)="showMore({facet: facet, facetName: facet.__key})">see more ...</a>
+        </div>
+      </ng-template>
+    </div>
+  </ng-template>
+</div>
