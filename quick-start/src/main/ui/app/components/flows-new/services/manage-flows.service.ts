@@ -31,6 +31,7 @@ export class ManageFlowsService {
 
   createFlow(newFlow: Object) {
     console.log('POST /api/flows');
+    console.log(newFlow);
     return this.http.post('api/flows', newFlow);
   }
 
@@ -40,8 +41,9 @@ export class ManageFlowsService {
   }
 
   saveFlow(flow: Flow) {
-    console.log(`PUT /api/flows/${flow.flowId}`);
-    return this.http.put(`/api/flows/${flow.flowId}`, flow);
+    console.log(`PUT /api/flows/${flow.id}`);
+    console.log(flow);
+    return this.http.put(`/api/flows/${flow.id}`, flow);
   }
 
 }

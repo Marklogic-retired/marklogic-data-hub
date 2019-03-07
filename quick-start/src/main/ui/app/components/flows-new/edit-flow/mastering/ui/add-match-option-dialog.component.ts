@@ -17,6 +17,7 @@ export interface DialogData {
 export class AddMatchOptionDialogComponent {
 
   form: FormGroup;
+  selectedType: string;
 
   constructor(
     private fb: FormBuilder,
@@ -26,7 +27,7 @@ export class AddMatchOptionDialogComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName.join(', ') : '', Validators.required],
+      propertyName: [this.data.option ? this.data.option.propertyName.join(', ') : ''],
       matchType: [this.data.option ? this.data.option.matchType : ''],
       weight: [this.data.option ? this.data.option.weight : ''],
       thesaurus: [this.data.option ? this.data.option.thesaurus : ''],
@@ -40,6 +41,7 @@ export class AddMatchOptionDialogComponent {
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
       index: this.data.index
     })
+    this.selectedType = this.data.option.matchType;
   }
 
   onNoClick(): void {

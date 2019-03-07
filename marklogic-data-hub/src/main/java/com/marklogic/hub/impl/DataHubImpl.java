@@ -39,10 +39,7 @@ import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.CMASettings;
@@ -596,6 +593,8 @@ public class DataHubImpl implements DataHub {
 
         updateServerCommandList(commandMap);
 
+        updateTriggersCommandList(commandMap);
+
         updateModuleCommandList(commandMap);
 
         // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
@@ -661,6 +660,17 @@ public class DataHubImpl implements DataHub {
             }
         }
         commandMap.put(key, newCommands);
+    }
+
+    /**
+     * The existing "DeployTriggersCommand" is based on the ml-config path and the AppConfig object should set the default
+     * triggers database name to that of the final triggers database. Thus, we just need to add a hub-specific command for
+     * loading staging triggers into the staging triggers database.
+     *
+     */
+    private void updateTriggersCommandList(Map<String, List<Command>> commandMap) {
+        List<Command> commands = commandMap.get("mlTriggerCommands");
+        commands.add(new DeployHubTriggersCommand(hubConfig.getStagingTriggersDbName()));
     }
 
     /**

@@ -30,8 +30,8 @@ export const ROUTES: Routes = [
     ]
   },
   { path: 'mappings/map', component: MapComponent, canActivate: [AuthGuard] },
-  { path: 'flows', component: FlowsComponent, canActivate: [AuthGuard] },
-  { path: 'manage-flows', component: ManageFlowsComponent, canActivate: [AuthGuard]},
+  { path: 'flows-old', component: FlowsComponent, canActivate: [AuthGuard] },
+  { path: 'flows', component: ManageFlowsComponent, canActivate: [AuthGuard]},
   { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'edit-flow/:flowId', component: EditFlowComponent, canActivate: [AuthGuard] },
   { path: 'matching/:stepId', component: MatchingComponent, canActivate: [AuthGuard] },

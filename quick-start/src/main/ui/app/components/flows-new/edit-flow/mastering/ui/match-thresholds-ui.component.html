@@ -1,0 +1,103 @@
+<div id="match-thresholds" class="page-layout carded fullwidth">
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HEADER -->
+    <div class="header accent">
+      <mat-toolbar style="background: transparent">
+        <div class="logo">
+          <span class="logo-text h2">
+            Match Thresholds
+          </span>
+        </div>
+        <button mat-raised-button
+                class="new-option-button"
+                (click)="openMatchThresholdDialog(null, null)"
+        >
+          <span>ADD</span>
+        </button>
+        <span class="fill-space"></span>
+      </mat-toolbar>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content-card">
+
+      <mat-table class="matching-table"
+                 #table [dataSource]="dataSource" matSort>
+
+        <!-- Threshold Name Column -->
+        <ng-container matColumnDef="label">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Threshold Name</mat-header-cell>
+          <mat-cell *matCellDef="let mThr">
+            <a>
+              {{mThr.label}}
+          </a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="above">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
+          <mat-cell *matCellDef="let mThr">
+            <a>
+              {{mThr.above}}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
+          <mat-cell *matCellDef="let mThr">
+            <div *ngIf="mThr.action !== 'custom'">
+              <a class="capitalize">
+                {{mThr.action}}
+              </a>
+            </div>
+            <div *ngIf="mThr.action === 'custom'">
+              <div>
+                <span class="actionLabel">URI</span>
+                <a>{{mThr.customUri}}</a>
+              </div>
+              <div>
+                <span class="actionLabel">Function</span>
+                <a>{{mThr.customFunction}}</a>
+              </div>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let mThr; let i = index">
+            <mat-icon class="match-menu-icon" [matMenuTriggerFor]="matchMenu" [matMenuTriggerData]="{mThr: mThr, i: paginator.pageIndex * paginator.pageSize + i}"
+                      disableRipple>more_vert</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let mThr; columns: displayedColumns;">
+        </mat-row>
+
+      </mat-table>
+
+      <mat-paginator #paginator
+                     [length]="matchThresholds.length"
+                     [pageIndex]="0"
+                     [pageSize]="15"
+                     [pageSizeOptions]="[3, 5, 15, 30]">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+<mat-menu #matchMenu="matMenu">
+  <ng-template matMenuContent let-mThr="mThr" let-i="i">
+    <div mat-menu-item (click)="openMatchThresholdDialog(mThr, i)">Edit Settings</div>
+    <div mat-menu-item (click)="openConfirmDialog(i)">Delete</div>
+  </ng-template>
+</mat-menu>

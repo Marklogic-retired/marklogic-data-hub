@@ -1,29 +1,91 @@
 import { Matching } from "./matching.model";
 
+/**
+ * Represents a set of match thresholds for UI display.
+ */
 export class MatchThresholds {
   public thresholds: Array<MatchThreshold> = [];
 
-  static fromJSON(matching: Matching) {
+  /**
+   * Construct match thresholds based on a JSON matching configuration.
+   */
+  static fromMatching(matching: Matching) {
     const result = new MatchThresholds();
+    const acts = matching.actions['action'];
     if (matching.thresholds && matching.thresholds['threshold']) {
       matching.thresholds['threshold'].forEach(t => {
-        result.thresholds.push(new MatchThreshold(t));
+        result.thresholds.push(MatchThreshold.fromMatching(t, acts));
       })
     }
     return result;
   }
 
+  /**
+   * Add a new match threshold.
+   */
+  addThreshold(thr) {
+    this.thresholds.push(new MatchThreshold(thr));
+  }
+
+  /**
+   * Update a match threshold.
+   */
+  updateThreshold(thr, index) {
+    let mThr = new MatchThreshold({
+      label: thr.label,
+      above: thr.above,
+      action: thr.action
+    });
+    if (thr.action === 'custom') {
+      if (thr.customUri) mThr.customUri = thr.customUri;
+      if (thr.customFunction) mThr.customFunction = thr.customFunction;
+    }
+    this.thresholds.splice(index, 1, mThr);
+  }
+
+  /**
+   * Delete a match threshold.
+   */
+  deleteThreshold(index) {
+    this.thresholds.splice(index, 1);
+  }
+
 }
 
+/**
+ * Represents a match threshold for UI display.
+ */
 export class MatchThreshold {
-  public label: Array<string>;
+  public type: string;
+  public label: string;
   public above: string;
   public action: string;
+  public customUri: string;
+  public customFunction: string;
 
   constructor(mThr: any) {
+    if (mThr.type) this.type = mThr.type;
     if (mThr.label) this.label = mThr.label;
     if (mThr.above) this.above = mThr.above;
     if (mThr.action) this.action = mThr.action;
+    if (mThr.customUri) this.customUri = mThr.customUri;
+    if (mThr.customFunction) this.customFunction = mThr.customFunction;
+  }
+
+  /**
+   * Construct a match threshold from matching configuration data.
+   */
+  static fromMatching(mThr: any, acts: any) {
+    const result = new MatchThreshold(mThr);
+    if (mThr.action !== 'merge' && mThr.action !== 'notify' ) {
+      let act = acts.find(a => {
+        return a.name === mThr.action;
+      });
+      if (act) result.action = 'custom';
+      if (act.at) result.customUri = act.at;
+      if (act.function) result.customFunction = act.function;
+    }
+    return result;
   }
 
 }

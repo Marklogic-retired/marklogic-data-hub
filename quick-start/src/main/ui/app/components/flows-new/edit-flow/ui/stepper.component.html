@@ -1,19 +1,23 @@
 <div class="steps-container">
-    <header>
-      <div class="steps-header">
-        <h3>{{flow.name}}</h3>
+  <header>
+    <div class="flow-container">
+        <h3 class="text">{{flow.name}}</h3>
         <button mat-raised-button color="primary" (click)="this.newStepClicked()">New Step</button>
-      </div>
-      <div class="steps-header ">
-        <button mat-raised-button color="primary" (click)="this.runClicked()">Run</button>
-        <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-        <div class="text">Started: 2019-02-07 13:01:45</div>
-        <a href="#" class="text">View Jobs</a>
-        <mat-icon class="flow-menu-icon" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
-        <mat-icon class="flow-menu-icon">arrow_drop_down</mat-icon>
-      </div>
-    </header>
-    <div *ngIf="flow.steps.length > 0" class="steps-body">
+    </div>
+    <div class="spacer"></div>
+    <div class="flow-container">
+        <button class="item" mat-raised-button color="primary" (click)="this.runClicked()">Run</button>
+        <mat-progress-bar class="item" mode="determinate" value="40"></mat-progress-bar>
+        <div class="text item">Started: 2019-02-07 13:01:45</div>
+        <a href="#" class="text item">View Jobs</a>
+        <div class="icon-container">
+          <mat-icon class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
+          <mat-icon class="flow-menu-icon item" (click)="this.toggleBody()">arrow_drop_down</mat-icon>
+        </div>
+    </div>
+  </header>
+
+    <div *ngIf="flow.steps.length > 0 && showBody" class="steps-body">
         <section class="step-navigation-bar" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropped($event)" >
           <div class="stepper-container" *ngFor="let step of steps; let i = index;">
             <div
@@ -22,17 +26,25 @@
             (click)="stepClicked(i)"
             cdkDrag
             >
-          <div class="bar {{flow.steps[i].type}}"></div>
-          <div class="move-icon" cdkDragHandle>
-            <svg width="18px" fill="white" viewBox="0 0 24 24">
-              <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
-              <path d="M0 0h24v24H0z" fill="none"></path>
-            </svg>
-          </div>
-          <div class="step-title {{flow.steps[i].type}}">{{flow.steps[i].type}}</div>
-          <span>{{step.label}}</span>
-          </div>
-            <div *ngIf="i !== (steps.length-1)" class="line">&rarr;</div>
+              <div class="bar {{flow.steps[i].type}}"></div>
+              <div class="move-icon" cdkDragHandle>
+                <svg width="18px" fill="white" viewBox="0 0 24 24">
+                  <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                </svg>
+              </div>
+              <div class="header">
+                <div class="step-title {{flow.steps[i].type}}">{{flow.steps[i].type}}</div>
+                <div class="header-icons">
+                  <mat-icon class="check-icon">check_circle</mat-icon>
+                  <mat-icon (click)="deleteStepClicked(flow.steps[i])" class="delete-icon">delete</mat-icon>
+                  <!-- <mat-spinner diameter="20"></mat-spinner> -->
+                </div>            
+              </div>
+              <span>{{step.label}}</span>
+            </div>
+            <div *ngIf="i !== (steps.length-1); else spacer" class="line">&rarr;</div>
+            <ng-template #spacer><span class="spacer" ></span></ng-template>
           </div>
         </section>
     </div>
@@ -44,7 +56,7 @@
   <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
 
   <mat-menu #flowMenu="matMenu">
-      <div mat-menu-item>Edit Settings</div>
-      <div mat-menu-item>Redeploy</div>
-      <div mat-menu-item>Delete</div>
+      <div mat-menu-item (click)="this.editSettingsClicked()">Edit Settings</div>
+      <div mat-menu-item (click)="this.redeployClicked()">Redeploy</div>
+      <div mat-menu-item (click)="this.deleteFlowClicked()">Delete</div>
   </mat-menu>

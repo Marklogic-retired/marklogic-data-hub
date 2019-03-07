@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { MatchingUiComponent } from "./ui/matching-ui.component";
-import { matchingData } from "../../models/matching.data";
+import { MatchOptionsUiComponent } from "./ui/match-options-ui.component";
+import { MatchThresholdsUiComponent } from "./ui/match-thresholds-ui.component";
 import { Matching } from "../../models/matching.model";
 import { MatchOptions } from "../../models/match-options.model";
 import { MatchThresholds } from "../../models/match-thresholds.model";
@@ -15,6 +16,9 @@ import { MatchThresholds } from "../../models/match-thresholds.model";
     (createOption)="this.createOption($event)"
     (saveOption)="this.saveOption($event)"
     (deleteOption)="this.deleteOption($event)"
+    (createThreshold)="this.createThreshold($event)"
+    (saveThreshold)="this.saveThreshold($event)"
+    (deleteThreshold)="this.deleteThreshold($event)"
   ></app-matching-ui>
 `
 })
@@ -22,7 +26,9 @@ export class MatchingComponent implements OnInit {
 
   @ViewChild(MatchingUiComponent) matchingUi: MatchingUiComponent;
 
+  @Input() step: any;
   public stepId: string;
+  public matching: Matching;
   public matchOptions: MatchOptions;
   public matchThresholds: MatchThresholds;
 
@@ -33,18 +39,13 @@ export class MatchingComponent implements OnInit {
   ngOnInit() {
 
     this.stepId = this.activatedRoute.snapshot.paramMap.get('stepId');
-    console.log('stepId:', this.stepId);
 
-    // TODO Retrieve matching data from the backend based on stepId
-    let matching = Matching.fromConfig(matchingData);
-    console.log(matching);
+    this.matching = Matching.fromConfig(this.step.config.matchOptions);
 
     // Parse matching data and instantiate models for UI
-    this.matchOptions = MatchOptions.fromMatching(matching);
-    console.log(this.matchOptions);
+    this.matchOptions = MatchOptions.fromMatching(this.matching);
+    this.matchThresholds = MatchThresholds.fromMatching(this.matching);
 
-    this.matchThresholds = MatchThresholds.fromJSON(matching);
-    console.log(this.matchThresholds);
   }
 
   createOption(event): void {
@@ -60,9 +61,26 @@ export class MatchingComponent implements OnInit {
   }
 
   deleteOption(index): void {
-    console.log(index);
     this.matchOptions.deleteOption(index);
+    console.log('deleteOption');
     this.matchingUi.renderRows();
   }
 
+  createThreshold(event): void {
+    this.matchThresholds.addThreshold(event);
+    console.log('createThreshold', this.matchThresholds);
+    this.matchingUi.renderRowsThresholds();
+  }
+
+  saveThreshold(event): void {
+    this.matchThresholds.updateThreshold(event, event.index);
+    console.log('saveThreshold', this.matchThresholds);
+    this.matchingUi.renderRowsThresholds();
+  }
+
+  deleteThreshold(index): void {
+    this.matchThresholds.deleteThreshold(index);
+    console.log('deleteThreshold', this.matchThresholds);
+    this.matchingUi.renderRowsThresholds();
+  }
 }
