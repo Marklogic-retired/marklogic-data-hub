@@ -32,6 +32,7 @@ import com.marklogic.hub.web.listeners.ValidateListener;
 import com.marklogic.hub.web.model.StatusMessage;
 import com.marklogic.hub.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
@@ -57,7 +58,8 @@ import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
-@Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="session")
+@Lazy
+@Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="singleton")
 public class CurrentProjectController implements FileSystemEventListener, ValidateListener, DeployUserModulesListener, AuthenticationSuccessHandler, LogoutSuccessHandler {
 
     @Autowired
@@ -293,6 +295,7 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        request.getSession().invalidate();
         String pluginDir = hubConfig.getHubPluginsDir().toString();
         watcherService.removeListener(this);
         watcherService.unwatch(pluginDir);
