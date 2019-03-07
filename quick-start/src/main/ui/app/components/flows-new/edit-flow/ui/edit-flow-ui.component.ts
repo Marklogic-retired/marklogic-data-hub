@@ -103,7 +103,7 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.deleteFlow.emit(this.flow.flowId);
+        this.deleteFlow.emit(this.flow.id);
       }
     });
   }
