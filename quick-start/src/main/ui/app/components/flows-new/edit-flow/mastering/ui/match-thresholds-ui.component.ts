@@ -10,28 +10,24 @@ import { ConfirmationDialogComponent } from "../../../../common";
   styleUrls: ['./match-thresholds-ui.component.scss'],
 })
 export class MatchThresholdsUiComponent {
-  displayedColumns = ['label', 'above', 'action', 'actions'];
-  @Input() step: any;
+  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
   @Input() matchThresholds: any;
 
   @Output() createThreshold = new EventEmitter();
-  @Output() saveThreshold = new EventEmitter();
+  @Output() updateThreshold = new EventEmitter();
   @Output() deleteThreshold = new EventEmitter();
 
-  dataSource: MatTableDataSource<MatchThreshold>;
-
-  @ViewChild(MatTable) table: MatTable<any>;
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  @ViewChild(MatSort) sort: MatSort;
+  public displayedColumns = ['label', 'above', 'action', 'actions'];
+  public dataSource: MatTableDataSource<MatchThreshold>;
 
   constructor(
     public dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    console.log('this.matchThresholds', this.matchThresholds);
     this.dataSource = new MatTableDataSource<MatchThreshold>(this.matchThresholds.thresholds);
   }
 
@@ -45,12 +41,11 @@ export class MatchThresholdsUiComponent {
       width: '500px',
       data: {option: thresholdToEdit, index: index}
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
         if (thresholdToEdit) {
           console.log('saveThreshold');
-          this.saveThreshold.emit(result);
+          this.updateThreshold.emit(result);
         }else{
           console.log('createThreshold', result);
           this.createThreshold.emit(result);
@@ -59,15 +54,14 @@ export class MatchThresholdsUiComponent {
     });
   }
 
-  openConfirmDialog(index): void {
+  openConfirmDialog(thr): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
       data: {title: 'Delete Match Threshold', confirmationMessage: `Delete the threshold?`}
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        this.deleteThreshold.emit(index);
+        this.deleteThreshold.emit(thr);
       }
     });
   }
@@ -79,12 +73,8 @@ export class MatchThresholdsUiComponent {
       value;
   }
 
-  updateDataSource() {
-    this.dataSource.data = this.matchThresholds['thresholds'];
-  }
-
   renderRows(): void {
-    this.updateDataSource();
+    this.dataSource.data = this.matchThresholds['thresholds'];
     this.table.renderRows();
   }
 

@@ -31,19 +31,15 @@
         <ng-container matColumnDef="label">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Threshold Name</mat-header-cell>
           <mat-cell *matCellDef="let mThr">
-            <a>
-              {{mThr.label}}
-          </a>
+            {{mThr.label}}
           </mat-cell>
         </ng-container>
 
         <!-- Weight Column -->
         <ng-container matColumnDef="above">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header start="desc">Weight</mat-header-cell>
           <mat-cell *matCellDef="let mThr">
-            <a>
-              {{mThr.above}}
-            </a>
+            {{mThr.above}}
           </mat-cell>
         </ng-container>
 
@@ -52,18 +48,16 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
           <mat-cell *matCellDef="let mThr">
             <div *ngIf="mThr.action !== 'custom'">
-              <a class="capitalize">
-                {{mThr.action}}
-              </a>
+              <span class="capitalize">{{mThr.action}}</span>
             </div>
-            <div *ngIf="mThr.action === 'custom'">
+            <div *ngIf="mThr.action === 'custom'" class="action-content">
               <div>
                 <span class="actionLabel">URI</span>
-                <a>{{mThr.customUri}}</a>
+                {{mThr.customUri}}
               </div>
               <div>
                 <span class="actionLabel">Function</span>
-                <a>{{mThr.customFunction}}</a>
+                {{mThr.customFunction}}
               </div>
             </div>
           </mat-cell>
@@ -96,8 +90,8 @@
 </div>
 
 <mat-menu #matchMenu="matMenu">
-  <ng-template matMenuContent let-mThr="mThr" let-i="i">
-    <div mat-menu-item (click)="openMatchThresholdDialog(mThr, i)">Edit Settings</div>
-    <div mat-menu-item (click)="openConfirmDialog(i)">Delete</div>
+  <ng-template matMenuContent let-mThr="mThr">
+    <div mat-menu-item (click)="openMatchThresholdDialog(mThr)">Edit Settings</div>
+    <div mat-menu-item (click)="openConfirmDialog(mThr)">Delete</div>
   </ng-template>
 </mat-menu>

@@ -1,4 +1,5 @@
-import { MatchOption } from "./match-options.model";
+import { MatchOptions, MatchOption } from "./match-options.model";
+import { MatchThresholds, MatchThreshold } from "./match-thresholds.model";
 
 /**
  * Represents a Smart Mastering matching configuration.
@@ -72,6 +73,26 @@ export class Matching {
   }
 
   /**
+   * Construct based on a UI configuration.
+   */
+  static fromUI(matchOptions: MatchOptions, matchThresholds: MatchThresholds) {
+    const result = new Matching();
+    result.addAlgorithmDefaults();
+    if (matchOptions) {
+      matchOptions.options.forEach(mOpt => {
+        result.addOption(mOpt);
+      })
+    }
+    if (matchThresholds) {
+      matchThresholds.thresholds.forEach(mThr => {
+        result.addThreshold(mThr);
+      })
+    }
+    console.log('fromUI', result);
+    return result;
+  }
+
+  /**
    * Add a property name definition.
    */
   addProperty(name) {
@@ -88,7 +109,9 @@ export class Matching {
    * Add an algorithm definition.
    */
   addAlgorithm(name, at, fn) {
-    let alg = new Algorithm({ name: name, at: at, function: fn });
+    let alg = new Algorithm({ name: name, function: fn });
+    // reduce doesn't require at property
+    if (at) alg.at = at;
     this.algorithms['algorithm'].push(alg);
   }
 
@@ -100,6 +123,7 @@ export class Matching {
       ['double-metaphone', '/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy'],
       ['thesaurus', '/com.marklogic.smart-mastering/algorithms/thesaurus.xqy'],
       ['zip-match', '/com.marklogic.smart-mastering/algorithms/zip.xqy'],
+      ['standard-reduction', null]
     ]
     defaultAlgs.forEach(a => {
       this.addAlgorithm(a[0], a[1], a[0]);
@@ -111,6 +135,14 @@ export class Matching {
    */
   addOption(mOpt: MatchOption) {
     let opt;
+    if (typeof mOpt.propertyName === 'string') {
+      mOpt.propertyName = [mOpt.propertyName];
+    }
+    if (mOpt.propertyName) {
+      mOpt.propertyName.forEach(p => {
+        this.addProperty(p);
+      })
+    }
     switch(mOpt.matchType) {
       case "exact":
         opt = new Add({
@@ -159,7 +191,7 @@ export class Matching {
             property: mOpt.propertyName
           }
         });
-        this.scoring['expand'].push(opt);
+        this.scoring['reduce'].push(opt);
         break;
       case "custom":
         this.addAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction)
@@ -171,6 +203,21 @@ export class Matching {
         this.scoring['expand'].push(opt);
         break;
     }
+    console.log('matching.addOption', this);
+  }
+
+  /**
+   * Add a match threshold.
+   */
+  addThreshold(mThr: MatchThreshold) {
+    let thr;
+    console.log('addThreshold', mThr);
+    thr = new Threshold({
+      label: mThr.label,
+      above: mThr.above,
+      action: mThr.action
+    });
+    this.thresholds['threshold'].push(thr);
   }
 
 }

@@ -3,25 +3,33 @@
 }
 
 #match-options {
-  margin-bottom: 20px;
+  padding: 10px 30px 20px 30px;
 
   .center .header .mat-toolbar-single-row {
     padding: 0;
   }
 }
 
-.otherLabel {
+/* HEADER ROW HEIGHT */
+.matching-table .mat-header-row {
+    min-height: 48px !important;
+}
+
+/* BODY ROW HEIGHT */
+.matching-table .mat-row {
+    min-height: 38px !important;
+}
+
+.other-content {
+  padding: 4px 0;
+}
+
+.other-label {
   display: inline-block;
   width: 140px;
   font-size: 12px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.54);
-}
-
-.otherContent {
-  width: 480px;
-  min-width: 480px;
-  max-width: 480px;
 }
 
 $header-height: 70px !default;

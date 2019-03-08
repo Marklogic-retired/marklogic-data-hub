@@ -31,9 +31,7 @@
         <ng-container matColumnDef="propertyName">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Property to Match</mat-header-cell>
           <mat-cell *matCellDef="let mOpt">
-            <a>
-              {{mOpt.propertyName.join(', ')}}
-          </a>
+            {{mOpt.propertyName.join(', ')}}
           </mat-cell>
         </ng-container>
 
@@ -41,19 +39,17 @@
         <ng-container matColumnDef="matchType">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Match Type</mat-header-cell>
           <mat-cell *matCellDef="let mOpt">
-            <a class="capitalize">
+            <span class="capitalize">
               {{mOpt.matchType}}
-            </a>
+            </span>
           </mat-cell>
         </ng-container>
 
         <!-- Weight Column -->
         <ng-container matColumnDef="weight">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header start="desc">Weight</mat-header-cell>
           <mat-cell *matCellDef="let mOpt">
-            <a>
-              {{mOpt.weight}}
-            </a>
+            {{mOpt.weight}}
           </mat-cell>
         </ng-container>
 
@@ -62,55 +58,56 @@
           <mat-header-cell *matHeaderCellDef>Other</mat-header-cell>
           <mat-cell *matCellDef="let mOpt">
 
-            <div *ngIf="mOpt.matchType === 'exact'">
+            <div *ngIf="mOpt.matchType === 'exact'" class="other-content">
               <div>&nbsp;</div>
             </div>
-            <div *ngIf="mOpt.matchType === 'reduce'">
+            <div *ngIf="mOpt.matchType === 'reduce'" class="other-content">
               <div>&nbsp;</div>
             </div>
-            <div *ngIf="mOpt.matchType === 'synonym'">
+            <div *ngIf="mOpt.matchType === 'synonym'" class="other-content">
               <div>
-                <span class="otherLabel">Thesaurus</span>
-                <a>{{truncate(mOpt.thesaurus, 40)}}</a>
+                <span class="other-label">Thesaurus</span>
+                {{truncate(mOpt.thesaurus, 40)}}
               </div>
               <div>
-                <span class="otherLabel">Filter</span>
-                <a>{{mOpt.filter}}</a>
+                <span class="other-label">Filter</span>
+                {{mOpt.filter}}
               </div>
             </div>
-            <div *ngIf="mOpt.matchType === 'double metaphone'">
+            <div *ngIf="mOpt.matchType === 'double metaphone'" class="other-content">
               <div>
-                <span class="otherLabel">Dictionary</span> <a>{{truncate(mOpt.dictionary, 40)}}</a>
+                <span class="other-label">Dictionary</span>
+                {{truncate(mOpt.dictionary, 40)}}
               </div>
               <div>
-                <span class="otherLabel">Distance Threshold</span>
-                <a>{{mOpt.distanceThreshold}}</a>
+                <span class="other-label">Distance Threshold</span>
+                {{mOpt.distanceThreshold}}
               </div>
               <div>
-                <span class="otherLabel">Collation</span>
-                <a title="{{mOpt.collation}}">
+                <span class="other-label">Collation</span>
+                <span title="{{mOpt.collation}}">
                   {{truncate(mOpt.collation, 40)}}
-                </a>
+                </span>
               </div>
             </div>
-            <div *ngIf="mOpt.matchType === 'custom'">
+            <div *ngIf="mOpt.matchType === 'custom'" class="other-content">
               <div>
-                <span class="otherLabel">URI</span>
-                <a>{{truncate(mOpt.customUri, 40)}}</a>
+                <span class="other-label">URI</span>
+                {{truncate(mOpt.customUri, 40)}}
               </div>
               <div>
-                <span class="otherLabel">Function</span>
-                <a>{{mOpt.customFunction}}</a>
+                <span class="other-label">Function</span>
+                {{mOpt.customFunction}}
               </div>
             </div>
-            <div *ngIf="mOpt.matchType === 'zip'">
+            <div *ngIf="mOpt.matchType === 'zip'" class="other-content">
               <div>
-                <span class="otherLabel">5-matches-9 Boost</span>
-                <a>{{mOpt.zip5match9}}</a>
+                <span class="other-label">5-matches-9 Boost</span>
+                {{mOpt.zip5match9}}
               </div>
               <div>
-                <span class="otherLabel">9-matches-5 Weight</span>
-                <a>{{mOpt.zip9match5}}</a>
+                <span class="other-label">9-matches-5 Weight</span>
+                {{mOpt.zip9match5}}
               </div>
             </div>
 
@@ -146,6 +143,6 @@
 <mat-menu #matchMenu="matMenu">
   <ng-template matMenuContent let-mOpt="mOpt" let-i="i">
     <div mat-menu-item (click)="openMatchOptionDialog(mOpt, i)">Edit Settings {{index}}</div>
-    <div mat-menu-item (click)="openConfirmDialog(i)">Delete</div>
+    <div mat-menu-item (click)="openConfirmDialog(mOpt)">Delete</div>
   </ng-template>
 </mat-menu>

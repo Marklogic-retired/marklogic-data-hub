@@ -1,6 +1,5 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { MatchingUiComponent } from "./ui/matching-ui.component";
 import { MatchOptionsUiComponent } from "./ui/match-options-ui.component";
 import { MatchThresholdsUiComponent } from "./ui/match-thresholds-ui.component";
 import { Matching } from "../../models/matching.model";
@@ -10,23 +9,27 @@ import { MatchThresholds } from "../../models/match-thresholds.model";
 @Component({
   selector: 'app-matching',
   template: `
-  <app-matching-ui
+  <app-match-options-ui
     [matchOptions]="matchOptions"
+    (createOption)="this.onCreateOption($event)"
+    (updateOption)="this.onUpdateOption($event)"
+    (deleteOption)="this.onDeleteOption($event)"
+  ></app-match-options-ui>
+  <app-match-thresholds-ui
     [matchThresholds]="matchThresholds"
-    (createOption)="this.createOption($event)"
-    (saveOption)="this.saveOption($event)"
-    (deleteOption)="this.deleteOption($event)"
-    (createThreshold)="this.createThreshold($event)"
-    (saveThreshold)="this.saveThreshold($event)"
-    (deleteThreshold)="this.deleteThreshold($event)"
-  ></app-matching-ui>
+    (createThreshold)="this.onCreateThreshold($event)"
+    (updateThreshold)="this.onUpdateThreshold($event)"
+    (deleteThreshold)="this.onDeleteThreshold($event)"
+  ></app-match-thresholds-ui>
 `
 })
 export class MatchingComponent implements OnInit {
-
-  @ViewChild(MatchingUiComponent) matchingUi: MatchingUiComponent;
+  @ViewChild(MatchOptionsUiComponent) matchOptionsUi: MatchOptionsUiComponent;
+  @ViewChild(MatchThresholdsUiComponent) matchThresholdsUi: MatchThresholdsUiComponent;
 
   @Input() step: any;
+  @Output() saveStep = new EventEmitter();
+
   public stepId: string;
   public matching: Matching;
   public matchOptions: MatchOptions;
@@ -48,39 +51,48 @@ export class MatchingComponent implements OnInit {
 
   }
 
-  createOption(event): void {
+  onCreateOption(event): void {
     console.log('createOption', event);
     this.matchOptions.addOption(event);
-    this.matchingUi.renderRows();
+    this.matchOptionsUi.renderRows();
+    this.onSaveStep();
   }
 
-  saveOption(event): void {
+  onUpdateOption(event): void {
     console.log('saveOption', event);
     this.matchOptions.updateOption(event, event.index);
-    this.matchingUi.renderRows();
+    this.matchOptionsUi.renderRows();
+    this.onSaveStep();
   }
 
-  deleteOption(index): void {
-    this.matchOptions.deleteOption(index);
-    console.log('deleteOption');
-    this.matchingUi.renderRows();
+  onDeleteOption(event): void {
+    this.matchOptions.deleteOption(event);
+    this.matchOptionsUi.renderRows();
+    this.onSaveStep();
   }
 
-  createThreshold(event): void {
+  onCreateThreshold(event): void {
     this.matchThresholds.addThreshold(event);
-    console.log('createThreshold', this.matchThresholds);
-    this.matchingUi.renderRowsThresholds();
+    this.matchThresholdsUi.renderRows();
+    this.onSaveStep();
   }
 
-  saveThreshold(event): void {
+  onUpdateThreshold(event): void {
     this.matchThresholds.updateThreshold(event, event.index);
-    console.log('saveThreshold', this.matchThresholds);
-    this.matchingUi.renderRowsThresholds();
+    this.matchThresholdsUi.renderRows();
+    this.onSaveStep();
   }
 
-  deleteThreshold(index): void {
-    this.matchThresholds.deleteThreshold(index);
-    console.log('deleteThreshold', this.matchThresholds);
-    this.matchingUi.renderRowsThresholds();
+  onDeleteThreshold(event): void {
+    this.matchThresholds.deleteThreshold(event);
+    this.matchThresholdsUi.renderRows();
+    this.onSaveStep();
   }
+
+  onSaveStep(): void {
+    this.matching = Matching.fromUI(this.matchOptions, this.matchThresholds);
+    this.step.config.matchOptions = this.matching;
+    this.saveStep.emit(this.step);
+  }
+
 }

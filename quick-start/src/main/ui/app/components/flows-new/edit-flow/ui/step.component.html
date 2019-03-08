@@ -23,6 +23,7 @@
       <div *ngIf="step.type === 'mastering'">
         <app-matching
           [step]="step"
+          (saveStep)="saveStep($event)"
         ></app-matching>
       </div>
       <div *ngIf="step.type === 'custom'">
