@@ -8,7 +8,7 @@ function main(content, options) {
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
-    var errMsg = 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.';
+    let errMsg = 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.';
     datahub.flow.debug.log({message: errMsg, type: 'error'});
     throw Error(errMsg);
   }
@@ -26,7 +26,9 @@ function main(content, options) {
       }
     }
 
+    //set the content value which is our envelope
     content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+
     return content;
   }
 }

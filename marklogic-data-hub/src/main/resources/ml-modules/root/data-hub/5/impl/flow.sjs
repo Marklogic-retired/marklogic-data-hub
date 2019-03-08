@@ -117,22 +117,6 @@ class Flow {
       this.writeQueue.push(content);
   }
 
-  putMetadata(uri, flowName, stepName) {
-    let metaData = {};
-    metaData[this.consts.CREATED_ON] = this.datahub.hubUtils.evalVal(this.consts.CREATED_ON);
-    metaData[this.consts.CREATED_BY] = this.datahub.hubUtils.evalVal(this.consts.CREATED_BY);
-    metaData[this.consts.CREATED_IN_FLOW] = flowName;
-    metaData[this.consts.CREATED_BY_STEP] = stepName;
-
-    xdmp.eval('declareUpdate(); xdmp.documentPutMetadata(uri, metaData)', {
-      uri: uri,
-      metaData: metaData,
-    },{
-      isolation: 'different-transaction',
-      commit: 'auto'
-    });
-  }
-
   runFlow(flowName, jobId, content = [], options, stepNumber) {
     let uris = content.map((contentItem) => contentItem.uri);
     let flow = this.getFlow(flowName);
@@ -167,7 +151,7 @@ class Flow {
     let step = this.globalContext.flow.steps[stepNumber];
     if(!step) {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
-      throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')
+      throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, step, stepNumber);
     this.globalContext.batchId = batchDoc.batch.batchId;
@@ -180,6 +164,7 @@ class Flow {
     }
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, step.options, options);
+
     //let stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
@@ -188,6 +173,8 @@ class Flow {
     }
     let flowInstance = this;
     let stepResult = null;
+
+
     if (this.isContextDB(combinedOptions.sourceDb) && !options.stepUpdate) {
       this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
     } else {
@@ -209,11 +196,12 @@ class Flow {
       }
       for (let content of this.writeQueue) {
         let info = {
-          derivedFrom: content.uri,
-          influencedBy: step.name,
-          status: (flow.type === 'ingest') ? 'created' : 'updated',
-          metadata: {}
-        };
+            derivedFrom: content.uri,
+            influencedBy: step.name,
+            status: (flow.type === 'ingest') ? 'created' : 'updated',
+            metadata: this.datahub.flowUtils.createMetadata(content.context.metadata, flowName, step.name)
+          }
+        ;
         this.datahub.prov.createStepRecord(jobId, flowName, step.type, content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
