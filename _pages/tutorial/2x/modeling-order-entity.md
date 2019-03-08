@@ -53,7 +53,7 @@ Let's start modeling our Entity. <i class="fa fa-hand-pointer-o"></i> Click on t
 1. <i class="fa fa-hand-pointer-o"></i> Click the **+**{:.circle-button} button below **Properties** to add a new row.
 1. Type in **products** as the Name.
 1. Change the Type to **Product**.
-1. Change the cardinality to 1..∞
+1. Change the cardinality to `1..∞`.
 1. <i class="fa fa-hand-pointer-o"></i> Click the **SAVE**{:.blue-button} button.
 
 ![Edit Entity]({{site.baseurl}}/images/2x/edit-order-entity3.png)
