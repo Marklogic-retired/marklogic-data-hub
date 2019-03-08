@@ -152,16 +152,6 @@ class HubUtils {
      return newInstance;
   }
 
-  evalVal(value) {
-    let obj = consts.PROPERY_KEY_MAP.get(value);
-    if (obj === undefined) return value;
-    if (obj == consts.CURRENT_DATE_TIME) {
-      return fn.currentDateTime();
-    } else if (obj == consts.CURRENT_USER) {
-      return xdmp.getCurrentUser();
-    }
-    return value;
-  }
 }
 
 module.exports = HubUtils;

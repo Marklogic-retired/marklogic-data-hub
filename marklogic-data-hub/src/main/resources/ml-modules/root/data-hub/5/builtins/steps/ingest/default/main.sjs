@@ -3,7 +3,6 @@ const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
 function main(content, options) {
-  let lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
@@ -19,7 +18,7 @@ function main(content, options) {
     return content;
   } else {
     let triples = [];
-    let headers = createHeaders(options);
+    let headers = datahub.flow.flowUtils.createHeaders(options);
 
     if (options.triples && Array.isArray(options.triples)) {
       for (let triple of options.triples) {
@@ -30,14 +29,6 @@ function main(content, options) {
     content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
     return content;
   }
-}
-
-function createHeaders(options) {
-  let headers = {};
-  for (let key in options.headers) {
-    headers[key] = datahub.hubUtils.evalVal(options.headers[key]);
-  }
-  return headers;
 }
 
 module.exports = {

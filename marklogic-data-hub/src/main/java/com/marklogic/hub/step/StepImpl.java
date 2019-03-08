@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.error.DataHubProjectException;
 
 public class StepImpl implements Step {
@@ -36,6 +37,7 @@ public class StepImpl implements Step {
         this.type = type;
         this.version = 1;
         this.options = JsonNodeFactory.instance.objectNode();
+        ((ObjectNode) this.options).putPOJO("collections", JsonNodeFactory.instance.arrayNode().add(name));
         this.modulePath = "/path/to/your/step/module/main.sjs";
         this.customHook = JsonNodeFactory.instance.objectNode();
     }

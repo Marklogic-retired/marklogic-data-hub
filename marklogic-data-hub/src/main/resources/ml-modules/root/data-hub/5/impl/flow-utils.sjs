@@ -432,6 +432,25 @@ class FlowUtils {
     }
     return nb;
   }
+
+  evalSubstituteVal(value) {
+    let obj = consts.PROPERY_KEY_MAP.get(value);
+    if (obj === undefined) return value;
+    if (obj == consts.CURRENT_DATE_TIME) {
+      return fn.currentDateTime();
+    } else if (obj == consts.CURRENT_USER) {
+      return xdmp.getCurrentUser();
+    }
+    return value;
+  }
+
+  createHeaders(options) {
+    let headers = {};
+    for (let key in options.headers) {
+      headers[key] = this.evalSubstituteVal(options.headers[key]);
+    }
+    return headers;
+  }
 }
 
 module.exports = FlowUtils;

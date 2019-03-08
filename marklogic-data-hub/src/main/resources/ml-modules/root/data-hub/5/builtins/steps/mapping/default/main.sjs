@@ -1,8 +1,9 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
-function main(id, content, options) {
+function main(content, options) {
   let lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+  let id = content.uri;
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
@@ -22,7 +23,7 @@ function main(id, content, options) {
 
   //grab the doc
   // let doc = cts.doc(id);
-  let doc = content;
+  let doc = content.value;
 
   // for json we need to return the instance
   if (doc && doc instanceof Document) {
@@ -71,13 +72,13 @@ function main(id, content, options) {
   instance = lib.processInstance(entityModel, mapping, instance);
 
   let triples = [];
-  let headers = {};
+  let headers = datahub.flow.flowUtils.createHeaders(options);
 
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  content.value = envelope;
 
-  return envelope;
+  return content;
 }
-
 
 module.exports = {
   main: main
