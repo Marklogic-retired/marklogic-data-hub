@@ -22,7 +22,6 @@ import com.marklogic.hub.web.model.SearchQuery;
 import com.marklogic.hub.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpHeaders;
@@ -43,8 +42,7 @@ public class SearchController {
     private HubConfigImpl hubConfig;
 
     @Bean
-    @Lazy
-    @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="singleton")
+    @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="request")
     SearchService searchService() {
         return new SearchService(hubConfig);
     }

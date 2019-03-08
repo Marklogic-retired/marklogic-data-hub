@@ -32,7 +32,6 @@ import com.marklogic.hub.web.listeners.ValidateListener;
 import com.marklogic.hub.web.model.StatusMessage;
 import com.marklogic.hub.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
@@ -58,8 +57,7 @@ import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
-@Lazy
-@Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="singleton")
+@Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="request")
 public class CurrentProjectController implements FileSystemEventListener, ValidateListener, DeployUserModulesListener, AuthenticationSuccessHandler, LogoutSuccessHandler {
 
     @Autowired

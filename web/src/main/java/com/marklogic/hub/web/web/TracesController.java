@@ -23,7 +23,6 @@ import com.marklogic.hub.web.model.TraceQuery;
 import com.marklogic.hub.web.service.TraceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Controller;
@@ -40,8 +39,7 @@ public class TracesController {
     private HubConfigImpl hubConfig;
 
     @Bean
-    @Lazy
-    @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="singleton")
+    @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="request")
     TraceService traceManager() {
         return new TraceService(hubConfig.newJobDbClient());
     }
