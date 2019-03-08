@@ -35,8 +35,7 @@ const uuid = function() {
 process.env.WARN = 'off';
  
 let app = express();
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+let jsonParser = bodyParser.json();
 
 let middleware = new Middleware(app);
 
@@ -105,7 +104,7 @@ middleware.init(swaggerMockDocPath, (err) => {
   /**
    * FLOWS
    */
-  app.get('/api/flows', (req, res, next) => {
+  app.get('/api/flows', jsonParser, (req, res, next) => {
     myDB.getCollection('flows', (err, flows) => {
       if (err) return next(err);
       // Send the response
@@ -113,7 +112,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     });
   });  
 
-  app.post('/api/flows', (req, res, next) => {
+  app.post('/api/flows', jsonParser, (req, res, next) => {
     if (req.body) {
       let resData = req.body;
       resData.id = uuid();
@@ -128,7 +127,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     }
   });  
 
-  app.get('/api/flows/:flowId', (req, res, next) => {
+  app.get('/api/flows/:flowId', jsonParser, (req, res, next) => {
     if (req.params.flowId) {
       // supposed to merge with previous item with same ID
       myDB.get(new Resource(`/flows/${req.params.flowId}`), (err, flow) => {
@@ -141,7 +140,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     }
   });
 
-  app.put('/api/flows/:flowId', (req, res, next) => {
+  app.put('/api/flows/:flowId', jsonParser, (req, res, next) => {
     if (req.body && req.params.flowId) {
       // supposed to merge with previous item with same ID
       myDB.save(new Resource('flows', req.params.flowId, req.body), (err, flow) => {
@@ -154,7 +153,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     }
   });
 
-  app.delete('/api/flows/:flowId', (req, res, next) => {
+  app.delete('/api/flows/:flowId', jsonParser, (req, res, next) => {
     if (req.params.flowId) {
       myDB.delete(new Resource(`/flows/${req.params.flowId}`), (err, flow) => {
         if (err) return next(err);
@@ -167,7 +166,7 @@ middleware.init(swaggerMockDocPath, (err) => {
   });
 
 
-  app.post('/api/flows/:flowId/run', (req, res, next) => {
+  app.post('/api/flows/:flowId/run', jsonParser, (req, res, next) => {
     if (req.params.flowId) {
       let resData = req.body;
       resData.id = uuid();
@@ -191,7 +190,7 @@ middleware.init(swaggerMockDocPath, (err) => {
   /**
    * STEPS
    */
-  app.get('/api/flows/:flowId/steps', (req, res, next) => {
+  app.get('/api/flows/:flowId/steps', jsonParser, (req, res, next) => {
     if (req.params.flowId) {
       myDB.get(new Resource(`/flows/${req.params.flowId}`), (err, flow) => {
         if (err) return next(err);
@@ -211,7 +210,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     }
   });  
 
-  app.post('/api/flows/:flowId/steps', (req, res, next) => {
+  app.post('/api/flows/:flowId/steps', jsonParser, (req, res, next) => {
     if (req.body && req.params.flowId) {
       let data = req.body;
       data.id = uuid();
@@ -235,7 +234,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     }
   });  
 
-  app.put('/api/flows/:flowId/steps/:stepId', (req, res, next) => {
+  app.put('/api/flows/:flowId/steps/:stepId', jsonParser, (req, res, next) => {
     if (req.body && req.params.flowId && req.params.stepId) {
       // supposed to merge with previous item with same ID
       myDB.save(new Resource('steps', req.params.stepId, req.body), (err, step) => {
@@ -248,7 +247,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     }
   });
 
-  app.delete('/api/flows/:flowId/steps/:stepId', (req, res, next) => {
+  app.delete('/api/flows/:flowId/steps/:stepId', jsonParser, (req, res, next) => {
     if (req.params.flowId && req.params.stepId) {
       myDB.delete(new Resource(`/steps/${req.params.stepId}`), (err, step) => {
         if (err) return next(err);
@@ -273,7 +272,7 @@ middleware.init(swaggerMockDocPath, (err) => {
   /**
    * Collections - list of all available collections
    */
-  app.get('/api/collections/:databaseId', (req, res, next) => {
+  app.get('/api/collections/:databaseId', jsonParser, (req, res, next) => {
     if (req.params.databaseId) {
       myDB.getCollection('collections', (err, collections) => {
         // Send the response
