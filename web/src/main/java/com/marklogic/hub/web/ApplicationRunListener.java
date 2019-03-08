@@ -45,7 +45,7 @@ public class ApplicationRunListener implements SpringApplicationRunListener {
     @Override
     public void started(ConfigurableApplicationContext context) {
         String port = context.getEnvironment().getProperty("local.server.port");
-        System.out.println("QuickStart UI is Ready and Listening on port " + port + ".\n");
+        System.out.println("Web UI is Ready and Listening on port " + port + ".\n");
         System.out.println("Open your browser to http://localhost:" + port + ".\t(We recommend you use Chrome or FireFox.)");
     }
 

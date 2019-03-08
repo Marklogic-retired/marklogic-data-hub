@@ -1,0 +1,92 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+  class="entity-def-box" [ngClass]="{'has-flows' : entity.hasFlows}">
+  <app-resizable
+    [minWidth]="350"
+    [minHeight]="75"
+    [directions]="['bottomRight']" (sizeChange)="onSizeChange($event)">
+    <div class="title" (mousedown)="handleStartDrag($event)">
+      <span>{{entity.info.title}}</span>
+      <span class="version">v{{entity.info.version}}</span>
+      <span class="help-icon">
+        <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+      </span>
+      <span class="edit-area">
+        <span *ngIf="entity.inputFlowCount > 0">
+          <i class="mdi mdi-import"></i>
+          {{entity.inputFlowCount}}
+        </span>
+        <span *ngIf="entity.harmonizeFlowCount > 0">
+          <i class="mdi mdi-looks"></i>
+          {{entity.harmonizeFlowCount}}
+        </span>
+
+        <span class="edit-start" (click)="startEditing()">
+          <i class="fa fa-pencil"></i>
+        </span>
+        <span class="delete-entity" (click)="deleteEntity()">
+          <i class="fa fa-remove"></i>
+        </span>
+      </span>
+    </div>
+    <div class="meta">
+      <div class="description">
+        <div>{{entity.info.description || 'No description yet'}}</div>
+      </div>
+      <div class="baseuri">
+        <div>{{entity.info.baseUri || 'No Base URI yet'}}</div>
+      </div>
+    </div>
+    <div class="scroller">
+      <table #properties class="properties">
+        <thead>
+          <tr>
+            <th class="icons"><i class="fa fa-key" tooltip="Primary Key" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-bolt" tooltip="Element Range Index" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-code" tooltip="Path Range Index" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-krw" tooltip="Word Lexicon" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-exclamation" tooltip="Required Field" placement="top" container="body"></i></th>
+            <th class="icons"><i class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top" container="body"></i></th>
+            <th>Name</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="no-props" *ngIf="!entity.definition.properties || entity.definition.properties.length === 0">
+            <td colspan="6">No properties defined.</td>
+          </tr>
+
+          <tr id="{{entity.name}}-{{property.name}}"
+            [ngClass]="{ 'primary' : isPrimaryKey(property.name) }"
+            *ngFor="let property of entity.definition.properties" class="property">
+            <td class="icons">
+              <i [hidden]="!isPrimaryKey(property.name)" class="fa fa-key" tooltip="Primary Key" placement="top" container="body"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isRangeIndex(property.name)" class="fa fa-bolt" tooltip="Element Range Index" placement="top" container="body"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isPathRangeIndex(property.name)" class="fa fa-code" tooltip="Path Range Index" placement="top" container="body"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isWordLexicon(property.name)" class="fa fa-krw" tooltip="Word Lexicon" placement="top" container="body"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isRequired(property.name)" class="fa fa-exclamation" tooltip="Required Field" placement="top" container="body"></i>
+            </td>
+            <td class="icons">
+              <i [hidden]="!isPii(property.name)" class="fa fa-lock" tooltip="Personally Identifiable Information" placement="top" container="body"></i>
+            </td>
+            <td class="key-cell">
+              <span class="property-name" [ngClass]="{'invalid':!property.validString}">{{property.name}}</span>
+            </td>
+            <td class="value-cell">
+              <span>{{property.getType()}}</span>
+              <span *ngIf="property.isString" class="collation-toggler" (click)="property.showCollation = !property.showCollation">...</span>
+              <span *ngIf="property.isString && property.showCollation" class="collation">{{getCollation(property)}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-resizable>
+</div>

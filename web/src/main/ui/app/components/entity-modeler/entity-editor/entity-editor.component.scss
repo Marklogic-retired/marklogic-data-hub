@@ -1,0 +1,126 @@
+@import '../../theme/styles/colors';
+
+$bg-color: unquote("rgb(#{$palette-datahub-500})");
+
+:host {
+  display: block;
+  min-width: 639px;
+}
+
+.mdl-dialog__content {
+  h4 {
+    margin-top: 0px;
+  }
+}
+
+.mdl-textfield {
+  width: 100%;
+}
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
+}
+
+div.selected-entity div.mdl-dialog__content {
+  display:block;
+  overflow:auto;
+  max-height:596px;
+  width:100%;
+}
+
+table.properties {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  thead {
+    background-color: #ccc;
+  }
+
+  .col-toggler {
+    width: 16px;
+    min-width: 16px;
+  }
+
+  td.col-toggler {
+    i {
+      color: transparent;
+    }
+    i:hover {
+      color: rgba(0,0,0,0.25);
+    }
+
+    i.active {
+      color: black;
+      &:hover {
+        color: black;
+      }
+    }
+
+  }
+
+  .col-pk {
+
+  }
+  .col-rangeindex {
+
+  }
+  .col-wordlexicon {
+
+  }
+
+  td {
+    border-bottom: 1px solid #ccc;
+    padding: 2px;
+  }
+
+  input {
+    border: 1px solid #ddd;
+    padding: 2px;
+  }
+
+  .ng-invalid:not(form)  {
+    border: 2px solid #a94442; /* red */
+    outline-width: 0;
+  }
+
+  select {
+    max-width: 150px;
+  }
+}
+
+.alert-text {
+  color: #a94442;
+}
+
+.invalid {
+  color: #a94442;
+  border: 2px solid #a94442 !important;
+  outline-width: 0;
+}
+
+.toolbar button {
+  margin-right: 5px;
+}
+
+.properties-heading {
+  padding-bottom: 20px;
+  .properties-title {
+    display: inline-block;
+    margin: 5px 10px 10px 0;
+    font-size: 24px;
+  }
+  .help-icon {
+    position: relative;
+    top: -3px;
+    i.fa-question-circle {
+      cursor: pointer;
+    }
+    a, a:hover {
+      color: rgba(0,0,0, 0.54);
+    }
+  }
+}
+

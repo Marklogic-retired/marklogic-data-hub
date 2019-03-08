@@ -1,0 +1,36 @@
+@import 'colors';
+
+// Our primary is dark, so use $color-dark-contrast for overlaid text.
+$color-primary-contrast: $color-dark-contrast !default;
+// Our accent is dark, so use $color-dark-contrast for overlaid text.
+$color-accent-contrast: $color-dark-contrast !default;
+
+$entity-model-min-width: 350px;
+
+mdl-button {
+  i.fa {
+    font-size: 14px;
+  }
+}
+
+/deep/ mdl-progress {
+
+  &.mdl-progress > .progressbar {
+    background-color: unquote("rgb(#{$palette-datahub-900})");
+  }
+
+  &.mdl-progress > .bufferbar {
+    background-image: none;
+    background-color: unquote("rgb(#{$palette-datahub-A100})");
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@import '../../../../../../../node_modules/@angular-mdl/core/scss/material-design-lite';
+
+.mdl-dialog {
+  width: fit-content;
+}

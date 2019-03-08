@@ -1,0 +1,142 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "data-hub-web": {
+      "root": "",
+      "sourceRoot": "src/main/ui",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "index": "src/main/ui/index.html",
+            "main": "src/main/ui/main.ts",
+            "tsConfig": "src/main/ui/tsconfig.app.json",
+            "polyfills": "src/main/ui/polyfills.ts",
+            "assets": [
+              { "glob": "**/*", "input": "src/main/ui/assets", "output": "/" },
+              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" }
+            ],
+            "styles": [
+              "node_modules/mdi/css/materialdesignicons.css",
+              "node_modules/material-design-icons-iconfont/dist/material-design-icons.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/codemirror/lib/codemirror.css",
+              "node_modules/@angular-mdl/popover/popover.css",
+              "node_modules/@angular-mdl/select/select.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/main/ui/environments/environment.ts",
+                  "with": "src/main/ui/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "data-hub-web:build",
+            "proxyConfig": "proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "data-hub-web:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "data-hub-web:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/main/ui/test.ts",
+            "karmaConfig": "./karma.conf.js",
+            "polyfills": "src/main/ui/polyfills.ts",
+            "tsConfig": "src/main/ui/tsconfig.spec.json",
+            "scripts": [],
+            "styles": [
+              "node_modules/mdi/css/materialdesignicons.css",
+              "node_modules/material-design-icons-iconfont/dist/material-design-icons.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/codemirror/lib/codemirror.css",
+              "src/main/ui/styles.scss"
+            ],
+            "assets": [
+              { "glob": "**/*", "input": "src/main/ui/assets", "output": "/" },
+              { "glob": "favicon.ico", "input": "src/main/ui/", "output": "/" }
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "src/main/ui/tsconfig.app.json",
+              "src/main/ui/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "data-hub-web-e2e": {
+      "root": "",
+      "sourceRoot": "",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "./protractor.conf.js",
+            "devServerTarget": "data-hub-web:serve"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "data-hub-web",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "styleext": "scss"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    }
+  }
+}
