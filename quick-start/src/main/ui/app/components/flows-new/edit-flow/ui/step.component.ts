@@ -33,4 +33,9 @@ export class StepComponent {
     });
   }
 
+  saveStep(event) {
+    console.log('this.updateStep.emit', event);
+    this.updateStep.emit(event);
+  }
+
 }

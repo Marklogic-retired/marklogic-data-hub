@@ -3,11 +3,25 @@
 }
 
 #match-thresholds {
-  margin-bottom: 30px;
+  padding: 10px 30px 30px 30px;
 
   .center .header .mat-toolbar-single-row {
     padding: 0;
   }
+}
+
+/* HEADER ROW HEIGHT */
+.matching-table .mat-header-row {
+    min-height: 48px !important;
+}
+
+/* BODY ROW HEIGHT */
+.matching-table .mat-row {
+    min-height: 38px !important;
+}
+
+.action-content {
+  padding: 4px 0;
 }
 
 .actionLabel {

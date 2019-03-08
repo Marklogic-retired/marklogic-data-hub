@@ -6,6 +6,7 @@
       <mat-option value="synonym">Synonym</mat-option>
       <mat-option value="double metaphone">Double Metaphone</mat-option>
       <mat-option value="zip">Zip</mat-option>
+      <mat-option value="reduce">Reduce</mat-option>
       <mat-option value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
@@ -25,8 +26,7 @@
       <input matInput formControlName="thesaurus"/>
     </mat-form-field>
     <mat-form-field layout-fill>
-      <mat-label>Filter</mat-label>
-      <input matInput formControlName="filter"/>
+      <textarea matInput formControlName="filter" placeholder="Filter"></textarea>
     </mat-form-field>
   </div>
 

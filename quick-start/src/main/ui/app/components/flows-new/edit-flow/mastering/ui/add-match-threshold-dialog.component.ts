@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatchingUiComponent } from './matching-ui.component';
 import { MatchThreshold } from "../../../models/match-thresholds.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
@@ -29,12 +28,10 @@ export class AddMatchThresholdDialogComponent {
     this.form = this.fb.group({
       label: [this.data.option ? this.data.option.label : ''],
       above: [this.data.option ? this.data.option.above : ''],
-      action: [this.data.option ? this.data.option.action : ''],
+      action: [this.data.option ? this.data.option.action : 'merge'],
       customUri: [this.data.option ? this.data.option.customUri : ''],
-      customFunction: [this.data.option ? this.data.option.customFunction : ''],
-      index: this.data.index
+      customFunction: [this.data.option ? this.data.option.customFunction : '']
     })
-    this.selectedAction = this.data.option.action;
   }
 
   onNoClick(): void {

@@ -12,34 +12,33 @@ export class MatchOptions {
   static fromMatching(matching: Matching) {
     const result = new MatchOptions();
     const algs = matching.algorithms['algorithm'];
-    let mOpt;
     if (matching.scoring && matching.scoring['add']) {
       matching.scoring['add'].forEach(a => {
         result.options.push(MatchOption.fromMatching(a, algs));
       })
     }
     if (matching.scoring && matching.scoring['expand']) {
-      matching.scoring['expand'].forEach(a => {
-        result.options.push(MatchOption.fromMatching(a, algs));
+      matching.scoring['expand'].forEach(e => {
+        result.options.push(MatchOption.fromMatching(e, algs));
       })
     }
     if (matching.scoring && matching.scoring['reduce']) {
-      matching.scoring['reduce'].forEach(a => {
-        result.options.push(MatchOption.fromMatching(a, algs));
+      matching.scoring['reduce'].forEach(r => {
+        result.options.push(MatchOption.fromMatching(r, algs));
       })
     }
     return result;
   }
 
   /**
-   * Add a new match option.
+   * Add a new match option to the set.
    */
   addOption(opt) {
     this.options.push(new MatchOption(opt));
   }
 
   /**
-   * Update a match option.
+   * Update a match option in the set.
    */
   updateOption(opt, index) {
     let mOpt = new MatchOption(opt);
@@ -47,10 +46,15 @@ export class MatchOptions {
   }
 
   /**
-   * Delete a match option.
+   * Delete a match option from the set.
    */
-  deleteOption(index) {
-    this.options.splice(index, 1);
+  deleteOption(opt) {
+    let i = this.options.findIndex(o => {
+      return o === opt;
+    })
+    if (i >= 0) {
+      this.options.splice(i, 1);
+    }
   }
 
 }
