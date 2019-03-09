@@ -48,10 +48,10 @@ middleware.init(swaggerMockDocPath, (err) => {
   let myDB = new MemoryDataStore();
   // TODO: import flow objects directly from the Swagger document
   myDB.save(
-    new Resource('flows', 'flow-01', {'id':'flow-01','name':'Order Flow 01','description':'My Flow01 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':['step-1-flow-1','step-2-flow-1','step-3-flow-1','step-4-flow-1'],'stepsPreview':['ingestion','mapping','mastering','custom'],'jobs':['job-1-flow-1','job-2-flow-1','job-3-flow-1','job-4-flow-1'],'latestJob':{'id':'job-4-flow-1','flowId':'flow-1','startTime':'2019-01-31 12:10:00','endTime':'2019-01-31 13:10:00','output':[],'status':'running','runningPercent':85,'successfulEvents':500,'failedEvents':0},'isValid':true,'isRunning':false,'version':1}),
-    new Resource('flows', 'flow-02', {'id':'flow-02','name':'Order Flow 2','description':'My Flow2 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':['step-1-flow-2','step-2-flow-2','step-3-flow-2','step-4-flow-2'],'stepsPreview':['ingestion','mapping','mastering','custom'],'jobs':['job-1-flow-2','job-2-flow-2','job-3-flow-2','job-4-flow-2'],'latestJob':{'id':'job-4-flow-2','flowId':'flow-2','startTime':'2019-02-01 12:10:00','endTime':'2019-02-01 16:10:00','output':[],'status':'finished','runningPercent':null,'successfulEvents':13429,'failedEvents':63},'isValid':true,'isRunning':false,'version':1}),
-    new Resource('flows', 'flow-03', {'id':'flow-03','name':'Customer Flow','description':'My Customer Flow flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':['step-1-flow-3','step-2-flow-3','step-3-flow-3','step-4-flow-3'],'stepsPreview':['ingestion','mapping','mastering','custom'],'jobs':['job-1-flow-3'],'latestJob':{'id':'job-1-flow-3','flowId':'flow-3','startTime':'2019-02-02 12:10:00','endTime':'2019-02-02 16:10:00','output':[],'status':'errored','runningPercent':null,'successfulEvents':0,'failedEvents':500},'isValid':true,'isRunning':false,'version':1}),
-    new Resource('flows', 'flow-04', {'id':'flow-04','name':'Product Ingestion','description':'My Product Ingestion Flow flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':['step-1-flow-4'],'stepsPreview':['custom'],'jobs':[],'latestJob':null,'isValid':false,'isRunning':false,'version':1}),
+    new Resource('flows', 'flow-01', {'id':'flow-01','name':'Order Flow 01','description':'My Flow01 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-1', type:'ingestion' },{ id: 'step-2-flow-1', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-1', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-1', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-1','job-2-flow-1','job-3-flow-1','job-4-flow-1'],'latestJob':{'id':'job-4-flow-1','flowId':'flow-1','startTime':'2019-01-31 12:10:00','endTime':'2019-01-31 13:10:00','output':[],'status':'running','runningPercent':85,'successfulEvents':500,'failedEvents':0},'isValid':true,'isRunning':false,'version':1}),
+    new Resource('flows', 'flow-02', {'id':'flow-02','name':'Order Flow 2','description':'My Flow2 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-2', type:'ingestion' },{ id: 'step-2-flow-2', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-2', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-2', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-2','job-2-flow-2','job-3-flow-2','job-4-flow-2'],'latestJob':{'id':'job-4-flow-2','flowId':'flow-2','startTime':'2019-02-01 12:10:00','endTime':'2019-02-01 16:10:00','output':[],'status':'finished','runningPercent':null,'successfulEvents':13429,'failedEvents':63},'isValid':true,'isRunning':false,'version':1}),
+    new Resource('flows', 'flow-03', {'id':'flow-03','name':'Customer Flow','description':'My Customer Flow flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-3', type:'ingestion' },{ id: 'step-2-flow-3', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-3', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-3', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-3'],'latestJob':{'id':'job-1-flow-3','flowId':'flow-3','startTime':'2019-02-02 12:10:00','endTime':'2019-02-02 16:10:00','output':[],'status':'errored','runningPercent':null,'successfulEvents':0,'failedEvents':500},'isValid':true,'isRunning':false,'version':1}),
+    new Resource('flows', 'flow-04', {'id':'flow-04','name':'Product Ingestion','description':'My Product Ingestion Flow flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-4', type:'custom', targetEntity: 'Order' }],'jobs':[],'latestJob':null,'isValid':false,'isRunning':false,'version':1}),
 
     new Resource('steps', 'step-1-flow-1', {'id':'step-1-flow-1','name':'Flow 01 Ingest Step','description':'My Step 1 description','type':'ingestion','sourceDatabase':'','targetDatabase':'staging','isValid':true,'isRunning':false,'config':{'input_file_path':'/marklogic-data-hub/examples/healthcare','input_file_type':'documents','output_collections':'Order,Flow 01 Ingest Step,input,newCollection','output_permissions':'rest-reader,read,rest-writer,update','document_type':'json','transform_module':'/data-hub/5/transforms/mlcp-flow-transform.sjs','transform_namespace':'http://marklogic.com/data-hub/mlcp-flow-transform','transform_param':'entity-name=Order,flow-name=Flow 01 Ingest Step'},'language':'en','version':'1'}),
     new Resource('steps', 'step-2-flow-1', {'id':'step-2-flow-1','name':'Flow 01 Mapping Step','description':'My Step 2 description','type':'mapping','sourceDatabase':'','targetDatabase':'staging','isValid':true,'isRunning':false,'config':{'sourceCollection':'Flow 01 Ingest Step','sourceURI':'source-doc-01.json','sourceQuery':'','targetEntity':'Order','targetEntityType':'http://example.org/Order-0.0.1/Order','sourceContext':'//','properties':{'id':{'sourcedFrom':'id'},'price':{'sourcedFrom':'price'},'products':{'sourcedFrom':'product_id'}}},'language':'en','version':'1'}),
@@ -194,7 +194,7 @@ middleware.init(swaggerMockDocPath, (err) => {
     if (req.params.flowId) {
       myDB.get(new Resource(`/flows/${req.params.flowId}`), (err, flow) => {
         if (err) return next(err);
-        let stepIds = flow && flow.data && flow.data.steps || [];
+        let stepIds = flow && flow.data && flow.data.steps && _.map(flow.data.steps, 'id') || [];
         myDB.getCollection('steps', (err, steps) => {
           if (err) return next(err);
           let stepsResp = []; // Array of Step objects
@@ -222,7 +222,7 @@ middleware.init(swaggerMockDocPath, (err) => {
           if (err) return next(err);
           let updatedFlow = flow.data;
           updatedFlow.steps = updatedFlow.steps || [];
-          updatedFlow.steps.push(step.data.id); // adds step id to steps Array, appended to the end
+          updatedFlow.steps.push({ id: step.data.id, type: step.data.type, targetEntity: step.data.config && step.data.config.targetEntity || null }); // adds step id to steps Array, appended to the end
           myDB.save(new Resource('flows', req.params.flowId, updatedFlow), (err, flow) => {
             // Send the response
             res.json(step.data);
@@ -239,6 +239,7 @@ middleware.init(swaggerMockDocPath, (err) => {
       // supposed to merge with previous item with same ID
       myDB.save(new Resource('steps', req.params.stepId, req.body), (err, step) => {
         if (err) return next(err);
+        // TODO: If step type or targetEntity changes, we should update flow.  Is this even needed?  This is a mock... !! 
         // Send the response
         res.json(step.data);
       });
@@ -256,7 +257,9 @@ middleware.init(swaggerMockDocPath, (err) => {
         myDB.get(new Resource(`/flows/${req.params.flowId}`), (err, flow) => {
           if (err) return next(err);
           let updatedFlow = flow.data;
-          _.pull(updatedFlow.steps, req.params.stepId); // removes step id from steps Array
+          _.remove(updatedFlow.steps, function(s) {
+            return s.id === req.params.stepId;
+          });
           myDB.save(new Resource('flows', req.params.flowId, updatedFlow), (err, flow) => {
             // Send the response
             res.json(flow.data);
