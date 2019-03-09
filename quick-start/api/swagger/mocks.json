@@ -456,9 +456,9 @@
         },
         "steps": {
           "type": "array",
-          "description": "Array of Step Ids associated with this Flow",
+          "description": "Array of summary Step objects associated with this Flow",
           "items": {
-            "type": "string"
+            "type": "object"
           }
         },
         "jobs": {
