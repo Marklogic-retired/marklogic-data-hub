@@ -41,9 +41,9 @@ export class Flow {
 
   get targetEntity(): string {
     let step = this.steps.find(function (step) {
-      return step.config['targetEntity'] !== undefined && step.config['targetEntity'] !== '';
-    })
-    return (step) ? step.config['targetEntity'] : '';
+      return step['targetEntity'] !== undefined && step['targetEntity'] !== '';
+    });
+    return (step) ? step['targetEntity'] : '';
   }
 
   static fromJSON(json) {
