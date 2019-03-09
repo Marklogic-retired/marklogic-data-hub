@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Flow } from "../models/flow.model";
+import { Step } from '../models/step.model';
 import { ProjectService } from '../../../services/projects';
 import { ManageFlowsService } from "../services/manage-flows.service";
 import { EntitiesService } from '../../../models/entities.service';
@@ -11,10 +12,14 @@ import { Entity } from '../../../models/entity.model';
   template: `
   <app-edit-flow-ui
     [flow]="flow"
+    [stepsArray]="stepsArray"
     [databases]="databases"
     [entities]="entities"
     (saveFlow)="saveFlow($event)"
     (deleteFlow)="deleteFlow($event)"
+    (stepCreate)="createStep($event)"
+    (stepUpdate)="updateStep($event)"
+    (stepDelete)="deleteStep($event)"
   ></app-edit-flow-ui>
 `
 })
@@ -22,6 +27,7 @@ export class EditFlowComponent implements OnInit {
   flowId: string;
   flows: any;
   flow: Flow;
+  stepsArray: any;
   databases: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
 
@@ -34,6 +40,7 @@ export class EditFlowComponent implements OnInit {
 
   ngOnInit() {
     this.getFlow();
+    this.getSteps();
     this.getDbInfo();
     this.getEntities();
   }
@@ -51,6 +58,12 @@ export class EditFlowComponent implements OnInit {
       this.flow = this.flows.find(flow => flow.id === this.flowId);
     }
   }
+  getSteps() {
+    this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
+      console.log('steps', resp);
+      this.stepsArray = resp;
+    });
+  }
   getDbInfo() {
     this.projectService.getStatus().subscribe((stats) => {
       this.databases.push(stats.finalDb);
@@ -65,12 +78,31 @@ export class EditFlowComponent implements OnInit {
   }
   saveFlow(flow): void {
     this.manageFlowsService.saveFlow(flow).subscribe(resp => {
-      console.log('save response', resp);
+      this.flow = Flow.fromJSON(resp);
+      this.getSteps();
     });
   }
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
       console.log('delete response', resp);
+    });
+  }
+  createStep(step) {
+    this.manageFlowsService.createStep(this.flow.id, step).subscribe(resp => {
+      console.log('create response', resp);
+      this.getSteps();
+    });
+  }
+  updateStep(step) {
+    this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
+      console.log('update response', resp);
+      this.getSteps();
+    });
+  }
+  deleteStep(stepId) {
+    this.manageFlowsService.deleteStep(this.flow.id, stepId).subscribe(resp => {
+      this.flow = Flow.fromJSON(resp);
+      this.getSteps();
     });
   }
 }

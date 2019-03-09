@@ -12,6 +12,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 export class StepperComponent extends CdkStepper  {
 
   @Input() flow: any;
+  @Input() stepsArray: any;
   @Output() newStep = new EventEmitter();
   @Output() run = new EventEmitter();
   @Output() deleteStep = new EventEmitter();
@@ -26,8 +27,13 @@ export class StepperComponent extends CdkStepper  {
     this.showBody = !this.showBody;
   }
   dropped(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.flow.steps, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.stepsArray, event.previousIndex, event.currentIndex);
     this.selectedIndex = event.currentIndex;
+    const newStepsOrder = [];
+    this.stepsArray.forEach(step => {
+      newStepsOrder.push(step.name);
+    });
+    this.flow.steps = newStepsOrder;
     this.updateFlow.emit();
   }
   stepClicked(index: number): void {

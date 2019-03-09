@@ -2881,6 +2881,13 @@
         ],
         "parameters": [
           {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "description": "Step to create",

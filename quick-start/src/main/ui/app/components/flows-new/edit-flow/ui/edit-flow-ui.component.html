@@ -1,7 +1,8 @@
 <h2>Edit Flow</h2>
 <app-stepper 
-  *ngIf="flow"
+  *ngIf="flow && stepsArray"
   [flow]="flow"
+  [stepsArray]="stepsArray"
   (newStep)="openStepDialog()" 
   (run)="openRunDialog(flow)" 
   (deleteStep)="deleteStepDialog($event)"
@@ -9,7 +10,7 @@
   (redeploy)="redeployDialog()" 
   (deleteFlow)="deleteFlowDialog()"
   (updateFlow)="updateFlow()">
-  <cdk-step *ngFor="let step of flow.steps; let i = index" label="{{flow.steps[i].name}}">
+  <cdk-step *ngFor="let step of stepsArray; let i = index" label="{{stepsArray[i].name}}">
     <app-step [step]="step" [databases]="databases" (updateStep)="updateStep($event)"></app-step>
   </cdk-step>
 </app-stepper>

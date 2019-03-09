@@ -15,10 +15,14 @@ import { Step } from '../../models/step.model';
 export class EditFlowUiComponent {
 
   @Input() flow: Flow;
+  @Input() stepsArray: any;
   @Input() databases: any;
   @Input() entities: any;
   @Output() saveFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
+  @Output() stepCreate = new EventEmitter();
+  @Output() stepUpdate = new EventEmitter();
+  @Output() stepDelete = new EventEmitter();
 
   constructor(
     public dialog: MatDialog
@@ -32,10 +36,7 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        // TODO when adding step, need endpoint to generate step id
-        this.flow.steps.push(response);
-        console.log('flow after adding step', this.flow);
-        this.saveFlow.emit(this.flow);
+        this.stepCreate.emit(response);
       }
     });
   }
@@ -59,10 +60,7 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        // TODO remove by step id
-        const index = this.flow.steps.findIndex(object => object.name === step.name);
-        this.flow.steps.splice(index, 1);
-        this.saveFlow.emit(this.flow);
+        this.stepDelete.emit(step.id);
       }
     });
   }
@@ -110,9 +108,6 @@ export class EditFlowUiComponent {
     this.saveFlow.emit(this.flow);
   }
   updateStep(step): void {
-    // TODO update by step id
-    const index = this.flow.steps.findIndex(object => object.name === step.name);
-    this.flow.steps[index] = step;
-    this.saveFlow.emit(this.flow);
+    this.stepUpdate.emit(step);
   }
 }
