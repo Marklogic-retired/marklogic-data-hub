@@ -72,7 +72,6 @@ import {ManageFlowsService} from './components/flows-new/services/manage-flows.s
 import {ProjectService} from './services/projects';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
-import {FocusElementDirective} from './directives/focus-element/focus-element.directive';
 import {TraceService} from './components/traces/trace.service';
 import {SearchService} from './components/search/search.service';
 import {HarmonizeFlowOptionsComponent} from './components/harmonize-flow-options';
@@ -139,7 +138,6 @@ import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
     SearchViewerUiComponent,
     NoContentComponent,
     ClipboardDirective,
-    FocusElementDirective,
     HarmonizeFlowOptionsComponent,
     HarmonizeFlowOptionsUiComponent,
     DashboardComponent,
