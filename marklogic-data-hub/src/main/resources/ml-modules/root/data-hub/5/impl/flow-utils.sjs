@@ -453,8 +453,8 @@ class FlowUtils {
   }
 
   createMetadata(metaData = {}, flowName, stepName) {
-    metaData[this.consts.CREATED_ON] = this.datahub.flowUtils.evalSubstituteVal(this.consts.CREATED_ON);
-    metaData[this.consts.CREATED_BY] = this.datahubflowUtils.evalSubstituteVal(this.consts.CREATED_BY);
+    metaData[this.consts.CREATED_ON] = this.evalSubstituteVal(this.consts.CREATED_ON);
+    metaData[this.consts.CREATED_BY] = this.evalSubstituteVal(this.consts.CREATED_BY);
     metaData[this.consts.CREATED_IN_FLOW] = flowName;
     metaData[this.consts.CREATED_BY_STEP] = stepName;
 
