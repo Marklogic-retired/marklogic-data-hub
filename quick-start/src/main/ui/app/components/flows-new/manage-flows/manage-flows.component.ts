@@ -3,7 +3,7 @@ import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
 import * as _ from "lodash";
-  
+
 @Component({
   selector: 'flows-page',
   template: `
