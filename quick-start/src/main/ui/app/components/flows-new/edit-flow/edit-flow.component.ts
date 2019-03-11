@@ -39,7 +39,6 @@ export class EditFlowComponent implements OnInit {
 
   ngOnInit() {
     this.getFlow();
-    // this.getSteps();
     this.getDbInfo();
     this.getEntities();
   }
@@ -78,7 +77,6 @@ export class EditFlowComponent implements OnInit {
     });
   }
   saveFlow(flow): void {
-    console.log('save flow', flow);
     this.manageFlowsService.saveFlow(flow).subscribe(resp => {
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
@@ -96,7 +94,6 @@ export class EditFlowComponent implements OnInit {
   }
   updateStep(step) {
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
-      console.log('update response', resp);
       this.stepsArray.forEach( step => {
         if (step.id === resp.id) {
           step = resp;

@@ -30,12 +30,6 @@ export class StepperComponent extends CdkStepper  {
     moveItemInArray(this.stepsArray, event.previousIndex, event.currentIndex);
     moveItemInArray(this.flow.steps, event.previousIndex, event.currentIndex);
     this.selectedIndex = event.currentIndex;
-    console.log('flow steps ', this.flow.steps);
-    //const newStepsOrder = [];
-    // this.stepsArray.forEach(step => {
-    //   newStepsOrder.push(step.name);
-    // });
-    // this.flow.steps = newStepsOrder;
     this.updateFlow.emit();
   }
   stepClicked(index: number): void {
