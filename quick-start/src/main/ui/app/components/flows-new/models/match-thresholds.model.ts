@@ -21,14 +21,14 @@ export class MatchThresholds {
   }
 
   /**
-   * Add a new match threshold.
+   * Add a match threshold to the set.
    */
   addThreshold(thr) {
     this.thresholds.push(new MatchThreshold(thr));
   }
 
   /**
-   * Update a match threshold.
+   * Update a match threshold in the set.
    */
   updateThreshold(thr, index) {
     let mThr = new MatchThreshold({
@@ -44,10 +44,15 @@ export class MatchThresholds {
   }
 
   /**
-   * Delete a match threshold.
+   * Delete a match threshold from the set.
    */
-  deleteThreshold(index) {
-    this.thresholds.splice(index, 1);
+  deleteThreshold(thr) {
+    let i = this.thresholds.findIndex(t => {
+      return t === thr;
+    })
+    if (i >= 0) {
+      this.thresholds.splice(i, 1);
+    }
   }
 
 }
@@ -64,7 +69,6 @@ export class MatchThreshold {
   public customFunction: string;
 
   constructor(mThr: any) {
-    if (mThr.type) this.type = mThr.type;
     if (mThr.label) this.label = mThr.label;
     if (mThr.above) this.above = mThr.above;
     if (mThr.action) this.action = mThr.action;

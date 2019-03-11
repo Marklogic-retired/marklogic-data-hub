@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatchingUiComponent } from './matching-ui.component';
 import { MatchOption } from "../../../models/match-options.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
@@ -28,7 +27,7 @@ export class AddMatchOptionDialogComponent {
   ngOnInit() {
     this.form = this.fb.group({
       propertyName: [this.data.option ? this.data.option.propertyName.join(', ') : ''],
-      matchType: [this.data.option ? this.data.option.matchType : ''],
+      matchType: [this.data.option ? this.data.option.matchType : 'exact'],
       weight: [this.data.option ? this.data.option.weight : ''],
       thesaurus: [this.data.option ? this.data.option.thesaurus : ''],
       filter: [this.data.option ? this.data.option.filter : ''],
@@ -41,7 +40,8 @@ export class AddMatchOptionDialogComponent {
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
       index: this.data.index
     })
-    this.selectedType = this.data.option.matchType;
+    this.selectedType = (this.data.option && this.data.option.matchType) ?
+      this.data.option.matchType : 'exact';
   }
 
   onNoClick(): void {

@@ -25,7 +25,6 @@ import { Entity } from '../../../models/entity.model';
 })
 export class EditFlowComponent implements OnInit {
   flowId: string;
-  flows: any;
   flow: Flow;
   stepsArray: any;
   databases: string[] = [];
@@ -40,28 +39,30 @@ export class EditFlowComponent implements OnInit {
 
   ngOnInit() {
     this.getFlow();
-    this.getSteps();
+    // this.getSteps();
     this.getDbInfo();
     this.getEntities();
   }
   getFlow() {
-    this.flows = this.manageFlowsService.flows;
     this.flowId = this.activatedRoute.snapshot.paramMap.get('flowId');
 
-    // GET Flow by ID if flows do not exist from flow service
-    if (this.flows.length === 0) {
+    // GET Flow by ID
+    if (this.flowId) {
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         console.log('flow by id response', resp);
         this.flow = Flow.fromJSON(resp);
+        this.getSteps();
       });
-    } else {
-      this.flow = this.flows.find(flow => flow.id === this.flowId);
     }
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
       console.log('steps', resp);
-      this.stepsArray = resp;
+      const newArray = [];
+      this.flow.steps.map(step => {
+        newArray.push(resp.find(item => item.id === step.id));
+      });
+      this.stepsArray = newArray;
     });
   }
   getDbInfo() {
@@ -77,6 +78,7 @@ export class EditFlowComponent implements OnInit {
     });
   }
   saveFlow(flow): void {
+    console.log('save flow', flow);
     this.manageFlowsService.saveFlow(flow).subscribe(resp => {
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
@@ -89,14 +91,17 @@ export class EditFlowComponent implements OnInit {
   }
   createStep(step) {
     this.manageFlowsService.createStep(this.flow.id, step).subscribe(resp => {
-      console.log('create response', resp);
-      this.getSteps();
+      this.stepsArray.push(resp);
     });
   }
   updateStep(step) {
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
       console.log('update response', resp);
-      this.getSteps();
+      this.stepsArray.forEach( step => {
+        if (step.id === resp.id) {
+          step = resp;
+        }
+      });
     });
   }
   deleteStep(stepId) {

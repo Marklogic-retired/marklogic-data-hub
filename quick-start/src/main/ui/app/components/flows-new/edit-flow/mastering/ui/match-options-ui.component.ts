@@ -10,28 +10,24 @@ import { ConfirmationDialogComponent } from "../../../../common";
   styleUrls: ['./match-options-ui.component.scss'],
 })
 export class MatchOptionsUiComponent {
-  displayedColumns = ['propertyName', 'matchType', 'weight', 'other', 'actions'];
-  @Input() step: any;
+  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
   @Input() matchOptions: any;
 
   @Output() createOption = new EventEmitter();
-  @Output() saveOption = new EventEmitter();
+  @Output() updateOption = new EventEmitter();
   @Output() deleteOption = new EventEmitter();
 
-  dataSource: MatTableDataSource<MatchOption>;
-
-  @ViewChild(MatTable) table: MatTable<any>;
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  @ViewChild(MatSort) sort: MatSort;
+  public displayedColumns = ['propertyName', 'matchType', 'weight', 'other', 'actions'];
+  public dataSource: MatTableDataSource<MatchOption>;
 
   constructor(
     public dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    console.log('this.matchOptions', this.matchOptions);
     this.dataSource = new MatTableDataSource<MatchOption>(this.matchOptions.options);
   }
 
@@ -45,12 +41,11 @@ export class MatchOptionsUiComponent {
       width: '500px',
       data: {option: optionToEdit, index: index}
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
         if (optionToEdit) {
-          console.log('saveOption');
-          this.saveOption.emit(result);
+          console.log('updateOption');
+          this.updateOption.emit(result);
         }else{
           console.log('createOption');
           this.createOption.emit(result);
@@ -59,15 +54,14 @@ export class MatchOptionsUiComponent {
     });
   }
 
-  openConfirmDialog(index): void {
+  openConfirmDialog(opt): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
       data: {title: 'Delete Match Option', confirmationMessage: `Delete the option?`}
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        this.deleteOption.emit(index);
+        this.deleteOption.emit(opt);
       }
     });
   }
@@ -79,12 +73,8 @@ export class MatchOptionsUiComponent {
       value;
   }
 
-  updateDataSource() {
-    this.dataSource.data = this.matchOptions['options'];
-  }
-
   renderRows(): void {
-    this.updateDataSource();
+    this.dataSource.data = this.matchOptions['options'];
     this.table.renderRows();
   }
 

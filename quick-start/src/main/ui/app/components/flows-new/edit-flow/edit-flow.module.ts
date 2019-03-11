@@ -15,7 +15,6 @@ import { StepComponent } from './ui/step.component';
 import { StepperComponent } from './ui/stepper.component';
 
 import { MatchingComponent } from './mastering/matching.component';
-import { MatchingUiComponent } from './mastering/ui/matching-ui.component';
 import { MatchOptionsUiComponent } from './mastering/ui/match-options-ui.component';
 import { MatchThresholdsUiComponent } from "./mastering/ui/match-thresholds-ui.component";
 import { AddMatchOptionDialogComponent } from './mastering/ui/add-match-option-dialog.component';
@@ -30,7 +29,6 @@ import { AddMatchThresholdDialogComponent } from './mastering/ui/add-match-thres
     StepComponent,
     StepperComponent,
     MatchingComponent,
-    MatchingUiComponent,
     MatchOptionsUiComponent,
     MatchThresholdsUiComponent,
     AddMatchOptionDialogComponent,
