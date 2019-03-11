@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Flow} from "../models/flow.model";
+import { Step } from '../models/step.model';
 
 
 @Injectable()
@@ -42,4 +43,22 @@ export class ManageFlowsService {
     return this.http.put(`/api/flows/${flow.id}`, flow);
   }
 
+  getSteps(flowId: string) {
+    console.log(`GET /api/flows/${flowId}/steps`);
+    console.log(flowId);
+    return this.http.get<Array<Step>>(`api/flows/${flowId}/steps`);
+  }
+  createStep(flowId: string, step: Step) {
+    console.log(`POST api/flows/${flowId}/steps`);
+    return this.http.post<Step>(`api/flows/${flowId}/steps`, step);
+  }
+  updateStep(flowId: string, stepId: string, step: Step) {
+    console.log(`PUT api/flows/${flowId}/steps/${stepId}`);
+    return this.http.put<Step>(`api/flows/${flowId}/steps/${stepId}`, step);
+  }
+
+  deleteStep(flowId: string, stepId: string) {
+    console.log(`DELETE api/flows/${flowId}/steps/${stepId}`);
+    return this.http.delete(`api/flows/${flowId}/steps/${stepId}`);
+  }
 }

@@ -265,7 +265,7 @@
           {
             "name": "flowId",
             "in": "path",
-            "description": "Id of flow to be fetched",
+            "description": "Id of flow",
             "required": true,
             "type": "string"
           },

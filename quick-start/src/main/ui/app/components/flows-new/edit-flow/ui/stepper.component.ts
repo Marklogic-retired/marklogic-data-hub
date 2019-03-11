@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -9,9 +9,10 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./stepper.component.scss'],
   providers: [{ provide: CdkStepper, useExisting: StepperComponent }]
 })
-export class StepperComponent extends CdkStepper {
+export class StepperComponent extends CdkStepper  {
 
   @Input() flow: any;
+  @Input() stepsArray: any;
   @Output() newStep = new EventEmitter();
   @Output() run = new EventEmitter();
   @Output() deleteStep = new EventEmitter();
@@ -21,10 +22,12 @@ export class StepperComponent extends CdkStepper {
   @Output() updateFlow = new EventEmitter();
 
   showBody = true;
+
   toggleBody() {
     this.showBody = !this.showBody;
   }
   dropped(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.stepsArray, event.previousIndex, event.currentIndex);
     moveItemInArray(this.flow.steps, event.previousIndex, event.currentIndex);
     this.selectedIndex = event.currentIndex;
     this.updateFlow.emit();
@@ -37,6 +40,9 @@ export class StepperComponent extends CdkStepper {
   }
   runClicked(): void {
     this.run.emit();
+  }
+  stopClicked(): void {
+    console.log('stop clicked');
   }
   deleteStepClicked(step): void {
     this.deleteStep.emit(step);

@@ -1,10 +1,17 @@
 <h1 mat-dialog-title>Run Flow</h1>
 <div mat-dialog-content class="content">
-  <div *ngFor="let step of data.steps">
-    <mat-checkbox>{{step}}</mat-checkbox>
+  <mat-checkbox 
+    [indeterminate]="indeterminate" 
+    [checked]="isCheckAll()" 
+    (change)="toggleSelection($event)">Run All</mat-checkbox>
+  <mat-divider></mat-divider>
+  <div *ngFor="let step of data.steps; let i = index">
+    <mat-checkbox 
+      [checked]="selected[i]" 
+      (change)="checkSelections($event, i)">{{step}}</mat-checkbox>
   </div>
 </div>
 <div mat-dialog-actions class="bottom">
   <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button cdkFocusInitial>Run</button>
+  <button mat-button cdkFocusInitial [mat-dialog-close]="returnSelectedSteps()">Run</button>
 </div>
