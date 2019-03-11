@@ -2,11 +2,13 @@ import {Component, Inject, OnInit} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { EditFlowUiComponent } from './edit-flow-ui.component';
 import { Step } from '../../models/step.model';
+import { Matching } from '../../models/matching.model';
 
 export interface DialogData {
   title: string;
   databases: any;
   entities: any;
+  collections: any;
   step: any;
 }
 
@@ -32,5 +34,4 @@ export class NewStepDialogComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close(false);
   }
-
 }

@@ -48,10 +48,12 @@ export class ManageFlowsService {
     console.log(flowId);
     return this.http.get<Array<Step>>(`api/flows/${flowId}/steps`);
   }
+
   createStep(flowId: string, step: Step) {
     console.log(`POST api/flows/${flowId}/steps`);
     return this.http.post<Step>(`api/flows/${flowId}/steps`, step);
   }
+
   updateStep(flowId: string, stepId: string, step: Step) {
     console.log(`PUT api/flows/${flowId}/steps/${stepId}`);
     return this.http.put<Step>(`api/flows/${flowId}/steps/${stepId}`, step);
@@ -60,5 +62,14 @@ export class ManageFlowsService {
   deleteStep(flowId: string, stepId: string) {
     console.log(`DELETE api/flows/${flowId}/steps/${stepId}`);
     return this.http.delete(`api/flows/${flowId}/steps/${stepId}`);
+  }
+  getCollections(database: string) {
+    console.log('GET api/collections/' + database);
+    return this.http.get<Array<string>>('api/collections/' + database);
+  }
+
+  runFlow(flowId: string) {
+    console.log(`POST api/flows/${flowId}/run`);
+    return this.http.post(`api/flows/${flowId}/run`, {});
   }
 }

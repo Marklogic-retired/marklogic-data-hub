@@ -11,6 +11,7 @@ import { MatchingComponent } from '../mastering/matching.component';
 export class StepComponent {
   @Input() step: any;
   @Input() databases: any;
+  @Input() collections: any;
   @Output() updateStep = new EventEmitter();
 
   showBody = true;
@@ -23,7 +24,12 @@ export class StepComponent {
   editSettingsClicked() {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
-      data: {title: 'Edit Step', databases: this.databases, step: this.step}
+      data: {
+        title: 'Edit Step',
+        databases: this.databases,
+        collections: this.collections,
+        step: this.step
+      }
     });
 
     dialogRef.afterClosed().subscribe(response => {

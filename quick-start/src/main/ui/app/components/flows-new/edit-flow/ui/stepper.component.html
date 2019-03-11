@@ -8,13 +8,13 @@
     <div class="flow-container">
         <button *ngIf="!flow.isRunning; else elseStop" class="item" mat-raised-button color="primary" (click)="this.runClicked()">Run</button>
         <ng-template #elseStop><button class="item" mat-raised-button color="primary" (click)="this.stopClicked()">Stop</button></ng-template>
-        <mat-progress-bar  *ngIf="flow.isRunning; else finished" class="item" mode="determinate" value="40"></mat-progress-bar>
+        <mat-progress-bar  *ngIf="flow.isRunning; else finished" class="item" mode="determinate" [value]="flow.latestJob.runningPercent"></mat-progress-bar>
         <!--  TODO Add flow status -->
         <ng-template #finished>
-          <!-- <a href="#">Finished</a> -->
+          <a href="#">{{flow.status}}</a>
           <div></div>
         </ng-template>
-        <div [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: 2019-02-07 13:01:45</div>
+        <div [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: {{flow.latestJob.startTime}}</div>
         <a href="#" class="text item">View Jobs</a>
         <div class="icon-container">
           <mat-icon class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>

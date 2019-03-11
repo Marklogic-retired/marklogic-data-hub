@@ -14,9 +14,11 @@ import { Entity } from '../../../models/entity.model';
     [flow]="flow"
     [stepsArray]="stepsArray"
     [databases]="databases"
+    [collections]="collections"
     [entities]="entities"
     (saveFlow)="saveFlow($event)"
     (deleteFlow)="deleteFlow($event)"
+    (runFlow)="runFlow($event)"
     (stepCreate)="createStep($event)"
     (stepUpdate)="updateStep($event)"
     (stepDelete)="deleteStep($event)"
@@ -28,6 +30,7 @@ export class EditFlowComponent implements OnInit {
   flow: Flow;
   stepsArray: any;
   databases: string[] = [];
+  collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
 
   constructor(
@@ -69,6 +72,13 @@ export class EditFlowComponent implements OnInit {
       this.databases.push(stats.finalDb);
       this.databases.push(stats.jobDb);
       this.databases.push(stats.stagingDb);
+      // TODO provide database to get collections from
+      this.getCollections(stats.finalDb);
+    });
+  }
+  getCollections(db) {
+    this.manageFlowsService.getCollections(db).subscribe( resp => {
+      this.collections = resp;
     });
   }
   getEntities() {
@@ -85,6 +95,11 @@ export class EditFlowComponent implements OnInit {
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
       console.log('delete response', resp);
+    });
+  }
+  runFlow(flowId): void {
+    this.manageFlowsService.runFlow(flowId).subscribe(resp => {
+      console.log('run response', resp);
     });
   }
   createStep(step) {
