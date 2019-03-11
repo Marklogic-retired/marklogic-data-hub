@@ -20,7 +20,6 @@ import { Entity } from '../../../models/entity.model';
 })
 export class EditFlowComponent implements OnInit {
   flowId: string;
-  flows: any;
   flow: Flow;
   databases: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
@@ -38,17 +37,14 @@ export class EditFlowComponent implements OnInit {
     this.getEntities();
   }
   getFlow() {
-    this.flows = this.manageFlowsService.flows;
     this.flowId = this.activatedRoute.snapshot.paramMap.get('flowId');
 
-    // GET Flow by ID if flows do not exist from flow service
-    if (this.flows.length === 0) {
+    // GET Flow by ID
+    if (this.flowId) {
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         console.log('flow by id response', resp);
         this.flow = Flow.fromJSON(resp);
       });
-    } else {
-      this.flow = this.flows.find(flow => flow.id === this.flowId);
     }
   }
   getDbInfo() {
