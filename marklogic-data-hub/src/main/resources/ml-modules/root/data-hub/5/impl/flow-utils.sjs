@@ -23,6 +23,7 @@ class FlowUtils {
       config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
+    this.consts = consts;
   }
 
 
@@ -58,19 +59,19 @@ class FlowUtils {
   determineDocumentType(input) {
     switch (input.nodeType) {
       case Node.OBJECT_NODE:
-        return consts.JSON;
+        return this.consts.JSON;
       case Node.ARRAY_NODE:
-        return consts.JSON;
+        return this.consts.JSON;
       case Node.ELEMENT_NODE:
-        return consts.XML;
+        return this.consts.XML;
       case Node.TEXT_NODE:
-        return consts.TEXT;
+        return this.consts.TEXT;
       case Node.BINARY_NODE:
-        return consts.BINARY;
+        return this.consts.BINARY;
       case Node.BINARY_NODE:
-        return consts.BINARY;
+        return this.consts.BINARY;
       default:
-        return consts.DEFAULT_FORMAT;
+        return this.consts.DEFAULT_FORMAT;
     }
   }
   /**
@@ -89,7 +90,7 @@ class FlowUtils {
     let attachments = null;
     let inputFormat = this.determineDocumentType(content);
     if (content instanceof Object && content.hasOwnProperty("$type")) {
-      if (dataFormat === consts.JSON) {
+      if (dataFormat === this.consts.JSON) {
         instance = this.instanceToCanonicalJson(content);
         instance.info = {
           title: content['$type'],
@@ -102,7 +103,7 @@ class FlowUtils {
         } else {
           attachments = content['$attachments'];
         }
-      } else if (dataFormat === consts.XML) {
+      } else if (dataFormat === this.consts.XML) {
         instance = this.instanceToCanonicalXml(content);
         if (content['$attachments'] instanceof Object || content['$attachments'] instanceof ObjectNode) {
           attachments = xdmp.toJsonString(content['$attachments']);
@@ -112,13 +113,13 @@ class FlowUtils {
       }
     } else if (inputFormat === dataFormat) {
       instance = content;
-    } else if (dataFormat === consts.XML && inputFormat === consts.JSON) {
+    } else if (dataFormat === this.consts.XML && inputFormat === this.consts.JSON) {
       instance = this.jsonToXml(content);
-    } else if (dataFormat === consts.JSON && inputFormat === consts.XML) {
+    } else if (dataFormat === this.consts.JSON && inputFormat === this.consts.XML) {
       instance = this.xmlToJson(content);
     }
 
-    if (dataFormat === consts.JSON) {
+    if (dataFormat === this.consts.JSON) {
       return {
         envelope: {
           headers: headers,
@@ -127,7 +128,7 @@ class FlowUtils {
           attachments: attachments
         }
       };
-    } else if (dataFormat === consts.XML) {
+    } else if (dataFormat === this.consts.XML) {
       const nb = new NodeBuilder();
       nb.startDocument();
       nb.startElement("envelope", "http://marklogic.com/entity-services");
@@ -206,24 +207,24 @@ class FlowUtils {
       if (resp instanceof Object && resp.hasOwnProperty('$type')) {
         return resp;
       }
-      else if (dataFormat === consts.XML) {
+      else if (dataFormat === this.consts.XML) {
         return json.transformFromJson(resp, json.config("custom"));
       }
       else {
         return resp;
       }
     } else if (resp instanceof ArrayNode || resp instanceof Array) {
-      if (dataFormat === consts.XML) {
+      if (dataFormat === this.consts.XML) {
         return json.arrayValues(resp);
       }
       else {
         return resp;
       }
     } else if (resp === null) {
-      if (destination === "headers" && dataFormat === consts.JSON) {
+      if (destination === "headers" && dataFormat === this.consts.JSON) {
         return {};
       }
-      else if (destination === "triples" && dataFormat === consts.JSON) {
+      else if (destination === "triples" && dataFormat === this.consts.JSON) {
         return [];
       }
       else {
@@ -231,7 +232,7 @@ class FlowUtils {
       }
     }
 
-    if (dataFormat === consts.JSON &&
+    if (dataFormat === this.consts.JSON &&
       destination === "triples") {
       return json.toArray(resp);
     }
@@ -434,11 +435,11 @@ class FlowUtils {
   }
 
   evalSubstituteVal(value) {
-    let obj = consts.PROPERY_KEY_MAP.get(value);
+    let obj = this.consts.PROPERY_KEY_MAP.get(value);
     if (obj === undefined) return value;
-    if (obj == consts.CURRENT_DATE_TIME) {
+    if (obj == this.consts.CURRENT_DATE_TIME) {
       return fn.currentDateTime();
-    } else if (obj == consts.CURRENT_USER) {
+    } else if (obj == this.consts.CURRENT_USER) {
       return xdmp.getCurrentUser();
     }
     return value;
@@ -453,8 +454,11 @@ class FlowUtils {
   }
 
   createMetadata(metaData = {}, flowName, stepName) {
-    metaData[this.consts.CREATED_ON] = this.evalSubstituteVal(this.consts.CREATED_ON);
-    metaData[this.consts.CREATED_BY] = this.evalSubstituteVal(this.consts.CREATED_BY);
+    if (!metaData) {
+      metaData = {};
+    }
+    metaData[this.consts.CREATED_ON] = fn.string(this.evalSubstituteVal(this.consts.CREATED_ON));
+    metaData[this.consts.CREATED_BY] = fn.string(this.evalSubstituteVal(this.consts.CREATED_BY));
     metaData[this.consts.CREATED_IN_FLOW] = flowName;
     metaData[this.consts.CREATED_BY_STEP] = stepName;
 

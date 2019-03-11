@@ -27,7 +27,7 @@ const visitedURIs = [];
 const urisToContent = {};
 
 
-function transform(content, context) {
+function transform(content, context = {}) {
   let currentUri = content.uri;
   urisToContent[currentUri] = content;
   visitedURIs.push(currentUri);
@@ -78,6 +78,7 @@ function transform(content, context) {
       if (urisToContent.hasOwnProperty(uri)) {
         let content = urisToContent[uri];
         if (content.value) {
+          content.context = context;
           contentObjs.push(content);
         } else {
           datahub.debug.log({message: params, type: 'error'});
@@ -96,7 +97,11 @@ function transform(content, context) {
       datahub.debug.log(documents);
       fn.error(null, "RESTAPI-SRVEXERR", documents.message);
     }
+    if (documents && documents.length) {
+      Object.assign(context, documents[0].context);
+    }
     for (let doc of documents) {
+      delete doc.context;
       if (doc.type && doc.type === 'error' && doc.message) {
         datahub.debug.log(doc);
         fn.error(null, "RESTAPI-SRVEXERR", doc.message);
