@@ -1,4 +1,4 @@
-# Release Notes for DHF 4.2.0
+# Release Notes for DHF 4.2.x
 
 <details open><summary class="relnote-summary">Data Hub Framework 4.2 is now more aligned with Entity Services.</summary>
   <div markdown="1">
@@ -9,7 +9,10 @@
 
   - Automatic generation and installation of a template-driven extraction (TDE) template in the final SCHEMAS database (`data-hub-final-SCHEMAS`). See [the TDE documentation](http://docs.marklogic.com/guide/app-dev/TDE).
 
-  *[View a demo of the TDE template generation. (video)]({{site.baseurl}}/videos/TDE_template_video.mp4){:target="_blank"}*
+  **Demo of the TDE template generation**
+
+  {% include youtube.html videocode="vlS17F9MbdM" %}
+
   </div>
 </details>
 
@@ -23,26 +26,3 @@
 
   </div>
 </details>
-
-
-<!--
-<details open><summary class="relnote-summary">...</summary>
-  <div markdown="1">
-  ...
-  </div>
-</details>
--->
-
-<!--
-## Changes and Incompatibilities
-
-### DHF 4.2.0 Changes and Incompatibilities
--->
-
-<!--
-<details><summary>...</summary>
-  <div markdown="1">
-  ...
-  </div>
-</details>
--->
