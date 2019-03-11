@@ -2,7 +2,8 @@ import {Component, ViewChild} from "@angular/core";
 import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
-
+import * as _ from "lodash";
+  
 @Component({
   selector: 'flows-page',
   template: `
@@ -55,6 +56,9 @@ export class ManageFlowsComponent {
 
   getFlows() {
     this.manageFlowsService.getFlows().subscribe(resp => {
+      _.remove(this.flows, () => {
+        return true;
+      });
       resp.forEach(flow => {
         let flowParsed = Flow.fromJSON(flow);
         this.flows.push(flowParsed);

@@ -6,8 +6,6 @@ import {Flow} from "../models/flow.model";
 @Injectable()
 export class ManageFlowsService {
 
-  flows: Array<Object> = new Array<Object>();
-
   constructor(
     private http: HttpClient,
   ) {
@@ -15,9 +13,7 @@ export class ManageFlowsService {
 
   getFlows() {
     console.log('GET /api/flows');
-    const response = this.http.get<Array<Object>>('api/flows');
-    response.subscribe((data) =>  this.flows.push(...data));
-    return response;
+    return this.http.get<Array<Object>>('api/flows');
   }
   getFlowById(id: string) {
     console.log('GET /api/flows/' + id);

@@ -57,7 +57,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openConfirmDialog(flow: Flow): void {
+  openConfirmDeleteDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
       data: {title: 'Delete Flow', confirmationMessage: `Delete the flow "${flow.name}"?`}
@@ -65,7 +65,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        this.deleteFlow.emit(result);
+        this.deleteFlow.emit(flow.id);
       }
     });
   }
