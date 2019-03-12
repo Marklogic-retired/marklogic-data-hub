@@ -27,8 +27,6 @@ import { FocusElementDirective } from '../../../directives/focus-element/focus-e
 import { ListFilterPipe } from '../../../components/mappings/ui/listfilter.pipe';
 import { MdlModule } from '@angular-mdl/core';
 
-import { FocusElementDirective } from '../../../directives/focus-element/focus-element.directive';
-
 @NgModule({
   declarations: [
     EditFlowComponent,
@@ -63,9 +61,6 @@ import { FocusElementDirective } from '../../../directives/focus-element/focus-e
   exports: [
     FocusElementDirective,
     ListFilterPipe
-  ],
-  exports: [
-    FocusElementDirective
   ],
   providers   : [
   ],
