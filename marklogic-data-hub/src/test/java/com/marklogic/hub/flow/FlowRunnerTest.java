@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
@@ -39,6 +40,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,9 +49,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -246,6 +247,104 @@ public class FlowRunnerTest extends HubTestBase {
         //logger.debug(actual);
         XMLAssert.assertXMLEqual(expected, actual);
 
+    }
+
+    @Test
+    public void testRunFlowNamespaceXMLSJS() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        scaffolding.createFlow(ENTITY, "testharmonize-sjs-ns-xml", FlowType.HARMONIZE,
+            CodeFormat.JAVASCRIPT, DataFormat.XML, true);
+
+        Files.copy(getResourceStream("flow-runner-test/collector-ns-xml.sjs"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-ns-xml/collector.sjs"),
+            StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getResourceStream("flow-runner-test/content-ns-xml.sjs"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-ns-xml/content.sjs"),
+            StandardCopyOption.REPLACE_EXISTING);
+
+        installUserModules(getHubAdminConfig(), false);
+
+
+        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-ns-xml",
+            FlowType.HARMONIZE);
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(harmonizeFlow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+
+        String expected =
+            "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
+                "  <headers></headers>\n" +
+                "  <triples></triples>\n" +
+                "  <instance>\n" +
+                "   <info>\n" +
+                "     <title>Person</title>\n" +
+                "     <version>0.0.1</version>\n" +
+                "   </info>\n" +
+                "    <Person xmlns=\"\">\n" +
+                "       <an>instance</an>\n" +
+                "       <document>that</document>\n" +
+                "       <is>not</is>\n" +
+                "       <harmononized>yeah</harmononized>\n" +
+                "    </Person>\n" +
+                "  </instance>\n" +
+                "  <attachments><and xmlns=\"\">originaldochere</and></attachments>\n" +
+                "</envelope>";
+
+        String actual = finalDocMgr.read("2.xml").next().getContentAs(String.class);
+        //logger.debug(expected);
+        //logger.debug(actual);
+        XMLAssert.assertXMLEqual(expected, actual);
+    }
+
+    @Test
+    public void testRunFlowNamespaceXMLXQY() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        scaffolding.createFlow(ENTITY, "testharmonize-xqy-ns-xml", FlowType.HARMONIZE,
+            CodeFormat.JAVASCRIPT, DataFormat.XML, true);
+
+        Files.copy(getResourceStream("flow-runner-test/collector-ns-xml.xqy"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-ns-xml/collector.xqy"),
+            StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getResourceStream("flow-runner-test/content-ns-xml.xqy"),
+            projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-ns-xml/content.xqy"),
+            StandardCopyOption.REPLACE_EXISTING);
+
+        installUserModules(getHubAdminConfig(), false);
+
+
+        Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-ns-xml",
+            FlowType.HARMONIZE);
+        FlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(harmonizeFlow)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+
+        String expected =
+            "<envelope xmlns=\"http://marklogic.com/entity-services\">\n" +
+                "  <headers></headers>\n" +
+                "  <triples></triples>\n" +
+                "  <instance>\n" +
+                "   <info>\n" +
+                "     <title>Person</title>\n" +
+                "     <version>0.0.1</version>\n" +
+                "   </info>\n" +
+                "    <Person xmlns=\"\">\n" +
+                "       <an>instance</an>\n" +
+                "       <document>that</document>\n" +
+                "       <is>not</is>\n" +
+                "       <harmononized>yeah</harmononized>\n" +
+                "    </Person>\n" +
+                "  </instance>\n" +
+                "  <attachments><and xmlns=\"\">originaldochere</and></attachments>\n" +
+                "</envelope>";
+
+        String actual = finalDocMgr.read("2.xml").next().getContentAs(String.class);
+        //logger.debug(expected);
+        //logger.debug(actual);
+        XMLAssert.assertXMLEqual(expected, actual);
     }
 
     @Test

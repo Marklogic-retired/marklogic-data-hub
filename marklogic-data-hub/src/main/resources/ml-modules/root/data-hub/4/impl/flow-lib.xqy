@@ -596,45 +596,62 @@ declare function flow:instance-to-canonical-xml(
   $entity-instance as map:map) as element()
 {
   (: Construct an element that is named the same as the Entity Type :)
-  element { map:get($entity-instance, "$type") }  {
-    if ( map:contains($entity-instance, "$ref") ) then
-      map:get($entity-instance, "$ref")
-    else
-      for $key in map:keys($entity-instance)
-      let $instance-property := map:get($entity-instance, $key)
-      where ($key castable as xs:NCName and $key ne "$type")
-      return
-        typeswitch ($instance-property)
-        (: This branch handles embedded objects.  You can choose to prune
+  let $namespace := map:get($entity-instance, "$namespace")
+  let $namespace-prefix := map:get($entity-instance, "$namespacePrefix")
+  let $nsdecl :=
+    if ($namespace) then
+      namespace {$namespace-prefix} {$namespace}
+    else ()
+  let $type-name := map:get($entity-instance, '$type')
+  let $type-qname :=
+    if ($namespace)
+    then fn:QName($namespace, $namespace-prefix || ":" || $type-name)
+    else $type-name
+  return
+    element { $type-qname } {
+      $nsdecl,
+      if ( map:contains($entity-instance, "$ref")) then
+        map:get($entity-instance, "$ref")
+      else
+        for $key in map:keys($entity-instance)
+        let $instance-property := map:get($entity-instance, $key)
+        let $ns-key :=
+          if ($namespace and $key castable as xs:NCName)
+          then fn:QName($namespace, $namespace-prefix || ":" || $key)
+          else $key
+        where ($key castable as xs:NCName and $key ne "$type")
+        return
+          typeswitch ($instance-property)
+          (: This branch handles embedded objects.  You can choose to prune
            an entity's representation of extend it with lookups here. :)
-        case json:object+ return
-          for $prop in $instance-property
-          return
-            element { $key } {
-              flow:instance-to-canonical-xml($prop)
-            }
-        (: An array can also treated as multiple elements :)
-        case json:array return
-          for $val in json:array-values($instance-property)
-          return
-            if ($val instance of json:object) then
-              element { $key } {
-                attribute datatype { "array" },
-                flow:instance-to-canonical-xml($val)
-              }
-            else
-              element { $key } {
-                attribute datatype { "array" },
-                $val
-              }
-        (: A sequence of values should be simply treated as multiple elements :)
-        case item()+ return
-          for $val in $instance-property
-          return
-            element { $key } { $val }
-        default return
-          element { $key } { $instance-property }
-  }
+            case json:object+ return
+              for $prop in $instance-property
+              return
+                element {$ns-key} {
+                  flow:instance-to-canonical-xml($prop)
+                }
+          (: An array can also treated as multiple elements :)
+            case json:array return
+              for $val in json:array-values($instance-property)
+              return
+                if ($val instance of json:object) then
+                  element {$ns-key} {
+                    attribute datatype {"array"},
+                    flow:instance-to-canonical-xml($val)
+                  }
+                else
+                  element {$ns-key} {
+                    attribute datatype {"array"},
+                    $val
+                  }
+          (: A sequence of values should be simply treated as multiple elements :)
+            case item()+ return
+              for $val in $instance-property
+              return
+                element {$ns-key} {$val}
+            default return
+              element {$ns-key} {$instance-property}
+    }
 };
 
 (: Formats the input for a trace based on the plugin type :)
