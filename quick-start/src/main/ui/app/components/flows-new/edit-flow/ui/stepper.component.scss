@@ -23,7 +23,7 @@ header {
   .flow-container {
     display: flex;
     align-items: center;
-    flex-wrap: nowrap;  
+    flex-wrap: nowrap;
   }
   .item {
     margin: 0 12px;
@@ -61,7 +61,7 @@ header {
   > p {
     font-size: 24px;
     text-align: center;
-    
+
     > span {
       font-weight: bold;
     }
@@ -83,7 +83,8 @@ header {
     margin: auto 0;
   }
   .step {
-    border: 1px solid rgba(0,0,0,.25);  
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,.25);
     border-radius: 2px;
     width: 200px;
     height: 200px;
