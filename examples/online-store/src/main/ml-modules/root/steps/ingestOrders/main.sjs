@@ -4,27 +4,26 @@ const triplesPlugin = require('./triples/triples.sjs');
 /*
  * Plugin Entry point
  *
- * @param id          - the identifier returned by the collector
- * @param rawContent  - the raw content being loaded
+ * @param contentDesc  - the raw content being loaded
  * @param options     - a map containing options. Options are sent from Java
  *
  */
-function main(id, rawContent, options) {
-  var content = contentPlugin.createContent(id, rawContent, options);
+function main(contentDesc, options) {
+  let content = contentPlugin.createContent(contentDesc.uri, contentDesc.value, options);
 
-  var headers = headersPlugin.createHeaders(id, content, options);
+  let headers = headersPlugin.createHeaders(contentDesc.uri, content, options);
 
-  var triples = triplesPlugin.createTriples(id, content, headers, options);
+  let triples = triplesPlugin.createTriples(contentDesc.uri, content, headers, options);
 
-  var envelope = {
-    envelope: {
-        instance: content,
-        headers,
-        triples
-      }
-  };
+  contentDesc.value = {
+      envelope: {
+          instance: content,
+          headers,
+          triples
+        }
+    };
 
-  return envelope;
+  return contentDesc;
 }
 
 module.exports = {
