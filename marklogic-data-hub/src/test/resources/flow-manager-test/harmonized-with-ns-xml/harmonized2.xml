@@ -1,0 +1,22 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers>
+    <value xmlns="">1234</value>
+  </headers>
+  <triples>
+    <sem:triple xmlns:sem="http://marklogic.com/semantics">
+      <sem:subject>subject</sem:subject>
+      <sem:predicate>predicate</sem:predicate>
+      <sem:object>object</sem:object>
+    </sem:triple>
+  </triples>
+  <instance>
+    <info>
+      <title>Person</title>
+      <version>0.0.1</version>
+    </info>
+    <prs:Person xmlns:prs="http://marklogic.com/Person">
+      <prs:Id>2</prs:Id>
+    </prs:Person>
+  </instance>
+  <attachments/>
+</envelope>
