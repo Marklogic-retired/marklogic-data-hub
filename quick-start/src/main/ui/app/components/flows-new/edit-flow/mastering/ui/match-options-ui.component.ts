@@ -1,0 +1,81 @@
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
+import { MatchOption } from "../../../models/match-options.model";
+import { AddMatchOptionDialogComponent } from './add-match-option-dialog.component';
+import { ConfirmationDialogComponent } from "../../../../common";
+
+@Component({
+  selector: 'app-match-options-ui',
+  templateUrl: './match-options-ui.component.html',
+  styleUrls: ['./match-options-ui.component.scss'],
+})
+export class MatchOptionsUiComponent {
+  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
+  @Input() matchOptions: any;
+
+  @Output() createOption = new EventEmitter();
+  @Output() updateOption = new EventEmitter();
+  @Output() deleteOption = new EventEmitter();
+
+  public displayedColumns = ['propertyName', 'matchType', 'weight', 'other', 'actions'];
+  public dataSource: MatTableDataSource<MatchOption>;
+
+  constructor(
+    public dialog: MatDialog
+  ) {}
+
+  ngOnInit() {
+    this.dataSource = new MatTableDataSource<MatchOption>(this.matchOptions.options);
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  openMatchOptionDialog(optionToEdit: MatchOption, index: number): void {
+    const dialogRef = this.dialog.open(AddMatchOptionDialogComponent, {
+      width: '500px',
+      data: {option: optionToEdit, index: index}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        if (optionToEdit) {
+          console.log('updateOption');
+          this.updateOption.emit(result);
+        }else{
+          console.log('createOption');
+          this.createOption.emit(result);
+        }
+      }
+    });
+  }
+
+  openConfirmDialog(opt): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Delete Match Option', confirmationMessage: `Delete the option?`}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(!!result){
+        this.deleteOption.emit(opt);
+      }
+    });
+  }
+
+  // TODO Use TruncateCharactersPipe
+  truncate(value: string, limit: number, trail: string = '...'): string {
+    return value.length > limit ?
+      value.substring(0, limit) + trail :
+      value;
+  }
+
+  renderRows(): void {
+    this.dataSource.data = this.matchOptions['options'];
+    this.table.renderRows();
+  }
+
+}

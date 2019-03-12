@@ -1,37 +1,38 @@
-import { isNumber } from "util";
-import {Job} from "../../jobs/job.model";
+import {isNumber} from "util";
+import uuid from "uuid";
 
 export class Flow {
 
-  public flowId: string;
+  public id: string = uuid.v4();
   public name: string = '';
   public description: string;
   public batchSize: number;
   public threadCount: number;
-  public options: Object = {};
+  public options = {};
   public steps: Array<any> = [];
   public jobs: Array<string> = [];
   public latestJob: any = {};
   public isValid: boolean = false;
   public isRunning: boolean = false;
-  public version: string;
+  public version: number = 0;
 
-  get docsCommitted(): number{
+  get docsCommitted(): number {
     return this.latestJob.successfulEvents;
   }
 
-  get docsFailed(): number{
+  get docsFailed(): number {
     return this.latestJob.failedEvents;
   }
 
-  constructor() {}
+  constructor() {
+  }
 
   get status(): string {
     return (this.latestJob && this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
   }
 
   get jobsNumber(): number {
-    return this.jobs? this.jobs.length : 0;
+    return this.jobs ? this.jobs.length : 0;
   }
 
   get lastJobFinished() {
@@ -39,52 +40,69 @@ export class Flow {
   }
 
   get targetEntity(): string {
-    let step = this.steps.find(function(step) {
-      return step.config['targetEntity'] !== undefined && step.config['targetEntity'] !== '';
-    })
-    return (step) ? step.config['targetEntity'] : '';
+    let step = this.steps.find(function (step) {
+      return step['targetEntity'] !== undefined && step['targetEntity'] !== '';
+    });
+    return (step) ? step['targetEntity'] : '';
   }
 
   static fromJSON(json) {
 
     const result = new Flow();
 
-    if(json.id) {
-      result.flowId = json.id;
+    if (json.id) {
+      result.id = json.id;
     }
-    if(json.name) {
+    if (json.name) {
       result.name = json.name;
     }
-    if(json.description) {
+    if (json.description) {
       result.description = json.description;
     }
-    if(json.batchSize && isNumber(parseInt(json.batchSize))){
+    if (json.batchSize && isNumber(parseInt(json.batchSize))) {
       result.batchSize = json.batchSize;
     }
-    if(json.threadCount && isNumber(parseInt(json.threadCount))){
+    if (json.threadCount && isNumber(parseInt(json.threadCount))) {
       result.threadCount = json.threadCount;
     }
-    if(json.options) {
+    if (json.options) {
       result.options = json.options;
     }
-    if(json.steps) {
+    if (json.steps) {
       result.steps = json.steps;
     }
-    if(json.jobs) {
+    if (json.jobs) {
       result.jobs = json.jobs;
     }
-    if(json.latestJob) {
+    if (json.latestJob) {
       result.latestJob = json.latestJob;
     }
-    if(json.isValid){
+    if (json.isValid) {
       result.isValid = json.isValid;
     }
-    if(json.isRunning) {
+    if (json.isRunning) {
       result.isRunning = json.isRunning;
     }
-    if(json.version && isNumber(parseInt(json.version))){
+    if (json.version && isNumber(parseInt(json.version))) {
       result.version = json.version;
     }
+    return result;
+  }
+
+  toJson() {
+    const result: any = {};
+    result.id = this.id;
+    result.name = this.name;
+    result.description = this.description;
+    result.batchSize = this.batchSize;
+    result.threadCount = this.threadCount;
+    result.options = this.options;
+    result.steps = this.steps;
+    result.jobs = this.jobs;
+    result.latestJob = this.latestJob;
+    result.isValid = this.isValid;
+    result.isRunning = this.isRunning;
+    result.version = this.version;
     return result;
   }
 

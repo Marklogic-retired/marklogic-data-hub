@@ -1,12 +1,12 @@
 <h1 mat-dialog-title>{{getDialogTitle()}}</h1>
-<div mat-dialog-content [formGroup]="form" class="content">
+<div id="flow-dialog" mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field layout-fill>
     <mat-label>Flow name</mat-label>
-    <input matInput formControlName="name"/>
+    <input id="flow-name" matInput formControlName="name"/>
   </mat-form-field>
   <mat-form-field layout-fill>
     <mat-label>Description (optional)</mat-label>
-    <input matInput formControlName="description"/>
+    <input id="flow-desc" matInput formControlName="description"/>
   </mat-form-field>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -16,37 +16,42 @@
     </mat-expansion-panel-header>
     <mat-form-field layout-fill>
       <mat-label>Batch Size</mat-label>
-      <input matInput formControlName="batchSize"
+      <input id="flow-batch-size" matInput formControlName="batchSize"
       />
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>Thread Count</mat-label>
-      <input matInput formControlName="threadCount"
+      <input id="flow-thread-count" matInput formControlName="threadCount"
       />
     </mat-form-field>
     <mat-label>
       Options
     </mat-label>
-    <button mat-icon-button>
+    <button class="flow-add-option-btn" mat-icon-button (click)="onAddOption()">
       <mat-icon>add</mat-icon>
     </button>
-    <div class="key-value-group">
-      <mat-form-field>
-        <mat-label>Key</mat-label>
-        <input matInput/>
-      </mat-form-field>
-      <mat-icon></mat-icon>
-      <mat-form-field>
-        <mat-label>Value</mat-label>
-        <input matInput/>
-      </mat-form-field>
-      <button mat-icon-button>
-        <mat-icon>remove</mat-icon>
-      </button>
+    <div
+      id="flow-dialog"
+      formArrayName="options"
+      *ngFor="let option of this.options.controls; let i = index;">
+      <div [formGroupName]="i" class="key-value-group">
+        <mat-form-field>
+          <mat-label>Key</mat-label>
+          <input [class]="'flow-option-key-' + i" matInput formControlName="key"/>
+        </mat-form-field>
+        <mat-icon></mat-icon>
+        <mat-form-field>
+          <mat-label>Value</mat-label>
+          <input [class]="'flow-option-value-' + i" matInput formControlName="value"/>
+        </mat-form-field>
+        <button class="flow-remove-option-btn" mat-icon-button (click)="onRemoveOption(i)">
+          <mat-icon>remove</mat-icon>
+        </button>
+      </div>
     </div>
   </mat-expansion-panel>
 </div>
 <mat-dialog-actions class="bottom">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button id="flow-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button id="flow-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

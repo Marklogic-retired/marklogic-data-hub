@@ -1,8 +1,11 @@
-import { Component, Input, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
-import { Flow } from "../../models/flow.model";
+import { ConfirmationDialogComponent } from '../../../common';
+import { FlowSettingsDialogComponent } from '../../manage-flows/ui/flow-settings-dialog.component';
+import { Flow } from '../../models/flow.model';
+import { Step } from '../../models/step.model';
 
 @Component({
   selector: 'app-edit-flow-ui',
@@ -12,9 +15,14 @@ import { Flow } from "../../models/flow.model";
 export class EditFlowUiComponent {
 
   @Input() flow: Flow;
-  stepName: string;
-  stepType: string;
-  steps: [];
+  @Input() stepsArray: any;
+  @Input() databases: any;
+  @Input() entities: any;
+  @Output() saveFlow = new EventEmitter();
+  @Output() deleteFlow = new EventEmitter();
+  @Output() stepCreate = new EventEmitter();
+  @Output() stepUpdate = new EventEmitter();
+  @Output() stepDelete = new EventEmitter();
 
   constructor(
     public dialog: MatDialog
@@ -23,11 +31,13 @@ export class EditFlowUiComponent {
   openStepDialog(): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
-      data: {stepName: this.stepName, stepType: this.stepType}
+      data: {title: 'New Step', databases: this.databases, entities: this.entities, step: null}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.stepCreate.emit(response);
+      }
     });
   }
   openRunDialog(flow: Flow): void {
@@ -36,9 +46,68 @@ export class EditFlowUiComponent {
       data: {steps: flow.steps.map(step => step.name)}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The run dialog was closed');
+    dialogRef.afterClosed().subscribe(response => {
+      // TODO add endpoint to run
+      console.log('The run dialog was closed', response);
     });
   }
+  deleteStepDialog(step: Step): void {
+    console.log('delete step', step);
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Delete Step?', confirmationMessage: `Delete ${step.name}?`}
+    });
 
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.stepDelete.emit(step.id);
+      }
+    });
+  }
+  openFlowSettingsDialog(): void {
+    const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
+      width: '500px',
+      data: {flow: this.flow}
+    });
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.flow.name = response.name;
+        this.flow.description = response.description;
+        this.flow.batchSize = response.batchSize;
+        this.flow.threadCount = response.threadCount;
+        this.saveFlow.emit(this.flow);
+      }
+    });
+  }
+  redeployDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Redeploy Flow?', confirmationMessage: `Redeploy ${this.flow.name} to database?`}
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        // TODO Redeploy endpoint
+        console.log('redeploy');
+      }
+    });
+  }
+  deleteFlowDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Delete Flow?', confirmationMessage: `Delete ${this.flow.name}?`}
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        this.deleteFlow.emit(this.flow.id);
+      }
+    });
+  }
+  updateFlow(): void {
+    this.saveFlow.emit(this.flow);
+  }
+  updateStep(step): void {
+    this.stepUpdate.emit(step);
+  }
 }

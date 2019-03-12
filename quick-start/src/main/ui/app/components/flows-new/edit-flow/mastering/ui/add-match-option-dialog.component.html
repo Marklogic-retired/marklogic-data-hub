@@ -1,0 +1,74 @@
+<h1 mat-dialog-title>{{getDialogTitle()}}</h1>
+<div id="match-option-dialog" mat-dialog-content [formGroup]="form" class="content">
+  <mat-form-field>
+    <mat-select id="match-option-type" placeholder="Match Type" formControlName="matchType" [(value)]="selectedType">
+      <mat-option value="exact">Exact</mat-option>
+      <mat-option value="synonym">Synonym</mat-option>
+      <mat-option value="double metaphone">Double Metaphone</mat-option>
+      <mat-option value="zip">Zip</mat-option>
+      <mat-option value="reduce">Reduce</mat-option>
+      <mat-option value="custom">Custom</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field layout-fill>
+    <mat-label>Property to Match</mat-label>
+    <input id="match-option-property" matInput formControlName="propertyName"/>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
+    <mat-label>Weight</mat-label>
+    <input id="match-option-weight" matInput formControlName="weight"/>
+  </mat-form-field>
+
+  <div *ngIf="selectedType === 'synonym'">
+    <mat-form-field layout-fill>
+      <mat-label>Thesaurus URI</mat-label>
+      <input id="match-option-synonym-thesaurus" matInput formControlName="thesaurus"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <textarea id="match-option-synonym-filter" matInput formControlName="filter" placeholder="Filter"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="selectedType === 'double metaphone'">
+    <mat-form-field layout-fill>
+      <mat-label>Dictionary URI</mat-label>
+      <input id="match-option-metaphone-dictionary" matInput formControlName="dictionary"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Distance Threshold</mat-label>
+      <input id="match-option-metaphone-distance-threshold" matInput formControlName="distanceThreshold"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Collation</mat-label>
+      <input id="match-option-metaphone-distance-collation" matInput formControlName="collation"/>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="selectedType === 'zip'">
+    <mat-form-field layout-fill>
+      <mat-label>5-matches-9 Boost</mat-label>
+      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>9-matches-5 Weight</mat-label>
+      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5"/>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="selectedType === 'custom'">
+    <mat-form-field layout-fill>
+      <mat-label>URI</mat-label>
+      <input id="match-option-custom-uri" matInput formControlName="customUri"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Function</mat-label>
+      <input id="match-option-custom-function" matInput formControlName="customFunction"/>
+    </mat-form-field>
+  </div>
+
+</div>
+<mat-dialog-actions class="bottom">
+  <button id="match-option-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button id="match-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+</mat-dialog-actions>

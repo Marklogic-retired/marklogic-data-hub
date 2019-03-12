@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -9,45 +9,51 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./stepper.component.scss'],
   providers: [{ provide: CdkStepper, useExisting: StepperComponent }]
 })
-export class StepperComponent extends CdkStepper {
+export class StepperComponent extends CdkStepper  {
 
   @Input() flow: any;
+  @Input() stepsArray: any;
   @Output() newStep = new EventEmitter();
   @Output() run = new EventEmitter();
+  @Output() deleteStep = new EventEmitter();
+  @Output() editFlow = new EventEmitter();
+  @Output() redeploy = new EventEmitter();
+  @Output() deleteFlow = new EventEmitter();
+  @Output() updateFlow = new EventEmitter();
 
-  addStep(): void {
-    const newStep = {
-      id: 'new-step',
-      name: 'New Step',
-      description: 'New Step description',
-      type: 'ingestion',
-      sourceDatabase: '',
-      targetDatabase: 'staging',
-      isValid: true,
-      isRunning: false,
-      config: {
-        mlcp: 'options'
-      },
-      language: 'en',
-      version: '1'
-    };
-    this.flow.steps.push(newStep);
-  }
-  deleteStep() {
-    this.flow.steps.splice(this.selectedIndex, 1);
+  showBody = true;
+
+  toggleBody() {
+    this.showBody = !this.showBody;
   }
   dropped(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.stepsArray, event.previousIndex, event.currentIndex);
     moveItemInArray(this.flow.steps, event.previousIndex, event.currentIndex);
     this.selectedIndex = event.currentIndex;
+    this.updateFlow.emit();
   }
   stepClicked(index: number): void {
     this.selectedIndex = index;
-    // this.stepIndex = index;
   }
   newStepClicked(): void {
     this.newStep.emit();
   }
   runClicked(): void {
     this.run.emit();
+  }
+  stopClicked(): void {
+    console.log('stop clicked');
+  }
+  deleteStepClicked(step): void {
+    this.deleteStep.emit(step);
+  }
+  editSettingsClicked(): void {
+    this.editFlow.emit();
+  }
+  redeployClicked(): void {
+    this.redeploy.emit();
+  }
+  deleteFlowClicked(): void {
+    this.deleteFlow.emit();
   }
 }
