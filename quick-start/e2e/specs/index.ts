@@ -57,10 +57,10 @@ describe('QuickStart', function () {
   });
 
   auth(tmpobj.name);
-  create(tmpobj.name);
-  runFlows(tmpobj.name);
-  jobs();
-  runTraces();
-  mappings();
-  uninstall(tmpobj.name);
+  //create(tmpobj.name);
+  //runFlows(tmpobj.name);
+  //jobs();
+  //runTraces();
+  //mappings();
+  //uninstall(tmpobj.name);
 });
