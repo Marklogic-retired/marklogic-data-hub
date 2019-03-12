@@ -76,6 +76,7 @@ export class MatchOption {
   public zip9match5: number;
   public customUri: string;
   public customFunction: string;
+  public editing: boolean = false;
 
   constructor (mOpt: any = {}) {
     if (mOpt.matchType) this.matchType = mOpt.matchType;

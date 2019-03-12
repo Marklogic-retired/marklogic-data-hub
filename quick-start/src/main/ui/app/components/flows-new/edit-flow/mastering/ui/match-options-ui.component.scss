@@ -32,6 +32,28 @@
   color: rgba(0, 0, 0, 0.54);
 }
 
+.otherContent {
+  width: 480px;
+  min-width: 480px;
+  max-width: 480px;
+}
+
+.editing-field {
+  padding: 0;
+  margin: 0;
+  width: 25px;
+}
+
+/deep/ .mat-column-weight div.mat-form-field-wrapper {
+  position: absolute;
+  top: -25px;
+  width: 30px;
+}
+
+/deep/ .mat-cell a.weight-value {
+  cursor: pointer!important;
+}
+
 $header-height: 70px !default;
 
 button {
