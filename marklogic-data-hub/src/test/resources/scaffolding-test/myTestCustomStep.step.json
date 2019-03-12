@@ -3,7 +3,10 @@
   "type": "CUSTOM",
   "version": 1,
   "options": {
-    "key": "val",
-    "key2": "val2"
-  }
+    "collections" : [ "myTestCustomStep" ]
+  },
+  "customHook" : { },
+  "language" : "zxx",
+  "modulePath" : "/path/to/your/step/module/main.sjs",
+  "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))"
 }

@@ -23,6 +23,7 @@ class FlowUtils {
       config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
+    this.consts = consts;
   }
 
 
@@ -49,6 +50,31 @@ class FlowUtils {
   }
 
   /**
+   : Determine the input document type from the root node.
+   :
+   : @param rootNode -
+   : @return - a copy of the xml without the bad elements
+   */
+
+  determineDocumentType(input) {
+    switch (input.nodeType) {
+      case Node.OBJECT_NODE:
+        return this.consts.JSON;
+      case Node.ARRAY_NODE:
+        return this.consts.JSON;
+      case Node.ELEMENT_NODE:
+        return this.consts.XML;
+      case Node.TEXT_NODE:
+        return this.consts.TEXT;
+      case Node.BINARY_NODE:
+        return this.consts.BINARY;
+      case Node.BINARY_NODE:
+        return this.consts.BINARY;
+      default:
+        return this.consts.DEFAULT_FORMAT;
+    }
+  }
+  /**
    : Construct an envelope
    :
    : @param map - a map with all the stuff in it
@@ -59,20 +85,17 @@ class FlowUtils {
     content = this.cleanData(content, "content", dataFormat);
     headers = this.cleanData(headers, "headers", dataFormat);
     triples = this.cleanData(triples, "triples", dataFormat);
+
     let instance = null;
-    if (dataFormat === consts.JSON) {
-      if (content instanceof Object && content.hasOwnProperty("$type")) {
+    let attachments = null;
+    let inputFormat = this.determineDocumentType(content);
+    if (content instanceof Object && content.hasOwnProperty("$type")) {
+      if (dataFormat === this.consts.JSON) {
         instance = this.instanceToCanonicalJson(content);
         instance.info = {
           title: content['$type'],
           version: content['$version']
         };
-      } else {
-        instance = content;
-      }
-
-      let attachments = null;
-      if (content instanceof Object && content.hasOwnProperty("$attachments")) {
         if (content['$attachments'] instanceof Element) {
           let config = json.config('custom');
           config['element-namespace'] = "http://marklogic.com/entity-services";
@@ -80,8 +103,23 @@ class FlowUtils {
         } else {
           attachments = content['$attachments'];
         }
+      } else if (dataFormat === this.consts.XML) {
+        instance = this.instanceToCanonicalXml(content);
+        if (content['$attachments'] instanceof Object || content['$attachments'] instanceof ObjectNode) {
+          attachments = xdmp.toJsonString(content['$attachments']);
+        } else {
+          attachments = content['$attachments'];
+        }
       }
+    } else if (inputFormat === dataFormat) {
+      instance = content;
+    } else if (dataFormat === this.consts.XML && inputFormat === this.consts.JSON) {
+      instance = this.jsonToXml(content);
+    } else if (dataFormat === this.consts.JSON && inputFormat === this.consts.XML) {
+      instance = this.xmlToJson(content);
+    }
 
+    if (dataFormat === this.consts.JSON) {
       return {
         envelope: {
           headers: headers,
@@ -90,7 +128,7 @@ class FlowUtils {
           attachments: attachments
         }
       };
-    } else if (dataFormat === consts.XML) {
+    } else if (dataFormat === this.consts.XML) {
       const nb = new NodeBuilder();
       nb.startDocument();
       nb.startElement("envelope", "http://marklogic.com/entity-services");
@@ -123,44 +161,23 @@ class FlowUtils {
       nb.endElement();
 
       nb.startElement("instance", "http://marklogic.com/entity-services");
-      if (content instanceof Object && content.hasOwnProperty("$type")) {
-        nb.startElement("info", "http://marklogic.com/entity-services");
-        nb.startElement("title", "http://marklogic.com/entity-services");
-        nb.addText(content["$type"]);
-        nb.endElement();
-        nb.startElement("version", "http://marklogic.com/entity-services");
-        nb.addText(content["$version"]);
-        nb.endElement();
-        nb.endElement();
-        let canonical = this.this.instanceToCanonicalXml(content);
-        if (canonical) {
-          nb.addNode(canonical);
-        }
-      } else if (content) {
-        if (content instanceof Sequence) {
-          for (let c of content) {
-            nb.addNode(c);
-          }
-        } else if (this.isXmlNode(content)) {
-          nb.addNode(content);
-        } else {
-          nb.addText(content.toString());
-        }
-      }
+      nb.addNode(instance);
       nb.endElement();
 
-      nb.startElement("attachments", "http://marklogic.com/entity-services");
-      if (content instanceof Object && content.hasOwnProperty("$attachments")) {
-        let attachments = content["$attachments"];
-        if (attachments instanceof XMLDocument || this.isXmlNode(attachments)) {
-          nb.addNode(attachments);
-        } else {
-          let config = json.config('custom');
-          let cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty'));
-          nb.addNode(json.transformFromJson(attachments, config));
+      if (attachments) {
+        nb.startElement("attachments", "http://marklogic.com/entity-services");
+        if (content instanceof Object && content.hasOwnProperty("$attachments")) {
+          let attachments = content["$attachments"];
+          if (attachments instanceof XMLDocument || this.isXmlNode(attachments)) {
+            nb.addNode(attachments);
+          } else {
+            let config = json.config('custom');
+            let cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty'));
+            nb.addNode(json.transformFromJson(attachments, config));
+          }
         }
+        nb.endElement();
       }
-      nb.endElement();
       nb.endElement();
       nb.endDocument();
       return nb.toNode();
@@ -190,24 +207,24 @@ class FlowUtils {
       if (resp instanceof Object && resp.hasOwnProperty('$type')) {
         return resp;
       }
-      else if (dataFormat === consts.XML) {
+      else if (dataFormat === this.consts.XML) {
         return json.transformFromJson(resp, json.config("custom"));
       }
       else {
         return resp;
       }
     } else if (resp instanceof ArrayNode || resp instanceof Array) {
-      if (dataFormat === consts.XML) {
+      if (dataFormat === this.consts.XML) {
         return json.arrayValues(resp);
       }
       else {
         return resp;
       }
     } else if (resp === null) {
-      if (destination === "headers" && dataFormat === consts.JSON) {
+      if (destination === "headers" && dataFormat === this.consts.JSON) {
         return {};
       }
-      else if (destination === "triples" && dataFormat === consts.JSON) {
+      else if (destination === "triples" && dataFormat === this.consts.JSON) {
         return [];
       }
       else {
@@ -215,7 +232,7 @@ class FlowUtils {
       }
     }
 
-    if (dataFormat === consts.JSON &&
+    if (dataFormat === this.consts.JSON &&
       destination === "triples") {
       return json.toArray(resp);
     }
@@ -273,6 +290,14 @@ class FlowUtils {
   instanceToCanonicalXml(entityInstance) {
     const nb = new NodeBuilder();
     nb.startDocument();
+    nb.startElement("info", "http://marklogic.com/entity-services");
+    nb.startElement("title", "http://marklogic.com/entity-services");
+    nb.addText(entityInstance["$type"]);
+    nb.endElement();
+    nb.startElement("version", "http://marklogic.com/entity-services");
+    nb.addText(entityInstance["$version"]);
+    nb.endElement();
+    nb.endElement();
     nb.startElement(entityInstance['$type']);
     if (entityInstance['$ref']) {
       nb.addNode(entityInstance['$ref']);
@@ -327,6 +352,117 @@ class FlowUtils {
     nb.endElement();
     nb.endDocument();
     return nb.toNode();
+  }
+
+  xmlToJson(content) {
+    let rootElementName = content.localName;
+    let contentBody = this.xmlNodeToJson(content);
+    return {
+      [rootElementName]: contentBody
+    };
+  }
+
+  xmlNodeToJson(content) {
+    if (content && (content.hasChildNodes() || (content.attributes && content.attributes.length))) {
+      let organizedOutput = {};
+      let attributes = content.attributes;
+      for (let i = 0; i < attributes.length; i++) {
+        let childNode = attributes[i];
+        organizedOutput[`@${childNode.localName}`] = organizedOutput[childNode.localName] || [];
+        organizedOutput[`@${childNode.localName}`].push(this.xmlNodeToJson(childNode));
+      }
+      let childNodes = content.childNodes;
+      for (let i = 0; i < childNodes.length; i++) {
+        let childNode = childNodes[i];
+        if (childNode instanceof Element) {
+          organizedOutput[childNode.localName] = organizedOutput[childNode.localName] || [];
+          organizedOutput[childNode.localName].push(this.xmlNodeToJson(childNode));
+        } else {
+          organizedOutput['$text'] = organizedOutput['$text'] || [];
+          organizedOutput['$text'].push(this.xmlNodeToJson(childNode));
+        }
+      }
+      if (organizedOutput['$text'] && fn.normalizeSpace(organizedOutput['$text'].join('')) === '') {
+        delete organizedOutput['$text'];
+      }
+      for (let key in organizedOutput) {
+        if (organizedOutput.hasOwnProperty(key) && organizedOutput[key].length === 1) {
+          organizedOutput[key] = organizedOutput[key][0];
+        }
+      }
+      if (Object.keys(organizedOutput).length === 1 && organizedOutput['$text']) {
+        return organizedOutput['$text'];
+      } else {
+        return organizedOutput;
+      }
+    } else {
+      return fn.string(content);
+    }
+  }
+
+  jsonToXml(content) {
+    let contentInput = content;
+    if (content instanceof ObjectNode || content instanceof ArrayNode) {
+      contentInput = content.toObject();
+    }
+    return this.jsonToXmlNodeBuilder(contentInput).toNode();
+  }
+
+  jsonToXmlNodeBuilder(content, nb = new NodeBuilder()) {
+    if (content instanceof Object) {
+      for (let propName in content) {
+        if (content.hasOwnProperty(propName)) {
+          let propValues = content[propName];
+          if (propValues instanceof Array) {
+            for (let propValueIndex in propValues) {
+              if (propValues.hasOwnProperty(propValueIndex)) {
+                nb.startElement(propName);
+                this.jsonToXml(propValues[propValueIndex], nb);
+                nb.endElement();
+              }
+            }
+          } else {
+            nb.startElement(propName);
+            this.jsonToXml(propValues, nb);
+            nb.endElement();
+          }
+        }
+      }
+    } else {
+      nb.addText(content);
+    }
+    return nb;
+  }
+
+  evalSubstituteVal(value) {
+    let obj = this.consts.PROPERTY_KEY_MAP.get(value);
+    if (obj === undefined) return value;
+    if (obj == this.consts.CURRENT_DATE_TIME) {
+      return fn.currentDateTime();
+    } else if (obj == this.consts.CURRENT_USER) {
+      return xdmp.getCurrentUser();
+    }
+    return value;
+  }
+
+  createHeaders(options) {
+    let headers = {};
+    for (let key in options.headers) {
+      headers[key] = this.evalSubstituteVal(options.headers[key]);
+    }
+    return headers;
+  }
+
+  createMetadata(metaData = {}, flowName, stepName) {
+    if (!metaData) {
+      metaData = {};
+    }
+    metaData[this.consts.CREATED_ON] = fn.string(this.evalSubstituteVal(this.consts.CREATED_ON));
+    metaData[this.consts.CREATED_BY] = fn.string(this.evalSubstituteVal(this.consts.CREATED_BY));
+    metaData[this.consts.CREATED_IN_FLOW] = flowName;
+    metaData[this.consts.CREATED_BY_STEP] = stepName;
+
+    return metaData;
   }
 }
 

@@ -36,7 +36,7 @@ class Flow {
     this.step = new Step(config, datahub);
     this.flowUtils = new FlowUtils(config);
     this.consts = datahub.consts;
-    this.writeQueue = {};
+    this.writeQueue = [];
     if (!globalContext) {
       globalContext = {
         flow : {},
@@ -113,14 +113,12 @@ class Flow {
     this.globalContext.flow = flowObj;
   }
 
-  addToWriteQueue(uri, content, context) {
-      this.writeQueue[uri] = {
-        content: content,
-        context: context
-      }
+  addToWriteQueue(content) {
+      this.writeQueue.push(content);
   }
 
-  runFlow(flowName, jobId, uris, content = {}, options, stepNumber) {
+  runFlow(flowName, jobId, content = [], options, stepNumber) {
+    let uris = content.map((contentItem) => contentItem.uri);
     let flow = this.getFlow(flowName);
     if(!flow) {
       this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
@@ -128,6 +126,7 @@ class Flow {
     }
     //set the flow in the context
     this.globalContext.flow = flow;
+
 
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
     if(!jobDoc){
@@ -152,7 +151,7 @@ class Flow {
     let step = this.globalContext.flow.steps[stepNumber];
     if(!step) {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
-      throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.')
+      throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, step, stepNumber);
     this.globalContext.batchId = batchDoc.batch.batchId;
@@ -165,6 +164,7 @@ class Flow {
     }
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, step.options, options);
+
     //let stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
@@ -172,17 +172,21 @@ class Flow {
       delete this.datahub.flow;
     }
     let flowInstance = this;
-    let stepResult = fn.head(
+    let stepResult = null;
+
+
+    if (this.isContextDB(combinedOptions.sourceDb) && !options.stepUpdate) {
+      this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    } else {
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        { flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber },
-        { database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb): xdmp.database(), ignoreAmps: true }
-      )
-    );
-    if (Array.isArray(stepResult)) {
-      this.globalContext.batchErrors = this.globalContext.batchErrors.concat(stepResult);
-    } else {
-      this.writeQueue = stepResult;
+        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber},
+        {
+          database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
+          update: !options.stepUpdate,
+          ignoreAmps: true
+        }
+      );
     }
 
     //let's update our jobdoc now
@@ -190,16 +194,15 @@ class Flow {
       if (!combinedOptions.noWrite) {
         this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
       }
-      for (let uri in this.writeQueue) {
-        if (this.writeQueue.hasOwnProperty(uri)) {
-          let info = {
-            derivedFrom: uri,
+      for (let content of this.writeQueue) {
+        let info = {
+            derivedFrom: content.uri,
             influencedBy: step.name,
             status: (flow.type === 'ingest') ? 'created' : 'updated',
             metadata: {}
-          };
-          this.datahub.prov.createStepRecord(jobId, flowName, step.type, uri, info);
-        }
+          }
+        ;
+        this.datahub.prov.createStepRecord(jobId, flowName, step.type, content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
       this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
@@ -207,8 +210,7 @@ class Flow {
       this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
-    let resp =
-    {
+    let resp = {
       "jobId": this.globalContext.jobId,
       "totalCount": uris.length,
       // TODO should error counts, completedItems, etc. be all or nothing?
@@ -223,8 +225,10 @@ class Flow {
     if (this.datahub.performance.performanceMetricsOn()) {
       resp.performanceMetrics = this.datahub.performance.stepMetrics;
     }
+
     return resp;
   }
+
 
   runStep(uris, content, options, flowName, stepNumber, step) {
     // declareUpdate({explicitCommit: true});
@@ -237,6 +241,7 @@ class Flow {
     }
 
     let combinedOptions = Object.assign({}, processor.options, step.options, options);
+
     try {
       let hookOperation = function() {};
       let hook = processor.customHook;
@@ -254,10 +259,15 @@ class Flow {
       if (hook && hook.runBefore) {
         hookOperation();
       }
-      for (let uri of uris) {
-        flowInstance.globalContext.uri = uri;
-        let result = flowInstance.runMain(uri, content[uri], combinedOptions, processor.run);
-        flowInstance.addToWriteQueue(uri, result, flowInstance.globalContext);
+      let self = this;
+      for (let contentItem of content) {
+        flowInstance.globalContext.uri = contentItem.uri;
+        let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
+        //add our metadata to this
+        if(result && result.context) {
+          result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+        }
+        flowInstance.addToWriteQueue(result, flowInstance.globalContext);
       }
       flowInstance.globalContext.uri = null;
       if (hook && !hook.runBefore) {
@@ -275,7 +285,7 @@ class Flow {
         "retryable": e.retryable,
         "stackFrames": e.stackFrames
       });
-      flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}.`, type: 'error'});
+      flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
  //     xdmp.rollback();
       return flowInstance.globalContext.batchErrors;
     }
@@ -285,9 +295,9 @@ class Flow {
     return !databaseName || fn.string(xdmp.database()) === fn.string(xdmp.database(databaseName));
   }
 
-  runMain(uri, content, options, func) {
+  runMain(content, options, func) {
     let resp;
-    resp = func(uri, content, options);
+    resp = func(content, options);
     if (resp instanceof Sequence) {
       resp = fn.head(resp);
     }

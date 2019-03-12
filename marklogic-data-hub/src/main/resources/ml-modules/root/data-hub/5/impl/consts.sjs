@@ -13,10 +13,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+
 module.exports = {
   XQUERY: "xqy",
   JAVASCRIPT: "sjs",
   XML: "xml",
   JSON: "json",
-  DEFAULT_FORMAT: "json"
+  BINARY: "binary",
+  DEFAULT_FORMAT: "json",
+
+  //predefined functions, may want to break this out soon
+  CURRENT_DATE_TIME: "currentDateTime",
+  CURRENT_USER: "currentUser",
+
+  //predefined metadata may want to break this out soon
+  CREATED_ON: "createdOn",
+  CREATED_BY: "createdBy",
+
+  CREATED_IN_FLOW: "createdInFlow",
+  CREATED_BY_STEP: "createdByStep",
+
+  PROPERTY_KEY_MAP: new Map([
+    ["currentDateTime", "currentDateTime"],
+    ["createdOn", "currentDateTime"],
+    ["currentUser", "currentUser"],
+    ["createdBy", "currentUser"]
+  ])
 };

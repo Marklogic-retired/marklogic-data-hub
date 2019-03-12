@@ -15,6 +15,7 @@
 */
 'use strict';
 const cachedModules = {};
+const consts = require("/data-hub/5/impl/consts.sjs");
 
 class HubUtils {
   constructor(config = null) {
@@ -46,13 +47,18 @@ class HubUtils {
 
   writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
     xdmp.eval(`
-    for (let docUri in writeQueue) {
-      xdmp.documentInsert(docUri, writeQueue[docUri].content, {permissions: ${permissions}, collections});
+    let basePermissions = ${permissions};
+    for (let content of writeQueue) {
+      let context = (content.context||{});
+      let permissions = (basePermissions || []).concat((context.permissions||[]));
+      let collections = baseCollections.concat((context.collections||[]));
+      let metadata = context.metadata;
+      xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
     }`,
       {
         writeQueue,
         permissions,
-        collections: collections || []
+        baseCollections: collections || []
       },
       {
         database: xdmp.database(database),
@@ -145,7 +151,7 @@ class HubUtils {
      }
      return newInstance;
   }
- 
+
 }
 
 module.exports = HubUtils;
