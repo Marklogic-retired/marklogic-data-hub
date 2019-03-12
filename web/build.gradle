@@ -29,10 +29,10 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
 
 war {
-  baseName = 'web'
+  baseName = 'MarkLogic-DataHub'
   version = "${version}"
   manifest {
-    attributes("Implementation-Title": "Web UI",
+    attributes("Implementation-Title": "Web Services and UI",
       "Implementation-Version": version)
   }
 
