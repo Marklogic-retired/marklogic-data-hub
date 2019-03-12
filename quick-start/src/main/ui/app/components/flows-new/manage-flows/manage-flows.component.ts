@@ -60,15 +60,14 @@ export class ManageFlowsComponent {
       _.remove(this.flows, () => {
         return true;
       });
-      resp.forEach(flow => {
-        let flowParsed = Flow.fromJSON(flow);
-        this.flows.push(flowParsed);
+      _.forEach(resp, flow => {
+        this.flows.push(Flow.fromJSON(flow));
       });
       this.flowsPageUi.renderRows();
     });
   }
 
   redeployAll() {
-    console.log("Redeploy All Flows")
+    console.log(`Redeploy All Flows`)
   }
 }
