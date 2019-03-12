@@ -435,7 +435,7 @@ class FlowUtils {
   }
 
   evalSubstituteVal(value) {
-    let obj = this.consts.PROPERY_KEY_MAP.get(value);
+    let obj = this.consts.PROPERTY_KEY_MAP.get(value);
     if (obj === undefined) return value;
     if (obj == this.consts.CURRENT_DATE_TIME) {
       return fn.currentDateTime();

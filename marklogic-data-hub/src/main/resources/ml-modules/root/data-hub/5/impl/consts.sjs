@@ -33,7 +33,7 @@ module.exports = {
   CREATED_IN_FLOW: "createdInFlow",
   CREATED_BY_STEP: "createdByStep",
 
-  PROPERY_KEY_MAP: new Map([
+  PROPERTY_KEY_MAP: new Map([
     ["currentDateTime", "currentDateTime"],
     ["createdOn", "currentDateTime"],
     ["currentUser", "currentUser"],

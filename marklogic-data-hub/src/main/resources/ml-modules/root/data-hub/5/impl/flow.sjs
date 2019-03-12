@@ -199,7 +199,7 @@ class Flow {
             derivedFrom: content.uri,
             influencedBy: step.name,
             status: (flow.type === 'ingest') ? 'created' : 'updated',
-            metadata: this.flowUtils.createMetadata(content.context.metadata, flowName, step.name)
+            metadata: {}
           }
         ;
         this.datahub.prov.createStepRecord(jobId, flowName, step.type, content.uri, info);
@@ -241,6 +241,7 @@ class Flow {
     }
 
     let combinedOptions = Object.assign({}, processor.options, step.options, options);
+
     try {
       let hookOperation = function() {};
       let hook = processor.customHook;
@@ -258,9 +259,14 @@ class Flow {
       if (hook && hook.runBefore) {
         hookOperation();
       }
+      let self = this;
       for (let contentItem of content) {
         flowInstance.globalContext.uri = contentItem.uri;
         let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
+        //add our metadata to this
+        if(result && result.context) {
+          result.context.metadata = self.flowUtils.createMetadata( result.context ? result.context.metadata : {}, flowName, step.name);
+        }
         flowInstance.addToWriteQueue(result, flowInstance.globalContext);
       }
       flowInstance.globalContext.uri = null;

@@ -35,8 +35,6 @@ function transform(content, context = {}) {
     let params = {};
     let optionsString = null;
     let parsedTransformParam = null;
-    //let's set some metadata content for our createdOn datetime field
-    context.metadata = {"createdOn": fn.currentDateTime()};
     let transformString = context.transform_param ? context.transform_param : '';
     let pattern = '^.*(options=\{.*\}).*$';
     let match = new RegExp(pattern).exec(transformString);
@@ -88,6 +86,7 @@ function transform(content, context = {}) {
     }
     //don't catch any exception here, let it slip through to mlcp
     let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObjs, options, step);
+
     // if an array is returned, then it is an array of errors
     if (Array.isArray(flowResponse) && flowResponse.length) {
       fn.error(null, flowResponse[0].message, flowResponse[0]);
