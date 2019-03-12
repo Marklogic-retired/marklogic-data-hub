@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { concatMap, map, merge, switchMap, tap, delay, skip } from 'rxjs/operators';
+import { concat, of, Observable, BehaviorSubject, timer, interval } from 'rxjs';
 import { Flow } from "../models/flow.model";
 import { Step } from '../models/step.model';
 import { ProjectService } from '../../../services/projects';
@@ -99,7 +101,14 @@ export class EditFlowComponent implements OnInit {
   }
   runFlow(flowId): void {
     this.manageFlowsService.runFlow(flowId).subscribe(resp => {
-      console.log('run response', resp);
+      const running = timer(0, 750)
+      .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
+        this.flow = Flow.fromJSON(poll);
+        if (!this.flow.isRunning) {
+          running.unsubscribe();
+        }
+      })
+      );
     });
   }
   createStep(step) {

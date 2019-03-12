@@ -192,10 +192,7 @@ middleware.init(swaggerMockDocPath, (err) => {
       // Send the response
       let currentFlow = flow.data
       currentFlow.isRunning = true;
-      console.log('flow', currentFlow);
-      // interval
-
-
+      // Add 10 percent every 1 second
       const interval = setInterval( function() { updateProgress(); }, 1000 );
 
       function updateProgress() {
@@ -211,8 +208,7 @@ middleware.init(swaggerMockDocPath, (err) => {
         }
         myDB.save(new Resource('flows', id, currentFlow), (err, flow) => {
           if (err) return next(err);
-
-          console.log('saved flow', flow);
+          // Save Flow
         });
       }
     });

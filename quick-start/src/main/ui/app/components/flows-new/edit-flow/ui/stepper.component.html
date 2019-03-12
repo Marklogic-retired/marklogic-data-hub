@@ -27,7 +27,7 @@
           id="job-progress-bar"
           class="item" 
           mode="determinate" 
-          value="40"></mat-progress-bar>
+          [value]="flow.latestJob.runningPercent"></mat-progress-bar>
         <!--  TODO Add flow status -->
         <ng-template #finished>
           <a href="#">{{flow.status}}</a>
