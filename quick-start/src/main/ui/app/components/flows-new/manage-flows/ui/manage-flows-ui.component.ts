@@ -18,6 +18,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
+  @Output() redeployAll = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
 
@@ -66,6 +67,18 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
         this.deleteFlow.emit(flow.id);
+      }
+    });
+  }
+
+  openConfirmRedeployDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: 'Redeploy', confirmationMessage: "Redeploy all flows to database?"}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(!!result){
+        this.redeployAll.emit();
       }
     });
   }
