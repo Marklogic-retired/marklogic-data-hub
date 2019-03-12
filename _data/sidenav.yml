@@ -71,21 +71,19 @@ main:
             url: '/project/',
             text: 'Create Project' ,
             childPages: [
-              {
-                { url: '/project/quickstart/', text: 'Using QuickStart' },
-                { url: '/project/gradle/', text: 'Using Gradle' },
-              },
-              {
-                url: '/project/flow-tracing/',
-                text: 'Configure Flow Tracing',
-                # childPages: [
-                #   { url: '/project/set-flow-tracing/', text: 'Set Up Flow Tracing' },
-                #   { url: '/project/view-traces/', text: 'View Traces' },
-                #   { url: '/project/export-traces/', text: 'Export Traces' },
-                #   { url: '/project/delete-traces/', text: 'Delete Traces' },
-                # ]
-              }
+              { url: '/project/quickstart/', text: 'Using QuickStart' },
+              { url: '/project/gradle/', text: 'Using Gradle' },
             ]
+          },
+          {
+            url: '/project/flow-tracing/',
+            text: 'Configure Flow Tracing',
+            # childPages: [
+            #   { url: '/project/set-flow-tracing/', text: 'Set Up Flow Tracing' },
+            #   { url: '/project/view-traces/', text: 'View Traces' },
+            #   { url: '/project/export-traces/', text: 'Export Traces' },
+            #   { url: '/project/delete-traces/', text: 'Delete Traces' },
+            # ]
           },
           {
             url: '/ingest/',

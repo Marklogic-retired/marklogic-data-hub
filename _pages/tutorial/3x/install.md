@@ -15,7 +15,7 @@ mkdir data-hub
 cd data-hub
 </pre>
 
-Download the latest [QuickStart .war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version_3x }}/quick-start-{{ site.data.global.hub_version_3x }}.war) and place it in the folder you just created.
+Download the [QuickStart v3.0.0 .war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version_3x }}/quick-start-{{ site.data.global.hub_version_3x }}.war) and place it in the folder you just created.
 
 ## 2. Download the Sample Data
 
@@ -84,7 +84,7 @@ After opening the QuickStart application, you must step through a sequence of sc
 5. Enter your MarkLogic credentials, then click **LOGIN**.
 <br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-5.png){:.screenshot}
 
-6. Click **INSTALL** to install the data hub into MarkLogic. You will see a screen with progress information while the data hub is being installed.
+6. Click **INSTALL** to install the Data Hub Framework into MarkLogic. You will see a screen with progress information while the data hub is being installed.
 <br/>![Hub Directory]({{site.baseurl}}/images/3x/install/hub-wizard-6.png){:.screenshot}
 
 Congratulations! The Data Hub Framework is installed and ready to use.

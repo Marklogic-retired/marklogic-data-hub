@@ -27,7 +27,6 @@ In this section, we create and run an input flow for each entity: `Product`, `Cu
      entityname="Product"
      inputflowname="Load Products"
      datadir="input\products\games"
-     jobname="Load Products"
      fullsteps=true
 %}
 
@@ -40,7 +39,6 @@ Perform the same steps for **Order**.
      entityname="Order"
      inputflowname="Load Orders"
      datadir="input\orders"
-     jobname="Load Orders"
      fullsteps=false
 %}
 
@@ -53,7 +51,6 @@ Perform the same steps for **Customer**.
      entityname="Customer"
      inputflowname="Load Customers"
      datadir="input\customers"
-     jobname="Load Customers"
      fullsteps=false %}
 
 

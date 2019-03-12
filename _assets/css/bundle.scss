@@ -661,6 +661,13 @@ details[open] > summary:before {
   content: "▼ ";
 }
 
+.stepsection {
+  margin-left: 1em;
+  padding: 5px;
+  padding-left: 1em;
+  background-color: #f2f2f2;
+}
+
 .relnote-summary {
   font-size: 120%;
 }

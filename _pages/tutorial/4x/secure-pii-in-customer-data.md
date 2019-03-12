@@ -52,7 +52,7 @@ Because the information can easily be mapped between the source dataset and the 
 
 ## 3 - Create and Run the Harmonize Flow
 
-Harmonization uses the data in your **STAGING** database to generate canonical entity instances in **FINAL** database.
+Harmonization uses the data in your **STAGING** database to generate canonical entity instances in the **FINAL** database.
 
 {% include conrefs/conref-qs-4x-create-run-harmonize-flow.md imgpath=var-imgpath entityname="Customer" harmonizeflowname="Harmonize Customers" mappingname="Customer Mapping" create=true run=true fullsteps=true %}
 
@@ -61,9 +61,18 @@ Harmonization uses the data in your **STAGING** database to generate canonical e
 
 To deploy the PII security configuration files to the **FINAL** database,
 
+1. In the `gradle.properties` file, set `mlSecurityUsername` and `mlSecurityPassword` to your MarkLogic Server credentials.
+
+   {% include note-in-list.html type="IMPORTANT" content="Your MarkLogic Server account must be assigned both `manage-admin` and `security` roles." %}
 1. Open a command-line window, and navigate to your DHF project root directory.
 1. {% include ostabs-run-gradle-step.html grtask="mlDeploySecurity" %}
 {:.ol-steps}
+
+Only users with the `pii-reader` role will be able to view properties marked as PII in the documents they are allowed to view.
+
+
+## See Also
+- [Configuring Security (ml-gradle)](https://github.com/marklogic-community/ml-gradle/wiki/Configuring-security)
 
 
 {% include prev-next-nav-tut4xtoc.html gotopage="tutorial-toc.md" %}
