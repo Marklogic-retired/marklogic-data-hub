@@ -19,6 +19,13 @@ import { MatchOptionsUiComponent } from './mastering/ui/match-options-ui.compone
 import { MatchThresholdsUiComponent } from "./mastering/ui/match-thresholds-ui.component";
 import { AddMatchOptionDialogComponent } from './mastering/ui/add-match-option-dialog.component';
 import { AddMatchThresholdDialogComponent } from './mastering/ui/add-match-threshold-dialog.component';
+import { MappingComponent } from './mapping/mapping.component';
+import { MappingUiComponent } from './mapping/ui/mapping-ui.component';
+
+import { BsDropdownModule, TooltipModule } from 'ngx-bootstrap';
+import { FocusElementDirective } from '../../../directives/focus-element/focus-element.directive';
+import { ListFilterPipe } from '../../../components/mappings/ui/listfilter.pipe';
+import { MdlModule } from '@angular-mdl/core';
 
 import { FocusElementDirective } from '../../../directives/focus-element/focus-element.directive';
 
@@ -35,7 +42,10 @@ import { FocusElementDirective } from '../../../directives/focus-element/focus-e
     MatchThresholdsUiComponent,
     AddMatchOptionDialogComponent,
     AddMatchThresholdDialogComponent,
-    FocusElementDirective
+    MappingComponent,
+    MappingUiComponent,
+    FocusElementDirective,
+    ListFilterPipe
   ],
   imports     : [
     CommonModule,
@@ -45,7 +55,14 @@ import { FocusElementDirective } from '../../../directives/focus-element/focus-e
     RouterModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BsDropdownModule.forRoot(),
+    TooltipModule.forRoot(),
+    MdlModule
+  ],
+  exports: [
+    FocusElementDirective,
+    ListFilterPipe
   ],
   exports: [
     FocusElementDirective

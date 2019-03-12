@@ -5,7 +5,6 @@ import {HttpModule} from '@angular/http';
 import {RouterModule} from '@angular/router';
 import {TruncateCharactersPipe} from './pipes/truncate';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {ListFilterPipe} from './components/mappings/ui/listfilter.pipe';
 import {AppComponent} from './app.component';
 import {
   AppUiComponent,
@@ -146,7 +145,6 @@ import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
     FacetsComponent,
     TitlecasePipe,
     TruncateCharactersPipe,
-    ListFilterPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
     MapComponent,
