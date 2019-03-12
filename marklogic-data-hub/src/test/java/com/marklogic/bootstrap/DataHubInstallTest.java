@@ -169,7 +169,7 @@ public class DataHubInstallTest extends HubTestBase
         assertXMLEqual(expectedXml, actualXml);
         
         //checking if triggers are written
-        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 1);
+        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 4);
         // 3 triggers are written as part of installation
         assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 4);
         
