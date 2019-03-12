@@ -87,15 +87,12 @@ function transform(content, context = {}) {
     //don't catch any exception here, let it slip through to mlcp
     let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObjs, options, step);
 
-    // if an array is returned, then it is an array of errors
-    if (Array.isArray(flowResponse) && flowResponse.length) {
-      fn.error(null, flowResponse[0].message, flowResponse[0]);
+    // if an error is returned, throw it to MLCP
+    if (flowResponse.errors && flowResponse.errors.length) {
+      datahub.debug.log(flowResponse.errors[0]);
+      fn.error(null, flowResponse.errors[0].message, flowResponse.errors[0].stack);
     }
     let documents = flowResponse.documents;
-    if (documents.type && documents.type === 'error' && documents.message) {
-      datahub.debug.log(documents);
-      fn.error(null, "RESTAPI-SRVEXERR", documents.message);
-    }
     if (documents && documents.length) {
       Object.assign(context, documents[0].context);
     }
