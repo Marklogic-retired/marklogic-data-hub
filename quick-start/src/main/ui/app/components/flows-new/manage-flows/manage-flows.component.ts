@@ -12,6 +12,7 @@ import * as _ from "lodash";
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
       (saveFlow)="this.saveFlow($event)"
+      (redeployAll)="this.redeployAll()"
     >
     </flows-page-ui>
   `
@@ -65,5 +66,9 @@ export class ManageFlowsComponent {
       });
       this.flowsPageUi.renderRows();
     });
+  }
+
+  redeployAll() {
+    console.log("Redeploy All Flows")
   }
 }
