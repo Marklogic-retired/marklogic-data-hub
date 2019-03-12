@@ -1,28 +1,22 @@
 .map-page {
-  padding: 20px 40px 100px 40px;
+  padding: 20px 40px 150px 40px;
 }
 
 .map-container2 {
-  width: 1000px;
+  width: 1200px;
   padding: 0;
 }
 
 #map-heading {
-  height: 50px;
+  height: 5px;
 }
 
-#map-heading h1 {
-  font-size: 34px;
-  font-weight: normal;
-  margin: 10px 0;
-  padding: 0;
-  width: 651px;
-  position: relative;
-  float: left;
-}
 
 #save-map {
-  mdl-button {
+  position: absolute;
+  top: -67px;
+  left: 350px;
+  .mat-raised-button {
     margin-right: 5px;
   }
 }
@@ -56,9 +50,14 @@ p.item-identifying-info {
   padding-right: 7px;
 }
 
-#source, #harmonized, #save-map {
+#source, #harmonized {
   position: relative;
   float: left;
+  margin: 0;
+}
+
+#save-map {
+  position: relative;
   margin: 0;
 }
 
