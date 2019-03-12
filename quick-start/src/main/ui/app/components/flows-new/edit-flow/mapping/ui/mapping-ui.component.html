@@ -6,8 +6,8 @@
 
       <!-- Save/Reset happens via header buttons -->
       <div id="save-map">
-        <mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple ng-class="btn-save-map" [disabled]="!mapChanged()" (click)="mapChanged() && onSaveMap()">Save</mdl-button>
-        <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple ng-class="btn-cancel-map" [disabled]="!mapChanged()" (click)="mapChanged() && onResetMap()">Reset</mdl-button>
+        <button mat-raised-button color="primary" [disabled]="!mapChanged()" (click)="mapChanged() && onSaveMap()">Save</button>
+        <button mat-raised-button color="primary" [disabled]="!mapChanged()" (click)="mapChanged() && onResetMap()">Reset</button>
       </div>
 
     </div>
