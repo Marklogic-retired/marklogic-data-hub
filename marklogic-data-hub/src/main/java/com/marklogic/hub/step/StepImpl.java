@@ -39,16 +39,16 @@ public class StepImpl implements Step {
         this.version = 1;
         this.options = JsonNodeFactory.instance.objectNode();
         ((ObjectNode) this.options).putPOJO("collections", JsonNodeFactory.instance.arrayNode().add(name));
-        if(type == StepType.INGEST){
+        if (type == StepType.INGEST) {
             ((ObjectNode) this.options).putPOJO("outputFormat", "json");
         }
-        if(type == StepType.MAPPING || type == StepType.CUSTOM){
-            this.identifier =  "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
+        if (type == StepType.MAPPING || type == StepType.CUSTOM) {
+            this.identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
         }
         this.modulePath = "/path/to/your/step/module/main.sjs";
         this.customHook = JsonNodeFactory.instance.objectNode();
     }
-    
+
     public String getName() {
         return name;
     }
@@ -65,7 +65,9 @@ public class StepImpl implements Step {
         return language;
     }
 
-    public void setLanguage() { this.language = "zxx"; }
+    public void setLanguage() {
+        this.language = "zxx";
+    }
 
     public void setType(StepType type) {
         this.type = type;
@@ -87,9 +89,13 @@ public class StepImpl implements Step {
         this.options = options;
     }
 
-    public String getModulePath() { return modulePath; }
+    public String getModulePath() {
+        return modulePath;
+    }
 
-    public void setModulePath(String path) { this.modulePath = path; }
+    public void setModulePath(String path) {
+        this.modulePath = path;
+    }
 
     public JsonNode getCustomHook() {
         return customHook;
@@ -99,13 +105,20 @@ public class StepImpl implements Step {
         this.customHook = hookObj;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
     @Override
     public String serialize() {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(this);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Unable to serialize step object.");
         }
     }
@@ -128,12 +141,16 @@ public class StepImpl implements Step {
             setOptions(json.get("options"));
         }
 
+        if (json.has("customHook")) {
+            setCustomHook(json.get("customHook"));
+        }
+
         if (json.has("modulePath")) {
             setModulePath(json.get("modulePath").asText());
         }
 
-        if (json.has("customHook")) {
-            setCustomHook(json.get("customHook"));
+        if (json.has("identifier")) {
+            setIdentifier(json.get("identifier").asText());
         }
     }
 }
