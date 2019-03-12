@@ -27,6 +27,7 @@ import com.marklogic.spring.security.context.SpringSecurityCredentialsProvider;
 import org.apache.http.client.CredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -42,6 +43,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
+@ComponentScan("com.marklogic.hub.web")
 public class AuthConfig extends WebSecurityConfigurerAdapter {
     /**
      * @return a config class with ML connection properties
@@ -71,20 +73,13 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/h2-console/**");
     }
 
-    /**
-     * We seem to need this defined as a bean; otherwise, aspects of the default Spring Boot security will still remain.
-     *
-     * @return a new MarkLogicAuthenticationManager
-     */
-    @Bean
-    public MarkLogicAuthenticationManager markLogicAuthenticationManager() {
-        return new MarkLogicAuthenticationManager();
-    }
+    @Autowired
+    public MarkLogicAuthenticationManager markLogicAuthenticationManager;
 
     @Bean
     public ConnectionAuthenticationFilter getConnectionAuthenticationFilter() throws Exception{
         ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
-        authFilter.setAuthenticationManager(markLogicAuthenticationManager());
+        authFilter.setAuthenticationManager(markLogicAuthenticationManager);
         authFilter.setAuthenticationSuccessHandler(currentProjectController);
         authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
 
@@ -99,7 +94,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         super.configure(auth);
-        auth.parentAuthenticationManager(markLogicAuthenticationManager());
+        auth.parentAuthenticationManager(markLogicAuthenticationManager);
         auth.eraseCredentials(false);
     }
 

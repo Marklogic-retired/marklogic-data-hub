@@ -29,13 +29,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
-@ComponentScan(basePackages = "com.marklogic.hub.web")
+@ComponentScan(basePackages = "com.marklogic.hub")
 public class WebApplication extends SpringBootServletInitializer {
 
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(new Class[] { WebApplication.class, ApplicationConfig.class });
+        return application.sources(WebApplication.class);
     }
 
     public static void main(String[] args) throws Exception {
@@ -44,7 +44,7 @@ public class WebApplication extends SpringBootServletInitializer {
             ContentPump.main(newArgs);
         }
         else {
-            SpringApplication.run(new Class[] { WebApplication.class, ApplicationConfig.class } , args);
+            SpringApplication.run(WebApplication.class, args);
         }
     }
 }
