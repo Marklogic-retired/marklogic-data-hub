@@ -1,9 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-import { concatMap, map, merge, switchMap, tap, delay, skip } from 'rxjs/operators';
-import { concat, of, Observable, BehaviorSubject, timer, interval } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { timer } from 'rxjs';
 import { Flow } from "../models/flow.model";
-import { Step } from '../models/step.model';
 import { ProjectService } from '../../../services/projects';
 import { ManageFlowsService } from "../services/manage-flows.service";
 import { EntitiesService } from '../../../models/entities.service';

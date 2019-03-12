@@ -1,10 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import { delay } from 'rxjs/operators';
 import {Flow} from "../models/flow.model";
 import { Step } from '../models/step.model';
-import { Observable } from 'rxjs';
-
 
 @Injectable()
 export class ManageFlowsService {

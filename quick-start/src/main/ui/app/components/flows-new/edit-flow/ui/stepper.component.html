@@ -34,7 +34,7 @@
           <div></div>
         </ng-template>
         <div id="job-started-timestamp" [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: {{flow.latestJob.startTime}}</div>
-        <a href="#" class="text item">View Jobs</a>
+        <a id="view-jobs-btn"  href="#" class="text item">View Jobs</a>
         <div class="icon-container">
           <mat-icon id="flow-menu" class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
           <mat-icon id="flow-expand-collapse-btn" class="flow-menu-icon item" (click)="this.toggleBody()">arrow_drop_down</mat-icon>
