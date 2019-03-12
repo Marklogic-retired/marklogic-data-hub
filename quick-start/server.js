@@ -48,7 +48,7 @@ middleware.init(swaggerMockDocPath, (err) => {
   let myDB = new MemoryDataStore();
   // TODO: import flow objects directly from the Swagger document
   myDB.save(
-    new Resource('flows', 'flow-01', {'id':'flow-01','name':'Order Flow 01','description':'My Flow01 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-1', type:'ingestion' },{ id: 'step-2-flow-1', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-1', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-1', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-1','job-2-flow-1','job-3-flow-1','job-4-flow-1'],'latestJob':{'id':'job-4-flow-1','flowId':'flow-1','startTime':'2019-01-31 12:10:00','endTime':'2019-01-31 13:10:00','output':[],'status':'running','runningPercent':85,'successfulEvents':500,'failedEvents':0},'isValid':true,'isRunning':false,'version':1}),
+    new Resource('flows', 'flow-01', {'id':'flow-01','name':'Order Flow 01','description':'My Flow01 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-1', type:'ingestion' },{ id: 'step-2-flow-1', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-1', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-1', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-1','job-2-flow-1','job-3-flow-1','job-4-flow-1'],'latestJob':{'id':'job-4-flow-1','flowId':'flow-1','startTime':'2019-01-31 12:10:00','endTime':'2019-01-31 13:10:00','output':[],'status':'never run','runningPercent':null,'successfulEvents':500,'failedEvents':0},'isValid':true,'isRunning':false,'version':1}),
     new Resource('flows', 'flow-02', {'id':'flow-02','name':'Order Flow 2','description':'My Flow2 flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-2', type:'ingestion' },{ id: 'step-2-flow-2', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-2', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-2', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-2','job-2-flow-2','job-3-flow-2','job-4-flow-2'],'latestJob':{'id':'job-4-flow-2','flowId':'flow-2','startTime':'2019-02-01 12:10:00','endTime':'2019-02-01 16:10:00','output':[],'status':'finished','runningPercent':null,'successfulEvents':13429,'failedEvents':63},'isValid':true,'isRunning':false,'version':1}),
     new Resource('flows', 'flow-03', {'id':'flow-03','name':'Customer Flow','description':'My Customer Flow flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-3', type:'ingestion' },{ id: 'step-2-flow-3', type:'mapping', targetEntity: 'Order' },{ id: 'step-3-flow-3', type:'mastering', targetEntity: 'Order' },{ id: 'step-4-flow-3', type:'custom', targetEntity: 'Order' }],'jobs':['job-1-flow-3'],'latestJob':{'id':'job-1-flow-3','flowId':'flow-3','startTime':'2019-02-02 12:10:00','endTime':'2019-02-02 16:10:00','output':[],'status':'errored','runningPercent':null,'successfulEvents':0,'failedEvents':500},'isValid':true,'isRunning':false,'version':1}),
     new Resource('flows', 'flow-04', {'id':'flow-04','name':'Product Ingestion','description':'My Product Ingestion Flow flow desc','batchSize':100,'threadCount':4,'options':{'key':'value','key2':'value1','key3':'value1'},'steps':[{ id: 'step-1-flow-4', type:'custom', targetEntity: 'Order' }],'jobs':[],'latestJob':null,'isValid':false,'isRunning':false,'version':1}),
@@ -171,6 +171,7 @@ middleware.init(swaggerMockDocPath, (err) => {
       let resData = req.body;
       resData.id = uuid();
       res.json({ "data": "success" });
+      running(req.params.flowId);
       /**
        * TODO - return Job stub
        * 
@@ -185,6 +186,37 @@ middleware.init(swaggerMockDocPath, (err) => {
       next();
     }
   });  
+  const running = function(id) {
+    myDB.get(new Resource(`/flows/${id}`), (err, flow) => {
+      if (err) return next(err);
+      // Send the response
+      let currentFlow = flow.data
+      currentFlow.isRunning = true;
+      console.log('flow', currentFlow);
+      // interval
+
+
+      const interval = setInterval( function() { updateProgress(); }, 1000 );
+
+      function updateProgress() {
+        if (currentFlow.latestJob.runningPercent == 100) {
+          clearInterval(interval);
+          currentFlow.isRunning = false;
+        } else {
+          currentFlow.latestJob.runningPercent += 10;
+          if (currentFlow.latestJob.runningPercent > 100) {
+            currentFlow.latestJob.runningPercent = 100;
+            currentFlow.isRunning = false;
+          }
+        }
+        myDB.save(new Resource('flows', id, currentFlow), (err, flow) => {
+          if (err) return next(err);
+
+          console.log('saved flow', flow);
+        });
+      }
+    });
+  };
 
 
   /**

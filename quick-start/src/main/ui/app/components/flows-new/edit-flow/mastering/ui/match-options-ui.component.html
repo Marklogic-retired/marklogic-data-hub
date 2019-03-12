@@ -24,21 +24,22 @@
 
     <div class="content-card">
 
-      <mat-table class="matching-table"
+      <mat-table id="match-options-table"
+                 class="matching-table"
                  #table [dataSource]="dataSource" matSort>
 
         <!-- Property to Match Column -->
         <ng-container matColumnDef="propertyName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Property to Match</mat-header-cell>
-          <mat-cell *matCellDef="let mOpt">
+          <mat-header-cell id="match-option-property-sort-btn" *matHeaderCellDef mat-sort-header>Property to Match</mat-header-cell>
+          <mat-cell class="match-option-property" *matCellDef="let mOpt">
             {{mOpt.propertyName.join(', ')}}
           </mat-cell>
         </ng-container>
 
         <!-- Match Type Column -->
         <ng-container matColumnDef="matchType">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Match Type</mat-header-cell>
-          <mat-cell *matCellDef="let mOpt">
+          <mat-header-cell id="match-option-type-sort-btn" *matHeaderCellDef mat-sort-header>Match Type</mat-header-cell>
+          <mat-cell class="match-option-type" *matCellDef="let mOpt">
             <span class="capitalize">
               {{mOpt.matchType}}
             </span>
@@ -47,8 +48,8 @@
 
         <!-- Weight Column -->
         <ng-container matColumnDef="weight">
-          <mat-header-cell *matHeaderCellDef mat-sort-header start="desc">Weight</mat-header-cell>
-          <mat-cell *matCellDef="let mOpt">
+          <mat-header-cell id="match-option-weight-sort-btn" *matHeaderCellDef mat-sort-header start="desc">Weight</mat-header-cell>
+          <mat-cell class="match-option-weight" *matCellDef="let mOpt">
             {{mOpt.weight}}
           </mat-cell>
         </ng-container>
@@ -56,7 +57,7 @@
         <!-- Other Column -->
         <ng-container matColumnDef="other">
           <mat-header-cell *matHeaderCellDef>Other</mat-header-cell>
-          <mat-cell *matCellDef="let mOpt">
+          <mat-cell class="match-option-other" *matCellDef="let mOpt">
 
             <div *ngIf="mOpt.matchType === 'exact'" class="other-content">
               <div>&nbsp;</div>
@@ -117,19 +118,21 @@
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-          <mat-cell *matCellDef="let mOpt; let i = index">
+          <mat-cell class="match-option-menu" *matCellDef="let mOpt; let i = index">
             <mat-icon class="match-menu-icon" [matMenuTriggerFor]="matchMenu" [matMenuTriggerData]="{mOpt: mOpt, i: paginator.pageIndex * paginator.pageSize + i}"
                       disableRipple>more_vert</mat-icon>
           </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row *matRowDef="let mOpt; columns: displayedColumns;">
+        <mat-row class="{{ 'match-option-' + mOpt.propertyName.join('-').toLowerCase().split(' ').join('-') }}"
+                 *matRowDef="let mOpt; columns: displayedColumns;">
         </mat-row>
 
       </mat-table>
 
-      <mat-paginator #paginator
+      <mat-paginator id="match-option-pagination" 
+                     #paginator
                      [length]="matchOptions.length"
                      [pageIndex]="0"
                      [pageSize]="15"
@@ -140,9 +143,9 @@
   </div>
 </div>
 
-<mat-menu #matchMenu="matMenu">
+<mat-menu class="match-option-menu-dialog" #matchMenu="matMenu">
   <ng-template matMenuContent let-mOpt="mOpt" let-i="i">
-    <div mat-menu-item (click)="openMatchOptionDialog(mOpt, i)">Edit Settings {{index}}</div>
-    <div mat-menu-item (click)="openConfirmDialog(mOpt)">Delete</div>
+    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i)">Edit Settings {{index}}</div>
+    <div class="match-option-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mOpt)">Delete</div>
   </ng-template>
 </mat-menu>
