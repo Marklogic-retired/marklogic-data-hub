@@ -17,8 +17,10 @@
         <p>{{step.description}}</p>
       </div>
       <div *ngIf="step.type === 'mapping'">
-        <p>{{step.type}}</p>
-        <p>{{step.description}}</p>
+        <app-mapping
+          [step]="step"
+          (saveStep)="saveStep($event)"
+        ></app-mapping>
       </div>
       <div *ngIf="step.type === 'mastering'">
         <app-matching
