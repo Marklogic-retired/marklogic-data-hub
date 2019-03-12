@@ -37,12 +37,12 @@
       <div [formGroupName]="i" class="key-value-group">
         <mat-form-field>
           <mat-label>Key</mat-label>
-          <input class="'flow-option-key-' + i" matInput formControlName="key"/>
+          <input [class]="'flow-option-key-' + i" matInput formControlName="key"/>
         </mat-form-field>
         <mat-icon></mat-icon>
         <mat-form-field>
           <mat-label>Value</mat-label>
-          <input class="'flow-option-value-' + i" matInput formControlName="value"/>
+          <input [class]="'flow-option-value-' + i" matInput formControlName="value"/>
         </mat-form-field>
         <button class="flow-remove-option-btn" mat-icon-button (click)="onRemoveOption(i)">
           <mat-icon>remove</mat-icon>
