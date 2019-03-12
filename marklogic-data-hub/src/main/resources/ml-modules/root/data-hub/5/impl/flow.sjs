@@ -265,7 +265,7 @@ class Flow {
         let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
         //add our metadata to this
         if(result && result.context) {
-          result.context.metadata = self.flowUtils.createMetadata( result.context ? result.context.metadata : {}, flowName, step.name);
+          result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
         }
         flowInstance.addToWriteQueue(result, flowInstance.globalContext);
       }
