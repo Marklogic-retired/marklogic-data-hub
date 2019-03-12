@@ -31,6 +31,7 @@ public class StepImpl implements Step {
     private JsonNode customHook;
     private String language = "zxx";
     private String modulePath;
+    private String identifier;
 
     StepImpl(String name, StepType type) {
         this.name = name;
@@ -38,6 +39,12 @@ public class StepImpl implements Step {
         this.version = 1;
         this.options = JsonNodeFactory.instance.objectNode();
         ((ObjectNode) this.options).putPOJO("collections", JsonNodeFactory.instance.arrayNode().add(name));
+        if(type == StepType.INGEST){
+            ((ObjectNode) this.options).putPOJO("outputFormat", "json");
+        }
+        if(type == StepType.MAPPING || type == StepType.CUSTOM){
+            this.identifier =  "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
+        }
         this.modulePath = "/path/to/your/step/module/main.sjs";
         this.customHook = JsonNodeFactory.instance.objectNode();
     }
