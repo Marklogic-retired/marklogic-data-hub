@@ -1,0 +1,14 @@
+<div class="dialog-container job-output-dialog">
+  <div class="mdl-dialog__title fixed-header">
+    <div>Job Output for {{job.jobId}}</div>
+    <div class="mdl-layout-spacer"></div>
+    <mdl-button mdl-button-type="icon" (click)="cancelClicked.emit($event)">
+      <i class="fa fa-close"></i>
+    </mdl-button>
+  </div>
+  <div class="mdl-dialog__content">
+    <pre class="job-output">
+      <div *ngFor="let job of jobOutput; let i = index;" [ngClass]="{'job-item-top' : i === 0 }">{{ job }}</div>
+    </pre>
+  </div>
+</div>

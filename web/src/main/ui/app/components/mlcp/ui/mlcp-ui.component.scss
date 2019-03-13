@@ -1,0 +1,132 @@
+@import '../../theme/styles/variables';
+
+$error: unquote("rgb(#{$palette-datahub-red})");
+
+$openDuration: 0.5s;
+$duration: 0.25s;
+$easingFunc: ease-in-out;
+
+.content {
+  padding: 0 15px;
+  background-color: #e9eef4;
+}
+
+.setting {
+  margin-top: 10px;
+}
+
+.mdl-dialog__content {
+  padding: 0px 24px 8px 24px;
+}
+
+.mdl-dialog__actions {
+  flex-direction: row;
+  padding-left: 16px;
+  .save-options {
+    margin-right: 8px;
+  }
+}
+
+.group-container {
+  margin-bottom: 10px;
+
+  > h3 {
+    cursor: pointer;
+    margin: 2px 3px;
+    font-size: 20px;
+
+    .fa {
+      transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      transition: transform $openDuration ease-in-out;
+      -webkit-transition: -webkit-transform $openDuration ease-in-out;
+    }
+
+    .fa.collapsed {
+      transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+    }
+  }
+}
+
+h4 {
+  font-size: 20px;
+  margin: 10px 0px;
+}
+$heightDuration: 0.5s;
+$fadeDuration: 1s;
+
+$easingFunc: ease-in-out;
+
+.group-section {
+  flex: none;  // fixes a bug in IE rendering
+  max-height: 5000px;
+  overflow: hidden;
+  position: relative;
+  -webkit-transition: max-height $heightDuration $easingFunc;
+  -moz-transition: max-height $heightDuration $easingFunc;
+  transition: max-height $heightDuration $easingFunc;
+
+  &.collapsed {
+    max-height: 0px;
+  }
+}
+mat-form-field {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+@media (min-width: 960px) {
+  md-tooltip.custom-tt ._md-content {
+    max-width: 400px;
+    height: auto;
+
+    background-color: rgba(0,0,0,0.85);
+
+    pre {
+      white-space: pre-wrap;
+      font-size: 12px;
+    }
+  }
+}
+
+.mlcp-cmd {
+  background-color: unquote("rgb(#{$palette-indigo-50})");
+  border: 1px solid #b1c7d9;
+  padding: 5px;
+
+  pre {
+    white-space: pre-wrap;
+    font-size: 10px;
+    word-wrap: normal;
+    max-width: 550px;
+  }
+}
+
+.padded {
+  padding: 15px;
+}
+
+.mdl-textfield {
+  width: 100%;
+}
+
+
+/deep/ mdl-button.mdl-button.mdl-button--raised.mdl-button--primary.error-button {
+  background-color: $error;
+}
+
+/deep/ .mdl-textfield__label:after {
+  bottom: 12px;
+}
+
+/* Fix bug showing double tooltip arrows */
+/deep/ .tooltip .arrow::before {
+  visibility: hidden;
+}
+
+/* Widen tooltip container for long phrases */
+/deep/ .tooltip .tooltip-inner {
+  max-width: 250px;
+}

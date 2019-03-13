@@ -1,0 +1,60 @@
+<div class="dialog-container new-flow-dialog">
+  <div class="mdl-dialog__title">
+    <div>Create {{flowType}} Flow</div>
+    <div class="mdl-layout-spacer"></div>
+    <mdl-button mdl-button-type="icon" (click)="cancel()">
+      <i class="fa fa-close"></i>
+    </mdl-button>
+  </div>
+  <div class="mdl-dialog__content">
+    <form (submit)="create()">
+      <div class="modal-body">
+        <div class="md-dialog-content" flex layout="column">
+          <mdl-textfield
+            [ngClass]="{ 'custom-invalid' : !isNameValid }"
+            name="flowTypeInput"
+            type="text"
+            required autofocus floating-label
+            id="flowTypeInput"
+            label="{{flowType}} Flow Name (required)"
+            #flowTypeInput="ngModel"
+            [(ngModel)]="flow.flowName"
+            (keyup)="checkName()"></mdl-textfield>
+          <div *ngIf="!isNameValid" class="alert-text">{{ errorMsg }}</div>
+          <ng-template [ngIf]="markLogicVersion >= 9">
+            <label>Code Generation</label>
+            <app-select-list
+              [items]="scaffoldOptions"
+              [initialSelectedItem]="startingScaffoldOption"
+              label="label" identifier="value"
+              (selectedItem)="updateflow('useEsModel', $event);"></app-select-list>
+            <div *ngIf="flow.useEsModel">
+            <label>Mapping Generation</label>
+              <app-select-list
+                [items]="mappingOptions"
+                [initialSelectedItem]="startingMappingOption"
+                label="label" identifier="value"
+                (selectedItem)="updateflow('mappingName', $event);"></app-select-list>
+            </div>
+          </ng-template>
+          <label>Plugin Type</label>
+          <app-select-list
+            [items]="codeFormats"
+            [initialSelectedItem]="codeFormats[0]"
+            label="label" identifier="value"
+            (selectedItem)="updateflow('codeFormat', $event);"></app-select-list>
+          <label>Data Format</label>
+          <app-select-list
+            [items]="dataFormats"
+            [initialSelectedItem]="dataFormats[0]"
+            (selectedItem)="updateflow('dataFormat', $event);"
+            label="label" identifier="value"></app-select-list>
+        </div>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="submit" [disabled]="(flowTypeInput && flowTypeInput.errors && flowTypeInput.errors.required) || !isNameValid" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Create</button>
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

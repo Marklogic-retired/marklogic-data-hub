@@ -1,0 +1,73 @@
+@import '../theme/styles/variables';
+
+$highlight-color: unquote("rgb(#{$palette-datahub-A100})");
+$bg-color: unquote("rgb(#{$palette-datahub-500})");
+
+:host {
+  display: block;
+}
+
+.facet {
+  background-color: white;
+  padding: 0px;
+  margin-bottom: 10px;
+
+  .facet-name {
+    background-color: $bg-color;
+    color: white;
+    padding: 10px;
+
+    .fa {
+      float: right;
+      font-weight: bold;
+      font-size: 11px;
+    }
+  }
+
+  .facet-value {
+    padding: 2px;
+    padding-top: 10px;
+    cursor: pointer;
+
+    .fa {
+      color: $bg-color;
+      font-size: 11px;
+    }
+
+    .facet-small-name {
+      font-size: .59vw;
+    }
+
+    .mdl-badge {
+      &:after {
+        width: 48px;
+        border-radius: 10%;
+      }
+    }
+  }
+
+  .facet-right-padding {
+    padding-right: 5px;
+  }
+}
+
+/deep/ span.badge.mdl-badge[data-badge] {
+  float: right;
+  &:after {
+    top: -5px;
+    background: $bg-color;
+  }
+}
+
+.chiclets {
+  button {
+    font-size: 10px;
+    margin-bottom: 5px;
+
+    .chiclet-name {
+        font-size: .54vw;
+    }
+  }
+
+  margin-bottom: 10px;
+}

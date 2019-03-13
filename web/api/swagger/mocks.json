@@ -1,0 +1,1714 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample of a QuickStart DataHub Swagger doucment defining endpoints to be mocked",
+    "version": "1.0.0",
+    "title": "QuickStart DataHub API",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [],
+  "schemes": [
+    "http"
+  ],
+  "host": "localhost:4200",
+  "basePath": "/api",
+  "paths": {
+    "/flows": {
+      "get": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Returns all flows",
+        "description": "Returns all flows",
+        "operationId": "getFlows",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/flow"
+              },
+              "default": [
+                {
+                  "id": "flow-1",
+                  "name": "Order Flow 01",
+                  "description": "My Flow01 flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-1",
+                      "name": "Flow 01 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "input_file_path": "/marklogic-data-hub/examples/healthcare",
+                        "input_file_type": "documents",
+                        "output_collections": "Order,Flow 01 Ingest Step,input,newCollection",
+                        "output_permissions": "rest-reader,read,rest-writer,update",
+                        "document_type": "json",
+                        "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
+                        "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
+                        "transform_param": "entity-name=Order,flow-name=Flow 01 Ingest Step"                      
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-2-flow-1",
+                      "name": "Flow 01 Mapping Step",
+                      "description": "My Step 2 description",
+                      "type": "mapping",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "sourceCollection": "Flow 01 Ingest Step",
+                        "sourceURI": "source-doc-01.json",
+                        "sourceQuery": "",
+                        "targetEntity": "Order",
+                        "targetEntityType": "http://example.org/Order-0.0.1/Order",
+                        "sourceContext": "//",
+                        "properties": {
+                          "id": {
+                            "sourcedFrom": "id"
+                          },
+                          "price": {
+                            "sourcedFrom": "price"
+                          },
+                          "products": {
+                            "sourcedFrom": "product_id"
+                          }
+                        }
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-3-flow-1",
+                      "name": "Flow 01 Mastering Step",
+                      "description": "My Step 3 description",
+                      "type": "mastering",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "matchOptions": [
+                          {
+                            "type": "exact",
+                            "properties": ["ssn"],
+                            "weight": 10
+                          },
+                          {
+                            "type": "synonym",
+                            "properties": ["firstName"],
+                            "weight": 5,
+                            "thesaurusUri": "/dictionary/thesarus.xml",
+                            "filter": ""
+                          },
+                          {
+                            "type": "dblMetaphone",
+                            "properties": ["lastName"],
+                            "weight": 2,
+                            "dictionaryUri": "/dictionary/dictionary.xml",
+                            "distanceThreshold": 30,
+                            "collation": "http://marklogic.com/collation/codepoint.xml"
+                          },
+                          {
+                            "type": "reduce",
+                            "properties": ["lastName"],
+                            "weightReduction": 2
+                          },
+                          {
+                            "type": "zip",
+                            "properties": ["postal"],
+                            "weight": 10,
+                            "5matches9Boost": 3,
+                            "9matches5Weight": 2
+                          },
+                          {
+                            "type": "custom",
+                            "properties": ["state"],
+                            "weight": 1,
+                            "uri": "/directory/customOption.sjs",
+                            "function": "customOptionFn"
+                          }
+                        ],
+                        "matchThresholds": [
+                          {
+                            "name": "Definite Match",
+                            "weight": 20,
+                            "action": "merge"
+                          },
+                          {
+                            "name": "Custom Match",
+                            "weight": 1,
+                            "action": "custom",
+                            "uri": "/directory/customOption.sjs",
+                            "function": "customOptionFn"
+                          }
+                        ],
+                        "mergeOptions": [
+                          {
+                            "type": "Standard",
+                            "property": "ssn",
+                            "maxValues": 1,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 5
+                          },
+                          {
+                            "type": "Standard",
+                            "property": "firstName",
+                            "maxValues": null,
+                            "maxSources": 2,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Standard",
+                            "property": "lastName",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Strategy: CRM Source",
+                            "property": "state",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Strategy: Length-Weight",
+                            "property": "postal",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 12
+                          }
+                        ],
+                        "mergeStrategies": [
+                          {
+                            "default": true,
+                            "maxValues": 10,
+                            "maxSources": 5,
+                            "sourceWeights": [],
+                            "lengthWeight": null
+                          },
+                          {
+                            "default": false,
+                            "name": "CRM Source",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "default": false,
+                            "name": "Length-Weight",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 12
+                          }                          
+                        ]
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-4-flow-1",
+                      "name": "Flow 01 Custom Step",
+                      "description": "My Step 4 description",
+                      "type": "custom",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "custom": "TODO"
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [
+                    "job-1-flow-1",
+                    "job-2-flow-1",
+                    "job-3-flow-1",
+                    "job-4-flow-1"
+                  ],
+                  "latestJob": {
+                    "id": "job-4-flow-1",
+                    "flowId": "flow-1",
+                    "startTime": "2019-01-31 12:10:00",
+                    "endTime": "2019-01-31 13:10:00",
+                    "output": [],
+                    "status": "running",
+                    "runningPercent": 85,
+                    "successfulEvents": 500,
+                    "failedEvents": 0
+                  },
+                  "isValid": true,
+                  "isRunning": false,
+                  "version": 1
+                },
+                {
+                  "id": "flow-2",
+                  "name": "Order Flow 2",
+                  "description": "My Flow2 flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-2",
+                      "name": "Flow 02 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "input_file_path": "/marklogic-data-hub/examples/healthcare",
+                        "input_file_type": "documents",
+                        "output_collections": "Order,Flow 02 Ingest Step,input,newCollection",
+                        "output_permissions": "rest-reader,read,rest-writer,update",
+                        "document_type": "json",
+                        "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
+                        "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
+                        "transform_param": "entity-name=Order,flow-name=Flow 02 Ingest Step"                      
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-2-flow-2",
+                      "name": "Flow 02 Mapping Step",
+                      "description": "My Step 2 description",
+                      "type": "mapping",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "sourceCollection": "Flow 02 Ingest Step",
+                        "sourceURI": "source-doc-01.json",
+                        "sourceQuery": "",
+                        "targetEntity": "Order",
+                        "targetEntityType": "http://example.org/Order-0.0.1/Order",
+                        "sourceContext": "//",
+                        "properties": {
+                          "id": {
+                            "sourcedFrom": "id"
+                          },
+                          "price": {
+                            "sourcedFrom": "price"
+                          },
+                          "products": {
+                            "sourcedFrom": "product_id"
+                          }
+                        }
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-3-flow-2",
+                      "name": "Flow 02 Mastering Step",
+                      "description": "My Step 3 description",
+                      "type": "mastering",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "matchOptions": [
+                          {
+                            "type": "exact",
+                            "properties": ["ssn"],
+                            "weight": 10
+                          },
+                          {
+                            "type": "synonym",
+                            "properties": ["firstName"],
+                            "weight": 5,
+                            "thesaurusUri": "/dictionary/thesarus.xml",
+                            "filter": ""
+                          },
+                          {
+                            "type": "dblMetaphone",
+                            "properties": ["lastName"],
+                            "weight": 2,
+                            "dictionaryUri": "/dictionary/dictionary.xml",
+                            "distanceThreshold": 30,
+                            "collation": "http://marklogic.com/collation/codepoint.xml"
+                          },
+                          {
+                            "type": "reduce",
+                            "properties": ["lastName"],
+                            "weightReduction": 2
+                          },
+                          {
+                            "type": "zip",
+                            "properties": ["postal"],
+                            "weight": 10,
+                            "5matches9Boost": 3,
+                            "9matches5Weight": 2
+                          },
+                          {
+                            "type": "custom",
+                            "properties": ["state"],
+                            "weight": 1,
+                            "uri": "/directory/customOption.sjs",
+                            "function": "customOptionFn"
+                          }
+                        ],
+                        "matchThresholds": [
+                          {
+                            "name": "Definite Match",
+                            "weight": 20,
+                            "action": "merge"
+                          },
+                          {
+                            "name": "Custom Match",
+                            "weight": 1,
+                            "action": "custom",
+                            "uri": "/directory/customOption.sjs",
+                            "function": "customOptionFn"
+                          }
+                        ],
+                        "mergeOptions": [
+                          {
+                            "type": "Standard",
+                            "property": "ssn",
+                            "maxValues": 1,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 5
+                          },
+                          {
+                            "type": "Standard",
+                            "property": "firstName",
+                            "maxValues": null,
+                            "maxSources": 2,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Standard",
+                            "property": "lastName",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Strategy: CRM Source",
+                            "property": "state",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Strategy: Length-Weight",
+                            "property": "postal",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 12
+                          }
+                        ],
+                        "mergeStrategies": [
+                          {
+                            "default": true,
+                            "maxValues": 10,
+                            "maxSources": 5,
+                            "sourceWeights": [],
+                            "lengthWeight": null
+                          },
+                          {
+                            "default": false,
+                            "name": "CRM Source",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "default": false,
+                            "name": "Length-Weight",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 12
+                          }                          
+                        ]
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-4-flow-2",
+                      "name": "Flow 02 Custom Step",
+                      "description": "My Step 4 description",
+                      "type": "custom",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "custom": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [
+                    "job-1-flow-2",
+                    "job-2-flow-2",
+                    "job-3-flow-2",
+                    "job-4-flow-2"
+                  ],
+                  "latestJob": {
+                    "id": "job-4-flow-2",
+                    "flowId": "flow-2",
+                    "startTime": "2019-02-01 12:10:00",
+                    "endTime": "2019-02-01 16:10:00",
+                    "output": [],
+                    "status": "finished",
+                    "runningPercent": null,
+                    "successfulEvents": 13429,
+                    "failedEvents": 63
+                  },
+                  "isValid": true,
+                  "isRunning": false,
+                  "version": 1
+                },
+                {
+                  "id": "flow-3",
+                  "name": "Customer Flow",
+                  "description": "My Customer Flow flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-3",
+                      "name": "Flow 3 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "input_file_path": "/marklogic-data-hub/examples/healthcare",
+                        "input_file_type": "documents",
+                        "output_collections": "Order,Flow 3 Ingest Step,input,newCollection",
+                        "output_permissions": "rest-reader,read,rest-writer,update",
+                        "document_type": "json",
+                        "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
+                        "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
+                        "transform_param": "entity-name=Order,flow-name=Flow 3 Ingest Step"                      
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-2-flow-3",
+                      "name": "Flow 3 Mapping Step",
+                      "description": "My Step 2 description",
+                      "type": "mapping",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "sourceCollection": "Flow 3 Ingest Step",
+                        "sourceURI": "source-doc-01.json",
+                        "sourceQuery": "",
+                        "targetEntity": "Order",
+                        "targetEntityType": "http://example.org/Order-0.0.1/Order",
+                        "sourceContext": "//",
+                        "properties": {
+                          "id": {
+                            "sourcedFrom": "id"
+                          },
+                          "price": {
+                            "sourcedFrom": "price"
+                          },
+                          "products": {
+                            "sourcedFrom": "product_id"
+                          }
+                        }
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-3-flow-3",
+                      "name": "Flow 3 Mastering Step",
+                      "description": "My Step 3 description",
+                      "type": "mastering",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "matchOptions": [
+                          {
+                            "type": "exact",
+                            "properties": ["ssn"],
+                            "weight": 10
+                          },
+                          {
+                            "type": "synonym",
+                            "properties": ["firstName"],
+                            "weight": 5,
+                            "thesaurusUri": "/dictionary/thesarus.xml",
+                            "filter": ""
+                          },
+                          {
+                            "type": "dblMetaphone",
+                            "properties": ["lastName"],
+                            "weight": 2,
+                            "dictionaryUri": "/dictionary/dictionary.xml",
+                            "distanceThreshold": 30,
+                            "collation": "http://marklogic.com/collation/codepoint.xml"
+                          },
+                          {
+                            "type": "reduce",
+                            "properties": ["lastName"],
+                            "weightReduction": 2
+                          },
+                          {
+                            "type": "zip",
+                            "properties": ["postal"],
+                            "weight": 10,
+                            "5matches9Boost": 3,
+                            "9matches5Weight": 2
+                          },
+                          {
+                            "type": "custom",
+                            "properties": ["state"],
+                            "weight": 1,
+                            "uri": "/directory/customOption.sjs",
+                            "function": "customOptionFn"
+                          }
+                        ],
+                        "matchThresholds": [
+                          {
+                            "name": "Definite Match",
+                            "weight": 20,
+                            "action": "merge"
+                          },
+                          {
+                            "name": "Custom Match",
+                            "weight": 1,
+                            "action": "custom",
+                            "uri": "/directory/customOption.sjs",
+                            "function": "customOptionFn"
+                          }
+                        ],
+                        "mergeOptions": [
+                          {
+                            "type": "Standard",
+                            "property": "ssn",
+                            "maxValues": 1,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 5
+                          },
+                          {
+                            "type": "Standard",
+                            "property": "firstName",
+                            "maxValues": null,
+                            "maxSources": 2,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Standard",
+                            "property": "lastName",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Strategy: CRM Source",
+                            "property": "state",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "type": "Strategy: Length-Weight",
+                            "property": "postal",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 12
+                          }
+                        ],
+                        "mergeStrategies": [
+                          {
+                            "default": true,
+                            "maxValues": 10,
+                            "maxSources": 5,
+                            "sourceWeights": [],
+                            "lengthWeight": null
+                          },
+                          {
+                            "default": false,
+                            "name": "CRM Source",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [
+                              { "source": "CRM", "weight": 3 },
+                              { "source": "ERP", "weight": 1 }
+                            ],
+                            "lengthWeight": null
+                          },
+                          {
+                            "default": false,
+                            "name": "Length-Weight",
+                            "maxValues": null,
+                            "maxSources": null,
+                            "sourceWeights": [],
+                            "lengthWeight": 12
+                          }                          
+                        ]
+                      },
+                      "language": "en",
+                      "version": 1
+                    },
+                    {
+                      "id": "step-4-flow-3",
+                      "name": "Flow 3 Custom Step",
+                      "description": "My Step 4 description",
+                      "type": "custom",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": true,
+                      "isRunning": false,
+                      "config": {
+                        "custom": "options"
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [
+                    "job-1-flow-3"
+                  ],
+                  "latestJob": {
+                    "id": "job-1-flow-3",
+                    "flowId": "flow-3",
+                    "startTime": "2019-02-02 12:10:00",
+                    "endTime": "2019-02-02 16:10:00",
+                    "output": [],
+                    "status": "errored",
+                    "runningPercent": null,
+                    "successfulEvents": 0,
+                    "failedEvents": 500
+                  },
+                  "isValid": true,
+                  "isRunning": false,
+                  "version": 1
+                },
+                {
+                  "id": "flow-3",
+                  "name": "Product Ingestion",
+                  "description": "My Product Ingestion Flow flow desc",
+                  "batchSize": 100,
+                  "threadCount": 4,
+                  "options": {
+                    "key": "value",
+                    "key2": "value1",
+                    "key3": "value1"
+                  },
+                  "steps": [
+                    {
+                      "id": "step-1-flow-3",
+                      "name": "Flow 3 Ingest Step",
+                      "description": "My Step 1 description",
+                      "type": "ingestion",
+                      "sourceDatabase": null,
+                      "targetDatabase": "staging",
+                      "isValid": false,
+                      "isRunning": false,
+                      "config": {
+                        "input_file_path": "/marklogic-data-hub/examples/healthcare",
+                        "input_file_type": "documents",
+                        "output_collections": "Order,Flow 3 Ingest Step,input,newCollection",
+                        "output_permissions": "rest-reader,read,rest-writer,update",
+                        "document_type": "json",
+                        "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
+                        "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
+                        "transform_param": "entity-name=Order,flow-name=Flow 3 Ingest Step"                      
+                      },
+                      "language": "en",
+                      "version": 1
+                    }
+                  ],
+                  "jobs": [],
+                  "latestJob": null,
+                  "isValid": false,
+                  "isRunning": false,
+                  "version": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Create flow",
+        "description": "",
+        "operationId": "createFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Flow to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/flow"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/flow",
+              "default": {
+                "id": "flow-1",
+                "name": "Flow 01",
+                "description": "My Flow01 flow desc",
+                "batchSize": 100,
+                "threadCount": 4,
+                "options": {
+                  "key": "value",
+                  "key2": "value1",
+                  "key3": "value1"
+                },
+                "steps": [],
+                "jobs": [],
+                "latestJob": null,
+                "isValid": false,
+                "isRunning": false,
+                "version": 1
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          }
+        }
+      }
+    },
+    "/flows/{flowId}": {
+      "get": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Find flow by Id",
+        "description": "....",
+        "operationId": "getFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow to be fetched",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/flow",
+              "default": {
+                "id": "flow-1",
+                "name": "Order Flow 01",
+                "description": "My Flow01 flow desc",
+                "batchSize": 100,
+                "threadCount": 4,
+                "options": {
+                  "key": "value",
+                  "key2": "value1",
+                  "key3": "value1"
+                },
+                "steps": [
+                  {
+                    "id": "step-1-flow-1",
+                    "name": "Flow 01 Ingest Step",
+                    "description": "My Step 1 description",
+                    "type": "ingestion",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "input_file_path": "/marklogic-data-hub/examples/healthcare",
+                      "input_file_type": "documents",
+                      "output_collections": "Order,Flow 01 Ingest Step,input,newCollection",
+                      "output_permissions": "rest-reader,read,rest-writer,update",
+                      "document_type": "json",
+                      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
+                      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
+                      "transform_param": "entity-name=Order,flow-name=Flow 01 Ingest Step"                      
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-2-flow-1",
+                    "name": "Flow 01 Mapping Step",
+                    "description": "My Step 2 description",
+                    "type": "mapping",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "sourceCollection": "Flow 01 Ingest Step",
+                      "sourceURI": "source-doc-01.json",
+                      "sourceQuery": "",
+                      "targetEntity": "Order",
+                      "targetEntityType": "http://example.org/Order-0.0.1/Order",
+                      "sourceContext": "//",
+                      "properties": {
+                        "id": {
+                          "sourcedFrom": "id"
+                        },
+                        "price": {
+                          "sourcedFrom": "price"
+                        },
+                        "products": {
+                          "sourcedFrom": "product_id"
+                        }
+                      }
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-3-flow-1",
+                    "name": "Flow 01 Mastering Step",
+                    "description": "My Step 3 description",
+                    "type": "mastering",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "matchOptions": [
+                        {
+                          "type": "exact",
+                          "properties": ["ssn"],
+                          "weight": 10
+                        },
+                        {
+                          "type": "synonym",
+                          "properties": ["firstName"],
+                          "weight": 5,
+                          "thesaurusUri": "/dictionary/thesarus.xml",
+                          "filter": ""
+                        },
+                        {
+                          "type": "dblMetaphone",
+                          "properties": ["lastName"],
+                          "weight": 2,
+                          "dictionaryUri": "/dictionary/dictionary.xml",
+                          "distanceThreshold": 30,
+                          "collation": "http://marklogic.com/collation/codepoint.xml"
+                        },
+                        {
+                          "type": "reduce",
+                          "properties": ["lastName"],
+                          "weightReduction": 2
+                        },
+                        {
+                          "type": "zip",
+                          "properties": ["postal"],
+                          "weight": 10,
+                          "5matches9Boost": 3,
+                          "9matches5Weight": 2
+                        },
+                        {
+                          "type": "custom",
+                          "properties": ["state"],
+                          "weight": 1,
+                          "uri": "/directory/customOption.sjs",
+                          "function": "customOptionFn"
+                        }
+                      ],
+                      "matchThresholds": [
+                        {
+                          "name": "Definite Match",
+                          "weight": 20,
+                          "action": "merge"
+                        },
+                        {
+                          "name": "Custom Match",
+                          "weight": 1,
+                          "action": "custom",
+                          "uri": "/directory/customOption.sjs",
+                          "function": "customOptionFn"
+                        }
+                      ],
+                      "mergeOptions": [
+                        {
+                          "type": "Standard",
+                          "property": "ssn",
+                          "maxValues": 1,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": 5
+                        },
+                        {
+                          "type": "Standard",
+                          "property": "firstName",
+                          "maxValues": null,
+                          "maxSources": 2,
+                          "sourceWeights": [
+                            { "source": "CRM", "weight": 3 },
+                            { "source": "ERP", "weight": 1 }
+                          ],
+                          "lengthWeight": null
+                        },
+                        {
+                          "type": "Standard",
+                          "property": "lastName",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": null
+                        },
+                        {
+                          "type": "Strategy: CRM Source",
+                          "property": "state",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [
+                            { "source": "CRM", "weight": 3 },
+                            { "source": "ERP", "weight": 1 }
+                          ],
+                          "lengthWeight": null
+                        },
+                        {
+                          "type": "Strategy: Length-Weight",
+                          "property": "postal",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": 12
+                        }
+                      ],
+                      "mergeStrategies": [
+                        {
+                          "default": true,
+                          "maxValues": 10,
+                          "maxSources": 5,
+                          "sourceWeights": [],
+                          "lengthWeight": null
+                        },
+                        {
+                          "default": false,
+                          "name": "CRM Source",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [
+                            { "source": "CRM", "weight": 3 },
+                            { "source": "ERP", "weight": 1 }
+                          ],
+                          "lengthWeight": null
+                        },
+                        {
+                          "default": false,
+                          "name": "Length-Weight",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": 12
+                        }                          
+                      ]
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-4-flow-1",
+                    "name": "Flow 01 Custom Step",
+                    "description": "My Step 4 description",
+                    "type": "custom",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "custom": "TODO"
+                    },
+                    "language": "en",
+                    "version": 1
+                  }
+                ],
+                "jobs": [
+                  "job-1-flow-1",
+                  "job-2-flow-1",
+                  "job-3-flow-1",
+                  "job-4-flow-1"
+                ],
+                "latestJob": {
+                  "id": "job-4-flow-1",
+                  "flowId": "flow-1",
+                  "startTime": "2019-01-31 12:10:00",
+                  "endTime": "2019-01-31 13:10:00",
+                  "output": [],
+                  "status": "running",
+                  "runningPercent": 85,
+                  "successfulEvents": 500,
+                  "failedEvents": 0
+                },
+                "isValid": true,
+                "isRunning": false,
+                "version": 1
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Update flow by Id",
+        "description": "",
+        "operationId": "updateFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated flow",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/flow",
+              "default": {
+                "id": "flow-1",
+                "name": "Order Flow 01",
+                "description": "My Flow01 flow desc",
+                "batchSize": 100,
+                "threadCount": 4,
+                "options": {
+                  "key": "value",
+                  "key2": "value1",
+                  "key3": "value1"
+                },
+                "steps": [
+                  {
+                    "id": "step-1-flow-1",
+                    "name": "Flow 01 Ingest Step",
+                    "description": "My Step 1 description",
+                    "type": "ingestion",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "input_file_path": "/marklogic-data-hub/examples/healthcare",
+                      "input_file_type": "documents",
+                      "output_collections": "Order,Flow 01 Ingest Step,input,newCollection",
+                      "output_permissions": "rest-reader,read,rest-writer,update",
+                      "document_type": "json",
+                      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
+                      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
+                      "transform_param": "entity-name=Order,flow-name=Flow 01 Ingest Step"                      
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-2-flow-1",
+                    "name": "Flow 01 Mapping Step",
+                    "description": "My Step 2 description",
+                    "type": "mapping",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "sourceCollection": "Flow 01 Ingest Step",
+                      "sourceURI": "source-doc-01.json",
+                      "sourceQuery": "",
+                      "targetEntity": "Order",
+                      "targetEntityType": "http://example.org/Order-0.0.1/Order",
+                      "sourceContext": "//",
+                      "properties": {
+                        "id": {
+                          "sourcedFrom": "id"
+                        },
+                        "price": {
+                          "sourcedFrom": "price"
+                        },
+                        "products": {
+                          "sourcedFrom": "product_id"
+                        }
+                      }
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-3-flow-1",
+                    "name": "Flow 01 Mastering Step",
+                    "description": "My Step 3 description",
+                    "type": "mastering",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "matchOptions": [
+                        {
+                          "type": "exact",
+                          "properties": ["ssn"],
+                          "weight": 10
+                        },
+                        {
+                          "type": "synonym",
+                          "properties": ["firstName"],
+                          "weight": 5,
+                          "thesaurusUri": "/dictionary/thesarus.xml",
+                          "filter": ""
+                        },
+                        {
+                          "type": "dblMetaphone",
+                          "properties": ["lastName"],
+                          "weight": 2,
+                          "dictionaryUri": "/dictionary/dictionary.xml",
+                          "distanceThreshold": 30,
+                          "collation": "http://marklogic.com/collation/codepoint.xml"
+                        },
+                        {
+                          "type": "reduce",
+                          "properties": ["lastName"],
+                          "weightReduction": 2
+                        },
+                        {
+                          "type": "zip",
+                          "properties": ["postal"],
+                          "weight": 10,
+                          "5matches9Boost": 3,
+                          "9matches5Weight": 2
+                        },
+                        {
+                          "type": "custom",
+                          "properties": ["state"],
+                          "weight": 1,
+                          "uri": "/directory/customOption.sjs",
+                          "function": "customOptionFn"
+                        }
+                      ],
+                      "matchThresholds": [
+                        {
+                          "name": "Definite Match",
+                          "weight": 20,
+                          "action": "merge"
+                        },
+                        {
+                          "name": "Custom Match",
+                          "weight": 1,
+                          "action": "custom",
+                          "uri": "/directory/customOption.sjs",
+                          "function": "customOptionFn"
+                        }
+                      ],
+                      "mergeOptions": [
+                        {
+                          "type": "Standard",
+                          "property": "ssn",
+                          "maxValues": 1,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": 5
+                        },
+                        {
+                          "type": "Standard",
+                          "property": "firstName",
+                          "maxValues": null,
+                          "maxSources": 2,
+                          "sourceWeights": [
+                            { "source": "CRM", "weight": 3 },
+                            { "source": "ERP", "weight": 1 }
+                          ],
+                          "lengthWeight": null
+                        },
+                        {
+                          "type": "Standard",
+                          "property": "lastName",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": null
+                        },
+                        {
+                          "type": "Strategy: CRM Source",
+                          "property": "state",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [
+                            { "source": "CRM", "weight": 3 },
+                            { "source": "ERP", "weight": 1 }
+                          ],
+                          "lengthWeight": null
+                        },
+                        {
+                          "type": "Strategy: Length-Weight",
+                          "property": "postal",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": 12
+                        }
+                      ],
+                      "mergeStrategies": [
+                        {
+                          "default": true,
+                          "maxValues": 10,
+                          "maxSources": 5,
+                          "sourceWeights": [],
+                          "lengthWeight": null
+                        },
+                        {
+                          "default": false,
+                          "name": "CRM Source",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [
+                            { "source": "CRM", "weight": 3 },
+                            { "source": "ERP", "weight": 1 }
+                          ],
+                          "lengthWeight": null
+                        },
+                        {
+                          "default": false,
+                          "name": "Length-Weight",
+                          "maxValues": null,
+                          "maxSources": null,
+                          "sourceWeights": [],
+                          "lengthWeight": 12
+                        }                          
+                      ]
+                    },
+                    "language": "en",
+                    "version": 1
+                  },
+                  {
+                    "id": "step-4-flow-1",
+                    "name": "Flow 01 Custom Step",
+                    "description": "My Step 4 description",
+                    "type": "custom",
+                    "sourceDatabase": null,
+                    "targetDatabase": "staging",
+                    "isValid": true,
+                    "isRunning": false,
+                    "config": {
+                      "custom": "TODO"
+                    },
+                    "language": "en",
+                    "version": 1
+                  }
+                ],
+                "jobs": [
+                  "job-1-flow-1",
+                  "job-2-flow-1",
+                  "job-3-flow-1",
+                  "job-4-flow-1"
+                ],
+                "latestJob": {
+                  "id": "job-4-flow-1",
+                  "flowId": "flow-1",
+                  "startTime": "2019-01-31 12:10:00",
+                  "endTime": "2019-01-31 13:10:00",
+                  "output": [],
+                  "status": "running",
+                  "runningPercent": 85,
+                  "successfulEvents": 500,
+                  "failedEvents": 0
+                },
+                "isValid": true,
+                "isRunning": false,
+                "version": 2
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "flow not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Delete flow by Id",
+        "description": "",
+        "operationId": "deleteFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow to be fetched",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Flow not found"
+          }
+        }
+      }
+    },
+
+    "/flows/{flowId}/run": {
+      "post": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Run a Flow",
+        "description": "",
+        "operationId": "runFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow to run",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/step"
+            }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Step not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "flow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Id of a flow"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of a flow"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of flow"
+        },
+        "batchSize": {
+          "type": "integer",
+          "description": "The # of documents to process in a single batch",
+          "minimum": 0,
+          "format": "int64"
+        },
+        "threadCount": {
+          "type": "integer",
+          "description": "",
+          "minimum": 0,
+          "format": "int64"
+        },
+        "options": {
+          "description": "TBD: Likely metadata ",
+          "type": "object"
+        },
+        "steps": {
+          "type": "array",
+          "description": "Array of Step objects associated with this flow",
+          "items": {
+            "$ref": "#/definitions/step"
+          }
+        },
+        "jobs": {
+          "type": "array",
+          "description": "Array of Job IDs generated by this flow",
+          "items": {
+            "$ref": "#/definitions/job"
+          }
+        },
+        "latestJob": {
+          "description": "Data related to the last job run for this Flow",
+          "type": "object"
+        },
+        "isValid": {
+          "type": "boolean",
+          "description": "Boolean flag used for UI to tell whether all Steps associated with this Flow are valid, making the Flow valid"
+        },
+        "isRunning": {
+          "type": "boolean",
+          "description": "(shouldn't this be on the job level? Flows don't run)"
+        },
+        "version": {
+          "type": "integer",
+          "description": "(Is this valid?)",
+          "minimum": 0,
+          "format": "int64"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Id of a step"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of a step"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of a step"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of a step",
+          "enum": [
+            "ingestion",
+            "mapping",
+            "mastering",
+            "custom"
+          ]
+        },
+        "sourceDatabase": {
+          "type": "string"
+        },
+        "targetDatabase": {
+          "type": "string"
+        },
+        "isValid": {
+          "type": "boolean",
+          "description": "Boolean flag to tell whether a Step is valid"
+        },
+        "isRunning": {
+          "type": "boolean",
+          "description": "Boolean flag to tell whether a Step is running"
+        },
+        "config": {
+          "type": "object"
+        },
+        "language": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "customHook": {
+          "$ref": "#/definitions/customHook"
+        }
+      },
+      "xml": {
+        "name": "Process"
+      }
+    },
+    "job": {
+      "type": "object",
+      "required": [
+        "id",
+        "flowId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Id of the job"
+        },
+        "flowId": {
+          "type": "string",
+          "description": "Id of the flow associated with this job"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp job started"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp job started"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of a job",
+          "enum": [
+            "running",
+            "canceled",
+            "failed",
+            "completed"
+          ]
+        },
+        "successfulEvents": {
+          "type": "integer",
+          "minimum": 0,
+          "format": "int64"
+        },
+        "failedEvents": {
+          "type": "integer",
+          "minimum": 0,
+          "format": "int64"
+        }
+      },
+      "xml": {
+        "name": "Process"
+      }
+    },
+    "customHook": {
+      "type": "object",
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "user": {
+          "type": "string"
+        },
+        "runBefore": {
+          "type": "boolean"
+        }
+      },
+      "xml": {
+        "name": "Tag"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about MarkLogic Data Hub",
+    "url": "https://github.com/marklogic/marklogic-data-hub"
+  }
+}

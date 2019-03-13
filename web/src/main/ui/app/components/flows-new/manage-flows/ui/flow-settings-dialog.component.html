@@ -1,0 +1,52 @@
+<h1 mat-dialog-title>{{getDialogTitle()}}</h1>
+<div mat-dialog-content [formGroup]="form" class="content">
+  <mat-form-field layout-fill>
+    <mat-label>Flow name</mat-label>
+    <input matInput formControlName="name"/>
+  </mat-form-field>
+  <mat-form-field layout-fill>
+    <mat-label>Description (optional)</mat-label>
+    <input matInput formControlName="description"/>
+  </mat-form-field>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Advanced Settings (optional)
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-form-field layout-fill>
+      <mat-label>Batch Size</mat-label>
+      <input matInput formControlName="batchSize"
+      />
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Thread Count</mat-label>
+      <input matInput formControlName="threadCount"
+      />
+    </mat-form-field>
+    <mat-label>
+      Options
+    </mat-label>
+    <button mat-icon-button>
+      <mat-icon>add</mat-icon>
+    </button>
+    <div class="key-value-group">
+      <mat-form-field>
+        <mat-label>Key</mat-label>
+        <input matInput/>
+      </mat-form-field>
+      <mat-icon></mat-icon>
+      <mat-form-field>
+        <mat-label>Value</mat-label>
+        <input matInput/>
+      </mat-form-field>
+      <button mat-icon-button>
+        <mat-icon>remove</mat-icon>
+      </button>
+    </div>
+  </mat-expansion-panel>
+</div>
+<mat-dialog-actions class="bottom">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+</mat-dialog-actions>

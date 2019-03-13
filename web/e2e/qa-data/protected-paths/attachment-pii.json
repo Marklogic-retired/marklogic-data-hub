@@ -1,0 +1,8 @@
+{
+  "path-expression" : "/envelope/attachments//instance/title",
+  "path-namespace" : [ ],
+  "permission" : {
+    "role-name" : "pii-reader",
+    "capability" : "read"
+  }
+}

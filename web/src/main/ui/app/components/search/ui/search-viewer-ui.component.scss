@@ -1,0 +1,22 @@
+@import '../../theme/styles/variables';
+
+$bg-color: unquote("rgb(#{$palette-datahub-100})");
+$border-color: unquote("rgb(#{$palette-datahub-50})");
+
+app-search-viewer {
+  display: block;
+  padding: 10px;
+}
+
+.innards {
+  border: 1px solid $border-color;
+}
+.title {
+  // border: 1px solid;
+  padding: 10px;
+  background-color: $bg-color;
+}
+
+h4 {
+  margin: 0px;
+}

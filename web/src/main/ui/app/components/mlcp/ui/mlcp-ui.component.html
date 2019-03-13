@@ -1,0 +1,96 @@
+<div class="content">
+  <div *ngIf="flow">
+    <h3 class="mlcp-flow-name">Run Input Flow - {{flow.entityName}} : {{flow.flowName}}</h3>
+    <div>
+      <div class="group-container" flex layout="column">
+        <h3 (click)="toggleSection('inputFiles')"><i class="fa fa-caret-right" [ngClass]="getSectionClass('inputFiles')"></i> Input Files</h3>
+        <div class="group-section slideDown" flex layout="column" [ngClass]="getSectionClass('inputFiles')">
+          <app-folder-browser
+            [startPath]="startPath"
+            (folderChosen)="folderClicked.emit($event)"
+            (fileChosen)="fileClicked.emit($event)"
+            showFiles="true">
+          </app-folder-browser>
+        </div>
+      </div>
+
+      <div class="group-container" *ngFor="let group of groups" [hidden]="!isGroupVisible(group.category)">
+        <h3 (click)="toggleSection(group.category)"><i class="fa fa-caret-right" [ngClass]="getSectionClass(group.category)"></i> {{group.category}}</h3>
+        <div class="group-section slideDown" [ngClass]="getSectionClass(group.category)">
+          <div class="setting" *ngFor="let setting of group.settings">
+            <span
+              *ngIf="setting.type === 'boolean'"
+              [tooltip]="setting.description"
+              placement="left"
+              container="body">
+              <mdl-switch
+                [attr.id]="setting.field"
+                class="primary-color"
+                *ngIf="setting.type === 'boolean'"
+                [ngModel]="setting.value"
+                (change)="handleValueChanged(setting, $event)">
+                  {{setting.label}}
+              </mdl-switch>
+            </span>
+            <span
+              [tooltip]="setting.description"
+              placement="left"
+              container="body">
+              <mat-form-field appearance="outline" 
+                *ngIf="isText(setting.type)"
+                [ngClass]="setting.readOnly ? 'read-only' : ''">
+                <mat-label>{{setting.label}}</mat-label>
+                <input matInput 
+                [ngModel]="setting.value"
+                [id]="setting.field"
+                (input)="handleValueChanged(setting, $event.target.value)"
+                [readonly]="setting.readOnly"/>
+              </mat-form-field>
+            </span>
+            <span
+              *ngIf="setting.type === 'type'"
+              [tooltip]="setting.description"
+              placement="left"
+              container="body">
+              <app-custom-select
+                [attr.id]="setting.field"
+                [labelText]="setting.label"
+                [items]="setting.options"
+                [initialSelectedItem]="setting.value"
+                (selectedItem)="handleValueChanged(setting, $event)"
+                *ngIf="setting.type === 'type'"
+                label="label"
+                value="value"></app-custom-select>
+              </span>
+          </div>
+        </div>
+      </div>
+      <h4>
+        <span
+          tooltip="This is the MLCP Command line that we generated from the options you chose."
+          placement="left"
+          container="body">
+          MLCP Command
+        </span>
+        <button
+          class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
+          [appClipboard]="mlcpcmd"
+          (onSuccess)="clipboardSuccess.emit()">
+          <i class="fa fa-copy" aria-hidden="true">
+          </i>
+        </button>
+      </h4>
+      <div class="mlcp-cmd" flex layout="column">
+        <div id="mlcp-cmd-copied" class="mdl-js-snackbar mdl-snackbar">
+          <div class="mdl-snackbar__text"></div>
+          <button class="mdl-snackbar__action" type="button" aria-hidden="true"></button>
+        </div>
+        <pre #mlcpcmd>{{mlcpCommand}}</pre>
+      </div>
+    </div>
+    <div class="mdl-dialog__actions">
+      <mdl-button mdl-button-type="raised" mdl-colored mdl-ripple (click)="saveOptionsClicked.emit()">Save Options</mdl-button>
+      <mdl-button mdl-button-type="raised" mdl-colored="primary" [ngClass]="{'error-button': hasErrors}" mdl-ripple (click)="runImportClicked.emit()">Run Import</mdl-button>
+    </div>
+  </div>
+</div>

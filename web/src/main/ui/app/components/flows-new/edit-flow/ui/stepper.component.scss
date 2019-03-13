@@ -1,0 +1,115 @@
+h3 {
+  margin: 0 30px 0 0;
+}
+a {
+  color: blue;
+}
+.steps-container {
+  background: white;
+  border: 1px solid black;
+  width: 90%;
+  margin: auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  padding: 8px;
+  > .steps-header:last-child {
+    width: 40%;
+    justify-content: space-between;
+  }
+}
+
+.steps-header {
+  display: flex;
+}
+
+.steps-body {
+  display: flex;
+  min-height: 250px;
+  > p {
+    font-size: 24px;
+    text-align: center;
+    
+    > span {
+      font-weight: bold;
+    }
+  }
+  .step-navigation-bar {
+    padding-top: 20px;
+    padding-left: 25px;
+  }
+}
+
+.text {
+  padding-top: 1.5%;
+  white-space: nowrap;
+}
+.stepper-container {
+  display: inline-flex;
+  .line {
+    font-size: 48px;
+    margin: auto;
+  }
+  .step {
+    border: 1px solid black;  
+    width: 200px;
+    height: 200px;
+    position: relative;
+    .bar {
+      height: 23px;
+    }
+    .bar.mapping {
+      background: #3F51B5;
+    }
+    .bar.mastering {
+      background: #009688;
+    }
+    .bar.ingestion {
+      background: #AD1457;
+    }
+    .bar.custom {
+      background: #F4511E;
+    }
+    .step-title {
+      text-transform: uppercase;
+      font-size: 16px;
+      margin: 3px 0 15px 5px;
+    }
+    .step-title.mapping {
+      color: #3F51B5;
+    }
+    .step-title.mastering {
+      color: #009688;
+    }
+    .step-title.ingestion {
+      color: #AD1457;
+    }
+    .step-title.custom {
+      color: #F4511E;
+    }
+  }
+  .move-icon {
+    position: absolute;
+    top: 0;
+    cursor: move;
+    width: 18px;
+    height: 18px;
+    margin-bottom: 20px;
+  }
+  
+  span{
+    margin-left: 10px;
+  }
+}
+
+button {
+  height: 35px;
+}
+
+mat-progress-bar {
+  padding-top: 1%;
+  width: 100px;
+  height: 30px;
+}
