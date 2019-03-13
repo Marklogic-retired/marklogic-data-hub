@@ -35,23 +35,18 @@ import com.marklogic.hub.job.Job;
 import com.marklogic.hub.flow.FlowItemFailureListener;
 import com.marklogic.hub.job.JobStatus;
 
+import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.UUID;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class FlowRunnerImpl implements FlowRunner {
-
     private static final int DEFAULT_BATCH_SIZE = 100;
     private static final int DEFAULT_THREAD_COUNT = 4;
     private static final int MAX_ERROR_MESSAGES = 10;
@@ -65,7 +60,7 @@ public class FlowRunnerImpl implements FlowRunner {
     private boolean stopOnFailure = false;
     private String jobId;
     private boolean isFullOutput = false;
-
+    private boolean onlyWriteJobOnFailure = false;
 
     private int step = 1;
 
@@ -76,6 +71,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
     private HubConfig hubConfig;
     private Thread runningThread = null;
+    private DataMovementManager dataMovementManager = null;
+    private QueryBatcher queryBatcher = null;
 
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -95,6 +92,12 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public FlowRunner withJobId(String jobId) {
         this.jobId = jobId;
+        return this;
+    }
+
+    @Override
+    public FlowRunner withOnlyWriteJobOnFailure(boolean onlyWriteJobOnFailure) {
+        this.onlyWriteJobOnFailure = onlyWriteJobOnFailure;
         return this;
     }
 
@@ -162,38 +165,59 @@ public class FlowRunnerImpl implements FlowRunner {
     public void awaitCompletion() {
         try {
             awaitCompletion(Long.MAX_VALUE, TimeUnit.DAYS);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException| TimeoutException e) {
         }
     }
 
     @Override
-    public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException {
+    public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException,TimeoutException {
         if (runningThread != null) {
-            runningThread.join(unit.convert(timeout, TimeUnit.MILLISECONDS));
+            runningThread.join(unit.convert(timeout, unit));
+            if (runningThread.getState() != Thread.State.TERMINATED) {
+                if ( dataMovementManager != null && queryBatcher != null ) {
+                    dataMovementManager.stopJob(queryBatcher);
+                }
+                runningThread.interrupt();
+                throw new TimeoutException("Timeout occurred after "+timeout+" "+unit.toString());
+            }
         }
     }
 
     @Override
     public Job run() {
-        Job job = Job.withFlow(flow);
-        if(this.jobId == null) {
-            jobId = UUID.randomUUID().toString();
+        runningThread = null;
+        Job job = createJob();
+        Collection<String> uris = null;
+        try {
+            uris = runCollector();
+        } catch (Exception e) {
+            job.setCounts(0,0, 0, 0, 0)
+                .withStatus(JobStatus.FAILED.toString());
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            job.withJobOutput(errors.toString());
+            return job;
         }
-        job.withJobId(jobId);
+        this.runHarmonizer(job,uris);
+        return job;
+    }
+
+    @Override
+    public Job run(Collection uris) {
+        runningThread = null;
+        Job job = createJob();
+        return this.runHarmonizer(job,uris);
+    }
+
+    private Collection<String> runCollector() throws Exception {
         Collector c = new CollectorImpl(this.flow, jobId);
         c.setHubConfig(hubConfig);
         c.setClient(stagingClient);
 
-        AtomicLong successfulEvents = new AtomicLong(0);
-        AtomicLong failedEvents = new AtomicLong(0);
-        AtomicLong successfulBatches = new AtomicLong(0);
-        AtomicLong failedBatches = new AtomicLong(0);
-
         if (options == null) {
             options = new HashMap<>();
-        }
-        else {
-            if(options.get("fullOutput") != null) {
+        } else {
+            if (options.get("fullOutput") != null) {
                 isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
             }
         }
@@ -204,24 +228,32 @@ public class FlowRunnerImpl implements FlowRunner {
         });
 
         final DiskQueue<String> uris;
-        try {
-            uris = c.run(this.flow.getName(),  String.valueOf(step), this.jobId, options);
-        } catch (Exception e) {
-            job.setCounts(0, 0, 0, 0)
-                .withStatus(JobStatus.FAILED.toString());
+        uris = c.run(this.flow.getName(), String.valueOf(step), this.jobId, options);
+        return uris;
+    }
 
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
-            job.withJobOutput(errors.toString());
-            return job;
-        }
-
+    private Job runHarmonizer(Job job,Collection uris) {
+        AtomicLong successfulEvents = new AtomicLong(0);
+        AtomicLong failedEvents = new AtomicLong(0);
+        AtomicLong successfulBatches = new AtomicLong(0);
+        AtomicLong failedBatches = new AtomicLong(0);
         flowStatusListeners.forEach((FlowStatusListener listener) -> {
             listener.onStatusChange(job.getJobId(), 0, "starting step execution");
         });
+
+        if ( uris == null || uris.size() == 0 ) {
+            flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                listener.onStatusChange(job.getJobId(), 100, "(collector returned 0 items)");
+            });
+            flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
+            job.setCounts(0,0,0,0,0);
+            job.withStatus(JobStatus.COMPLETED_PREFIX+step);
+            return job;
+        }
+
         Vector<String> errorMessages = new Vector<>();
 
-        DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
+        dataMovementManager = stagingClient.newDataMovementManager();
 
         double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
 
@@ -230,7 +262,7 @@ public class FlowRunnerImpl implements FlowRunner {
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
         Map<String,Object> fullResponse = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
-        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+        queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .withJobId(job.getJobId())
@@ -329,11 +361,11 @@ public class FlowRunnerImpl implements FlowRunner {
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
                 status = JobStatus.FINISHED_WITH_ERRORS.toString();
             } else if ((failedEvents.get() == 0 && successfulEvents.get() > 0) || uris.size() == 0) {
-                status = "completed step " + step ;
+                status = JobStatus.COMPLETED_PREFIX + step ;
             } else {
                 status = JobStatus.FAILED.toString();
             }
-            job.setCounts(successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
+            job.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             job.withStatus(status);
             jobUpdate.postJobs(jobId, status, step);
             if (errorMessages.size() > 0) {
@@ -345,6 +377,15 @@ public class FlowRunnerImpl implements FlowRunner {
         });
 
         runningThread.start();
+        return job;
+    }
+
+    private Job createJob() {
+        Job job = Job.withFlow(flow);
+        if (this.jobId == null) {
+            jobId = UUID.randomUUID().toString();
+        }
+        job.withJobId(jobId);
         return job;
     }
 
@@ -420,9 +461,15 @@ public class FlowRunnerImpl implements FlowRunner {
         }
 
         private void postJobs(String jobId, String status, int step) {
+            if ( onlyWriteJobOnFailure ) {
+                if ( status.equals(JobStatus.FINISHED.toString())  ||
+                     status.startsWith(JobStatus.COMPLETED_PREFIX) ) {
+                    return;
+                }
+            }
             params = new RequestParameters();
             params.put("jobid", jobId);
-            params.put("status", status);
+            params.put("status", status.toString());
             params.put("step", String.valueOf(step));
             try {
                 this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));

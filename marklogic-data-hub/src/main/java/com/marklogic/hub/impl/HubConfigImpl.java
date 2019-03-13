@@ -816,6 +816,8 @@ public class HubConfigImpl implements HubConfig
         return mlPassword;
     }
 
+    public void setHost(String host ) { this.host = host; }
+
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
     }
