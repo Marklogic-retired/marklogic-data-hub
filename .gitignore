@@ -7,7 +7,7 @@
 npm-debug.log
 marklogic-data-hub/bin/
 marklogic-data-hub/src/main/resources/ml-modules/root/trace-ui
-quick-start/bin/
+web/bin/
 build/
 out/
 releases/
@@ -16,8 +16,8 @@ releases/
 gradle-local.properties
 environment.properties
 assetInstallTime.properties
-/quick-start/input
-/quick-start/plugins
+/web/input
+/web/plugins
 flow.properties
 node_modules/
 .tmp/
