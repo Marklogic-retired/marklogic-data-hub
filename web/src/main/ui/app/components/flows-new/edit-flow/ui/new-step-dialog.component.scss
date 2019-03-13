@@ -12,6 +12,10 @@ mat-radio-button {
   margin-left: 10px;
 }
 
+.type-select, .type-option {
+  text-transform: capitalize;
+}
+
 .content {
   background: #f3f3f3;
   padding: 10px 15px 20px 15px;

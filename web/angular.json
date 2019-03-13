@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "data-hub-web": {
+    "data-hub-quickstart": {
       "root": "",
       "sourceRoot": "src/main/ui",
       "projectType": "application",
@@ -53,19 +53,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "data-hub-web:build",
+            "browserTarget": "data-hub-quickstart:build",
             "proxyConfig": "proxy.config.json"
           },
           "configurations": {
             "production": {
-              "browserTarget": "data-hub-web:build:production"
+              "browserTarget": "data-hub-quickstart:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "data-hub-web:build"
+            "browserTarget": "data-hub-quickstart:build"
           }
         },
         "test": {
@@ -103,7 +103,7 @@
         }
       }
     },
-    "data-hub-web-e2e": {
+    "data-hub-quickstart-e2e": {
       "root": "",
       "sourceRoot": "",
       "projectType": "application",
@@ -112,7 +112,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "data-hub-web:serve"
+            "devServerTarget": "data-hub-quickstart:serve"
           }
         },
         "lint": {
@@ -129,7 +129,7 @@
       }
     }
   },
-  "defaultProject": "data-hub-web",
+  "defaultProject": "data-hub-quickstart",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
