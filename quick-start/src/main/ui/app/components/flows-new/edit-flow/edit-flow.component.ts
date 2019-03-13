@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { timer } from 'rxjs';
 import { Flow } from "../models/flow.model";
 import { Step } from '../models/step.model';
 import { ProjectService } from '../../../services/projects';
@@ -14,8 +15,11 @@ import { Entity } from '../../../models/entity.model';
     [flow]="flow"
     [stepsArray]="stepsArray"
     [databases]="databases"
+    [collections]="collections"
     [entities]="entities"
     (saveFlow)="saveFlow($event)"
+    (stopFlow)="stopFlow($event)"
+    (runFlow)="runFlow($event)"
     (deleteFlow)="deleteFlow($event)"
     (stepCreate)="createStep($event)"
     (stepUpdate)="updateStep($event)"
@@ -28,6 +32,7 @@ export class EditFlowComponent implements OnInit {
   flow: Flow;
   stepsArray: any;
   databases: string[] = [];
+  collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
 
   constructor(
@@ -69,6 +74,12 @@ export class EditFlowComponent implements OnInit {
       this.databases.push(stats.finalDb);
       this.databases.push(stats.jobDb);
       this.databases.push(stats.stagingDb);
+      this.getCollections(stats.finalDb);
+    });
+  }
+  getCollections(db) {
+    this.manageFlowsService.getCollections(db).subscribe( resp => {
+      this.collections = resp;
     });
   }
   getEntities() {
@@ -85,6 +96,25 @@ export class EditFlowComponent implements OnInit {
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
       console.log('delete response', resp);
+    });
+  }
+  runFlow(flowId): void {
+    this.manageFlowsService.runFlow(flowId).subscribe(resp => {
+      // TODO add response check
+      const running = timer(0, 750)
+        .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
+          this.flow = Flow.fromJSON(poll);
+          if (!this.flow.isRunning) {
+            running.unsubscribe();
+          }
+        })
+      );
+    });
+  }
+  stopFlow(flowid): void {
+    this.manageFlowsService.stopFlow(flowid).subscribe(resp => {
+      this.flow = Flow.fromJSON(resp);
+      this.getSteps();
     });
   }
   createStep(step) {

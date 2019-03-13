@@ -1,3 +1,5 @@
+import { Matching } from './matching.model';
+
 export class Step {
   public id: string;
   public type: string;
@@ -5,7 +7,11 @@ export class Step {
   public description: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
-  public config: Object = {};
+  public config: Object = {
+    matchOptions: new Matching
+    // TODO add merge options
+    // mergeOptions:
+  };
   public language: string;
   public isValid: boolean = false;
   public isRunning: boolean = false;

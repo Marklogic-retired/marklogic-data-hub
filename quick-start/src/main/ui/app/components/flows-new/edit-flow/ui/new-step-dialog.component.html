@@ -22,7 +22,7 @@
   <!-- TODO: Add Source Collection Information -->
   <mat-form-field *ngIf="selectedSource === 'collection'">
     <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
-      <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
+      <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'" >

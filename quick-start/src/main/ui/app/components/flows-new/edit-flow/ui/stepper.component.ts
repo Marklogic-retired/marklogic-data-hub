@@ -9,12 +9,13 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./stepper.component.scss'],
   providers: [{ provide: CdkStepper, useExisting: StepperComponent }]
 })
-export class StepperComponent extends CdkStepper  {
+export class StepperComponent extends CdkStepper {
 
   @Input() flow: any;
   @Input() stepsArray: any;
   @Output() newStep = new EventEmitter();
-  @Output() run = new EventEmitter();
+  @Output() runFlow = new EventEmitter();
+  @Output() stopFlow = new EventEmitter();
   @Output() deleteStep = new EventEmitter();
   @Output() editFlow = new EventEmitter();
   @Output() redeploy = new EventEmitter();
@@ -39,10 +40,10 @@ export class StepperComponent extends CdkStepper  {
     this.newStep.emit();
   }
   runClicked(): void {
-    this.run.emit();
+    this.runFlow.emit();
   }
   stopClicked(): void {
-    console.log('stop clicked');
+    this.stopFlow.emit();
   }
   deleteStepClicked(step): void {
     this.deleteStep.emit(step);
