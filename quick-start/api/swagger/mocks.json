@@ -215,6 +215,44 @@
         }
       }
     },
+    "/flows/{flowId}/stop": {
+      "post": {
+        "tags": [
+          "flows"
+        ],
+        "summary": "Stop a Flow",
+        "description": "",
+        "operationId": "stopFlow",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "flowId",
+            "in": "path",
+            "description": "Id of flow to stop",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/flow"
+            }
+          },
+          "400": {
+            "description": "Invalid parameter supplied"
+          },
+          "404": {
+            "description": "Flow not found"
+          }
+        }
+      }
+    },
+
 
 
 
