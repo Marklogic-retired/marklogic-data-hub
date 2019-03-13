@@ -18,6 +18,9 @@ export class EditFlowUiComponent {
   @Input() stepsArray: any;
   @Input() databases: any;
   @Input() entities: any;
+  @Input() collections: any;
+  @Output() runFlow = new EventEmitter();
+  @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
   @Output() stepCreate = new EventEmitter();
@@ -31,7 +34,13 @@ export class EditFlowUiComponent {
   openStepDialog(): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
-      data: {title: 'New Step', databases: this.databases, entities: this.entities, step: null}
+      data: {
+        title: 'New Step',
+        databases: this.databases,
+        entities: this.entities,
+        collections: this.collections,
+        step: null
+      }
     });
 
     dialogRef.afterClosed().subscribe(response => {
@@ -43,12 +52,13 @@ export class EditFlowUiComponent {
   openRunDialog(flow: Flow): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: flow.steps.map(step => step.name)}
+      data: {steps: this.stepsArray.map(step => step.name)}
     });
 
     dialogRef.afterClosed().subscribe(response => {
-      // TODO add endpoint to run
+      // TODO add ability to run individual steps
       console.log('The run dialog was closed', response);
+      this.runFlow.emit(this.flow.id);
     });
   }
   deleteStepDialog(step: Step): void {

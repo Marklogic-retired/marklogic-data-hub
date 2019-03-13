@@ -61,4 +61,16 @@ export class ManageFlowsService {
     console.log(`DELETE api/flows/${flowId}/steps/${stepId}`);
     return this.http.delete(`api/flows/${flowId}/steps/${stepId}`);
   }
+  getCollections(database: string) {
+    console.log('GET api/collections/' + database);
+    return this.http.get<Array<string>>('api/collections/' + database);
+  }
+  runFlow(flowId: string) {
+    console.log(`POST api/flows/${flowId}/run`);
+    return this.http.post(`api/flows/${flowId}/run`, {});
+  }
+  stopFlow(flowId: string) {
+    console.log(`POST api/flows/${flowId}/stop`);
+    return this.http.post(`api/flows/${flowId}/stop`, {});
+  }
 }

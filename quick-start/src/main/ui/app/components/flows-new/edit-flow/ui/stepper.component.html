@@ -27,13 +27,12 @@
           id="job-progress-bar"
           class="item" 
           mode="determinate" 
-          value="40"></mat-progress-bar>
-        <!--  TODO Add flow status -->
+          [value]="flow.latestJob.runningPercent"></mat-progress-bar>
         <ng-template #finished>
-          <!-- <a href="#">Finished</a> -->
+          <a href="#">{{flow.status}}</a>
           <div></div>
         </ng-template>
-        <div id="job-started-timestamp" [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: 2019-02-07 13:01:45</div>
+        <div id="job-started-timestamp" [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: {{flow.latestJob.startTime}}</div>
         <a id="view-jobs-btn" href="#" class="text item">View Jobs</a>
         <div class="icon-container">
           <mat-icon id="flow-menu" class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
