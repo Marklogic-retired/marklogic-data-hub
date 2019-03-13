@@ -63,7 +63,10 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         super();
     }
 
-    
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
     public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);

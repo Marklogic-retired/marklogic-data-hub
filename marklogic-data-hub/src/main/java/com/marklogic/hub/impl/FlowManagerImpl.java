@@ -49,6 +49,10 @@ public class FlowManagerImpl implements FlowManager {
     @Autowired
     private HubConfig hubConfig;
 
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
     @Override
     public Flow getFlow(String flowName) {
         Path flowPath = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);

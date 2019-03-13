@@ -20,14 +20,23 @@ import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.job.Job;
 
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Executes a flow with options
  */
 public interface FlowRunner {
 
+    /**
+     * Should we always write a document to the jobs database or only in case of a failure?
+     *
+     * @param onlyWriteJobOnFailure true -> only write job on failure, else always
+     * @return the flow runner object
+     */
+    FlowRunner withOnlyWriteJobOnFailure(boolean onlyWriteJobOnFailure);
     /**
      * Sets the flow to be used with the flow runner
      * @param flow the flow object to be used
@@ -133,12 +142,22 @@ public interface FlowRunner {
      * @param unit the time unit of the timeout argument
      *
      * @throws InterruptedException if interrupted while waiting
+     * @throws TimeoutException if an timeout occurred.
      */
-    void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException;
+    void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException;
 
     /**
      * Runs the flow and creates the job
      * @return Job object for the flow that is run
      */
     Job run();
+
+    /**
+     * Runs the flow and creates the job. This bypasses the collector
+     *
+     * @params uris the ids to pass to the harmonization flow
+     *
+     * @return Job object for the flow that is run
+     */
+    Job run(Collection<String> uris);
 }
