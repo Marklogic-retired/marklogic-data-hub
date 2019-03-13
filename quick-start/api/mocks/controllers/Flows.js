@@ -69,3 +69,14 @@ module.exports.updateFlow = function updateFlow (req, res, next) {
       utils.writeJson(res, response, 400);
     });
 };
+
+module.exports.stopFlow = function stopFlow (req, res, next) {
+  var flowId = req.swagger.params['flowId'].value;
+  Flows.stopFlow(flowId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response, 400);
+    });
+};

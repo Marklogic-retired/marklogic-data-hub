@@ -43,7 +43,7 @@ export class StepperComponent extends CdkStepper {
     this.runFlow.emit();
   }
   stopClicked(): void {
-    this.stopFlow.emit();
+    this.stopFlow.emit(this.flow.id);
   }
   deleteStepClicked(step): void {
     this.deleteStep.emit(step);
