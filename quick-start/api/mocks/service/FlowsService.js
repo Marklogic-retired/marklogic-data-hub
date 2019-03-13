@@ -102,43 +102,32 @@ exports.updateFlow = function(flowId, body) {
  * flowId String Id of flow to run
  * returns step
  **/
-exports.runFlow = function(flowId) {
-  let resp;
+exports.runFlow = async function(flowId) {
+  let resp = { data: 'success' };
   if (flowId) {
-    resp = new Promise(async (resolve) => {
-      resolve({ "data": "success" });
+    let currentFlow = await Storage.get('flows', flowId);
 
-      let currentFlow = await Storage.get('flows', flowId);
-      currentFlow.latestJob.runningPercent = null;
+    if(!currentFlow.isRunning){
+      currentFlow.latestJob.runningPercent = 0;
       currentFlow.isRunning = true;
       // Add 10 percent every 1 second
       const interval = setInterval( function() { updateProgress(); }, 1000 );
-  
       function updateProgress() {
-        if (currentFlow.latestJob.runningPercent == 100) {
+        if (currentFlow.latestJob.runningPercent === 100) {
           clearInterval(interval);
           currentFlow.isRunning = false;
           currentFlow.latestJob.status = 'finished';
         } else {
           currentFlow.latestJob.runningPercent += 10;
-          if (currentFlow.latestJob.runningPercent > 100) {
-            currentFlow.latestJob.runningPercent = 100;
-            currentFlow.isRunning = false;
-            currentFlow.latestJob.status = 'finished';
-          }
         }
         Storage.save('flows', flowId, currentFlow);
       }
-    });
-
+    }
   } else {
-    resp = new Promise((resolve, reject) => {
-      reject({ error: `'flowId' does not exist` });
-    });
+    resp = { error: `'flowId' does not exist` };
   }
   return resp;
 }
-
 
 /**
  * Stop a Flow
@@ -147,22 +136,20 @@ exports.runFlow = function(flowId) {
  * flowId String Id of flow to run
  * returns step
  **/
-exports.stopFlow = function(flowId) {
-  let resp;
+exports.stopFlow = async function(flowId) {
+  let resp = { data: 'flow is not running'};
   if (flowId) {
-    resp = new Promise(async (resolve) => {
+    let currentFlow = await Storage.get('flows', flowId);
+    if( currentFlow.isRunning ) {
       // Reset flow run parameters
-      let flow = await Storage.get('flows', flowId);
-      flow.isRunning = false;
-      flow.latestJob.runningPercent = null;
-      flow.latestJob.status = 'stopped';
-
-      resolve(Storage.save('flows', flowId, flow));
-    });
+      currentFlow.isRunning = false;
+      currentFlow.latestJob.runningPercent = 0;
+      currentFlow.latestJob.status = 'stopped'; 
+      Storage.save('flows', flowId, currentFlow);
+      resp = currentFlow;
+    }
   } else {
-    resp = new Promise((resolve, reject) => {
-      reject({ error: `'flowId' does not exist` });
-    });
+    resp = { error: `'flowId' does not exist` };
   }
   return resp;
 }
