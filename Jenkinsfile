@@ -56,7 +56,7 @@ pipeline{
 			steps{
 				copyRPM 'Latest'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh "echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;"
+				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;'
 				junit '**/TEST-*.xml'
 				script{
 				if(env.CHANGE_TITLE){
