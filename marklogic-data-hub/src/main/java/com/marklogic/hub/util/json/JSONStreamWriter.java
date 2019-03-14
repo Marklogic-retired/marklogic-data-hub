@@ -7,16 +7,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class JSONSerializer {
-    private static Logger logger = LoggerFactory.getLogger(JSONSerializer.class);
+public class JSONStreamWriter {
+    private static Logger logger = LoggerFactory.getLogger(JSONStreamWriter.class);
 
     final OutputStream out;
 
-    public JSONSerializer(OutputStream out) {
+    public JSONStreamWriter(OutputStream out) {
         this.out = out;
     }
 
-    public void serialize(Object val) throws IOException {
+    public void write(Object val) throws IOException {
         String stringToSer = JSONObject.writeValueAsString(val);
         if (StringUtils.isNotEmpty(stringToSer)) {
             out.write(stringToSer.getBytes());

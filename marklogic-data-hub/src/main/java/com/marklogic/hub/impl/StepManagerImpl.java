@@ -23,7 +23,7 @@ import com.marklogic.hub.StepManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.json.JSONSerializer;
+import com.marklogic.hub.util.json.JSONStreamWriter;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +50,8 @@ public class StepManagerImpl implements StepManager {
             String stepFileName = step.getName() + STEP_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), stepFileName).toFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            JSONSerializer jsonParser = new JSONSerializer(fileOutputStream);
-            jsonParser.serialize(step);
+            JSONStreamWriter jw = new JSONStreamWriter(fileOutputStream);
+            jw.write(step);
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize Step for project.");
         } catch (IOException e) {
