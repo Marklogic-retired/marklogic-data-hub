@@ -1,18 +1,22 @@
+@import '../../../theme//styles/colors';
+
 h3 {
   margin: 0 30px 0 0;
 }
 .steps-container {
   background: white;
-  border: 1px solid black;
+  // border: 1px solid black;
   width: 90%;
   margin: auto;
   margin-top: 30px;
   margin-bottom: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
 }
 header {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid rgba(0,0,0,.35);
   padding: 8px;
 }
 
@@ -30,6 +34,7 @@ header > .steps-header:last-child {
 
 .steps-body {
   min-height: 250px;
+  background: rgba(238,238,238,.65);
   > p {
     font-size: 24px;
     text-align: center;
@@ -50,14 +55,18 @@ button {
   height: 25px;
 }
 .mapping {
-  background: #3F51B5;
+  background: $color-mapping;
 }
 .mastering {
-  background: #009688;
+  background: $color-mastering;
 }
 .ingestion {
-  background: #AD1457;
+  background: $color-ingestion;
 }
 .custom {
-  background: #F4511E;
+  background: $color-custom;
+}
+
+mat-icon {
+  user-select: none;
 }

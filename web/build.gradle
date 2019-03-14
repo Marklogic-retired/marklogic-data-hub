@@ -29,7 +29,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
 
 war {
-  baseName = 'MarkLogic-DataHub'
+  baseName = 'marklogic-datahub'
   version = "${version}"
   manifest {
     attributes("Implementation-Title": "Web Services and UI",
@@ -38,6 +38,9 @@ war {
 
 }
 
+bootWar {
+  baseName "marklogic-datahub"
+}
 
 repositories {
     jcenter()
@@ -71,7 +74,7 @@ dependencies {
     compile("com.marklogic:mlcp:9.0.8") {
         exclude group: 'org.apache.avro', module: 'avro-tools'
     }
-    compile("com.marklogic:marklogic-spring-web:1.0")
+    //compile("com.marklogic:marklogic-spring-web:1.0")
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.session:spring-session-core'
@@ -203,14 +206,19 @@ if (!(
 //test.dependsOn e2eUI
 
 bootRun {
-  // this is not in spring boot 2 addResources = true
   environment 'spring.profiles.active', 'dev'
 }
 
 springBoot {
   // not in spring boot 2 executable = true
   mainClassName = "com.marklogic.hub.web.WebApplication"
-  buildInfo()
+  buildInfo {
+    properties {
+      group = "marklogic"
+      name = "marklogic-datahub"
+      version = "${version}"
+    }
+  }
 }
 
 test {

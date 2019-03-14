@@ -1,26 +1,48 @@
-.gradle
-/build/
-!gradle/wrapper/gradle-wrapper.jar
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
+# compiled output
+/dist
+/tmp
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
 .project
-.settings
-.springBeans
-.sts4-cache
+.classpath
+.c9/
+*.launch
+.settings/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-/out/
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+/e2e/reports/*
+/e2e/screenshoter-plugin/*
+
+#System Files
+.DS_Store
+Thumbs.db
+bin/
+build/
+src/main/resources/static/
+src/main/resources/templates/
+package-lock.json
+site/

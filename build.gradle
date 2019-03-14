@@ -47,7 +47,7 @@ task updateVersion {
         def files = ["gradle.properties",
                      "marklogic-data-hub/gradle.properties",
                      "ml-data-hub-plugin/gradle.properties",
-                     "quick-start/gradle.properties",
+                     "web/gradle.properties",
                      "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
                      "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/HubConfigImpl.java"
         ]

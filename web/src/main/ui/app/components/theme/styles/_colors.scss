@@ -46,3 +46,8 @@ $color-primary: $palette-datahub-500 !default;
 $color-primary-dark: $palette-datahub-700 !default;
 $color-accent: $palette-pink-A200 !default;
 $input-text-error-color: unquote("rgb(#{$color-primary})") !default;
+
+$color-mapping: #3F51B5;
+$color-mastering: #009688;
+$color-ingestion: #AD1457;
+$color-custom: #F4511E;
