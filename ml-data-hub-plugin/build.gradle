@@ -59,6 +59,7 @@ dependencies {
     compile ('com.marklogic:ml-gradle:3.12.0') {
         exclude group: 'ch.qos.logback'
     }
+    testCompile 'org.jdom:jdom:2.0.2'
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'
