@@ -18,13 +18,13 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.json.JSONSerializer;
+import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,26 +43,18 @@ public class StepManagerImpl implements StepManager {
     @Override
     public void saveStep(Step step) {
         try {
-            String stepString = step.serialize();
             Path dir = resolvePath(hubConfig.getStepsDirByType(step.getType()), step.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
             String stepFileName = step.getName() + STEP_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), stepFileName).toFile();
-            //create the object mapper to pretty print to disk
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-            Object json = objectMapper.readValue(stepString, Object.class);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        }
-        catch (JsonProcessingException e) {
+            JSONSerializer jsonParser = new JSONSerializer(fileOutputStream);
+            jsonParser.serialize(step);
+        } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize Step for project.");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new DataHubProjectException("Could not write Step to disk for project.");
         }
     }
@@ -73,8 +65,7 @@ public class StepManagerImpl implements StepManager {
         if (dir.toFile().exists()) {
             try {
                 FileUtils.deleteDirectory(dir.toFile());
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new DataHubProjectException("Could not delete Step for project.");
             }
         }
@@ -98,17 +89,14 @@ public class StepManagerImpl implements StepManager {
         try {
             String targetFileName = name + STEP_FILE_EXTENSION;
             FileInputStream fileInputStream = new FileInputStream(stepPath.resolve(targetFileName).toFile());
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode node = objectMapper.readTree(fileInputStream);
+            JsonNode node = JSONObject.readInput(fileInputStream);
             Step newStep = createStepFromJSON(node);
             if (newStep != null && newStep.getName().length() > 0) {
                 return newStep;
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             return null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new DataHubProjectException("Could not read Step on disk.");
         }
 
