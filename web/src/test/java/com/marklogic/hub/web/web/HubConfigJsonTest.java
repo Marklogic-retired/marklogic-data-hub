@@ -15,19 +15,20 @@
  *
  */
 
-package com.marklogic.quickstart.web;
+package com.marklogic.hub.web.web;
 
 
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.quickstart.DataHubApiConfiguration;
+import com.marklogic.hub.web.WebApplication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -37,13 +38,12 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, HubConfigJsonTest.class})
+@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, HubConfigJsonTest.class})
 @JsonTest
 public class HubConfigJsonTest {
 
     protected static final String PROJECT_PATH = "ye-olde-project";
 
-    @Autowired
     private JacksonTester<HubConfig> jsonSerializer;
 
     @Autowired

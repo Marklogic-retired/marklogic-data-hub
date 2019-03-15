@@ -15,7 +15,7 @@
  *
  */
 
-package com.marklogic.quickstart.service;
+package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,9 +27,9 @@ import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.quickstart.DataHubApiConfiguration;
-import com.marklogic.quickstart.model.FlowModel;
-import com.marklogic.quickstart.model.entity_services.EntityModel;
+import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.web.model.FlowModel;
+import com.marklogic.hub.web.model.entity_services.EntityModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, EntityManagerServiceTest.class})
+@ContextConfiguration(classes = {WebApplication.class, ApplicationConfig.class, EntityManagerServiceTest.class})
 public class EntityManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";

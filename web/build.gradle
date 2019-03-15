@@ -74,7 +74,9 @@ dependencies {
     compile("com.marklogic:mlcp:9.0.8") {
         exclude group: 'org.apache.avro', module: 'avro-tools'
     }
-    //compile("com.marklogic:marklogic-spring-web:1.0")
+    //this really needs to go
+    compile("com.marklogic:marklogic-spring-web:1.0")
+
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.session:spring-session-core'

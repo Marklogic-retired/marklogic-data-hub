@@ -15,13 +15,13 @@
  *
  */
 
-package com.marklogic.quickstart.web;
+package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.service.EnvironmentConfig;
-import com.marklogic.quickstart.service.ProjectManagerService;
+import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
+import com.marklogic.hub.web.service.EnvironmentConfig;
+import com.marklogic.hub.web.service.ProjectManagerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

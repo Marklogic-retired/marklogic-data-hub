@@ -15,15 +15,15 @@
  *
  */
 
-package com.marklogic.quickstart.web;
+package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.quickstart.DataHubApiConfiguration;
-import com.marklogic.quickstart.model.HubSettings;
-import com.marklogic.quickstart.model.Project;
-import com.marklogic.quickstart.model.ProjectInfo;
-import com.marklogic.quickstart.service.ProjectManagerService;
+import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.web.model.HubSettings;
+import com.marklogic.hub.web.model.Project;
+import com.marklogic.hub.web.model.ProjectInfo;
+import com.marklogic.hub.web.service.ProjectManagerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, ProjectsControllerTest.class})
+@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, ProjectsControllerTest.class})
 @WebAppConfiguration
 public class ProjectsControllerTest extends BaseTestController {
 
