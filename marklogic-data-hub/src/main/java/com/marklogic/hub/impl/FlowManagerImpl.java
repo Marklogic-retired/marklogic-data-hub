@@ -21,8 +21,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -30,11 +28,16 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowImpl;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -84,7 +87,11 @@ public class FlowManagerImpl implements FlowManager {
 
     @Override
     public String getFlowAsJSON(String flowName) {
-        return getFlow(flowName).serialize();
+        try {
+            return JSONObject.writeValueAsString(getFlow(flowName));
+        } catch (JsonProcessingException e) {
+            throw new DataHubProjectException("Unable to serialize flow object.");
+        }
     }
 
     @Override
@@ -158,25 +165,17 @@ public class FlowManagerImpl implements FlowManager {
 
     @Override
     public void saveFlow(Flow flow)  {
-        String flowString = flow.serialize();
-        String flowFileName = flow.getName() + FLOW_FILE_EXTENSION;
-        File file = Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();
-        ObjectNode rootNode;
-        FileOutputStream fileOutputStream = null;
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            rootNode = (ObjectNode)objectMapper.readTree(flowString);
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-            fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode).getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        }
-        catch (JsonProcessingException e) {
+            String flowFileName = flow.getName() + FLOW_FILE_EXTENSION;
+            File file = Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();
+
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            JSONStreamWriter writer = new JSONStreamWriter(fileOutputStream);
+            writer.write(flow);
+
+        } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize flow.");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
         }
     }

@@ -33,13 +33,6 @@ public interface Flow {
     void setName(String flowName);
 
     /**
-     * Serializes the flow as a json string
-     *
-     * @return the serialized JSON string
-     */
-    String serialize();
-
-    /**
      * Deserialize a json response and applies it to this flow
      *
      * @param json - the JsonNode you want deserialize
