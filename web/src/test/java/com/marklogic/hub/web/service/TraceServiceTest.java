@@ -15,7 +15,7 @@
  *
  */
 
-package com.marklogic.quickstart.service;
+package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,9 +28,9 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.quickstart.DataHubApiConfiguration;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
-import com.marklogic.quickstart.model.TraceQuery;
+import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
+import com.marklogic.hub.web.model.TraceQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, TraceServiceTest.class})
+@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, TraceServiceTest.class})
 class TraceServiceTest extends AbstractServiceTest {
 
     private DatabaseClient traceClient;

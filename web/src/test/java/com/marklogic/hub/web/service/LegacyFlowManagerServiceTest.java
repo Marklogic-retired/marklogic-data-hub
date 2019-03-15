@@ -15,7 +15,7 @@
  *
  */
 
-package com.marklogic.quickstart.service;
+package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,8 +31,8 @@ import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.quickstart.DataHubApiConfiguration;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
+import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, LegacyFlowManagerServiceTest.class})
+@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, LegacyFlowManagerServiceTest.class})
 public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";

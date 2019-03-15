@@ -1,7 +1,7 @@
-package com.marklogic.quickstart.service;
+package com.marklogic.hub.web.service;
 
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
+import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 

@@ -15,7 +15,7 @@
  *
  */
 
-package com.marklogic.quickstart.web;
+package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.quickstart.DataHubApiConfiguration;
+import com.marklogic.hub.web.WebApplication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -48,7 +48,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {DataHubApiConfiguration.class, ApplicationConfig.class, EntitiesControllerTest.class})
+@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, EntitiesControllerTest.class})
 @WebAppConfiguration
 class EntitiesControllerTest extends BaseTestController {
 

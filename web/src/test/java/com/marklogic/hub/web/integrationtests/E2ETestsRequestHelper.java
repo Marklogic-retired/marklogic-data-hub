@@ -1,4 +1,4 @@
-package com.marklogic.quickstart.integrationtests;
+package com.marklogic.hub.web.integrationtests;
 
 import static io.restassured.RestAssured.given;
 
@@ -17,9 +17,9 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.quickstart.auth.LoginInfo;
-import com.marklogic.quickstart.model.FlowModel;
-import com.marklogic.quickstart.model.JobQuery;
+import com.marklogic.hub.web.auth.LoginInfo;
+import com.marklogic.hub.web.model.FlowModel;
+import com.marklogic.hub.web.model.JobQuery;
 
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookie;
