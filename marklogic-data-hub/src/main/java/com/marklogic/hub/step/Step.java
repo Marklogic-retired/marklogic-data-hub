@@ -71,6 +71,13 @@ public interface Step {
     String getName();
 
     /**
+     * Sets the name of the step
+     *
+     * @param name - a step name
+     */
+    void setName(String name);
+
+    /**
      * Returns the language setting of the step
      *
      * @return 'zxx', the default setting
@@ -78,11 +85,88 @@ public interface Step {
     String getLanguage();
 
     /**
-     * Sets the name of the step
+     * Return the step version
      *
-     * @param name - a step name
+     * @return - a step version
      */
-    void setName(String name);
+    int getVersion();
+
+    /**
+     * Sets the step version number
+     *
+     * @param version - a step version
+     */
+    void setVersion(int version);
+
+    /**
+     * Returns the step options as JsonNode
+     *
+     * @return - options node
+     */
+    JsonNode getOptions();
+
+    /**
+     * Sets the step options
+     *
+     * @param options - a options node
+     */
+    void setOptions(JsonNode options);
+
+    /**
+     * Returns path to the module
+     *
+     * @return - a string path to the module
+     */
+    String getModulePath();
+
+    /**
+     * Sets the module path
+     *
+     * @param path - a string path to the module
+     */
+    void setModulePath(String path);
+
+    /**
+     * Returns the customHook
+     *
+     * @return - a customHook node
+     */
+    JsonNode getCustomHook();
+
+    /**
+     * Sets the customHook
+     *
+     * @param hookObj - a customHook node
+     */
+    void setCustomHook(JsonNode hookObj);
+
+    /**
+     * Returns the step identifier
+     *
+     * @return - a string identifier
+     */
+    String getIdentifier();
+
+    /**
+     * Sets the identifier for the step
+     *
+     * @param identifier - a string identifier
+     */
+    void setIdentifier(String identifier);
+
+    /**
+     * Returns the retry limit for the step
+     *
+     * @return - an integer retry limit
+     */
+    int getRetryLimit();
+
+    /**
+     * Sets the retry limit for the step
+     *
+     * @param retryLimit - an integer retry limit
+     */
+    void setRetryLimit(int retryLimit);
 
     /**
      * Returns the type of the Step

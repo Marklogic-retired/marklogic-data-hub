@@ -1,16 +1,16 @@
 {
-  "name" : "default-mapping",
-  "description" : "This is the default flow for mapping into data hub",
-  "identifier" : null,
-    "steps" : {
-	  "1": {	 
-	   "type": "mapping",
-	   "name": "default-mapping",
-	   "retryLimit": 0,
-	   "options": {
-		"outputFormat" : "json",
-		"collections" : "default-mapping"
-		}
-	  }
-	}
+  "name": "default-mapping",
+  "description": "This is the default flow for mapping into data hub",
+  "identifier": null,
+  "steps": {
+    "1": {
+      "type": "mapping",
+      "name": "default-mapping",
+      "retryLimit": 0,
+      "options": {
+        "outputFormat": "json",
+        "collections": "default-mapping"
+      }
+    }
+  }
 }
