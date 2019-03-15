@@ -39,3 +39,26 @@ subprojects {
 wrapper {
     gradleVersion = '4.10'
 }
+
+//Task to update versions in files they are hardcoded. If version is hardcoded in any other files in the future,it has to be added to the list
+//Usage : ./gradlew updateVersion -PsourceVersion=<source_version> -PtargetVersion=<target_version>
+task updateVersion {
+    doLast {
+        def files = ["gradle.properties",
+                     "marklogic-data-hub/gradle.properties",
+                     "ml-data-hub-plugin/gradle.properties",
+                     "quick-start/gradle.properties",
+                     "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
+                     "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/HubConfigImpl.java"
+        ]
+        String sourceVersion = project.hasProperty('sourceVersion') ? project.property('sourceVersion') : ""
+        String targetVersion = project.hasProperty('targetVersion') ? project.property('targetVersion') : ""
+        files.each {
+            def myFile = new File(it)
+            def fileText = myFile.getText('UTF-8')
+            myFile.withWriter('UTF-8') { writer ->
+                writer.write(fileText.replaceAll(sourceVersion, targetVersion))
+            }
+        }
+    }
+}

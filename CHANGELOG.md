@@ -12,6 +12,28 @@
 -  [DHFPROD-1819] - Generate ES-created entity schema
 
 
+# [v4.2.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.2) (2019-03-13)
+
+**Fixed bugs:**
+- empty collector result should be finished instead of failed job [\#1715](https://github.com/marklogic/marklogic-data-hub/issues/1715)
+- gradle hubRunFlow options does not lose dhf prefix [\#1536](https://github.com/marklogic/marklogic-data-hub/issues/1536)
+- [DHFPROD-1930] Data Hub Framework URI handling with diacritics
+- [DHFPROD-1929] Triggers dont get deployed to staging-triggers
+
+
+# [v4.2.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.1) (2019-02-27)
+
+**Fixed bugs:**
+- Unable to delete harmonize flow with the "trash" icon [\#1877](https://github.com/marklogic/marklogic-data-hub/issues/1877)
+- QuickStart - mlcp transform_param shows the wrong entity when defining input flow [\#1858](https://github.com/marklogic/marklogic-data-hub/issues/1858)
+- flow name no longer stored for errors [\#1845](https://github.com/marklogic/marklogic-data-hub/issues/1845)
+
+**Improvement**
+-  [DHFPROD-1819] - Generate ES-created entity schema
+
+
+
+
 # [v4.2.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.0) (2019-02-14)
 [Full Changelog](https://github.com/marklogic/marklogic-data-hub/compare/v4.1.1...v4.2.0)
 

@@ -32,6 +32,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,6 +145,7 @@ public class StreamCollectorTest extends HubTestBase {
         // there is a custom content plugin that throws an error. This code uses the stopOnFailure
         // option to halt execution. This allows us to test that the collector runs to completion while not
         // having to wait for the entire harmonize flow to finish.
+        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",

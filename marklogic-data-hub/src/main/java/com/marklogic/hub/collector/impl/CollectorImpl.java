@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -138,7 +139,7 @@ public class CollectorImpl implements Collector {
 
             // Streams the response instead of loading it all in memory
             ResponseExtractor<Void> responseExtractor = response -> {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody()));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8));
                 String line;
                 while((line = bufferedReader.readLine()) != null) {
                     results.add(line);

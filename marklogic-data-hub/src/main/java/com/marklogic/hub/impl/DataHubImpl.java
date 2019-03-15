@@ -584,6 +584,8 @@ public class DataHubImpl implements DataHub {
 
         updateSchemaCommandList(commandMap);
 
+        updateTriggersCommandList(commandMap);
+
         updateModuleCommandList(commandMap);
 
         // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
@@ -602,7 +604,6 @@ public class DataHubImpl implements DataHub {
      * preserve any other commands, with the one addition being that it needs to modify DeployOtherDatabaseCommand so
      * that a custom DeployDatabaseCommand implementation is used.
      *
-     * @param commandMap
      */
     private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
         List<Command> dbCommands = new ArrayList<>();
@@ -646,7 +647,6 @@ public class DataHubImpl implements DataHub {
      * schemas database name to that of the final schemas database. Thus, we just need to add a hub-specific command for
      * loading staging schemas from a different path and into the staging schemas database.
      *
-     * @param commandMap
      */
     private void updateSchemaCommandList(Map<String, List<Command>> commandMap) {
         List<Command> commands = commandMap.get("mlSchemaCommands");
@@ -655,13 +655,23 @@ public class DataHubImpl implements DataHub {
     }
 
     /**
+     * The existing "DeployTriggersCommand" is based on the ml-config path and the AppConfig object should set the default
+     * triggers database name to that of the final triggers database. Thus, we just need to add a hub-specific command for
+     * loading staging triggers into the staging triggers database.
+     *
+     */
+    private void updateTriggersCommandList(Map<String, List<Command>> commandMap) {
+        List<Command> commands = commandMap.get("mlTriggerCommands");
+        commands.add(new DeployHubTriggersCommand(hubConfig.getStagingTriggersDbName()));
+    }
+
+    /**
      * This affects what mlLoadModules does. We want it to load all modules, including hub modules. This supports a
      * scenario where a user may clear her modules database; mlLoadModules should then load everything in.
      *
-     * @param commandsMap
      */
     private void updateModuleCommandList(Map<String, List<Command>> commandsMap) {
-        List<Command> commands = new ArrayList();
+        List<Command> commands = new ArrayList<>();
         commands.add(loadHubModulesCommand);
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);

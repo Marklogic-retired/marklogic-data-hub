@@ -1611,7 +1611,7 @@ public class HubConfigImpl implements HubConfig
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "4.2.1";
+            version = "4.2.2";
         }
         return version;
     }
@@ -1933,6 +1933,10 @@ public class HubConfigImpl implements HubConfig
 
     public String getStagingSchemasDbName() {
         return this.stagingSchemasDbName;
+    }
+
+    public String getStagingTriggersDbName() {
+        return this.stagingTriggersDbName;
     }
 
     // Only used by QS for login
