@@ -20,14 +20,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.util.json.JSONObject;
 
 public class StepImpl implements Step {
+    private String language = "zxx";
     private String name;
     private StepType type;
     private int version;
     private JsonNode options;
     private JsonNode customHook;
-    private String language = "zxx";
     private String modulePath;
     private String identifier;
+    private int retryLimit;
 
     StepImpl(String name, StepType type) {
         this.name = name;
@@ -43,6 +44,15 @@ public class StepImpl implements Step {
         }
         this.modulePath = "/path/to/your/step/module/main.sjs";
         this.customHook = new JSONObject().jsonNode();
+        this.retryLimit = 0;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage() {
+        this.language = "zxx";
     }
 
     public String getName() {
@@ -55,14 +65,6 @@ public class StepImpl implements Step {
 
     public StepType getType() {
         return type;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage() {
-        this.language = "zxx";
     }
 
     public void setType(StepType type) {
@@ -109,6 +111,15 @@ public class StepImpl implements Step {
         this.identifier = identifier;
     }
 
+    public int getRetryLimit() {
+        return retryLimit;
+    }
+
+    public void setRetryLimit(int retryLimit) {
+        this.retryLimit = retryLimit;
+    }
+
+
 
     @Override
     public void deserialize(JsonNode json) {
@@ -120,5 +131,6 @@ public class StepImpl implements Step {
         setCustomHook(jsonObject.getNode("customHook"));
         setModulePath(jsonObject.getString("modulePath"));
         setIdentifier(jsonObject.getString("identifier"));
+        setRetryLimit(jsonObject.getInt("retryLimit"));
     }
 }

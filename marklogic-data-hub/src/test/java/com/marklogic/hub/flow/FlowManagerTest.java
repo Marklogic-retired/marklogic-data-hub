@@ -44,17 +44,17 @@ class FlowManagerTest extends HubTestBase {
 
     private String flowString = "{\n" +
         "  \"name\": \"test-flow\",\n" +
-        "  \"Description\": \"this is an example\",\n" +
-        "  \"Identifier\": \"(some identifier or search)\",\n" +
-        "  \"Steps\": [{\n" +
-        "    \"0\": {\n" +
-        "      \"type\": \"mapping\",\n" +
+        "  \"description\": \"this is an example\",\n" +
+        "  \"identifier\": \"(some identifier or search)\",\n" +
+        "  \"steps\": {\n" +
+        "    \"1\": {\n" +
+        "      \"type\": \"MAPPING\",\n" +
         "      \"name\": \"person-mapping1.json\",\n" +
         "      \"identifier\": \"null\",\n" +
         "      \"retryLimit\": 0,\n" +
         "      \"options\": {}\n" +
         "    }\n" +
-        "  }]\n" +
+        "  }\n" +
         "}\n";
 
     @BeforeEach
