@@ -99,13 +99,6 @@ public interface Step {
     void setType(StepType type);
 
     /**
-     * Serializes the mapping as a json string
-     *
-     * @return the serialized JSON string
-     */
-    String serialize();
-
-    /**
      * Deserialize a json response and applies it to this mapping
      *
      * @param json - the JsonNode you want deserialize

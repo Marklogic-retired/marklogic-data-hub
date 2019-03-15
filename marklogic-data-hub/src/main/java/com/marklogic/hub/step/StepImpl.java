@@ -16,12 +16,8 @@
 
 package com.marklogic.hub.step;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.util.json.JSONObject;
 
 public class StepImpl implements Step {
     private String name;
@@ -37,16 +33,16 @@ public class StepImpl implements Step {
         this.name = name;
         this.type = type;
         this.version = 1;
-        this.options = JsonNodeFactory.instance.objectNode();
-        ((ObjectNode) this.options).putPOJO("collections", JsonNodeFactory.instance.arrayNode().add(name));
+        JSONObject jsonObject = new JSONObject();
+        options = jsonObject.jsonNode();
+        jsonObject.putArray("collections", name);
         if (type == StepType.INGEST) {
-            ((ObjectNode) this.options).putPOJO("outputFormat", "json");
-        }
-        if (type == StepType.MAPPING || type == StepType.CUSTOM) {
+            jsonObject.put("outputFormat", "json");
+        } else if (type == StepType.MAPPING || type == StepType.CUSTOM) {
             this.identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
         }
         this.modulePath = "/path/to/your/step/module/main.sjs";
-        this.customHook = JsonNodeFactory.instance.objectNode();
+        this.customHook = new JSONObject().jsonNode();
     }
 
     public String getName() {
@@ -113,44 +109,16 @@ public class StepImpl implements Step {
         this.identifier = identifier;
     }
 
-    @Override
-    public String serialize() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            throw new DataHubProjectException("Unable to serialize step object.");
-        }
-    }
 
     @Override
     public void deserialize(JsonNode json) {
-        if (json.has("name")) {
-            setName(json.get("name").asText());
-        }
-
-        if (json.has("type")) {
-            setType(StepType.getStepType(json.get("type").asText()));
-        }
-
-        if (json.has("version")) {
-            setVersion(json.get("version").asInt());
-        }
-
-        if (json.has("options")) {
-            setOptions(json.get("options"));
-        }
-
-        if (json.has("customHook")) {
-            setCustomHook(json.get("customHook"));
-        }
-
-        if (json.has("modulePath")) {
-            setModulePath(json.get("modulePath").asText());
-        }
-
-        if (json.has("identifier")) {
-            setIdentifier(json.get("identifier").asText());
-        }
+        JSONObject jsonObject = new JSONObject(json);
+        setName(jsonObject.getString("name"));
+        setType(StepType.getStepType(jsonObject.getString("type")));
+        setVersion(jsonObject.getInt("version"));
+        setOptions(jsonObject.getNode("options"));
+        setCustomHook(jsonObject.getNode("customHook"));
+        setModulePath(jsonObject.getString("modulePath"));
+        setIdentifier(jsonObject.getString("identifier"));
     }
 }
