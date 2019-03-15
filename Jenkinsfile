@@ -10,6 +10,7 @@ pipeline{
 	agent none;
 	options {
   	checkoutToSubdirectory 'data-hub'
+  	 skipStagesAfterUnstable()
 	}
 	environment{
 	JAVA_HOME_DIR="~/java/jdk1.8.0_72"
