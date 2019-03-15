@@ -64,6 +64,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.5.RELEASE'
     compile group: 'org.springframework', name: 'spring-websocket', version: '5.1.5.RELEASE'
     compile("org.springframework.boot:spring-boot-starter-websocket")
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")

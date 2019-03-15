@@ -43,7 +43,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-@ComponentScan("com.marklogic.hub.web")
 public class AuthConfig extends WebSecurityConfigurerAdapter {
     /**
      * @return a config class with ML connection properties
@@ -154,6 +153,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             "/traces/**",
             "/404",
             "/assets/**",
+            "/static/**",
             "/shutdown",
             "/img/**",
             "/favicon.ico"
