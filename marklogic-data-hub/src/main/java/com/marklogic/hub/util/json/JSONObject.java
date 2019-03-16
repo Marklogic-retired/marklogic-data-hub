@@ -60,19 +60,6 @@ public class JSONObject {
     }
 
     /**
-     * @param jsonInString
-     * @throws IOException
-     */
-    public JSONObject(String jsonInString) throws IOException {
-        try {
-            mapper = new ObjectMapper();
-            json = mapper.readValue(jsonInString, JsonNode.class);
-        } catch (JsonParseException e) {
-            throw new IOException(e);
-        }
-    }
-
-    /**
      * @param json
      */
     public JSONObject(JsonNode json) {
@@ -81,6 +68,17 @@ public class JSONObject {
         } else {
             this.json = json;
         }
+    }
+
+    /**
+     *
+     * @param jsonString
+     * @return
+     * @throws IOException
+     */
+    public static JsonNode readInput(String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonString, JsonNode.class);
     }
 
     /**

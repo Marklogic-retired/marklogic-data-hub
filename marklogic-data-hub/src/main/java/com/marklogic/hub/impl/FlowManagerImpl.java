@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -68,10 +67,9 @@ public class FlowManagerImpl implements FlowManager {
                 return null;
             }
         }
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node;
         try {
-            node = objectMapper.readTree(inputStream);
+            node = JSONObject.readInput(inputStream);
         } catch (IOException e) {
             throw new DataHubProjectException("Unable to read flow: " + e.getMessage());
         }
@@ -108,11 +106,9 @@ public class FlowManagerImpl implements FlowManager {
     public List<String> getFlowNames() {
         // Get all the files with flow.json extension from flows dir
         List<File> files = (List<File>) FileUtils.listFiles(hubConfig.getFlowsDir().toFile(), new String[] {"flow.json"} , false );
-        List<String> flowNames = files.stream().map(f ->{
-            String fileName = f.getName();
-            fileName = fileName.replaceAll("(.+)\\.flow\\.json" , "$1");
-            return fileName;
-        }).collect(Collectors.toList());
+        List<String> flowNames = files.stream()
+                                .map(f -> f.getName().replaceAll("(.+)\\.flow\\.json" , "$1"))
+                                .collect(Collectors.toList());
 
         return flowNames;
     }
@@ -126,10 +122,9 @@ public class FlowManagerImpl implements FlowManager {
 
     @Override
     public Flow createFlowFromJSON(String json) {
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode node = null;
         try {
-            node = mapper.readValue(json, JsonNode.class);
+            node = JSONObject.readInput(json);
         } catch (JsonParseException e) {
             throw new DataHubProjectException("Unable to parse flow json string : "+ e.getMessage());
         } catch (JsonMappingException e1) {
@@ -160,7 +155,6 @@ public class FlowManagerImpl implements FlowManager {
         else {
             throw new DataHubProjectException("The specified flow doesn't exist.");
         }
-
     }
 
     @Override
@@ -193,9 +187,8 @@ public class FlowManagerImpl implements FlowManager {
             String flowScaffoldingSrcFile = "scaffolding/flowName.flow.json";
             InputStream inputStream = FlowManagerImpl.class.getClassLoader()
                 .getResourceAsStream(flowScaffoldingSrcFile);
-            ObjectMapper objectMapper = new ObjectMapper();
             try {
-                this.flowScaffolding = objectMapper.readTree(inputStream);
+                this.flowScaffolding = JSONObject.readInput(inputStream);
                 return this.flowScaffolding;
             } catch (IOException e) {
                 throw new DataHubProjectException("Unable to parse flow json string : "+ e.getMessage());
