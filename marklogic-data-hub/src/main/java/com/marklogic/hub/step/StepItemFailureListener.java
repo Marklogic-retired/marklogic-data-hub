@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.step;
 
-public interface FlowFinishedListener {
+public interface StepItemFailureListener {
     /**
-     * Listens for when the flow is complete
+     * Listener interface for each flow item that failed
+     * @param jobId - the id of the job as a string
+     * @param itemId - the id of the item as a string
      */
-    void onFlowFinished();
+    void processFailure(String jobId, String itemId);
 }
