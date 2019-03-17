@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
