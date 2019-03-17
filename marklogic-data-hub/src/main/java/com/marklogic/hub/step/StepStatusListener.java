@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.step;
 
-public interface FlowStatusListener {
+public interface StepStatusListener {
     /**
      *
      * @param jobId - the id of the job to change

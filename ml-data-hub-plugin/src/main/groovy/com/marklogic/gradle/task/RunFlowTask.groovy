@@ -18,16 +18,14 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.client.DatabaseClient
-
-import com.marklogic.client.io.JacksonHandle
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
-import com.marklogic.hub.flow.FlowItemCompleteListener
-import com.marklogic.hub.flow.FlowItemFailureListener
-import com.marklogic.hub.flow.FlowRunner
+import com.marklogic.hub.step.StepItemCompleteListener
+import com.marklogic.hub.step.StepItemFailureListener
+import com.marklogic.hub.step.StepRunner
 import com.marklogic.hub.job.Job
 import groovy.json.JsonBuilder
 import org.gradle.api.tasks.Input
@@ -152,7 +150,7 @@ class RunFlowTask extends HubTask {
             }
         }
 
-        FlowRunner flowRunner = fm.newFlowRunner()
+        StepRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow)
             .withStep(step)
             .withOptions(options)
@@ -161,13 +159,13 @@ class RunFlowTask extends HubTask {
             .withSourceClient(sourceClient)
             .withDestinationDatabase(destDB)
             .withJobId(jobId)
-            .onItemComplete(new FlowItemCompleteListener() {
+            .onItemComplete(new StepItemCompleteListener() {
                 @Override
                 void processCompletion(String jobId, String itemId) {
                     //TODO in the future, let's figure out a good use of this space
                 }
             })
-            .onItemFailed(new FlowItemFailureListener() {
+            .onItemFailed(new StepItemFailureListener() {
                 @Override
                 void processFailure(String jobId, String itemId) {
                     //TODO ditto
