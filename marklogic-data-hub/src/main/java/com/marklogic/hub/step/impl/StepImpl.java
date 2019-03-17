@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.step;
+package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
 public class StepImpl implements Step {
@@ -29,7 +30,7 @@ public class StepImpl implements Step {
     private String modulePath;
     private String identifier;
 
-    StepImpl(String name, StepType type) {
+    public StepImpl(String name, StepType type) {
         this.name = name;
         this.type = type;
         this.version = 1;

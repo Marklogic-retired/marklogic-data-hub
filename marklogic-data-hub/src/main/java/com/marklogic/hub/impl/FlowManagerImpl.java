@@ -27,14 +27,17 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowImpl;
 import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -182,7 +185,7 @@ public class FlowManagerImpl implements FlowManager {
     }
 
     @Override public FlowRunner newFlowRunner() {
-        return new FlowRunnerImpl(hubConfig);
+        return new FlowRunnerImpl();
     }
 
     private JsonNode flowScaffolding = null;

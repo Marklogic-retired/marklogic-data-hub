@@ -17,6 +17,7 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.step.impl.StepImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;

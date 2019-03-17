@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Map;
 
-public class RunFlowResponse {
+public class RunStepResponse {
     public String jobId;
     public long totalCount = 0;
     public long errorCount = 0;
