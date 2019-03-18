@@ -18,6 +18,10 @@ public class FlowManagerService {
     @Autowired
     private HubConfigImpl hubConfig;
 
+    public List<Flow> getFlows() {
+        return flowManager.getFlows();
+    }
+
     public Flow createFlow(String flowJson) {
         Flow flow = flowManager.createFlowFromJSON(flowJson);
         if (flow != null && StringUtils.isEmpty(flow.getName())) {

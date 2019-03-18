@@ -60,7 +60,7 @@ public class FlowManagerImpl implements FlowManager {
                 inputStream = FileUtils.openInputStream(flowPath.toFile());
             } catch (IOException e) {
                 // return null if it doesn't exist, so we can check for it.
-                return null;
+                throw new DataHubProjectException(e.getMessage());
             }
         }
         JsonNode node;
