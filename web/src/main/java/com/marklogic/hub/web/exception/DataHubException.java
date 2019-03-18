@@ -23,4 +23,8 @@ public class DataHubException extends RuntimeException {
 	public DataHubException(String message, Throwable cause) {
 		super("Error in connecting to the Data Hub API with the following message: " + message, cause);
 	}
+
+    public DataHubException(String message) {
+        super("Error: " + message);
+    }
 }
