@@ -32,6 +32,18 @@ public interface Flow {
      */
     void setName(String flowName);
 
+    String getId();
+    void setId(String id);
+
+    String getDescription();
+    void setDescription(String description);
+
+    int getBatchSize();
+    void setBatchSize(int batchSize);
+
+    int getThreadCount();
+    void setThreadCount(int threadCount);
+
     /**
      * Deserialize a json response and applies it to this flow
      *

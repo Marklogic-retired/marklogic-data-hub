@@ -23,9 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FlowImpl implements Flow {
+    public final static int DEFAULT_BATCH_SIZE = 100;
+    public final static int DEFAULT_THREAD_COUNT = 4;
+
     private String name;
-    private String identifier;
+    private String id;
     private String description;
+    private int batchSize;
+    private int threadCount;
+
     private Map<String, Step> steps;
 
     public String getName() {
@@ -36,12 +42,14 @@ public class FlowImpl implements Flow {
         this.name = flowName;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    @Override
+    public String getId() {
+        return id;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -50,6 +58,26 @@ public class FlowImpl implements Flow {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    @Override
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    @Override
+    public int getThreadCount() {
+        return threadCount;
+    }
+
+    @Override
+    public void setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
     }
 
     public Map<String, Step> getSteps() {
@@ -65,7 +93,9 @@ public class FlowImpl implements Flow {
         JSONObject jsonObject = new JSONObject(json);
         setName(jsonObject.getString("name"));
         setDescription(jsonObject.getString("description"));
-        setIdentifier(jsonObject.getString("identifier"));
+        setId(jsonObject.getString("id"));
+        setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
+        setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
 
         Map<String, Step> steps = new HashMap<>();
         JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
