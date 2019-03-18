@@ -413,22 +413,36 @@ function instanceToCanonicalJson(entityInstance) {
   return rootObject;
 }
 
+function getElementName(ns, nsPrefix, name) {
+  return ns && nsPrefix ? nsPrefix + ':' + name : name;
+}
+
+function getElementNamespace(ns, nsPrefix) {
+  return ns && nsPrefix ? ns : null;
+}
+
 function instanceToCanonicalXml(entityInstance) {
+  let namespace = entityInstance['$namespace'];
+  let namespacePrefix = entityInstance['$namespacePrefix'];
+  let typeName = entityInstance['$type'];
+  let typeQName = getElementName(namespace, namespacePrefix, typeName);
+  let ns = getElementNamespace(namespace, namespacePrefix);
   const nb = new NodeBuilder();
   nb.startDocument();
-    nb.startElement(entityInstance['$type']);
+    nb.startElement(typeQName, ns);
       if (entityInstance['$ref']) {
         nb.addNode(entityInstance['$ref']);
       } else {
         for (let key in entityInstance) {
           if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'NCName', key) && key !== '$type') {
+            let nsKey = getElementName(namespace, namespacePrefix, key);
             let prop = entityInstance[key];
             if (prop instanceof Sequence) {
               for (let item of prop) {
                 if (item instanceof ObjectNode) {
                   instanceToCanonicalXml(item);
                 } else {
-                  nb.startElement(key);
+                  nb.startElement(nsKey, ns);
                   if (item) {
                     nb.addNode(item);
                   }
@@ -438,7 +452,7 @@ function instanceToCanonicalXml(entityInstance) {
             } else if (prop instanceof Array) {
               for (let item of prop) {
                 if (item instanceof Object) {
-                  nb.startElement(key);
+                  nb.startElement(nsKey, ns);
                   nb.addAttribute('datatype', 'array');
                   let canonical = instanceToCanonicalXml(item);
                   if (canonical) {
@@ -447,7 +461,7 @@ function instanceToCanonicalXml(entityInstance) {
                   nb.endElement();
                 }
                 else {
-                  nb.startElement(key);
+                  nb.startElement(nsKey, ns);
                   nb.addAttribute('datatype', 'array');
                   if (item) {
                     nb.addNode(item);
@@ -457,7 +471,7 @@ function instanceToCanonicalXml(entityInstance) {
               }
             }
             else {
-              nb.startElement(key);
+              nb.startElement(nsKey, ns);
               if(prop) {
                 nb.addText(prop.toString());
               }

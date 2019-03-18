@@ -68,7 +68,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
         getHubAdminConfig();
         enableDebugging();
 
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         addStagingDocs();
         installModules();
@@ -404,6 +404,69 @@ public class LegacyFlowManagerTest extends HubTestBase {
         runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-with-all/\")");
     }
 
+    @Test
+    public void testRunFlowNamespaceXMLSJS() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/flow.xml", "flow-manager-test/my-test-flow-ns-xml-sjs/flow.xml");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/collector.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/collector.sjs");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/headers.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/headers.sjs");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/content.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/content.sjs");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/triples.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/triples.sjs");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/writer.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/writer.sjs");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/main.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/main.sjs");
+        installModules(modules);
+
+        assertEquals(2, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        getHubFlowRunnerConfig();
+        LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-ns-xml-sjs");
+        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+        getHubAdminConfig();
+        assertEquals(2, getStagingDocCount());
+        assertEquals(2, getFinalDocCount());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+
+        runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-ns-xml-sjs/\")");
+    }
+
+    @Test
+    public void testRunFlowNamespaceXMLXQY() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+        addStagingDocs();
+        HashMap<String, String> modules = new HashMap<>();
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/flow.xml", "flow-manager-test/my-test-flow-ns-xml-xqy/flow.xml");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/collector.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/collector.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/headers.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/headers.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/content.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/content.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/triples.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/triples.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/writer.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/writer.xqy");
+        modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/main.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/main.xqy");
+        installModules(modules);
+
+        assertEquals(2, getStagingDocCount());
+        assertEquals(0, getFinalDocCount());
+        getHubFlowRunnerConfig();
+        LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-ns-xml-xqy");
+        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+            .withFlow(flow1)
+            .withBatchSize(10)
+            .withThreadCount(1);
+        flowRunner.run();
+        flowRunner.awaitCompletion();
+        getHubAdminConfig();
+        assertEquals(2, getStagingDocCount());
+        assertEquals(2, getFinalDocCount());
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
+        assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
+
+        runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-ns-xml-xqy/\")");
+    }
 
     @Test
     public void testHasLegacyflows() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
