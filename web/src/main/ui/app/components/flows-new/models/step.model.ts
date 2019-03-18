@@ -22,4 +22,8 @@ export class Step {
   public sourceQuery: string = '';
   public targetEntity: string;
 
+  // Custom
+
+  public customModuleUri: string = '';
+
 }

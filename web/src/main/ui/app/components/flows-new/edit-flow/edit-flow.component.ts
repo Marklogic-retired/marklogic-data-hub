@@ -71,6 +71,7 @@ export class EditFlowComponent implements OnInit {
   }
   getDbInfo() {
     this.projectService.getStatus().subscribe((stats) => {
+      console.log('project stats', stats);
       this.databases.push(stats.finalDb);
       this.databases.push(stats.jobDb);
       this.databases.push(stats.stagingDb);
