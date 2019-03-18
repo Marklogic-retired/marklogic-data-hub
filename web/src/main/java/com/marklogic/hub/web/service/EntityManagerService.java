@@ -66,7 +66,7 @@ public class EntityManagerService {
     Scaffolding scaffolding;
 
     @Autowired
-    private FlowManagerService flowManagerService;
+    private LegacyFlowManagerService legacyFlowManagerService;
 
     @Autowired
     private FileSystemWatcherService watcherService;
@@ -86,8 +86,8 @@ public class EntityManagerService {
             InfoType infoType = new InfoType();
             infoType.setTitle(entityName);
             entityModel.setInfo(infoType);
-            entityModel.inputFlows = flowManagerService.getFlows(entityName, FlowType.INPUT);
-            entityModel.harmonizeFlows = flowManagerService.getFlows(entityName, FlowType.HARMONIZE);
+            entityModel.inputFlows = legacyFlowManagerService.getFlows(entityName, FlowType.INPUT);
+            entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entityName, FlowType.HARMONIZE);
             entities.add(entityModel);
         }
         return entities;
@@ -107,8 +107,8 @@ public class EntityManagerService {
                     data = new HubUIData();
                 }
                 entityModel.setHubUi(data);
-                entityModel.inputFlows = flowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
-                entityModel.harmonizeFlows = flowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
+                entityModel.inputFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
+                entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
 
                 entities.add(entityModel);
             }
