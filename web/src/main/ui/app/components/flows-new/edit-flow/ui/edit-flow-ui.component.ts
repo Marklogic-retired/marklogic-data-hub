@@ -32,7 +32,6 @@ export class EditFlowUiComponent {
   ) {}
 
   openStepDialog(index): void {
-    console.log('index', index);
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
       data: {
