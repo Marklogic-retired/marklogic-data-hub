@@ -69,6 +69,24 @@
                 </div>            
               </div>
               <span class="step-name">{{step.label}}</span>
+              <!-- TODO Update Information -->
+              <div class="summary" *ngIf="stepsArray[i].type === 'ingestion'">
+                <div>Source: {{stepsArray[i].targetEntity}}</div>
+                <div>Input Type: {{stepsArray[i].targetEntity}}</div>
+              </div>
+              <div class="summary" *ngIf="stepsArray[i].type === 'mapping'">
+                <div>Source Collection: {{stepsArray[i].sourceCollection}}</div>
+                <div>Target Entity: {{stepsArray[i].targetEntity}}</div>
+              </div>
+              <div class="summary" *ngIf="stepsArray[i].type === 'mastering'">
+                  <div>Match Options: {{stepsArray[i].config.matchOptions.propertyDefs.property.length}}</div>
+                  <div>Merge Options: {{stepsArray[i].targetEntity}}</div>
+              </div>
+              <div class="summary" *ngIf="stepsArray[i].type === 'custom'">
+                <div>Target Entity: {{stepsArray[i].targetEntity}}</div>
+                <div>Module: {{stepsArray[i].targetEntity}}</div>
+              </div>
+              
             </div>
             <div *ngIf="i !== (steps.length-1); else spacer" class="line">&rarr;</div>
             <ng-template #spacer><span class="spacer" ></span></ng-template>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -9,7 +9,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./stepper.component.scss'],
   providers: [{ provide: CdkStepper, useExisting: StepperComponent }]
 })
-export class StepperComponent extends CdkStepper {
+export class StepperComponent extends CdkStepper implements OnChanges {
 
   @Input() flow: any;
   @Input() stepsArray: any;
@@ -24,6 +24,12 @@ export class StepperComponent extends CdkStepper {
 
   showBody = true;
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.stepsArray.currentValue.length > changes.stepsArray.previousValue.length) {
+      this.selectedIndex += 1;
+    }
+  }
+
   toggleBody() {
     this.showBody = !this.showBody;
   }
@@ -37,7 +43,7 @@ export class StepperComponent extends CdkStepper {
     this.selectedIndex = index;
   }
   newStepClicked(): void {
-    this.newStep.emit();
+    this.newStep.emit(this.selectedIndex + 1);
   }
   runClicked(): void {
     this.runFlow.emit();
