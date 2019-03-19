@@ -34,7 +34,7 @@ pipeline{
 				}
 				}
 				println(BRANCH_NAME)
-				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean --stacktrace;./gradlew build -x test -Pskipui=true;'
+				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean --stacktrace;./gradlew build -x test;'
 				archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/quick-start/build/libs/', onlyIfSuccessful: true			}
 				post{
                    failure {
@@ -57,7 +57,7 @@ pipeline{
 			steps{
 				copyRPM 'Latest'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;'
+				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew quick-start:test;'
 				junit '**/TEST-*.xml'
 				script{
 				if(env.CHANGE_TITLE){
@@ -196,7 +196,7 @@ pipeline{
 			steps{
 				copyRPM 'Latest'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Pskipui=true -Dorg.gradle.jvmargs=-Xmx1g;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -Pskipui=true;sleep 10s;./gradlew ml-data-hub:testFullCycle -Pskipui=true;'
+				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew quick-start:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;'
 				junit '**/TEST-*.xml'
 				script{
 				 commitMessage = sh (returnStdout: true, script:'''
@@ -280,7 +280,7 @@ pipeline{
 				copyRPM 'Release','9.0-6'
 				script{
 				def dockerhost=setupMLDockerCluster 3
-				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -Pskipui=true;sleep 10s;./gradlew ml-data-hub:testFullCycle -Pskipui=true;"'
+				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test ;sleep 10s;./gradlew quick-start:test ;sleep 10s;./gradlew marklogic-data-hub:testBootstrap ;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
 				}
 				junit '**/TEST-*.xml'
 					script{
@@ -315,7 +315,7 @@ pipeline{
 				copyRPM 'Release','9.0-7'
 				script{
 				def dockerhost=setupMLDockerCluster 3
-				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -Pskipui=true;sleep 10s;./gradlew ml-data-hub:testFullCycle -Pskipui=true;"'
+				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew quick-start:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap ;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
 				}
 				junit '**/TEST-*.xml'
 					script{
@@ -349,7 +349,7 @@ pipeline{
 				copyRPM 'Release','9.0-8'
 				script{
 				def dockerhost=setupMLDockerCluster 3
-				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -Pskipui=true;sleep 10s;./gradlew ml-data-hub:testFullCycle -Pskipui=true;"'
+				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew quick-start:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
 				}
 				junit '**/TEST-*.xml'
 					script{
@@ -524,7 +524,7 @@ pipeline{
 			steps{
 				copyRPM 'Latest'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test -Pskipui=true;sleep 10s;./gradlew ml-data-hub:test -Pskipui=true;sleep 10s;./gradlew quick-start:test -Pskipui=true;'
+				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew quick-start:test;'
 				junit '**/TEST-*.xml'
 				script{
 				 commitMessage = sh (returnStdout: true, script:'''
