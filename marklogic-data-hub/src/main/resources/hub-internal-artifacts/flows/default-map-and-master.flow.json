@@ -1,0 +1,25 @@
+{
+  "name" : "default-map-and-master",
+  "description" : "This is the default flow for mapping prevously ingested data and then mastering it into data hub",
+  "options": {"identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))"},
+    "steps" : {
+	  "1": {	 
+	   "type": "mapping",
+	   "name": "default-mapping",
+	   "retryLimit": 0,
+	   "options": {
+		"outputFormat" : "json",
+		"collections" : "default-mapping"
+		}
+	  },
+	   "2": {	 
+	   "type": "master",
+	   "name": "default-mastering",
+	   "retryLimit": 0,
+	   "options": {
+		"outputFormat" : "json",
+		"collections" : ["default-mastering", "mastered"]
+		}
+	  }
+	}
+}
