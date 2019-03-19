@@ -214,7 +214,7 @@ export class Strategy {
   public maxValues: number;
   public maxSources: string;
   public length: Object;
-  public sourceWeights: [];
+  public sourceWeights: Array<any> = [];
   constructor(mStr) {
     if (mStr.name) this.name = mStr.name;
     if (mStr.algorithmRef) this.algorithmRef = mStr.algorithmRef;
