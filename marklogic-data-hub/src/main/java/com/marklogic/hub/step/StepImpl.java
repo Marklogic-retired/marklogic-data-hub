@@ -38,7 +38,8 @@ public class StepImpl implements Step {
         jsonObject.putArray("collections", name);
         if (type == StepType.INGEST) {
             jsonObject.put("outputFormat", "json");
-        } else if (type == StepType.MAPPING || type == StepType.CUSTOM) {
+        }
+        if (type == StepType.MAPPING || type == StepType.CUSTOM) {
             this.identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
         }
         this.modulePath = "/path/to/your/step/module/main.sjs";

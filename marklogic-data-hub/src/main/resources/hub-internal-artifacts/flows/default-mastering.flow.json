@@ -1,0 +1,16 @@
+{
+  "name" : "default-mastering",
+  "description" : "This is the default flow for mastering previously mapped data into data hub",
+  "identifier" : "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
+    "steps" : {
+	  "1": {	 
+	   "type": "master",
+	   "name": "default-mastering",
+	   "retryLimit": 0,
+	   "options": {
+		"outputFormat" : "json",
+		"collections" : ["default-mastering", "mastered"]
+		}
+	  }
+	}
+}
