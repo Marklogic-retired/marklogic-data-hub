@@ -11,7 +11,7 @@
             Match Options
           </span>
         </div>
-        <button mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null)">Add</button>
+        <button mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">Add</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
@@ -103,11 +103,11 @@
             </div>
             <div *ngIf="mOpt.matchType === 'zip'" class="other-content">
               <div>
-                <span class="other-label">5-matches-9 Boost</span>
+                <span class="other-label">5-Matches-9 Boost</span>
                 {{mOpt.zip5match9}}
               </div>
               <div>
-                <span class="other-label">9-matches-5 Weight</span>
+                <span class="other-label">9-Matches-5 Weight</span>
                 {{mOpt.zip9match5}}
               </div>
             </div>
@@ -145,7 +145,7 @@
 
 <mat-menu class="match-option-menu-dialog" #matchMenu="matMenu">
   <ng-template matMenuContent let-mOpt="mOpt" let-i="i">
-    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i)">Edit Settings {{index}}</div>
+    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i, targetEntity.definition.properties)">Edit Settings {{index}}</div>
     <div class="match-option-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mOpt)">Delete</div>
   </ng-template>
 </mat-menu>

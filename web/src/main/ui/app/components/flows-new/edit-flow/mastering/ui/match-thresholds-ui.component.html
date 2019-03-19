@@ -48,10 +48,10 @@
         <ng-container matColumnDef="action">
           <mat-header-cell id="match-threshold-action-sort-btn" *matHeaderCellDef mat-sort-header>Action</mat-header-cell>
           <mat-cell class="match-threshold-action" *matCellDef="let mThr">
-            <div *ngIf="mThr.action !== 'custom'">
+            <div *ngIf="mThr.action === 'merge' || mThr.action === 'notify'">
               <span class="capitalize">{{mThr.action}}</span>
             </div>
-            <div *ngIf="mThr.action === 'custom'" class="action-content">
+            <div *ngIf="mThr.action !== 'merge' && mThr.action !== 'notify'" class="action-content">
               <div>
                 <span class="actionLabel">URI</span>
                 {{mThr.customUri}}

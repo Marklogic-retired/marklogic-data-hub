@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>{{getDialogTitle()}}</h1>
 <div id="match-option-dialog" mat-dialog-content [formGroup]="form" class="content">
-  <mat-form-field>
+
+  <mat-form-field layout-fill>
     <mat-select id="match-option-type" placeholder="Match Type" formControlName="matchType" [(value)]="selectedType">
       <mat-option value="exact">Exact</mat-option>
       <mat-option value="synonym">Synonym</mat-option>
@@ -10,10 +11,36 @@
       <mat-option value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field layout-fill>
-    <mat-label>Property to Match</mat-label>
-    <input id="match-option-property" matInput formControlName="propertyName"/>
+
+  <mat-form-field *ngIf="selectedType !== 'reduce'" layout-fill>
+    <mat-select id="match-option-property" placeholder="Property to Match" formControlName="propertyName" [(value)]="propertyName">
+      <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
+    </mat-select>
   </mat-form-field>
+
+  <div *ngIf="selectedType === 'reduce'" id="properties-reduce">
+    <mat-label>
+      Properties to Match
+    </mat-label>
+    <button class="add-property-btn" mat-icon-button (click)="onAddProp()">
+      <mat-icon>add</mat-icon>
+    </button>
+    <div
+      class="property-reduce-wrapper"
+      formArrayName="propertiesReduce"
+      *ngFor="let prop of this.propertiesReduce.controls; let i = index;">
+      <div [formGroupName]="i" class="prop-group">
+        <mat-form-field layout-fill>
+          <mat-select class="match-option-property-reduce" placeholder="Property Name" formControlName="name">
+            <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button *ngIf="i !== 0" class="remove-property-btn" mat-icon-button (click)="onRemoveProp(i)">
+          <mat-icon>remove</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>

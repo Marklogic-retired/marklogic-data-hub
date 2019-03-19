@@ -65,6 +65,7 @@ export class MatchOptions {
 export class MatchOption {
   public matchType: string;
   public propertyName: Array<string>;
+  public propertiesReduce: Array<any>;
   public weight: number;
   public algorithmRef: string;
   public thesaurus: string;
@@ -92,6 +93,13 @@ export class MatchOption {
     if (mOpt.zip9match5) this.zip9match5 = mOpt.zip9match5;
     if (mOpt.customUri) this.customUri = mOpt.customUri;
     if (mOpt.customFunction) this.customFunction = mOpt.customFunction;
+    // Adjust property names if reduce type
+    if (mOpt.matchType === 'reduce' && mOpt.propertiesReduce) {
+      this.propertyName = mOpt.propertiesReduce.map(prop => {
+        return prop.name;
+      })
+    }
+    console.log('constructor', this);
   }
 
   /**
