@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterContentChecked } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -9,7 +9,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./stepper.component.scss'],
   providers: [{ provide: CdkStepper, useExisting: StepperComponent }]
 })
-export class StepperComponent extends CdkStepper implements OnChanges {
+export class StepperComponent extends CdkStepper implements OnChanges, AfterContentChecked {
 
   @Input() flow: any;
   @Input() stepsArray: any;
@@ -23,13 +23,19 @@ export class StepperComponent extends CdkStepper implements OnChanges {
   @Output() updateFlow = new EventEmitter();
 
   showBody = true;
+  stepAdded = false;
 
   ngOnChanges(changes: SimpleChanges) {
-    if ( changes.hasOwnProperty('stepsArray') && !changes.stepsArray.firstChange && changes.stepsArray.currentValue.length > changes.stepsArray.previousValue.length) {
-      this.selectedIndex += 1;
+    if ( changes.hasOwnProperty('stepsArray') && !changes.stepsArray.firstChange && changes.stepsArray.currentValue.length > changes.stepsArray.previousValue.length ) {
+      this.stepAdded = true;
     }
   }
-
+  ngAfterContentChecked() {
+    if (this.stepAdded) {
+      this.selectedIndex += 1;
+      this.stepAdded = false;
+    }
+  }
   toggleBody() {
     this.showBody = !this.showBody;
   }
