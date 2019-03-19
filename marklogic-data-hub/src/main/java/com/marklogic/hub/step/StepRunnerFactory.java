@@ -8,17 +8,24 @@ public class StepRunnerFactory {
 
     @Autowired
     private HubConfig hubConfig;
-    
+    private StepRunner stepRunner;
+
     public StepRunner getStepRunner(Step step) {
         switch (step.getType()) {
             case MAPPING:
-                return new MappingStepRunner(hubConfig);
+                stepRunner = new MappingStepRunner(hubConfig);
             case CUSTOM:
-                return null;
+                stepRunner = null;
             case INGEST:
-                return null;
+                stepRunner =  null;
         }
-        return null;
+        return stepRunner.withFlow(step.getFlow())
+            .withStep(step)
+            .withOptions(step.getOptions())
+            .withBatchSize(step.getBatchSize())
+            .withThreadCount(step.getThreadCount())
+            .withSourceClient(hubConfig.newStagingClient(step.getStagingDB()))
+            .withDestinationDatabase(step.getdestDB());
     }
 
 }
