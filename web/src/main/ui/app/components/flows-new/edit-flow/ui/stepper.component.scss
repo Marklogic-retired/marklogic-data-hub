@@ -84,7 +84,7 @@ header {
   }
   .step {
     cursor: pointer;
-    border: 1px solid rgba(0,0,0,.25);
+    border: 2px solid #e6e6e6;
     border-radius: 2px;
     width: 200px;
     height: 175px;
@@ -147,8 +147,11 @@ header {
       margin: 10px;
     }
   }
+  .step:hover {
+    border-color: #b3b3b3;
+  }
   .step.active {
-    border: 2px solid #212529;
+    border-color: #696969;
   }
   .spacer {
     width: 15px;
