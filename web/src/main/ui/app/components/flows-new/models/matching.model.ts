@@ -217,7 +217,18 @@ export class Matching {
       above: mThr.above,
       action: mThr.action
     });
+    if (mThr.action !== 'merge' && mThr.action !== 'notify') {
+      this.addAction(mThr.customFunction, mThr.customUri, mThr.customFunction)
+    }
     this.thresholds['threshold'].push(thr);
+  }
+
+  /**
+   * Add a match threshold action.
+   */
+  addAction(name, at, fn) {
+    let alg = new Action({ name: name, at: at, function: fn });
+    this.actions['action'].push(alg);
   }
 
 }
