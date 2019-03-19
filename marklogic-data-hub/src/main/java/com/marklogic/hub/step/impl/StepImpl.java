@@ -18,6 +18,7 @@ package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
@@ -55,11 +56,33 @@ public class StepImpl implements Step {
 
         if (type == StepType.INGEST) {
             options.put("outputFormat", "json");
-        } else if (type == StepType.MAPPING || type == StepType.CUSTOM) {
+        } else if (type == StepType.MAPPING  || type == StepType.MASTER || type == StepType.CUSTOM) {
             identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
             options.put("identifier", this.identifier);
         }
-        modulePath = "/path/to/your/step/module/main.sjs";
+        switch (type) {
+            case INGEST:
+                jsonObject.put("outputFormat", "json");
+                this.modulePath = "/data-hub/5/builtins/steps/ingest/default/main.sjs";
+                break;
+            case MAPPING:
+                this.modulePath = "/data-hub/5/builtins/steps/mapping/default/main.sjs";
+                break;
+            case MASTER:
+                jsonObject.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
+                jsonObject.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
+                jsonObject.put("mergeOptions", new JSONObject());
+                jsonObject.put("matchOptions", new JSONObject());
+                // Step update needed for lock-for-update in Smart Mastering
+                jsonObject.put("stepUpdate", true);
+                // Accepts batch needed for Smart Mastering to receive all batch documents at once
+                jsonObject.put("acceptsBatch", true);
+                this.modulePath = "/data-hub/5/builtins/steps/master/default/main.sjs";
+                break;
+            default:
+                this.modulePath = "/path/to/your/step/module/main.sjs";
+                break;
+        }
         customHook = new JSONObject().jsonNode();
         retryLimit = 0;
     }
