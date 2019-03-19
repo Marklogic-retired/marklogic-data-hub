@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import { MatchOption } from "../../../models/match-options.model";
+import { MatchOption } from "../match-options.model";
 import { AddMatchOptionDialogComponent } from './add-match-option-dialog.component';
-import { ConfirmationDialogComponent } from "../../../../common";
+import { ConfirmationDialogComponent } from "../../../../../common";
 
 @Component({
   selector: 'app-match-options-ui',

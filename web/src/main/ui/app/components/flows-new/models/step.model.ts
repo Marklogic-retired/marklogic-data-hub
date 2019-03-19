@@ -1,4 +1,4 @@
-import { Matching } from './matching.model';
+import { Matching } from '../edit-flow/mastering/matching/matching.model';
 
 export class Step {
   public id: string;

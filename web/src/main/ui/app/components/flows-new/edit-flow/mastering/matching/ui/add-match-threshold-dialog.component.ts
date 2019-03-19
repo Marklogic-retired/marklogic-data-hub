@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatchThreshold } from "../../../models/match-thresholds.model";
+import { MatchThreshold } from "../match-thresholds.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 export interface DialogData {

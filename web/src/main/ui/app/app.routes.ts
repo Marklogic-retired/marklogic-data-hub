@@ -12,7 +12,6 @@ import {NoContentComponent} from './components/no-content';
 import {EditFlowComponent} from './components/flows-new/edit-flow/edit-flow.component';
 import {AuthGuard} from './services/auth/auth-guard.service';
 import {ManageFlowsComponent} from "./components/flows-new/manage-flows/manage-flows.component";
-import {MatchingComponent} from "./components/flows-new/edit-flow/mastering/matching.component";
 
 export const ROUTES: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
@@ -34,7 +33,6 @@ export const ROUTES: Routes = [
   { path: 'flows', component: ManageFlowsComponent, canActivate: [AuthGuard]},
   { path: 'flows/:entityName/:flowName/:flowType', component: FlowsComponent, canActivate: [AuthGuard] },
   { path: 'edit-flow/:flowId', component: EditFlowComponent, canActivate: [AuthGuard] },
-  { path: 'matching/:stepId', component: MatchingComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: JobsComponent, canActivate: [AuthGuard] },
   { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
   { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },
