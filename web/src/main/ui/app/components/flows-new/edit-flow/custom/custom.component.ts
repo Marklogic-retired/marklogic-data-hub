@@ -6,12 +6,14 @@ import { Step } from '../../models/step.model';
   template: `
   <app-custom-ui
     [step]="step"
+    [module]="module"
   ></app-custom-ui>
 `
 })
 export class CustomComponent implements OnInit {
 
   @Input() step: Step;
+  @Input() module: string;
   constructor(
 
   ) { }

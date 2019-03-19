@@ -31,7 +31,12 @@ export class EditFlowComponent implements OnInit {
   flowId: string;
   flow: Flow;
   stepsArray: any;
-  databases: string[] = [];
+  databases: any = {
+    final: '',
+    staging: '',
+    job: '',
+    modules: ''
+  };
   collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
 
@@ -70,12 +75,11 @@ export class EditFlowComponent implements OnInit {
     });
   }
   getDbInfo() {
-    this.projectService.getStatus().subscribe((stats) => {
-      console.log('project stats', stats);
-      this.databases.push(stats.finalDb);
-      this.databases.push(stats.jobDb);
-      this.databases.push(stats.stagingDb);
-      this.getCollections(stats.finalDb);
+    this.projectService.getProjectEnvironment().subscribe( resp => {
+      this.databases.final = resp.mlSettings.finalDbName;
+      this.databases.job = resp.mlSettings.jobDbName;
+      this.databases.staging = resp.mlSettings.stagingDbName;
+      this.databases.modules = resp.mlSettings.modulesDbName;
     });
   }
   getCollections(db) {

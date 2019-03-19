@@ -23,7 +23,6 @@ export class Step {
   public targetEntity: string;
 
   // Custom
-
   public customModuleUri: string = '';
 
 }

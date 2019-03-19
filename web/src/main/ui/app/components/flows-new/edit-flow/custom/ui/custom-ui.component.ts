@@ -8,6 +8,7 @@ import { Step } from '../../../models/step.model';
 })
 export class CustomUiComponent {
   @Input() step: Step;
+  @Input() module: string;
 
   constructor(
 
