@@ -16,7 +16,6 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.hub.job.Job;
 
 
@@ -30,13 +29,6 @@ import java.util.concurrent.TimeoutException;
  */
 public interface FlowRunner {
 
-    /**
-     * Should we always write a document to the jobs database or only in case of a failure?
-     *
-     * @param onlyWriteJobOnFailure true -> only write job on failure, else always
-     * @return the flow runner object
-     */
-    FlowRunner withOnlyWriteJobOnFailure(boolean onlyWriteJobOnFailure);
     /**
      * Sets the flow to be used with the flow runner
      * @param flow the flow object to be used

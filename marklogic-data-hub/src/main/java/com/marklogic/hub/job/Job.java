@@ -75,7 +75,6 @@ public class Job {
 
     public Job withStatus(String status) {
         this.status = status;
-        success = status.startsWith(JobStatus.COMPLETED_PREFIX);
         return this;
     }
 
