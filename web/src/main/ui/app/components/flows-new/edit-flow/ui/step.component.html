@@ -3,8 +3,8 @@
     <header>
       <div class="steps-header">
         <h3 id="step-details-name">{{step.name}}</h3>
-        <!-- <button id="save-step-btn" mat-raised-button color="primary">Save</button>
-        <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
+        <button id="save-step-btn" *ngIf="step.type !== 'mapping'" (click)=saveStep(step); mat-raised-button color="primary">Save</button>
+        <!-- <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
       </div>
       <div class="steps-header">
         <mat-icon id="step-menu" class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
@@ -33,8 +33,10 @@
         ></app-matching>
       </div>
       <div id="step-type-custom-container" *ngIf="step.type === 'custom'">
-        <p>{{step.type}}</p>
-        <p>{{step.description}}</p>
+        <app-custom
+          [step]="step"
+          [module]="databases.modules"
+        ></app-custom>
       </div>
     </div>
 </div>

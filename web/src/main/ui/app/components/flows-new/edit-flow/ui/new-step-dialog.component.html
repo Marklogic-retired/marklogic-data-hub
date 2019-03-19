@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
 <div id="step-dialog" mat-dialog-content class="content">
   <mat-form-field>
-    <mat-select id="step-type" class="type-select" placeholder="Step Type" [(value)]="newStep.type">
+    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange(newStep.type)" [(value)]="newStep.type">
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -19,7 +19,7 @@
       <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
     </mat-radio-group>
   </div>
-  <!-- TODO: Add Source Collection Information -->
+  
   <mat-form-field *ngIf="selectedSource === 'collection'">
     <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
       <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
@@ -45,12 +45,12 @@
   
       <mat-form-field>
         <mat-select id="step-source-database" placeholder="Source Database" [(value)]="newStep.sourceDatabase">
-          <mat-option *ngFor="let database of data.databases" [value]="database">{{database}}</mat-option>
+          <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>
         <mat-select id="step-target-database" placeholder="Target Database" [(value)]="newStep.targetDatabase">
-          <mat-option *ngFor="let database of data.databases" [value]="database">{{database}}</mat-option>
+          <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
         </mat-select>
       </mat-form-field>
     </mat-expansion-panel>
