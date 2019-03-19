@@ -15,7 +15,10 @@ export class MergeOptions {
     const strategies = merging.mergeStrategies;
     if (merging.merging) {
       merging.merging.forEach(mOpt => {
-        result.options.push(MergeOption.fromMerging(mOpt, algs, strategies));
+        // Do not add default to options (add to strategies)
+        if (!mOpt.default) {
+          result.options.push(MergeOption.fromMerging(mOpt, algs, strategies));
+        }
       })
     }
     return result;
@@ -58,14 +61,15 @@ export class MergeOption {
   public algorithmRef: string;
   public maxValues: number;
   public maxSources: number;
-  public sourceWeights: string;
-  public length: string;
+  public sourceWeights: Array<any> = [];
+  public length: Object;
   public strategy: string;
   public customUri: string;
   public customFunction: string;
+  public mergeType: string;
 
   constructor (mOpt: any = {}) {
-    if (mOpt.propertyName) this.propertyName = [mOpt.propertyName];
+    if (mOpt.propertyName) this.propertyName = mOpt.propertyName;
     if (mOpt.algorithmRef) this.algorithmRef = mOpt.algorithmRef;
     if (mOpt.maxValues) this.maxValues = mOpt.maxValues;
     if (mOpt.maxSources) this.maxSources = mOpt.maxSources;
@@ -74,6 +78,7 @@ export class MergeOption {
     if (mOpt.strategy) this.strategy = mOpt.strategy;
     if (mOpt.customUri) this.customUri = mOpt.customUri;
     if (mOpt.customFunction) this.customFunction = mOpt.customFunction;
+    if (mOpt.mergeType) this.mergeType = mOpt.mergeType;
   }
 
   /**
@@ -89,6 +94,7 @@ export class MergeOption {
       result = new MergeOption(strategy);
       result.propertyName = mOpt.propertyName;
       result.strategy = mOpt.strategy;
+      result.mergeType = 'strategy';
     } else if (mOpt.algorithmRef !== undefined) {
       // Handle custom type
       result = new MergeOption(mOpt);
@@ -97,9 +103,11 @@ export class MergeOption {
       });
       if (alg.at) result.customUri = alg.at;
       if (alg.function) result.customFunction = alg.function;
+      result.mergeType = 'custom';
     } else {
       // Handle standard type
       result = new MergeOption(mOpt);
+      result.mergeType = 'standard';
     }
     return result;
   }

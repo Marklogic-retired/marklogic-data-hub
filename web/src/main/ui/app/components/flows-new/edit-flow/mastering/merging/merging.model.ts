@@ -69,37 +69,37 @@ export class Merging {
   /**
    * Construct based on a UI configuration.
    */
-  // static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
-  //   const result = new Merging();
-  //   if (mergeOptions) {
-  //     mergeOptions.options.forEach(mOpt => {
-  //       result.addOption(mOpt);
-  //     })
-  //   }
-  //   if (mergeStrategies) {
-  //     mergeStrategies.strategies.forEach(mStr => {
-  //       result.addStrategy(mStr);
-  //     })
-  //   }
-  //   if (mergeCollections) {
-  //     mergeCollections.collections.forEach(mColl => {
-  //       result.addCollection(mColl);
-  //     })
-  //   }
-  //   console.log('fromUI', result);
-  //   return result;
-  // }
+  static fromUI(mergeOptions: MergeOptions) { //, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
+    const result = new Merging();
+    if (mergeOptions) {
+      mergeOptions.options.forEach(mOpt => {
+        result.addOption(mOpt);
+      })
+    }
+    // if (mergeStrategies) {
+    //   mergeStrategies.strategies.forEach(mStr => {
+    //     result.addStrategy(mStr);
+    //   })
+    // }
+    // if (mergeCollections) {
+    //   mergeCollections.collections.forEach(mColl => {
+    //     result.addCollection(mColl);
+    //   })
+    // }
+    console.log('fromUI', result);
+    return result;
+  }
 
   /**
    * Add a property name definition.
    */
   addProperty(name) {
-    let found = this.propertyDefs['property'].find(p => {
+    let found = this.propertyDefs['properties'].find(p => {
       return p.name === name;
     });
     if (!found) {
       let prop = new Property({ localname: name, name: name });
-      this.propertyDefs['property'].push(prop);
+      this.propertyDefs['properties'].push(prop);
     }
   }
 
@@ -129,10 +129,14 @@ export class Merging {
   /**
    * Add a merge option.
    */
-  addOption(mOpt: MergeOption) {
+  addOption(mOpt) {
     console.log('addOption', mOpt);
     if (mOpt.propertyName) {
       this.addProperty(mOpt.propertyName);
+    }
+    if (typeof mOpt.length === 'string' || typeof mOpt.length === 'number') {
+      mOpt.length = { weight: mOpt.length };
+      console.log('after', mOpt);
     }
     let opt = new Option(mOpt);
     this.merging.push(opt);
@@ -212,7 +216,7 @@ export class Strategy {
   public name: string;
   public algorithmRef: string;
   public maxValues: number;
-  public maxSources: string;
+  public maxSources: number;
   public length: Object;
   public sourceWeights: Array<any> = [];
   constructor(mStr) {
@@ -229,13 +233,13 @@ export class Strategy {
 }
 
 /**
- * Represents a merge strategy in merging options.
+ * Represents a merge option in merging options.
  */
 export class Option {
   public propertyName: string;
   public algorithmRef: string;
   public maxValues: number;
-  public maxSources: string;
+  public maxSources: number;
   public length: Object;
   public sourceWeights: any;
   public strategy: string;
