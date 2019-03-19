@@ -19,5 +19,5 @@ public interface StepFinishedListener {
     /**
      * Listens for when the flow is complete
      */
-    void onFlowFinished();
+    void onStepFinished();
 }
