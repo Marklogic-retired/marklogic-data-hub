@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.legacy;
 
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
 import com.marklogic.hub.legacy.flow.FlowType;
@@ -29,6 +30,12 @@ import java.util.List;
  * Manages existing flows and creates flow runners to execute flows.
  */
 public interface LegacyFlowManager {
+
+    /**
+     * Set HubConfig
+     * @param hubConfig
+     */
+    void setHubConfig(HubConfig hubConfig);
 
     /**
      * Turns an XML document into a flow

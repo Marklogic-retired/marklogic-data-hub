@@ -32,8 +32,6 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -48,6 +46,10 @@ public class FlowManagerImpl implements FlowManager {
 
     @Autowired
     private HubConfig hubConfig;
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
 
     @Override
     public Flow getFlow(String flowName) {

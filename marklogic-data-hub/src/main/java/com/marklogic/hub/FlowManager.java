@@ -17,7 +17,6 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 
@@ -33,6 +32,12 @@ public interface FlowManager {
      */
     String FLOW_FILE_EXTENSION = ".flow.json";
 
+    /**
+     * Set the HubConfig
+     *
+     * @param hubConfig - the hubConfig to use
+     */
+    void setHubConfig(HubConfig hubConfig);
     /**
      * Retrieves a named flow
      * @param flowName - name of the flow
