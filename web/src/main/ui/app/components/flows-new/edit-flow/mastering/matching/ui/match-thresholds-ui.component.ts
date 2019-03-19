@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, ViewChild, HostListener } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import { MatchThreshold } from "../../../models/match-thresholds.model";
+import { MatchThreshold } from "../match-thresholds.model";
 import { AddMatchThresholdDialogComponent } from './add-match-threshold-dialog.component';
-import { ConfirmationDialogComponent } from "../../../../common";
+import { ConfirmationDialogComponent } from "../../../../../common";
 
 @Component({
   selector: 'app-match-thresholds-ui',

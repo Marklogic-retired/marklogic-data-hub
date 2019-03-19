@@ -23,6 +23,10 @@
         ></app-mapping>
       </div>
       <div id="step-type-mastering-container" *ngIf="step.type === 'mastering'">
+        <app-merging
+          [step]="step"
+          (saveStep)="saveStep($event)"
+        ></app-merging>
         <app-matching
           [step]="step"
           (saveStep)="saveStep($event)"

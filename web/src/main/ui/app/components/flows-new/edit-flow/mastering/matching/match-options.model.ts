@@ -99,7 +99,6 @@ export class MatchOption {
         return prop.name;
       })
     }
-    console.log('constructor', this);
   }
 
   /**
