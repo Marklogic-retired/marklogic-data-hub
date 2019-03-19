@@ -1,11 +1,8 @@
 const sem = require("/MarkLogic/semantics.xqy");
 const DataHub = require("/data-hub/5/datahub.sjs");
-var datahub = null;
+const datahub = new DataHub();
 
 function main(content, options) {
-  if(!datahub){
-    datahub = new DataHub();
-  }
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;

@@ -1,11 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
-var datahub = new DataHub();
-var lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+const datahub = new DataHub();
+const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 
 function main(content, options) {
-  if(!datahub){
-    datahub = new DataHub();
-  }
   let id = content.uri;
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
