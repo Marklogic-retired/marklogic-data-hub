@@ -1,0 +1,9 @@
+<flow xmlns="http://marklogic.com/data-hub">
+  <name>my-test-flow-ns-xml-sjs</name>
+  <entity>test</entity>
+  <type>harmonize</type>
+  <data-format>xml</data-format>
+  <code-format>sjs</code-format>
+  <collector code-format="sjs" module="/entities/test/harmonize/my-test-flow-ns-xml-sjs/collector.sjs"></collector>
+  <main code-format="sjs" module="/entities/test/harmonize/my-test-flow-ns-xml-sjs/main.sjs"></main>
+</flow>
