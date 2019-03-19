@@ -2,11 +2,11 @@ import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angu
 import { ActivatedRoute, Params } from '@angular/router';
 import { MatchOptionsUiComponent } from "./ui/match-options-ui.component";
 import { MatchThresholdsUiComponent } from "./ui/match-thresholds-ui.component";
-import { Matching } from "../../models/matching.model";
-import { MatchOptions } from "../../models/match-options.model";
-import { MatchThresholds } from "../../models/match-thresholds.model";
-import { EntitiesService } from '../../../../models/entities.service';
-import { Entity } from '../../../../models';
+import { Matching } from "./matching.model";
+import { MatchOptions } from "./match-options.model";
+import { MatchThresholds } from "./match-thresholds.model";
+import { EntitiesService } from '../../../../../models/entities.service';
+import { Entity } from '../../../../../models';
 import * as _ from "lodash";
 
 @Component({
