@@ -1,14 +1,17 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+var datahub = new DataHub();
+var lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 
 function main(content, options) {
-  let lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+  if(!datahub){
+    datahub = new DataHub();
+  }
   let id = content.uri;
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
-    datahub.flow.debug.log({
+    datahub.debug.log({
       message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',
       type: 'error'
     });
@@ -17,7 +20,7 @@ function main(content, options) {
 
   //let's see if our doc is in the cluster at update time
   if (!fn.docAvailable(id)) {
-    datahub.flow.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
+    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
     throw Error('The document with the uri: ' + id + ' could not be found.')
   }
 
@@ -40,7 +43,7 @@ function main(content, options) {
   } else if (options.mapping && options.mapping.name) {
     mapping = lib.getMapping(options.mapping.name);
   } else {
-    datahub.flow.debug.log({message: 'You must specify a mapping name.', type: 'error'});
+    datahub.debug.log({message: 'You must specify a mapping name.', type: 'error'});
     throw Error('You must specify a mapping name.');
   }
 
@@ -51,7 +54,7 @@ function main(content, options) {
     if (options.mapping.version) {
       mapError += ' with version #' + options.mapping.version;
     }
-    datahub.flow.debug.log({message: mapError, type: 'error'});
+    datahub.debug.log({message: mapError, type: 'error'});
     throw Error(mapError);
   }
 
@@ -64,7 +67,7 @@ function main(content, options) {
   if (entityModel) {
     entityModel = entityModel.toObject();
   } else {
-    datahub.flow.debug.log({message: 'Could not find a target entity: ' + mapping.targetEntityType, type: 'error'});
+    datahub.debug.log({message: 'Could not find a target entity: ' + mapping.targetEntityType, type: 'error'});
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
   }
 

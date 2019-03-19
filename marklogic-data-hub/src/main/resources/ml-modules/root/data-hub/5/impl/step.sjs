@@ -81,6 +81,14 @@ class Step {
     return cts.search(cts.andQuery(query)).toArray();
   }
 
+  getStepByNameAndType(name, type = 'custom') {
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
+    let doc = fn.head(cts.search(cts.andQuery(query)));
+    if(doc) {
+      return doc.toObject();
+    }
+  }
+
   getStepProcessor(flow, name, type = 'custom') {
     let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
     let doc = fn.head(cts.search(cts.andQuery(query)));
