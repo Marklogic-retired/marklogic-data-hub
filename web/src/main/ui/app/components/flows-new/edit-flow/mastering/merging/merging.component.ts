@@ -1,6 +1,6 @@
 import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-// import { MergeOptionsUiComponent } from "./ui/merge-options-ui.component";
+import { MergeOptionsUiComponent } from "./ui/merge-options-ui.component";
 // import { MergeStrategiesUiComponent } from "./ui/merge-strategies-ui.component";
 // import { MergeCollectionsUiComponent } from "./ui/merge-collections-ui.component";
 import { Merging } from "./merging.model";
@@ -14,11 +14,24 @@ import * as _ from "lodash";
 @Component({
   selector: 'app-merging',
   template: `
-  <h1>Merging Component</h1>
+  <app-merge-options-ui
+    [mergeOptions]="mergeOptions"
+    [targetEntity]="targetEntity"
+    (createOption)="this.onCreateOption($event)"
+    (updateOption)="this.onUpdateOption($event)"
+    (deleteOption)="this.onDeleteOption($event)"
+  ></app-merge-options-ui>
+  <app-merge-strategies-ui
+    [mergeStrategies]="mergeStrategies"
+    [targetEntity]="targetEntity"
+    (createStrategy)="this.onCreateStrategy($event)"
+    (updateStrategy)="this.onUpdateStrategy($event)"
+    (deleteStrategy)="this.onDeleteStrategy($event)"
+  ></app-merge-strategies-ui>
 `
 })
 export class MergingComponent implements OnInit {
-  // @ViewChild(MergeOptionsUiComponent) mergeOptionsUi: MergeOptionsUiComponent;
+  @ViewChild(MergeOptionsUiComponent) mergeOptionsUi: MergeOptionsUiComponent;
   // @ViewChild(MergeStrategiesUiComponent) mergeStrategiesUi: MergeStrategiesUiComponent;
   // @ViewChild(MergeCollectionsUiComponent) mergeCollectionsUi: MergeCollectionsUiComponent;
 
@@ -69,23 +82,23 @@ export class MergingComponent implements OnInit {
     this.entitiesService.getEntities();
   }
 
-  // onCreateOption(event): void {
-  //   this.matchOptions.addOption(event);
-  //   this.matchOptionsUi.renderRows();
-  //   this.onSaveStep();
-  // }
+  onCreateOption(event): void {
+    this.mergeOptions.addOption(event.opt);
+    this.mergeOptionsUi.renderRows();
+    this.onSaveStep();
+  }
 
-  // onUpdateOption(event): void {
-  //   this.matchOptions.updateOption(event, event.index);
-  //   this.matchOptionsUi.renderRows();
-  //   this.onSaveStep();
-  // }
+  onUpdateOption(event): void {
+    this.mergeOptions.updateOption(event.opt, event.index);
+    this.mergeOptionsUi.renderRows();
+    this.onSaveStep();
+  }
 
-  // onDeleteOption(event): void {
-  //   this.matchOptions.deleteOption(event);
-  //   this.matchOptionsUi.renderRows();
-  //   this.onSaveStep();
-  // }
+  onDeleteOption(event): void {
+    this.mergeOptions.deleteOption(event);
+    this.mergeOptionsUi.renderRows();
+    this.onSaveStep();
+  }
 
   // onCreateThreshold(event): void {
   //   this.matchThresholds.addThreshold(event);
@@ -105,10 +118,10 @@ export class MergingComponent implements OnInit {
   //   this.onSaveStep();
   // }
 
-  // onSaveStep(): void {
-  //   this.matching = Matching.fromUI(this.matchOptions, this.matchThresholds);
-  //   this.step.config.matchOptions = this.matching;
-  //   this.saveStep.emit(this.step);
-  // }
+  onSaveStep(): void {
+    this.merging = Merging.fromUI(this.mergeOptions);
+    this.step.config.mergeOptions = this.merging;
+    this.saveStep.emit(this.step);
+  }
 
 }

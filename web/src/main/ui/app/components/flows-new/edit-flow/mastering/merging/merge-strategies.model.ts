@@ -58,7 +58,7 @@ export class MergeStrategy {
   public maxValues: number;
   public maxSources: number;
   public sourceWeights: string;
-  public length: string;
+  public length: Object;
   public strategy: string;
   public customUri: string;
   public customFunction: string;
