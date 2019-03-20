@@ -51,12 +51,21 @@ public class FlowRunnerImpl implements FlowRunner{
     private ExecutorService threadPool;
     private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
 
+    public RunFlowResponse runFlow(String flowName) {
+        Flow flow = flowManager.getFlow(flowName);
+        if (flow == null){
+            throw new RuntimeException("Flow " + flowName + " not found");
+        }
+        List<String> steps = new ArrayList<String>(flow.getSteps().keySet());
+        return runFlow(flowName, steps);
+    }
+
     public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
         Flow flow = flowManager.getFlow(flowName);
 
         //Validation of flow, provided steps
         if (flow == null){
-            throw new RuntimeException("Flow not found");
+            throw new RuntimeException("Flow " + flowName + " not found");
         }
         Iterator<String> stepItr = stepNums.iterator();
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
@@ -64,7 +73,7 @@ public class FlowRunnerImpl implements FlowRunner{
             String stepNum = stepItr.next();
             Step tmpStep = flow.getStep(stepNum);
             if(tmpStep == null){
-                throw new RuntimeException("Step not found");
+                throw new RuntimeException("Step " + stepNum + " not found in the flow");
             }
             stepsQueue.add(stepNum);
         }
