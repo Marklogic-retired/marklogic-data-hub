@@ -15,49 +15,104 @@
  */
 package com.marklogic.hub.flow;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.step.Step;
+import com.marklogic.hub.util.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FlowImpl implements Flow {
+    public final static int DEFAULT_BATCH_SIZE = 100;
+    public final static int DEFAULT_THREAD_COUNT = 4;
+
     private String name;
-    // Storing the entire JSON node for serialization;
-    private JsonNode rawValue;
+    private String id;
+    private String description;
+    private int batchSize;
+    private int threadCount;
 
-    public String getName() { return this.name; }
+    private Map<String, Step> steps;
 
-    public void setName(String flowName) { this.name = flowName; }
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String flowName) {
+        this.name = flowName;
+    }
 
     @Override
-    public String serialize() {
-        ObjectMapper mapper = new ObjectMapper();
-        // Using this approach, as we aren't de-serializing all data into Java Objects
-        if (rawValue != null) {
-            ObjectNode objNode = mapper.createObjectNode();
-            rawValue.fields().forEachRemaining((field) -> {
-                objNode.set(field.getKey(), field.getValue());
-            });
-            // Setters should be serialized into JSON
-            objNode.put("name", this.name);
-            return objNode.toString();
-        } else {
-            try {
-                return mapper.writeValueAsString(this);
-            }
-            catch (JsonProcessingException e) {
-                throw new DataHubProjectException("Unable to serialize flow object.");
-            }
-        }
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    @Override
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    @Override
+    public int getThreadCount() {
+        return threadCount;
+    }
+
+    @Override
+    public void setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
+    }
+
+    public Map<String, Step> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(Map<String, Step> steps) {
+        this.steps = steps;
     }
 
     @Override
     public Flow deserialize(JsonNode json) {
-        this.rawValue = json;
-        if (json.has("name")) {
-            setName(json.get("name").asText());
+        JSONObject jsonObject = new JSONObject(json);
+        setName(jsonObject.getString("name"));
+        setDescription(jsonObject.getString("description"));
+        setId(jsonObject.getString("id"));
+        setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
+        setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
+
+        Map<String, Step> steps = new HashMap<>();
+        JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
+        int n = 1;
+        while (stepsNode.isExist(String.valueOf(n))) {
+            String key = String.valueOf(n);
+
+            Step step = Step.create("default", Step.StepType.CUSTOM);
+            step.deserialize(stepsNode.getNode(key));
+
+            steps.put(key, step);
+
+            n++;
         }
+
+        setSteps(steps);
+
         return this;
     }
 }

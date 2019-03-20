@@ -57,7 +57,7 @@ class TraceServiceTest extends AbstractServiceTest {
     private static String ENTITY = "test-entity";
 
     @Autowired
-    private FlowManagerService flowMgrService;
+    private LegacyFlowManagerService flowMgrService;
 
     @Autowired
     Scaffolding scaffolding;

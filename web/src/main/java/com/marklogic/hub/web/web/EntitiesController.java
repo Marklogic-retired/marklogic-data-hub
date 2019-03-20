@@ -26,7 +26,7 @@ import com.marklogic.hub.web.model.PluginModel;
 import com.marklogic.hub.web.model.entity_services.EntityModel;
 import com.marklogic.hub.web.service.DataHubService;
 import com.marklogic.hub.web.service.EntityManagerService;
-import com.marklogic.hub.web.service.FlowManagerService;
+import com.marklogic.hub.web.service.LegacyFlowManagerService;
 import com.marklogic.hub.web.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +48,7 @@ class EntitiesController {
     protected DataHubService dataHubService;
 
     @Autowired
-    private FlowManagerService flowManagerService;
+    private LegacyFlowManagerService legacyFlowManagerService;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -156,12 +156,12 @@ class EntitiesController {
 
         ResponseEntity<?> resp;
 
-        LegacyFlow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
+        LegacyFlow flow = legacyFlowManagerService.getServerFlow(entityName, flowName, FlowType.HARMONIZE);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         else {
-            flowManagerService.runFlow(flow, batchSize, threadCount, options, (jobId, percentComplete, message) -> {
+            legacyFlowManagerService.runFlow(flow, batchSize, threadCount, options, (jobId, percentComplete, message) -> {
                 template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.HARMONIZE.toString()));
             });
             resp = new ResponseEntity<>(HttpStatus.OK);
@@ -201,7 +201,7 @@ class EntitiesController {
         @PathVariable String flowName,
         @RequestBody JsonNode json) throws IOException {
 
-        flowManagerService.saveOrUpdateHarmonizeFlowOptionsToFile(entityName,
+        legacyFlowManagerService.saveOrUpdateHarmonizeFlowOptionsToFile(entityName,
             flowName, json.toString());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -214,7 +214,7 @@ class EntitiesController {
         @PathVariable String flowName,
         @RequestBody JsonNode json) throws IOException {
 
-        flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+        legacyFlowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
             flowName, json.toString());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -228,16 +228,16 @@ class EntitiesController {
 
         ResponseEntity<?> resp;
 
-        LegacyFlow flow = flowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
+        LegacyFlow flow = legacyFlowManagerService.getServerFlow(entityName, flowName, FlowType.INPUT);
         if (flow == null) {
             resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
             String mlcpOptions = json.get("mlcpOptions").toString();
-            flowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
+            legacyFlowManagerService.saveOrUpdateFlowMlcpOptionsToFile(entityName,
                 flowName, mlcpOptions);
 
-            flowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
+            legacyFlowManagerService.runMlcp(flow, json, (jobId, percentComplete, message) -> template.convertAndSend("/topic/flow-status", new JobStatusMessage(jobId, percentComplete, message, FlowType.INPUT.toString())));
             resp = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
@@ -264,6 +264,6 @@ class EntitiesController {
     public Map<String, Object> getInputFlowOptions(
             @PathVariable String entityName,
             @PathVariable String flowName) throws IOException {
-        return flowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);
+        return legacyFlowManagerService.getFlowMlcpOptionsFromFile(entityName, flowName);
     }
 }
