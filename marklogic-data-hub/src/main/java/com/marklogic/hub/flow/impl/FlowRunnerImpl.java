@@ -1,10 +1,14 @@
 package com.marklogic.hub.flow.impl;
 
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
-import com.marklogic.hub.impl.FlowManagerImpl;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.job.Job;
+import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
@@ -17,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class FlowRunnerImpl implements FlowRunner{
@@ -25,7 +30,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private HubConfigImpl hubConfig;
 
     @Autowired
-    private FlowManagerImpl flowManager;
+    private FlowManager flowManager;
 
     private AtomicBoolean isRunning;
 
@@ -35,59 +40,74 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private StepRunner stepRunner;
 
-    private Map<String, List<Step>> stepsMap = new HashMap<>();
+    private Map<String, List<String>> stepsMap = new HashMap<>();
     private Map<String, Flow> flowMap = new HashMap<>();
+    private Map<String, RunFlowResponse> flowResp = new HashMap<>();
     private ConcurrentLinkedQueue jobQueue = new ConcurrentLinkedQueue();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
-    private Calendar jobStartTime;
-    private Calendar jobEndTime;
-
     private ExecutorService threadPool;
+    private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
 
 
-    public String runFlow(String flowName, List<String> stepNums) {
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
         Flow flow = flowManager.getFlow(flowName);
+
+        //Validation of flow, provided steps
         if (flow == null){
             throw new RuntimeException("Flow not found");
         }
         Iterator<String> stepItr = stepNums.iterator();
-        List<Step> steps = new ArrayList<>();
         while(stepItr.hasNext()) {
             Step tmpStep = flow.getStep(stepItr.next());
             if(tmpStep == null){
                 throw new RuntimeException("Step not found");
             }
-            steps.add(tmpStep);
         }
 
         String jobId = UUID.randomUUID().toString();
-        stepsMap.put(jobId, steps);
+        RunFlowResponse response = new RunFlowResponse(jobId);
+
+        //Put response, steps and flow in maps with jobId as key
+        flowResp.put(jobId, response);
+        stepsMap.put(jobId, stepNums);
         flowMap.put(jobId, flow);
+
+        //add jobId to a queue
         jobQueue.add(jobId);
+
         if(! isRunning.get()){
             initializeFlow(jobId);
         }
-        return jobId;
+        return response;
     }
 
     private void initializeFlow(String jobId) {
         isRunning.set(true);
-        jobStartTime = Calendar.getInstance();
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
-        threadPool = Executors.newFixedThreadPool(1);
+        if(threadPool == null || threadPool.isTerminated()) {
+            threadPool = Executors.newFixedThreadPool(1);
+        }
         threadPool.submit(new FlowRunnerTask(runningFlow, runningJobId));
     }
 
     public void stopJob(String jobId) {
         if (jobId.equals(runningJobId)) {
-            jobEndTime = Calendar.getInstance();
-            isRunning.set(false);
+            RunFlowResponse resp = flowResp.get(runningJobId);
+            resp.setStepResponses(stepOutputs);
+
+            stepRunner.stop();
+            jobUpdate.postJobs(jobId, JobStatus.CANCELED.toString(), runningStep.getName());
+            if(jobQueue.isEmpty()) {
+                threadPool.shutdown();
+                isRunning.set(false);
+            }
+            else {
+                initializeFlow((String) jobQueue.peek());
+            }
         }
-        stepRunner.stop();
-        threadPool.shutdown();
     }
 
     private class FlowRunnerTask implements Runnable {
@@ -101,27 +121,41 @@ public class FlowRunnerImpl implements FlowRunner{
 
         @Override
         public void run() {
-            List<Step> stepList = stepsMap.get(jobQueue.peek());
-            Iterator<Step> itr = stepList.iterator();
+            RunFlowResponse resp = flowResp.get(runningJobId);
+            resp.setStartTime(Calendar.getInstance());
+            List<String> stepList = stepsMap.get(jobQueue.peek());
+            Iterator<String> itr = stepList.iterator();
+            AtomicInteger errorCount = new AtomicInteger();
+            Map<String, Job> stepOutputs = new HashMap<>();
             while ((itr.hasNext())){
-                Step step = itr.next();
-                runningStep = step;
-                stepRunner = new StepRunnerFactory().getStepRunner(step)
+                String stepNum = itr.next();
+                runningStep = runningFlow.getSteps().get(stepNum);
+                stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
                     .onItemFailed((jobId, itemId)-> {
+                        errorCount.incrementAndGet();
                         if(flow.isStopOnError()){
                             stopJob(jobId);
                         }
                     })
                     .onStatusChanged((jobId, percentComplete, message) ->{
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChange(jobId, step, percentComplete, step.getName() + " " + message);
+                            listener.onStatusChange(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
                         });
 
                     });
-                stepRunner.run();
+                Job stepResp = stepRunner.run();
+                stepOutputs.put(stepNum, stepResp);
                 stepRunner.awaitCompletion();
             }
+            if(errorCount.get() > 0){
+                jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
+            }
+            else {
+                jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
+            }
+            resp.setStepResponses(stepOutputs);
+            resp.setEndTime(Calendar.getInstance());
             jobQueue.remove(jobQueue.peek());
             if(!jobQueue.isEmpty()) {
                 initializeFlow((String) jobQueue.peek());

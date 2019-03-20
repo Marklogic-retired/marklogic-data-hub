@@ -33,6 +33,7 @@ import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 
 import java.io.PrintWriter;
@@ -61,7 +62,7 @@ public class MappingStepRunner implements StepRunner {
     private boolean isFullOutput = false;
 
 
-    private int step = 1;
+    private String step = "1";
 
     private List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
     private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
@@ -85,7 +86,7 @@ public class MappingStepRunner implements StepRunner {
         return this;
     }
 
-    public StepRunner withStep(int step) {
+    public StepRunner withStep(String step) {
         this.step = step;
         return this;
     }
@@ -207,6 +208,11 @@ public class MappingStepRunner implements StepRunner {
     }
 
     @Override
+    public void stop() {
+        dataMovementManager.stopJob(queryBatcher);
+    }
+
+    @Override
     public Job run(Collection uris) {
         runningThread = null;
         Job job = createJob();
@@ -223,7 +229,7 @@ public class MappingStepRunner implements StepRunner {
         });
 
         final DiskQueue<String> uris;
-        uris = c.run(this.flow.getName(), String.valueOf(step), this.jobId, options);
+        uris = c.run(this.flow.getName(), step, this.jobId, options);
         return uris;
     }
 
@@ -410,12 +416,12 @@ public class MappingStepRunner implements StepRunner {
         }
 
 
-        public RunStepResponse run(String jobId, int step, Map<String, Object> options) {
+        public RunStepResponse run(String jobId, String step, Map<String, Object> options) {
             RunStepResponse resp;
             try {
                 RequestParameters params = new RequestParameters();
                 params.add("flow-name", flow.getName());
-                params.put("step", String.valueOf(step));
+                params.put("step", step);
                 params.put("job-id", jobId);
                 params.put("identifiers", (String) null);
                 params.put("target-database", targetDatabase);
@@ -447,29 +453,5 @@ public class MappingStepRunner implements StepRunner {
 
     }
 
-    class JobUpdate extends ResourceManager {
-        private static final String NAME = "ml:jobs";
 
-        private RequestParameters params;
-
-        public JobUpdate(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        private void postJobs(String jobId, String status, int step) {
-            params = new RequestParameters();
-            params.put("jobid", jobId);
-            params.put("status", status);
-            params.put("step", String.valueOf(step));
-            try {
-                this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-            }
-            catch (Exception e) {
-                throw new RuntimeException("Unable to update the job document");
-            }
-
-        }
-
-    }
 }
