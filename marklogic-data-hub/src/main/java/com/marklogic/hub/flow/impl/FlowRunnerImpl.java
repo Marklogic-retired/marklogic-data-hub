@@ -33,6 +33,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private FlowManager flowManager;
 
     private AtomicBoolean isRunning;
+    private AtomicBoolean isJobCancelled;
 
     private String runningJobId;
     private Step runningStep;
@@ -40,7 +41,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private StepRunner stepRunner;
 
-    private Map<String, List<String>> stepsMap = new HashMap<>();
+    private Map<String, Queue<String>> stepsMap = new HashMap<>();
     private Map<String, Flow> flowMap = new HashMap<>();
     private Map<String, RunFlowResponse> flowResp = new HashMap<>();
     private ConcurrentLinkedQueue jobQueue = new ConcurrentLinkedQueue();
@@ -50,7 +51,6 @@ public class FlowRunnerImpl implements FlowRunner{
     private ExecutorService threadPool;
     private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
 
-
     public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
         Flow flow = flowManager.getFlow(flowName);
 
@@ -59,11 +59,14 @@ public class FlowRunnerImpl implements FlowRunner{
             throw new RuntimeException("Flow not found");
         }
         Iterator<String> stepItr = stepNums.iterator();
+        Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
         while(stepItr.hasNext()) {
-            Step tmpStep = flow.getStep(stepItr.next());
+            String stepNum = stepItr.next();
+            Step tmpStep = flow.getStep(stepNum);
             if(tmpStep == null){
                 throw new RuntimeException("Step not found");
             }
+            stepsQueue.add(stepNum);
         }
 
         String jobId = UUID.randomUUID().toString();
@@ -71,7 +74,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
         //Put response, steps and flow in maps with jobId as key
         flowResp.put(jobId, response);
-        stepsMap.put(jobId, stepNums);
+        stepsMap.put(jobId, stepsQueue);
         flowMap.put(jobId, flow);
 
         //add jobId to a queue
@@ -95,18 +98,9 @@ public class FlowRunnerImpl implements FlowRunner{
 
     public void stopJob(String jobId) {
         if (jobId.equals(runningJobId)) {
-            RunFlowResponse resp = flowResp.get(runningJobId);
-            resp.setStepResponses(stepOutputs);
-
+            stepsMap.get(jobId).clear();
+            isJobCancelled.set(true);
             stepRunner.stop();
-            jobUpdate.postJobs(jobId, JobStatus.CANCELED.toString(), runningStep.getName());
-            if(jobQueue.isEmpty()) {
-                threadPool.shutdown();
-                isRunning.set(false);
-            }
-            else {
-                initializeFlow((String) jobQueue.peek());
-            }
         }
     }
 
@@ -123,12 +117,12 @@ public class FlowRunnerImpl implements FlowRunner{
         public void run() {
             RunFlowResponse resp = flowResp.get(runningJobId);
             resp.setStartTime(Calendar.getInstance());
-            List<String> stepList = stepsMap.get(jobQueue.peek());
-            Iterator<String> itr = stepList.iterator();
+            Queue<String> stepQueue = stepsMap.get(jobQueue.peek());
+
             AtomicInteger errorCount = new AtomicInteger();
             Map<String, Job> stepOutputs = new HashMap<>();
-            while ((itr.hasNext())){
-                String stepNum = itr.next();
+            while (! stepQueue.isEmpty()){
+                String stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
                 stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
@@ -142,7 +136,6 @@ public class FlowRunnerImpl implements FlowRunner{
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
                             listener.onStatusChange(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
                         });
-
                     });
                 Job stepResp = stepRunner.run();
                 stepOutputs.put(stepNum, stepResp);
@@ -150,6 +143,9 @@ public class FlowRunnerImpl implements FlowRunner{
             }
             if(errorCount.get() > 0){
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
+            }
+            else if(isJobCancelled.get()) {
+                jobUpdate.postJobs(jobId, JobStatus.CANCELED.toString(), runningStep.getName());
             }
             else {
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
@@ -159,6 +155,9 @@ public class FlowRunnerImpl implements FlowRunner{
             jobQueue.remove(jobQueue.peek());
             if(!jobQueue.isEmpty()) {
                 initializeFlow((String) jobQueue.peek());
+            }
+            else {
+                threadPool.shutdownNow();
             }
         }
     }
