@@ -7,8 +7,21 @@ import java.util.concurrent.TimeoutException;
 
 public interface FlowRunner {
 
+    /**
+     * Runs the flow.
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     *
+     */
     RunFlowResponse runFlow(String flow, List<String> steps);
 
+    /**
+     * Runs the flow.
+     *
+     * @param jobId the id of the running flow
+     *
+     */
     void stopJob(String jobId);
 
     /**
