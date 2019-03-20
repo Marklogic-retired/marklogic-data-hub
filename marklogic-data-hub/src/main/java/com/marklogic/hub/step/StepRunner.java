@@ -50,7 +50,7 @@ public interface StepRunner {
      * @return the step runner object
      */
 
-    StepRunner withStep(int step) ;
+    StepRunner withStep(String step) ;
 
     /**
      * Sets the batch size for the step runner
@@ -152,4 +152,6 @@ public interface StepRunner {
      * @return Job object for the flow that is run
      */
     Job run(Collection<String> uris);
+
+    void stop();
 }
