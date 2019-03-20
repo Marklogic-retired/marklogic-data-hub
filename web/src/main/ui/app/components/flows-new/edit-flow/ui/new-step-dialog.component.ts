@@ -20,6 +20,7 @@ export interface DialogData {
 export class NewStepDialogComponent implements OnInit {
   public newStep: Step = new Step;
   readonly stepOptions = ['ingestion', 'mapping', 'mastering', 'custom'];
+  public databases = Object.values(this.data.databases).slice(0, -1);
   selectedSource: string = '';
 
   constructor(
@@ -34,5 +35,22 @@ export class NewStepDialogComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close(false);
   }
-
+  stepTypeChange(type) {
+    if (type === 'ingestion') {
+      this.newStep.sourceDatabase = '';
+      this.newStep.targetDatabase = this.data.databases.staging;
+    }
+    if (type === 'mapping') {
+      this.newStep.sourceDatabase = this.data.databases.staging;
+      this.newStep.targetDatabase = this.data.databases.final;
+    }
+    if (type === 'mastering') {
+      this.newStep.sourceDatabase = this.data.databases.final;
+      this.newStep.targetDatabase = this.data.databases.final;
+    }
+    if (type === 'custom') {
+      this.newStep.sourceDatabase = this.data.databases.staging;
+      this.newStep.targetDatabase = this.data.databases.final;
+    }
+  }
 }
