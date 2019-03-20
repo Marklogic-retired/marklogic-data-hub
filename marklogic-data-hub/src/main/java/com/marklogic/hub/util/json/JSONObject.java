@@ -222,6 +222,23 @@ public class JSONObject {
      * @param key
      * @return
      */
+    public Boolean getBoolean(String key) {
+        return getBoolean(key, false);
+    }
+
+    /**
+     * @param key
+     * @param defaultVal
+     * @return
+     */
+    public Boolean getBoolean(Object key, Boolean defaultVal) {
+        return json.get((String) key) == null ? defaultVal : json.get((String) key).asBoolean();
+    }
+
+    /**
+     * @param key
+     * @return
+     */
     public long getLong(String key) {
         return getLong(key, 0L);
     }

@@ -3,6 +3,7 @@ package com.marklogic.hub.web.web;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.web.exception.DataHubException;
+import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,5 +59,17 @@ public class FlowController {
         flowManagerService.deleteFlow(flowName);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.GET)
+    @ResponseBody
+    public List<StepModel> getSteps(@PathVariable String flowName) {
+        return flowManagerService.getSteps(flowName);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
+    @ResponseBody
+    public StepModel createStep(@PathVariable String flowName, @RequestBody String stepJson) {
+        return flowManagerService.createStep(flowName, stepJson);
     }
 }

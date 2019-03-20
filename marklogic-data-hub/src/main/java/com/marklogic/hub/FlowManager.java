@@ -19,8 +19,10 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.step.Step;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages CRUD operations for flows
@@ -40,6 +42,7 @@ public interface FlowManager {
     void setHubConfig(HubConfig hubConfig);
     /**
      * Retrieves a named flow
+     *
      * @param flowName - name of the flow
      * @return a flow object
      */
@@ -47,6 +50,7 @@ public interface FlowManager {
 
     /**
      * Returns a flow based on the provided name as JSON string
+     *
      * @param flowName - name of the flow
      * @return string json representation of the flow object
      */
@@ -54,31 +58,36 @@ public interface FlowManager {
 
     /**
      * Retrieves a list of flows installed on the MarkLogic server
+     *
      * @return - a list of all flows
      */
     List<Flow> getFlows();
 
     /**
      * Retrieves a list of names of flows installed on the MarkLogic server
+     *
      * @return - a list of names of all flows
      */
     List<String> getFlowNames();
 
     /**
      * Creates a flow
+     *
      * @param flowName - name of the flow
      */
     Flow createFlow(String flowName);
 
     /**
      * Creates a flow from a given JSON string
-     * @param  json - string representation of the flow
+     *
+     * @param json - string representation of the flow
      * @return - a Flow object
      */
     Flow createFlowFromJSON(String json);
 
     /**
      * Creates a flow from a given JsonNode
+     *
      * @param json - JsonNode representation of the flow
      * @return - a Flow object
      */
@@ -86,20 +95,26 @@ public interface FlowManager {
 
     /**
      * Deletes a flow
+     *
      * @param flowName - name of the flow
      */
     void deleteFlow(String flowName);
 
     /**
      * Saves a flow to disk
+     *
      * @param flow - the flow object to be saved
      */
     void saveFlow(Flow flow);
 
+    Map<String, Step> getSteps(String flowName);
+
+    Flow setSteps(String flowName, Map<String, Step> stepMap);
 
     /**
      * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
+     *
      * @return FlowRunner object with current hubconfig already set
      */
-    public FlowRunner newFlowRunner();
+    FlowRunner newFlowRunner();
 }
