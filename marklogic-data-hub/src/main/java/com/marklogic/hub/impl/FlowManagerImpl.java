@@ -27,6 +27,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowImpl;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
@@ -41,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -172,6 +174,17 @@ public class FlowManagerImpl implements FlowManager {
         } catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
         }
+    }
+
+    public Map<String, Step> getSteps(String flowName) {
+        Flow flow = getFlow(flowName);
+        return flow.getSteps();
+    }
+
+    public Flow setSteps(String flowName, Map<String, Step> stepMap) {
+        Flow flow = getFlow(flowName);
+        flow.setSteps(stepMap);
+        return flow;
     }
 
     @Override public FlowRunner newFlowRunner() {

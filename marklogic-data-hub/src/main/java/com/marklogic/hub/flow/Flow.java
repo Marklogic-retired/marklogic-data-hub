@@ -16,6 +16,9 @@
 package com.marklogic.hub.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.step.Step;
+
+import java.util.Map;
 
 public interface Flow {
     /**
@@ -43,6 +46,20 @@ public interface Flow {
 
     int getThreadCount();
     void setThreadCount(int threadCount);
+
+    /**
+     * Returns a map of Steps
+     *
+     * @return - a map having Step number as key and Step model as value
+     */
+    Map<String, Step> getSteps();
+
+    /**
+     * Sets the steps to the flow model
+     *
+     * @param steps -  a map having Step number as key and Step model as value
+     */
+    void setSteps(Map<String, Step> steps);
 
     /**
      * Deserialize a json response and applies it to this flow
