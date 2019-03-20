@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -85,15 +84,15 @@ class FlowManagerTest extends HubTestBase {
     @Test
     void getFlows() {
         List<Flow> flows = fm.getFlows();
-        Assertions.assertEquals(flows.size() ,  1);
+        Assertions.assertEquals(flows.size(), 1);
         Assertions.assertEquals(flows.get(0).getName(), fm.getFlow("test-flow").getName());
     }
 
     @Test
     void getFlowNames() {
         List<String> flows = fm.getFlowNames();
-        Assertions.assertEquals(flows.size() ,  1);
-        Assertions.assertEquals(flows.get(0) ,  "test-flow");
+        Assertions.assertEquals(flows.size(), 1);
+        Assertions.assertEquals(flows.get(0), "test-flow");
     }
 
     @Test
@@ -121,9 +120,8 @@ class FlowManagerTest extends HubTestBase {
     void deleteFlow() {
         fm.deleteFlow("test-flow");
 
-        Assertions.assertThrows(DataHubProjectException.class, () -> {
-            fm.getFlow("test-flow");
-        });
+        Flow flow = fm.getFlow("test-flow");
+        Assertions.assertNull(flow);
     }
 
     @Test

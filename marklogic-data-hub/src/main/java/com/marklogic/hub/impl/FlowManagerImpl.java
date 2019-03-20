@@ -34,10 +34,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -64,8 +61,9 @@ public class FlowManagerImpl implements FlowManager {
         if(inputStream == null) {
             try {
                 inputStream = FileUtils.openInputStream(flowPath.toFile());
+            } catch (FileNotFoundException e) {
+                return null;
             } catch (IOException e) {
-                // return null if it doesn't exist, so we can check for it.
                 throw new DataHubProjectException(e.getMessage());
             }
         }
