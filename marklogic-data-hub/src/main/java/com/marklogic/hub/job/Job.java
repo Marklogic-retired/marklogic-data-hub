@@ -28,13 +28,21 @@ public class Job {
 
     private List<String> jobOutput;
     private Map<String, Object> fullOutput;
-    private String status ;
+    private String status;
 
+    private long totalEvents = 0;
     private long successfulEvents = 0;
     private long failedEvents = 0;
     private long successfulBatches = 0;
     private long failedBatches = 0;
+    private boolean success = false;
 
+    /**
+     * @return true if the job ran without errors, false otherwise.
+     */
+    public boolean isSuccess() {
+        return success;
+    }
 
     public Job withJobId(String jobId) {
         this.jobId = jobId;
@@ -70,7 +78,8 @@ public class Job {
         return this;
     }
 
-    public Job setCounts(long successfulEvents, long failedEvents, long successfulBatches, long failedBatches) {
+    public Job setCounts(long totalEvents,long successfulEvents, long failedEvents, long successfulBatches, long failedBatches) {
+        this.totalEvents = totalEvents;
         this.successfulEvents = successfulEvents;
         this.failedEvents = failedEvents;
         this.successfulBatches = successfulBatches;
@@ -107,6 +116,8 @@ public class Job {
     public long getFailedEvents() {
         return failedEvents;
     }
+
+    public long getTotalEvents() {  return totalEvents; }
 
     public long getSuccessfulBatches() {
         return successfulBatches;

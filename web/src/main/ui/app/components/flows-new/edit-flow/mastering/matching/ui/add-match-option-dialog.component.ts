@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatchOption } from "../../../models/match-options.model";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatchOption } from "../match-options.model";
+import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import {forOwn} from 'lodash';
 
 export interface DialogData {
   stepName: string;
@@ -16,7 +17,9 @@ export interface DialogData {
 export class AddMatchOptionDialogComponent {
 
   form: FormGroup;
+  props: FormArray;
   selectedType: string;
+  propertiesReduce: FormArray;
 
   constructor(
     private fb: FormBuilder,
@@ -26,7 +29,7 @@ export class AddMatchOptionDialogComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName.join(', ') : ''],
+      propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
       weight: [this.data.option ? this.data.option.weight : ''],
       thesaurus: [this.data.option ? this.data.option.thesaurus : ''],
@@ -38,10 +41,40 @@ export class AddMatchOptionDialogComponent {
       zip9match5: [this.data.option ? this.data.option.zip9match5 : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
-      index: this.data.index
+      index: this.data.index,
+      entityProps:  [this.data.entityProps ? this.data.entityProps : []]
     })
     this.selectedType = (this.data.option && this.data.option.matchType) ?
       this.data.option.matchType : 'exact';
+    this.form.setControl('propertiesReduce', this.createProps());
+    this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
+  }
+
+  createProps() {
+    if (!this.data.option || !this.data.option.propertyName) {
+      return this.fb.array([this.createProp('')]);
+    }
+    const result = [];
+    this.data.option.propertyName.forEach(name => {
+      result.push(this.createProp(name))
+    })
+    return this.fb.array(result);
+  }
+
+  createProp(name) {
+    return this.fb.group({
+      name: name
+    });
+  }
+
+  onAddProp() {
+    const props = this.form.get('propertiesReduce') as FormArray;
+    props.push(this.createProp(''));
+  }
+
+  onRemoveProp(i) {
+    const props = this.form.get('propertiesReduce') as FormArray;
+    props.removeAt(i);
   }
 
   onNoClick(): void {

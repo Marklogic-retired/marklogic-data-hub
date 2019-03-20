@@ -85,9 +85,9 @@ export class MatchThreshold {
       let act = acts.find(a => {
         return a.name === mThr.action;
       });
-      if (act) result.action = 'custom';
-      if (act.at) result.customUri = act.at;
-      if (act.function) result.customFunction = act.function;
+      if (act && act.name) result.action = act.name;
+      if (act && act.at) result.customUri = act.at;
+      if (act && act.function) result.customFunction = act.function;
     }
     return result;
   }

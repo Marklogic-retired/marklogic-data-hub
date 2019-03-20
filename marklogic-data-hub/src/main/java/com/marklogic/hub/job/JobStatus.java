@@ -26,4 +26,7 @@ public enum JobStatus {
     public String toString() {
         return this.type;
     }
+
+    public static final String COMPLETED_PREFIX = "completed step ";
+
 }

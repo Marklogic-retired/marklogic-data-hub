@@ -14,11 +14,12 @@ import { RunFlowDialogComponent } from './ui/run-flow-dialog.component';
 import { StepComponent } from './ui/step.component';
 import { StepperComponent } from './ui/stepper.component';
 
-import { MatchingComponent } from './mastering/matching.component';
-import { MatchOptionsUiComponent } from './mastering/ui/match-options-ui.component';
-import { MatchThresholdsUiComponent } from "./mastering/ui/match-thresholds-ui.component";
-import { AddMatchOptionDialogComponent } from './mastering/ui/add-match-option-dialog.component';
-import { AddMatchThresholdDialogComponent } from './mastering/ui/add-match-threshold-dialog.component';
+import { MatchingComponent } from './mastering/matching/matching.component';
+import { MatchOptionsUiComponent } from './mastering/matching/ui/match-options-ui.component';
+import { MatchThresholdsUiComponent } from "./mastering/matching/ui/match-thresholds-ui.component";
+import { AddMatchOptionDialogComponent } from './mastering/matching/ui/add-match-option-dialog.component';
+import { AddMatchThresholdDialogComponent } from './mastering/matching/ui/add-match-threshold-dialog.component';
+import { MergingComponent } from './mastering/merging/merging.component';
 import { MappingComponent } from './mapping/mapping.component';
 import { MappingUiComponent } from './mapping/ui/mapping-ui.component';
 
@@ -40,6 +41,7 @@ import { MdlModule } from '@angular-mdl/core';
     MatchThresholdsUiComponent,
     AddMatchOptionDialogComponent,
     AddMatchThresholdDialogComponent,
+    MergingComponent,
     MappingComponent,
     MappingUiComponent,
     FocusElementDirective,

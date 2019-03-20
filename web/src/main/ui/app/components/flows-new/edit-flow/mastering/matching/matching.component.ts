@@ -2,15 +2,19 @@ import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angu
 import { ActivatedRoute, Params } from '@angular/router';
 import { MatchOptionsUiComponent } from "./ui/match-options-ui.component";
 import { MatchThresholdsUiComponent } from "./ui/match-thresholds-ui.component";
-import { Matching } from "../../models/matching.model";
-import { MatchOptions } from "../../models/match-options.model";
-import { MatchThresholds } from "../../models/match-thresholds.model";
+import { Matching } from "./matching.model";
+import { MatchOptions } from "./match-options.model";
+import { MatchThresholds } from "./match-thresholds.model";
+import { EntitiesService } from '../../../../../models/entities.service';
+import { Entity } from '../../../../../models';
+import * as _ from "lodash";
 
 @Component({
   selector: 'app-matching',
   template: `
   <app-match-options-ui
     [matchOptions]="matchOptions"
+    [targetEntity]="targetEntity"
     (createOption)="this.onCreateOption($event)"
     (updateOption)="this.onUpdateOption($event)"
     (deleteOption)="this.onDeleteOption($event)"
@@ -34,9 +38,11 @@ export class MatchingComponent implements OnInit {
   public matching: Matching;
   public matchOptions: MatchOptions;
   public matchThresholds: MatchThresholds;
+  public targetEntity: any;
 
   constructor(
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private entitiesService: EntitiesService
   ) { }
 
   ngOnInit() {
@@ -49,17 +55,30 @@ export class MatchingComponent implements OnInit {
     this.matchOptions = MatchOptions.fromMatching(this.matching);
     this.matchThresholds = MatchThresholds.fromMatching(this.matching);
 
+    this.getEntity(this.step.config.targetEntity);
+
+  }
+
+  /**
+   * Load target entity.
+   */
+  getEntity(entityName): void {
+    let self = this;
+    this.entitiesService.entitiesChange.subscribe(entities => {
+      this.targetEntity = _.find(entities, (e: Entity) => {
+        return e.name === entityName;
+      });
+    });
+    this.entitiesService.getEntities();
   }
 
   onCreateOption(event): void {
-    console.log('createOption', event);
     this.matchOptions.addOption(event);
     this.matchOptionsUi.renderRows();
     this.onSaveStep();
   }
 
   onUpdateOption(event): void {
-    console.log('saveOption', event);
     this.matchOptions.updateOption(event, event.index);
     this.matchOptionsUi.renderRows();
     this.onSaveStep();

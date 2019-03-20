@@ -76,8 +76,8 @@ export class FlowSettingsDialogComponent implements OnInit {
     const resultFlow = this.data.flow ? this.data.flow.toJson() : new Flow().toJson();
     resultFlow.name = this.form.value.name;
     resultFlow.description = this.form.value.description;
-    resultFlow.batchSize = this.form.value.batchSize;
-    resultFlow.threadCount = this.form.value.threadCount;
+    resultFlow.batchSize = parseInt(this.form.value.batchSize);
+    resultFlow.threadCount = parseInt(this.form.value.threadCount);
     resultFlow.options = this.form.value.options ?
       this.updateOptions(this.form.value.options) : [];
     this.dialogRef.close(resultFlow);

@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import { MatchOption } from "../../../models/match-options.model";
+import { MatchOption } from "../match-options.model";
 import { AddMatchOptionDialogComponent } from './add-match-option-dialog.component';
-import { ConfirmationDialogComponent } from "../../../../common";
+import { ConfirmationDialogComponent } from "../../../../../common";
 
 @Component({
   selector: 'app-match-options-ui',
@@ -15,6 +15,7 @@ export class MatchOptionsUiComponent {
   @ViewChild(MatSort) sort: MatSort;
 
   @Input() matchOptions: any;
+  @Input() targetEntity: any;
 
   @Output() createOption = new EventEmitter();
   @Output() updateOption = new EventEmitter();
@@ -38,10 +39,11 @@ export class MatchOptionsUiComponent {
     this.dataSource.sort = this.sort;
   }
 
-  openMatchOptionDialog(optionToEdit: MatchOption, index: number): void {
+  openMatchOptionDialog(optionToEdit: MatchOption, index: number, entityProps: any): void {
+    console.log('entityProps', entityProps);
     const dialogRef = this.dialog.open(AddMatchOptionDialogComponent, {
       width: '500px',
-      data: {option: optionToEdit, index: index}
+      data: {option: optionToEdit, index: index, entityProps: entityProps}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
