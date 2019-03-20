@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Step } from '../../models/step.model';
 
 @Component({
@@ -7,19 +7,20 @@ import { Step } from '../../models/step.model';
   <app-custom-ui
     [step]="step"
     [module]="module"
+    (updateCustom)="saveCustom($event)"
   ></app-custom-ui>
 `
 })
-export class CustomComponent implements OnInit {
+export class CustomComponent {
 
   @Input() step: Step;
   @Input() module: string;
+  @Output() saveStep = new EventEmitter();
   constructor(
 
   ) { }
 
-  ngOnInit() {
-
+  saveCustom(step) {
+    this.saveStep.emit(step);
   }
-
 }
