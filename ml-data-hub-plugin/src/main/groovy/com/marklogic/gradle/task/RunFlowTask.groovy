@@ -118,7 +118,7 @@ class RunFlowTask extends HubTask {
 
         if (step == null) {
             step = project.hasProperty("step") ?
-                Integer.parseInt(project.property("step")) : 1
+                project.property("step") : "1"
         }
 
         if (!isHubInstalled()) {

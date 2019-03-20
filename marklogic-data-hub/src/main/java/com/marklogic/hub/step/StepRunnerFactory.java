@@ -1,8 +1,11 @@
 package com.marklogic.hub.step;
 
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.impl.MappingStepRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 public class StepRunnerFactory {
 
@@ -10,7 +13,10 @@ public class StepRunnerFactory {
     private HubConfig hubConfig;
     private StepRunner stepRunner;
 
-    public StepRunner getStepRunner(Step step) {
+    public StepRunner getStepRunner(Flow flow, String stepNum) {
+        Map<String,Step> steps = flow.getSteps();
+        Step step = steps.get(stepNum);
+
         switch (step.getType()) {
             case MAPPING:
                 stepRunner = new MappingStepRunner(hubConfig);
@@ -19,8 +25,8 @@ public class StepRunnerFactory {
             case INGEST:
                 stepRunner =  null;
         }
-        return stepRunner.withFlow(step.getFlow())
-            .withStep(step)
+        return stepRunner.withFlow(flow)
+            .withStep(stepNum)
             .withOptions(step.getOptions())
             .withBatchSize(step.getBatchSize())
             .withThreadCount(step.getThreadCount())
