@@ -1,45 +1,54 @@
 package com.marklogic.hub.web.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ApiError {
     private HttpStatus status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDateTime timestamp;
-    private String message;
-    private String debugMessage;
+    Map<String, Object> errorInfo;
 
     private ApiError() {
-        timestamp = LocalDateTime.now();
+        errorInfo = new LinkedHashMap<>();
     }
 
-    public ApiError(HttpStatus status) {
+    private ApiError(HttpStatus status) {
         this();
         this.status = status;
     }
 
     public ApiError(HttpStatus status, Throwable ex) {
-        this();
-        this.status = status;
-        this.message = "Unexpected error";
-        this.debugMessage = ex.getLocalizedMessage();
+        this(status);
+        String msg = checkMessage(ex.getLocalizedMessage());
+        setErrorInfo(msg);
     }
 
-    public ApiError(HttpStatus status, String message, Throwable ex) {
-        this();
-        this.status = status;
-        this.message = message;
-        this.debugMessage = ex.getLocalizedMessage();
+    public ApiError(HttpStatus status, String message) {
+        this(status);
+        setErrorInfo(checkMessage(message));
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    private String checkMessage(String message) {
+        if (StringUtils.isEmpty(message)) {
+            message = status.name();
+        }
+        return message;
+    }
+
+    private void setErrorInfo(String message) {
+        errorInfo.put("code", status.value());
+        errorInfo.put("message", message);
+        errorInfo.put("timestamp", String.valueOf(LocalDateTime.now()));
     }
 
     public HttpStatus getStatus() {
         return this.status;
+    }
+
+    public Map<String, Object> getErrorInfo() {
+        return this.errorInfo;
     }
 }
