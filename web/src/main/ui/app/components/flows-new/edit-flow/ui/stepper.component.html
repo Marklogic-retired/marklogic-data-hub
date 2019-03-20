@@ -80,7 +80,7 @@
     </div>
   </div>
 
-  <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
+  <ng-container *ngIf="stepsArray.length > 0" [ngTemplateOutlet]="selected.content"></ng-container>
 
   <mat-menu id="flow-menu-dialog" #flowMenu="matMenu">
       <div id="flow-menu-edit-btn" mat-menu-item (click)="this.editSettingsClicked()">Edit Settings</div>
