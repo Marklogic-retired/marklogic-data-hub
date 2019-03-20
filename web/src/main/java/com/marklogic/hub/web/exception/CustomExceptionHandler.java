@@ -4,9 +4,11 @@ import com.marklogic.hub.web.model.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -17,30 +19,28 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<?> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+        return new ResponseEntity<>(apiError.getErrorInfo(), new HttpHeaders(), apiError.getStatus());
     }
 
     @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity<?> handleEntityNotFound(
+    protected ResponseEntity<?> handleErrorRequest(
         NotFoundException ex) {
-        ApiError apiError = new ApiError(NOT_FOUND);
-        apiError.setMessage(ex.getMessage());
+        ApiError apiError = new ApiError(NOT_FOUND, ex);
         return buildResponseEntity(apiError);
     }
 
     @ExceptionHandler(BadRequestException.class)
-    protected ResponseEntity<?> handleBadReqest(
+    protected ResponseEntity<?> handleErrorRequest(
         BadRequestException ex) {
-        ApiError apiError = new ApiError(BAD_REQUEST);
-        apiError.setMessage(ex.getMessage());
+        ApiError apiError = new ApiError(BAD_REQUEST, ex);
         return buildResponseEntity(apiError);
     }
 
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataHubException.class)
-    protected ResponseEntity<?> handleErrorReqest(
+    protected ResponseEntity<?> handleErrorRequest(
         DataHubException ex) {
-        ApiError apiError = new ApiError(BAD_REQUEST);
-        apiError.setMessage(ex.getLocalizedMessage());
+        ApiError apiError = new ApiError(BAD_REQUEST, ex);
         return buildResponseEntity(apiError);
     }
 }
