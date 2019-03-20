@@ -260,14 +260,27 @@ class Flow {
         hookOperation();
       }
       let self = this;
-      for (let contentItem of content) {
-        flowInstance.globalContext.uri = contentItem.uri;
-        let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
-        //add our metadata to this
-        if(result && result.context) {
-          result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+      if(combinedOptions.acceptsBatch){
+        let results = this.hubUtils.normalizeToSequence(flowInstance.runMain(content, combinedOptions, processor.run));
+        for (let result of results) {
+          if(result && result.context) {
+            result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+          }
+          flowInstance.addToWriteQueue(result, flowInstance.globalContext);
         }
-        flowInstance.addToWriteQueue(result, flowInstance.globalContext);
+      }
+      else{
+          for (let contentItem of content) {
+            flowInstance.globalContext.uri = contentItem.uri;
+            let results = this.hubUtils.normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
+            for (let result of results) {
+            //add our metadata to this
+              if(result && result.context) {
+                result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+              }
+              flowInstance.addToWriteQueue(result, flowInstance.globalContext);
+            }
+          } 
       }
       flowInstance.globalContext.uri = null;
       if (hook && !hook.runBefore) {
