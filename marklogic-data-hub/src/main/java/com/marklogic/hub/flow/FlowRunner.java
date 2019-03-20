@@ -147,7 +147,7 @@ public interface FlowRunner {
     /**
      * Runs the flow and creates the job. This bypasses the collector
      *
-     * @params uris the ids to pass to the harmonization flow
+     * @param uris the ids to pass to the harmonization flow
      *
      * @return Job object for the flow that is run
      */
