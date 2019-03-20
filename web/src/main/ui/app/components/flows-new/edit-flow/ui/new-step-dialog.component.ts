@@ -20,7 +20,7 @@ export interface DialogData {
 export class NewStepDialogComponent implements OnInit {
   public newStep: Step = new Step;
   readonly stepOptions = ['ingestion', 'mapping', 'mastering', 'custom'];
-  private databases = Object.values(this.data.databases).slice(0, -1);
+  public databases = Object.values(this.data.databases).slice(0, -1);
   selectedSource: string = '';
 
   constructor(
