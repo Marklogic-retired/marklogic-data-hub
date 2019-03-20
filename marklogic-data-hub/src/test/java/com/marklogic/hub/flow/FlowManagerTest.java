@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -45,7 +46,6 @@ class FlowManagerTest extends HubTestBase {
     private String flowString = "{\n" +
         "  \"name\": \"test-flow\",\n" +
         "  \"description\": \"this is an example\",\n" +
-        "  \"identifier\": \"(some identifier or search)\",\n" +
         "  \"steps\": {\n" +
         "    \"1\": {\n" +
         "      \"type\": \"MAPPING\",\n" +
@@ -121,8 +121,9 @@ class FlowManagerTest extends HubTestBase {
     void deleteFlow() {
         fm.deleteFlow("test-flow");
 
-        Flow flow = fm.getFlow("test-flow");
-        Assertions.assertNull(flow);
+        Assertions.assertThrows(DataHubProjectException.class, () -> {
+            fm.getFlow("test-flow");
+        });
     }
 
     @Test
