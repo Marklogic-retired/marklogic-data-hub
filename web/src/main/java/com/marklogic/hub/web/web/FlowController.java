@@ -3,6 +3,7 @@ package com.marklogic.hub.web.web;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.web.exception.DataHubException;
+import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -22,24 +22,25 @@ public class FlowController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
-    public List<Flow> getFlows() throws ClassNotFoundException, IOException {
+    public List<Flow> getFlows() {
         return flowManagerService.getFlows();
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public Flow createFlow(
-        @RequestBody String flowJson) throws ClassNotFoundException, IOException {
+    public Flow createFlow(@RequestBody String flowJson) {
         return flowManagerService.createFlow(flowJson);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getFlow(
-        @PathVariable String flowName) {
+    public ResponseEntity<?> getFlow(@PathVariable String flowName) {
         Flow flow = null;
         try {
             flow = flowManagerService.getFlow(flowName);
+            if (flow == null) {
+                throw new NotFoundException();
+            }
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
@@ -48,14 +49,13 @@ public class FlowController {
 
     @RequestMapping(value = "/names/", method = RequestMethod.GET)
     @ResponseBody
-    public List<String> getFlowNames() throws ClassNotFoundException, IOException {
+    public List<String> getFlowNames() {
         return flowManagerService.getFlowNames();
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteFlow(
-        @PathVariable String flowName) throws ClassNotFoundException, IOException {
+    public ResponseEntity<?> deleteFlow(@PathVariable String flowName)  {
         flowManagerService.deleteFlow(flowName);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
