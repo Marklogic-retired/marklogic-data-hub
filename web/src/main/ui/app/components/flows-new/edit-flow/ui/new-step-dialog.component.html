@@ -1,36 +1,36 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
-<div id="step-dialog" mat-dialog-content class="content">
+<div id="step-dialog" mat-dialog-content class="content" [formGroup]="newStepForm">
   <mat-form-field>
-    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange(newStep.type)" [(value)]="newStep.type">
+    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()" formControlName="type" required>
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="">
-    <input id="step-name" matInput [(ngModel)]="newStep.name" placeholder="Name">
+    <input id="step-name" matInput formControlName="name" placeholder="Name" required>
   </mat-form-field>
   <mat-form-field class="">
-    <input id="step-description" matInput [(ngModel)]="newStep.description" placeholder="Description">
+    <input id="step-description" matInput formControlName="description" placeholder="Description">
     <mat-hint>Optional</mat-hint>
   </mat-form-field>
   <div>
     <label>Source Type: </label>
-    <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource">
+    <mat-radio-group id="step-source-type" formControlName="selectedSource">
       <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
       <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
     </mat-radio-group>
   </div>
   
-  <mat-form-field *ngIf="selectedSource === 'collection'">
-    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
+  <mat-form-field *ngIf="this.newStepForm.value.selectedSource === 'collection'">
+    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection" formControlName="sourceCollection">
       <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'" >
-    <textarea matInput placeholder="Source Query" [(ngModel)]="newStep.sourceQuery"></textarea>
+  <mat-form-field id="step-source-query" *ngIf="this.newStepForm.value.selectedSource === 'query'" >
+    <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 
   <mat-form-field>
-    <mat-select id="step-target-entity" class="" placeholder="Target Entity" [(value)]="newStep.targetEntity">
+    <mat-select id="step-target-entity" class="" placeholder="Target Entity" formControlName="targetEntity">
       <mat-option class="" *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -44,12 +44,12 @@
       </mat-expansion-panel-header>
   
       <mat-form-field>
-        <mat-select id="step-source-database" placeholder="Source Database" [(value)]="newStep.sourceDatabase">
+        <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
           <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>
-        <mat-select id="step-target-database" placeholder="Target Database" [(value)]="newStep.targetDatabase">
+        <mat-select id="step-target-database" placeholder="Target Database" formControlName="targetDatabase">
           <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -58,5 +58,5 @@
 </div>
 <div mat-dialog-actions class="bottom">
   <button id="step-cancel-btn" mat-button (click)="onNoClick()">Cancel</button>
-  <button id="step-save-btn" mat-button cdkFocusInitial [mat-dialog-close]="newStep">Save</button>
+  <button id="step-save-btn" mat-button (click)="onSave()">Save</button>
 </div>
