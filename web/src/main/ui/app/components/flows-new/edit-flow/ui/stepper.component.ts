@@ -32,7 +32,9 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   ngAfterContentChecked() {
     if (this.stepAdded) {
-      this.selectedIndex += 1;
+      if (this.steps.length !== 1) {
+        this.selectedIndex += 1;
+      }
       this.stepAdded = false;
     }
   }
