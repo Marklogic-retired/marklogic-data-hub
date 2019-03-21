@@ -101,7 +101,7 @@ pipeline{
 		stage('code-review'){
 		when {
   			 allOf {
-    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '', title: '', url: ''
+    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
   }
   			beforeAgent true
 		}
