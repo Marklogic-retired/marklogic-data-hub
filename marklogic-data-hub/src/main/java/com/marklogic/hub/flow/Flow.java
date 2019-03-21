@@ -120,6 +120,24 @@ public interface Flow {
     void setSteps(Map<String, Step> steps);
 
     /**
+     *
+     * @param stepNum
+     * @return
+     */
+    Step getStep(String stepNum);
+
+    /**
+     *
+     * @param stopOnError
+     */
+    void setStopOnError(boolean stopOnError);
+    /**
+     *
+     * @return
+     */
+    boolean isStopOnError();
+
+    /**
      * Deserialize a json response and applies it to this flow
      *
      * @param json - the JsonNode you want deserialize
