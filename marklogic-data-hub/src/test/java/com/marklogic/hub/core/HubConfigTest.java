@@ -54,7 +54,7 @@ public class HubConfigTest extends HubTestBase {
 
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getFlowDeveloperConfig().getIsProvisionedEnvironment());
 
         AppConfig config = adminHubConfig.getAppConfig();
 

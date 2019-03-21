@@ -303,7 +303,7 @@ public class HubSettings {
     @Value("${mlModulesDbName}")
     String modulesDbName = null;
 
-    @Value("${mlHubUserName}")
+    @Value("${mlFlowOperatorName}")
     String username = null;
 
     String projectDir = null;

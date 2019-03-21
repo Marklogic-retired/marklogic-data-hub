@@ -61,10 +61,10 @@ public interface HubConfig {
     String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
     String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
-    String DEFAULT_ROLE_NAME = "data-hub-role";
-    String DEFAULT_USER_NAME = "data-hub-user";
-    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
-    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
+    String DEFAULT_ROLE_NAME = "flow-operator-role";
+    String DEFAULT_USER_NAME = "flow-operator";
+    String DEFAULT_ADMIN_ROLE_NAME = "flow-developer-role";
+    String DEFAULT_ADMIN_USER_NAME = "flow-developer";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;

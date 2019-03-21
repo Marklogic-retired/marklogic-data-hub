@@ -281,10 +281,10 @@ public class HubProjectImpl implements HubProject {
             logger.error("Failed to load amp resource", e);
         }
 
-        writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/flow-operator-role.json", rolesDir.resolve("flow-operator-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/flow-operator.json", usersDir.resolve("flow-operator.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/flow-developer-role.json", rolesDir.resolve("flow-developer-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/flow-developer.json", usersDir.resolve("flow-developer.json"), true);
 
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
@@ -395,7 +395,7 @@ public class HubProjectImpl implements HubProject {
         
         //obsolete database/server/role names in hub-internal-config from 3.0
         Set<String> obsoleteFiles = Stream.of("trace-database.json", "triggers-database.json", 
-                "schemas-database.json", "trace-server.json", "data-hub-role.json").collect(Collectors.toSet());
+                "schemas-database.json", "trace-server.json", "flow-operator-role.json").collect(Collectors.toSet());
                 
         //if the entity-config directory exists, we'll copy it to the src/main/entity-config
         upgradeProjectDir(entityConfigDir, getEntityConfigDir(), oldEntityConfigDir);
