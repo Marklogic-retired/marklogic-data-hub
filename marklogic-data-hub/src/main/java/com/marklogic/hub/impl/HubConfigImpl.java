@@ -1449,7 +1449,7 @@ public class HubConfigImpl implements HubConfig
         return newStagingClient(stagingDbName);
     }
 
-    private DatabaseClient newStagingClient(String dbName) {
+    public DatabaseClient newStagingClient(String dbName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
         config.setDatabase(dbName);

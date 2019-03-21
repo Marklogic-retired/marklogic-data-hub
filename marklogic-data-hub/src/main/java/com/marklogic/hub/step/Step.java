@@ -21,6 +21,7 @@ import com.marklogic.hub.step.impl.StepImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 public interface Step {
 
@@ -100,18 +101,18 @@ public interface Step {
     void setVersion(int version);
 
     /**
-     * Returns the step options as JsonNode
+     * Returns the step options as a map
      *
-     * @return - options node
+     * @return - options map
      */
-    JsonNode getOptions();
+    Map<String, Object> getOptions();
 
     /**
      * Sets the step options
      *
-     * @param options - a options node
+     * @param options - a options map
      */
-    void setOptions(JsonNode options);
+    void setOptions(Map<String, Object> options);
 
     /**
      * Returns path to the module
@@ -182,6 +183,62 @@ public interface Step {
      * @param type - a step type
      */
     void setType(StepType type);
+
+    /**
+     * Returns the batch size
+     *
+     * @return - an integer batch size
+     */
+    int getBatchSize();
+
+    /**
+     * Sets the batch size for running this step
+     *
+     * @param batchSize - an integer
+     */
+    void setBatchSize(int batchSize);
+
+    /**
+     * Returns the thread count
+     *
+     * @return - thread count as integer
+     */
+    int getThreadCount();
+
+    /**
+     * Sets the thread count for running this step
+     *
+     * @param threadCount - an integer
+     */
+    void setThreadCount(int threadCount);
+
+    /**
+     * Returns the name of the source DB
+     *
+     * @return - source DB name as String
+     */
+    String getSourceDB();
+
+    /**
+     * Sets the name of the source DB
+     *
+     * @param sourceDB - a String
+     */
+    void setSourceDB(String sourceDB);
+
+    /**
+     * Returns the name of the destination DB
+     *
+     * @return - destination DB name as String
+     */
+    String getDestDB();
+
+    /**
+     * Sets the name of the destination DB
+     *
+     * @param destDB - a String
+     */
+    void setDestDB(String destDB);
 
     /**
      * Deserialize a json response and applies it to this mapping
