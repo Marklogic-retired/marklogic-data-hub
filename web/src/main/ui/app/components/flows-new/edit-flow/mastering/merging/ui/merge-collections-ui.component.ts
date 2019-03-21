@@ -1,27 +1,27 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import { MergeStrategy } from "../merge-strategies.model";
-import { AddMergeStrategyDialogComponent } from './add-merge-strategy-dialog.component';
+import { MergeCollection } from "../merge-collections.model";
+import { AddMergeCollectionDialogComponent } from './add-merge-collection-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
 
 @Component({
-  selector: 'app-merge-strategies-ui',
-  templateUrl: './merge-strategies-ui.component.html',
-  styleUrls: ['./merge-strategies-ui.component.scss'],
+  selector: 'app-merge-collections-ui',
+  templateUrl: './merge-collections-ui.component.html',
+  styleUrls: ['./merge-collections-ui.component.scss'],
 })
-export class MergeStrategiesUiComponent {
+export class MergeCollectionsUiComponent {
   @ViewChild(MatTable) table: MatTable<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  @Input() mergeStrategies: any;
+  @Input() mergeCollections: any;
 
-  @Output() createStrategy = new EventEmitter();
-  @Output() updateStrategy = new EventEmitter();
-  @Output() deleteStrategy = new EventEmitter();
+  @Output() createCollection = new EventEmitter();
+  @Output() updateCollection = new EventEmitter();
+  @Output() deleteCollection = new EventEmitter();
 
-  public displayedColumns = ['strategyName', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
-  public dataSource: MatTableDataSource<MergeStrategy>;
+  public displayedColumns = ['event', 'add', 'remove', 'set', 'actions'];
+  public dataSource: MatTableDataSource<MergeCollection>;
 
   public weightFocus: object = {};
 
@@ -30,8 +30,8 @@ export class MergeStrategiesUiComponent {
   ) {}
 
   ngOnInit() {
-    console.log('ngOnInit this.mergeStrategies', this.mergeStrategies);
-    this.dataSource = new MatTableDataSource<MergeStrategy>(this.mergeStrategies.strategies);
+    console.log('ngOnInit this.mergeCollections', this.mergeCollections);
+    this.dataSource = new MatTableDataSource<MergeCollection>(this.mergeCollections.collections);
   }
 
   ngAfterViewInit() {
@@ -39,32 +39,32 @@ export class MergeStrategiesUiComponent {
     this.dataSource.sort = this.sort;
   }
 
-  openMergeStrategyDialog(strategyToEdit: MergeStrategy, index: number): void {
-    const dialogRef = this.dialog.open(AddMergeStrategyDialogComponent, {
+  openMergeCollectionDialog(collectionToEdit: MergeCollection, index: number): void {
+    const dialogRef = this.dialog.open(AddMergeCollectionDialogComponent, {
       width: '500px',
-      data: { strategy: strategyToEdit, index: index }
+      data: { collection: collectionToEdit, index: index }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
-        if (strategyToEdit) {
-          console.log('updateStrategy');
-          this.updateStrategy.emit(result);
+        if (collectionToEdit) {
+          console.log('updateCollection');
+          this.updateCollection.emit(result);
         }else{
-          console.log('createStrategy');
-          this.createStrategy.emit(result);
+          console.log('createCollection');
+          this.createCollection.emit(result);
         }
       }
     });
   }
 
-  openConfirmDialog(str): void {
+  openConfirmDialog(coll): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
-      data: {title: 'Delete Merge Strategy', confirmationMessage: `Delete the strategy?`}
+      data: {title: 'Delete Collection Event', confirmationMessage: `Delete the event?`}
     });
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        this.deleteStrategy.emit(str);
+        this.deleteCollection.emit(coll);
       }
     });
   }
@@ -77,7 +77,7 @@ export class MergeStrategiesUiComponent {
   }
 
   renderRows(): void {
-    this.dataSource.data = this.mergeStrategies.strategies;
+    this.dataSource.data = this.mergeCollections.collections;
     this.table.renderRows();
   }
 

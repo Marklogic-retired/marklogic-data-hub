@@ -2,7 +2,7 @@ import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angu
 import { ActivatedRoute, Params } from '@angular/router';
 import { MergeOptionsUiComponent } from "./ui/merge-options-ui.component";
 import { MergeStrategiesUiComponent } from "./ui/merge-strategies-ui.component";
-// import { MergeCollectionsUiComponent } from "./ui/merge-collections-ui.component";
+import { MergeCollectionsUiComponent } from "./ui/merge-collections-ui.component";
 import { Merging } from "./merging.model";
 import { MergeOptions } from "./merge-options.model";
 import { MergeStrategies } from "./merge-strategies.model";
@@ -27,12 +27,18 @@ import * as _ from "lodash";
     (updateStrategy)="this.onUpdateStrategy($event)"
     (deleteStrategy)="this.onDeleteStrategy($event)"
   ></app-merge-strategies-ui>
+  <app-merge-collections-ui
+    [mergeCollections]="mergeCollections"
+    (createCollection)="this.onCreateCollection($event)"
+    (updateCollection)="this.onUpdateCollection($event)"
+    (deleteCollection)="this.onDeleteCollection($event)"
+  ></app-merge-collections-ui>
 `
 })
 export class MergingComponent implements OnInit {
   @ViewChild(MergeOptionsUiComponent) mergeOptionsUi: MergeOptionsUiComponent;
   @ViewChild(MergeStrategiesUiComponent) mergeStrategiesUi: MergeStrategiesUiComponent;
-  // @ViewChild(MergeCollectionsUiComponent) mergeCollectionsUi: MergeCollectionsUiComponent;
+  @ViewChild(MergeCollectionsUiComponent) mergeCollectionsUi: MergeCollectionsUiComponent;
 
   @Input() step: any;
   @Output() saveStep = new EventEmitter();
@@ -117,8 +123,26 @@ export class MergingComponent implements OnInit {
     this.onSaveStep();
   }
 
+  onCreateCollection(event): void {
+    this.mergeCollections.addCollection(event.coll);
+    this.mergeCollectionsUi.renderRows();
+    this.onSaveStep();
+  }
+
+  onUpdateCollection(event): void {
+    this.mergeCollections.updateCollection(event.coll, event.index);
+    this.mergeCollectionsUi.renderRows();
+    this.onSaveStep();
+  }
+
+  onDeleteCollection(event): void {
+    this.mergeCollections.deleteCollection(event);
+    this.mergeCollectionsUi.renderRows();
+    this.onSaveStep();
+  }
+
   onSaveStep(): void {
-    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies);
+    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections);
     this.step.config.mergeOptions = this.merging;
     this.saveStep.emit(this.step);
   }

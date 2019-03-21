@@ -31,8 +31,8 @@ export class MergeStrategies {
    * Update a merge strategy in the set.
    */
   updateStrategy(strategy, index) {
-    let mOpt = new MergeStrategy(strategy);
-    this.strategies.splice(index, 1, mOpt);
+    let mStr = new MergeStrategy(strategy);
+    this.strategies.splice(index, 1, mStr);
   }
 
   /**
@@ -76,7 +76,7 @@ export class MergeStrategy {
   }
 
   /**
-   * Construct a merge option from merging configuration data.
+   * Construct a merge strategy from merging configuration data.
    */
   static fromMerging(mStr: any, algs: any) {
     let result;

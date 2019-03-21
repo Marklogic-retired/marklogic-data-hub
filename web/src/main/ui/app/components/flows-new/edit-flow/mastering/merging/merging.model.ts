@@ -1,6 +1,6 @@
 import { MergeOptions, MergeOption } from "./merge-options.model";
 import { MergeStrategies, MergeStrategy } from "./merge-strategies.model";
-//import { MergeCollections, MergeCollection } from "./merge-collections.model";
+import { MergeCollections, MergeCollection } from "./merge-collections.model";
 
 /**
  * Represents a Smart Mastering merging configuration.
@@ -69,7 +69,7 @@ export class Merging {
   /**
    * Construct based on a UI configuration.
    */
-  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies) { //,  mergeCollections: MergeCollections) {
+  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
     const result = new Merging();
     if (mergeOptions) {
       mergeOptions.options.forEach(mOpt => {
@@ -81,11 +81,11 @@ export class Merging {
         result.addStrategy(mStr);
       })
     }
-    // if (mergeCollections) {
-    //   mergeCollections.collections.forEach(mColl => {
-    //     result.addCollection(mColl);
-    //   })
-    // }
+    if (mergeCollections) {
+      mergeCollections.collections.forEach(mColl => {
+        result.addCollection(mColl);
+      })
+    }
     console.log('fromUI', result);
     return result;
   }
@@ -130,37 +130,35 @@ export class Merging {
    * Add a merge option.
    */
   addOption(mOpt) {
-    console.log('addOption', mOpt);
     if (mOpt.propertyName) {
       this.addProperty(mOpt.propertyName);
     }
     if (typeof mOpt.length === 'string' || typeof mOpt.length === 'number') {
       mOpt.length = { weight: mOpt.length };
-      console.log('after', mOpt);
     }
     let opt = new Option(mOpt);
     this.merging.push(opt);
-    console.log('merging.addOption', this);
   }
 
   /**
    * Add a merge strategy.
    */
   addStrategy(mStr: MergeStrategy) {
-    let thr;
-    console.log('addStrategy', mStr);
     let strategy = new Strategy(mStr);
     this.mergeStrategies.push(strategy);
-    console.log('merging.addStrategy', this);
   }
 
   /**
    * Add a merge collection.
    */
-  // addCollection(mColl: MergeCollection) {
-  //   let coll = new Collection(mColl);
-  //   this.algorithms['collections'][mColl.type] = coll;
-  // }
+  addCollection(mColl: MergeCollection) {
+    let mColl2 = {};
+    if (mColl.add) mColl2['add'] = { collection: mColl.add };
+    if (mColl.remove) mColl2['remove'] = { collection: mColl.remove };
+    if (mColl.set) mColl2['set'] = { collection: mColl.set };
+    let coll = new Collection(mColl2);
+    this.algorithms['collections'][mColl.event] = coll;
+  }
 
 }
 
@@ -199,9 +197,9 @@ export class Algorithm {
  * Represents a collection option in merging options.
  */
 export class Collection {
-  public add: Array<string>;
-  public remove: Array<string>;
-  public set: Array<string>;
+  public add: any;
+  public remove: any;
+  public set: any;
   constructor(c) {
     if (c.add) this.add = c.add;
     if (c.remove) this.remove = c.remove;
