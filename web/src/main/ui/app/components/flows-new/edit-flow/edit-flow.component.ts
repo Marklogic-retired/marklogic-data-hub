@@ -117,9 +117,10 @@ export class EditFlowComponent implements OnInit {
       this.getSteps();
     });
   }
-  createStep(step) {
-    this.manageFlowsService.createStep(this.flow.id, step).subscribe(resp => {
-      this.stepsArray.push(resp);
+  createStep(stepObject) {
+    this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
+      this.flow = Flow.fromJSON(resp);
+      this.getSteps();
     });
   }
   updateStep(step) {
