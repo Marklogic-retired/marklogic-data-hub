@@ -17,6 +17,14 @@ public interface FlowRunner {
     RunFlowResponse runFlow(String flow, List<String> steps);
 
     /**
+     * Runs the entire flow.
+     *
+     * @param flow the flow to run
+     *
+     */
+    RunFlowResponse runFlow(String flow);
+
+    /**
      * Runs the flow.
      *
      * @param jobId the id of the running flow
