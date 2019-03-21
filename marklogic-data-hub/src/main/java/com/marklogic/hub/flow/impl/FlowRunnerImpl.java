@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,10 +38,10 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private StepRunner stepRunner;
 
-    private Map<String, Queue<String>> stepsMap = new HashMap<>();
-    private Map<String, Flow> flowMap = new HashMap<>();
-    private Map<String, RunFlowResponse> flowResp = new HashMap<>();
-    private ConcurrentLinkedQueue jobQueue = new ConcurrentLinkedQueue();
+    private Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
+    private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
+    private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
+    private Queue<String> jobQueue = new ConcurrentLinkedQueue();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
