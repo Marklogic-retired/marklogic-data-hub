@@ -20,6 +20,7 @@ import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class FlowImpl implements Flow {
@@ -111,13 +112,13 @@ public class FlowImpl implements Flow {
 
         Map<String, Step> steps = new HashMap<>();
         JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
-        int n = 1;
-        while (stepsNode.isExist(String.valueOf(n))) {
-            String key = String.valueOf(n);
+        Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
             Step step = Step.create("default", Step.StepType.CUSTOM);
             step.deserialize(stepsNode.getNode(key));
+
             steps.put(key, step);
-            n++;
         }
         setSteps(steps);
 
