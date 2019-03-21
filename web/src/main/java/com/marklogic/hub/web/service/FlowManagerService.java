@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2019 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.web.service;
 
 import com.marklogic.hub.FlowManager;
@@ -5,6 +20,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +45,13 @@ public class FlowManagerService {
         return flowManager.getFlows();
     }
 
-    public Flow createFlow(String flowJson) {
+    public Flow createFlow(String flowJson, boolean checkExists) {
         Flow flow = flowManager.createFlowFromJSON(flowJson);
         if (flow != null && StringUtils.isEmpty(flow.getName())) {
             return null;
+        }
+        if (checkExists && flowManager.isFlowExisted(flow.getName())) {
+            throw new DataHubException(flow.getName() +" is existed.");
         }
         flowManager.saveFlow(flow);
         return flow;

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2019 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
@@ -28,8 +43,32 @@ public class FlowController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public Flow createFlow(@RequestBody String flowJson) {
-        return flowManagerService.createFlow(flowJson);
+    public ResponseEntity<?> createFlow(@RequestBody String flowJson) {
+        Flow flow = null;
+        try {
+            flow = flowManagerService.createFlow(flowJson, true);
+            if (flow == null) {
+                throw new DataHubException("Flow request payload is invalid.");
+            }
+        } catch (DataHubProjectException dpe) {
+            throw new DataHubException(dpe.getMessage());
+        }
+        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @ResponseBody
+    public ResponseEntity<?> updateFlow(@RequestBody String flowJson) {
+        Flow flow = null;
+        try {
+            flow = flowManagerService.createFlow(flowJson, false);
+            if (flow == null) {
+                throw new DataHubException("Flow request payload is invalid.");
+            }
+        } catch (DataHubProjectException dpe) {
+            throw new DataHubException(dpe.getMessage());
+        }
+        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
@@ -49,16 +88,20 @@ public class FlowController {
 
     @RequestMapping(value = "/names/", method = RequestMethod.GET)
     @ResponseBody
-    public List<String> getFlowNames() {
-        return flowManagerService.getFlowNames();
+    public ResponseEntity<?> getFlowNames() {
+        List<String> names = flowManagerService.getFlowNames();
+        return new ResponseEntity<>(names, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteFlow(@PathVariable String flowName)  {
-        flowManagerService.deleteFlow(flowName);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            flowManagerService.deleteFlow(flowName);
+        } catch (DataHubProjectException dpe) {
+            throw new DataHubException(dpe.getMessage());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.GET)

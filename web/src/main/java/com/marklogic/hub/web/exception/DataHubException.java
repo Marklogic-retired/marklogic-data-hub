@@ -25,6 +25,6 @@ public class DataHubException extends RuntimeException {
 	}
 
     public DataHubException(String message) {
-        super("Error: " + message);
+        super(message);
     }
 }

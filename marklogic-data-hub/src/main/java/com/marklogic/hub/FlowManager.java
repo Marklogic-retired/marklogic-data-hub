@@ -107,6 +107,14 @@ public interface FlowManager {
      */
     void saveFlow(Flow flow);
 
+
+    /**
+     * Check if a flow has existed
+     * @param flowName
+     * @return
+     */
+    boolean isFlowExisted(String flowName);
+
     Map<String, Step> getSteps(String flowName);
 
     Flow setSteps(String flowName, Map<String, Step> stepMap);

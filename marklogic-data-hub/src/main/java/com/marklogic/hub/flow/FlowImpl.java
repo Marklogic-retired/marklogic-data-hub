@@ -31,6 +31,7 @@ public class FlowImpl implements Flow {
     private String description;
     private int batchSize;
     private int threadCount;
+    private JsonNode options;
 
     private Map<String, Step> steps;
 
@@ -80,6 +81,16 @@ public class FlowImpl implements Flow {
         this.threadCount = threadCount;
     }
 
+    @Override
+    public JsonNode getOptions() {
+        return this.options;
+    }
+
+    @Override
+    public void setOptions(JsonNode options) {
+        this.options = options;
+    }
+
     public Map<String, Step> getSteps() {
         return steps;
     }
@@ -93,24 +104,21 @@ public class FlowImpl implements Flow {
         JSONObject jsonObject = new JSONObject(json);
         setName(jsonObject.getString("name"));
         setDescription(jsonObject.getString("description"));
-        setId(jsonObject.getString("id"));
+        setId(jsonObject.getString("id", getName()));
         setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
         setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
+        setOptions(jsonObject.getNode("options"));
 
         Map<String, Step> steps = new HashMap<>();
         JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
         int n = 1;
         while (stepsNode.isExist(String.valueOf(n))) {
             String key = String.valueOf(n);
-
             Step step = Step.create("default", Step.StepType.CUSTOM);
             step.deserialize(stepsNode.getNode(key));
-
             steps.put(key, step);
-
             n++;
         }
-
         setSteps(steps);
 
         return this;
