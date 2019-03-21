@@ -20,7 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StepImpl implements Step {
@@ -41,18 +43,21 @@ public class StepImpl implements Step {
     public StepImpl(String name, StepType type) {
         this.name = name;
         this.type = type;
-        this.version = 1;
-        JSONObject jsonObject = new JSONObject();
+        version = 1;
+
         options = new HashMap<>();
-        jsonObject.putArray("collections", name);
+        List<String> collectionName = new ArrayList<>();
+        collectionName.add(name);
+        options.put("collections", collectionName);
+
         if (type == StepType.INGEST) {
-            jsonObject.put("outputFormat", "json");
+            options.put("outputFormat", "json");
         } else if (type == StepType.MAPPING || type == StepType.CUSTOM) {
-            this.identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
+            identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
         }
-        this.modulePath = "/path/to/your/step/module/main.sjs";
-        this.customHook = new JSONObject().jsonNode();
-        this.retryLimit = 0;
+        modulePath = "/path/to/your/step/module/main.sjs";
+        customHook = new JSONObject().jsonNode();
+        retryLimit = 0;
     }
 
     public String getLanguage() {
