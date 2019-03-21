@@ -3,7 +3,7 @@
   *ngIf="flow && stepsArray"
   [flow]="flow"
   [stepsArray]="stepsArray"
-  (newStep)="openStepDialog()" 
+  (newStep)="openStepDialog($event)" 
   (runFlow)="openRunDialog(flow)" 
   (stopFlow)="stopFlow.emit($event)" 
   (deleteStep)="deleteStepDialog($event)"
