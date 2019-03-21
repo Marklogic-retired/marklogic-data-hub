@@ -23,6 +23,7 @@ import { MergingComponent } from './mastering/merging/merging.component';
 import { MergeOptionsUiComponent } from './mastering/merging/ui/merge-options-ui.component';
 import { MergeStrategiesUiComponent } from './mastering/merging/ui/merge-strategies-ui.component';
 import { AddMergeOptionDialogComponent } from './mastering/merging/ui/add-merge-option-dialog.component';
+import { AddMergeStrategyDialogComponent } from './mastering/merging/ui/add-merge-strategy-dialog.component';
 import { MappingComponent } from './mapping/mapping.component';
 import { MappingUiComponent } from './mapping/ui/mapping-ui.component';
 
@@ -51,6 +52,7 @@ import { CustomUiComponent } from './custom/ui/custom-ui.component';
     MergeOptionsUiComponent,
     MergeStrategiesUiComponent,
     AddMergeOptionDialogComponent,
+    AddMergeStrategyDialogComponent,
     MappingComponent,
     MappingUiComponent,
     FocusElementDirective,
@@ -82,7 +84,8 @@ import { CustomUiComponent } from './custom/ui/custom-ui.component';
     RunFlowDialogComponent,
     AddMatchOptionDialogComponent,
     AddMatchThresholdDialogComponent,
-    AddMergeOptionDialogComponent
+    AddMergeOptionDialogComponent,
+    AddMergeStrategyDialogComponent
   ]
 })
 export class EditFlowModule {}

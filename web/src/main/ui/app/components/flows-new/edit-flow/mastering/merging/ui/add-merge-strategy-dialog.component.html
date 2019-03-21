@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>{{getDialogTitle()}}</h1>
+<div id="merge-strategy-dialog" mat-dialog-content [formGroup]="form" class="content">
+
+  <!-- Default select -->
+  <!-- <mat-form-field layout-fill>
+    <mat-select id="merge-option-type" placeholder="Merge Type" formControlName="mergeType" [(value)]="selectedType">
+      <mat-option value="standard">Standard</mat-option>
+      <mat-option value="strategy">Strategy</mat-option>
+      <mat-option value="custom">Custom</mat-option>
+    </mat-select>
+  </mat-form-field> -->
+
+  <mat-form-field layout-fill>
+    <mat-label>Name</mat-label>
+    <input id="merge-strategy-name" matInput formControlName="name"/>
+  </mat-form-field>
+
+  <mat-form-field layout-fill>
+    <mat-label>Max Values</mat-label>
+    <input id="merge-strategy-max-values" matInput formControlName="maxValues"/>
+  </mat-form-field>
+
+  <mat-form-field layout-fill>
+    <mat-label>Max Sources</mat-label>
+    <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
+  </mat-form-field>
+
+  <!-- TODO handle multiple source weights -->
+  <!-- <mat-form-field layout-fill>
+    <mat-label>Source Weights</mat-label>
+    <input id="merge-option-source-weights" matInput formControlName="sourceWeights"/>
+  </mat-form-field> -->
+
+  <mat-form-field layout-fill>
+    <mat-label>Length Weight</mat-label>
+    <input id="merge-strategy-length" matInput formControlName="length"/>
+  </mat-form-field>
+
+</div>
+<mat-dialog-actions class="bottom">
+  <button id="merge-strategy-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button id="merge-strategy-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+</mat-dialog-actions>

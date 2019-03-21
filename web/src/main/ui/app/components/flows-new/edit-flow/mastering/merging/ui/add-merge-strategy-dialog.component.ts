@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MergeOption } from "../merge-options.model";
+import { MergeStrategy } from "../merge-strategies.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
-import { forOwn } from 'lodash';
+import {forOwn} from 'lodash';
 
 export interface DialogData {
   stepName: string;
@@ -10,11 +10,11 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-add-merge-option-dialog',
-  templateUrl: './add-merge-option-dialog.component.html',
-  styleUrls: ['./add-merge-option-dialog.component.scss'],
+  selector: 'app-add-merge-strategy-dialog',
+  templateUrl: './add-merge-strategy-dialog.component.html',
+  styleUrls: ['./add-merge-strategy-dialog.component.scss'],
 })
-export class AddMergeOptionDialogComponent {
+export class AddMergeStrategyDialogComponent {
 
   form: FormGroup;
   props: FormArray;
@@ -23,28 +23,24 @@ export class AddMergeOptionDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<AddMergeOptionDialogComponent>,
+    public dialogRef: MatDialogRef<AddMergeStrategyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
   }
 
   ngOnInit() {
-    console.log('this.data.option', this.data.option);
+    console.log('this.data.strategy', this.data.strategy);
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName : ''],
-      mergeType: [this.data.option ? this.data.option.mergeType : 'exact'],
-      algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
-      maxValues: [this.data.option ? this.data.option.maxValues : ''],
-      maxSources: [this.data.option ? this.data.option.maxSources : ''],
-      sourceWeights: [this.data.option ? this.data.option.sourceWeights : []],
-      length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : ''],
-      strategy: [this.data.option ? this.data.option.strategy : ''],
-      customUri: [this.data.option ? this.data.option.customUri : ''],
-      customFunction: [this.data.option ? this.data.option.customFunction : ''],
+      name: [this.data.strategy ? this.data.strategy.name : ''],
+      algorithmRef: [this.data.strategy ? this.data.strategy.algorithmRef : ''],
+      maxValues: [this.data.strategy ? this.data.strategy.maxValues : ''],
+      maxSources: [this.data.strategy ? this.data.strategy.maxSources : ''],
+      sourceWeights: [this.data.strategy ? this.data.strategy.sourceWeights : []],
+      length: [(this.data.strategy && this.data.strategy.length) ? this.data.strategy.length.weight : ''],
+      customUri: [this.data.strategy ? this.data.strategy.customUri : ''],
+      customFunction: [this.data.strategy ? this.data.strategy.customFunction : ''],
       index: this.data.index,
       entityProps:  [this.data.entityProps ? this.data.entityProps : []]
     })
-    this.selectedType = (this.data.option && this.data.option.mergeType) ?
-      this.data.option.mergeType : 'standard';
     //this.form.setControl('propertiesReduce', this.createProps());
     //this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
   }
@@ -85,19 +81,23 @@ export class AddMergeOptionDialogComponent {
   }
 
   getDialogTitle(){
-    return this.data.option ? 'Add Merge Option' : 'New Merge Option';
+    return this.data.strategy ? 'Add Merge Strategy' : 'New Merge Strategy';
   }
 
   getSubmitButtonTitle() {
-    return this.data.option ? 'Save' : 'Create';
+    return this.data.strategy ? 'Save' : 'Create';
   }
 
   onSave() {
-    const resultOption = new MergeOption(this.form.value);
+    const resultStrategy = new MergeStrategy(this.form.value);
+    //resultStrategy.name = resultStrategy.strategy;
+    // TODO allow custom strategies
+    resultStrategy.algorithmRef = 'standard';
     if (this.form.value.length) {
-      resultOption.length = { weight: this.form.value.length };
+      resultStrategy.length = { weight: this.form.value.length };
     }
-    this.dialogRef.close({opt: resultOption, index: this.form.value.index});
+    console.log('onSave resultStrategy', resultStrategy);
+    this.dialogRef.close({str: resultStrategy, index: this.form.value.index});
   }
 
 }
