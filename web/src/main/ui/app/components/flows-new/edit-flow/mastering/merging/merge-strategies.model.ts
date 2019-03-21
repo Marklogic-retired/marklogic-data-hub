@@ -21,14 +21,14 @@ export class MergeStrategies {
   }
 
   /**
-   * Add a new match option to the set.
+   * Add a new merge strategy to the set.
    */
   addStrategy(strategy) {
     this.strategies.push(new MergeStrategy(strategy));
   }
 
   /**
-   * Update a match option in the set.
+   * Update a merge strategy in the set.
    */
   updateStrategy(strategy, index) {
     let mOpt = new MergeStrategy(strategy);
@@ -36,9 +36,9 @@ export class MergeStrategies {
   }
 
   /**
-   * Delete a match option from the set.
+   * Delete a merge strategy from the set.
    */
-  deleteOption(strategy) {
+  deleteStrategy(strategy) {
     let i = this.strategies.findIndex(s => {
       return s === strategy;
     })
@@ -70,7 +70,7 @@ export class MergeStrategy {
     if (mStr.maxSources) this.maxSources = mStr.maxSources;
     if (mStr.sourceWeights) this.sourceWeights = mStr.sourceWeights;
     if (mStr.length) this.length = mStr.length;
-    if (mStr.strategy) this.strategy = mStr.strategy;
+    //if (mStr.strategy) this.strategy = mStr.strategy;
     if (mStr.customUri) this.customUri = mStr.customUri;
     if (mStr.customFunction) this.customFunction = mStr.customFunction;
   }

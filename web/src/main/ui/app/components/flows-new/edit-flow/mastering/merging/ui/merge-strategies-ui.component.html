@@ -11,7 +11,7 @@
             Merge Strategies
           </span>
         </div>
-        <button mat-raised-button class="new-strategy-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties)">Add</button>
+        <button mat-raised-button class="new-strategy-button" color="primary" (click)="openMergeStrategyDialog(null, null)">Add</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
@@ -106,7 +106,7 @@
 
 <mat-menu class="merge-strategy-menu-dialog" #mergeStrategiesMenu="matMenu">
   <ng-template matMenuContent let-mStr="mStr" let-i="i">
-    <div class="merge-strategy-menu-edit-btn" mat-menu-item (click)="openMergeOptionDialog(mStr, i, targetEntity.definition.properties)">Edit Settings</div>
+    <div class="merge-strategy-menu-edit-btn" mat-menu-item (click)="openMergeStrategyDialog(mStr, i)">Edit Settings</div>
     <div class="merge-strategy-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mStr)">Delete</div>
   </ng-template>
 </mat-menu>

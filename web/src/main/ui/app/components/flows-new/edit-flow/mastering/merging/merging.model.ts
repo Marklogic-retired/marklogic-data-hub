@@ -69,18 +69,18 @@ export class Merging {
   /**
    * Construct based on a UI configuration.
    */
-  static fromUI(mergeOptions: MergeOptions) { //, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
+  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies) { //,  mergeCollections: MergeCollections) {
     const result = new Merging();
     if (mergeOptions) {
       mergeOptions.options.forEach(mOpt => {
         result.addOption(mOpt);
       })
     }
-    // if (mergeStrategies) {
-    //   mergeStrategies.strategies.forEach(mStr => {
-    //     result.addStrategy(mStr);
-    //   })
-    // }
+    if (mergeStrategies) {
+      mergeStrategies.strategies.forEach(mStr => {
+        result.addStrategy(mStr);
+      })
+    }
     // if (mergeCollections) {
     //   mergeCollections.collections.forEach(mColl => {
     //     result.addCollection(mColl);

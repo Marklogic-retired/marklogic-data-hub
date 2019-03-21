@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChil
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import { MergeStrategy } from "../merge-strategies.model";
 import { AddMergeOptionDialogComponent } from './add-merge-option-dialog.component';
+import { AddMergeStrategyDialogComponent } from './add-merge-strategy-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
 
 @Component({
@@ -15,7 +16,6 @@ export class MergeStrategiesUiComponent {
   @ViewChild(MatSort) sort: MatSort;
 
   @Input() mergeStrategies: any;
-  @Input() targetEntity: any;
 
   @Output() createStrategy = new EventEmitter();
   @Output() updateStrategy = new EventEmitter();
@@ -40,23 +40,23 @@ export class MergeStrategiesUiComponent {
     this.dataSource.sort = this.sort;
   }
 
-  // openMergeOptionDialog(strategyToEdit: MergeStrategy, index: number, entityProps: any): void {
-  //   const dialogRef = this.dialog.open(AddMergeOptionDialogComponent, {
-  //     width: '500px',
-  //     data: {strategy: strategyToEdit, index: index, entityProps: entityProps}
-  //   });
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (!!result) {
-  //       if (strategyToEdit) {
-  //         console.log('updateStrategy');
-  //         this.updateStrategy.emit(result);
-  //       }else{
-  //         console.log('createStrategy');
-  //         this.createStrategy.emit(result);
-  //       }
-  //     }
-  //   });
-  // }
+  openMergeStrategyDialog(strategyToEdit: MergeStrategy, index: number): void {
+    const dialogRef = this.dialog.open(AddMergeStrategyDialogComponent, {
+      width: '500px',
+      data: { strategy: strategyToEdit, index: index }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        if (strategyToEdit) {
+          console.log('updateStrategy');
+          this.updateStrategy.emit(result);
+        }else{
+          console.log('createStrategy');
+          this.createStrategy.emit(result);
+        }
+      }
+    });
+  }
 
   openConfirmDialog(opt): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {

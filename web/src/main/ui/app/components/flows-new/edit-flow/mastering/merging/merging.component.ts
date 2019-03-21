@@ -1,7 +1,7 @@
 import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { MergeOptionsUiComponent } from "./ui/merge-options-ui.component";
-// import { MergeStrategiesUiComponent } from "./ui/merge-strategies-ui.component";
+import { MergeStrategiesUiComponent } from "./ui/merge-strategies-ui.component";
 // import { MergeCollectionsUiComponent } from "./ui/merge-collections-ui.component";
 import { Merging } from "./merging.model";
 import { MergeOptions } from "./merge-options.model";
@@ -23,7 +23,6 @@ import * as _ from "lodash";
   ></app-merge-options-ui>
   <app-merge-strategies-ui
     [mergeStrategies]="mergeStrategies"
-    [targetEntity]="targetEntity"
     (createStrategy)="this.onCreateStrategy($event)"
     (updateStrategy)="this.onUpdateStrategy($event)"
     (deleteStrategy)="this.onDeleteStrategy($event)"
@@ -32,7 +31,7 @@ import * as _ from "lodash";
 })
 export class MergingComponent implements OnInit {
   @ViewChild(MergeOptionsUiComponent) mergeOptionsUi: MergeOptionsUiComponent;
-  // @ViewChild(MergeStrategiesUiComponent) mergeStrategiesUi: MergeStrategiesUiComponent;
+  @ViewChild(MergeStrategiesUiComponent) mergeStrategiesUi: MergeStrategiesUiComponent;
   // @ViewChild(MergeCollectionsUiComponent) mergeCollectionsUi: MergeCollectionsUiComponent;
 
   @Input() step: any;
@@ -100,26 +99,26 @@ export class MergingComponent implements OnInit {
     this.onSaveStep();
   }
 
-  // onCreateThreshold(event): void {
-  //   this.matchThresholds.addThreshold(event);
-  //   this.matchThresholdsUi.renderRows();
-  //   this.onSaveStep();
-  // }
+  onCreateStrategy(event): void {
+    this.mergeStrategies.addStrategy(event.str);
+    this.mergeStrategiesUi.renderRows();
+    this.onSaveStep();
+  }
 
-  // onUpdateThreshold(event): void {
-  //   this.matchThresholds.updateThreshold(event, event.index);
-  //   this.matchThresholdsUi.renderRows();
-  //   this.onSaveStep();
-  // }
+  onUpdateStrategy(event): void {
+    this.mergeStrategies.updateStrategy(event.str, event.index);
+    this.mergeStrategiesUi.renderRows();
+    this.onSaveStep();
+  }
 
-  // onDeleteThreshold(event): void {
-  //   this.matchThresholds.deleteThreshold(event);
-  //   this.matchThresholdsUi.renderRows();
-  //   this.onSaveStep();
-  // }
+  onDeleteStrategy(event): void {
+    this.mergeStrategies.deleteStrategy(event);
+    this.mergeStrategiesUi.renderRows();
+    this.onSaveStep();
+  }
 
   onSaveStep(): void {
-    this.merging = Merging.fromUI(this.mergeOptions);
+    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies);
     this.step.config.mergeOptions = this.merging;
     this.saveStep.emit(this.step);
   }
