@@ -85,7 +85,7 @@ export class AddMergeOptionDialogComponent {
   }
 
   getDialogTitle(){
-    return this.data.option ? 'Add Merge Option' : 'New Merge Option';
+    return this.data.option ? 'Edit Merge Option' : 'New Merge Option';
   }
 
   getSubmitButtonTitle() {

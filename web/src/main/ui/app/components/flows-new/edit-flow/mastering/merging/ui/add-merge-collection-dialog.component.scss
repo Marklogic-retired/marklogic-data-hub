@@ -1,0 +1,17 @@
+div.add-group input,
+div.remove-group input,
+div.set-group input {
+  border: 0;
+}
+
+.collections-add-wrapper .mat-form-field,
+.collections-remove-wrapper .mat-form-field,
+.collections-set-wrapper .mat-form-field {
+  width: 390px;
+}
+
+#collections-add,
+#collections-remove,
+#collections-set {
+  margin-bottom: 10px;
+}

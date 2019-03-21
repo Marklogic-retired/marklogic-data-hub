@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeStrategy } from "../merge-strategies.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
-import {forOwn} from 'lodash';
+import { forOwn } from 'lodash';
 
 export interface DialogData {
   stepName: string;
@@ -38,8 +38,7 @@ export class AddMergeStrategyDialogComponent {
       length: [(this.data.strategy && this.data.strategy.length) ? this.data.strategy.length.weight : ''],
       customUri: [this.data.strategy ? this.data.strategy.customUri : ''],
       customFunction: [this.data.strategy ? this.data.strategy.customFunction : ''],
-      index: this.data.index,
-      entityProps:  [this.data.entityProps ? this.data.entityProps : []]
+      index: this.data.index
     })
     //this.form.setControl('propertiesReduce', this.createProps());
     //this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
@@ -81,7 +80,7 @@ export class AddMergeStrategyDialogComponent {
   }
 
   getDialogTitle(){
-    return this.data.strategy ? 'Add Merge Strategy' : 'New Merge Strategy';
+    return this.data.strategy ? 'Edit Merge Strategy' : 'New Merge Strategy';
   }
 
   getSubmitButtonTitle() {
@@ -90,7 +89,6 @@ export class AddMergeStrategyDialogComponent {
 
   onSave() {
     const resultStrategy = new MergeStrategy(this.form.value);
-    //resultStrategy.name = resultStrategy.strategy;
     // TODO allow custom strategies
     resultStrategy.algorithmRef = 'standard';
     if (this.form.value.length) {
