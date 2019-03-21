@@ -31,7 +31,7 @@ export class EditFlowUiComponent {
     public dialog: MatDialog
   ) {}
 
-  openStepDialog(): void {
+  openStepDialog(index): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
       data: {
@@ -45,7 +45,11 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.stepCreate.emit(response);
+        const stepObject = {
+          step: response,
+          index: index
+        };
+        this.stepCreate.emit(stepObject);
       }
     });
   }
