@@ -27,15 +27,17 @@ import java.util.Map;
 public class FlowImpl implements Flow {
     public final static int DEFAULT_BATCH_SIZE = 100;
     public final static int DEFAULT_THREAD_COUNT = 4;
+    public final static boolean DEFAULT_STOP_ONERROR = true;
 
     private String name;
     private String id;
     private String description;
     private int batchSize;
     private int threadCount;
+    private boolean stopOnError;
     private JsonNode options;
 
-    private Map<String, Step> steps;
+    private Map<String, Step> steps = new HashMap<>();
 
     public String getName() {
         return this.name;
@@ -102,6 +104,21 @@ public class FlowImpl implements Flow {
     }
 
     @Override
+    public Step getStep(String stepNum) {
+        return steps.get(stepNum);
+    }
+
+    @Override
+    public void setStopOnError(boolean stopOnError) {
+        this.stopOnError = stopOnError;
+    }
+
+    @Override
+    public boolean isStopOnError() {
+        return stopOnError;
+    }
+
+    @Override
     public Flow deserialize(JsonNode json) {
         JSONObject jsonObject = new JSONObject(json);
         setName(jsonObject.getString("name"));
@@ -110,8 +127,8 @@ public class FlowImpl implements Flow {
         setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
         setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
         setOptions(jsonObject.getNode("options"));
+        setStopOnError(jsonObject.getBoolean("stopOnError", DEFAULT_STOP_ONERROR));
 
-        Map<String, Step> steps = new HashMap<>();
         JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
         Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
         while (iterator.hasNext()) {
