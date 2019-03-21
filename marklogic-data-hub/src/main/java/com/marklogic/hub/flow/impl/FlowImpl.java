@@ -27,7 +27,7 @@ import java.util.Map;
 public class FlowImpl implements Flow {
     public final static int DEFAULT_BATCH_SIZE = 100;
     public final static int DEFAULT_THREAD_COUNT = 4;
-    public final static boolean DEFAULT_STOP_ONERROR = true;
+    public final static boolean DEFAULT_STOP_ONERROR = false;
 
     private String name;
     private String id;
