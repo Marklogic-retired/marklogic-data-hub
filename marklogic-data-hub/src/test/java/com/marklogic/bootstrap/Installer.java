@@ -47,7 +47,7 @@ public class Installer extends HubTestBase {
 
 	        }
         }
-        if(getHubAdminConfig().getIsProvisionedEnvironment()) {
+        if(getFlowDeveloperConfig().getIsProvisionedEnvironment()) {
             installHubModules();
         }
     }

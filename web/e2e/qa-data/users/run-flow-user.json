@@ -2,5 +2,5 @@
   "user-name": "run-flow-user",
   "description": "A user that is used for reading and writing from MarkLogic Data Hub databases",
   "password": "run-flow-user",
-  "role": ["%%mlHubUserRole%%"]
+  "role": ["%%mlFlowOperatorRole%%"]
 }
