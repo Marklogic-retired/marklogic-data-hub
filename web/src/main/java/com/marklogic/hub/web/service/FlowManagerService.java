@@ -73,9 +73,8 @@ public class FlowManagerService {
         Map<String, Step> stepMap = flowManager.getSteps(flowName);
 
         List<StepModel> stepModelList = new ArrayList<>();
-        int n = 1;
-        while (stepMap.containsKey(String.valueOf(n))){
-            Step step = stepMap.get(String.valueOf(n));
+        for (String key : stepMap.keySet()) {
+            Step step = stepMap.get(key);
             StepModel stepModel = new StepModel();
 
             stepModel.setId(step.getName() + "-" + step.getType());
@@ -95,8 +94,6 @@ public class FlowManagerService {
 //            stepModel.setTargetEntity(step.get);
 
             stepModelList.add(stepModel);
-
-            n++;
         }
 
         return stepModelList;
