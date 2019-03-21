@@ -80,7 +80,6 @@ public class FlowManagerImpl implements FlowManager {
         else {
             throw new DataHubProjectException(flowName +" is not a valid flow");
         }
-
     }
 
     @Override
@@ -166,12 +165,20 @@ public class FlowManagerImpl implements FlowManager {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             JSONStreamWriter writer = new JSONStreamWriter(fileOutputStream);
             writer.write(flow);
-
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize flow.");
         } catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
         }
+    }
+
+    @Override
+    public boolean isFlowExisted(String flowName) {
+        File flowFile = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
+        if (flowFile.exists()) {
+            return true;
+        }
+        return false;
     }
 
     public Map<String, Step> getSteps(String flowName) {

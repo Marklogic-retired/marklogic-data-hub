@@ -35,17 +35,75 @@ public interface Flow {
      */
     void setName(String flowName);
 
+    /**
+     * Returns flow id
+     *
+     * @return
+     */
     String getId();
+
+    /**
+     * Sets flow Id
+     *
+     * @param id
+     */
     void setId(String id);
 
+    /**
+     * Returns flow description
+     *
+     * @return
+     */
     String getDescription();
+
+    /**
+     * Sets flow description
+     *
+     * @param description
+     */
     void setDescription(String description);
 
+    /**
+     * Returns flow batch size
+     *
+     * @return
+     */
     int getBatchSize();
+
+    /**
+     * Set flow batch size
+     *
+     * @param batchSize
+     */
     void setBatchSize(int batchSize);
 
+    /**
+     * Returns flow thread count
+     *
+     * @return
+     */
     int getThreadCount();
+
+    /**
+     * Sets flow thread count
+     *
+     * @param threadCount
+     */
     void setThreadCount(int threadCount);
+
+    /**
+     * Returns flow options as JsonNode
+     *
+     * @return - options node
+     */
+    JsonNode getOptions();
+
+    /**
+     * Sets flow options
+     *
+     * @param options - a options node
+     */
+    void setOptions(JsonNode options);
 
     /**
      * Returns a map of Steps
