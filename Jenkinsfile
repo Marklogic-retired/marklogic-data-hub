@@ -129,7 +129,7 @@ pipeline{
 		}
 		stage('PR'){
 		when {
-  			changeRequest()
+  			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'master'};
