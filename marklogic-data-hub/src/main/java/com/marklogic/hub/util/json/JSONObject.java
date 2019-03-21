@@ -15,9 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class JSONObject {
     private static Logger logger = LoggerFactory.getLogger(JSONObject.class);
@@ -276,6 +274,18 @@ public class JSONObject {
             listObj.add(s);
         }
         return listObj;
+    }
+
+    public Map<String, Object> getMap(String key) {
+        Map<String, Object> mapObj = new HashMap<>();
+
+        Iterator<Map.Entry<String, JsonNode>> entryIterator =  json.get(key).fields();
+        while (entryIterator.hasNext()) {
+            Map.Entry<String, JsonNode> entry = entryIterator.next();
+            mapObj.put(entry.getKey(), entry.getValue());
+        }
+
+        return mapObj;
     }
 
     /**

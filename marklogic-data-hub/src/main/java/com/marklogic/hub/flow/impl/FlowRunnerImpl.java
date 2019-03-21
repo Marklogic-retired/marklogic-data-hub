@@ -41,7 +41,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
     private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
     private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
-    private Queue<String> jobQueue = new ConcurrentLinkedQueue();
+    private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
@@ -68,6 +68,7 @@ public class FlowRunnerImpl implements FlowRunner{
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
         while(stepItr.hasNext()) {
             String stepNum = stepItr.next();
+            // TODO: use Map<String, Step> getSteps()
             Step tmpStep = flow.getStep(stepNum);
             if(tmpStep == null){
                 throw new RuntimeException("Step " + stepNum + " not found in the flow");
@@ -135,6 +136,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     .withJobId(jobId)
                     .onItemFailed((jobId, itemId)-> {
                         errorCount.incrementAndGet();
+                        // TODO: Add to Flow Model
                         if(flow.isStopOnError()){
                             stopJob(jobId);
                         }
