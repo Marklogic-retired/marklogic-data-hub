@@ -46,7 +46,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
     private ExecutorService threadPool;
-    private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+    private JobUpdate jobUpdate;
 
     public RunFlowResponse runFlow(String flowName) {
         Flow flow = flowManager.getFlow(flowName);
@@ -97,6 +97,9 @@ public class FlowRunnerImpl implements FlowRunner{
         isRunning.set(true);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
+        if(jobUpdate == null) {
+            jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+        }
         if(threadPool == null || threadPool.isTerminated()) {
             threadPool = Executors.newFixedThreadPool(1);
         }

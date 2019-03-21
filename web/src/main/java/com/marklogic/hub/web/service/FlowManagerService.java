@@ -17,6 +17,8 @@ package com.marklogic.hub.web.service;
 
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -27,16 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class FlowManagerService {
 
     @Autowired
     private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunner flowRunner;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -120,5 +122,16 @@ public class FlowManagerService {
         flowManager.saveFlow(flow);
 
         return stepModel;
+    }
+
+    public String runFlow(String flowName, String[] steps) {
+        RunFlowResponse resp = null;
+        if (steps == null){
+           resp = flowRunner.runFlow(flowName);
+        }
+        else {
+            resp = flowRunner.runFlow(flowName, Arrays.asList(steps));
+        }
+        return  resp.getJobId();
     }
 }
