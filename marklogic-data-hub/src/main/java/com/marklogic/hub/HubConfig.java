@@ -524,6 +524,13 @@ public interface HubConfig {
     DatabaseClient newStagingClient();
 
     /**
+     * Gets a new DatabaseClient that queries the staging database and appserver
+     * @param dbName the name of the database
+     * @return A client that accesses the hub's staging appserver and the database passed as param.
+     */
+    DatabaseClient newStagingClient(String dbName);
+
+    /**
      * Gets a new DatabaseClient that queries the Final database using the staging appserver.
      * @return A database client configured for fetching from final database, but using DHF's staging modules.
      */

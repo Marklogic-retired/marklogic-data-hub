@@ -20,23 +20,30 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StepImpl implements Step {
     private String language = "zxx";
     private String name;
     private StepType type;
     private int version;
-    private JsonNode options;
+    private Map<String, Object> options;
     private JsonNode customHook;
     private String modulePath;
     private String identifier;
     private int retryLimit;
+    private int batchSize;
+    private int threadCount;
+    private String sourceDB;
+    private String destDB;
 
     public StepImpl(String name, StepType type) {
         this.name = name;
         this.type = type;
         this.version = 1;
         JSONObject jsonObject = new JSONObject();
-        options = jsonObject.jsonNode();
+        options = new HashMap<>();
         jsonObject.putArray("collections", name);
         if (type == StepType.INGEST) {
             jsonObject.put("outputFormat", "json");
@@ -80,11 +87,11 @@ public class StepImpl implements Step {
         this.version = version;
     }
 
-    public JsonNode getOptions() {
+    public Map<String, Object> getOptions() {
         return options;
     }
 
-    public void setOptions(JsonNode options) {
+    public void setOptions(Map<String, Object> options) {
         this.options = options;
     }
 
@@ -120,7 +127,37 @@ public class StepImpl implements Step {
         this.retryLimit = retryLimit;
     }
 
+    public int getBatchSize() {
+        return batchSize;
+    }
 
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public int getThreadCount() {
+        return threadCount;
+    }
+
+    public void setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
+    }
+
+    public String getSourceDB() {
+        return sourceDB;
+    }
+
+    public void setSourceDB(String sourceDB) {
+        this.sourceDB = sourceDB;
+    }
+
+    public String getDestDB() {
+        return destDB;
+    }
+
+    public void setDestDB(String destDB) {
+        this.destDB = destDB;
+    }
 
     @Override
     public void deserialize(JsonNode json) {
@@ -128,10 +165,14 @@ public class StepImpl implements Step {
         setName(jsonObject.getString("name"));
         setType(StepType.getStepType(jsonObject.getString("type")));
         setVersion(jsonObject.getInt("version"));
-        setOptions(jsonObject.getNode("options"));
+        setOptions(jsonObject.getMap("options"));
         setCustomHook(jsonObject.getNode("customHook"));
         setModulePath(jsonObject.getString("modulePath"));
         setIdentifier(jsonObject.getString("identifier"));
         setRetryLimit(jsonObject.getInt("retryLimit"));
+        setBatchSize(jsonObject.getInt("batchSize"));
+        setThreadCount(jsonObject.getInt("threadCount"));
+        setSourceDB(jsonObject.getString("sourceDB"));
+        setDestDB(jsonObject.getString("destDB"));
     }
 }
