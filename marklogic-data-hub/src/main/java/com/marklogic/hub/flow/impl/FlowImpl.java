@@ -22,7 +22,9 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class FlowImpl implements Flow {
     public final static int DEFAULT_BATCH_SIZE = 100;
