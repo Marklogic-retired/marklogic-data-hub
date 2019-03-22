@@ -275,25 +275,25 @@ public interface HubConfig {
      * Get the roleName the hub uses
      * @return the name of the role the DHF uses
      */
-    String getHubRoleName();
+    String getflowOperatorRoleName();
 
     /**
      * Set the role name that the hub uses
-     * @param hubRoleName the name to use
+     * @param flowOperatorRoleName the name to use
      */
-    void setHubRoleName(String hubRoleName);
+    void setflowOperatorRoleName(String flowOperatorRoleName);
 
     /**
      * Get the current marklogic user name the hub uses
      * @return the username
      */
-    String getHubUserName();
+    String getFlowOperatorUserName();
 
     /**
      * Sets the username for the hub to use in MarkLogic
-     * @param hubUserName - username to use
+     * @param flowOperatorName - username to use
      */
-    void setHubUserName(String hubUserName);
+    void setFlowOperatorUserName(String flowOperatorName);
 
     /**
      * Gets a string of load balancer host

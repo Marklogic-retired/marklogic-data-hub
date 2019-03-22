@@ -81,8 +81,8 @@ public class HubConfigJsonTest {
             "  \"stagingSchemasForestsPerHost\": 1,\n" +
             "  \"finalTriggersForestsPerHost\": 1,\n" +
             "  \"finalSchemasForestsPerHost\": 1,\n" +
-            "  \"hubRoleName\": \"flow-operator-role\",\n" +
-            "  \"hubUserName\": \"flow-operator\",\n" +
+            "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
+            "  \"flowOperatorName\": \"flow-operator\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
             "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-operator-role,read,flow-operator-role,execute\",\n" +
             "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +

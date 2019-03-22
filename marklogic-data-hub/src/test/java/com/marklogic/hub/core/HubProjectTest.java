@@ -65,8 +65,8 @@ public class HubProjectTest extends HubTestBase {
 
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
 
-        config.setHubRoleName("myrole");
-        config.setHubUserName("myuser");
+        config.setflowOperatorRoleName("myrole");
+        config.setFlowOperatorUserName("myuser");
 
         config.initHubProject();
 
@@ -142,8 +142,8 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.STAGING_SCHEMAS), props.getProperty("mlStagingSchemasDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_SCHEMAS).toString(), props.getProperty("mlStagingSchemasForestsPerHost"));
 
-        assertEquals(config.getHubRoleName(), props.getProperty("mlFlowOperatorRole"));
-        assertEquals(config.getHubUserName(), props.getProperty("mlFlowOperatorName"));
+        assertEquals(config.getflowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
+        assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
