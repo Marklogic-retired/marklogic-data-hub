@@ -170,10 +170,7 @@ public class StepImpl implements Step {
         setName(jsonObject.getString("name"));
         setType(StepType.getStepType(jsonObject.getString("type")));
         setVersion(jsonObject.getInt("version"));
-        Map<String, Object> options = jsonObject.getMap("options");
-        if (!options.isEmpty()) {
-            setOptions(options);
-        }
+        setOptions(jsonObject.getMap("options"));
         setCustomHook(jsonObject.getNode("customHook"));
         setModulePath(jsonObject.getString("modulePath"));
         setIdentifier(jsonObject.getString("identifier"));
