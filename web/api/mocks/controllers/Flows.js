@@ -1,7 +1,6 @@
 'use strict';
 
 var utils = require('../utils/writer.js');
-var Storage = require('../service/StorageService');
 var Flows = require('../service/FlowsService');
 
 module.exports.createFlow = function createFlow (req, res, next) {
@@ -49,7 +48,8 @@ module.exports.getFlows = function getFlows (req, res, next) {
 
 module.exports.runFlow = function runFlow (req, res, next) {
   var flowId = req.swagger.params['flowId'].value;
-  Flows.runFlow(flowId)
+  var body = req.swagger.params['body'].value;
+  Flows.runFlow(flowId, body)
     .then(function (response) {
       utils.writeJson(res, response);
     })
