@@ -189,6 +189,11 @@ public class FlowManagerImpl implements FlowManager {
         return flow.getSteps();
     }
 
+    public Step getStep(String flowName, String stepNum) {
+        Flow flow = getFlow(flowName);
+        return flow.getStep(stepNum);
+    }
+
     public Flow setSteps(String flowName, Map<String, Step> stepMap) {
         Flow flow = getFlow(flowName);
         flow.setSteps(stepMap);

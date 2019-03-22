@@ -43,6 +43,9 @@ public class FlowManagerService {
     @Autowired
     private HubConfigImpl hubConfig;
 
+    @Autowired
+    private StepManagerService stepManagerService;
+
     public List<Flow> getFlows() {
         return flowManager.getFlows();
     }
@@ -53,7 +56,7 @@ public class FlowManagerService {
             return null;
         }
         if (checkExists && flowManager.isFlowExisted(flow.getName())) {
-            throw new DataHubException(flow.getName() +" is existed.");
+            throw new DataHubException(flow.getName() + " is existed.");
         }
         flowManager.saveFlow(flow);
         return flow;
@@ -84,9 +87,9 @@ public class FlowManagerService {
             stepModel.setType(step.getType());
             stepModel.setName(step.getName());
 //            stepModel.setDescription(step.get);
-//            stepModel.setSourceDatabase(step.get);
-//            stepModel.setTargetDatabase(step.get);
-//            stepModel.setConfig(step.get);
+            stepModel.setSourceDatabase(step.getSourceDB());
+            stepModel.setTargetDatabase(step.getDestDB());
+            stepModel.setConfig(step.getConfig());
             stepModel.setLanguage("zxx");
 //            stepModel.setValid(step.get);
 //            stepModel.setRunning();
@@ -103,7 +106,6 @@ public class FlowManagerService {
 
 
     public StepModel createStep(String flowName, String stepJson) {
-
         StepModel stepModel = null;
         try {
             stepModel = StepModel.fromJson(JSONObject.readInput(stepJson));
@@ -114,24 +116,34 @@ public class FlowManagerService {
         Step step = Step.create("dummy", Step.StepType.CUSTOM);
 
         // TODO: Transform stepModel to step, Save the step on disk, Add the stepJson to Flow
+        // NOTE: Only save step if step is of Custom type, for rest use the default steps.
 
-        //stepManagerService.saveStep(step);
+        if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
+            stepManagerService.saveStep(step);
+        } else {
+            stepManagerService.createStep(step);
+        }
         Map<String, Step> stepMap = new HashMap<>();
-        stepMap.put("", step);
+        stepMap.put("<STEP_ORDER>", step);
         Flow flow = flowManager.setSteps(flowName, stepMap);
         flowManager.saveFlow(flow);
 
         return stepModel;
     }
 
+    public void deleteStep(String flowName, String stepId) {
+        // TODO: stepId: stepNum or stepName-stepType
+        Step step = flowManager.getStep(flowName, stepId);
+        stepManagerService.deleteStep(step);
+    }
+
     public String runFlow(String flowName, String[] steps) {
         RunFlowResponse resp = null;
-        if (steps == null){
-           resp = flowRunner.runFlow(flowName);
-        }
-        else {
+        if (steps == null) {
+            resp = flowRunner.runFlow(flowName);
+        } else {
             resp = flowRunner.runFlow(flowName, Arrays.asList(steps));
         }
-        return  resp.getJobId();
+        return resp.getJobId();
     }
 }
