@@ -28,6 +28,8 @@ import com.marklogic.hub.step.StepItemFailureListener
 import com.marklogic.hub.step.StepRunner
 import com.marklogic.hub.job.Job
 import groovy.json.JsonBuilder
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
@@ -132,11 +134,16 @@ class RunFlowTask extends HubTask {
         }
 
         Map<String, Object> options = new HashMap<>()
-        project.ext.properties.each { key, value ->
-            if (key.toString().startsWith("dhf.")) {
-                options.put(key.minus("dhf."), value)
-            }
+        def jsonSlurper = new JsonSlurper(type: JsonParserType.INDEX_OVERLAY)
+        if(project.ext.properties.containsKey("optionsFile")){
+            def jsonFile = new File(project.ext.optionsFile)
+            options = jsonSlurper.parseText(jsonFile.text)
         }
+        else if(project.ext.properties.containsKey("options")) {
+            def optionsString = String.valueOf(project.ext.options)
+            options = jsonSlurper.parseText(optionsString)
+        }
+
         println("Running Flow: [" + flowName + "], Step: [" + step + "]" +
             "\n\twith batch size: " + batchSize +
             "\n\twith thread count: " + threadCount +
