@@ -278,7 +278,9 @@ public class JSONObject {
 
     public Map<String, Object> getMap(String key) {
         Map<String, Object> mapObj = new HashMap<>();
-
+        if (json.get(key) == null) {
+            return mapObj;
+        }
         Iterator<Map.Entry<String, JsonNode>> entryIterator =  json.get(key).fields();
         while (entryIterator.hasNext()) {
             Map.Entry<String, JsonNode> entry = entryIterator.next();
