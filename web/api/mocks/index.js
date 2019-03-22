@@ -35,7 +35,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   app.use(middleware.swaggerMetadata());
 
   // Validate Swagger requests
-  app.use(middleware.swaggerValidator());
+  // app.use(middleware.swaggerValidator());
 
   // Route validated requests to appropriate controller
   app.use(middleware.swaggerRouter(options));
@@ -51,8 +51,8 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
   // Start the server
   http.createServer(app).listen(serverPort, function () {
-    console.log('Sample Mock API server is now running at http://localhost:8081');
-    console.log('Swagger JSON Doc: http://localhost:4200/api/swagger/doc/');
+    console.log('Sample Mock API server is now running at http://localhost:4200/api/');
+    // console.log('Swagger JSON Doc: http://localhost:4200/api/swagger/doc/');
     console.log('Swagger UI: http://localhost:4200/api/swagger-ui/');
   });
 
