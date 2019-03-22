@@ -86,7 +86,7 @@ export class AddMatchOptionDialogComponent {
   }
 
   getDialogTitle(){
-    return this.data.option ? 'Add Match Option' : 'New Match Option';
+    return this.data.option ? 'Edit Match Option' : 'New Match Option';
   }
 
   getSubmitButtonTitle() {

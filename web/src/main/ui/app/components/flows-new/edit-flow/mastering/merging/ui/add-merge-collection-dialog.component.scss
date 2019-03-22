@@ -1,3 +1,13 @@
+.mat-dialog-title {
+  margin: -6px 0 20px;
+  font-size: 24px;
+}
+
+.mat-dialog-actions {
+  padding: 12px 0;
+  margin-bottom: -20px;
+}
+
 div.add-group input,
 div.remove-group input,
 div.set-group input {
@@ -14,4 +24,15 @@ div.set-group input {
 #collections-remove,
 #collections-set {
   margin-bottom: 10px;
+}
+
+.mat-icon {
+  color: #2a4356;
+}
+
+.add-add-btn .mat-icon,
+.add-remove-btn .mat-icon,
+.add-set-btn .mat-icon {
+  position: relative;
+  top: -2px;
 }
