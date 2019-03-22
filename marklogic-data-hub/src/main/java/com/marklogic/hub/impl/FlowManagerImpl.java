@@ -181,14 +181,14 @@ public class FlowManagerImpl implements FlowManager {
         return false;
     }
 
-    public Map<String, Step> getSteps(String flowName) {
+    public Map<String, Step> getStepDetails(String flowName) {
         Flow flow = getFlow(flowName);
-        return flow.getSteps();
+        return flow.getStepDetails();
     }
 
-    public Flow setSteps(String flowName, Map<String, Step> stepMap) {
+    public Flow setStepDetails(String flowName, Map<String, Step> stepMap) {
         Flow flow = getFlow(flowName);
-        flow.setSteps(stepMap);
+        flow.setStepDetails(stepMap);
         return flow;
     }
 

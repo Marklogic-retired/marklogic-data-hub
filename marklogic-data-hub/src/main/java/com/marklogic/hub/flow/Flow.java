@@ -110,14 +110,14 @@ public interface Flow {
      *
      * @return - a map having Step number as key and Step model as value
      */
-    Map<String, Step> getSteps();
+    Map<String, Step> getStepDetails();
 
     /**
      * Sets the steps to the flow model
      *
      * @param steps -  a map having Step number as key and Step model as value
      */
-    void setSteps(Map<String, Step> steps);
+    void setStepDetails(Map<String, Step> steps);
 
     /**
      *
@@ -136,6 +136,9 @@ public interface Flow {
      * @return
      */
     boolean isStopOnError();
+
+    JsonNode getSteps();
+    void setSteps(JsonNode stepsNode);
 
     /**
      * Deserialize a json response and applies it to this flow

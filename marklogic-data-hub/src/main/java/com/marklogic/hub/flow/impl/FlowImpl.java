@@ -15,14 +15,14 @@
  */
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class FlowImpl implements Flow {
     public final static int DEFAULT_BATCH_SIZE = 100;
@@ -36,8 +36,10 @@ public class FlowImpl implements Flow {
     private int threadCount;
     private boolean stopOnError;
     private JsonNode options;
+    private JsonNode stepsNode;
 
-    private Map<String, Step> steps = new HashMap<>();
+    @JsonIgnore
+    private Map<String, Step> stepDetails = new HashMap<>();
 
     public String getName() {
         return this.name;
@@ -95,17 +97,17 @@ public class FlowImpl implements Flow {
         this.options = options;
     }
 
-    public Map<String, Step> getSteps() {
-        return steps;
+    public Map<String, Step> getStepDetails() {
+        return stepDetails;
     }
 
-    public void setSteps(Map<String, Step> steps) {
-        this.steps = steps;
+    public void setStepDetails(Map<String, Step> steps) {
+        this.stepDetails = steps;
     }
 
     @Override
     public Step getStep(String stepNum) {
-        return steps.get(stepNum);
+        return stepDetails.get(stepNum);
     }
 
     @Override
@@ -119,6 +121,16 @@ public class FlowImpl implements Flow {
     }
 
     @Override
+    public JsonNode getSteps() {
+        return this.stepsNode;
+    }
+
+    @Override
+    public void setSteps(JsonNode stepsNode) {
+        this.stepsNode = stepsNode;
+    }
+
+    @Override
     public Flow deserialize(JsonNode json) {
         JSONObject jsonObject = new JSONObject(json);
         setName(jsonObject.getString("name"));
@@ -129,16 +141,23 @@ public class FlowImpl implements Flow {
         setOptions(jsonObject.getNode("options"));
         setStopOnError(jsonObject.getBoolean("stopOnError", DEFAULT_STOP_ONERROR));
 
-        JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
-        Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            Step step = Step.create("default", Step.StepType.CUSTOM);
-            step.deserialize(stepsNode.getNode(key));
+        JsonNode stepsNode = jsonObject.getNode("steps");
+        if (stepsNode != null) {
+            if (stepsNode instanceof ArrayNode) {
+                setSteps(stepsNode);
+            }
+            else {
+                Iterator<String> iterator = stepsNode.fieldNames();
+                while (iterator.hasNext()) {
+                    String key = iterator.next();
+                    Step step = Step.create("default", Step.StepType.CUSTOM);
+                    step.deserialize(stepsNode.get(key));
 
-            steps.put(key, step);
+                    stepDetails.put(key, step);
+                }
+                setStepDetails(stepDetails);
+            }
         }
-        setSteps(steps);
 
         return this;
     }

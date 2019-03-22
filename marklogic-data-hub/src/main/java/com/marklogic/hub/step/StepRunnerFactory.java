@@ -14,7 +14,7 @@ public class StepRunnerFactory {
     private StepRunner stepRunner;
 
     public StepRunner getStepRunner(Flow flow, String stepNum) {
-        Map<String,Step> steps = flow.getSteps();
+        Map<String,Step> steps = flow.getStepDetails();
         Step step = steps.get(stepNum);
 
         switch (step.getType()) {

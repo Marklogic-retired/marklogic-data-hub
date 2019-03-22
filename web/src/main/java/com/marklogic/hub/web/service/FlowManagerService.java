@@ -72,7 +72,7 @@ public class FlowManagerService {
     }
 
     public List<StepModel> getSteps(String flowName) {
-        Map<String, Step> stepMap = flowManager.getSteps(flowName);
+        Map<String, Step> stepMap = flowManager.getStepDetails(flowName);
 
         List<StepModel> stepModelList = new ArrayList<>();
         for (String key : stepMap.keySet()) {
@@ -118,7 +118,7 @@ public class FlowManagerService {
         //stepManagerService.saveStep(step);
         Map<String, Step> stepMap = new HashMap<>();
         stepMap.put("", step);
-        Flow flow = flowManager.setSteps(flowName, stepMap);
+        Flow flow = flowManager.setStepDetails(flowName, stepMap);
         flowManager.saveFlow(flow);
 
         return stepModel;

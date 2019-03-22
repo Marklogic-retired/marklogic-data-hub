@@ -115,9 +115,9 @@ public interface FlowManager {
      */
     boolean isFlowExisted(String flowName);
 
-    Map<String, Step> getSteps(String flowName);
+    Map<String, Step> getStepDetails(String flowName);
 
-    Flow setSteps(String flowName, Map<String, Step> stepMap);
+    Flow setStepDetails(String flowName, Map<String, Step> stepMap);
 
     /**
      * Creates and returns a new FlowRunner object using the FlowManager's hubconfig

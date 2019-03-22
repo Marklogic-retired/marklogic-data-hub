@@ -53,7 +53,7 @@ public class FlowRunnerImpl implements FlowRunner{
         if (flow == null){
             throw new RuntimeException("Flow " + flowName + " not found");
         }
-        List<String> steps = new ArrayList<String>(flow.getSteps().keySet());
+        List<String> steps = new ArrayList<String>(flow.getStepDetails().keySet());
         return runFlow(flowName, steps);
     }
 
@@ -134,7 +134,7 @@ public class FlowRunnerImpl implements FlowRunner{
             Map<String, Job> stepOutputs = new HashMap<>();
             while (! stepQueue.isEmpty()){
                 String stepNum = stepQueue.poll();
-                runningStep = runningFlow.getSteps().get(stepNum);
+                runningStep = runningFlow.getStepDetails().get(stepNum);
                 stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
                     .onItemFailed((jobId, itemId)-> {
