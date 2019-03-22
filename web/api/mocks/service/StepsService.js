@@ -1,5 +1,6 @@
 'use strict';
 let Storage = require('./StorageService');
+let Error = require('./ErrorService');
 const _ = require('lodash');
 
 /**
@@ -10,10 +11,12 @@ const _ = require('lodash');
  * body Step Step to create
  * returns step
  **/
-exports.createFlowStep = function(flowId, stepIndex, body) {
+exports.createFlowStep = function(flowId, stepOrder, body) {
   return new Promise(async (resolve, reject) => {
-    const index = parseInt(stepIndex);
-    if (flowId && body) {
+    const index = parseInt(stepOrder) - 1;
+    console.log('index');
+    console.log(index);
+    if (flowId && body && Object.keys(body).length > 0) {
       let flow = await Storage.get('flows', flowId);
       if (flow) {
         body.id = Storage.uuid();
@@ -21,6 +24,7 @@ exports.createFlowStep = function(flowId, stepIndex, body) {
         flow.steps = flow.steps || [];
         const newFlowStep = { 
           id: step.id,
+          name: step.name,
           type: step.type,
           name: step.name,
           targetEntity: step.config && step.config.targetEntity || null 
@@ -29,10 +33,10 @@ exports.createFlowStep = function(flowId, stepIndex, body) {
         await Storage.save('flows', flowId, flow);
         resolve(flow);
       } else {
-        reject({ error: `'${flowId}' does not exist` });
+        reject(Error.create(404, `Not Found: '${flowId}' does not exist`));
       }
     } else {
-      reject({ error: `POST body or 'flowId' does not exist` });
+      reject(Error.create(400, `Bad Request: POST body and 'flowId' required`));
     }
   });
 }
@@ -58,10 +62,10 @@ exports.deleteFlowStep = function(flowId, stepId) {
         await Storage.save('flows', flowId, flow);
         resolve(flow);
       } else {
-        reject({ error: `'${flowId}' does not exist` });
+        reject(Error.create(404, `Not Found: '${flowId}' does not exist`));
       }
     } else {
-      reject({ error: `'flowId' or 'stepId' does not exist` });
+      reject(Error.create(400, `Bad Request: 'flowId' and 'stepId' required`));
     }
   });
 }
@@ -80,18 +84,18 @@ exports.getFlowSteps = function(flowId) {
       let flow = await Storage.get('flows', flowId);
       if (flow) {
         let stepIds = flow && flow.steps && _.map(flow.steps, 'id') || [];
-        let steps = await Storage.getCollection('steps');
         let stepsResp = []; // Array of Step objects
-        _.forEach(steps, (step) => {
-          if (stepIds.includes(step.id))
+        _.forEach(stepIds, async (stepId) => {
+          let step = await Storage.get('steps', stepId);
+          if (step)
             stepsResp.push(step);
         });
         resolve(stepsResp);
       } else {
-        reject({ error: `'${flowId}' does not exist` });
+        reject(Error.create(404, `Not Found: '${flowId}' does not exist`));
       }
     } else {
-      reject({ error: `'flowId' does not exist` });
+      reject(Error.create(400, `Bad Request: 'flowId' required`));
     }
   });
 }
@@ -108,7 +112,7 @@ exports.getFlowSteps = function(flowId) {
  **/
 exports.updateFlowStep = function(flowId, stepId, body) {
   return new Promise(async (resolve, reject) => {
-    if (flowId && stepId && body) {
+    if (flowId && stepId && body && Object.keys(body).length > 0) {
       let flow = await Storage.get('flows', flowId);
       if (flow) {
         let step = await Storage.save('steps', stepId, body);
@@ -117,10 +121,10 @@ exports.updateFlowStep = function(flowId, stepId, body) {
         await Storage.save('flows', flowId, flow);
         resolve(step);
       } else {
-        reject({ error: `'${flowId}' does not exist` });
+        reject(Error.create(404, `Not Found: '${flowId}' does not exist`));
       }
     } else {
-      reject({ error: `POST body, 'flowId' or 'stepId' does not exist` });
+      reject(Error.create(400, `Bad Request: POST body, 'flowId' and 'stepId' required`));
     }
   });
 }

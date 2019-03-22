@@ -1,5 +1,6 @@
 'use strict';
 let Storage = require('./StorageService');
+let Error = require('./ErrorService');
 
 
 /**
@@ -10,7 +11,15 @@ let Storage = require('./StorageService');
  * returns List
  **/
 exports.getDatabaseCollections = function(databaseId) {
-  // ignoring databaseId - it's just a mock
-  return Storage.getCollection('collections');
+  let resp;
+  if (databaseId) {
+    resp = Storage.getCollection('collections');
+  } else {
+    resp = new Promise((resolve, reject) => {
+      reject(Error.create(400, `Bad Request: 'databaseId' required`));
+    });
+  }
+  return resp;
+
 }
 
