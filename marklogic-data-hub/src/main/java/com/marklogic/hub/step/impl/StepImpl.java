@@ -171,7 +171,7 @@ public class StepImpl implements Step {
         setType(StepType.getStepType(jsonObject.getString("type")));
         setVersion(jsonObject.getInt("version"));
         Map<String, Object> options = jsonObject.getMap("options");
-        if (options.isEmpty()) {
+        if (!options.isEmpty()) {
             setOptions(options);
         }
         setCustomHook(jsonObject.getNode("customHook"));
