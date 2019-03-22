@@ -3,7 +3,7 @@
 }
 
 #match-thresholds {
-  padding: 10px 30px 30px 30px;
+  padding: 8px 30px 24px 30px;
 
   .center .header .mat-toolbar-single-row {
     padding: 0;
@@ -213,4 +213,26 @@ button {
 
 .capitalize {
    text-transform: capitalize;
+}
+
+/deep/ .mat-dialog-title {
+  margin: -6px 0 20px !important;
+  font-size: 24px;
+}
+/deep/ .mat-dialog-actions {
+  padding: 12px 0 !important;
+  margin-bottom: -20px !important;
+  justify-content: flex-end;
+}
+
+/deep/ .mat-dialog-content {
+  background: #fff !important;
+  padding: 10px 24px 20px 24px !important;
+}
+
+/deep/ .mat-button {
+  outline: none !important;
+  color: white !important;
+  background-color: #2a4356 !important;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
 }

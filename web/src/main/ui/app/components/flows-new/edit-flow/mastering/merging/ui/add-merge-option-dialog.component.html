@@ -37,7 +37,8 @@
   </mat-form-field>
 
 </div>
-<mat-dialog-actions class="bottom">
-  <button id="merge-option-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
-  <button id="merge-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+
+<mat-dialog-actions align="end" class="bottom">
+  <button mat-raised-button color="primary" id="merge-option-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" id="merge-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>
