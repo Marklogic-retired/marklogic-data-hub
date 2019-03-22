@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.step.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -42,6 +43,10 @@ public class StepImpl implements Step {
     private int threadCount;
     private String sourceDB;
     private String destDB;
+
+
+
+    private JsonNode config;
 
     public StepImpl(String name, StepType type) {
         this.name = name;
@@ -167,6 +172,19 @@ public class StepImpl implements Step {
         this.destDB = destDB;
     }
 
+    @JsonIgnore
+    public JsonNode getConfig() {
+        return config;
+    }
+
+    public void setConfig(JsonNode config) {
+        this.config = config;
+    }
+
+    public void incrementVersion() {
+        setVersion(getVersion() + 1);
+    }
+
     @Override
     public void deserialize(JsonNode json) {
         JSONObject jsonObject = new JSONObject(json);
@@ -185,5 +203,6 @@ public class StepImpl implements Step {
         setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
         setSourceDB(jsonObject.getString("sourceDB"));
         setDestDB(jsonObject.getString("destDB"));
+        setConfig(jsonObject.getNode("config"));
     }
 }

@@ -240,6 +240,15 @@ public interface Step {
      */
     void setDestDB(String destDB);
 
+    JsonNode getConfig();
+
+    void setConfig(JsonNode config);
+
+    /**
+     * Automatically increments the version of the mapping by 1
+     */
+    void incrementVersion();
+
     /**
      * Deserialize a json response and applies it to this mapping
      *

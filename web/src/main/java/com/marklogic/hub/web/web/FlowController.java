@@ -116,6 +116,19 @@ public class FlowController {
         return flowManagerService.createStep(flowName, stepJson);
     }
 
+    @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
+    @ResponseBody
+    public StepModel createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
+        return flowManagerService.createStep(flowName, stepJson);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
+        flowManagerService.deleteStep(flowName, stepId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/flows/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     public String runFlow(@PathVariable String flowName, @RequestBody String[] steps) {
