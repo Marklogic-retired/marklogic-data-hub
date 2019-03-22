@@ -116,7 +116,7 @@ public class FlowController {
         return flowManagerService.createStep(flowName, stepJson);
     }
 
-    @RequestMapping(value = "/flows/{flowId}/run", method = RequestMethod.POST)
+    @RequestMapping(value = "/flows/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     public String runFlow(@PathVariable String flowName, @RequestBody String[] steps) {
         return flowManagerService.runFlow(flowName, steps);

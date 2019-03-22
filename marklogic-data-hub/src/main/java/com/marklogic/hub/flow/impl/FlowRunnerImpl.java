@@ -48,6 +48,12 @@ public class FlowRunnerImpl implements FlowRunner{
     private ExecutorService threadPool;
     private JobUpdate jobUpdate;
 
+    @Override
+    public FlowRunner onStatusChanged(FlowStatusListener listener) {
+        this.flowStatusListeners.add(listener);
+        return this;
+    }
+
     public RunFlowResponse runFlow(String flowName) {
         Flow flow = flowManager.getFlow(flowName);
         if (flow == null){
@@ -146,7 +152,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     })
                     .onStatusChanged((jobId, percentComplete, message) ->{
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChange(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
+                            listener.onStatusChanged(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
                         });
                     });
                 Job stepResp = stepRunner.run();
