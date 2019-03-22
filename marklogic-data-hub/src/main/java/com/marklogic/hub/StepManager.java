@@ -36,6 +36,14 @@ public interface StepManager {
     void saveStep(Step step);
 
     /**
+     * Saves a Step to disk
+     *
+     * @param step - the Step object to be saved
+     * @param autoIncrement - true to increment version, false if not to
+     */
+    void saveStep(Step step, boolean autoIncrement);
+
+    /**
      * Deletes a Step from disk
      *
      * @param step - the Step object to be deleted
