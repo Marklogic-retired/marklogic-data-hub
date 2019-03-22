@@ -12,5 +12,6 @@ public interface FlowStatusListener {
      * @param message - the message you'd like to send along with it
      */
 
-    void onStatusChange(String jobId, Step step, int percentComplete, String message) ;
+    void onStatusChanged(String jobId, Step step, int percentComplete, String message) ;
+
 }
