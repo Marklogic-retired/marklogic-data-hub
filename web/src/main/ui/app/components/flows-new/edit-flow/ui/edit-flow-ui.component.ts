@@ -53,10 +53,10 @@ export class EditFlowUiComponent {
       }
     });
   }
-  openRunDialog(flow: Flow): void {
+  openRunDialog(): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: flow.steps}
+      data: {steps: this.flow.steps}
     });
 
     dialogRef.afterClosed().subscribe(response => {
