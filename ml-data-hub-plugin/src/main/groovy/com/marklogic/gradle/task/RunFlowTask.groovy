@@ -23,6 +23,7 @@ import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
+import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.step.StepItemCompleteListener
 import com.marklogic.hub.step.StepItemFailureListener
 import com.marklogic.hub.step.StepRunner
@@ -35,9 +36,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 
 class RunFlowTask extends HubTask {
-
-    @Input
-    public String entityName
 
     @Input
     public String flowName
@@ -61,7 +59,7 @@ class RunFlowTask extends HubTask {
     public Boolean failHard
 
     @Input
-    public Integer step
+    public List<String> steps
 
     @Input
     public String jobId
@@ -75,17 +73,13 @@ class RunFlowTask extends HubTask {
             throw new FlowNameRequiredException()
         }
 
-        if (entityName == null) {
-            entityName = project.hasProperty("entityName") ? project.property("entityName") : null
-        }
-
         if (jobId == null) {
             jobId = project.hasProperty("jobId") ? project.property("jobId") : null
         }
 
         if (batchSize == null) {
             batchSize = project.hasProperty("batchSize") ?
-                Integer.parseInt(project.property("batchSize")) : 100
+                Integer.parseInt(project.property("batchSize")) : 200
         }
 
         if (threadCount == null) {
@@ -118,9 +112,9 @@ class RunFlowTask extends HubTask {
                 Boolean.parseBoolean(project.property("failHard")) : false
         }
 
-        if (step == null) {
-            step = project.hasProperty("step") ?
-                project.property("step") : "1"
+        if (steps == null) {
+            steps = project.hasProperty("steps") ?
+                project.property("steps").toString().trim().tokenize(",") : null
         }
 
         if (!isHubInstalled()) {
@@ -130,7 +124,7 @@ class RunFlowTask extends HubTask {
         FlowManager fm = getFlowManager()
         Flow flow = fm.getFlow(flowName)
         if (flow == null) {
-            throw new FlowNotFoundException(flowName);
+            throw new FlowNotFoundException(flowName)
         }
 
         Map<String, Object> options = new HashMap<>()
@@ -144,7 +138,7 @@ class RunFlowTask extends HubTask {
             options = jsonSlurper.parseText(optionsString)
         }
 
-        println("Running Flow: [" + flowName + "], Step: [" + step + "]" +
+        println("Running Flow: [" + flowName + "], Steps: [" + steps.join(",") + "]" +
             "\n\twith batch size: " + batchSize +
             "\n\twith thread count: " + threadCount +
             "\n\twith Source DB: " + sourceClient.database +
@@ -157,9 +151,7 @@ class RunFlowTask extends HubTask {
             }
         }
 
-        StepRunner flowRunner = fm.newFlowRunner()
-            .withFlow(flow)
-            .withStep(step)
+        FlowRunner flowRunner = dataHub.getFlowRunner().runFlow(flow, steps)
             .withOptions(options)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)

@@ -2,7 +2,7 @@ package com.marklogic.hub.step;
 
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.step.impl.MappingStepRunner;
+import com.marklogic.hub.step.impl.QueryStepRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -19,11 +19,11 @@ public class StepRunnerFactory {
 
         switch (step.getType()) {
             case MAPPING:
-                stepRunner = new MappingStepRunner(hubConfig);
-            case CUSTOM:
-                stepRunner = null;
+                stepRunner = new QueryStepRunner(hubConfig);
             case INGEST:
                 stepRunner =  null;
+            default:
+                stepRunner = new QueryStepRunner(hubConfig);
         }
         return stepRunner.withFlow(flow)
             .withStep(stepNum)

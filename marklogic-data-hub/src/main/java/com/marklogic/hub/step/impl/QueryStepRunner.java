@@ -45,7 +45,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class MappingStepRunner implements StepRunner {
+public class QueryStepRunner implements StepRunner {
 
     private static final int DEFAULT_BATCH_SIZE = 100;
     private static final int DEFAULT_THREAD_COUNT = 4;
@@ -75,7 +75,7 @@ public class MappingStepRunner implements StepRunner {
     private QueryBatcher queryBatcher = null;
     private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
 
-    public MappingStepRunner(HubConfig hubConfig) {
+    public QueryStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.stagingClient = hubConfig.newStagingClient();
         this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);

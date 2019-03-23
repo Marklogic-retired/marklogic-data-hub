@@ -118,11 +118,4 @@ public interface FlowManager {
     Map<String, Step> getSteps(String flowName);
 
     Flow setSteps(String flowName, Map<String, Step> stepMap);
-
-    /**
-     * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
-     *
-     * @return FlowRunner object with current hubconfig already set
-     */
-    FlowRunner newFlowRunner();
 }
