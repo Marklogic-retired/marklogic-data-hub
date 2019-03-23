@@ -31,6 +31,8 @@ declare variable $rdfs-prefix := fn:namespace-uri-from-QName(xs:QName("rdfs:docu
 declare variable $RDF-TYPE-IRI := sem:iri($rdf-prefix || "type");
 declare variable $RDFS-LABEL-IRI := sem:iri($rdfs-prefix || "label");
 
+declare private variable $ps-collection as xs:string :=
+ "http://marklogic.com/provenance-services/record";
 (:
  : Generate and record PROV-XML regarding a merge or unmerge action.
  :
@@ -172,9 +174,9 @@ declare function auditing:audit-trace(
  :)
 declare function auditing:auditing-receipts-for-doc-uri($doc-uri as xs:string)
 {
-  cts:search(fn:collection($const:AUDITING-COLL)/prov:document,
+  cts:search(fn:collection(($const:AUDITING-COLL,$ps-collection))/prov:document,
     cts:element-value-query(
-      xs:QName("auditing:new-uri"),
+      (xs:QName("auditing:new-uri"),xs:QName("new-uri")),
       $doc-uri,
       "exact"
     )
@@ -200,7 +202,9 @@ declare function auditing:auditing-receipts-for-doc-history($doc-uris as xs:stri
         cts:element-value-query(
           (
             xs:QName("auditing:previous-uri"),
-            xs:QName("auditing:new-uri")
+            xs:QName("auditing:new-uri"),
+            xs:QName("previous-uri"),
+            xs:QName("new-uri")
           ),
           $doc-uris,
           "exact"
@@ -216,12 +220,12 @@ declare function auditing:audit-trace-rollback($prov-xml)
 {
   let $merged-uri :=
     fn:string(
-      $prov-xml/prov:collection[fn:starts-with(prov:type, "result of record ")]/prov:label
+      $prov-xml/(prov:collection|prov:entity)[fn:starts-with(prov:type, "result of record ")]/prov:label
     )
-  for $entity in $prov-xml/prov:collection[fn:starts-with(prov:type, "contributing record for ")]
+  for $entity in $prov-xml/(prov:collection|prov:entity)[fn:starts-with(prov:type, "contributing record for ")]
   let $orig-uri :=
     fn:string(
-      $entity/prov:label
+      $entity/*:label
     )
   return
     auditing:audit-trace(

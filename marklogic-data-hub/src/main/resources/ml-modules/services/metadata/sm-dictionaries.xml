@@ -1,0 +1,32 @@
+<metadata>
+  <title>Smart Mastering: Dictionary List</title>
+  <description>
+    <p>Retrieves a list of dictionaries for use with Smart Mastering.</p>
+    <dl>
+      <dt>GET</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul></ul>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              [
+                {
+                  "displayName": "firstNames.json"
+                },
+                {
+                  "displayName": "lastNames.json"
+                }
+              ]
+            </code>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="GET">
+  </method>
+</metadata>

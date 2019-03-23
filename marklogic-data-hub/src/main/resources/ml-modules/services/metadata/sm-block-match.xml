@@ -1,0 +1,16 @@
+<metadata>
+  <title>Smart Mastering: Block Match</title>
+  <description>
+  </description>
+  <method name="GET">
+    <param name="uri" type="xs:string" />
+  </method>
+  <method name="POST">
+    <param name="uri1" type="xs:string" />
+    <param name="uri2" type="xs:string" />
+  </method>
+  <method name="DELETE">
+    <param name="uri1" type="xs:string" />
+    <param name="uri2" type="xs:string" />
+  </method>
+</metadata>

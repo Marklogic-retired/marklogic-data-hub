@@ -1,0 +1,29 @@
+<metadata>
+  <title>Smart Mastering: Thesarus List</title>
+  <description>
+    <p>Retrieves a list of thesauri for use with Smart Mastering.</p>
+    <dl>
+      <dt>GET</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul></ul>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              [
+                {
+                  "displayName": "nickNames.json"
+                }
+              ]
+            </code>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="GET">
+  </method>
+</metadata>

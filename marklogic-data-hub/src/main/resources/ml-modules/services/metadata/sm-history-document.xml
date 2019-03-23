@@ -1,0 +1,35 @@
+<metadata>
+  <title>Smart Mastering: Document History</title>
+  <description>
+    <p>Get history of document lineage.</p>
+    <dl>
+      <dt>GET</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul><li>rs:uri (xs:string)</li></ul>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              {
+                  "activities": [{
+                    "type": "merge",
+                    "auditUri": "/com.marklogic.agile-mastering/auditing/merge/4d486103-bf84-44fd-939b-d08b8f6e26d5.xml",
+                    "wasDerivedFromUris": ["/CSV_FILE/Person/208.xml", "/CSV_FILE/Person/199.xml"],
+                    "time": "2017-11-09T21:54:34.564421Z",
+                    "resultUri": "/com.marklogic.agile-mastering/merged/a5bd0dc1-6ae7-4575-a9b2-6c132bd051da.xml",
+                    "label": "merge by admin"
+                  }]
+                }
+            </code>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="GET">
+    <param name="uri" type="xs:string" />
+  </method>
+</metadata>

@@ -1,0 +1,294 @@
+<metadata>
+  <title>Smart Mastering: Match Options</title>
+  <description>
+    <p>CRUD options for matching records together</p>
+    <dl>
+      <dt>GET</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul><li>rs:name (xs:string)</li></ul>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              {
+              "options": {
+                "property-defs": {
+                  "property": [{
+                    "namespace": "",
+                    "localname": "IdentificationID",
+                    "name": "ssn"
+                  }, {
+                    "namespace": "",
+                    "localname": "PersonGivenName",
+                    "name": "first-name"
+                  }, {
+                    "namespace": "",
+                    "localname": "PersonSurName",
+                    "name": "last-name"
+                  }, {
+                    "namespace": "",
+                    "localname": "AddressPrivateMailboxText",
+                    "name": "addr1"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationCity",
+                    "name": "city"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationState",
+                    "name": "state"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationPostalCode",
+                    "name": "zip"
+                  }]
+                },
+                "algorithms": {
+                  "algorithm": [{
+                    "name": "cust-function",
+                    "function": "customFunction",
+                    "at": "/ext/com.marklogic.agile-mastering/algorithms/test.sjs"
+                  }, {
+                    "name": "std-reduce",
+                    "function": "standard-reduction"
+                  }, {
+                    "name": "dbl-metaphone",
+                    "function": "double-metaphone"
+                  }, {
+                    "name": "thesaurus",
+                    "function": "thesaurus"
+                  }]
+                },
+                "scoring": [{
+                  "add": [{
+                    "property-name": "ssn",
+                    "weight": "75"
+                  }, {
+                    "property-name": "last-name",
+                    "weight": "8"
+                  }, {
+                    "property-name": "first-name",
+                    "weight": "12"
+                  }, {
+                    "property-name": "addr1",
+                    "weight": "5"
+                  }, {
+                    "property-name": "city",
+                    "weight": "3"
+                  }, {
+                    "property-name": "state",
+                    "weight": "1"
+                  }, {
+                    "property-name": "zip",
+                    "weight": "3"
+                  }],
+                  "expand": [{
+                    "property-name": "first-name",
+                    "algorithm-ref": "thesaurus",
+                    "weight": "3",
+                    "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml"
+                  }, {
+                    "property-name": "first-name",
+                    "algorithm-ref": "thesaurus",
+                    "weight": "2",
+                    "thesaurus": "/mdm/config/thesauri/names-across-languages.xml"
+                  }, {
+                    "property-name": "first-name",
+                    "algorithm-ref": "dbl-metaphone",
+                    "weight": "6",
+                    "dictionary": "/mdm/config/dictionaries/first-names.xml",
+                    "distance-threshold": "50"
+                  }, {
+                    "property-name": "last-name",
+                    "algorithm-ref": "dbl-metaphone",
+                    "weight": "5",
+                    "dictionary": "/mdm/config/dictionaries/last-names.xml"
+                  }],
+                  "reduce": [{
+                    "algorithm-ref": "std-reduce",
+                    "weight": "18",
+                    "all-match": {
+                      "property": [
+                        "last-name",
+                        "addr1"
+                      ]
+                    }
+                  }]
+                }],
+                "thresholds": {
+                  "threshold": [{
+                    "above": "30",
+                    "label": "Possible Match"
+                  }, {
+                    "above": "50",
+                    "label": "Likely Match"
+                  }, {
+                    "above": "75",
+                    "label": "Definitive Match"
+                  }]
+                },
+                "tuning": {
+                  "max-scan": "200"
+                }
+              }
+            }
+            </code>
+          </dd>
+        </dl>
+      </dd>
+      <dt>POST</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul>rs:name (xs:string)</ul>
+          </dd>
+          <dt>Example Request Body (application/json)</dt>
+          <dd>
+            <code>
+              {
+              "options": {
+                "property-defs": {
+                  "property": [{
+                    "namespace": "",
+                    "localname": "IdentificationID",
+                    "name": "ssn"
+                  }, {
+                    "namespace": "",
+                    "localname": "PersonGivenName",
+                    "name": "first-name"
+                  }, {
+                    "namespace": "",
+                    "localname": "PersonSurName",
+                    "name": "last-name"
+                  }, {
+                    "namespace": "",
+                    "localname": "AddressPrivateMailboxText",
+                    "name": "addr1"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationCity",
+                    "name": "city"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationState",
+                    "name": "state"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationPostalCode",
+                    "name": "zip"
+                  }]
+                },
+                "algorithms": {
+                  "algorithm": [{
+                    "name": "cust-function",
+                    "function": "customFunction",
+                    "at": "/ext/com.marklogic.agile-mastering/algorithms/test.sjs"
+                  }, {
+                    "name": "std-reduce",
+                    "function": "standard-reduction"
+                  }, {
+                    "name": "dbl-metaphone",
+                    "function": "double-metaphone"
+                  }, {
+                    "name": "thesaurus",
+                    "function": "thesaurus"
+                  }]
+                },
+                "scoring": [{
+                  "add": [{
+                    "property-name": "ssn",
+                    "weight": "75"
+                  }, {
+                    "property-name": "last-name",
+                    "weight": "8"
+                  }, {
+                    "property-name": "first-name",
+                    "weight": "12"
+                  }, {
+                    "property-name": "addr1",
+                    "weight": "5"
+                  }, {
+                    "property-name": "city",
+                    "weight": "3"
+                  }, {
+                    "property-name": "state",
+                    "weight": "1"
+                  }, {
+                    "property-name": "zip",
+                    "weight": "3"
+                  }],
+                  "expand": [{
+                    "property-name": "first-name",
+                    "algorithm-ref": "thesaurus",
+                    "weight": "3",
+                    "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml"
+                  }, {
+                    "property-name": "first-name",
+                    "algorithm-ref": "thesaurus",
+                    "weight": "2",
+                    "thesaurus": "/mdm/config/thesauri/names-across-languages.xml"
+                  }, {
+                    "property-name": "first-name",
+                    "algorithm-ref": "dbl-metaphone",
+                    "weight": "6",
+                    "dictionary": "/mdm/config/dictionaries/first-names.xml",
+                    "distance-threshold": "50"
+                  }, {
+                    "property-name": "last-name",
+                    "algorithm-ref": "dbl-metaphone",
+                    "weight": "5",
+                    "dictionary": "/mdm/config/dictionaries/last-names.xml"
+                  }],
+                  "reduce": [{
+                    "algorithm-ref": "std-reduce",
+                    "weight": "18",
+                    "all-match": {
+                      "property": [
+                        "last-name",
+                        "addr1"
+                      ]
+                    }
+                  }]
+                }],
+                "thresholds": {
+                  "threshold": [{
+                    "above": "30",
+                    "label": "Possible Match"
+                  }, {
+                    "above": "50",
+                    "label": "Likely Match"
+                  }, {
+                    "above": "75",
+                    "label": "Definitive Match"
+                  }]
+                },
+                "tuning": {
+                  "max-scan": "200"
+                }
+              }
+            }
+            </code>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              {
+                "success" : true
+              }
+            </code>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="GET">
+    <param name="name" type="xs:string" />
+  </method>
+  <method name="POST">
+    <param name="name" type="xs:string" />
+  </method>
+</metadata>
