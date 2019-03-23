@@ -32,6 +32,7 @@ import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -47,6 +48,8 @@ public class FlowManagerImpl implements FlowManager {
 
     @Autowired
     private HubConfig hubConfig;
+
+    private FlowRunner flowRunner;
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -190,10 +193,6 @@ public class FlowManagerImpl implements FlowManager {
         Flow flow = getFlow(flowName);
         flow.setSteps(stepMap);
         return flow;
-    }
-
-    @Override public FlowRunner newFlowRunner() {
-        return new FlowRunnerImpl();
     }
 
     private JsonNode flowScaffolding = null;
