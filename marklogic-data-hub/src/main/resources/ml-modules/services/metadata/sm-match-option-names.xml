@@ -1,0 +1,28 @@
+<metadata>
+  <title>Smart Mastering: Match Option Names</title>
+  <description>
+    <p>Retrieve names of options for matching records together.</p>
+    <dl>
+      <dt>GET</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              {
+                "options": {
+                  "option": ["basic"]
+                }
+              }
+            </code>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="GET">
+  </method>
+</metadata>

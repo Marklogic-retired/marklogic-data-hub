@@ -1,0 +1,304 @@
+<metadata>
+  <title>Smart Mastering: Match</title>
+  <description>
+    <p>Match documents</p>
+    <dl>
+      <dt>POST</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul>
+              <li>rs:uri (xs:string?)</li>
+              <li>rs:options (xs:string?)</li>
+              <li>rs:preview (xs:boolean?)</li>
+              <li>rs:start (xs:integer?)</li>
+              <li>rs:pageLength (xs:integer?)</li>
+            </ul>
+          </dd>
+          <dt>Example Request Body (application/json)</dt>
+          <dd>
+            <code>
+              {
+              "document": {
+                "Person": {
+                  "PersonName": {
+                    "PersonGivenName": "Jane",
+                    "PersonSurName": "Doe"
+                  }
+                }
+              },
+              "options": {
+                "property-defs": {
+                  "property": [{
+                    "namespace": "",
+                    "localname": "IdentificationID",
+                    "name": "ssn"
+                  }, {
+                    "namespace": "",
+                    "localname": "PersonGivenName",
+                    "name": "first-name"
+                  }, {
+                    "namespace": "",
+                    "localname": "PersonSurName",
+                    "name": "last-name"
+                  }, {
+                    "namespace": "",
+                    "localname": "AddressPrivateMailboxText",
+                    "name": "addr1"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationCity",
+                    "name": "city"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationState",
+                    "name": "state"
+                  }, {
+                    "namespace": "",
+                    "localname": "LocationPostalCode",
+                    "name": "zip"
+                  }]
+                },
+                "algorithms": {
+                  "algorithm": [{
+                    "name": "cust-function",
+                    "function": "customFunction",
+                    "at": "/ext/com.marklogic.agile-mastering/algorithms/test.sjs"
+                  }, {
+                    "name": "std-reduce",
+                    "function": "standard-reduction"
+                  }, {
+                    "name": "dbl-metaphone",
+                    "function": "double-metaphone"
+                  }, {
+                    "name": "thesaurus",
+                    "function": "thesaurus"
+                  }]
+                },
+                "scoring": [{
+                  "add": [{
+                    "property-name": "ssn",
+                    "weight": "75"
+                  }, {
+                    "property-name": "last-name",
+                    "weight": "8"
+                  }, {
+                    "property-name": "first-name",
+                    "weight": "12"
+                  }, {
+                    "property-name": "addr1",
+                    "weight": "5"
+                  }, {
+                    "property-name": "city",
+                    "weight": "3"
+                  }, {
+                    "property-name": "state",
+                    "weight": "1"
+                  }, {
+                    "property-name": "zip",
+                    "weight": "3"
+                  }],
+                  "expand": [{
+                    "property-name": "first-name",
+                    "algorithm-ref": "thesaurus",
+                    "weight": "3",
+                    "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml"
+                  }, {
+                    "property-name": "first-name",
+                    "algorithm-ref": "thesaurus",
+                    "weight": "2",
+                    "thesaurus": "/mdm/config/thesauri/names-across-languages.xml"
+                  }, {
+                    "property-name": "first-name",
+                    "algorithm-ref": "dbl-metaphone",
+                    "weight": "6",
+                    "dictionary": "/mdm/config/dictionaries/first-names.xml",
+                    "distance-threshold": "50"
+                  }, {
+                    "property-name": "last-name",
+                    "algorithm-ref": "dbl-metaphone",
+                    "weight": "5",
+                    "dictionary": "/mdm/config/dictionaries/last-names.xml"
+                  }],
+                  "reduce": [{
+                    "algorithm-ref": "std-reduce",
+                    "weight": "18",
+                    "all-match": {
+                      "property": [
+                        "last-name",
+                        "addr1"
+                      ]
+                    }
+                  }]
+                }],
+                "thresholds": {
+                  "threshold": [{
+                    "above": "30",
+                    "label": "Possible Match"
+                  }, {
+                    "above": "50",
+                    "label": "Likely Match"
+                  }, {
+                    "above": "75",
+                    "label": "Definitive Match"
+                  }]
+                },
+                "tuning": {
+                  "max-scan": "200"
+                }
+              }
+            }
+            </code>
+          </dd>
+          <dt>Example Response (application/json)</dt>
+          <dd>
+            <code>
+              {
+                  "results": {
+                    "query": {
+                      "and-query": {
+                        "queries": [{
+                            "collection-query": {
+                              "uri": "mdm-content"
+                            }
+                          },
+                          {
+                            "not-query": {
+                              "document-query": {
+                                "uri": "/CSV_FILE/Person/199.xml"
+                              }
+                            }
+                          },
+                          {
+                            "or-query": {
+                              "queries": [{
+                                  "element-value-query": {
+                                    "weight": 50,
+                                    "element": [
+                                      "IdentificationID"
+                                    ],
+                                    "text": [{
+                                      "lang": "en",
+                                      "_value": "73777777"
+                                    }],
+                                    "option": [
+                                      "case-insensitive"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "element-value-query": {
+                                    "weight": 8,
+                                    "element": [
+                                      "PersonSurName"
+                                    ],
+                                    "text": [{
+                                      "lang": "en",
+                                      "_value": "DEMODEC"
+                                    }],
+                                    "option": [
+                                      "case-insensitive"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "element-value-query": {
+                                    "weight": 12,
+                                    "element": [
+                                      "PersonGivenName"
+                                    ],
+                                    "text": [{
+                                      "lang": "en",
+                                      "_value": "JILL"
+                                    }],
+                                    "option": [
+                                      "case-insensitive"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "element-value-query": {
+                                    "weight": 5,
+                                    "element": [
+                                      "AddressPrivateMailboxText"
+                                    ],
+                                    "text": [{
+                                      "lang": "en",
+                                      "_value": "9999"
+                                    }],
+                                    "option": [
+                                      "case-insensitive"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "element-value-query": {
+                                    "element": [
+                                      "LocationState"
+                                    ],
+                                    "text": [{
+                                      "lang": "en",
+                                      "_value": "MD"
+                                    }],
+                                    "option": [
+                                      "case-insensitive"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "element-value-query": {
+                                    "weight": 3,
+                                    "element": [
+                                      "LocationPostalCode"
+                                    ],
+                                    "text": [{
+                                      "lang": "en",
+                                      "_value": "215020000"
+                                    }],
+                                    "option": [
+                                      "case-insensitive"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "result": [{
+                      "uri": "/CSV_FILE/Person/208.xml",
+                      "index": "1",
+                      "total": "1",
+                      "score": "63",
+                      "threshold": "Likely Match",
+                      "matches": {
+                        "PersonSurName": "DEMODEC",
+                        "LocationState": "MD",
+                        "AddressPrivateMailboxText": "9999",
+                        "LocationPostalCode": "215020000",
+                        "IdentificationID": "73777777"
+                      }
+                    }]
+                  }
+                }
+            </code>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="GET">
+    <param name="uri" type="xs:string" />
+    <param name="options" type="xs:string?" />
+    <param name="start" type="xs:integer?" />
+    <param name="pageLength" type="xs:integer?" />
+  </method>
+  <method name="POST">
+    <param name="uri" type="xs:string?" />
+    <param name="options" type="xs:string?" />
+    <param name="start" type="xs:integer?" />
+    <param name="pageLength" type="xs:integer?" />
+  </method>
+</metadata>

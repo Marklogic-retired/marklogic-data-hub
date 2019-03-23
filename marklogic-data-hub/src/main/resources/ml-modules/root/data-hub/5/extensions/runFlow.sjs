@@ -53,7 +53,7 @@ function post(context, params, input) {
             uri: xdmp.nodeUri(doc),
             value: doc,
             context: {
-              collections: xdmp.nodeCollections(doc),
+              collections: options.collections || xdmp.nodeCollections(doc),
               permissions: xdmp.nodePermissions(doc),
               metadata: xdmp.nodeMetadata(doc)
             }

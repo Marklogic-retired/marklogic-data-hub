@@ -1,0 +1,30 @@
+<metadata>
+  <title>Smart Mastering: Match and Merge</title>
+  <description>
+    <p>Run matching against documents, then execute the actions</p>
+    <dl>
+      <dt>POST</dt>
+      <dd>
+        <dl>
+          <dt>Parameters</dt>
+          <dd>
+            <ul>
+              <li>rs:uri (xs:string*)</li>
+              <li>rs:collector-name (xs:string?)</li>
+              <li>rs:collector-ns (xs:string?)</li>
+              <li>rs:collector-at (xs:string?)</li>
+              <li>rs:options (xs:string)</li>
+            </ul>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </description>
+  <method name="POST">
+    <param name="uri" type="xs:string*" />
+    <param name="rs:collector-name" type="xs:string?" />
+    <param name="rs:collector-ns" type="xs:string?" />
+    <param name="rs:collector-at" type="xs:string?" />
+    <param name="options" type="xs:string" />
+  </method>
+</metadata>

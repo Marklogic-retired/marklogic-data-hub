@@ -1,0 +1,14 @@
+<metadata>
+  <title>Smart Mastering: Notifications</title>
+  <description>Notifications of potential matches</description>
+  <method name="GET">
+    <param name="start" type="xs:int?" />
+    <param name="page-size" type="xs:int?" />
+  </method>
+  <method name="PUT">
+    <!-- Body description not supported. -->
+  </method>
+  <method name="DELETE">
+    <param name="uri" type="xs:string+" />
+  </method>
+</metadata>
