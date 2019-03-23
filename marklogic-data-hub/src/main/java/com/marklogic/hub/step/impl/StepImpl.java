@@ -62,21 +62,21 @@ public class StepImpl implements Step {
         }
         switch (type) {
             case INGEST:
-                jsonObject.put("outputFormat", "json");
+                options.put("outputFormat", "json");
                 this.modulePath = "/data-hub/5/builtins/steps/ingest/default/main.sjs";
                 break;
             case MAPPING:
                 this.modulePath = "/data-hub/5/builtins/steps/mapping/default/main.sjs";
                 break;
             case MASTER:
-                jsonObject.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
-                jsonObject.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-                jsonObject.put("mergeOptions", new JSONObject());
-                jsonObject.put("matchOptions", new JSONObject());
+                options.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
+                options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
+                options.put("mergeOptions", new JSONObject());
+                options.put("matchOptions", new JSONObject());
                 // Step update needed for lock-for-update in Smart Mastering
-                jsonObject.put("stepUpdate", true);
+                options.put("stepUpdate", true);
                 // Accepts batch needed for Smart Mastering to receive all batch documents at once
-                jsonObject.put("acceptsBatch", true);
+                options.put("acceptsBatch", true);
                 this.modulePath = "/data-hub/5/builtins/steps/master/default/main.sjs";
                 break;
             default:

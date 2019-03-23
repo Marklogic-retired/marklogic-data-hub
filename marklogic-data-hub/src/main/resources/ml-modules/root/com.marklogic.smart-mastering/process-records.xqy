@@ -57,7 +57,7 @@ declare function process:process-match-and-merge(
  : score is above the merge threshold; record notification for matches above
  : that threshold.
  :
- : @param $uri  URI of the target document
+ : @param $input  URIs of the target documents or map:map objects that contain the document in the value entry
  : @param $merge-options  the JSON or XML representing the merge options
  : @param $match-options  the JSON or XML representing the match options
  : @param $filter-query  a cts:query used to restrict matches to a set, such as a specific entity type or collection
@@ -65,14 +65,14 @@ declare function process:process-match-and-merge(
  : @return merged docs, if any, otherwise any notification documents
  :)
 declare function process:process-match-and-merge-with-options(
-  $uris as xs:string*,
+  $input as item()*,
   $merge-options as item(),
   $match-options as item(),
   $filter-query as cts:query,
   $persist-results as xs:boolean)
 {
   if ($persist-results) then
-    proc-impl:process-match-and-merge-with-options-save($uris, $merge-options, $match-options, $filter-query)
+    proc-impl:process-match-and-merge-with-options-save($input, $merge-options, $match-options, $filter-query)
   else
-    proc-impl:process-match-and-merge-with-options($uris, $merge-options, $match-options, $filter-query)
+    proc-impl:process-match-and-merge-with-options($input, $merge-options, $match-options, $filter-query)
 };

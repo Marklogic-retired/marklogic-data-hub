@@ -113,7 +113,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingStepDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet finalStepDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet finalFlowDocumentWriteSet = finalDocMgr.newWriteSet();
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
 
         try {
@@ -133,8 +135,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    finalEntityDocumentWriteSet.add("/entities/" + r.getFilename(), meta, handle);
-                                    stagingEntityDocumentWriteSet.add("/entities/" + r.getFilename(), meta, handle);
+                                    String docId = "/entities/" + r.getFilename();
+                                    finalEntityDocumentWriteSet.add(docId, meta, handle);
+                                    stagingEntityDocumentWriteSet.add(docId, meta, handle);
                                     propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
@@ -164,8 +167,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                     InputStream inputStream = r.getInputStream();
                                     StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                     inputStream.close();
-                                    finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                    stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                    String docId = "/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
+                                    finalMappingDocumentWriteSet.add(docId, meta, handle);
+                                    stagingMappingDocumentWriteSet.add(docId, meta, handle);
                                     propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                                 }
                             }
@@ -192,7 +196,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 InputStream inputStream = r.getInputStream();
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
-                                stagingStepDocumentWriteSet.add("/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
+                                String docId = "/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
+                                stagingStepDocumentWriteSet.add(docId, meta, handle);
+                                finalStepDocumentWriteSet.add(docId, meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
@@ -216,7 +222,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 InputStream inputStream = r.getInputStream();
                                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                                 inputStream.close();
-                                stagingFlowDocumentWriteSet.add("/flows/" + r.getFilename(), meta, handle);
+                                String docId = "/flows/" + r.getFilename();
+                                stagingFlowDocumentWriteSet.add(docId, meta, handle);
+                                finalFlowDocumentWriteSet.add(docId, meta, handle);
                                 propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
                             }
                         }
@@ -235,9 +243,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
             if (stagingStepDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingStepDocumentWriteSet);
+                finalDocMgr.write(finalStepDocumentWriteSet);
             }
             if (stagingFlowDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingFlowDocumentWriteSet);
+                finalDocMgr.write(finalFlowDocumentWriteSet);
             }
 
         }
