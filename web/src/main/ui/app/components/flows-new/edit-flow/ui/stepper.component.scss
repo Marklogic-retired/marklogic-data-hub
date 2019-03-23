@@ -1,10 +1,17 @@
 @import '../../../theme//styles/colors';
 
 h3 {
-  margin: 0 30px 0 0;
+  margin: 0 30px 0 16px;
+  font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  font-size: 26px;
+  font-weight: 500;
+}
+a:hover {
+  text-decoration: none;
+  color: #a73864;
 }
 a {
-  color: blue;
+  color: #2a4356;
 }
 .steps-container {
   background: white;
@@ -19,7 +26,7 @@ header {
   justify-content: space-between;
   border-bottom: 1px solid rgba(0,0,0,.35);
   padding: 8px;
-  background: rgb(177, 199, 217);
+  background: #fff;
   .flow-container {
     display: flex;
     align-items: center;
@@ -82,20 +89,22 @@ header {
 .stepper-container {
   display: inline-flex;
   .line {
-    font-size: 48px;
+    font-size: 40px;
+    color: #696969;
     margin: auto 0;
   }
   .step {
     cursor: pointer;
-    border: 2px solid #e6e6e6;
+    outline: 1px solid #e6e6e6;
     border-radius: 2px;
     width: 200px;
-    height: 175px;
+    height: 165px;
     position: relative;
     background: white;
     box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
     .bar {
-      height: 23px;
+      height: 22px;
     }
     .bar.mapping {
       background: $color-mapping;
@@ -115,7 +124,8 @@ header {
     }
     .step-title {
       text-transform: uppercase;
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 400;
       margin: 3px 0 15px 5px;
     }
     .step-title.mapping {
@@ -129,6 +139,12 @@ header {
     }
     .step-title.custom {
       color: #F4511E;
+    }
+    .step-icons {
+      margin: 3px 0;
+      .material-icons {
+        font-size: 20px;
+      }
     }
     .check-icon {
       color: #00e600;
@@ -146,15 +162,36 @@ header {
     .spinner-container {
       margin: 2px;
     }
+    .step-name {
+      margin: 0 6px;
+      font-size: 16px;
+      font-weight: 500;
+    }
     .summary {
-      margin: 10px;
+      margin: 6px;
+    }
+    .summary-label {
+      font-size: 12px;
+      font-weight: 400;
+      color: #999;
+    }
+    .summary-content {
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .progress-bar {
+      width: 188;
+      height: 15px;
+      border: solid 1px #ddd;
+      background-color: #fafafa;
+      margin: 12px 6px 5px 6px;
     }
   }
   .step:hover {
-    border-color: #b3b3b3;
+    outline: 2px solid #b3b3b3;
   }
   .step.active {
-    border-color: #696969;
+    outline: 2px solid #696969;
   }
   .spacer {
     width: 15px;
@@ -164,12 +201,9 @@ header {
     top: 0;
     left: 1%;
     cursor: move;
-    width: 18px;
-    height: 18px;
+    width: 16px !important;
+    height: 16px !important;
     margin-bottom: 20px;
-  }
-  .step-name {
-    margin: 0 10px;
   }
 }
 

@@ -1,3 +1,23 @@
-h2 {
-  margin-left: 5%;
+#edit-flow {
+  font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+}
+
+.back-link {
+  font-size: 14px;
+  margin: 15px 0 10px 5%;
+}
+
+.back-symbol {
+  display: inline-block;
+  position: relative;
+  top: -1px;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #a73864;
+}
+
+a {
+  color: #2a4356;
 }
