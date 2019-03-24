@@ -120,11 +120,71 @@ public interface Flow {
     void setSteps(Map<String, Step> steps);
 
     /**
-     *
-     * @param stepNum
-     * @return
+     * Gets the step specified by string key
+     * @param stepNum the string key of the step (usually 1, 2, 3 etc)
+     * @return the step object that is stored in the flow
      */
     Step getStep(String stepNum);
+
+    /**
+     * Gets the overridden batch size for the flow
+     * @return an integer representing the batch size
+     */
+    Integer getOverrideBatchSize();
+
+    /**
+     *  Sets the overridden batch size set for the flow
+     * @param overrideBatchSize an integer representing the batch size
+     */
+    void setOverrideBatchSize(Integer overrideBatchSize);
+
+    /**
+     * Gets the overridden thread count set for running the flow
+     * @return an integer representing the number of threads to use
+     */
+    Integer getOverrideThreadCount();
+
+    /**
+     * Sets the thread count temporarily for running a flow
+     * @param overrideThreadCount an integer representing the number of threads desired to use for running the flow
+     */
+    void setOverrideThreadCount(Integer overrideThreadCount);
+
+    /**
+     * Gets the overridden options that were set at java runtime
+     * @return returns a map object containing the json object submitted at runtime for commands
+     */
+    Map<String, Object> getOverrideOptions();
+
+    /**
+     * Sets the overridden options for the flow to use at java runtime
+     * @param overrideOptions a map object that represents the json flow options that are to be used at runtime
+     */
+    void setOverrideOptions(Map<String, Object> overrideOptions);
+
+    /**
+     * Gets the string name of the source db that's overridden
+     * @return the string name of the overridden source db
+     */
+    String getOverrideSourceDB();
+
+    /**
+     * Sets the string name of the source db that's overridden
+     * @param overrideSourceDB the string name of the overridden source DB
+     */
+    void setOverrideSourceDB(String overrideSourceDB);
+
+    /**
+     * Gets the string name of the destination db that's overridden
+     * @return the string name of the overridden destination db
+     */
+    String getOverrideDestDB();
+
+    /**
+     * Sets the string name of the destination db that's overridden
+     * @param overrideDestDB the string name of the overridden destination db
+     */
+    void setOverrideDestDB(String overrideDestDB);
 
     /**
      *

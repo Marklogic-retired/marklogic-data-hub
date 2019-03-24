@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.Step;
@@ -38,6 +39,60 @@ public class FlowImpl implements Flow {
     private JsonNode options;
 
     private Map<String, Step> steps = new HashMap<>();
+
+
+
+    @JsonIgnore
+    private Integer overrideBatchSize;
+    @JsonIgnore
+    private Integer overrideThreadCount;
+    @JsonIgnore
+    private Map<String, Object> overrideOptions;
+    @JsonIgnore
+    private String overrideSourceDB;
+    @JsonIgnore
+    private String overrideDestDB;
+
+    public Integer getOverrideBatchSize() {
+        return overrideBatchSize;
+    }
+
+    public void setOverrideBatchSize(Integer overrideBatchSize) {
+        this.overrideBatchSize = overrideBatchSize;
+    }
+
+    public Integer getOverrideThreadCount() {
+        return overrideThreadCount;
+    }
+
+    public void setOverrideThreadCount(Integer overrideThreadCount) {
+        this.overrideThreadCount = overrideThreadCount;
+    }
+
+    public Map<String, Object> getOverrideOptions() {
+        return overrideOptions;
+    }
+
+    public void setOverrideOptions(Map<String, Object> overrideOptions) {
+        this.overrideOptions = overrideOptions;
+    }
+
+    public String getOverrideSourceDB() {
+        return overrideSourceDB;
+    }
+
+    public void setOverrideSourceDB(String overrideSourceDB) {
+        this.overrideSourceDB = overrideSourceDB;
+    }
+
+    public String getOverrideDestDB() {
+        return overrideDestDB;
+    }
+
+    public void setOverrideDestDB(String overrideDestDB) {
+        this.overrideDestDB = overrideDestDB;
+    }
+
 
     public String getName() {
         return this.name;
