@@ -3,24 +3,24 @@
     <div class="flow-container">
         <h3 id="flow-name" class="text">{{flow.name}}</h3>
         <button id="new-step-btn"
-                mat-raised-button color="primary" 
-                (click)="this.newStepClicked()">New Step</button>
+                mat-raised-button color="primary"
+                (click)="this.newStepClicked()">NEW STEP</button>
     </div>
     <div class="spacer"></div>
     <div class="flow-container">
         <button *ngIf="!flow.isRunning; else elseStop"
                 id="run-flow-btn"
-                class="item" 
-                mat-raised-button 
-                color="primary" 
-                (click)="this.runClicked()">Run</button>
+                class="item"
+                mat-raised-button
+                color="primary"
+                (click)="this.runClicked()">RUN</button>
         <ng-template #elseStop>
           <button 
             id="stop-flow-btn"
-            class="item" 
-            mat-raised-button 
-            color="primary" 
-            (click)="this.stopClicked()">Stop</button>
+            class="item"
+            mat-raised-button
+            color="primary"
+            (click)="this.stopClicked()">STOP</button>
         </ng-template>
         <mat-progress-bar  
           *ngIf="flow.isRunning; else finished" 
