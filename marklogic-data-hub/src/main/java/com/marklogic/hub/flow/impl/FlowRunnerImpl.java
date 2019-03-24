@@ -1,5 +1,6 @@
 package com.marklogic.hub.flow.impl;
 
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
@@ -30,8 +31,8 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private FlowManager flowManager;
 
-    private AtomicBoolean isRunning;
-    private AtomicBoolean isJobCancelled;
+    private AtomicBoolean isRunning = new AtomicBoolean(false);
+    private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
 
     private String runningJobId;
     private Step runningStep;
@@ -56,21 +57,60 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public RunFlowResponse runFlow(String flowName) {
-        Flow flow = flowManager.getFlow(flowName);
-        if (flow == null){
-            throw new RuntimeException("Flow " + flowName + " not found");
-        }
-        List<String> steps = new ArrayList<String>(flow.getSteps().keySet());
-        return runFlow(flowName, steps);
+        return runFlow(flowName, null, null, new HashMap<>(), null, null, null, null);
     }
 
     public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
+        return runFlow(flowName, stepNums, null, new HashMap<>(), null, null, null, null);
+    }
+
+    public RunFlowResponse runFlow(String flowName, String jobId) {
+        return runFlow(flowName, null, jobId, new HashMap<>(), null, null, null, null);
+    }
+
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId) {
+        return runFlow(flowName, stepNums, jobId, new HashMap<>(), null, null, null, null);
+    }
+
+    public RunFlowResponse runFlow(String flowName, String jobId, Map<String, Object> options) {
+        return runFlow(flowName, null, jobId, options, null, null, null, null);
+    }
+
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options) {
+        return runFlow(flowName, stepNums, jobId, options, null, null, null, null);
+    }
+
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Integer batchSize, Integer threadCount, String sourceDB, String destDB) {
+
         Flow flow = flowManager.getFlow(flowName);
 
         //Validation of flow, provided steps
         if (flow == null){
             throw new RuntimeException("Flow " + flowName + " not found");
         }
+
+        if(stepNums == null) {
+            stepNums = new ArrayList<String>(flow.getSteps().keySet());
+        }
+
+        if(destDB != null){
+            flow.setOverrideDestDB(destDB);
+        }
+
+        if(sourceDB == null){
+            flow.setOverrideSourceDB(sourceDB);
+        }
+
+        if(threadCount == null){
+            flow.setOverrideThreadCount(threadCount);
+        }
+
+        if(batchSize == null){
+            flow.setOverrideBatchSize(batchSize);
+        }
+
+        flow.setOverrideOptions(options);
+
         Iterator<String> stepItr = stepNums.iterator();
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
         while(stepItr.hasNext()) {
@@ -83,7 +123,9 @@ public class FlowRunnerImpl implements FlowRunner{
             stepsQueue.add(stepNum);
         }
 
-        String jobId = UUID.randomUUID().toString();
+        if(jobId == null) {
+            jobId = UUID.randomUUID().toString();
+        }
         RunFlowResponse response = new RunFlowResponse(jobId);
 
         //Put response, steps and flow in maps with jobId as key
@@ -94,7 +136,7 @@ public class FlowRunnerImpl implements FlowRunner{
         //add jobId to a queue
         jobQueue.add(jobId);
 
-        if(! isRunning.get()){
+        if(!isRunning.get()){
             initializeFlow(jobId);
         }
         return response;
@@ -142,8 +184,18 @@ public class FlowRunnerImpl implements FlowRunner{
             while (! stepQueue.isEmpty()){
                 String stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
+
+                //now we check and validate we have no nulls
+                if(runningStep.getDestDB() == null) {
+                    runningStep.setDestDB(hubConfig.getDbName(DatabaseKind.FINAL));
+                }
+                if(runningStep.getSourceDB() == null) {
+                    runningStep.setSourceDB(hubConfig.getDbName(DatabaseKind.STAGING));
+                }
+
                 stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
+                    .withOptions(flow.getOverrideOptions())
                     .onItemFailed((jobId, itemId)-> {
                         errorCount.incrementAndGet();
                         // TODO: Add to Flow Model
@@ -156,6 +208,19 @@ public class FlowRunnerImpl implements FlowRunner{
                             listener.onStatusChanged(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
                         });
                     });
+                if(flow.getOverrideBatchSize() != null) {
+                    stepRunner.withBatchSize(flow.getOverrideBatchSize());
+                }
+                if(flow.getOverrideThreadCount() != null) {
+                    stepRunner.withThreadCount(flow.getOverrideThreadCount());
+                }
+                if(flow.getOverrideSourceDB() != null){
+                    stepRunner.withSourceClient(hubConfig.newStagingClient(flow.getOverrideSourceDB()));
+                }
+                if(flow.getOverrideDestDB() != null){
+                    stepRunner.withDestinationDatabase(flow.getOverrideDestDB());
+                }
+
                 Job stepResp = stepRunner.run();
                 stepOutputs.put(stepNum, stepResp);
                 stepRunner.awaitCompletion();

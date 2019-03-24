@@ -2,13 +2,69 @@ package com.marklogic.hub.flow;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public interface FlowRunner {
 
     /**
-     * Runs the flow.
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     * @param batchSize the number of documents to handle at once
+     * @param threadCount the number of threads to use for the flow running
+     * @param sourceDB the db to draw documents from, also where the flow will be first executed from
+     * @param destDB the DB where any write activity will take place
+     *
+     */
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options, Integer batchSize, Integer threadCount, String sourceDB, String destDB);
+
+    /**
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param jobId the jobid to be used for the flow
+     *
+     */
+    RunFlowResponse runFlow(String flow, String jobId);
+
+    /**
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     *
+     */
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId);
+
+    /**
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     *
+     */
+    RunFlowResponse runFlow(String flow, String jobId, Map<String, Object> options);
+
+    /**
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     *
+     */
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options);
+
+    /**
+     * Runs the flow, with a specific set of steps, with all defaults from step
      *
      * @param flow the flow to run
      * @param steps the steps in the flow to run
@@ -17,7 +73,7 @@ public interface FlowRunner {
     RunFlowResponse runFlow(String flow, List<String> steps);
 
     /**
-     * Runs the entire flow.
+     * Runs the entire flow, with full defaults
      *
      * @param flow the flow to run
      *

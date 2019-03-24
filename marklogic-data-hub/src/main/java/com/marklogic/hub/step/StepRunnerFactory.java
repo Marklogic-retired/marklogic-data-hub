@@ -3,6 +3,7 @@ package com.marklogic.hub.step;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.impl.QueryStepRunner;
+import com.marklogic.hub.step.impl.WriteStepRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -27,7 +28,6 @@ public class StepRunnerFactory {
         }
         return stepRunner.withFlow(flow)
             .withStep(stepNum)
-            .withOptions(step.getOptions())
             .withBatchSize(step.getBatchSize())
             .withThreadCount(step.getThreadCount())
             .withSourceClient(hubConfig.newStagingClient(step.getSourceDB()))
