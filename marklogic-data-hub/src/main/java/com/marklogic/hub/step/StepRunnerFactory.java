@@ -22,7 +22,7 @@ public class StepRunnerFactory {
             case MAPPING:
                 stepRunner = new QueryStepRunner(hubConfig);
             case INGEST:
-                stepRunner =  null;
+                stepRunner =  new WriteStepRunner(hubConfig);
             default:
                 stepRunner = new QueryStepRunner(hubConfig);
         }
