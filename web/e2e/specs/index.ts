@@ -18,36 +18,37 @@ let tmpobj = tmp.dirSync({ unsafeCleanup: true });
 fs.copySync('e2e/qa-data/data/input', path.join(tmpobj.name, 'input'));
 console.log('DIR: ' + tmpobj.name);
 
-describe('QuickStart', function () {
+describe('DataHub', function () {
   beforeAll(function (done) {
     //apply custom matchers
     jasmine.addMatchers(CUSTOM_MATCHERS)
 
-    let yargs = require('yargs').argv
+    /*let yargs = require('yargs').argv
     let width = typeof yargs.width === 'number' ? yargs.width : 1920
-    let height = typeof yargs.height === 'number' ? yargs.height : 1080
+    let height = typeof yargs.height === 'number' ? yargs.height : 1080*/
 
     request({
       url: `http://localhost:8080/api/projects/reset`
     }, function (error, response, body) {
 
-      browser.get('/');
+      browser.driver.get('http://localhost:8080')
+        .then(() => browser.driver.manage().deleteAllCookies())
+        .then(() => $('body').isPresent())
+        .then(() => {}, () => {})
+        .then(() => done())
 
-      browser.driver.manage().deleteAllCookies();
-
-      $('body').isPresent().then(() => {}, () => {})
-      .then(() => browser.driver.getCapabilities())
-      .then(caps => {
-        console.log('browserName:' + caps.get('browserName'));
-        pages.browserName =yargs.browserName
-        pages.baseUrl =yargs.baseUrl
-        console.log(`pages.baseUrl: ${pages.baseUrl}`);
-      })
+      //.then(() => browser.driver.getCapabilities())
+      //.then(caps => {
+      //  console.log('browserName:' + caps.get('browserName'));
+      //  pages.browserName =yargs.browserName
+      //  pages.baseUrl =yargs.baseUrl
+      //  console.log(`pages.baseUrl: ${pages.baseUrl}`);
+      //})
       // our Jenkins machine runs with a pretty low resolution, and we also
       // have an app that's misbehaving in smaller windows, so this is a delicate
       // setting
-      .then(() => browser.driver.manage().window().maximize())
-      .then(() => done())
+      //.then(() => browser.driver.manage().window().maximize())
+      //.then(() => done())
     });
   });
 
@@ -62,5 +63,5 @@ describe('QuickStart', function () {
   //jobs();
   //runTraces();
   //mappings();
-  //uninstall(tmpobj.name);
+  uninstall(tmpobj.name);
 });
