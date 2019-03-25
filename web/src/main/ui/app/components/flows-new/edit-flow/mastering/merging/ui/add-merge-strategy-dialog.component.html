@@ -1,15 +1,6 @@
 <h1 mat-dialog-title>{{getDialogTitle()}}</h1>
 <div id="merge-strategy-dialog" mat-dialog-content [formGroup]="form" class="content">
 
-  <!-- Default select -->
-  <!-- <mat-form-field layout-fill>
-    <mat-select id="merge-option-type" placeholder="Merge Type" formControlName="mergeType" [(value)]="selectedType">
-      <mat-option value="standard">Standard</mat-option>
-      <mat-option value="strategy">Strategy</mat-option>
-      <mat-option value="custom">Custom</mat-option>
-    </mat-select>
-  </mat-form-field> -->
-
   <mat-form-field layout-fill>
     <mat-label>Name</mat-label>
     <input id="merge-strategy-name" matInput formControlName="name"/>
@@ -25,11 +16,31 @@
     <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
   </mat-form-field>
 
-  <!-- TODO handle multiple source weights -->
-  <!-- <mat-form-field layout-fill>
+  <div id="source-weights">
     <mat-label>Source Weights</mat-label>
-    <input id="merge-option-source-weights" matInput formControlName="sourceWeights"/>
-  </mat-form-field> -->
+    <button class="add-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
+      <mat-icon>add_circle</mat-icon>
+    </button>
+    <div
+      id="source-weights-wrapper"
+      formArrayName="sourceWeights"
+      *ngFor="let sw of this.sourceWeights.controls; let i = index;">
+      <div [formGroupName]="i" class="source-weights-group">
+        <mat-form-field>
+          <mat-label>Source Name</mat-label>
+          <input [class]="'source-weights-source-' + i" matInput formControlName="source"/>
+        </mat-form-field>
+        <mat-icon></mat-icon>
+        <mat-form-field>
+          <mat-label>Weight</mat-label>
+          <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
+        </mat-form-field>
+        <button class="remove-source-weight-btn" mat-icon-button (click)="onRemoveSourceWeight(i)">
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <mat-form-field layout-fill>
     <mat-label>Length Weight</mat-label>

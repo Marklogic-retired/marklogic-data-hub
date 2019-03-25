@@ -135,7 +135,13 @@ export class Merging {
   /**
    * Add a merge strategy.
    */
-  addStrategy(mStr: MergeStrategy) {
+  addStrategy(mStr) {
+    // Transform any new source-weights from UI
+    if (mStr.sourceWeights.length > 0 && mStr.sourceWeights[0].weight) {
+      mStr.sourceWeights = mStr.sourceWeights.map(sw => {
+        return { source: { name: sw.source, weight: sw.weight } };
+      })
+    }
     let strategy = new Strategy(mStr);
     this.mergeStrategies.push(strategy);
   }
