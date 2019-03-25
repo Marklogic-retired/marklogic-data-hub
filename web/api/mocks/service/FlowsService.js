@@ -1,5 +1,7 @@
 'use strict';
 let Storage = require('./StorageService');
+let Error = require('./ErrorService');
+let runningFlowInterval  // interval for running flows
 
 /**
  * Returns all flows
@@ -25,7 +27,7 @@ exports.getFlow = function(flowId) {
     resp = Storage.get('flows', flowId);
   } else {
     resp = new Promise((resolve, reject) => {
-      reject({ error: `'flowId' does not exist` });
+      reject(Error.create(400, `Bad Request: 'flowId' required`));
     });
   }
   return resp;
@@ -41,12 +43,12 @@ exports.getFlow = function(flowId) {
  **/
 exports.createFlow = function(body) {
   let resp;
-  if (body) {
+  if (body && Object.keys(body).length > 0) {
     body.id = Storage.uuid();
     resp = Storage.save('flows', body.id, body);
   } else {
     resp = new Promise((resolve, reject) => {
-      reject({ error: `POST body does not exist` });
+      reject(Error.create(400, `Bad Request: POST body required`));
     });
   }
   return resp;
@@ -67,7 +69,7 @@ exports.deleteFlow = function(flowId) {
     resp = Storage.delete('flows', flowId);
   } else {
     resp = new Promise((resolve, reject) => {
-      reject({ error: `'flowId' does not exist` });
+      reject(Error.create(400, `Bad Request: 'flowId' required`));
     });
   }
   return resp;
@@ -84,11 +86,11 @@ exports.deleteFlow = function(flowId) {
  **/
 exports.updateFlow = function(flowId, body) {
   let resp;
-  if (flowId && body) {
+  if (flowId && body && Object.keys(body).length > 0) {
     resp = Storage.save('flows', flowId, body);
   } else {
     resp = new Promise((resolve, reject) => {
-      reject({ error: `POST body or 'flowId' does not exist` });
+      reject(Error.create(400, `Bad Request: POST body and 'flowId' required`));
     });
   }
   return resp;
@@ -102,31 +104,74 @@ exports.updateFlow = function(flowId, body) {
  * flowId String Id of flow to run
  * returns step
  **/
-exports.runFlow = async function(flowId) {
-  let resp = { data: 'success' };
-  if (flowId) {
-    let currentFlow = await Storage.get('flows', flowId);
+exports.runFlow = function(flowId, body) {
+  // if body exists, then it will be an Array of step IDs to run
+  return new Promise(async (resolve, reject) => {
+    if (flowId) {
+      let currentFlow = await Storage.get('flows', flowId);
+      if (currentFlow.latestJob && (!currentFlow.latestJob || currentFlow.latestJob.stepRunningPercent === null)) {
+        let fromBody = (body && Object.keys(body).length > 0);
+        let steps = (fromBody) ? body : currentFlow.steps;
+        let stepId = fromBody ? steps[0] : steps[0].id;
+        let step = await Storage.get('steps', stepId); 
+        let newJobId = Storage.uuid();
+        let currentJob = await Storage.save('jobs', newJobId, {
+          id: newJobId,
+          stepId: step && step.id || null,
+          stepName: step && step.name || null,
+          stepRunningPercent: 0,
+          startTime: (new Date()).toISOString(),
+          status: 'running'
+        });
+        currentFlow.latestJob = currentJob;
+        await Storage.save('flows', currentFlow.id, currentFlow);
 
-    if(!currentFlow.isRunning){
-      currentFlow.latestJob.runningPercent = 0;
-      currentFlow.isRunning = true;
-      // Add 10 percent every 1 second
-      const interval = setInterval( function() { updateProgress(); }, 1000 );
-      function updateProgress() {
-        if (currentFlow.latestJob.runningPercent === 100) {
-          clearInterval(interval);
-          currentFlow.isRunning = false;
-          currentFlow.latestJob.status = 'finished';
-        } else {
-          currentFlow.latestJob.runningPercent += 10;
+        // Add 10 percent every 1 second
+        runningFlowInterval = setInterval( function() { updateProgress(); }, 750 );
+        let stepCount = steps.length;
+        let stepIndex = 0;
+        async function updateProgress() {
+          if (currentJob.stepRunningPercent >= 100) {
+            stepIndex++;
+            if (stepIndex === stepCount) {
+              clearInterval(runningFlowInterval);
+              runningFlowInterval = null;
+              currentJob.status = 'completed';
+              currentJob.endTime = (new Date()).toISOString();
+              currentJob.stepId = null;
+              currentJob.stepName = null;
+              currentJob.stepRunningPercent = null;
+              currentFlow.latestJob = currentJob;
+            } else {
+              // move to the next step
+              let nextStepId = typeof steps[stepIndex] === 'object' ? steps[stepIndex].id : steps[stepIndex];
+              let nextStep = await Storage.get('steps', nextStepId); 
+              if (nextStep) {
+                currentJob.stepId = nextStep && nextStep.id;
+                currentJob.stepName = nextStep && nextStep.name;
+                currentJob.stepRunningPercent = 0;
+                currentFlow.latestJob = currentJob;
+              } else {
+                currentJob.stepRunningPercent = 100;  // skip to next step, the passed array had a bad step ID
+                currentFlow.latestJob = currentJob;
+              }
+            }
+          } else {
+            currentFlow.latestJob.stepRunningPercent += 10;
+            currentJob.stepRunningPercent += 10;
+          }
+          Storage.save('flows', currentFlow.id, currentFlow);
+          Storage.save('jobs', currentJob.id, currentJob);
         }
-        Storage.save('flows', flowId, currentFlow);
+        // return flow with new latestJob info
+        resolve(currentFlow);
       }
+      reject(Error.create(400, `Bad Request: '${flowId}' is already running`));
+    } else {
+      reject(Error.create(400, `Bad Request: 'flowId' required`));
     }
-  } else {
-    resp = { error: `'flowId' does not exist` };
-  }
-  return resp;
+  });
+
 }
 
 /**
@@ -136,20 +181,31 @@ exports.runFlow = async function(flowId) {
  * flowId String Id of flow to run
  * returns step
  **/
-exports.stopFlow = async function(flowId) {
-  let resp = { data: 'flow is not running'};
-  if (flowId) {
-    let currentFlow = await Storage.get('flows', flowId);
-    if( currentFlow.isRunning ) {
-      // Reset flow run parameters
-      currentFlow.isRunning = false;
-      currentFlow.latestJob.runningPercent = 0;
-      currentFlow.latestJob.status = 'stopped'; 
-      Storage.save('flows', flowId, currentFlow);
-      resp = currentFlow;
+exports.stopFlow = function(flowId) {
+  return new Promise(async (resolve, reject) => {
+    if (flowId) {
+      let currentFlow = await Storage.get('flows', flowId);
+      if (currentFlow.latestJob && currentFlow.latestJob.status === 'running') {
+        let currentJob = await Storage.get('jobs', currentFlow.latestJob.id);
+        if (runningFlowInterval) {
+          clearInterval(runningFlowInterval)
+          runningFlowInterval = null;
+        }
+        // Reset flow run parameters
+        currentJob.status = 'stopped'; 
+        currentJob.endTime = (new Date()).toISOString();
+        currentJob.stepId = null;
+        currentJob.stepName = null;
+        currentJob.stepRunningPercent = null;
+        currentFlow.latestJob = currentJob;
+        Storage.save('flows', flowId, currentFlow);
+        Storage.save('jobs', currentJob.id, currentJob);
+        resolve(currentFlow);
+      } else {
+        reject(Error.create(400, `Bad Request: '${flowId}' is not running`));
+      }
+    } else {
+      reject(Error.create(400, `Bad Request: 'flowId' required`));
     }
-  } else {
-    resp = { error: `'flowId' does not exist` };
-  }
-  return resp;
+  });
 }

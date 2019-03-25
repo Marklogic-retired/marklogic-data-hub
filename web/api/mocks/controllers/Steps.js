@@ -5,9 +5,9 @@ var Steps = require('../service/StepsService');
 
 module.exports.createFlowStep = function createFlowStep (req, res, next) {
   var flowId = req.swagger.params['flowId'].value;
-  var stepIndex = req.swagger.params['stepIndex'].value;
+  var stepOrder = req.swagger.params['stepOrder'].value;
   var body = req.swagger.params['body'].value;
-  Steps.createFlowStep(flowId,stepIndex,body)
+  Steps.createFlowStep(flowId,stepOrder,body)
     .then(function (response) {
       utils.writeJson(res, response);
     })
