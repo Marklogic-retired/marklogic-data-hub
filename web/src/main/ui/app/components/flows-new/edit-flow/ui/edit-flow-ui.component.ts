@@ -55,16 +55,18 @@ export class EditFlowUiComponent {
       }
     });
   }
-  openRunDialog(flow: Flow): void {
+  openRunDialog(): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: this.stepsArray.map(step => step.name)}
+      data: {steps: this.flow.steps}
     });
 
     dialogRef.afterClosed().subscribe(response => {
       // TODO add ability to run individual steps
       console.log('The run dialog was closed', response);
-      this.runFlow.emit(this.flow.id);
+      if ( response ) {
+        this.runFlow.emit(this.flow.id);
+      }
     });
   }
   deleteStepDialog(step: Step): void {
@@ -92,19 +94,6 @@ export class EditFlowUiComponent {
         this.flow.batchSize = response.batchSize;
         this.flow.threadCount = response.threadCount;
         this.saveFlow.emit(this.flow);
-      }
-    });
-  }
-  redeployDialog(): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px',
-      data: {title: 'Redeploy Flow?', confirmationMessage: `Redeploy ${this.flow.name} to database?`}
-    });
-
-    dialogRef.afterClosed().subscribe(response => {
-      if (response) {
-        // TODO Redeploy endpoint
-        console.log('redeploy');
       }
     });
   }

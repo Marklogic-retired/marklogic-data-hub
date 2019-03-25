@@ -10,7 +10,7 @@
     <mat-checkbox 
       [id]="'run-flow-' + i + '-' + (step || '')"
       [checked]="selected[i]" 
-      (change)="checkSelections($event, i)">{{step}}</mat-checkbox>
+      (change)="checkSelections($event, i)">{{step.name}}</mat-checkbox>
   </div>
 </div>
 <div mat-dialog-actions class="bottom">
