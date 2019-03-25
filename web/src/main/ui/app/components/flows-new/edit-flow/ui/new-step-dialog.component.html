@@ -57,6 +57,6 @@
   </mat-accordion>
 </div>
 <div mat-dialog-actions class="bottom">
-  <button id="step-cancel-btn" mat-button (click)="onNoClick()">Cancel</button>
-  <button id="step-save-btn" mat-button cdkFocusInitial [mat-dialog-close]="newStep">Save</button>
+  <button id="step-cancel-btn" mat-raised-button color="primary" (click)="onNoClick()">CANCEL</button>
+  <button id="step-save-btn" mat-raised-button color="primary" cdkFocusInitial [mat-dialog-close]="newStep">SAVE</button>
 </div>

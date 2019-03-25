@@ -14,15 +14,6 @@ mat-radio-button {
   margin-left: 10px;
 }
 
-.content {
-  background: #f3f3f3;
-  padding: 10px 15px 20px 15px;
-}
-
-.bottom {
-  justify-content: flex-end;
-}
-
 h1.mat-dialog-title {
   margin-top: -12px;
   margin-left: -4px;
@@ -30,7 +21,13 @@ h1.mat-dialog-title {
 }
 
 .mat-dialog-content {
-  padding: 10px 15px 20px 20px;
+  background: #f3f3f3;
+  padding: 20px;
+}
+
+.mat-dialog-actions {
+  margin-right: -4px;
+  justify-content: flex-end;
 }
 
 .key-value-group {

@@ -1,7 +1,7 @@
 <div class="steps-container">
   <header>
     <div class="flow-container">
-        <h3 id="flow-name" class="text">{{flow.name}}</h3>
+        <h2 id="flow-name">{{flow.name}}</h2>
         <button id="new-step-btn"
                 mat-raised-button color="primary"
                 (click)="this.newStepClicked()">NEW STEP</button>
@@ -22,11 +22,11 @@
             color="primary"
             (click)="this.stopClicked()">STOP</button>
         </ng-template>
-        <mat-progress-bar  
-          *ngIf="flow.isRunning; else finished" 
+        <mat-progress-bar
+          *ngIf="flow.isRunning; else finished"
           id="job-progress-bar"
-          class="item" 
-          mode="determinate" 
+          class="item"
+          mode="determinate"
           [value]="flow.latestJob.runningPercent"></mat-progress-bar>
         <ng-template #finished>
           <a href="#">{{flow.status}}</a>
@@ -68,7 +68,7 @@
                   </div>
                 </div>            
               </div>
-              <span class="step-name">{{step.label}}</span>
+              <h3 class="step-name">{{step.label}}</h3>
               <!-- TODO Update Information for each step -->
               <div class="summary" *ngIf="stepsArray[i].type === 'ingestion'">
                 <div class="summary-label">Source</div>
