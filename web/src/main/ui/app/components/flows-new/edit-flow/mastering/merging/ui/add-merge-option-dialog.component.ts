@@ -101,6 +101,7 @@ export class AddMergeOptionDialogComponent {
     if (this.form.value.length) {
       resultOption.length = { weight: this.form.value.length };
     }
+    resultOption.sourceWeights = this.getValidSourceWeights(this.form.value.sourceWeights);
     if (this.form.value.strategy) {
       this.addStrategy(resultOption, this.data.strategies);
     }
@@ -119,6 +120,19 @@ export class AddMergeOptionDialogComponent {
     if (str.maxSources) resultOption.maxSources = str.maxSources;
     if (str.sourceWeights) resultOption.sourceWeights = str.sourceWeights;
     if (str.length) resultOption.length = str.length;
+  }
+
+  /**
+   * Build source-weight data structure from form data.
+   */
+  getValidSourceWeights(formSourceWeights) {
+    let validSourceWeights = [];
+    formSourceWeights.forEach(sw => {
+      if (sw.source !== '' && sw.weight !== '') {
+        validSourceWeights.push({ source: sw.source, weight: sw.weight });
+      }
+    });
+    return validSourceWeights;
   }
 
 }
