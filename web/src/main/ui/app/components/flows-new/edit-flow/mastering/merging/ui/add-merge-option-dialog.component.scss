@@ -7,3 +7,24 @@
   padding: 12px 0;
   margin-bottom: -20px;
 }
+
+div.source-weights-group input {
+  border: 0;
+}
+
+.source-weights-wrapper .mat-form-field {
+  width: 390px;
+}
+
+#source-weights {
+  margin-bottom: 10px;
+}
+
+.mat-icon {
+  color: #2a4356;
+}
+
+.add-source-weight-btn .mat-icon {
+  position: relative;
+  top: -2px;
+}

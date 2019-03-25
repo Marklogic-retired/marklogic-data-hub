@@ -19,7 +19,7 @@ export class AddMergeOptionDialogComponent {
   form: FormGroup;
   props: FormArray;
   selectedType: string;
-  propertiesReduce: FormArray;
+  sourceWeights: FormArray;
 
   constructor(
     private fb: FormBuilder,
@@ -35,7 +35,7 @@ export class AddMergeOptionDialogComponent {
       algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
       maxValues: [this.data.option ? this.data.option.maxValues : ''],
       maxSources: [this.data.option ? this.data.option.maxSources : ''],
-      sourceWeights: [this.data.option ? this.data.option.sourceWeights : []],
+      //sourceWeights: [this.data.option ? this.data.option.sourceWeights : []],
       length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : ''],
       strategy: [this.data.option ? this.data.option.strategy : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
@@ -45,35 +45,46 @@ export class AddMergeOptionDialogComponent {
     })
     this.selectedType = (this.data.option && this.data.option.mergeType) ?
       this.data.option.mergeType : 'standard';
-    //this.form.setControl('propertiesReduce', this.createProps());
-    //this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
+    this.form.setControl('sourceWeights', this.createSourceWeights());
+    this.sourceWeights = this.form.get('sourceWeights') as FormArray;
+    console.log('ngOnInit this.form', this.form);
+    console.log('ngOnInit this.sourceWeights', this.sourceWeights);
   }
 
-  createProps() {
-    if (!this.data.option || !this.data.option.propertyName) {
-      return this.fb.array([this.createProp('')]);
+        // "sourceWeights": [
+        // {
+        //   "source": {
+        //     "name": "CRM",
+        //     "weight": "3"
+        //   }
+        // },
+
+  createSourceWeights() {
+    if (!this.data.option || !this.data.option.sourceWeights) {
+      return this.fb.array([this.createSourceWeight('', '')]);
     }
     const result = [];
-    this.data.option.propertyName.forEach(name => {
-      result.push(this.createProp(name))
+    this.data.option.sourceWeights.forEach(sw => {
+      result.push(this.createSourceWeight(sw.source.name, sw.source.weight))
     })
     return this.fb.array(result);
   }
 
-  createProp(name) {
+  createSourceWeight(source, weight) {
     return this.fb.group({
-      name: name
+      source: source,
+      weight: weight
     });
   }
 
-  onAddProp() {
-    const props = this.form.get('propertiesReduce') as FormArray;
-    props.push(this.createProp(''));
+  onAddSourceWeight() {
+    const sourceWeights = this.form.get('sourceWeights') as FormArray;
+    sourceWeights.push(this.createSourceWeight('', ''));
   }
 
-  onRemoveProp(i) {
-    const props = this.form.get('propertiesReduce') as FormArray;
-    props.removeAt(i);
+  onRemoveSourceWeight(i) {
+    const sourceWeights = this.form.get('sourceWeights') as FormArray;
+    sourceWeights.removeAt(i);
   }
 
   onNoClick(): void {

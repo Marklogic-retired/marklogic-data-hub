@@ -112,27 +112,19 @@ export class Merging {
   }
 
   /**
-   * Add definitions for the included algorithms.
-   */
-  // addAlgorithmDefaults() {
-  //   let defaultAlgs = [
-  //     ['double-metaphone', '/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy'],
-  //     ['thesaurus', '/com.marklogic.smart-mastering/algorithms/thesaurus.xqy'],
-  //     ['zip-match', '/com.marklogic.smart-mastering/algorithms/zip.xqy'],
-  //     ['standard-reduction', null]
-  //   ]
-  //   defaultAlgs.forEach(a => {
-  //     this.addAlgorithm(a[0], a[1], a[0]);
-  //   })
-  // }
-
-  /**
    * Add a merge option.
    */
   addOption(mOpt) {
     if (mOpt.propertyName) {
       this.addProperty(mOpt.propertyName);
     }
+    // Transform any new source-weights from UI
+    if (mOpt.sourceWeights.length > 0 && mOpt.sourceWeights[0].weight) {
+      mOpt.sourceWeights = mOpt.sourceWeights.map(sw => {
+        return { source: { name: sw.source, weight: sw.weight } };
+      })
+    }
+    // Transform any new length-weight from UI
     if (typeof mOpt.length === 'string' || typeof mOpt.length === 'number') {
       mOpt.length = { weight: mOpt.length };
     }
