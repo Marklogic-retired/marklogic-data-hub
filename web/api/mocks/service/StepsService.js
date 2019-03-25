@@ -117,7 +117,7 @@ exports.updateFlowStep = function(flowId, stepId, body) {
       if (flow) {
         let step = await Storage.save('steps', stepId, body);
         let stepIndex = _.findIndex(flow.steps, ['id', step.id]);
-        flow.steps[stepIndex] = { id: step.id, type: step.type, name: step.name, targetEntity: step.config && step.config.targetEntity || null }; // adds step id to steps Array, appended to the end
+        flow.steps[stepIndex] = { id: step.id, name: step.name, type: step.type, targetEntity: step.config && step.config.targetEntity || null }; // adds step id to steps Array, appended to the end
         await Storage.save('flows', flowId, flow);
         resolve(step);
       } else {
