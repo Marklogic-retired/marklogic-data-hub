@@ -18,7 +18,6 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.step.Step;
 
 import java.util.List;
@@ -120,11 +119,4 @@ public interface FlowManager {
     Flow setSteps(String flowName, Map<String, Step> stepMap);
 
     Step getStep(String flowName, String stepNum);
-
-    /**
-     * Creates and returns a new FlowRunner object using the FlowManager's hubconfig
-     *
-     * @return FlowRunner object with current hubconfig already set
-     */
-    FlowRunner newFlowRunner();
 }
