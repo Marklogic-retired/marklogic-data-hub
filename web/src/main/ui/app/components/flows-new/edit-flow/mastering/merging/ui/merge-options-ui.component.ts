@@ -16,6 +16,7 @@ export class MergeOptionsUiComponent {
 
   @Input() mergeOptions: any;
   @Input() targetEntity: any;
+  @Input() mergeStrategies: any;
 
   @Output() createOption = new EventEmitter();
   @Output() updateOption = new EventEmitter();
@@ -40,10 +41,12 @@ export class MergeOptionsUiComponent {
     this.dataSource.sort = this.sort;
   }
 
-  openMergeOptionDialog(optionToEdit: MergeOption, index: number, entityProps: any): void {
+  openMergeOptionDialog(optionToEdit: MergeOption, index: number, entityProps: any, strategies: any): void {
+    // Don't allow editing of strategies from Merge Options table
+    if (optionToEdit && optionToEdit.strategy) return;
     const dialogRef = this.dialog.open(AddMergeOptionDialogComponent, {
       width: '500px',
-      data: {option: optionToEdit, index: index, entityProps: entityProps}
+      data: {option: optionToEdit, index: index, entityProps: entityProps, strategies: this.mergeStrategies}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {

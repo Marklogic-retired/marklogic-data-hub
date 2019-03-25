@@ -19,7 +19,9 @@ export class AddMergeOptionDialogComponent {
   form: FormGroup;
   props: FormArray;
   selectedType: string;
+  propertyName: string;
   sourceWeights: FormArray;
+  strategies: any;
 
   constructor(
     private fb: FormBuilder,
@@ -35,7 +37,6 @@ export class AddMergeOptionDialogComponent {
       algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
       maxValues: [this.data.option ? this.data.option.maxValues : ''],
       maxSources: [this.data.option ? this.data.option.maxSources : ''],
-      //sourceWeights: [this.data.option ? this.data.option.sourceWeights : []],
       length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : ''],
       strategy: [this.data.option ? this.data.option.strategy : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
@@ -45,19 +46,11 @@ export class AddMergeOptionDialogComponent {
     })
     this.selectedType = (this.data.option && this.data.option.mergeType) ?
       this.data.option.mergeType : 'standard';
+    this.strategies = (this.data.strategies && this.data.strategies.strategies) ?
+      this.data.strategies.strategies.map(s => { return s.name; }) : [];
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
-    console.log('ngOnInit this.form', this.form);
-    console.log('ngOnInit this.sourceWeights', this.sourceWeights);
   }
-
-        // "sourceWeights": [
-        // {
-        //   "source": {
-        //     "name": "CRM",
-        //     "weight": "3"
-        //   }
-        // },
 
   createSourceWeights() {
     if (!this.data.option || !this.data.option.sourceWeights) {
@@ -108,7 +101,24 @@ export class AddMergeOptionDialogComponent {
     if (this.form.value.length) {
       resultOption.length = { weight: this.form.value.length };
     }
+    if (this.form.value.strategy) {
+      this.addStrategy(resultOption, this.data.strategies);
+    }
     this.dialogRef.close({opt: resultOption, index: this.form.value.index});
+  }
+
+  /**
+   * Add strategy settings to option.
+   */
+  addStrategy(resultOption, strategies) {
+    let str = strategies.strategies.find(s => {
+      return s.name === resultOption.strategy;
+    })
+    if (str.algorithmRef) resultOption.algorithmRef = str.algorithmRef;
+    if (str.maxValues) resultOption.maxValues = str.maxValues;
+    if (str.maxSources) resultOption.maxSources = str.maxSources;
+    if (str.sourceWeights) resultOption.sourceWeights = str.sourceWeights;
+    if (str.length) resultOption.length = str.length;
   }
 
 }
