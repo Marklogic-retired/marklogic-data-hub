@@ -117,7 +117,6 @@ export class EditFlowUiComponent {
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
         this.deleteFlow.emit(this.flow.id);
-        this.router.navigate(['flows']);
       }
     });
   }
