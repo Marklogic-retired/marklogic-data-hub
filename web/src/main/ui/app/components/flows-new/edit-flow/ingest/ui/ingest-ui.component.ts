@@ -109,6 +109,7 @@ export class IngestUiComponent implements OnInit {
     this.step.config.documentType = this.config.outputDocTypes.value;
     this.step.config.outputPermissions = this.config.outputPermissions.value;
     this.step.config.transformParams = `entity-name=${this.step.targetEntity}},flow-name=${flow.name}`;
+    this.step.config.outputCollections = `${this.step.targetEntity}`;
     return this.step;
   }
 
