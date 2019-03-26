@@ -112,14 +112,14 @@ public class FlowController {
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ResponseBody
-    public StepModel createStep(@PathVariable String flowName, @RequestBody String stepJson) {
-        return flowManagerService.createStep(flowName, stepJson);
+    public StepModel createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
+        return flowManagerService.createStep(flowName, stepOrder, null, stepJson);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
     @ResponseBody
     public StepModel createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
-        return flowManagerService.createStep(flowName, stepJson);
+        return flowManagerService.createStep(flowName, null, stepId, stepJson);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
