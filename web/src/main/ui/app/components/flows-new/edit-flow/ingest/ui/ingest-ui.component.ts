@@ -1,7 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Step} from "../../../models/step.model";
 
 const settings = {
-  inputFilePath:{
+  inputFilePath: {
     label: 'Input File Path',
     field: 'input_file_path',
     type: 'string',
@@ -85,8 +86,8 @@ export class IngestUiComponent implements OnInit {
   @Input() step: any;
   @Output() saveStep = new EventEmitter();
 
-  constructor(
-  ){}
+  constructor() {
+  }
 
   config = settings;
 
@@ -102,13 +103,13 @@ export class IngestUiComponent implements OnInit {
     this.config.outputPermissions.value = this.step.config.outputPermissions;
   }
 
-  onSave(){
+  getStep(flow): Step {
     this.step.config.inputFilePath = this.config.inputFilePath.value;
     this.step.config.inputFileType = this.config.fileTypes.value;
     this.step.config.documentType = this.config.outputDocTypes.value;
     this.step.config.outputPermissions = this.config.outputPermissions.value;
-    this.saveStep.emit(this.step);
+    this.step.config.transformParams = `entity-name=${this.step.targetEntity}},flow-name=${flow.name}`;
+    return this.step;
   }
-
 
 }

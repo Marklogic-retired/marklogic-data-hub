@@ -1,8 +1,4 @@
-<button id="save-custom" mat-raised-button color="primary"
-        (click)="onSave()">Save
-</button>
 <div layout-padding layout="column" class="ingest-page">
-  <form>
     <info-label
       [labelText]="config.inputFilePath.label"
       tooltipPlacement="right"
@@ -20,16 +16,16 @@
     <mat-form-field layout-fill appearance="outline">
       <mat-select
         id="file_type_select"
-        value="archive"
+        [(ngModel)]="config.fileTypes.value"
+        name="filetype"
       >
         <mat-option
           *ngFor="let option of config.fileTypes.options"
-          value="option.value"
+          [value]="option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
     </mat-form-field>
-
 
     <info-label
       [labelText]="config.outputDocTypes.label"
@@ -39,11 +35,11 @@
     <mat-form-field layout-fill appearance="outline">
       <mat-select
         [(ngModel)]="config.outputDocTypes.value"
-        name="docype"
+        name="doctype"
       >
         <mat-option
           *ngFor="let option of config.outputDocTypes.options"
-          value="option.value"
+          [value]="option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -59,5 +55,4 @@
       <input matInput [(ngModel)]="config.outputPermissions.value" name="permissions"
       />
     </mat-form-field>
-  </form>
 </div>

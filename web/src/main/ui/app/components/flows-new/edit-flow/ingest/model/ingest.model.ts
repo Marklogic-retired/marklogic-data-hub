@@ -13,25 +13,36 @@ export class Ingestion {
   documentType: "json" | 'xml';
   transformModule: string;
   transformNamespace: string;
-  transformParam: string; // comma separated list of text
+  transformParams: string; // comma separated list of text
 
   static fromConfig(step): Step {
     const config = step.config;
     const newStep = _.cloneDeep(step);
     const result = new Ingestion();
-    result.inputFilePath = config['input_file_path'] || '.';
+    result.inputFilePath = config && config['input_file_path'] || '.';
     result.inputFileType = config['input_file_type'] || 'documents';
     result.outputCollections = config['output_collections'] || '';
     result.outputPermissions = config['output_permissions'] || 'rest-reader,read,rest-writer,update';
     result.documentType = config['document_type'] || 'json';
     result.transformModule = config['transform_module'] || '/data-hub/5/transforms/mlcp-flow-transform.sjs';
     result.transformNamespace = config['transform_namespace'] || 'http://marklogic.com/data-hub/mlcp-flow-transform';
-    result.transformParam = config['transform_param'] || '';
+    result.transformParams = config['transform_param'] || '';
     newStep.config = result;
     return newStep;
   }
 
-  static fromUI(form): Ingestion {
-    return form.value;
+  static fromUI(input: Step): Step {
+    const config: any = {};
+    config['input_file_path'] = input.config['inputFilePath'];
+    config['input_file_type'] = input.config['inputFileType'];
+    config['output_collections'] = input.config['outputCollections'];
+    config['output_permissions'] = input.config['outputPermissions'];
+    config['document_type'] = input.config['documentType'];
+    config['transform_module'] = input.config['transformModule'];
+    config['transform_namespace'] = input.config['transformNamespace'];
+    config['transform_param'] = input.config['transformParams'];
+    const newStep = _.cloneDeep(input);
+    newStep.config = config;
+    return newStep;
   }
 }

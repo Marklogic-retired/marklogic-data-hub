@@ -3,7 +3,7 @@
     <header>
       <div class="steps-header">
         <h3 id="step-details-name">{{step.name}}</h3>
-        <!-- <button id="save-step-btn" *ngIf="step.type !== 'mapping'" (click)=saveStep(step); mat-raised-button color="primary">Save</button> -->
+        <button id="save-step-btn" *ngIf="step.type === 'ingestion'" (click)=saveStep(); mat-raised-button color="primary">Save</button>
         <!-- <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
       </div>
       <div class="steps-header">
