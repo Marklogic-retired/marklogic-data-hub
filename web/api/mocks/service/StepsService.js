@@ -13,9 +13,7 @@ const _ = require('lodash');
  **/
 exports.createFlowStep = function(flowId, stepOrder, body) {
   return new Promise(async (resolve, reject) => {
-    const index = parseInt(stepOrder) - 1;
-    console.log('index');
-    console.log(index);
+    const index = parseInt(stepOrder);
     if (flowId && body && Object.keys(body).length > 0) {
       let flow = await Storage.get('flows', flowId);
       if (flow) {
@@ -29,9 +27,14 @@ exports.createFlowStep = function(flowId, stepOrder, body) {
           name: step.name,
           targetEntity: step.config && step.config.targetEntity || null 
         };
-        flow.steps.splice(index, 0, newFlowStep);
+        if(index === flow.steps.length){
+          flow.steps.push(newFlowStep);
+        } else {
+          flow.steps.splice(index, 0, newFlowStep);
+        }
+        
         await Storage.save('flows', flowId, flow);
-        resolve(flow);
+        resolve(step);
       } else {
         reject(Error.create(404, `Not Found: '${flowId}' does not exist`));
       }
@@ -60,7 +63,7 @@ exports.deleteFlowStep = function(flowId, stepId) {
           return s.id === stepId;
         });
         await Storage.save('flows', flowId, flow);
-        resolve(flow);
+        resolve({200: 'Success'});
       } else {
         reject(Error.create(404, `Not Found: '${flowId}' does not exist`));
       }

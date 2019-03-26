@@ -21,7 +21,7 @@
   </div>
   
   <mat-form-field *ngIf="selectedSource === 'collection'">
-    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
+    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection" formControlName="sourceCollection">
       <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -30,7 +30,6 @@
   </mat-form-field>
 
   <mat-form-field>
-    <!-- <mat-select id="step-target-entity" class="" placeholder="Target Entity" (selectionChange)="targetEntityChange(newStep.targetEntity)" [(value)]="newStep.targetEntity"> -->
     <mat-select id="step-target-entity" class="" placeholder="Target Entity" formControlName="targetEntity">
       <mat-option class="" *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>

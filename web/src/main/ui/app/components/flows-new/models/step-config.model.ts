@@ -1,4 +1,5 @@
 import { Matching } from '../edit-flow/mastering/matching/matching.model';
+import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
 export class Config {
   public input_file_path: string;
@@ -16,5 +17,6 @@ export class Config {
   public targetEntity: string = '';
   public targetEntityType: string;
   public matchOptions: Matching;
+  public mergeOptions: Merging;
   public customModuleUri: string;
 }

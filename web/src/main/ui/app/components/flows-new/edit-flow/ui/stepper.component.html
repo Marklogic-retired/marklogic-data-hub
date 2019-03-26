@@ -8,7 +8,7 @@
     </div>
     <div class="spacer"></div>
     <div class="flow-container">
-        <button *ngIf="!flow.isRunning; else elseStop"
+        <button *ngIf="flow.latestJob.stepRunningPercent === null; else elseStop"
                 id="run-flow-btn"
                 class="item"
                 mat-raised-button
@@ -22,16 +22,7 @@
             color="primary"
             (click)="this.stopClicked()">STOP</button>
         </ng-template>
-        <mat-progress-bar
-          *ngIf="flow.isRunning; else finished"
-          id="job-progress-bar"
-          class="item"
-          mode="determinate"
-          [value]="flow.latestJob.runningPercent"></mat-progress-bar>
-        <ng-template #finished>
-          <a href="#">{{flow.status}}</a>
-          <div></div>
-        </ng-template>
+        <a id="latest-job-status" href="#">{{flow.latestJob.status}}</a>
         <div id="job-started-timestamp" [ngClass]="flow.isRunning ? 'show-running' : 'hide-running'" class="text item">Started: {{flow.latestJob.startTime}}</div>
         <a id="view-jobs-btn" href="#" class="text item">View Jobs</a>
         <div class="icon-container">
@@ -51,7 +42,7 @@
             cdkDrag
             >
               <div class="bar {{stepsArray[i].type}}"></div>
-              <div class="step-reorder-handle move-icon" cdkDragHandle>
+              <div *ngIf="flow.latestJob.stepRunningPercent === null" class="step-reorder-handle move-icon" cdkDragHandle>
                 <svg width="18px" fill="white" viewBox="0 0 24 24">
                   <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
                   <path d="M0 0h24v24H0z" fill="none"></path>
@@ -60,41 +51,41 @@
               <div class="header">
                 <div class="step-type step-title {{stepsArray[i].type}}">{{stepsArray[i].type}}</div>
                 <div class="step-icons header-icons">
-                  <mat-icon *ngIf="stepsArray[i].isValid && !stepsArray[i].isRunning" class="step-valid check-icon">check_circle</mat-icon>
-                  <mat-icon *ngIf="!stepsArray[i].isValid && !stepsArray[i].isRunning"  class="step-invalid grey-icon">lens</mat-icon>
-                  <mat-icon *ngIf="!stepsArray[i].isRunning && !flow.isRunning" (click)="deleteStepClicked(stepsArray[i])" class="step-delete delete-icon">delete</mat-icon>
-                  <div *ngIf="stepsArray[i].isRunning" class="spinner-container">
-                    <mat-spinner class="step-spinner" diameter="20"></mat-spinner>
-                  </div>
+                  <mat-icon *ngIf="stepsArray[i].isValid" class="step-valid check-icon">check_circle</mat-icon>
+                  <mat-icon *ngIf="!stepsArray[i].isValid"  class="step-invalid grey-icon">lens</mat-icon>
+                  <mat-icon *ngIf="flow.latestJob.stepRunningPercent === null" (click)="deleteStepClicked(stepsArray[i])" class="step-delete delete-icon">delete</mat-icon>
                 </div>            
               </div>
               <h3 class="step-name">{{step.label}}</h3>
               <!-- TODO Update Information for each step -->
               <div class="summary" *ngIf="stepsArray[i].type === 'ingestion'">
                 <div class="summary-label">Source</div>
-                <div title="{{stepsArray[i].config.input_file_path}}" class="summary-content">
+                <div class="summary-content" *ngIf="stepsArray[i].config.input_file_path">
                   {{stepsArray[i].config.input_file_path | truncate : -23}}
                 </div>
               </div>
               <div class="summary" *ngIf="stepsArray[i].type === 'mapping'">
                 <div class="summary-label">Target Entity</div>
-                <div class="summary-content">
+                <div class="summary-content" *ngIf="stepsArray[i].config.targetEntity">
                   {{stepsArray[i].config.targetEntity | truncate : 23}}
                 </div>
               </div>
               <div class="summary" *ngIf="stepsArray[i].type === 'mastering'">
                 <div class="summary-label">Target Entity</div>
-                <div class="summary-content">
+                <div class="summary-content" *ngIf="stepsArray[i].config.targetEntity">
                   {{stepsArray[i].config.targetEntity | truncate : 23}}
                 </div>
               </div>
               <div class="summary" *ngIf="stepsArray[i].type === 'custom'">
                 <div class="summary-label">Module</div>
-                <div title="/path/to/custom/module.sjs" class="summary-content">{{'/path/to/custom/module.sjs' | truncate : -23}}</div>
+                <div *ngIf="stepsArray[i].config.customModuleUri" class="summary-content">{{stepsArray[i].config.customModuleUri | truncate : -23}}</div>
               </div>
-
-              <div class="progress-bar">&nbsp;</div>
-
+              <mat-progress-bar
+                *ngIf="flow.latestJob.stepId === stepsArray[i].id"
+                id="job-progress-bar"
+                class="item"
+                mode="determinate"
+                [value]="flow.latestJob.stepRunningPercent"></mat-progress-bar>
             </div>
             <div *ngIf="i !== (steps.length-1); else spacer" class="line">&rarr;</div>
             <ng-template #spacer><span class="spacer" ></span></ng-template>

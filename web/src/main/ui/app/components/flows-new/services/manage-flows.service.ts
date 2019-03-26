@@ -50,7 +50,7 @@ export class ManageFlowsService {
   }
   createStep(flowId: string, stepIndex: number, step: Step) {
     console.log(`POST api/flows/${flowId}/steps`);
-    return this.http.post<Step>(`api/flows/${flowId}/stepIndex/${stepIndex}`, step);
+    return this.http.post<Step>(`api/flows/${flowId}/steps?stepOrder=${stepIndex}`, step);
   }
   updateStep(flowId: string, stepId: string, step: Step) {
     console.log(`PUT api/flows/${flowId}/steps/${stepId}`);
