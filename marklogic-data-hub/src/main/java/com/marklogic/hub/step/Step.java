@@ -28,7 +28,6 @@ public interface Step {
     enum StepType {
         INGEST("ingest"),
         MAPPING("mapping"),
-        MASTERING("mastering"),
         CUSTOM("custom");
 
         //map client-side type to server-side type
@@ -36,7 +35,6 @@ public interface Step {
         static  {
             STEP_TYPE_MAPPING.put("ingestion", Step.StepType.INGEST);
             STEP_TYPE_MAPPING.put("mapping", Step.StepType.MAPPING);
-            STEP_TYPE_MAPPING.put("mastering", Step.StepType.MASTERING);
             STEP_TYPE_MAPPING.put("custom", Step.StepType.CUSTOM);
         }
 
