@@ -266,9 +266,8 @@ public class QueryStepRunner implements StepRunner {
         Map<String,Object> fullResponse = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
-            //TODO: Remove this once Step class is fixed
-            .withBatchSize(100)
-            .withThreadCount(4)
+            .withBatchSize(batchSize)
+            .withThreadCount(threadCount)
             .withJobId(job.getJobId())
             .onUrisReady((QueryBatch batch) -> {
                 try {
