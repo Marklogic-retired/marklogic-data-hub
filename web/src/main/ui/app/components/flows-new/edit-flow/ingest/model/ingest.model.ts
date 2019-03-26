@@ -20,13 +20,13 @@ export class Ingestion {
     const newStep = _.cloneDeep(step);
     const result = new Ingestion();
     result.inputFilePath = config && config['input_file_path'] || '.';
-    result.inputFileType = config['input_file_type'] || 'documents';
-    result.outputCollections = config['output_collections'] || '';
-    result.outputPermissions = config['output_permissions'] || 'rest-reader,read,rest-writer,update';
-    result.documentType = config['document_type'] || 'json';
-    result.transformModule = config['transform_module'] || '/data-hub/5/transforms/mlcp-flow-transform.sjs';
-    result.transformNamespace = config['transform_namespace'] || 'http://marklogic.com/data-hub/mlcp-flow-transform';
-    result.transformParams = config['transform_param'] || '';
+    result.inputFileType = config && config['input_file_type'] || 'documents';
+    result.outputCollections = config && config['output_collections'] || '';
+    result.outputPermissions = config && config['output_permissions'] || 'rest-reader,read,rest-writer,update';
+    result.documentType = config && config['document_type'] || 'json';
+    result.transformModule = config && config['transform_module'] || '/data-hub/5/transforms/mlcp-flow-transform.sjs';
+    result.transformNamespace = config && config['transform_namespace'] || 'http://marklogic.com/data-hub/mlcp-flow-transform';
+    result.transformParams = config && config['transform_param'] || '';
     newStep.config = result;
     return newStep;
   }
