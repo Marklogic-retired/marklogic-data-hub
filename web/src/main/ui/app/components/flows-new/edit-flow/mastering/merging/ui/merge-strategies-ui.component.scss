@@ -25,15 +25,8 @@
 }
 
 .other-item {
+  padding: 1px 0;
   width: 250px;
-}
-
-.other-label {
-  display: inline-block;
-  width: 50px;
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.54);
 }
 
 .editing-field {
@@ -42,13 +35,24 @@
   width: 25px;
 }
 
-/deep/ .mat-column-weight div.mat-form-field-wrapper {
+/deep/ .mat-column-maxValues div.mat-form-field-wrapper,
+/deep/ .mat-column-maxSources div.mat-form-field-wrapper,
+/deep/ .mat-column-length div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
+  width: 40px;
+}
+
+/deep/ .mat-column-sourceWeights div.mat-form-field-wrapper {
+  position: absolute;
+  top: -30px;
   width: 30px;
 }
 
-/deep/ .mat-cell a.weight-value {
+/deep/ .mat-cell a.max-values-value,
+/deep/ .mat-cell a.max-sources-value,
+/deep/ .mat-cell a.source-weights-value,
+/deep/ .mat-cell a.length-value {
   cursor: pointer!important;
 }
 

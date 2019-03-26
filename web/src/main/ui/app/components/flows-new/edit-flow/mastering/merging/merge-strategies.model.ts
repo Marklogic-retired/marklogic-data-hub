@@ -62,6 +62,7 @@ export class MergeStrategy {
   public strategy: string;
   public customUri: string;
   public customFunction: string;
+  public editing: string = '';
 
   constructor (mStr: any = {}) {
     if (mStr.name) this.name = mStr.name;

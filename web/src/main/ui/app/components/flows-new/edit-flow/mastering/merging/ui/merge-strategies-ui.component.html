@@ -35,9 +35,12 @@
         <ng-container matColumnDef="maxValues">
           <mat-header-cell id="merge-strategy-max-values-sort-btn" *matHeaderCellDef mat-sort-header>Max Values</mat-header-cell>
           <mat-cell class="merge-strategy-max-values" *matCellDef="let mStr">
-            <a class="max-values-value">
+            <a *ngIf="mStr.editing !== 'maxValues'" (click)="valueClicked($event, mStr, 'maxValues')" class="max-values-value">
               {{mStr.maxValues}}
             </a>
+            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'maxValues'" (keypress)="valueKeyPress($event, mStr, 'maxValues')" class="editing-field">
+              <input matInput [value]="mStr.maxValues" [(ngModel)]="mStr.maxValues" [focusElement]="valueFocus[mStr.propertyName]">
+            </mat-form-field>
           </mat-cell>
         </ng-container>
 
@@ -45,9 +48,12 @@
         <ng-container matColumnDef="maxSources">
           <mat-header-cell id="merge-strategy-max-sources-sort-btn" *matHeaderCellDef mat-sort-header>Max Sources</mat-header-cell>
           <mat-cell class="merge-strategy-max-sources" *matCellDef="let mStr">
-            <a class="max-sources-value">
+            <a *ngIf="mStr.editing !== 'maxSources'" (click)="valueClicked($event, mStr, 'maxSources')" class="max-sources-value">
               {{mStr.maxSources}}
             </a>
+            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'maxSources'" (keypress)="valueKeyPress($event, mStr, 'maxSources')" class="editing-field">
+              <input matInput [value]="mStr.maxSources" [(ngModel)]="mStr.maxSources" [focusElement]="valueFocus[mStr.propertyName]">
+            </mat-form-field>
           </mat-cell>
         </ng-container>
 
@@ -57,9 +63,14 @@
           <mat-cell class="merge-strategy-source-weights" *matCellDef="let mStr">
 
             <div *ngIf="mStr.sourceWeights.length > 0" class="other-content">
-              <div *ngFor="let sw of mStr.sourceWeights" class="other-item">
+              <div *ngFor="let sw of mStr.sourceWeights; let i = index;" class="other-item">
                 {{sw.source.name}}:
-                <a>{{sw.source.weight}}</a>
+                <a *ngIf="mStr.editing !== getIdSW(sw,i)" (click)="valueClicked($event, mStr, getIdSW(sw,i))" class="source-weights-value">
+                  {{sw.source.weight}}
+                </a>
+                <mat-form-field floatLabel="never" *ngIf="mStr.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mStr, getIdSW(sw,i))" class="editing-field">
+                  <input matInput [value]="mStr.sourceWeights[i].source.weight" [(ngModel)]="mStr.sourceWeights[i].source.weight" [focusElement]="valueFocus[mStr.propertyName]">
+                </mat-form-field>
               </div>
             </div>
 
@@ -70,9 +81,12 @@
         <ng-container matColumnDef="length">
           <mat-header-cell id="merge-strategy-length-sort-btn" *matHeaderCellDef mat-sort-header>Length Weight</mat-header-cell>
           <mat-cell class="merge-strategy-length" *matCellDef="let mStr">
-            <a class="length-value">
+            <a *ngIf="mStr.editing !== 'length'" (click)="valueClicked($event, mStr, 'length')" class="length-value">
               {{(mStr.length) ? mStr.length.weight : ''}}
             </a>
+            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'length'" (keypress)="valueKeyPress($event, mStr, 'length')" class="editing-field">
+              <input matInput [value]="mStr.length.weight" [(ngModel)]="mStr.length.weight" [focusElement]="valueFocus[mStr.propertyName]">
+            </mat-form-field>
           </mat-cell>
         </ng-container>
 

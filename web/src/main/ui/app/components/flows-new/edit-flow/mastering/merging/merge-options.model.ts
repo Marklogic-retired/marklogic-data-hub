@@ -67,6 +67,7 @@ export class MergeOption {
   public customUri: string;
   public customFunction: string;
   public mergeType: string;
+  public editing: string = '';
 
   constructor (mOpt: any = {}) {
     if (mOpt.propertyName) this.propertyName = mOpt.propertyName;

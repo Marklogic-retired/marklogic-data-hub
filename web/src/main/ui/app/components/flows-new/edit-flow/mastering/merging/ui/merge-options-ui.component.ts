@@ -26,7 +26,7 @@ export class MergeOptionsUiComponent {
   public displayedColumns = ['propertyName', 'mergeType', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
   public dataSource: MatTableDataSource<MergeOption>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
@@ -44,7 +44,7 @@ export class MergeOptionsUiComponent {
 
   openMergeOptionDialog(optionToEdit: MergeOption, index: number, entityProps: any, strategies: any): void {
     // Don't allow editing of strategies from Merge Options table
-    if (optionToEdit && optionToEdit.strategy) return;
+    // if (optionToEdit && optionToEdit.strategy) return;
     const dialogRef = this.dialog.open(AddMergeOptionDialogComponent, {
       width: '500px',
       data: {option: optionToEdit, index: index, entityProps: entityProps, strategies: this.mergeStrategies}
@@ -86,24 +86,30 @@ export class MergeOptionsUiComponent {
     this.table.renderRows();
   }
 
-  // weightClicked(event, mOpt) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   this.matchOptions.options.forEach(m => { m.editing = false; })
-  //   mOpt.editing = !mOpt.editing;
-  //   this.weightFocus[mOpt.propertyName] = true;
-  // }
+  valueClicked(event, mOpt, type) {
+    console.log('valueClicked', type);
+    event.preventDefault();
+    event.stopPropagation();
+    this.mergeOptions.options.forEach(m => { m.editing = false; })
+    mOpt.editing = type;
+    this.valueFocus[mOpt.propertyName] = true;
+  }
 
-  // weightKeyPress(event, mOpt): void {
-  //   if (event.key === 'Enter') {
-  //     mOpt.editing = !mOpt.editing;
-  //     this.weightFocus[mOpt.propertyName] = false;
-  //   }
-  // }
+  valueKeyPress(event, mOpt, type): void {
+    console.log('valueKeyPress', type);
+    if (event.key === 'Enter') {
+      mOpt.editing = '';
+      this.valueFocus[mOpt.propertyName] = false;
+    }
+  }
 
-  // Close weight input on outside click
-  // @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mOpt){
-  //   this.matchOptions.options.forEach(m => { m.editing = false; })
-  // }
+  getIdSW(sw, index) {
+    return sw.source.name + '%%%' + index;
+  }
+
+  // Close value input on outside click
+  @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
+    this.mergeOptions.options.forEach(m => { m.editing = ''; })
+  }
 
 }

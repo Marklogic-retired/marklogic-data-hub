@@ -23,7 +23,7 @@ export class MergeStrategiesUiComponent {
   public displayedColumns = ['strategyName', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
   public dataSource: MatTableDataSource<MergeStrategy>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
@@ -81,24 +81,28 @@ export class MergeStrategiesUiComponent {
     this.table.renderRows();
   }
 
-  // weightClicked(event, mOpt) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   this.matchOptions.options.forEach(m => { m.editing = false; })
-  //   mOpt.editing = !mOpt.editing;
-  //   this.weightFocus[mOpt.propertyName] = true;
-  // }
+  valueClicked(event, mStr, type) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mergeStrategies.strategies.forEach(m => { m.editing = false; })
+    mStr.editing = type;
+    this.valueFocus[mStr.propertyName] = true;
+  }
 
-  // weightKeyPress(event, mOpt): void {
-  //   if (event.key === 'Enter') {
-  //     mOpt.editing = !mOpt.editing;
-  //     this.weightFocus[mOpt.propertyName] = false;
-  //   }
-  // }
+  valueKeyPress(event, mOpt, type): void {
+    if (event.key === 'Enter') {
+      mOpt.editing = '';
+      this.valueFocus[mOpt.propertyName] = false;
+    }
+  }
 
-  // Close weight input on outside click
-  // @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mOpt){
-  //   this.matchOptions.options.forEach(m => { m.editing = false; })
-  // }
+  getIdSW(sw, index) {
+    return sw.source.name + '%%%' + index;
+  }
+
+  // Close value input on outside click
+  @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
+    this.mergeStrategies.strategies.forEach(m => { m.editing = ''; })
+  }
 
 }
