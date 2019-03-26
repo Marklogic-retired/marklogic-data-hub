@@ -17,12 +17,11 @@
 package com.marklogic.hub.web.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.error.DataHubProjectException;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.entity_services.JsonPojo;
-
-import java.io.IOException;
 
 public class StepModel extends JsonPojo {
 
@@ -35,11 +34,8 @@ public class StepModel extends JsonPojo {
     protected JsonNode config;
     protected String language;
     protected Boolean isValid;
-    protected Boolean isRunning;
     protected String version;
-    protected String sourceCollection;
-    protected String sourceQuery;
-    protected String targetEntity;
+    protected JsonNode customHook;
 
     public String getId() {
         return id;
@@ -113,14 +109,6 @@ public class StepModel extends JsonPojo {
         isValid = valid;
     }
 
-    public Boolean getRunning() {
-        return isRunning;
-    }
-
-    public void setRunning(Boolean running) {
-        isRunning = running;
-    }
-
     public String getVersion() {
         return version;
     }
@@ -129,57 +117,64 @@ public class StepModel extends JsonPojo {
         this.version = version;
     }
 
-    public String getSourceCollection() {
-        return sourceCollection;
+    public JsonNode getCustomHook() {
+        return customHook;
     }
 
-    public void setSourceCollection(String sourceCollection) {
-        this.sourceCollection = sourceCollection;
-    }
-
-    public String getSourceQuery() {
-        return sourceQuery;
-    }
-
-    public void setSourceQuery(String sourceQuery) {
-        this.sourceQuery = sourceQuery;
-    }
-
-    public String getTargetEntity() {
-        return targetEntity;
-    }
-
-    public void setTargetEntity(String targetEntity) {
-        this.targetEntity = targetEntity;
+    public void setCustomHook(JsonNode customHook) {
+        this.customHook = customHook;
     }
 
     public static StepModel fromJson(JsonNode node) {
         StepModel step = new StepModel();
 
         JSONObject jsonObject = new JSONObject(node);
-        step.setId(jsonObject.getString("id"));
+
+
         step.setType(Step.StepType.getStepType(jsonObject.getString("type")));
         step.setName(jsonObject.getString("name"));
+
+        if (jsonObject.getString("id") != null) {
+            step.setId(jsonObject.getString("id"));
+        } else {
+            step.setId(step.getName() + "-" + step.getType());
+        }
+
         step.setDescription(jsonObject.getString("description"));
         step.setSourceDatabase(jsonObject.getString("sourceDatabase"));
         step.setTargetDatabase(jsonObject.getString("targetDatabase"));
         step.setConfig(jsonObject.getNode("config"));
         step.setLanguage("zxx");
         step.setValid(jsonObject.getBoolean("isValid"));
-        step.setRunning(jsonObject.getBoolean("isRunning"));
         step.setVersion(jsonObject.getString("version"));
-        step.setSourceCollection(jsonObject.getString("sourceCollection"));
-        step.setSourceQuery(jsonObject.getString("sourceQuery"));
-        step.setTargetEntity(jsonObject.getString("targetEntity"));
+        step.setCustomHook(jsonObject.getNode("customHook"));
 
         return step;
     }
 
     public JsonNode toJson() {
-        try {
-            return new JSONObject(this).jsonNode();
-        } catch (IOException e) {
-            throw new DataHubProjectException("Unable to get the Json Step object.");
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+
+        if (getId() != null) {
+            node.put("id", getId());
+        } else {
+            node.put("id", getName() + "-" + getType());
         }
+
+        if (getType() != null) {
+            node.put("type", getType().toString());
+        }
+
+        node.put("name", getName());
+        node.put("description", getDescription());
+        node.put("sourceDatabase", getSourceDatabase());
+        node.put("targetDatabase", getTargetDatabase());
+        node.set("config", getConfig());
+        node.put("language", getLanguage());
+        node.put("isValid", getValid());
+        node.put("version", getVersion());
+        node.set("customHook", getCustomHook());
+
+        return node;
     }
 }
