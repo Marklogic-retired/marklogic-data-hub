@@ -187,10 +187,10 @@ public class FlowManagerService {
             Flow flow = flowManager.setSteps(flowName, stepMap);
             flowManager.saveFlow(flow);
 
-            // TODO: Delete from the filesystem?
-            if (step.getType().equals(Step.StepType.CUSTOM)) {
-                stepManagerService.deleteStep(step);
-            }
+            // Don't delete the Step from the filesystem so that we can later on reuse the step.
+//            if (step.getType().equals(Step.StepType.CUSTOM)) {
+//                stepManagerService.deleteStep(step);
+//            }
         } else {
             // TODO: Handle wrong ID format
         }
