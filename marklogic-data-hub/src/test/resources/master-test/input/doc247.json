@@ -1,0 +1,9 @@
+{
+  "person": {
+    "id": 30,
+    "firstName": "Nels",
+    "lastName": "Hame",
+    "email": "nhamet@exblog.jp",
+    "gender": "Male"
+  }
+}
