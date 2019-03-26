@@ -86,4 +86,7 @@ export class NewStepDialogComponent implements OnInit {
       this.dialogRef.close(this.newStep);
     }
   }
+  targetEntityChange(entity) {
+    this.newStep.config['targetEntity'] = entity;
+  }
 }

@@ -30,6 +30,7 @@
   </mat-form-field>
 
   <mat-form-field>
+    <!-- <mat-select id="step-target-entity" class="" placeholder="Target Entity" (selectionChange)="targetEntityChange(newStep.targetEntity)" [(value)]="newStep.targetEntity"> -->
     <mat-select id="step-target-entity" class="" placeholder="Target Entity" formControlName="targetEntity">
       <mat-option class="" *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>

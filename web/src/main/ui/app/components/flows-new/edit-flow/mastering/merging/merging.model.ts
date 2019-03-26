@@ -1,6 +1,6 @@
 import { MergeOptions, MergeOption } from "./merge-options.model";
 import { MergeStrategies, MergeStrategy } from "./merge-strategies.model";
-//import { MergeCollections, MergeCollection } from "./merge-collections.model";
+import { MergeCollections, MergeCollection } from "./merge-collections.model";
 
 /**
  * Represents a Smart Mastering merging configuration.
@@ -69,37 +69,37 @@ export class Merging {
   /**
    * Construct based on a UI configuration.
    */
-  // static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
-  //   const result = new Merging();
-  //   if (mergeOptions) {
-  //     mergeOptions.options.forEach(mOpt => {
-  //       result.addOption(mOpt);
-  //     })
-  //   }
-  //   if (mergeStrategies) {
-  //     mergeStrategies.strategies.forEach(mStr => {
-  //       result.addStrategy(mStr);
-  //     })
-  //   }
-  //   if (mergeCollections) {
-  //     mergeCollections.collections.forEach(mColl => {
-  //       result.addCollection(mColl);
-  //     })
-  //   }
-  //   console.log('fromUI', result);
-  //   return result;
-  // }
+  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
+    const result = new Merging();
+    if (mergeOptions) {
+      mergeOptions.options.forEach(mOpt => {
+        result.addOption(mOpt);
+      })
+    }
+    if (mergeStrategies) {
+      mergeStrategies.strategies.forEach(mStr => {
+        result.addStrategy(mStr);
+      })
+    }
+    if (mergeCollections) {
+      mergeCollections.collections.forEach(mColl => {
+        result.addCollection(mColl);
+      })
+    }
+    console.log('fromUI', result);
+    return result;
+  }
 
   /**
    * Add a property name definition.
    */
   addProperty(name) {
-    let found = this.propertyDefs['property'].find(p => {
+    let found = this.propertyDefs['properties'].find(p => {
       return p.name === name;
     });
     if (!found) {
       let prop = new Property({ localname: name, name: name });
-      this.propertyDefs['property'].push(prop);
+      this.propertyDefs['properties'].push(prop);
     }
   }
 
@@ -112,51 +112,51 @@ export class Merging {
   }
 
   /**
-   * Add definitions for the included algorithms.
-   */
-  // addAlgorithmDefaults() {
-  //   let defaultAlgs = [
-  //     ['double-metaphone', '/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy'],
-  //     ['thesaurus', '/com.marklogic.smart-mastering/algorithms/thesaurus.xqy'],
-  //     ['zip-match', '/com.marklogic.smart-mastering/algorithms/zip.xqy'],
-  //     ['standard-reduction', null]
-  //   ]
-  //   defaultAlgs.forEach(a => {
-  //     this.addAlgorithm(a[0], a[1], a[0]);
-  //   })
-  // }
-
-  /**
    * Add a merge option.
    */
-  addOption(mOpt: MergeOption) {
-    console.log('addOption', mOpt);
+  addOption(mOpt) {
     if (mOpt.propertyName) {
       this.addProperty(mOpt.propertyName);
     }
+    // Transform any new source-weights from UI
+    if (mOpt.sourceWeights.length > 0 && mOpt.sourceWeights[0].weight) {
+      mOpt.sourceWeights = mOpt.sourceWeights.map(sw => {
+        return { source: { name: sw.source, weight: sw.weight } };
+      })
+    }
+    // Transform any new length-weight from UI
+    if (typeof mOpt.length === 'string' || typeof mOpt.length === 'number') {
+      mOpt.length = { weight: mOpt.length };
+    }
     let opt = new Option(mOpt);
     this.merging.push(opt);
-    console.log('merging.addOption', this);
   }
 
   /**
    * Add a merge strategy.
    */
-  addStrategy(mStr: MergeStrategy) {
-    let thr;
-    console.log('addStrategy', mStr);
+  addStrategy(mStr) {
+    // Transform any new source-weights from UI
+    if (mStr.sourceWeights.length > 0 && mStr.sourceWeights[0].weight) {
+      mStr.sourceWeights = mStr.sourceWeights.map(sw => {
+        return { source: { name: sw.source, weight: sw.weight } };
+      })
+    }
     let strategy = new Strategy(mStr);
     this.mergeStrategies.push(strategy);
-    console.log('merging.addStrategy', this);
   }
 
   /**
    * Add a merge collection.
    */
-  // addCollection(mColl: MergeCollection) {
-  //   let coll = new Collection(mColl);
-  //   this.algorithms['collections'][mColl.type] = coll;
-  // }
+  addCollection(mColl: MergeCollection) {
+    let mColl2 = {};
+    if (mColl.add) mColl2['add'] = { collection: mColl.add };
+    if (mColl.remove) mColl2['remove'] = { collection: mColl.remove };
+    if (mColl.set) mColl2['set'] = { collection: mColl.set };
+    let coll = new Collection(mColl2);
+    this.algorithms['collections'][mColl.event] = coll;
+  }
 
 }
 
@@ -195,9 +195,9 @@ export class Algorithm {
  * Represents a collection option in merging options.
  */
 export class Collection {
-  public add: Array<string>;
-  public remove: Array<string>;
-  public set: Array<string>;
+  public add: any;
+  public remove: any;
+  public set: any;
   constructor(c) {
     if (c.add) this.add = c.add;
     if (c.remove) this.remove = c.remove;
@@ -212,7 +212,7 @@ export class Strategy {
   public name: string;
   public algorithmRef: string;
   public maxValues: number;
-  public maxSources: string;
+  public maxSources: number;
   public length: Object;
   public sourceWeights: Array<any> = [];
   constructor(mStr) {
@@ -229,13 +229,13 @@ export class Strategy {
 }
 
 /**
- * Represents a merge strategy in merging options.
+ * Represents a merge option in merging options.
  */
 export class Option {
   public propertyName: string;
   public algorithmRef: string;
   public maxValues: number;
-  public maxSources: string;
+  public maxSources: number;
   public length: Object;
   public sourceWeights: any;
   public strategy: string;

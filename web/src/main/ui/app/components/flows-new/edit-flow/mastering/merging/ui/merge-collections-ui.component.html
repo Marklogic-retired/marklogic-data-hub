@@ -1,0 +1,97 @@
+<div id="merge-collections" class="page-layout carded fullwidth">
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HEADER -->
+    <div class="header accent">
+      <mat-toolbar style="background: transparent">
+        <div class="logo">
+          <span class="logo-text h2">
+            Merge Collections
+          </span>
+        </div>
+        <button mat-raised-button class="new-collection-button" color="primary" (click)="openMergeCollectionDialog(null, null)">Add</button>
+        <span class="fill-space"></span>
+      </mat-toolbar>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content-card">
+
+      <mat-table id="merge-collections-table"
+                 class="merging-table"
+                 #table [dataSource]="dataSource" matSort>
+
+        <!-- Event Column -->
+        <ng-container matColumnDef="event">
+          <mat-header-cell id="merge-collection-event-sort-btn" *matHeaderCellDef mat-sort-header>Event</mat-header-cell>
+          <mat-cell class="merge-collection-event" *matCellDef="let mColl">
+            {{mColl.event}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Add Column -->
+        <ng-container matColumnDef="add">
+          <mat-header-cell id="merge-collection-add-sort-btn" *matHeaderCellDef mat-sort-header>Add</mat-header-cell>
+          <mat-cell class="merge-collection-add" *matCellDef="let mColl">
+            <span *ngIf="mColl.add.length > 0" class="add-value">
+              {{mColl.add.join(', ')}}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Remove Column -->
+        <ng-container matColumnDef="remove">
+          <mat-header-cell id="merge-collection-remove-sort-btn" *matHeaderCellDef mat-sort-header>Remove</mat-header-cell>
+          <mat-cell class="merge-collection-remove" *matCellDef="let mColl">
+            <span *ngIf="mColl.remove.length > 0" class="remove-value">
+              {{mColl.remove.join(', ')}}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Set Column -->
+        <ng-container matColumnDef="set">
+          <mat-header-cell id="merge-collection-set-sort-btn" *matHeaderCellDef mat-sort-header>Set</mat-header-cell>
+          <mat-cell class="merge-collection-set" *matCellDef="let mColl">
+            <span *ngIf="mColl.set.length > 0" class="set-value">
+              {{mColl.set.join(', ')}}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell class="merge-collection-menu" *matCellDef="let mColl; let i = index">
+            <mat-icon class="merge-menu-icon" [matMenuTriggerFor]="mergeCollectionsMenu" [matMenuTriggerData]="{mColl: mColl, i: paginator.pageIndex * paginator.pageSize + i}"
+                      disableRipple>more_vert</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row class="{{ 'merge-option-' + mColl.event.toLowerCase().split(' ').join('-') }}"
+                 *matRowDef="let mColl; columns: displayedColumns;">
+        </mat-row>
+
+      </mat-table>
+
+      <mat-paginator id="merge-collection-pagination"
+                     #paginator
+                     [length]="mergeCollections.length"
+                     [pageIndex]="0"
+                     [pageSize]="15"
+                     [pageSizeOptions]="[3, 5, 15, 30]">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+<mat-menu class="merge-collection-menu-dialog" #mergeCollectionsMenu="matMenu">
+  <ng-template matMenuContent let-mColl="mColl" let-i="i">
+    <div class="merge-collection-menu-edit-btn" mat-menu-item (click)="openMergeCollectionDialog(mColl, i)">Edit Settings</div>
+    <div class="merge-collection-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mColl)">Delete</div>
+  </ng-template>
+</mat-menu>

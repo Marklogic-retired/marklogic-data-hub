@@ -1,38 +1,40 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import { MatchOption } from "../match-options.model";
-import { AddMatchOptionDialogComponent } from './add-match-option-dialog.component';
+import { MergeOption } from "../merge-options.model";
+import { AddMergeOptionDialogComponent } from './add-merge-option-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
 
 @Component({
-  selector: 'app-match-options-ui',
-  templateUrl: './match-options-ui.component.html',
-  styleUrls: ['./match-options-ui.component.scss'],
+  selector: 'app-merge-options-ui',
+  templateUrl: './merge-options-ui.component.html',
+  styleUrls: ['./merge-options-ui.component.scss'],
 })
-export class MatchOptionsUiComponent {
+export class MergeOptionsUiComponent {
   @ViewChild(MatTable) table: MatTable<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  @Input() matchOptions: any;
+  @Input() mergeOptions: any;
   @Input() targetEntity: any;
   @Input() targetEntityName: string;
+  @Input() mergeStrategies: any;
 
   @Output() createOption = new EventEmitter();
   @Output() updateOption = new EventEmitter();
   @Output() deleteOption = new EventEmitter();
 
-  public displayedColumns = ['propertyName', 'matchType', 'weight', 'other', 'actions'];
-  public dataSource: MatTableDataSource<MatchOption>;
+  public displayedColumns = ['propertyName', 'mergeType', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
+  public dataSource: MatTableDataSource<MergeOption>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource<MatchOption>(this.matchOptions.options);
+    console.log('ngOnInit this.mergeOptions', this.mergeOptions);
+    this.dataSource = new MatTableDataSource<MergeOption>(this.mergeOptions.options);
   }
 
   ngAfterViewInit() {
@@ -40,11 +42,12 @@ export class MatchOptionsUiComponent {
     this.dataSource.sort = this.sort;
   }
 
-  openMatchOptionDialog(optionToEdit: MatchOption, index: number, entityProps: any): void {
-    console.log('entityProps', entityProps);
-    const dialogRef = this.dialog.open(AddMatchOptionDialogComponent, {
+  openMergeOptionDialog(optionToEdit: MergeOption, index: number, entityProps: any, strategies: any): void {
+    // Don't allow editing of strategies from Merge Options table
+    // if (optionToEdit && optionToEdit.strategy) return;
+    const dialogRef = this.dialog.open(AddMergeOptionDialogComponent, {
       width: '500px',
-      data: {option: optionToEdit, index: index, entityProps: entityProps}
+      data: {option: optionToEdit, index: index, entityProps: entityProps, strategies: this.mergeStrategies}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
@@ -79,28 +82,34 @@ export class MatchOptionsUiComponent {
   }
 
   renderRows(): void {
-    this.dataSource.data = this.matchOptions['options'];
+    this.dataSource.data = this.mergeOptions.options;
     this.table.renderRows();
   }
 
-  weightClicked(event, mOpt) {
+  valueClicked(event, mOpt, type) {
+    console.log('valueClicked', type);
     event.preventDefault();
     event.stopPropagation();
-    this.matchOptions.options.forEach(m => { m.editing = false; })
-    mOpt.editing = !mOpt.editing;
-    this.weightFocus[mOpt.propertyName] = true;
+    this.mergeOptions.options.forEach(m => { m.editing = false; })
+    mOpt.editing = type;
+    this.valueFocus[mOpt.propertyName] = true;
   }
 
-  weightKeyPress(event, mOpt): void {
+  valueKeyPress(event, mOpt, type): void {
+    console.log('valueKeyPress', type);
     if (event.key === 'Enter') {
-      mOpt.editing = !mOpt.editing;
-      this.weightFocus[mOpt.propertyName] = false;
+      mOpt.editing = '';
+      this.valueFocus[mOpt.propertyName] = false;
     }
   }
 
-  // Close weight input on outside click
-  @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mOpt){
-    this.matchOptions.options.forEach(m => { m.editing = false; })
+  getIdSW(sw, index) {
+    return sw.source.name + '%%%' + index;
+  }
+
+  // Close value input on outside click
+  @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
+    this.mergeOptions.options.forEach(m => { m.editing = ''; })
   }
 
 }

@@ -20,6 +20,12 @@ import { MatchThresholdsUiComponent } from "./mastering/matching/ui/match-thresh
 import { AddMatchOptionDialogComponent } from './mastering/matching/ui/add-match-option-dialog.component';
 import { AddMatchThresholdDialogComponent } from './mastering/matching/ui/add-match-threshold-dialog.component';
 import { MergingComponent } from './mastering/merging/merging.component';
+import { MergeOptionsUiComponent } from './mastering/merging/ui/merge-options-ui.component';
+import { MergeStrategiesUiComponent } from './mastering/merging/ui/merge-strategies-ui.component';
+import { MergeCollectionsUiComponent } from './mastering/merging/ui/merge-collections-ui.component';
+import { AddMergeOptionDialogComponent } from './mastering/merging/ui/add-merge-option-dialog.component';
+import { AddMergeStrategyDialogComponent } from './mastering/merging/ui/add-merge-strategy-dialog.component';
+import { AddMergeCollectionDialogComponent } from './mastering/merging/ui/add-merge-collection-dialog.component';
 import { MappingComponent } from './mapping/mapping.component';
 import { MappingUiComponent } from './mapping/ui/mapping-ui.component';
 
@@ -45,6 +51,12 @@ import { CustomUiComponent } from './custom/ui/custom-ui.component';
     AddMatchOptionDialogComponent,
     AddMatchThresholdDialogComponent,
     MergingComponent,
+    MergeOptionsUiComponent,
+    MergeStrategiesUiComponent,
+    MergeCollectionsUiComponent,
+    AddMergeOptionDialogComponent,
+    AddMergeStrategyDialogComponent,
+    AddMergeCollectionDialogComponent,
     MappingComponent,
     MappingUiComponent,
     FocusElementDirective,
@@ -77,7 +89,10 @@ import { CustomUiComponent } from './custom/ui/custom-ui.component';
     NewStepDialogComponent,
     RunFlowDialogComponent,
     AddMatchOptionDialogComponent,
-    AddMatchThresholdDialogComponent
+    AddMatchThresholdDialogComponent,
+    AddMergeOptionDialogComponent,
+    AddMergeStrategyDialogComponent,
+    AddMergeCollectionDialogComponent
   ]
 })
 export class EditFlowModule {}

@@ -1,4 +1,5 @@
 import { Matching } from '../edit-flow/mastering/matching/matching.model';
+import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
 export class Step {
   public id: string;
@@ -8,9 +9,9 @@ export class Step {
   public sourceDatabase: string = '';
   public targetDatabase: string;
   public config: Object = {
-    matchOptions: new Matching
-    // TODO add merge options
-    // mergeOptions:
+    matchOptions: new Matching,
+    mergeOptions: new Merging,
+    targetEntity: ''
   };
   public language: string;
   public isValid: boolean = false;

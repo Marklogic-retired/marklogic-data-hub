@@ -1,53 +1,32 @@
-.matching {
+.merging {
   padding: 10px 40px;
 }
 
-#match-options {
+#merge-strategies {
   padding: 8px 30px;
 
   .center .header .mat-toolbar-single-row {
     padding: 0;
   }
-
-  .h2.logo-text {
-    font-size: 26px;
-  }
 }
 
 /* HEADER ROW HEIGHT */
-.matching-table .mat-header-row {
+.merging-table .mat-header-row {
     min-height: 48px !important;
 }
 
 /* BODY ROW HEIGHT */
-.matching-table .mat-row {
+.merging-table .mat-row {
     min-height: 38px !important;
-}
-
-/* PAGINATOR ROW HEIGHT */
-/deep/ .mat-paginator-container {
-  min-height: 48px !important;
-  .mat-paginator-page-size-select {
-    margin: 2px 4px -4px 4px !important;
-  }
 }
 
 .other-content {
   padding: 4px 0;
 }
 
-.other-label {
-  display: inline-block;
-  width: 140px;
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.54);
-}
-
-.otherContent {
-  width: 480px;
-  min-width: 480px;
-  max-width: 480px;
+.other-item {
+  padding: 1px 0;
+  width: 250px;
 }
 
 .editing-field {
@@ -56,23 +35,24 @@
   width: 25px;
 }
 
-a {
-  color: #2a4356; /* primary color */
-  font-weight: 500;
-}
-
-a:hover {
-  color: #6d8ba5; /* accent color */
-  text-decoration: none;
-}
-
-/deep/ .mat-column-weight div.mat-form-field-wrapper {
+/deep/ .mat-column-maxValues div.mat-form-field-wrapper,
+/deep/ .mat-column-maxSources div.mat-form-field-wrapper,
+/deep/ .mat-column-length div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
+  width: 40px;
+}
+
+/deep/ .mat-column-sourceWeights div.mat-form-field-wrapper {
+  position: absolute;
+  top: -30px;
   width: 30px;
 }
 
-/deep/ .mat-cell a.weight-value {
+/deep/ .mat-cell a.max-values-value,
+/deep/ .mat-cell a.max-sources-value,
+/deep/ .mat-cell a.source-weights-value,
+/deep/ .mat-cell a.length-value {
   cursor: pointer!important;
 }
 
@@ -141,7 +121,7 @@ button {
   }
 }
 
-.matching-table {
+.merging-table {
   flex: 1 1 auto;
   border-bottom: 1px solid rgba(0, 0, 0, .12);
   overflow: auto;
@@ -173,18 +153,22 @@ button {
 
   /* .mat-column-propertyName {
     flex: 0 1 200px;
-  }
-
-  .mat-column-matchType {
-    flex: 0 1 180px;
-  }
-
-  .mat-column-weight {
-    flex: 0 1 100px;
   } */
 
-  .mat-column-other {
-    flex: 0 1 480px;
+  .mat-column-mergeType {
+    flex: 0 1 250px;
+  }
+
+  .mat-column-maxValues {
+    flex: 0 1 120px;
+  }
+
+  .mat-column-maxSources {
+    flex: 0 1 120px;
+  }
+
+  .mat-column-sourceWeights {
+    flex: 0 1 300px;
   }
 
   .mat-column-actions {

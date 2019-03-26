@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>{{getDialogTitle()}}</h1>
+<div id="merge-strategy-dialog" mat-dialog-content [formGroup]="form" class="content">
+
+  <mat-form-field layout-fill>
+    <mat-label>Name</mat-label>
+    <input id="merge-strategy-name" matInput formControlName="name"/>
+  </mat-form-field>
+
+  <mat-form-field layout-fill>
+    <mat-label>Max Values</mat-label>
+    <input id="merge-strategy-max-values" matInput formControlName="maxValues"/>
+  </mat-form-field>
+
+  <mat-form-field layout-fill>
+    <mat-label>Max Sources</mat-label>
+    <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
+  </mat-form-field>
+
+  <div id="source-weights">
+    <mat-label>Source Weights</mat-label>
+    <button class="add-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
+      <mat-icon>add_circle</mat-icon>
+    </button>
+    <div
+      id="source-weights-wrapper"
+      formArrayName="sourceWeights"
+      *ngFor="let sw of this.sourceWeights.controls; let i = index;">
+      <div [formGroupName]="i" class="source-weights-group">
+        <mat-form-field>
+          <mat-label>Source Name</mat-label>
+          <input [class]="'source-weights-source-' + i" matInput formControlName="source"/>
+        </mat-form-field>
+        <mat-icon></mat-icon>
+        <mat-form-field>
+          <mat-label>Weight</mat-label>
+          <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
+        </mat-form-field>
+        <button class="remove-source-weight-btn" mat-icon-button (click)="onRemoveSourceWeight(i)">
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <mat-form-field layout-fill>
+    <mat-label>Length Weight</mat-label>
+    <input id="merge-strategy-length" matInput formControlName="length"/>
+  </mat-form-field>
+
+</div>
+
+<mat-dialog-actions align="end" class="bottom">
+  <button mat-raised-button color="primary" id="merge-strategy-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" id="merge-strategy-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+</mat-dialog-actions>
