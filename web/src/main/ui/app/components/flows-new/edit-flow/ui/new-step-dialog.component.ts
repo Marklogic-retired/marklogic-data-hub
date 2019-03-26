@@ -53,4 +53,7 @@ export class NewStepDialogComponent implements OnInit {
       this.newStep.targetDatabase = this.data.databases.final;
     }
   }
+  targetEntityChange(entity) {
+    this.newStep.config['targetEntity'] = entity;
+  }
 }
