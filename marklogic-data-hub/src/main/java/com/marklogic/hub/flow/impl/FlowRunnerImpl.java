@@ -49,6 +49,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
+    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
     private ExecutorService threadPool;
     private JobUpdate jobUpdate;
@@ -179,7 +180,7 @@ public class FlowRunnerImpl implements FlowRunner{
         @Override
         public void run() {
             RunFlowResponse resp = flowResp.get(runningJobId);
-            resp.setStartTime(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(Calendar.getInstance().getTime()));
+            resp.setStartTime(DATE_TIME_FORMAT.format(new Date()));
             Queue<String> stepQueue = stepsMap.get(jobQueue.peek());
 
             AtomicInteger errorCount = new AtomicInteger();
@@ -239,7 +240,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
             }
             resp.setStepResponses(stepOutputs);
-            resp.setEndTime(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(Calendar.getInstance().getTime()));
+            resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
             jobQueue.remove();
             if(!jobQueue.isEmpty()) {
                 initializeFlow((String) jobQueue.peek());
