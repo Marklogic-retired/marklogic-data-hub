@@ -17,18 +17,12 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.client.DatabaseClient
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
-import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.flow.RunFlowResponse
-import com.marklogic.hub.step.StepItemCompleteListener
-import com.marklogic.hub.step.StepItemFailureListener
-import com.marklogic.hub.step.StepRunner
-import com.marklogic.hub.job.Job
 import groovy.json.JsonBuilder
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper

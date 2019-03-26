@@ -73,7 +73,7 @@ public class QueryStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private QueryBatcher queryBatcher = null;
-    private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+    private JobUpdate jobUpdate ;
 
     public QueryStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -182,7 +182,7 @@ public class QueryStepRunner implements StepRunner {
     public Job run() {
         runningThread = null;
         Job job = createJob();
-
+        jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
         if (options == null) {
             options = new HashMap<>();
         } else {
@@ -266,8 +266,9 @@ public class QueryStepRunner implements StepRunner {
         Map<String,Object> fullResponse = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
-            .withBatchSize(batchSize)
-            .withThreadCount(threadCount)
+            //TODO: Remove this once Step class is fixed
+            .withBatchSize(100)
+            .withThreadCount(4)
             .withJobId(job.getJobId())
             .onUrisReady((QueryBatch batch) -> {
                 try {

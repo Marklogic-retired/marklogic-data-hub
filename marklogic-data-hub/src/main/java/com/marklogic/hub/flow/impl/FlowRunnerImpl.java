@@ -30,6 +30,9 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private FlowManager flowManager;
 
+    @Autowired
+    private StepRunnerFactory stepRunnerFactory;
+
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
 
@@ -167,7 +170,7 @@ public class FlowRunnerImpl implements FlowRunner{
         private String jobId;
         private Flow flow;
 
-        public FlowRunnerTask(Flow flow, String jobId) {
+        FlowRunnerTask(Flow flow, String jobId) {
             this.jobId = jobId;
             this.flow = flow;
         }
@@ -192,7 +195,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     runningStep.setSourceDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
                 }
 
-                stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)
+                stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
                     .withOptions(flow.getOverrideOptions())
                     .onItemFailed((jobId, itemId)-> {
@@ -221,8 +224,9 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
 
                 Job stepResp = stepRunner.run();
-                stepOutputs.put(stepNum, stepResp);
                 stepRunner.awaitCompletion();
+                stepOutputs.put(stepNum, stepResp);
+
             }
             if(errorCount.get() > 0){
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());

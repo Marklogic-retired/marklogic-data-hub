@@ -5,9 +5,11 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.impl.QueryStepRunner;
 import com.marklogic.hub.step.impl.WriteStepRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class StepRunnerFactory {
 
     @Autowired
@@ -22,7 +24,7 @@ public class StepRunnerFactory {
             case MAPPING:
                 stepRunner = new QueryStepRunner(hubConfig);
             case INGEST:
-                stepRunner =  new WriteStepRunner(hubConfig);
+                stepRunner = new WriteStepRunner(hubConfig);
             default:
                 stepRunner = new QueryStepRunner(hubConfig);
         }

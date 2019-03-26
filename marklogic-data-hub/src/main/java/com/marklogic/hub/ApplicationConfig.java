@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan(basePackages = {"com.marklogic.hub.impl", "com.marklogic.hub.legacy.impl", "com.marklogic.hub.deploy.commands",
-    "com.marklogic.hub.job.impl", "com.marklogic.hub.flow.impl"})
+    "com.marklogic.hub.job.impl", "com.marklogic.hub.flow.impl", "com.marklogic.hub.step"})
 @EnableAutoConfiguration
 public class ApplicationConfig {
 
