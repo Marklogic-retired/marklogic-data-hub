@@ -4,7 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {RouterModule} from '@angular/router';
 import {TruncateCharactersPipe} from './pipes/truncate';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppComponent} from './app.component';
 import {
   AppUiComponent,
@@ -13,7 +13,6 @@ import {
   EntityBoxComponent,
   EntityEditorComponent,
   ExternalDefDialogComponent,
-  FolderBrowserUiComponent,
   HarmonizeFlowOptionsUiComponent,
   HasBugsDialogComponent,
   HeaderUiComponent,
@@ -44,7 +43,6 @@ import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {ROUTES} from './app.routes';
 import {AUTH_PROVIDERS} from './services/auth';
 import {CodemirrorComponent} from './components/codemirror';
-import {FolderBrowserComponent} from './components/folder-browser/folder-browser.component';
 import {HeaderComponent} from './components/header/header.component';
 import {JobExportDialogComponent, JobOutputComponent, JobsComponent} from './components/jobs';
 import {JobExportUiComponent, JobOutputUiComponent, JobsUiComponent} from './components/jobs/ui';
@@ -83,15 +81,14 @@ import {DatePipeModule} from './pipes/date-pipe/date-pipe.module';
 import {MapComponent, MappingsComponent} from './components/mappings';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
-import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
+import {EditFlowModule, ManageFlowsModule} from "./components/flows-new";
+import {FolderBrowserModule} from "./components/folder-browser/folder-browser.module";
 
 @NgModule({
   declarations: [
     AppComponent,
     AppUiComponent,
     CodemirrorComponent,
-    FolderBrowserComponent,
-    FolderBrowserUiComponent,
     HeaderComponent,
     HeaderUiComponent,
     HasBugsDialogComponent,
@@ -172,13 +169,14 @@ import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
     MdlPopoverModule,
     MdlSelectModule,
     GridManiaModule,
-    RouterModule.forRoot(ROUTES, { useHash: true }),
+    RouterModule.forRoot(ROUTES, {useHash: true}),
     DatePipeModule,
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     ThemeModule,
     ManageFlowsModule,
-    EditFlowModule
+    EditFlowModule,
+    FolderBrowserModule
   ],
   providers: [
     AUTH_PROVIDERS,
@@ -200,4 +198,5 @@ import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
     AppComponent
   ],
 })
-export class AppModule { }
+export class AppModule {
+}

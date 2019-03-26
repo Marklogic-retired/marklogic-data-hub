@@ -12,29 +12,29 @@
     <input id="step-description" matInput [(ngModel)]="newStep.description" placeholder="Description">
     <mat-hint>Optional</mat-hint>
   </mat-form-field>
-  <div>
+  <div *ngIf="newStep.type != 'ingestion'">
     <label>Source Type: </label>
     <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource">
       <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
       <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
     </mat-radio-group>
   </div>
-  
-  <mat-form-field *ngIf="selectedSource === 'collection'">
+
+  <mat-form-field *ngIf="selectedSource === 'collection' && newStep.type != 'ingestion'">
     <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
       <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'" >
+  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query' && newStep.type != 'ingestion'" >
     <textarea matInput placeholder="Source Query" [(ngModel)]="newStep.sourceQuery"></textarea>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field *ngIf="newStep.type != 'ingestion'">
     <mat-select id="step-target-entity" class="" placeholder="Target Entity" [(value)]="newStep.targetEntity">
       <mat-option class="" *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
   </mat-form-field>
-  
+
   <mat-accordion>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
@@ -42,8 +42,8 @@
           Advanced Settings (optional)
         </mat-panel-title>
       </mat-expansion-panel-header>
-  
-      <mat-form-field>
+
+      <mat-form-field *ngIf="newStep.type != 'ingestion'">
         <mat-select id="step-source-database" placeholder="Source Database" [(value)]="newStep.sourceDatabase">
           <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
         </mat-select>

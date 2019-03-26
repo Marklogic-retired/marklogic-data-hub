@@ -1,0 +1,63 @@
+<button id="save-custom" mat-raised-button color="primary"
+        (click)="onSave()">Save
+</button>
+<div layout-padding layout="column" class="ingest-page">
+  <form>
+    <info-label
+      [labelText]="config.inputFilePath.label"
+      tooltipPlacement="right"
+      [tooltipText]="config.inputFilePath.description"
+    ></info-label>
+    <app-folder-browser
+      [startPath]="config.inputFilePath.value"
+    ></app-folder-browser>
+
+    <info-label
+      [labelText]="config.fileTypes.label"
+      tooltipPlacement="right"
+      [tooltipText]="config.fileTypes.description"
+    ></info-label>
+    <mat-form-field layout-fill appearance="outline">
+      <mat-select
+        id="file_type_select"
+        value="archive"
+      >
+        <mat-option
+          *ngFor="let option of config.fileTypes.options"
+          value="option.value"
+        >{{option.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <info-label
+      [labelText]="config.outputDocTypes.label"
+      tooltipPlacement="right"
+      [tooltipText]="config.outputDocTypes.description"
+    ></info-label>
+    <mat-form-field layout-fill appearance="outline">
+      <mat-select
+        [(ngModel)]="config.outputDocTypes.value"
+        name="docype"
+      >
+        <mat-option
+          *ngFor="let option of config.outputDocTypes.options"
+          value="option.value"
+        >{{option.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <info-label
+      [labelText]="config.outputPermissions.label"
+      tooltipPlacement="right"
+      [tooltipText]="config.outputPermissions.description"
+    ></info-label>
+    <mat-form-field layout-fill appearance="outline">
+      <mat-label>Output Permissions</mat-label>
+      <input matInput [(ngModel)]="config.outputPermissions.value" name="permissions"
+      />
+    </mat-form-field>
+  </form>
+</div>

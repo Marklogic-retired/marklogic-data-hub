@@ -13,8 +13,10 @@
     </header>
     <div *ngIf="showBody" class="steps-body">
       <div id="step-type-ingestion-container" *ngIf="step.type === 'ingestion'">
-        <p>{{step.type}}</p>
-        <p>{{step.description}}</p>
+        <app-ingest
+          [step]="step"
+          (saveStep)="saveStep($event)"
+        ></app-ingest>
       </div>
       <div id="step-type-mapping-container" *ngIf="step.type === 'mapping'">
         <app-mapping
