@@ -190,11 +190,11 @@ public class FlowRunnerImpl implements FlowRunner{
                 runningStep = runningFlow.getSteps().get(stepNum);
 
                 //now we check and validate we have no nulls
-                if(runningStep.getDestDB() == null) {
-                    runningStep.setDestDB(hubConfig.getDbName(DatabaseKind.FINAL));
+                if(runningStep.getDestinationDatabase() == null) {
+                    runningStep.setDestinationDatabase(hubConfig.getDbName(DatabaseKind.FINAL));
                 }
-                if(runningStep.getSourceDB() == null) {
-                    runningStep.setSourceDB(hubConfig.getDbName(DatabaseKind.STAGING));
+                if(runningStep.getSourceDatabase() == null) {
+                    runningStep.setSourceDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
                 }
 
                 stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)

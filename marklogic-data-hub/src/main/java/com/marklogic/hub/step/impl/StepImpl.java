@@ -16,7 +16,6 @@
 
 package com.marklogic.hub.step.impl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -31,22 +30,18 @@ public class StepImpl implements Step {
     public final static int DEFAULT_THREAD_COUNT = 4;
     private String language = "zxx";
     private String name;
+    private String description;
     private StepType type;
-    private int version;
+    private Integer version;
     private Map<String, Object> options;
     private JsonNode customHook;
     private String modulePath;
     private String identifier;
     private int retryLimit;
-
     private int batchSize;
     private int threadCount;
-    private String sourceDB;
-    private String destDB;
-
-
-
-    private JsonNode config;
+    private String sourceDatabase;
+    private String destinationDatabase;
 
     public StepImpl(String name, StepType type) {
         this.name = name;
@@ -92,11 +87,19 @@ public class StepImpl implements Step {
         this.type = type;
     }
 
-    public int getVersion() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 
@@ -156,29 +159,20 @@ public class StepImpl implements Step {
         this.threadCount = threadCount;
     }
 
-    public String getSourceDB() {
-        return sourceDB;
+    public String getSourceDatabase() {
+        return sourceDatabase;
     }
 
-    public void setSourceDB(String sourceDB) {
-        this.sourceDB = sourceDB;
+    public void setSourceDatabase(String sourceDatabase) {
+        this.sourceDatabase = sourceDatabase;
     }
 
-    public String getDestDB() {
-        return destDB;
+    public String getDestinationDatabase() {
+        return destinationDatabase;
     }
 
-    public void setDestDB(String destDB) {
-        this.destDB = destDB;
-    }
-
-    @JsonIgnore
-    public JsonNode getConfig() {
-        return config;
-    }
-
-    public void setConfig(JsonNode config) {
-        this.config = config;
+    public void setDestinationDatabase(String destinationDatabase) {
+        this.destinationDatabase = destinationDatabase;
     }
 
     public void incrementVersion() {
@@ -189,6 +183,7 @@ public class StepImpl implements Step {
     public void deserialize(JsonNode json) {
         JSONObject jsonObject = new JSONObject(json);
         setName(jsonObject.getString("name"));
+        setDescription(jsonObject.getString("description"));
         setType(StepType.getStepType(jsonObject.getString("type")));
         setVersion(jsonObject.getInt("version"));
         Map<String, Object> options = jsonObject.getMap("options");
@@ -201,8 +196,7 @@ public class StepImpl implements Step {
         setRetryLimit(jsonObject.getInt("retryLimit"));
         setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
         setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
-        setSourceDB(jsonObject.getString("sourceDB"));
-        setDestDB(jsonObject.getString("destDB"));
-        setConfig(jsonObject.getNode("config"));
+        setSourceDatabase(jsonObject.getString("sourceDatabase"));
+        setDestinationDatabase(jsonObject.getString("destinationDatabase"));
     }
 }
