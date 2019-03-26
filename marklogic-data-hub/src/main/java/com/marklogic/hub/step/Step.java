@@ -18,9 +18,9 @@ package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.impl.StepImpl;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public interface Step {
@@ -28,7 +28,17 @@ public interface Step {
     enum StepType {
         INGEST("ingest"),
         MAPPING("mapping"),
+        MASTERING("mastering"),
         CUSTOM("custom");
+
+        //map client-side type to server-side type
+        public final static Map<String, Step.StepType> STEP_TYPE_MAPPING = new HashMap<>();
+        static  {
+            STEP_TYPE_MAPPING.put("ingestion", Step.StepType.INGEST);
+            STEP_TYPE_MAPPING.put("mapping", Step.StepType.MAPPING);
+            STEP_TYPE_MAPPING.put("mastering", Step.StepType.MASTERING);
+            STEP_TYPE_MAPPING.put("custom", Step.StepType.CUSTOM);
+        }
 
         private String type;
 
@@ -37,6 +47,9 @@ public interface Step {
         }
 
         public static StepType getStepType(String type) {
+            if (STEP_TYPE_MAPPING.containsKey(type)) {
+                return STEP_TYPE_MAPPING.get(type);
+            }
             for (StepType stepType : StepType.values()) {
                 if (stepType.toString().equalsIgnoreCase(type)) {
                     return stepType;
