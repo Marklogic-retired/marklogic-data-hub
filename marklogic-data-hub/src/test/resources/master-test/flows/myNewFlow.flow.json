@@ -1,0 +1,15 @@
+{
+  "name" : "myNewFlow",
+  "description" : "flow description",
+  "identifier" : "",
+  "steps" : { "1": {
+  "name": "ingest",
+  "type": "INGEST"
+},  "2": {
+  "name": "mapping",
+  "type": "MAPPING"
+},  "3": {
+  "name": "master",
+  "type": "MASTER"
+} }
+}

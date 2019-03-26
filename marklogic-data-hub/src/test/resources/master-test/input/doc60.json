@@ -1,0 +1,9 @@
+{
+  "person": {
+    "id": 65,
+    "firstName": "Devin",
+    "lastName": "Bridges",
+    "email": "dbridges1s@nasa.gov",
+    "gender": "Female"
+  }
+}

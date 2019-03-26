@@ -1,0 +1,9 @@
+{
+  "person": {
+    "id": 34,
+    "firstName": "Barnie",
+    "lastName": "McGhie",
+    "email": "bmcghiex@example.com",
+    "gender": "Male"
+  }
+}
