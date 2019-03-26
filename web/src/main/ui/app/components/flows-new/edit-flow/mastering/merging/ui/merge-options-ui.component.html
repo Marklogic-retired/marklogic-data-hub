@@ -11,13 +11,17 @@
             Merge Options
           </span>
         </div>
-        <button mat-raised-button class="new-option-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties, mergeStrategies)">Add</button>
+        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties, mergeStrategies)">Add</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
     <!-- / HEADER -->
 
-    <div class="content-card">
+    <div *ngIf="!targetEntity">
+      Configuring merge options requires a target entity. The target entity "{{targetEntityName}}" is not defined. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
+    </div>
+
+    <div *ngIf="targetEntity" class="content-card">
 
       <mat-table id="merge-options-table"
                  class="merging-table"

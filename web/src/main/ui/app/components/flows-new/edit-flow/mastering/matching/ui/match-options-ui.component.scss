@@ -44,6 +44,16 @@
   width: 25px;
 }
 
+a {
+  color: #2a4356; /* primary color */
+  font-weight: 500;
+}
+
+a:hover {
+  color: #6d8ba5; /* accent color */
+  text-decoration: none;
+}
+
 /deep/ .mat-column-weight div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
@@ -171,10 +181,6 @@ button {
 
   .mat-header-cell .mat-icon {
     cursor: pointer;
-  }
-
-  .logo {
-    padding-right: 30px;
   }
 
   .run-flow-button {

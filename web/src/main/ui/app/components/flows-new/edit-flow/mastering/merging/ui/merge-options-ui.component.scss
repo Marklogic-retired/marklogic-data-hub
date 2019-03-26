@@ -36,6 +36,16 @@
   color: rgba(0, 0, 0, 0.54);
 }
 
+a {
+  color: #2a4356; /* primary color */
+  font-weight: 500;
+}
+
+a:hover {
+  color: #6d8ba5; /* accent color */
+  text-decoration: none;
+}
+
 .editing-field {
   padding: 0;
   margin: 0;
@@ -173,10 +183,6 @@ button {
 
   .mat-header-cell .mat-icon {
     cursor: pointer;
-  }
-
-  .logo {
-    padding-right: 30px;
   }
 
   .run-flow-button {

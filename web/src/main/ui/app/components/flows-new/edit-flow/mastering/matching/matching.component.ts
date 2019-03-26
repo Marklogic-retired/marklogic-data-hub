@@ -15,6 +15,7 @@ import * as _ from "lodash";
   <app-match-options-ui
     [matchOptions]="matchOptions"
     [targetEntity]="targetEntity"
+    [targetEntityName]="this.step.config.targetEntity"
     (createOption)="this.onCreateOption($event)"
     (updateOption)="this.onUpdateOption($event)"
     (deleteOption)="this.onDeleteOption($event)"

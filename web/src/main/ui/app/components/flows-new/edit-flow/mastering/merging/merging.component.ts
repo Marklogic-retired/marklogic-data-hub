@@ -17,6 +17,7 @@ import * as _ from "lodash";
   <app-merge-options-ui
     [mergeOptions]="mergeOptions"
     [targetEntity]="targetEntity"
+    [targetEntityName]="this.step.config.targetEntity"
     [mergeStrategies]="mergeStrategies"
     (createOption)="this.onCreateOption($event)"
     (updateOption)="this.onUpdateOption($event)"

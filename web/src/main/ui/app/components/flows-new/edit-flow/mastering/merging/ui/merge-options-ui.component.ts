@@ -16,6 +16,7 @@ export class MergeOptionsUiComponent {
 
   @Input() mergeOptions: any;
   @Input() targetEntity: any;
+  @Input() targetEntityName: string;
   @Input() mergeStrategies: any;
 
   @Output() createOption = new EventEmitter();
