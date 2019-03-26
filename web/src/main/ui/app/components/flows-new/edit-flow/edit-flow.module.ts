@@ -32,7 +32,7 @@ import { MappingUiComponent } from './mapping/ui/mapping-ui.component';
 import { BsDropdownModule, TooltipModule } from 'ngx-bootstrap';
 import { FocusElementDirective } from '../../../directives/focus-element/focus-element.directive';
 import { ListFilterPipe } from '../../../components/mappings/ui/listfilter.pipe';
-import { MdlModule } from '@angular-mdl/core';
+import { TruncateCharactersPipe } from '../../../pipes/truncate';import { MdlModule } from '@angular-mdl/core';
 
 import { CustomComponent } from './custom/custom.component';
 import { CustomUiComponent } from './custom/ui/custom-ui.component';
@@ -61,6 +61,7 @@ import { CustomUiComponent } from './custom/ui/custom-ui.component';
     MappingUiComponent,
     FocusElementDirective,
     ListFilterPipe,
+    TruncateCharactersPipe,
     CustomComponent,
     CustomUiComponent
   ],
@@ -79,7 +80,8 @@ import { CustomUiComponent } from './custom/ui/custom-ui.component';
   ],
   exports: [
     FocusElementDirective,
-    ListFilterPipe
+    ListFilterPipe,
+    TruncateCharactersPipe
   ],
   providers   : [
   ],

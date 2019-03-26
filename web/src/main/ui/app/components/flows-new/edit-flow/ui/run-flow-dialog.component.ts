@@ -20,7 +20,7 @@ export class RunFlowDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: RunDialogData) {}
 
   ngOnInit() {
-    this.data.steps.forEach( step => {
+    this.data.steps.map( step => {
       this.selected.push(true);
     });
   }
@@ -64,11 +64,14 @@ export class RunFlowDialogComponent implements OnInit {
     }
   }
   returnSelectedSteps() {
-    const selectedSteps = this.data.steps.map((selected, index) => {
+    let selectedSteps = this.data.steps.map((selected, index) => {
       if (this.selected[index]) {
-        return selected;
+        return selected.id;
       }
     });
+    if (this.selected.every( selection => selection === true )) {
+      selectedSteps = [];
+    }
     return selectedSteps.filter(selected => selected);
   }
 }

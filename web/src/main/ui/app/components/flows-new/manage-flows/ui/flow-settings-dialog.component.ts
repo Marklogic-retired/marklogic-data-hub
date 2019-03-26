@@ -41,7 +41,7 @@ export class FlowSettingsDialogComponent implements OnInit {
   }
 
   getSubmitButtonTitle() {
-    return this.data.flow ? 'Save' : 'Create';
+    return this.data.flow ? 'SAVE' : 'CREATE';
   }
 
   createOptions() {

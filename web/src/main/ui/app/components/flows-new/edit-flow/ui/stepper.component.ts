@@ -18,7 +18,6 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   @Output() stopFlow = new EventEmitter();
   @Output() deleteStep = new EventEmitter();
   @Output() editFlow = new EventEmitter();
-  @Output() redeploy = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
   @Output() updateFlow = new EventEmitter();
 
@@ -64,9 +63,6 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   editSettingsClicked(): void {
     this.editFlow.emit();
-  }
-  redeployClicked(): void {
-    this.redeploy.emit();
   }
   deleteFlowClicked(): void {
     this.deleteFlow.emit();

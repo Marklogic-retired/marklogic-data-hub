@@ -1,5 +1,5 @@
 {
-  "role-name": "%%mlHubUserRole%%",
+  "role-name": "%%mlFlowOperatorRole%%",
   "description": "A role that allows the user to read and write from MarkLogic Data Hub databases",
   "role": [
     "rest-reader",

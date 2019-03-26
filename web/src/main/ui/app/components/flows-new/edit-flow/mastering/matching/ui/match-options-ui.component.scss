@@ -8,6 +8,10 @@
   .center .header .mat-toolbar-single-row {
     padding: 0;
   }
+
+  .h2.logo-text {
+    font-size: 26px;
+  }
 }
 
 /* HEADER ROW HEIGHT */
@@ -18,6 +22,14 @@
 /* BODY ROW HEIGHT */
 .matching-table .mat-row {
     min-height: 38px !important;
+}
+
+/* PAGINATOR ROW HEIGHT */
+/deep/ .mat-paginator-container {
+  min-height: 48px !important;
+  .mat-paginator-page-size-select {
+    margin: 2px 4px -4px 4px !important;
+  }
 }
 
 .other-content {

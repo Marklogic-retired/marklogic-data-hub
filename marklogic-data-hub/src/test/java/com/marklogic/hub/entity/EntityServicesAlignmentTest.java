@@ -60,7 +60,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
     }
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
+        String timestampFile = getFlowDeveloperConfig().getHubProject().getUserModulesDeployTimestampFile();
         return new HubModuleManager(timestampFile);
     }
 
@@ -72,7 +72,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getFlowDeveloperConfig(), true);
 
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
@@ -88,7 +88,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
         getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getFlowDeveloperConfig(), true);
 
         // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
         Thread.sleep(1000);

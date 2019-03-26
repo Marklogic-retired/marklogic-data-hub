@@ -1,7 +1,41 @@
-$header-height: 100px !default;
+$header-height: 70px !default;
 
 button {
   outline: none;
+}
+
+#flows-page {
+  padding: 10px 3% 20px 3%;
+
+  .center .header .mat-toolbar-single-row {
+    padding: 0 !important;
+  }
+
+}
+
+/* HEADER ROW HEIGHT */
+.flows-table .mat-header-row {
+  min-height: 48px !important;
+  /deep/ button.mat-sort-header-button {
+    outline: none !important;
+  }
+}
+
+/* BODY ROW HEIGHT */
+.flows-table .mat-row {
+  min-height: 42px !important;
+  button {
+    height: 32px !important;
+    line-height: 32px !important;
+  }
+}
+
+/* PAGINATOR ROW HEIGHT */
+/deep/ .mat-paginator-container {
+  min-height: 48px !important;
+  .mat-paginator-page-size-select {
+    margin: 2px 4px -4px 4px !important;
+  }
 }
 
 .page-layout {
@@ -69,12 +103,13 @@ button {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
-  a {
-    color: black;
+  a:hover {
+    text-decoration: none;
+    color: #6d8ba5;
   }
 
-  a:hover {
-    text-decoration-color: blue;
+  a {
+    color: #2a4356;
   }
 
   .mat-header-row {
@@ -93,7 +128,7 @@ button {
     align-items: center;
   }
 
-  .mat-column-name {
+  /* .mat-column-name {
     flex: 0 1 240px;
   }
 
@@ -119,7 +154,7 @@ button {
 
   .mat-column-docsFailed {
     flex: 0 1 120px;
-  }
+  } */
 
   .mat-column-actions {
     flex: 0 1 150px;
@@ -127,10 +162,6 @@ button {
 
   .mat-header-cell .mat-icon {
     cursor: pointer;
-  }
-
-  .logo {
-    padding-right: 30px;
   }
 
   .run-flow-button {
@@ -169,8 +200,10 @@ button {
   width: 240px;
 }
 
-.logo {
+.header h1 {
   padding-right: 30px;
+  font-size: 32px;
+  font-weight: 500;
 }
 
 .mat-column-actions .mat-icon {
