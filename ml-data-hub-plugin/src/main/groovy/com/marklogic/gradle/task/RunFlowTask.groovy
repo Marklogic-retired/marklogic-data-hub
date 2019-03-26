@@ -23,12 +23,9 @@ import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
 import com.marklogic.hub.flow.RunFlowResponse
-import groovy.json.JsonBuilder
-import groovy.json.JsonParserType
-import groovy.json.JsonSlurper
+import groovy.json.*
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskExecutionException
 
 class RunFlowTask extends HubTask {
 
@@ -160,20 +157,8 @@ class RunFlowTask extends HubTask {
         RunFlowResponse runFlowResponse = dataHub.getFlowRunner().runFlow(flow.getName(), steps, jobId, options, batchSize, threadCount, sourceDB, destDB)
         dataHub.getFlowRunner().awaitCompletion()
 
-        JsonBuilder jobResp = new JsonBuilder()
-        def jobOutput = runFlowResponse.getStepResponses()
-        if (jobOutput != null && jobOutput.size() > 0) {
-            def output = prettyPrint(jobOutput.get(0))
-            if (failHard) {
-                throw new TaskExecutionException(this, new Throwable(output))
-            } else {
-                println("\n\nERROR Output:")
-                println(output)
-            }
-
-        } else {
-            println("\n\nOutput:")
-            println(jobResp.toPrettyString())
-        }
+        JsonBuilder jobResp = new JsonBuilder(runFlowResponse)
+        println("\n\nOutput:")
+        println(jobResp.toPrettyString())
     }
 }

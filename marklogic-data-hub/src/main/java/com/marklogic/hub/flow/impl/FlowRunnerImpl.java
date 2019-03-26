@@ -16,6 +16,7 @@ import com.marklogic.hub.step.StepRunnerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -178,7 +179,7 @@ public class FlowRunnerImpl implements FlowRunner{
         @Override
         public void run() {
             RunFlowResponse resp = flowResp.get(runningJobId);
-            resp.setStartTime(Calendar.getInstance());
+            resp.setStartTime(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(Calendar.getInstance().getTime()));
             Queue<String> stepQueue = stepsMap.get(jobQueue.peek());
 
             AtomicInteger errorCount = new AtomicInteger();
@@ -238,8 +239,8 @@ public class FlowRunnerImpl implements FlowRunner{
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
             }
             resp.setStepResponses(stepOutputs);
-            resp.setEndTime(Calendar.getInstance());
-            jobQueue.remove(jobQueue.peek());
+            resp.setEndTime(new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(Calendar.getInstance().getTime()));
+            jobQueue.remove();
             if(!jobQueue.isEmpty()) {
                 initializeFlow((String) jobQueue.peek());
             }
