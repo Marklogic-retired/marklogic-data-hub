@@ -1,0 +1,9 @@
+{
+  "person": {
+    "id": 50,
+    "firstName": "Richie",
+    "lastName": "Fagg",
+    "email": "rfagg1d@gmpg.org",
+    "gender": "Male"
+  }
+}
