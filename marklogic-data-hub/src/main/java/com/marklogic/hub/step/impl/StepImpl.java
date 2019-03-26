@@ -35,6 +35,7 @@ public class StepImpl implements Step {
     private String modulePath;
     private String identifier;
     private int retryLimit;
+    //TODO:Set default values
     private int batchSize;
     private int threadCount;
     private String sourceDB;
