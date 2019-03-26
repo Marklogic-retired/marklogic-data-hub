@@ -21,8 +21,8 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FlowImpl implements Flow {
@@ -38,8 +38,7 @@ public class FlowImpl implements Flow {
     private boolean stopOnError;
     private JsonNode options;
 
-    private Map<String, Step> steps = new HashMap<>();
-
+    private Map<String, Step> steps = new LinkedHashMap<>();
 
 
     @JsonIgnore

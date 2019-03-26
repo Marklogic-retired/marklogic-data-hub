@@ -30,8 +30,8 @@ public class StepRunnerFactory {
             .withStep(stepNum)
             .withBatchSize(step.getBatchSize())
             .withThreadCount(step.getThreadCount())
-            .withSourceClient(hubConfig.newStagingClient(step.getSourceDB()))
-            .withDestinationDatabase(step.getDestDB());
+            .withSourceClient(hubConfig.newStagingClient(step.getSourceDatabase()))
+            .withDestinationDatabase(step.getDestinationDatabase());
     }
 
 }
