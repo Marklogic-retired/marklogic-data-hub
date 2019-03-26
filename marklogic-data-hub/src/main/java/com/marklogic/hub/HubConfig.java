@@ -61,10 +61,10 @@ public interface HubConfig {
     String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
     String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
-    String DEFAULT_ROLE_NAME = "data-hub-role";
-    String DEFAULT_USER_NAME = "data-hub-user";
-    String DEFAULT_ADMIN_ROLE_NAME = "hub-admin-role";
-    String DEFAULT_ADMIN_USER_NAME = "hub-admin-user";
+    String DEFAULT_ROLE_NAME = "flow-operator-role";
+    String DEFAULT_USER_NAME = "flow-operator";
+    String DEFAULT_ADMIN_ROLE_NAME = "flow-developer-role";
+    String DEFAULT_ADMIN_USER_NAME = "flow-developer";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
@@ -275,25 +275,25 @@ public interface HubConfig {
      * Get the roleName the hub uses
      * @return the name of the role the DHF uses
      */
-    String getHubRoleName();
+    String getflowOperatorRoleName();
 
     /**
      * Set the role name that the hub uses
-     * @param hubRoleName the name to use
+     * @param flowOperatorRoleName the name to use
      */
-    void setHubRoleName(String hubRoleName);
+    void setflowOperatorRoleName(String flowOperatorRoleName);
 
     /**
      * Get the current marklogic user name the hub uses
      * @return the username
      */
-    String getHubUserName();
+    String getFlowOperatorUserName();
 
     /**
      * Sets the username for the hub to use in MarkLogic
-     * @param hubUserName - username to use
+     * @param flowOperatorName - username to use
      */
-    void setHubUserName(String hubUserName);
+    void setFlowOperatorUserName(String flowOperatorName);
 
     /**
      * Gets a string of load balancer host
