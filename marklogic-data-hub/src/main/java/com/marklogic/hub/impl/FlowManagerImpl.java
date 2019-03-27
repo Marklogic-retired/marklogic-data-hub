@@ -26,13 +26,11 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -186,7 +184,11 @@ public class FlowManagerImpl implements FlowManager {
 
     public Map<String, Step> getSteps(String flowName) {
         Flow flow = getFlow(flowName);
-        return flow.getSteps();
+        if (flow != null) {
+            return flow.getSteps();
+        } else {
+            throw new DataHubProjectException("Flow '" + flowName + "' not found");
+        }
     }
 
     public Step getStep(String flowName, String stepNum) {

@@ -16,13 +16,16 @@
 package com.marklogic.hub.web.service;
 
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
+import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -104,75 +107,92 @@ public class FlowManagerService {
             e.printStackTrace();
         }
 
-        Step step = convertToCoreModel(stepModel);
+        if (stepModel != null) {
+            Step step = convertToCoreModel(stepModel);
 
-        // Only save step if step is of Custom type, for rest use the default steps.
-        if (step.getType().equals(Step.StepType.CUSTOM)) {
-            if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
-                stepManagerService.saveStep(step);
+            // Only save step if step is of Custom type, for rest use the default steps.
+            if (step.getType().equals(Step.StepType.CUSTOM)) {
+                if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
+                    stepManagerService.saveStep(step);
+                } else {
+                    stepManagerService.createStep(step);
+                }
+            } else if (step.getType().equals(Step.StepType.INGEST)) {
+                try {
+                    InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json");
+                    JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
+                    Step defaultIngest = Step.create("defaultIngest", Step.StepType.INGEST);
+                    defaultIngest.deserialize(jsonObject.jsonNode());
+                    mergeOptions(stepModel, defaultIngest);
+                    mergeOtherFields(defaultIngest, step);
+                    step = defaultIngest;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+            } else if (step.getType().equals(Step.StepType.MAPPING)) {
+                try {
+                    InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json");
+                    JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
+                    Step defaultMapping = Step.create("defaultMapping", Step.StepType.MAPPING);
+                    defaultMapping.deserialize(jsonObject.jsonNode());
+                    mergeOptions(stepModel, defaultMapping);
+                    mergeOtherFields(defaultMapping, step);
+                    step = defaultMapping;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (stepOrder != null) {
+                // Create
+                try {
+                    Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                    stepMap.put(String.valueOf(stepOrder), step);
+                    Flow flow = flowManager.setSteps(flowName, stepMap);
+                    flowManager.saveFlow(flow);
+                } catch (DataHubProjectException e) {
+                    throw new NotFoundException(e.getMessage());
+                }
+            } else if (stepId != null) {
+                // Save
+
+                try {
+                    String key = getStepKeyInStepMap(flowName, stepId);
+
+                    if (key != null && !key.isEmpty()) {
+                        Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                        stepMap.put(key, step);
+                        Flow flow = flowManager.setSteps(flowName, stepMap);
+                        flowManager.saveFlow(flow);
+                    } else {
+                        throw new BadRequestException("Invalid Step Id");
+                    }
+                } catch (DataHubProjectException e) {
+                    throw new NotFoundException(e.getMessage());
+                }
             } else {
-                stepManagerService.createStep(step);
-            }
-        } else if (step.getType().equals(Step.StepType.INGEST)) {
-            try {
-                InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json");
-                JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
-                Step defaultIngest = Step.create("defaultIngest", Step.StepType.INGEST);
-                defaultIngest.deserialize(jsonObject.jsonNode());
-                mergeOptions(stepModel, defaultIngest);
-                mergeOtherFields(defaultIngest, step);
-                step = defaultIngest;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                //  Create at last
 
+                try {
+                    Map<String, Step> stepMap = flowManager.getSteps(flowName);
 
-        } else if (step.getType().equals(Step.StepType.MAPPING)) {
-            try {
-                InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json");
-                JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
-                Step defaultMapping = Step.create("defaultMapping", Step.StepType.MAPPING);
-                defaultMapping.deserialize(jsonObject.jsonNode());
-                mergeOptions(stepModel, defaultMapping);
-                mergeOtherFields(defaultMapping, step);
-                step = defaultMapping;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+                    String key = "1";
+                    if (stepMap.size() != 0) {
+                        key = (String) stepMap.keySet().toArray()[stepMap.size() - 1];
+                        key = String.valueOf(Integer.parseInt(key) + 1);
+                    }
 
-        if (stepOrder != null) {
-            // Create
-            Map<String, Step> stepMap = flowManager.getSteps(flowName);
-            stepMap.put(String.valueOf(stepOrder), step);
-            Flow flow = flowManager.setSteps(flowName, stepMap);
-            flowManager.saveFlow(flow);
-        } else if (stepId != null) {
-            // Save
-            String key = getStepKeyInStepMap(flowName, stepId);
-
-            if (key != null && !key.isEmpty()) {
-                Map<String, Step> stepMap = flowManager.getSteps(flowName);
-                stepMap.put(key, step);
-                Flow flow = flowManager.setSteps(flowName, stepMap);
-                flowManager.saveFlow(flow);
-            } else {
-                // TODO: Handle wrong ID format
+                    stepMap.put(key, step);
+                    Flow flow = flowManager.setSteps(flowName, stepMap);
+                    flowManager.saveFlow(flow);
+                } catch (DataHubProjectException e) {
+                    throw new NotFoundException(e.getMessage());
+                }
             }
         } else {
-            //  Create at last
-
-            Map<String, Step> stepMap = flowManager.getSteps(flowName);
-
-            String key = "1";
-            if (stepMap.size() != 0) {
-                key = (String) stepMap.keySet().toArray()[stepMap.size() - 1];
-                key = String.valueOf(Integer.parseInt(key) + 1);
-            }
-
-            stepMap.put(key, step);
-            Flow flow = flowManager.setSteps(flowName, stepMap);
-            flowManager.saveFlow(flow);
+            throw new BadRequestException();
         }
 
         return stepModel;
@@ -182,17 +202,21 @@ public class FlowManagerService {
         String key = getStepKeyInStepMap(flowName, stepId);
 
         if (key != null && !key.isEmpty()) {
-            Map<String, Step> stepMap = flowManager.getSteps(flowName);
-            Step step = stepMap.remove(key);
-            Flow flow = flowManager.setSteps(flowName, stepMap);
-            flowManager.saveFlow(flow);
+            try {
+                Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                Step step = stepMap.remove(key);
+                Flow flow = flowManager.setSteps(flowName, stepMap);
+                flowManager.saveFlow(flow);
 
-            // Don't delete the Step from the filesystem so that we can later on reuse the step.
+                // Don't delete the Step from the filesystem so that we can later on reuse the step.
 //            if (step.getType().equals(Step.StepType.CUSTOM)) {
 //                stepManagerService.deleteStep(step);
 //            }
+            } catch (DataHubProjectException e) {
+                throw new NotFoundException(e.getMessage());
+            }
         } else {
-            // TODO: Handle wrong ID format
+            throw new BadRequestException("Invalid Step Id");
         }
 
     }

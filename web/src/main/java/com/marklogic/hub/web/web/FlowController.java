@@ -95,7 +95,7 @@ public class FlowController {
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteFlow(@PathVariable String flowName)  {
+    public ResponseEntity<?> deleteFlow(@PathVariable String flowName) {
         try {
             flowManagerService.deleteFlow(flowName);
         } catch (DataHubProjectException dpe) {
@@ -112,14 +112,16 @@ public class FlowController {
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ResponseBody
-    public StepModel createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
-        return flowManagerService.createStep(flowName, stepOrder, null, stepJson);
+    public ResponseEntity<?> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
+        StepModel stepModel = flowManagerService.createStep(flowName, stepOrder, null, stepJson);
+        return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
     @ResponseBody
-    public StepModel createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
-        return flowManagerService.createStep(flowName, null, stepId, stepJson);
+    public ResponseEntity<?> createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
+        StepModel stepModel = flowManagerService.createStep(flowName, null, stepId, stepJson);
+        return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
