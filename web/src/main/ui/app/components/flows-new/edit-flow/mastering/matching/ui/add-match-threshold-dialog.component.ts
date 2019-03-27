@@ -43,7 +43,7 @@ export class AddMatchThresholdDialogComponent {
   }
 
   getDialogTitle(){
-    return this.data.option ? 'Add Match Threshold' : 'New Match Threshold';
+    return this.data.option ? 'Edit Match Threshold' : 'New Match Threshold';
   }
 
   getSubmitButtonTitle() {

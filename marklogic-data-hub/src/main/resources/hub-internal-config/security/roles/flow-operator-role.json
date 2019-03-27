@@ -1,5 +1,5 @@
 {
-  "role-name": "%%mlHubUserRole%%",
+  "role-name": "%%mlFlowOperatorRole%%",
   "description": "A role that allows the user to read and write from MarkLogic Data Hub databases",
   "role": [
     "rest-reader",
@@ -85,6 +85,11 @@
     {
       "privilege-name": "unprotected-uri",
       "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "ps-user",
+      "action": "http://marklogic.com/xdmp/privileges/ps-user",
       "kind": "execute"
     }
   ]

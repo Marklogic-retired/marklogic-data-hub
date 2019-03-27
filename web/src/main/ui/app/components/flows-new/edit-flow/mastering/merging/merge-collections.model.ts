@@ -22,24 +22,24 @@ export class MergeCollections {
   }
 
   /**
-   * Add a new match option to the set.
+   * Add a new merge collection to the set.
    */
   addCollection(coll) {
     this.collections.push(new MergeCollection(coll));
   }
 
   /**
-   * Update a match option in the set.
+   * Update a merge collection in the set.
    */
-  updateStrategy(coll, index) {
+  updateCollection(coll, index) {
     let mColl = new MergeCollection(coll);
     this.collections.splice(index, 1, mColl);
   }
 
   /**
-   * Delete a match option from the set.
+   * Delete a merge collection from the set.
    */
-  deleteOption(coll) {
+  deleteCollection(coll) {
     let i = this.collections.findIndex(s => {
       return s === coll;
     })
@@ -51,23 +51,23 @@ export class MergeCollections {
 }
 
 /**
- * Represents a merge strategy for UI display.
+ * Represents a merge collection for UI display.
  */
 export class MergeCollection {
   public event: string;
-  public add: Array<any>;
-  public remove: Array<any>;
-  public set: Array<any>;
+  public add: Array<any> = [];
+  public remove: Array<any> = [];
+  public set: Array<any> = [];
 
-  constructor (mStr: any = {}) {
-    if (mStr.event) this.event = mStr.event;
-    if (mStr.add) this.add = mStr.add;
-    if (mStr.remove) this.remove = mStr.remove;
-    if (mStr.set) this.set = mStr.set;
+  constructor (mColl: any = {}) {
+    if (mColl.event) this.event = mColl.event;
+    if (mColl.add) this.add = mColl.add;
+    if (mColl.remove) this.remove = mColl.remove;
+    if (mColl.set) this.set = mColl.set;
   }
 
   /**
-   * Construct a merge option from merging configuration data.
+   * Construct a merge collecion from merging configuration data.
    */
   static fromMerging(event: string, coll: any) {
     const result = new MergeCollection({ event: event });

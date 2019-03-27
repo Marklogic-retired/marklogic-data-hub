@@ -3,10 +3,14 @@
 }
 
 #match-options {
-  padding: 10px 30px 20px 30px;
+  padding: 8px 30px;
 
   .center .header .mat-toolbar-single-row {
     padding: 0;
+  }
+
+  .h2.logo-text {
+    font-size: 26px;
   }
 }
 
@@ -18,6 +22,14 @@
 /* BODY ROW HEIGHT */
 .matching-table .mat-row {
     min-height: 38px !important;
+}
+
+/* PAGINATOR ROW HEIGHT */
+/deep/ .mat-paginator-container {
+  min-height: 48px !important;
+  .mat-paginator-page-size-select {
+    margin: 2px 4px -4px 4px !important;
+  }
 }
 
 .other-content {
@@ -42,6 +54,16 @@
   padding: 0;
   margin: 0;
   width: 25px;
+}
+
+a {
+  color: #2a4356; /* primary color */
+  font-weight: 500;
+}
+
+a:hover {
+  color: #6d8ba5; /* accent color */
+  text-decoration: none;
 }
 
 /deep/ .mat-column-weight div.mat-form-field-wrapper {
@@ -173,10 +195,6 @@ button {
     cursor: pointer;
   }
 
-  .logo {
-    padding-right: 30px;
-  }
-
   .run-flow-button {
     margin: 0 15px 0 7px;
   }
@@ -223,4 +241,26 @@ button {
 
 .capitalize {
    text-transform: capitalize;
+}
+
+/deep/ .mat-dialog-title {
+  margin: -6px 0 20px !important;
+  font-size: 24px;
+}
+/deep/ .mat-dialog-actions {
+  padding: 12px 0 !important;
+  margin-bottom: -20px !important;
+  justify-content: flex-end;
+}
+
+/deep/ .mat-dialog-content {
+  background: #fff !important;
+  padding: 10px 24px 20px 24px !important;
+}
+
+/deep/ .mat-button {
+  outline: none !important;
+  color: white !important;
+  background-color: #2a4356 !important;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
 }
