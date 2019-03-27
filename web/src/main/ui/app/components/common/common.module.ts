@@ -1,7 +1,8 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from "@angular/common";
 
-import {ConfirmationDialogComponent, InfoLabelComponent} from ".";
+import {ConfirmationDialogComponent} from "./confirm-dialog/confirm-dialog.component";
+import {InfoLabelComponent} from "./info-label/info-label-component";
 import {MaterialModule} from "../theme/material.module";
 import {TooltipModule} from "ngx-bootstrap";
 
