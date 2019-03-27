@@ -40,7 +40,6 @@ public class FlowImpl implements Flow {
 
     private Map<String, Step> steps = new LinkedHashMap<>();
 
-
     @JsonIgnore
     private Integer overrideBatchSize;
     @JsonIgnore
@@ -184,16 +183,17 @@ public class FlowImpl implements Flow {
         setStopOnError(jsonObject.getBoolean("stopOnError", DEFAULT_STOP_ONERROR));
 
         JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
-        Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            Step step = Step.create("default", Step.StepType.CUSTOM);
-            step.deserialize(stepsNode.getNode(key));
+        if (jsonObject.getNode("steps") != null) {
+            Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                Step step = Step.create("default", Step.StepType.CUSTOM);
+                step.deserialize(stepsNode.getNode(key));
 
-            steps.put(key, step);
+                steps.put(key, step);
+            }
+            setSteps(steps);
         }
-        setSteps(steps);
-
         return this;
     }
 }

@@ -26,6 +26,7 @@ import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
+import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,8 +56,8 @@ public class FlowManagerService {
         return flowManager.getFlows();
     }
 
-    public Flow createFlow(String flowJson, boolean checkExists) {
-        Flow flow = flowManager.createFlowFromJSON(flowJson);
+    public FlowStepModel createFlow(String flowJson, boolean checkExists)  {
+        Flow flow = FlowStepModel.createFlowFromJSON(flowJson);
         if (flow != null && StringUtils.isEmpty(flow.getName())) {
             return null;
         }
@@ -64,11 +65,15 @@ public class FlowManagerService {
             throw new DataHubException(flow.getName() + " is existed.");
         }
         flowManager.saveFlow(flow);
-        return flow;
+
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        return fsm;
     }
 
-    public Flow getFlow(String flowName) {
-        return flowManager.getFlow(flowName);
+    public FlowStepModel getFlow(String flowName) {
+        Flow flow = flowManager.getFlow(flowName);
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        return fsm;
     }
 
     public List<String> getFlowNames() {
