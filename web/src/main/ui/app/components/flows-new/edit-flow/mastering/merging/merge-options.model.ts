@@ -66,6 +66,7 @@ export class MergeOption {
   public strategy: string;
   public customUri: string;
   public customFunction: string;
+  public customNs: string;
   public mergeType: string;
   public editing: string = '';
 
@@ -79,6 +80,7 @@ export class MergeOption {
     if (mOpt.strategy) this.strategy = mOpt.strategy;
     if (mOpt.customUri) this.customUri = mOpt.customUri;
     if (mOpt.customFunction) this.customFunction = mOpt.customFunction;
+    if (mOpt.customNs) this.customNs = mOpt.customNs;
     if (mOpt.mergeType) this.mergeType = mOpt.mergeType;
   }
 
@@ -104,6 +106,7 @@ export class MergeOption {
       });
       if (alg.at) result.customUri = alg.at;
       if (alg.function) result.customFunction = alg.function;
+      if (alg.namespace) result.customNs = alg.namespace;
       result.mergeType = 'custom';
     } else {
       // Handle standard type

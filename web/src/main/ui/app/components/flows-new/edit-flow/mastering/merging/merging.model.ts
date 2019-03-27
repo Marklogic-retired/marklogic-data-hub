@@ -106,8 +106,8 @@ export class Merging {
   /**
    * Add a custom algorithm definition.
    */
-  addCustomAlgorithm(name, at, fn) {
-    let alg = new Algorithm({ name: name, at: at, function: fn });
+  addCustomAlgorithm(name, at, fn, ns) {
+    let alg = new Algorithm({ name: name, at: at, function: fn, namespace: ns });
     this.algorithms['custom'].push(alg);
   }
 
@@ -130,7 +130,7 @@ export class Merging {
     }
     // Handle custom merge option
     if (mOpt.mergeType === 'custom') {
-      this.addCustomAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction)
+      this.addCustomAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction, mOpt.customNs)
       mOpt.algorithmRef = mOpt.customFunction;
     }
     let opt = new Option(mOpt);
@@ -186,13 +186,14 @@ export class Property {
  */
 export class Algorithm {
   public name: string;
-  public namespace: string;
   public function: string;
   public at: string;
+  public namespace: string;
   constructor(a) {
     if (a.name) this.name = a.name;
     if (a.function) this.function = a.function;
     if (a.at) this.at = a.at;
+    if (a.namespace) this.namespace = a.namespace;
   }
 }
 

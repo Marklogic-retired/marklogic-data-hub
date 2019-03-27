@@ -41,6 +41,7 @@ export class AddMergeOptionDialogComponent {
       strategy: [this.data.option ? this.data.option.strategy : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
+      customNs: [this.data.option ? this.data.option.customNs : ''],
       index: this.data.index,
       entityProps:  [this.data.entityProps ? this.data.entityProps : []]
     })
