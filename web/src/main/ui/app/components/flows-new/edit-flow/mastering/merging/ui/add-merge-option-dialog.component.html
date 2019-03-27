@@ -15,17 +15,17 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="selectedType !== 'strategy'" layout-fill>
+  <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Values</mat-label>
     <input id="merge-option-max-values" matInput formControlName="maxValues"/>
   </mat-form-field>
 
-  <mat-form-field *ngIf="selectedType !== 'strategy'" layout-fill>
+  <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Sources</mat-label>
     <input id="merge-option-max-sources" matInput formControlName="maxSources"/>
   </mat-form-field>
 
-  <div *ngIf="selectedType !== 'strategy'" id="source-weights">
+  <div *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" id="source-weights">
     <mat-label>Source Weights</mat-label>
     <button class="add-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
       <mat-icon>add_circle</mat-icon>
@@ -51,7 +51,7 @@
     </div>
   </div>
 
-  <mat-form-field *ngIf="selectedType !== 'strategy'" layout-fill>
+  <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Length Weight</mat-label>
     <input id="merge-option-length" matInput formControlName="length"/>
   </mat-form-field>
@@ -61,6 +61,17 @@
       <mat-option class="type-option" *ngFor="let strName of strategies" [value]="strName">{{strName}}</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <div *ngIf="selectedType === 'custom'">
+    <mat-form-field layout-fill>
+      <mat-label>URI</mat-label>
+      <input id="merge-option-custom-uri" matInput formControlName="customUri"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Function</mat-label>
+      <input id="merge-option-custom-function" matInput formControlName="customFunction"/>
+    </mat-form-field>
+  </div>
 
 </div>
 
