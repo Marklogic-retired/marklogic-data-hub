@@ -218,7 +218,8 @@ export class Matching {
       action: mThr.action
     });
     if (mThr.action !== 'merge' && mThr.action !== 'notify') {
-      this.addAction(mThr.customFunction, mThr.customUri, mThr.customFunction)
+      this.addAction(mThr.customFunction, mThr.customUri, mThr.customFunction, mThr.customNs)
+      thr.action = mThr.customFunction;
     }
     this.thresholds['threshold'].push(thr);
   }
@@ -226,8 +227,8 @@ export class Matching {
   /**
    * Add a match threshold action.
    */
-  addAction(name, at, fn) {
-    let alg = new Action({ name: name, at: at, function: fn });
+  addAction(name, at, fn, ns) {
+    let alg = new Action({ name: name, at: at, function: fn, namespace: ns });
     this.actions['action'].push(alg);
   }
 
@@ -328,10 +329,12 @@ export class Action {
   public name: string;
   public at: string;
   public function: string;
+  public namespace: string;
   constructor(a) {
     if (a.name) this.name = a.name;
     if (a.at) this.at = a.at;
     if (a.function) this.function = a.function;
+    if (a.namespace) this.namespace = a.namespace;
   }
 }
 

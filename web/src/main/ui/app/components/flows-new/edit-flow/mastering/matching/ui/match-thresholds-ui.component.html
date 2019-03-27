@@ -11,7 +11,7 @@
             Match Thresholds
           </span>
         </div>
-        <button mat-raised-button class="new-option-button" color="primary" (click)="openMatchThresholdDialog(null, null)">Add</button>
+        <button mat-raised-button class="new-option-button" color="primary" (click)="openMatchThresholdDialog(null, null)">ADD</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
@@ -53,12 +53,16 @@
             </div>
             <div *ngIf="mThr.action !== 'merge' && mThr.action !== 'notify'" class="action-content">
               <div>
-                <span class="actionLabel">URI</span>
+                <span class="action-label">URI</span>
                 {{mThr.customUri}}
               </div>
               <div>
-                <span class="actionLabel">Function</span>
+                <span class="action-label">Function</span>
                 {{mThr.customFunction}}
+              </div>
+              <div *ngIf="mThr.customNs" title="{{mThr.customNs}}">
+                <span class="action-label">Namespace</span>
+                {{mThr.customNs | truncate : -40}}
               </div>
             </div>
           </mat-cell>

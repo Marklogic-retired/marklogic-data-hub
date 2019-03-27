@@ -11,7 +11,7 @@
             Match Options
           </span>
         </div>
-        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">Add</button>
+        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">ADD</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
@@ -72,7 +72,9 @@
             <div *ngIf="mOpt.matchType === 'synonym'" class="other-content">
               <div>
                 <span class="other-label">Thesaurus</span>
-                {{truncate(mOpt.thesaurus, 40)}}
+                <span title="{{mOpt.thesaurus}}">
+                  {{mOpt.thesaurus | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="other-label">Filter</span>
@@ -82,7 +84,9 @@
             <div *ngIf="mOpt.matchType === 'double metaphone'" class="other-content">
               <div>
                 <span class="other-label">Dictionary</span>
-                {{truncate(mOpt.dictionary, 40)}}
+                <span title="{{mOpt.dictionary}}">
+                  {{mOpt.dictionary | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="other-label">Distance Threshold</span>
@@ -91,14 +95,16 @@
               <div>
                 <span class="other-label">Collation</span>
                 <span title="{{mOpt.collation}}">
-                  {{truncate(mOpt.collation, 40)}}
+                  {{mOpt.collation | truncate : -40}}
                 </span>
               </div>
             </div>
             <div *ngIf="mOpt.matchType === 'custom'" class="other-content">
               <div>
                 <span class="other-label">URI</span>
-                {{truncate(mOpt.customUri, 40)}}
+                <span title="{{mOpt.customUri}}">
+                  {{mOpt.customUri | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="other-label">Function</span>
@@ -106,7 +112,9 @@
               </div>
               <div *ngIf="mOpt.customNs">
                 <span class="other-label">Namespace</span>
-                {{mOpt.customNs}}
+                <span title="{{mOpt.customNs}}">
+                  {{mOpt.customNs | truncate : -40}}
+                </span>
               </div>
             </div>
             <div *ngIf="mOpt.matchType === 'zip'" class="other-content">

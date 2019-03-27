@@ -39,6 +39,7 @@ export class MatchThresholds {
     if (thr.action === 'custom') {
       if (thr.customUri) mThr.customUri = thr.customUri;
       if (thr.customFunction) mThr.customFunction = thr.customFunction;
+      if (thr.customNs) mThr.customNs = thr.customNs;
     }
     this.thresholds.splice(index, 1, mThr);
   }
@@ -67,6 +68,7 @@ export class MatchThreshold {
   public action: string;
   public customUri: string;
   public customFunction: string;
+  public customNs: string;
 
   constructor(mThr: any) {
     if (mThr.label) this.label = mThr.label;
@@ -74,6 +76,7 @@ export class MatchThreshold {
     if (mThr.action) this.action = mThr.action;
     if (mThr.customUri) this.customUri = mThr.customUri;
     if (mThr.customFunction) this.customFunction = mThr.customFunction;
+    if (mThr.customNs) this.customNs = mThr.customNs;
   }
 
   /**
@@ -88,6 +91,7 @@ export class MatchThreshold {
       if (act && act.name) result.action = act.name;
       if (act && act.at) result.customUri = act.at;
       if (act && act.function) result.customFunction = act.function;
+      if (act && act.namespace) result.customNs = act.namespace;
     }
     return result;
   }

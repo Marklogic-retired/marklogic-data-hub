@@ -74,13 +74,6 @@ export class MergeOptionsUiComponent {
     });
   }
 
-  // TODO Use TruncateCharactersPipe
-  truncate(value: string, limit: number, trail: string = '...'): string {
-    return value.length > limit ?
-      value.substring(0, limit) + trail :
-      value;
-  }
-
   renderRows(): void {
     this.dataSource.data = this.mergeOptions.options;
     this.table.renderRows();
