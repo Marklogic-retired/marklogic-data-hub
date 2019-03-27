@@ -14,7 +14,6 @@ import com.marklogic.hub.step.Step;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -186,11 +185,11 @@ public class FlowRunnerImpl implements FlowRunner{
                 runningStep = runningFlow.getSteps().get(stepNum);
 
                 //now we check and validate we have no nulls
-                if(runningStep.getDestDB() == null) {
-                    runningStep.setDestDB(hubConfig.getDbName(DatabaseKind.FINAL));
+                if(runningStep.getDestinationDatabase() == null) {
+                    runningStep.setDestinationDatabase(hubConfig.getDbName(DatabaseKind.FINAL));
                 }
-                if(runningStep.getSourceDB() == null) {
-                    runningStep.setSourceDB(hubConfig.getDbName(DatabaseKind.STAGING));
+                if(runningStep.getSourceDatabase() == null) {
+                    runningStep.setSourceDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
                 }
 
                 stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)

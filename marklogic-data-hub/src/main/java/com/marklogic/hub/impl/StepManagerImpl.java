@@ -23,8 +23,8 @@ import com.marklogic.hub.StepManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.json.JSONStreamWriter;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,16 @@ public class StepManagerImpl implements StepManager {
 
     @Override
     public void saveStep(Step step) {
+        saveStep(step, false);
+    }
+
+    @Override
+    public void saveStep(Step step, boolean autoIncrement) {
         try {
+            if (autoIncrement) {
+                step.incrementVersion();
+            }
+
             Path dir = resolvePath(hubConfig.getStepsDirByType(step.getType()), step.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();

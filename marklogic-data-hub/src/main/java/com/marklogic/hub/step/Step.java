@@ -102,14 +102,14 @@ public interface Step {
      *
      * @return - a step version
      */
-    int getVersion();
+    Integer getVersion();
 
     /**
      * Sets the step version number
      *
      * @param version - a step version
      */
-    void setVersion(int version);
+    void setVersion(Integer version);
 
     /**
      * Returns the step options as a map
@@ -196,6 +196,20 @@ public interface Step {
     void setType(StepType type);
 
     /**
+     * Returns the description of the Step
+     *
+     * @return - a step description
+     */
+    String getDescription();
+
+    /**
+     * Sets the description for the step
+     *
+     * @param description - a string description
+     */
+    void setDescription(String description);
+
+    /**
      * Returns the batch size
      *
      * @return - an integer batch size
@@ -228,28 +242,33 @@ public interface Step {
      *
      * @return - source DB name as String
      */
-    String getSourceDB();
+    String getSourceDatabase();
 
     /**
      * Sets the name of the source DB
      *
-     * @param sourceDB - a String
+     * @param sourceDatabase - a String
      */
-    void setSourceDB(String sourceDB);
+    void setSourceDatabase(String sourceDatabase);
 
     /**
      * Returns the name of the destination DB
      *
      * @return - destination DB name as String
      */
-    String getDestDB();
+    String getDestinationDatabase();
 
     /**
      * Sets the name of the destination DB
      *
-     * @param destDB - a String
+     * @param destinationDatabase - a String
      */
-    void setDestDB(String destDB);
+    void setDestinationDatabase(String destinationDatabase);
+
+    /**
+     * Automatically increments the version of the mapping by 1
+     */
+    void incrementVersion();
 
     /**
      * Deserialize a json response and applies it to this mapping

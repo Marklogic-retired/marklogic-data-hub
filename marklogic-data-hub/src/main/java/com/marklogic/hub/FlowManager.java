@@ -118,4 +118,6 @@ public interface FlowManager {
     Map<String, Step> getSteps(String flowName);
 
     Flow setSteps(String flowName, Map<String, Step> stepMap);
+
+    Step getStep(String flowName, String stepNum);
 }
