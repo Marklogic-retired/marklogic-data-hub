@@ -6,6 +6,7 @@
     ></info-label>
     <app-folder-browser
       [startPath]="config.inputFilePath.value"
+      (folderChosen)="changeFolder($event)"
       showFiles="true"
     ></app-folder-browser>
 

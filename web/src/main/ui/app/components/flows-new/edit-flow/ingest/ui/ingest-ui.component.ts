@@ -90,9 +90,14 @@ export class IngestUiComponent implements OnInit {
   }
 
   config = settings;
+  folder = settings.inputFilePath.value;
 
   ngOnInit(): void {
     this.updateConfigValues();
+  }
+
+  changeFolder(folder){
+    this.folder = folder.relativePath;
   }
 
   updateConfigValues() {
@@ -104,7 +109,7 @@ export class IngestUiComponent implements OnInit {
   }
 
   getStep(flow): Step {
-    this.step.config.inputFilePath = this.config.inputFilePath.value;
+    this.step.config.inputFilePath = this.folder;
     this.step.config.inputFileType = this.config.fileTypes.value;
     this.step.config.documentType = this.config.outputDocTypes.value;
     this.step.config.outputPermissions = this.config.outputPermissions.value;
