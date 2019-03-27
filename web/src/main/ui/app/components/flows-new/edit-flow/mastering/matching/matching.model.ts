@@ -108,8 +108,8 @@ export class Matching {
   /**
    * Add an algorithm definition.
    */
-  addAlgorithm(name, at, fn) {
-    let alg = new Algorithm({ name: name, function: fn });
+  addAlgorithm(name, at, fn, ns) {
+    let alg = new Algorithm({ name: name, function: fn, namespace: ns });
     // reduce doesn't require at property
     if (at) alg.at = at;
     this.algorithms['algorithm'].push(alg);
@@ -126,7 +126,7 @@ export class Matching {
       ['standard-reduction', null]
     ]
     defaultAlgs.forEach(a => {
-      this.addAlgorithm(a[0], a[1], a[0]);
+      this.addAlgorithm(a[0], a[1], a[0], '');
     })
   }
 
@@ -194,10 +194,10 @@ export class Matching {
         this.scoring['reduce'].push(opt);
         break;
       case "custom":
-        this.addAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction)
+        this.addAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction, mOpt.customNs)
         opt = new Expand({
           propertyName: mOpt.propertyName[0],
-          algorithmRef: mOpt.algorithmRef,
+          algorithmRef: mOpt.customFunction,
           weight: mOpt.weight
         });
         this.scoring['expand'].push(opt);
@@ -252,13 +252,14 @@ export class Property {
  */
 export class Algorithm {
   public name: string;
-  public namespace: string;
   public function: string;
   public at: string;
+  public namespace: string;
   constructor(a) {
     if (a.name) this.name = a.name;
     if (a.function) this.function = a.function;
     if (a.at) this.at = a.at;
+    if (a.namespace) this.namespace = a.namespace;
   }
 }
 

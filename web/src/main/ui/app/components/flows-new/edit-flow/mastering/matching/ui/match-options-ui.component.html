@@ -104,6 +104,10 @@
                 <span class="other-label">Function</span>
                 {{mOpt.customFunction}}
               </div>
+              <div *ngIf="mOpt.customNs">
+                <span class="other-label">Namespace</span>
+                {{mOpt.customNs}}
+              </div>
             </div>
             <div *ngIf="mOpt.matchType === 'zip'" class="other-content">
               <div>
