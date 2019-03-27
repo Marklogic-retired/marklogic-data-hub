@@ -11,13 +11,17 @@
             Match Options
           </span>
         </div>
-        <button mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">Add</button>
+        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">Add</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
     <!-- / HEADER -->
 
-    <div class="content-card">
+    <div *ngIf="!targetEntity">
+      Configuring match options requires a target entity. The target entity "{{targetEntityName}}" is not defined. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
+    </div>
+
+    <div *ngIf="targetEntity" class="content-card">
 
       <mat-table id="match-options-table"
                  class="matching-table"

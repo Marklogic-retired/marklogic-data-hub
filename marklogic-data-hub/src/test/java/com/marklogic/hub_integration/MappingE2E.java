@@ -104,12 +104,12 @@ public class MappingE2E extends HubTestBase {
             scaffolding.createEntity(ENTITY);
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-            installUserModules(getHubAdminConfig(), true);
+            installUserModules(getFlowDeveloperConfig(), true);
             if (modelProperties == null) {
     	        ObjectMapper objectMapper = new ObjectMapper();
     	     	JsonNode rootNode = null;
     			try {
-    				rootNode = objectMapper.readTree(getHubAdminConfig().getHubEntitiesDir().resolve(ENTITY).resolve(ENTITY+".entity.json").toFile());
+    				rootNode = objectMapper.readTree(getFlowDeveloperConfig().getHubEntitiesDir().resolve(ENTITY).resolve(ENTITY+".entity.json").toFile());
     			} catch (JsonProcessingException e) {
     			      throw new RuntimeException(e);
     			} catch (IOException e) {
@@ -124,7 +124,7 @@ public class MappingE2E extends HubTestBase {
             createMappings();
 
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-            installUserModules(getHubAdminConfig(), true);
+            installUserModules(getFlowDeveloperConfig(), true);
             allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             	if(flowType.equals(FlowType.HARMONIZE)) {
             		for(String mapping:getMappings()) {
@@ -139,7 +139,7 @@ public class MappingE2E extends HubTestBase {
             //Flows with xml docs having processing instructions/comments
             createFlow("extranodes", CodeFormat.XQUERY, DataFormat.XML, FlowType.HARMONIZE, true,"validPath1-threeProp", 1, (CreateFlowListener)null);
             createFlow("extranodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.HARMONIZE, true, "validPath1-threeProp", 1, (CreateFlowListener)null);
-            installUserModules(getHubAdminConfig(), true);
+            installUserModules(getFlowDeveloperConfig(), true);
             stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
         }
     }
@@ -190,7 +190,7 @@ public class MappingE2E extends HubTestBase {
     }
 
     private List<String> getMappings() {
-    	Path mappingDir = getHubAdminConfig().getHubMappingsDir();
+    	Path mappingDir = getFlowDeveloperConfig().getHubMappingsDir();
     	List<String> allMappings = new ArrayList<>();
     	try {
     		Files.walk(mappingDir).filter(f->Files.isDirectory(f)).forEach(f -> allMappings.add(f.getFileName().toString()));
@@ -260,7 +260,7 @@ public class MappingE2E extends HubTestBase {
         createMapping("validPath1-threeProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
         allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getFlowDeveloperConfig(), true);
     }
 
     private void createMapping(String name, String sourceContext, String targetEntityType,  String ... properties) {
@@ -397,7 +397,7 @@ public class MappingE2E extends HubTestBase {
                 throw new RuntimeException(e);
             }
         }
-        getHubAdminConfig();
+        getFlowDeveloperConfig();
         return new Tuple<>(flowRunner, jobTicket);
     }
 

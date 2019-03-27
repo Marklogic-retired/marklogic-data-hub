@@ -1,5 +1,5 @@
 import { Matching } from '../edit-flow/mastering/matching/matching.model';
-import {Ingestion} from "../edit-flow/ingest/model/ingest.model";
+import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
 export class Step {
   public id: string;
@@ -8,11 +8,11 @@ export class Step {
   public description: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
-  public config: {
-    matchOptions:  Matching;
-    // TODO add merge options
-    // mergeOptions:
-  } | Ingestion;
+  public config: any = {
+    matchOptions: new Matching,
+    mergeOptions: new Merging,
+    targetEntity: ''
+  };
   public language: string;
   public isValid: boolean = false;
   public isRunning: boolean = false;

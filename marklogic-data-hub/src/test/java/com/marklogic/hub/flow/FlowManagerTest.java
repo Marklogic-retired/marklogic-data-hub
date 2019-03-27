@@ -60,7 +60,7 @@ class FlowManagerTest extends HubTestBase {
     @BeforeEach
     void setUp() throws IOException {
         basicSetup();
-        getHubAdminConfig();
+        getFlowDeveloperConfig();
         FileUtils.copyFileToDirectory(getResourceFile("flow-manager-test/test-flow.flow.json"), adminHubConfig.getFlowsDir().toFile());
     }
 

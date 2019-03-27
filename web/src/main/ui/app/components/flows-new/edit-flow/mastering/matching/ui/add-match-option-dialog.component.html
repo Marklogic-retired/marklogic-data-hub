@@ -95,7 +95,8 @@
   </div>
 
 </div>
-<mat-dialog-actions class="bottom">
-  <button id="match-option-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
-  <button id="match-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+
+<mat-dialog-actions align="end" class="bottom">
+  <button mat-raised-button color="primary" id="match-option-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" id="match-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

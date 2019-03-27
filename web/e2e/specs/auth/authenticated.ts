@@ -31,7 +31,7 @@ export default function(tmpDir) {
     });
 
     it ('Has the correct current folder', function() {
-      expect(loginPage.currentFolderValue).toContain('quick-start');
+      expect(loginPage.currentFolderValue).toContain('web');
     });
 
     it ('Should select the temp folder', async function() {
@@ -99,7 +99,7 @@ export default function(tmpDir) {
       browser.wait(EC.elementToBeClickable(loginPage.postInitTab));
     });
 
-    it ('should copy run-flow-user.json file', function() {
+    /*it ('should copy run-flow-user.json file', function() {
       //copy run-flow-user.json
       console.log('copy run-flow-user.json');
       let runFlowUserFilePath = 'e2e/qa-data/users/run-flow-user.json';
@@ -125,7 +125,7 @@ export default function(tmpDir) {
       console.log('copy no-pii-user.json');
       let noPiiUserFilePath = 'e2e/qa-data/users/no-pii-user.json';
       fs.copy(noPiiUserFilePath, tmpDir + '/src/main/ml-config/security/users/no-pii-user.json');
-    });
+    });*/
 
     it ('Should be on the post init page', async function() {
       expect(loginPage.projectDirTab.isDisplayed()).toBe(false);

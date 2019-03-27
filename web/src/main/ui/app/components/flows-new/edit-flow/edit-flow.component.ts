@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { timer } from 'rxjs';
 import { Flow } from "../models/flow.model";
 import { Step } from '../models/step.model';
@@ -44,7 +44,8 @@ export class EditFlowComponent implements OnInit {
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
    private entitiesService: EntitiesService,
-   private activatedRoute: ActivatedRoute
+   private activatedRoute: ActivatedRoute,
+   private router: Router
   ) { }
 
   ngOnInit() {
@@ -102,6 +103,10 @@ export class EditFlowComponent implements OnInit {
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
       console.log('delete response', resp);
+      // TODO update delete response check
+      if (resp) {
+        this.router.navigate(['flows']);
+      }
     });
   }
   runFlow(flowId): void {
@@ -123,9 +128,10 @@ export class EditFlowComponent implements OnInit {
       this.getSteps();
     });
   }
-  createStep(step) {
-    this.manageFlowsService.createStep(this.flow.id, step).subscribe(resp => {
-      this.stepsArray.push(resp);
+  createStep(stepObject) {
+    this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
+      this.flow = Flow.fromJSON(resp);
+      this.getSteps();
     });
   }
   updateStep(step) {

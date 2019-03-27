@@ -10,17 +10,24 @@ const _ = require('lodash');
  * body Step Step to create
  * returns step
  **/
-exports.createFlowStep = function(flowId, body) {
+exports.createFlowStep = function(flowId, stepIndex, body) {
   return new Promise(async (resolve, reject) => {
+    const index = parseInt(stepIndex);
     if (flowId && body) {
       let flow = await Storage.get('flows', flowId);
       if (flow) {
         body.id = Storage.uuid();
         let step = await Storage.save('steps', body.id, body);
         flow.steps = flow.steps || [];
-        flow.steps.push({ id: step.id, type: step.type, targetEntity: step.config && step.config.targetEntity || null }); // adds step id to steps Array, appended to the end
+        const newFlowStep = { 
+          id: step.id,
+          type: step.type,
+          name: step.name,
+          targetEntity: step.config && step.config.targetEntity || null 
+        };
+        flow.steps.splice(index, 0, newFlowStep);
         await Storage.save('flows', flowId, flow);
-        resolve(step);
+        resolve(flow);
       } else {
         reject({ error: `'${flowId}' does not exist` });
       }
@@ -106,7 +113,7 @@ exports.updateFlowStep = function(flowId, stepId, body) {
       if (flow) {
         let step = await Storage.save('steps', stepId, body);
         let stepIndex = _.findIndex(flow.steps, ['id', step.id]);
-        flow.steps[stepIndex] = { id: step.id, type: step.type, targetEntity: step.config && step.config.targetEntity || null }; // adds step id to steps Array, appended to the end
+        flow.steps[stepIndex] = { id: step.id, type: step.type, name: step.name, targetEntity: step.config && step.config.targetEntity || null }; // adds step id to steps Array, appended to the end
         await Storage.save('flows', flowId, flow);
         resolve(step);
       } else {

@@ -50,7 +50,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   openRunDialog(flow: Flow) {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: flow.steps.map(step => step.name)}
+      data: {steps: flow.steps}
     });
 
     dialogRef.afterClosed().subscribe(result => {
