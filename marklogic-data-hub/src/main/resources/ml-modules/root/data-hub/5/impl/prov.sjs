@@ -29,13 +29,14 @@ class Provenance {
     this.config = {};
     this.config.granularityLevel    = config && config.granularityLevel || 'coarse';
     this.config.JOBDATABASE         = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
-    this.config.autoCommit          = config && config.autoCommit || true;
+    this.config.autoCommit          = config && config.autoCommit !== undefined ? config.autoCommit : true;
     this.config.commitQueue         = [];
     if (datahub) {
       this.hubutils = datahub.hubUtils;
     } else {
-      const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-      this.hubutils = new HubUtils(config);
+      this.hubutils = {
+        capitalize: (a) => { return a; }
+      };
     }
   }  
 
@@ -67,7 +68,7 @@ class Provenance {
     let requiredInfoParams = { 
       'ingest': ['derivedFrom'],  // the entity, file or document URI that this ingested document was derived from
       'mapping': ['derivedFrom','influencedBy'],
-      'mastering': ['derivedFrom','influencedBy'],
+      'mastering': ['influencedBy'],
       'custom': ['derivedFrom','influencedBy']
     };
     let provTypes = {
@@ -374,53 +375,58 @@ class Provenance {
    *                  for use with follow-up createStepPropertyMergeRecords() call
    */
   createStepPropertyRecords(jobId, flowId, stepType, docURI, properties, info) {
+    let resp;
     let docProvId;
     let docPropertyProvIds = {};
     let docPropertyProvIdsArray = [];
-    // TODO: Validation
     let isValid = this._validateCreateStepParams(jobId, flowId, stepType, docURI, info);
-    if (!(isValid instanceof Error) && properties && properties.length > 0) {
-      let capitalizedStepType = this.hubutils.capitalize(stepType);
-      for (property in properties) {
-        var docPropProvId = `${jobId + flowId + stepType + docURI}_${property}`
-        var docPropProvOptions = {
-          provTypes: [ 'ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', property ],
+    if (!(isValid instanceof Error)) {
+      if (properties && properties.length > 0) {
+        let capitalizedStepType = this.hubutils.capitalize(stepType);
+        for (let i=0; i<properties.length; i++) {
+          let property = properties[i];
+          let docPropProvId = `${jobId + flowId + stepType + docURI}_${property}`
+          let docPropProvOptions = {
+            provTypes: [ 'ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', property ],
+            relations: {
+              associatedWith: flowId,
+              generatedBy: jobId,
+              influencedBy: info && info.influencedBy,
+            },
+            attributes: { location: docURI }        
+          };
+          // append to return Object  
+          docPropertyProvIds[property] = docPropProvId; 
+          docPropertyProvIdsArray.push(docPropProvId);
+          (this.config.autoCommit) ? 
+            this._createRecord(docPropProvId, docPropProvOptions, info.metadata) : 
+            this.config.commitQueue.push([docPropProvId, docPropProvOptions, info.metadata]);
+        }
+
+        // create document record
+        docProvId = `${jobId + flowId + stepType + docURI}`;
+        let provTypes = ['ps:Flow','ps:Entity','dhf:Entity',`dhf:${capitalizedStepType}Entity`];
+        let recordOpts = {
+          provTypes,
           relations: {
             associatedWith: flowId,
             generatedBy: jobId,
+            hadMember: docPropertyProvIdsArray,
             influencedBy: info && info.influencedBy,
           },
-          attributes: { location: docURI }        
+          attributes: { location: docURI }
         };
-        // append to return Object  
-        docPropertyProvIds[property] = docPropProvId; 
-        docPropertyProvIdsArray.push(docPropProvId);
+
         (this.config.autoCommit) ? 
-          this._createRecord(docPropProvId, docPropProvOptions, info.metadata) : 
-          this.config.commitQueue.push([docPropProvId, docPropProvOptions, info.metadata]);
-      }
+          this._createRecord(docProvId, recordOpts, info.metadata) : 
+          this.config.commitQueue.push([docProvId, recordOpts, info.metadata]);
 
-      // create document record
-      docProvId = `${jobId + flowId + stepType + docURI}`;
-      let provTypes = ['ps:Flow','ps:Entity','dhf:Entity',`dhf:${capitalizedStepType}Entity`];
-      let recordOpts = {
-        provTypes,
-        relations: {
-          associatedWith: flowId,
-          generatedBy: jobId,
-          hadMember: docPropertyProvIdsArray,
-          influencedBy: info && info.influencedBy,
-        },
-        attributes: { location: docURI }
-      };
-
-      (this.config.autoCommit) ? 
-        this._createRecord(docProvId, recordOpts, info.metadata) : 
-        this.config.commitQueue.push([docProvId, recordOpts, info.metadata]);
-
-      // construct response
-      resp = [docProvId, docPropertyProvIds];
+        // construct response
+        resp = [docProvId, docPropertyProvIds];
       } else {
+        resp = new Error(`Function requires param 'properties' to be defined.`);
+      }
+    } else {
       resp = isValid
     }
     return resp;
@@ -441,28 +447,30 @@ class Provenance {
    */
   createStepPropertyMergeRecord(jobId, flowId, stepType, propertyName, docURIs, propertyProvIds, info) {
     let resp = [];
-    // TODO: Validation
     let isValid = this._validateCreateStepParams(jobId, flowId, stepType, docURIs, info);
-    if (!(isValid instanceof Error) && 
-      docURIs && docURIs.length > 0 &&
-      propertyProvIds && propertyProvIds.length > 0) {
+    if (!(isValid instanceof Error)) {
+      if (docURIs && docURIs.length > 0 &&
+        propertyProvIds && propertyProvIds.length > 0) {
+        let capitalizedStepType = this.hubutils.capitalize(stepType);
+        let provId = `${jobId + flowId + stepType + docURIs.concat()}_${propertyName}_merged`;
+        let provTypes = ['ps:Flow','ps:Entity','dhf:MergedEntityProperty',`dhf:${capitalizedStepType}MergedEntityProperty`, propertyName];
+        let recordOpts = {
+          provTypes,
+          relations: {
+            associatedWith: flowId,
+            generatedBy: jobId,
+            derivedFrom: propertyProvIds,
+            influencedBy: info && info.influencedBy,
+          }
+        };
+        (this.config.autoCommit) ? 
+          this._createRecord(provId, recordOpts, info.metadata) : 
+          this.config.commitQueue.push([provId, recordOpts, info.metadata]);
 
-      let capitalizedStepType = this.hubutils.capitalize(stepType);
-      let provId = `${jobId + flowId + stepType + docURIs.concat()}_${propertyName}_merged`;
-      let provTypes = ['ps:Flow','ps:Entity','dhf:MergedEntityProperty',`dhf:${capitalizedStepType}MergedEntityProperty`, propertyName];
-      let recordOpts = {
-        provTypes,
-        relations: {
-          associatedWith: flowId,
-          generatedBy: jobId,
-          derivedFrom: propertyProvIds,
-          influencedBy: info && info.influencedBy,
-        }
-      };
-      (this.config.autoCommit) ? 
-        this._createRecord(provId, recordOpts, info.metadata) : 
-        this.config.commitQueue.push([provId, recordOpts, info.metadata]);
-      resp[property] = provId;
+        resp = provId;
+      } else {
+        resp = new Error(`Function requires param 'docURIs' & 'propertyProvIds' to be defined.`);
+      }
     } else {
       resp = isValid
     }
@@ -483,30 +491,31 @@ class Provenance {
    */
   createStepDocumentMergeRecord(jobId, flowId, stepType, newDocURI, documentProvIds, mergedPropertyProvIds, info) {
     let resp = [];
-    // TODO: Validation
-    let isValid = this._validateCreateStepParams(jobId, flowId, stepType, docURIs, info);
-    if (!(isValid instanceof Error) && 
-      docURIs && docURIs.length > 0 &&
-      propertyProvIds && propertyProvIds.length > 0) {
-
-      let capitalizedStepType = this.hubutils.capitalize(stepType);
-      let provId = `${jobId + flowId + stepType + newDocURI}`;
-      let provTypes = ['ps:Flow','ps:Entity','dhf:MergedEntity',`dhf:${capitalizedStepType}MergedEntity`];
-      let recordOpts = {
-        provTypes,
-        relations: {
-          associatedWith: flowId,
-          generatedBy: jobId,
-          derivedFrom: documentProvIds,
-          hadMember: mergedPropertyProvIds,
-          influencedBy: info && info.influencedBy,
-        },
-        attributes: { location: newDocURI }
-      };
-      (this.config.autoCommit) ? 
-        this._createRecord(provId, recordOpts, info.metadata) : 
-        this.config.commitQueue.push([provId, recordOpts, info.metadata]);
-      resp = provId;
+    let isValid = this._validateCreateStepParams(jobId, flowId, stepType, newDocURI, info);
+    if (!(isValid instanceof Error)) { 
+      if (documentProvIds && documentProvIds.length > 0 &&
+        mergedPropertyProvIds && mergedPropertyProvIds.length > 0) {
+        let capitalizedStepType = this.hubutils.capitalize(stepType);
+        let provId = `${jobId + flowId + stepType + newDocURI}`;
+        let provTypes = ['ps:Flow','ps:Entity','dhf:MergedEntity',`dhf:${capitalizedStepType}MergedEntity`];
+        let recordOpts = {
+          provTypes,
+          relations: {
+            associatedWith: flowId,
+            generatedBy: jobId,
+            derivedFrom: documentProvIds,
+            hadMember: mergedPropertyProvIds,
+            influencedBy: info && info.influencedBy,
+          },
+          attributes: { location: newDocURI }
+        };
+        (this.config.autoCommit) ? 
+          this._createRecord(provId, recordOpts, info.metadata) : 
+          this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+        resp = provId;
+      } else {
+        resp = new Error(`Function requires param 'documentProvIds' & 'mergedPropertyProvIds' to be defined.`);
+      }
     } else {
       resp = isValid
     }
@@ -519,8 +528,8 @@ class Provenance {
    */
   commit() { 
     if (this.config.autoCommit === false && this.config.commitQueue.length > 0) {
-      while (commitQueue.length) {
-        this._createRecord( ...(commitQueue.shift()) );
+      while (this.config.commitQueue.length) {
+        this._createRecord( ...(this.config.commitQueue.shift()) );
       }
     }
   }
