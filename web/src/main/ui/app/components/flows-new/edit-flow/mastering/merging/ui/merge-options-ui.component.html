@@ -40,7 +40,26 @@
           <mat-header-cell id="merge-option-type-sort-btn" *matHeaderCellDef mat-sort-header>Merge Type</mat-header-cell>
           <mat-cell class="merge-option-type" *matCellDef="let mOpt">
             <span class="capitalize">{{mOpt.mergeType}}</span>
-            <span *ngIf="mOpt.mergeType === 'strategy'">: {{mOpt.strategy}}</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Details Column -->
+        <ng-container matColumnDef="details">
+          <mat-header-cell id="merge-option-details-sort-btn" *matHeaderCellDef mat-sort-header>Type Details</mat-header-cell>
+          <mat-cell class="merge-option-details" *matCellDef="let mOpt">
+            <div *ngIf="mOpt.mergeType === 'strategy'" class="details-content">
+              <div>{{mOpt.strategy}}</div>
+            </div>
+            <div *ngIf="mOpt.mergeType === 'custom'" class="details-content">
+              <div>
+                <span class="details-custom-label">URI</span>
+                {{mOpt.customUri}}
+              </div>
+              <div>
+                <span class="details-custom-label">Function</span>
+                {{mOpt.customFunction}}
+              </div>
+            </div>
           </mat-cell>
         </ng-container>
 

@@ -23,7 +23,7 @@ export class MergeOptionsUiComponent {
   @Output() updateOption = new EventEmitter();
   @Output() deleteOption = new EventEmitter();
 
-  public displayedColumns = ['propertyName', 'mergeType', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
+  public displayedColumns = ['propertyName', 'mergeType', 'details', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
   public dataSource: MatTableDataSource<MergeOption>;
 
   public valueFocus: object = {};

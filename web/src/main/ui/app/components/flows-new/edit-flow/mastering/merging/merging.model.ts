@@ -104,11 +104,11 @@ export class Merging {
   }
 
   /**
-   * Add an algorithm definition.
+   * Add a custom algorithm definition.
    */
-  addAlgorithm(name, at, fn) {
+  addCustomAlgorithm(name, at, fn) {
     let alg = new Algorithm({ name: name, at: at, function: fn });
-    this.algorithms['algorithm'].push(alg);
+    this.algorithms['custom'].push(alg);
   }
 
   /**
@@ -127,6 +127,11 @@ export class Merging {
     // Transform any new length-weight from UI
     if (typeof mOpt.length === 'string' || typeof mOpt.length === 'number') {
       mOpt.length = { weight: mOpt.length };
+    }
+    // Handle custom merge option
+    if (mOpt.mergeType === 'custom') {
+      this.addCustomAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction)
+      mOpt.algorithmRef = mOpt.customFunction;
     }
     let opt = new Option(mOpt);
     this.merging.push(opt);
