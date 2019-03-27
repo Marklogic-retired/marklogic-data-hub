@@ -30,7 +30,8 @@ export class AddMatchThresholdDialogComponent {
       above: [this.data.option ? this.data.option.above : ''],
       action: [this.data.option ? this.data.option.action : 'merge'],
       customUri: [this.data.option ? this.data.option.customUri : ''],
-      customFunction: [this.data.option ? this.data.option.customFunction : '']
+      customFunction: [this.data.option ? this.data.option.customFunction : ''],
+      customNs: [this.data.option ? this.data.option.customNs : '']
     })
   }
 
@@ -47,7 +48,7 @@ export class AddMatchThresholdDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.option ? 'Save' : 'Create';
+    return this.data.option ? 'SAVE' : 'CREATE';
   }
 
   onSave() {

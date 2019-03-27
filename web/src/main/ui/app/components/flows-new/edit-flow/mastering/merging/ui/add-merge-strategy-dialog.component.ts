@@ -85,7 +85,7 @@ export class AddMergeStrategyDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.strategy ? 'Save' : 'Create';
+    return this.data.strategy ? 'SAVE' : 'CREATE';
   }
 
   onSave() {

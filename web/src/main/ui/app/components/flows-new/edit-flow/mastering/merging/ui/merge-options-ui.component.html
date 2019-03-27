@@ -11,7 +11,7 @@
             Merge Options
           </span>
         </div>
-        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties, mergeStrategies)">Add</button>
+        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties, mergeStrategies)">ADD</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
@@ -53,7 +53,9 @@
             <div *ngIf="mOpt.mergeType === 'custom'" class="details-content">
               <div>
                 <span class="details-custom-label">URI</span>
-                {{mOpt.customUri}}
+                <span title="{{mOpt.customUri}}">
+                  {{mOpt.customUri | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="details-custom-label">Function</span>
@@ -61,7 +63,9 @@
               </div>
               <div *ngIf="mOpt.customNs">
                 <span class="details-custom-label">Namespace</span>
-                {{mOpt.customNs}}
+                <span title="{{mOpt.customNs}}">
+                  {{mOpt.customNs | truncate : -40}}
+                </span>
               </div>
             </div>
           </mat-cell>

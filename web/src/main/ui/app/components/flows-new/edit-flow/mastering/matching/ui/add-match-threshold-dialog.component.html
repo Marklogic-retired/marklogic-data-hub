@@ -15,17 +15,23 @@
       <mat-option value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field *ngIf="selectedAction === 'custom'" layout-fill>
-    <mat-label>URI</mat-label>
-    <input id="match-threshold-custom-uri" matInput formControlName="customUri"/>
-  </mat-form-field>
-  <mat-form-field *ngIf="selectedAction === 'custom'" layout-fill>
-    <mat-label>Function</mat-label>
-    <input id="match-threshold-custom-function" matInput formControlName="customFunction"/>
-  </mat-form-field>
+  <div *ngIf="selectedAction === 'custom'">
+    <mat-form-field layout-fill>
+      <mat-label>URI</mat-label>
+      <input id="match-threshold-custom-uri" matInput formControlName="customUri"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Function</mat-label>
+      <input id="match-threshold-custom-function" matInput formControlName="customFunction"/>
+    </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Namespace</mat-label>
+      <input id="match-threshold-custom-namespace" matInput formControlName="customNs"/>
+    </mat-form-field>
+  </div>
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="match-threshold-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" id="match-threshold-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
   <button mat-raised-button color="primary" id="match-threshold-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

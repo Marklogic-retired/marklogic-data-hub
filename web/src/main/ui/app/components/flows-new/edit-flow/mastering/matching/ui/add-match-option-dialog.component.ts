@@ -91,7 +91,7 @@ export class AddMatchOptionDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.option ? 'Save' : 'Create';
+    return this.data.option ? 'SAVE' : 'CREATE';
   }
 
   getMatchType() {

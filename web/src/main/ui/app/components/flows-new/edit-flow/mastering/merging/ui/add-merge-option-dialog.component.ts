@@ -94,7 +94,7 @@ export class AddMergeOptionDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.option ? 'Save' : 'Create';
+    return this.data.option ? 'SAVE' : 'CREATE';
   }
 
   onSave() {
