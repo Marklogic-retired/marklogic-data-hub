@@ -62,7 +62,6 @@ export class MatchThresholds {
  * Represents a match threshold for UI display.
  */
 export class MatchThreshold {
-  public type: string;
   public label: string;
   public above: string;
   public action: string;
@@ -88,10 +87,10 @@ export class MatchThreshold {
       let act = acts.find(a => {
         return a.name === mThr.action;
       });
-      if (act && act.name) result.action = act.name;
       if (act && act.at) result.customUri = act.at;
       if (act && act.function) result.customFunction = act.function;
       if (act && act.namespace) result.customNs = act.namespace;
+      result.action = 'custom';
     }
     return result;
   }

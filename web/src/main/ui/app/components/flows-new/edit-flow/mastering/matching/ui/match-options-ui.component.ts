@@ -41,7 +41,6 @@ export class MatchOptionsUiComponent {
   }
 
   openMatchOptionDialog(optionToEdit: MatchOption, index: number, entityProps: any): void {
-    console.log('entityProps', entityProps);
     const dialogRef = this.dialog.open(AddMatchOptionDialogComponent, {
       width: '500px',
       data: {option: optionToEdit, index: index, entityProps: entityProps}

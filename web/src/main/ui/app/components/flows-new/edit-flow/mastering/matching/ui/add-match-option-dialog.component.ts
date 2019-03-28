@@ -100,7 +100,6 @@ export class AddMatchOptionDialogComponent {
   }
 
   onSave() {
-    console.log('onSave', this.form);
     this.dialogRef.close(this.form.value);
   }
 
