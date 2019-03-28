@@ -5,5 +5,7 @@ module.exports = {
   JOBDATABASE: "%%mlJobDbName%%",
   MODULESDATABASE: "%%mlModulesDbName%%",
   HUBVERSION: "%%mlHubVersion%%",
-  HUBLOGLEVEL: "%%mlHubLogLevel%%"
+  HUBLOGLEVEL: "%%mlHubLogLevel%%",
+  FLOWOPERATORROLE: "%%mlFlowOperatorRole%%",
+  FLOWDEVELOPERROLE: "%%mlFlowDeveloperRole%%"
 };

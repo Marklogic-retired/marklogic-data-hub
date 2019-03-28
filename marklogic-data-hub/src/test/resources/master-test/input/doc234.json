@@ -1,9 +1,0 @@
-{
-  "person": {
-    "id": 100,
-    "firstName": "otherName-1",
-    "lastName": "Covill",
-    "email": "mcovill9@scientificamerican.com",
-    "gender": "Female"
-  }
-}
