@@ -23,6 +23,8 @@ import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.entity_services.JsonPojo;
 
+import java.util.Iterator;
+
 public class StepModel extends JsonPojo {
 
     protected String id;
@@ -176,5 +178,70 @@ public class StepModel extends JsonPojo {
         node.set("customHook", getCustomHook());
 
         return node;
+    }
+
+    public static Step transformToCoreStepModel(StepModel stepModel, JsonNode stepJson) {
+        Step step = Step.create("dummy", Step.StepType.CUSTOM);
+
+        step.setName(stepModel.getName());
+        step.setType(stepModel.getType());
+        step.setSourceDatabase(stepModel.getSourceDatabase());
+        step.setDestinationDatabase(stepModel.getTargetDatabase());
+        step.setCustomHook(stepModel.getCustomHook());
+        step.setDescription(stepModel.getDescription());
+
+        if (stepModel.getVersion() != null) {
+            step.setVersion(Integer.parseInt(stepModel.getVersion()));
+        }
+
+        JSONObject jsonObject = new JSONObject(stepJson);
+        step.setOptions(jsonObject.getMap("config"));
+
+        return step;
+    }
+
+    public static Step mergeFields(StepModel stepModel, Step defaultStep, Step step) {
+        // merge options
+        if (stepModel.getConfig() != null) {
+            Iterator<String> iterator = stepModel.getConfig().fieldNames();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                defaultStep.getOptions().put(key, stepModel.getConfig().get(key));
+            }
+        }
+
+        // merge otherFields
+        if (step.getName() != null) {
+            defaultStep.setName(step.getName());
+        }
+
+        if (step.getType() != null) {
+            defaultStep.setType(step.getType());
+        }
+
+        if (step.getDestinationDatabase() != null) {
+            defaultStep.setDestinationDatabase(step.getDestinationDatabase());
+        }
+
+        if (step.getSourceDatabase() != null) {
+            defaultStep.setSourceDatabase(step.getSourceDatabase());
+        }
+
+        if (step.getVersion() != null) {
+            defaultStep.setVersion(step.getVersion());
+        }
+
+        if (step.getDescription() != null) {
+            defaultStep.setDescription(step.getDescription());
+        }
+
+        if (step.getCustomHook() != null) {
+            defaultStep.setCustomHook(step.getCustomHook());
+        }
+
+        if (step.getIdentifier() != null) {
+            defaultStep.setIdentifier(step.getIdentifier());
+        }
+        return defaultStep;
     }
 }
