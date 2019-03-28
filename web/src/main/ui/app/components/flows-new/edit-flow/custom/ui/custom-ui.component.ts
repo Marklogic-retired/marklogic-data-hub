@@ -18,11 +18,11 @@ export class CustomUiComponent {
 
   ) {}
   onSave() {
-    console.log(this.step.config.customModuleUri, this.uriOrig);
-    this.uriOrig = _.cloneDeep(this.step.config.customModuleUri);
+    console.log(this.step.options.customModuleUri, this.uriOrig);
+    this.uriOrig = _.cloneDeep(this.step.options.customModuleUri);
     this.updateCustom.emit(this.step);
   }
   uriChanged() {
-    return !_.isEqual(this.step.config.customModuleUri, this.uriOrig);
+    return !_.isEqual(this.step.options.customModuleUri, this.uriOrig);
   }
 }

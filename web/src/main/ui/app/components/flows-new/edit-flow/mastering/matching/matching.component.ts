@@ -15,7 +15,7 @@ import * as _ from "lodash";
   <app-match-options-ui
     [matchOptions]="matchOptions"
     [targetEntity]="targetEntity"
-    [targetEntityName]="this.step.config.targetEntity"
+    [targetEntityName]="this.step.options.targetEntity"
     (createOption)="this.onCreateOption($event)"
     (updateOption)="this.onUpdateOption($event)"
     (deleteOption)="this.onDeleteOption($event)"
@@ -50,14 +50,13 @@ export class MatchingComponent implements OnInit {
 
     this.stepId = this.activatedRoute.snapshot.paramMap.get('stepId');
 
-    this.matching = Matching.fromConfig(this.step.config.matchOptions);
-    console.log('this.matching', this.matching);
+    this.matching = Matching.fromConfig(this.step.options.matchOptions);
 
     // Parse matching data and instantiate models for UI
     this.matchOptions = MatchOptions.fromMatching(this.matching);
     this.matchThresholds = MatchThresholds.fromMatching(this.matching);
 
-    this.getEntity(this.step.config.targetEntity);
+    this.getEntity(this.step.options.targetEntity);
 
   }
 
@@ -112,7 +111,7 @@ export class MatchingComponent implements OnInit {
 
   onSaveStep(): void {
     this.matching = Matching.fromUI(this.matchOptions, this.matchThresholds);
-    this.step.config.matchOptions = this.matching;
+    this.step.options.matchOptions = this.matching;
     this.saveStep.emit(this.step);
   }
 

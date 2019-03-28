@@ -674,7 +674,7 @@ definitions:
         type: "string"
         description: "Type of a step"
         enum:
-        - "ingestion"
+        - "ingest"
         - "mapping"
         - "mastering"
         - "custom"
@@ -703,7 +703,7 @@ definitions:
       name: "name"
       description: "description"
       id: "id"
-      type: "ingestion"
+      type: "ingest"
       config: "{}"
       version: "version"
       targetDatabase: "targetDatabase"

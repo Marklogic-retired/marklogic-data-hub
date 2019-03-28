@@ -200,8 +200,8 @@ export class MappingComponent implements OnInit {
   ngOnInit() {
     let self = this;
     if (this.step) {
-      this.entityName = this.step.config['targetEntity'];
-      this.mapping = this.step.config;
+      this.entityName = this.step.options['targetEntity'];
+      this.mapping = this.step.options;
       this.loadEntity();
       this.loadMap();
     }
@@ -217,7 +217,7 @@ export class MappingComponent implements OnInit {
       if (srcPropName)
         formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
     });
-    this.step.config['properties'] = formattedConns;
+    this.step.options['properties'] = formattedConns;
     this.saveStep.emit(this.step);
   }
 

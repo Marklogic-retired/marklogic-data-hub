@@ -3,12 +3,12 @@
     "id": "step-1-flow-1",
     "name": "Flow 01 Ingest Step",
     "description": "My Step 1 description",
-    "type": "ingestion",
+    "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
-      "input_file_path": "/marklogic-data-hub/examples/healthcare",
+    "options": {
+      "input_file_path": ".",
       "input_file_type": "documents",
       "output_collections": "Order,Flow 01 Ingest Step,input,newCollection",
       "output_permissions": "rest-reader,read,rest-writer,update",
@@ -27,7 +27,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
+    "options": {
       "sourceCollection": "Flow 01 Ingest Step",
       "sourceURI": "source-doc-01.json",
       "sourceQuery": "",
@@ -56,7 +56,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {     
+    "options": {     
       "sourceCollection": "Flow 01 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -400,7 +400,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
+    "options": {
       "targetEntity": "Order",
       "sourceCollection": "Flow 01 Mastering Step",
       "sourceQuery": "",
@@ -412,12 +412,12 @@
     "id": "step-1-flow-2",
     "name": "Flow 02 Ingest Step",
     "description": "My Step 1 description",
-    "type": "ingestion",
+    "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
-      "input_file_path": "/marklogic-data-hub/examples/healthcare",
+    "options": {
+      "input_file_path": ".",
       "input_file_type": "documents",
       "output_collections": "Order,Flow 02 Ingest Step,input,newCollection",
       "output_permissions": "rest-reader,read,rest-writer,update",
@@ -436,7 +436,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
+    "options": {
       "sourceCollection": "Flow 02 Ingest Step",
       "sourceURI": "source-doc-01.json",
       "sourceQuery": "",
@@ -465,7 +465,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {     
+    "options": {     
       "sourceCollection": "Flow 02 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -809,7 +809,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
+    "options": {
       "targetEntity": "Order",
       "sourceCollection": "Flow 02 Mastering Step",
       "sourceQuery": "",
@@ -821,12 +821,12 @@
     "id": "step-1-flow-3",
     "name": "Flow 3 Ingest Step",
     "description": "My Step 1 description",
-    "type": "ingestion",
+    "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
-      "input_file_path": "/marklogic-data-hub/examples/healthcare",
+    "options": {
+      "input_file_path": ".",
       "input_file_type": "documents",
       "output_collections": "Order,Flow 3 Ingest Step,input,newCollection",
       "output_permissions": "rest-reader,read,rest-writer,update",
@@ -845,7 +845,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
+    "options": {
       "sourceCollection": "Flow 3 Ingest Step",
       "sourceURI": "source-doc-01.json",
       "sourceQuery": "",
@@ -874,7 +874,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {     
+    "options": {     
       "sourceCollection": "Flow 03 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -1218,7 +1218,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "config": {
+    "options": {
       "targetEntity": "Order",
       "sourceCollection": "Flow 3 Mastering Step",
       "sourceQuery": "",
@@ -1230,12 +1230,12 @@
     "id": "step-1-flow-4",
     "name": "Flow 4 Ingest Step",
     "description": "My Step 1 description",
-    "type": "ingestion",
+    "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": false,
-    "config": {
-      "input_file_path": "/marklogic-data-hub/examples/healthcare",
+    "options": {
+      "input_file_path": ".",
       "input_file_type": "documents",
       "output_collections": "Order,Flow 4 Ingest Step,input,newCollection",
       "output_permissions": "rest-reader,read,rest-writer,update",
