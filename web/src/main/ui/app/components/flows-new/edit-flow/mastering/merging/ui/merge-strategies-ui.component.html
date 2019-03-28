@@ -27,7 +27,9 @@
         <ng-container matColumnDef="strategyName">
           <mat-header-cell id="merge-strategy-property-sort-btn" *matHeaderCellDef mat-sort-header>Strategy</mat-header-cell>
           <mat-cell class="merge-strategy-property" *matCellDef="let mStr">
-            {{mStr.name}}
+            <span [class.default-name]="mStr.default">
+              {{mStr.name}}
+            </span>
           </mat-cell>
         </ng-container>
 

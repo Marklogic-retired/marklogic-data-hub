@@ -78,7 +78,12 @@ export class Merging {
     }
     if (mergeStrategies) {
       mergeStrategies.strategies.forEach(mStr => {
-        result.addStrategy(mStr);
+        if (mStr.default === true) {
+          // Default option is represented as a strategy in UI
+          result.addOption(mStr);
+        } else {
+          result.addStrategy(mStr);
+        }
       })
     }
     if (mergeCollections) {

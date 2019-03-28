@@ -1,7 +1,15 @@
 <h1 mat-dialog-title>{{getDialogTitle()}}</h1>
 <div id="merge-strategy-dialog" mat-dialog-content [formGroup]="form" class="content">
 
-  <mat-form-field layout-fill>
+  <div id="merge-strategy-default-container">
+    <label>Default?</label>
+    <mat-radio-group id="merge-strategy-default" formControlName="default" [(ngModel)]="selectedDefault">
+      <mat-radio-button id="merge-strategy-default-yes-radio" value="true">Yes</mat-radio-button>
+      <mat-radio-button id="merge-strategy-default-no-radio" value="false">No</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <mat-form-field *ngIf="selectedDefault === 'false'" layout-fill>
     <mat-label>Name</mat-label>
     <input id="merge-strategy-name" matInput formControlName="name"/>
   </mat-form-field>

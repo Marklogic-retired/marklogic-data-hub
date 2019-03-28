@@ -48,7 +48,9 @@ export class AddMergeOptionDialogComponent {
     this.selectedType = (this.data.option && this.data.option.mergeType) ?
       this.data.option.mergeType : 'standard';
     this.strategies = (this.data.strategies && this.data.strategies.strategies) ?
-      this.data.strategies.strategies.map(s => { return s.name; }) : [];
+      this.data.strategies.strategies.map(s => {
+        if (!s.default) return s.name;
+      }) : [];
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
   }
