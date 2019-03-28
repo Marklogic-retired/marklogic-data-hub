@@ -3,6 +3,8 @@ import {Step} from "../../../models/step.model";
 
 /**
  * Ingestion config model object
+ *
+ * TODO: this should be a part of Step model. It does not make sense keep it separate
  */
 export class Ingestion {
 
