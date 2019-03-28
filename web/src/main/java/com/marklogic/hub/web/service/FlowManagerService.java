@@ -18,8 +18,8 @@ package com.marklogic.hub.web.service;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -34,7 +34,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FlowManagerService {
@@ -43,7 +46,7 @@ public class FlowManagerService {
     private FlowManager flowManager;
 
     @Autowired
-    private FlowRunner flowRunner;
+    private FlowRunnerImpl flowRunner;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -221,14 +224,26 @@ public class FlowManagerService {
 
     }
 
-    public String runFlow(String flowName, String[] steps) {
+    public Flow runFlow(String flowName, List<String> steps) {
         RunFlowResponse resp = null;
-        if (steps == null) {
+        if (steps == null || steps.size() ==0 ) {
             resp = flowRunner.runFlow(flowName);
         } else {
-            resp = flowRunner.runFlow(flowName, Arrays.asList(steps));
+            List<String> restrictedSteps = new ArrayList<>();
+            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flowName, step)));
+            resp = flowRunner.runFlow(flowName, restrictedSteps);
         }
-        return resp.getJobId();
+        return this.getFlow(flowName);
+    }
+
+    public Flow stop(String flowName) {
+        if (flowRunner.getRunningFlow().equals(flowName)) {
+            flowRunner.stopJob(flowRunner.getRunningJobId());
+        }
+        else{
+            throw new BadRequestException("Flow not running.");
+        }
+        return this.getFlow(flowName);
     }
 
     private StepModel convertToWebModel(Step step) throws IOException {
@@ -339,4 +354,5 @@ public class FlowManagerService {
 
         return null;
     }
+
 }

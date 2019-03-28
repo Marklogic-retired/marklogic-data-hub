@@ -133,7 +133,14 @@ public class FlowController {
 
     @RequestMapping(value = "/flows/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
-    public String runFlow(@PathVariable String flowName, @RequestBody String[] steps) {
-        return flowManagerService.runFlow(flowName, steps);
+    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody List<String> steps) {
+        Flow flow = flowManagerService.runFlow(flowName, steps);
+        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/flows/{flowName}/stop", method = RequestMethod.POST)
+    @ResponseBody
+    public String stopFlow(@PathVariable String flowName) {
+        return flowManagerService.stop(flowName);
     }
 }

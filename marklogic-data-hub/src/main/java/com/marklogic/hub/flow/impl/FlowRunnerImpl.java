@@ -36,6 +36,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
+    private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
 
     private String runningJobId;
     private Step runningStep;
@@ -148,6 +149,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private void initializeFlow(String jobId) {
         isRunning.set(true);
+        isJobSuccess.set(true);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
         if(jobUpdate == null) {
@@ -202,7 +204,6 @@ public class FlowRunnerImpl implements FlowRunner{
                     .withOptions(flow.getOverrideOptions())
                     .onItemFailed((jobId, itemId)-> {
                         errorCount.incrementAndGet();
-                        // TODO: Add to Flow Model
                         if(flow.isStopOnError()){
                             stopJob(jobId);
                         }
@@ -228,9 +229,12 @@ public class FlowRunnerImpl implements FlowRunner{
                 Job stepResp = stepRunner.run();
                 stepRunner.awaitCompletion();
                 stepOutputs.put(stepNum, stepResp);
+                if(! stepResp.isSuccess()) {
+                    isJobSuccess.set(false);
+                }
 
             }
-            if(errorCount.get() > 0){
+            if(! isJobSuccess.get()){
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
             }
             else if(isJobCancelled.get()) {
@@ -263,5 +267,14 @@ public class FlowRunnerImpl implements FlowRunner{
         if (threadPool != null) {
             threadPool.awaitTermination(timeout, unit);
         }
+    }
+
+    //These 2 methods are for UI. We can expose them in interface if required
+    public String getRunningFlow() {
+        return runningFlow.getName();
+    }
+
+    public String getRunningJobId() {
+        return runningJobId;
     }
 }
