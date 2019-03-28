@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Component
 public class FlowRunnerImpl implements FlowRunner{
@@ -120,7 +121,6 @@ public class FlowRunnerImpl implements FlowRunner{
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
         while(stepItr.hasNext()) {
             String stepNum = stepItr.next();
-            // TODO: use Map<String, Step> getSteps()
             Step tmpStep = flow.getStep(stepNum);
             if(tmpStep == null){
                 throw new RuntimeException("Step " + stepNum + " not found in the flow");
@@ -162,10 +162,15 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public void stopJob(String jobId) {
-        if (jobId.equals(runningJobId)) {
+        if(stepsMap.get(jobId) != null){
             stepsMap.get(jobId).clear();
             stepsMap.remove(jobId);
             isJobCancelled.set(true);
+        }
+        else {
+            throw new RuntimeException("Job not running");
+        }
+        if (jobId.equals(runningJobId)) {
             stepRunner.stop();
         }
     }
@@ -243,7 +248,6 @@ public class FlowRunnerImpl implements FlowRunner{
                 if(! stepResp.isSuccess()) {
                     isJobSuccess.set(false);
                 }
-
             }
             if(! isJobSuccess.get()){
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
@@ -280,12 +284,14 @@ public class FlowRunnerImpl implements FlowRunner{
         }
     }
 
-    //These 2 methods are for UI. We can expose them in interface if required
-    public String getRunningFlow() {
-        return runningFlow.getName();
-    }
+    //This method is for UI. We can expose them in interface if required
 
-    public String getRunningJobId() {
-        return runningJobId;
+    public List<String> getQueuedJobIdsFromFlow(String flowName) {
+        return flowMap
+            .entrySet()
+            .stream()
+            .filter(entry -> flowName.equals(entry.getValue().getName()))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
     }
 }

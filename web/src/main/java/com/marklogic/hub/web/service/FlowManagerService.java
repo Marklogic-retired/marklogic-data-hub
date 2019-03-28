@@ -31,10 +31,8 @@ import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -253,17 +251,19 @@ public class FlowManagerService {
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flowName, step)));
             resp = flowRunner.runFlow(flowName, restrictedSteps);
         }
-        return this.getFlow(flowName);
+        return flowManager.getFlow(flowName);
     }
 
     public Flow stop(String flowName) {
-        if (flowRunner.getRunningFlow().equals(flowName)) {
-            flowRunner.stopJob(flowRunner.getRunningJobId());
-        }
-        else{
+        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
+        Iterator<String> itr = jobIds.iterator();
+        if(!itr.hasNext()){
             throw new BadRequestException("Flow not running.");
         }
-        return this.getFlow(flowName);
+        while(itr.hasNext()){
+            flowRunner.stopJob(itr.next());
+        }
+        return flowManager.getFlow(flowName);
     }
 
     private StepModel convertToWebModel(Step step) throws IOException {
