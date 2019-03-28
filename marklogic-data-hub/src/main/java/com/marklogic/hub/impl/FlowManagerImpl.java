@@ -182,24 +182,16 @@ public class FlowManagerImpl implements FlowManager {
         return false;
     }
 
-    public Map<String, Step> getSteps(String flowName) {
-        Flow flow = getFlow(flowName);
-        if (flow != null) {
-            return flow.getSteps();
-        } else {
-            throw new DataHubProjectException("Flow '" + flowName + "' not found");
-        }
+    public Map<String, Step> getSteps(Flow flow) {
+        return flow.getSteps();
     }
 
-    public Step getStep(String flowName, String stepNum) {
-        Flow flow = getFlow(flowName);
+    public Step getStep(Flow flow, String stepNum) {
         return flow.getStep(stepNum);
     }
 
-    public Flow setSteps(String flowName, Map<String, Step> stepMap) {
-        Flow flow = getFlow(flowName);
+    public void setSteps(Flow flow, Map<String, Step> stepMap) {
         flow.setSteps(stepMap);
-        return flow;
     }
 
     private JsonNode flowScaffolding = null;

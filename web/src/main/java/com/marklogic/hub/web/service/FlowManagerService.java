@@ -22,7 +22,6 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.exception.BadRequestException;
@@ -48,9 +47,6 @@ public class FlowManagerService {
 
     @Autowired
     private FlowRunner flowRunner;
-
-    @Autowired
-    private HubConfigImpl hubConfig;
 
     @Autowired
     private StepManagerService stepManagerService;
@@ -110,7 +106,8 @@ public class FlowManagerService {
     }
 
     public List<StepModel> getSteps(String flowName) {
-        Map<String, Step> stepMap = flowManager.getSteps(flowName);
+        Flow flow = flowManager.getFlow(flowName);
+        Map<String, Step> stepMap = flowManager.getSteps(flow);
 
         List<StepModel> stepModelList = new ArrayList<>();
         for (String key : stepMap.keySet()) {
@@ -140,6 +137,7 @@ public class FlowManagerService {
         }
 
         if (stepModel != null) {
+            Flow flow = flowManager.getFlow(flowName);
             Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
 
             // Only save step if step is of Custom type, for rest use the default steps.
@@ -166,10 +164,10 @@ public class FlowManagerService {
             if (stepOrder != null) {
                 // Create
                 try {
-                    Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                    Map<String, Step> stepMap = flowManager.getSteps(flow);
                     if (!stepMap.containsKey(String.valueOf(stepOrder))) {
                         stepMap.put(String.valueOf(stepOrder), step);
-                        Flow flow = flowManager.setSteps(flowName, stepMap);
+                        flowManager.setSteps(flow, stepMap);
                         flowManager.saveFlow(flow);
                     } else {
                         throw new BadRequestException("Invalid Step Order. A Step is already present at Step Order: " + stepOrder);
@@ -180,12 +178,12 @@ public class FlowManagerService {
             } else if (stepId != null) {
                 // Save
                 try {
-                    String key = getStepKeyInStepMap(flowName, stepId);
+                    String key = getStepKeyInStepMap(flow, stepId);
 
                     if (key != null && !key.isEmpty()) {
-                        Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                        Map<String, Step> stepMap = flowManager.getSteps(flow);
                         stepMap.put(key, step);
-                        Flow flow = flowManager.setSteps(flowName, stepMap);
+                        flowManager.setSteps(flow, stepMap);
                         flowManager.saveFlow(flow);
                     } else {
                         throw new BadRequestException("Invalid Step Id");
@@ -196,7 +194,7 @@ public class FlowManagerService {
             } else {
                 //  Create at last
                 try {
-                    Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                    Map<String, Step> stepMap = flowManager.getSteps(flow);
 
                     String key = "1";
                     if (stepMap.size() != 0) {
@@ -206,7 +204,7 @@ public class FlowManagerService {
 
                     if (!stepMap.containsKey(key)) {
                         stepMap.put(key, step);
-                        Flow flow = flowManager.setSteps(flowName, stepMap);
+                        flowManager.setSteps(flow, stepMap);
                         flowManager.saveFlow(flow);
                     } else {
                         throw new BadRequestException("Invalid Step Order");
@@ -223,13 +221,14 @@ public class FlowManagerService {
     }
 
     public void deleteStep(String flowName, String stepId) {
-        String key = getStepKeyInStepMap(flowName, stepId);
+        Flow flow = flowManager.getFlow(flowName);
+        String key = getStepKeyInStepMap(flow, stepId);
 
         if (key != null && !key.isEmpty()) {
             try {
-                Map<String, Step> stepMap = flowManager.getSteps(flowName);
+                Map<String, Step> stepMap = flowManager.getSteps(flow);
                 Step step = stepMap.remove(key);
-                Flow flow = flowManager.setSteps(flowName, stepMap);
+                flowManager.setSteps(flow, stepMap);
                 flowManager.saveFlow(flow);
 
 //                // Don't delete the Step from the filesystem so that we can later on reuse the step.
@@ -278,7 +277,7 @@ public class FlowManagerService {
         return stepModel;
     }
 
-    private String getStepKeyInStepMap(String flowName, String stepId) {
+    private String getStepKeyInStepMap(Flow flow, String stepId) {
         // Split on the last occurrence of "-"
         String[] stepStr = stepId.split("-(?!.*-)");
 
@@ -287,7 +286,7 @@ public class FlowManagerService {
             String type = stepStr[1];
             String[] key = new String[1];
 
-            flowManager.getSteps(flowName).forEach((k, v) -> {
+            flowManager.getSteps(flow).forEach((k, v) -> {
                 if (name.equals(v.getName()) && type.equals(v.getType().toString())) {
                     key[0] = k;
                 }

@@ -2,6 +2,7 @@ package com.marklogic.hub.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.step.Step;
@@ -149,7 +150,7 @@ public class FlowStepModel {
             sm.name = step.getName();
             sm.type = stepType;
             if (step.getOptions() != null && step.getOptions().get("targetEntity") != null) {
-                sm.targetEntity = (String) step.getOptions().get("targetEntity").toString();
+                sm.targetEntity = ((TextNode) step.getOptions().get("targetEntity")).asText();
             }
             stepModels.add(sm);
         });
