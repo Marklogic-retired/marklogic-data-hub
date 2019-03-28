@@ -213,6 +213,17 @@ public class FlowRunnerImpl implements FlowRunner{
                             listener.onStatusChanged(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
                         });
                     });
+                //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
+                Map<String,Step> steps = runningFlow.getSteps();
+                Step step = steps.get(stepNum);
+
+                if(step.getThreadCount() == 0){
+                    stepRunner.withThreadCount(flow.getThreadCount());
+                }
+                if(step.getBatchSize() == 0) {
+                    stepRunner.withBatchSize(flow.getBatchSize());
+                }
+                //If property values are overriden in UI, use those values over any other.
                 if(flow.getOverrideBatchSize() != null) {
                     stepRunner.withBatchSize(flow.getOverrideBatchSize());
                 }
