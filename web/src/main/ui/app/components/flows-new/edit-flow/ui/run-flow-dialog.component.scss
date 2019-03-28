@@ -2,10 +2,27 @@ button {
   outline: none;
 }
 
-div.bottom {
+h1.mat-dialog-title {
+  margin-top: -12px;
+  margin-left: -4px;
+  margin-bottom: 11px;
+}
+
+.mat-dialog-content {
+  background: #f3f3f3;
+  padding: 20px;
+}
+
+.mat-dialog-actions {
+  margin-right: -4px;
   justify-content: flex-end;
 }
-.content {
-  background: #f3f3f3;
-  padding: 10px 15px 20px 15px;
+
+/deep/ #run-flow-dialog .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+/deep/ #run-flow-dialog .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #6d8ba5 !important;
+}
+
+/deep/ #run-flow-dialog .mat-divider {
+  margin-bottom: 10px;
 }

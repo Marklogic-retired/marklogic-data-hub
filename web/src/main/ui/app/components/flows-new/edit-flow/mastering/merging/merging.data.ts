@@ -50,12 +50,12 @@ export const mergingData = {
     "custom": [],
     "collections": {
       "onMerge": {
-        "remove": {
+        "add": {
           "collection": [
             "coll-to-add"
           ]
         },
-        "add": {
+        "remove": {
           "collection": [
             "coll-to-remove"
           ]

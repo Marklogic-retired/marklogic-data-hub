@@ -26,6 +26,7 @@ exports.createFlowStep = function(flowId, stepOrder, body) {
           id: step.id,
           name: step.name,
           type: step.type,
+          name: step.name,
           targetEntity: step.config && step.config.targetEntity || null 
         };
         flow.steps.splice(index, 0, newFlowStep);

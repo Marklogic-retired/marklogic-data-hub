@@ -1,6 +1,7 @@
 import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder } from 'protractor'
 import {pages} from '../page-objects/page';
-import auth from './auth'
+import auth from './auth';
+import flows from './flows';
 import create from './create';
 import runFlows from './run';
 import jobs from './jobs';
@@ -31,10 +32,15 @@ describe('DataHub', function () {
       url: `http://localhost:8080/api/projects/reset`
     }, function (error, response, body) {
 
-      browser.driver.get('http://localhost:8080')
+      browser.driver.get(browser.baseUrl)
         .then(() => browser.driver.manage().deleteAllCookies())
         .then(() => $('body').isPresent())
         .then(() => {}, () => {})
+        .then(() => browser.driver.getCapabilities())
+        .then(caps => {
+          console.log('browserName:' + caps.get('browserName'));
+          console.log('baseUrl:'+browser.baseUrl);
+        })
         .then(() => done())
 
       //.then(() => browser.driver.getCapabilities())
@@ -58,6 +64,7 @@ describe('DataHub', function () {
   });
 
   auth(tmpobj.name);
+  flows(tmpobj.name);
   //create(tmpobj.name);
   //runFlows(tmpobj.name);
   //jobs();

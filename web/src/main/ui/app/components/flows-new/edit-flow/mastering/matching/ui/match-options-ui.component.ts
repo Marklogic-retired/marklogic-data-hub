@@ -16,6 +16,7 @@ export class MatchOptionsUiComponent {
 
   @Input() matchOptions: any;
   @Input() targetEntity: any;
+  @Input() targetEntityName: string;
 
   @Output() createOption = new EventEmitter();
   @Output() updateOption = new EventEmitter();

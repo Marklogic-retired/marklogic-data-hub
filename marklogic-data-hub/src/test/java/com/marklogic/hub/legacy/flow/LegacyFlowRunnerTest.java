@@ -81,7 +81,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getFlowDeveloperConfig(), false);
 
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
@@ -139,7 +139,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getFlowDeveloperConfig(), false);
 
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
@@ -175,7 +175,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getFlowDeveloperConfig(), false);
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
                 FlowType.HARMONIZE);
@@ -210,7 +210,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getFlowDeveloperConfig(), false);
 
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
@@ -250,7 +250,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
 
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getFlowDeveloperConfig().getIsProvisionedEnvironment());
 
         scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
@@ -277,10 +277,10 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
-        getHubAdminConfig();
+        getFlowDeveloperConfig();
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
         //deploys the entity to final db
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getFlowDeveloperConfig(), false);
 
         ObjectMapper mapper = new ObjectMapper();
         Mapping testMap = Mapping.create("test");
@@ -302,7 +302,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         // Mapping should not be deployed
         assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getFlowDeveloperConfig(), true);
 
         scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
         try {

@@ -1,0 +1,250 @@
+.merging {
+  padding: 10px 40px;
+}
+
+#merge-strategies {
+  padding: 8px 30px;
+
+  .center .header .mat-toolbar-single-row {
+    padding: 0;
+  }
+}
+
+/* HEADER ROW HEIGHT */
+.merging-table .mat-header-row {
+    min-height: 48px !important;
+}
+
+/* BODY ROW HEIGHT */
+.merging-table .mat-row {
+    min-height: 38px !important;
+}
+
+.other-content {
+  padding: 4px 0;
+}
+
+.other-item {
+  padding: 1px 0;
+  width: 250px;
+}
+
+.editing-field {
+  padding: 0;
+  margin: 0;
+  width: 25px;
+}
+
+/deep/ .mat-column-maxValues div.mat-form-field-wrapper,
+/deep/ .mat-column-maxSources div.mat-form-field-wrapper,
+/deep/ .mat-column-length div.mat-form-field-wrapper {
+  position: absolute;
+  top: -25px;
+  width: 40px;
+}
+
+/deep/ .mat-column-sourceWeights div.mat-form-field-wrapper {
+  position: absolute;
+  top: -30px;
+  width: 30px;
+}
+
+/deep/ .mat-cell a.max-values-value,
+/deep/ .mat-cell a.max-sources-value,
+/deep/ .mat-cell a.source-weights-value,
+/deep/ .mat-cell a.length-value {
+  cursor: pointer!important;
+}
+
+$header-height: 70px !default;
+
+button {
+  outline: none;
+}
+
+.page-layout {
+  position: relative;
+  overflow: hidden;
+
+  // Carded layout
+  &.carded {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    width: 100%;
+    min-width: 100%;
+
+    // Top bg
+    > .top-bg {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      left: 0;
+    }
+
+    // Fullwidth
+    &.fullwidth {
+
+      // Center
+      > .center {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 auto;
+        position: relative;
+        z-index: 2;
+        padding: 0;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+
+        > .header {
+          height: $header-height !important;
+          min-height: $header-height !important;
+          max-height: $header-height!important;
+        }
+
+        > .content-card {
+          display: flex;
+          flex-direction: column;
+          flex: 1 0 auto;
+          overflow: hidden;
+
+          > .content {
+            flex: 1 0 auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+.merging-table {
+  flex: 1 1 auto;
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  a {
+    color: black;
+  }
+
+  a:hover {
+    text-decoration-color: blue;
+  }
+
+  .mat-header-row {
+    min-height: 64px;
+  }
+
+  .flow {
+    position: relative;
+    cursor: pointer;
+    height: 84px;
+  }
+
+  .mat-cell {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  /* .mat-column-propertyName {
+    flex: 0 1 200px;
+  } */
+
+  .mat-column-mergeType {
+    flex: 0 1 250px;
+  }
+
+  .mat-column-maxValues {
+    flex: 0 1 120px;
+  }
+
+  .mat-column-maxSources {
+    flex: 0 1 120px;
+  }
+
+  .mat-column-sourceWeights {
+    flex: 0 1 300px;
+  }
+
+  .mat-column-actions {
+    flex: 0 1 80px;
+  }
+
+  .mat-header-cell .mat-icon {
+    cursor: pointer;
+  }
+
+  .run-flow-button {
+    margin: 0 15px 0 7px;
+  }
+
+  .actions-menu-icon {
+    margin-left: 10px;
+  }
+
+  .quantity-indicator {
+    display: inline-block;
+    vertical-align: middle;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+
+    & + span {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .active-icon {
+    border-radius: 50%;
+  }
+}
+
+.fill-space {
+  flex: 1 1 auto;
+}
+
+.name-container {
+  position: relative;
+  width: 240px;
+}
+
+.logo {
+  padding-right: 30px;
+}
+
+.mat-column-actions .mat-icon {
+  cursor: pointer;
+}
+
+.capitalize {
+   text-transform: capitalize;
+}
+
+/deep/ .mat-dialog-title {
+  margin: -6px 0 20px !important;
+  font-size: 24px;
+}
+/deep/ .mat-dialog-actions {
+  padding: 12px 0 !important;
+  margin-bottom: -20px !important;
+  justify-content: flex-end;
+}
+
+/deep/ .mat-dialog-content {
+  background: #fff !important;
+  padding: 10px 24px 20px 24px !important;
+}
+
+/deep/ .mat-button {
+  outline: none !important;
+  color: white !important;
+  background-color: #2a4356 !important;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+}

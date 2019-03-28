@@ -3,7 +3,6 @@ import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {RouterModule} from '@angular/router';
-import {TruncateCharactersPipe} from './pipes/truncate';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {AppComponent} from './app.component';
 import {
@@ -144,7 +143,6 @@ import {ManageFlowsModule, EditFlowModule} from "./components/flows-new";
     InlineEditComponent,
     FacetsComponent,
     TitlecasePipe,
-    TruncateCharactersPipe,
     ObjectToArrayPipe,
     SelectKeyValuesComponent,
     MapComponent,
