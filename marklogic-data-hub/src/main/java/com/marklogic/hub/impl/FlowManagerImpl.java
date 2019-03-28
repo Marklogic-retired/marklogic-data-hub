@@ -159,6 +159,10 @@ public class FlowManagerImpl implements FlowManager {
 
     @Override
     public void saveFlow(Flow flow)  {
+        File flowsDir = hubConfig.getFlowsDir().toFile();
+        if (!flowsDir.exists()) {
+            flowsDir.mkdirs();
+        }
         try {
             String flowFileName = flow.getName() + FLOW_FILE_EXTENSION;
             File file = Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();

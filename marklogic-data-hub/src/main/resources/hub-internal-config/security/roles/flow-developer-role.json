@@ -31,6 +31,11 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "xdmp:xslt-eval",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-eval",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdmp:invoke",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
       "kind": "execute"
@@ -61,6 +66,16 @@
       "kind":"execute"
     },
     {
+      "privilege-name": "xdbc:insert",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:insert-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert-in",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdmp:document-load",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-document-load",
       "kind": "execute"
@@ -83,6 +98,11 @@
     {
       "privilege-name": "ps-user",
       "action": "http://marklogic.com/xdmp/privileges/ps-user",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "sem:sparql",
+      "action": "http://marklogic.com/xdmp/privileges/sem-sparql",
       "kind": "execute"
     }
   ]

@@ -1,9 +1,0 @@
-{
-  "person": {
-    "id": 1020,
-    "firstName": "otherName-3",
-    "lastName": "McGhie",
-    "email": "bmcghiex@example.com",
-    "gender": "Male"
-  }
-}

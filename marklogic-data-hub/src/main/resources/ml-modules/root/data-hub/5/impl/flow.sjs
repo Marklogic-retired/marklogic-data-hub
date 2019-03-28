@@ -157,25 +157,20 @@ class Flow {
     let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
     this.globalContext.batchId = batchDoc.batch.batchId;
 
-    if(stepRef.targetDb) {
-      this.globalContext.targetDb = stepRef.targetDb;
-    }
-    if(stepRef.sourceDb) {
-      this.globalContext.sourceDb = stepRef.sourceDb;
-    }
+    this.globalContext.targetDb = stepRef.targetDatabase || stepDetails.targetDatabase || this.globalContext.targetDb;
+    this.globalContext.sourceDb = stepRef.sourceDatabase || stepDetails.targetDatabase || this.globalContext.sourceDb;
+
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDetails.options, stepRef.options, options);
 
-    //let stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
       this.datahub = this.datahub.hubUtils.cloneInstance(this.datahub);
       delete this.datahub.flow;
     }
     let flowInstance = this;
-    let stepResult = null;
 
-    if (this.isContextDB(combinedOptions.sourceDb) && !combinedOptions.stepUpdate) {
+    if (this.isContextDB(this.globalContext.sourceDb) && !combinedOptions.stepUpdate) {
       this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
     } else {
       xdmp.invoke(
@@ -183,8 +178,8 @@ class Flow {
         {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
         {
           database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
-          update: combinedOptions.stepUpdate ? "true": "false",
-          isolation: combinedOptions.stepUpdate ? "different-transaction": "same-statement",
+          update: combinedOptions.stepUpdate ? 'true': 'false',
+          commit: 'auto',
           ignoreAmps: true
         }
       );
@@ -193,17 +188,17 @@ class Flow {
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
       if (!combinedOptions.noWrite) {
-        this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
+        this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', null, this.globalContext.targetDb);
       }
       for (let content of this.writeQueue) {
         let info = {
             derivedFrom: content.previousUri || content.uri,
             influencedBy: stepRef.name,
-            status: (flow.type === 'ingest') ? 'created' : 'updated',
+            status: (stepDetails.type === 'INGEST') ? 'created' : 'updated',
             metadata: {}
           }
         ;
-        this.datahub.prov.createStepRecord(jobId, flowName, stepRef.type, content.uri, info);
+        this.datahub.prov.createStepRecord(jobId, flowName, stepRef.type.toLowerCase(), content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
       this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
@@ -213,11 +208,11 @@ class Flow {
     }
     let resp = {
       "jobId": this.globalContext.jobId,
-      "totalCount": uris.length,
+      "totalCount": this.writeQueue.length,
       // TODO should error counts, completedItems, etc. be all or nothing?
-      "errorCount": this.globalContext.batchErrors.length ? uris.length: 0,
-      "completedItems": this.globalContext.batchErrors.length ? []: uris,
-      "failedItems": this.globalContext.batchErrors.length ? uris: [],
+      "errorCount": this.globalContext.batchErrors.length ? this.writeQueue.length: 0,
+      "completedItems": this.globalContext.batchErrors.length ? this.writeQueue.map((content) => content.uri): uris,
+      "failedItems": this.globalContext.batchErrors.length ? this.writeQueue.map((content) => content.uri): [],
       "errors": this.globalContext.batchErrors
     };
     if (combinedOptions.fullOutput) {
@@ -309,7 +304,9 @@ class Flow {
           result.context.collections = normalizeToArray(result.context.collections);
         }
         if (result.context.permissions) {
-          result.context.permissions = normalizeToArray(result.context.permissions);
+          // normalize permissions to array of JSON permissions
+          result.context.permissions = normalizeToArray(result.context.permissions)
+            .map((perm) => (perm instanceof Element) ? xdmp.permission(xdmp.roleName(fn.string(perm.xpath('*:role-id'))), fn.string(perm.xpath('*:capability')), "object") : perm);
         }
         self.addToWriteQueue(result, self.globalContext);
       }

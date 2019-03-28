@@ -59,7 +59,7 @@ function post(context, params, input) {
             }
           });
         }
-      }, flow.sourceDb || datahub.flow.globalContext.sourceDb);
+      }, flow.sourceDatabase || datahub.flow.globalContext.sourceDb);
     }
     return datahub.flow.runFlow(flowName, jobId, content, options, params.step);
   }
