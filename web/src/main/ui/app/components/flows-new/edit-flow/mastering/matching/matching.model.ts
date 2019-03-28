@@ -203,23 +203,21 @@ export class Matching {
         this.scoring['expand'].push(opt);
         break;
     }
-    console.log('matching.addOption', this);
   }
 
   /**
    * Add a match threshold.
    */
   addThreshold(mThr: MatchThreshold) {
-    let thr;
-    console.log('addThreshold', mThr);
-    thr = new Threshold({
+    let thr = new Threshold({
       label: mThr.label,
       above: mThr.above,
-      action: mThr.action
     });
     if (mThr.action !== 'merge' && mThr.action !== 'notify') {
       this.addAction(mThr.customFunction, mThr.customUri, mThr.customFunction, mThr.customNs)
       thr.action = mThr.customFunction;
+    } else {
+      thr.action = mThr.action;
     }
     this.thresholds['threshold'].push(thr);
   }
@@ -345,15 +343,11 @@ export class Threshold {
   public above: number;
   public label: string;
   public action: string;
-  public thresholdType: string;
+  public type: string;
   constructor(t) {
     if (t.above) this.above = t.above;
     if (t.label) this.label = t.label;
     if (t.action) this.action = t.action;
-    if (t.action && (t.action !== 'merge' && t.action !== 'notify')) {
-      this.thresholdType = 'custom';
-    } else {
-      this.thresholdType = t.action;
-    }
+    if (t.type) this.type = t.type;
   }
 }

@@ -161,7 +161,7 @@
 
 <mat-menu class="match-option-menu-dialog" #matchMenu="matMenu">
   <ng-template matMenuContent let-mOpt="mOpt" let-i="i">
-    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i, targetEntity.definition.properties)">Edit Settings {{index}}</div>
+    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i, targetEntity.definition.properties)">Edit Settings</div>
     <div class="match-option-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mOpt)">Delete</div>
   </ng-template>
 </mat-menu>

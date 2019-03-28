@@ -97,8 +97,8 @@
 </div>
 
 <mat-menu class="match-threshold-menu-dialog" #matchMenu="matMenu">
-  <ng-template matMenuContent let-mThr="mThr">
-    <div class="match-threshold-menu-edit-btn" mat-menu-item (click)="openMatchThresholdDialog(mThr)">Edit Settings</div>
+  <ng-template matMenuContent let-mThr="mThr" let-i="i">
+    <div class="match-threshold-menu-edit-btn" mat-menu-item (click)="openMatchThresholdDialog(mThr, i)">Edit Settings</div>
     <div class="match-threshold-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mThr)">Delete</div>
   </ng-template>
 </mat-menu>

@@ -28,11 +28,14 @@ export class AddMatchThresholdDialogComponent {
     this.form = this.fb.group({
       label: [this.data.option ? this.data.option.label : ''],
       above: [this.data.option ? this.data.option.above : ''],
-      action: [this.data.option ? this.data.option.action : 'merge'],
+      action: [this.data.option ? this.data.option.action : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
-      customNs: [this.data.option ? this.data.option.customNs : '']
+      customNs: [this.data.option ? this.data.option.customNs : ''],
+      index: this.data.index,
     })
+    this.selectedAction = (this.data.option && this.data.option.action) ?
+      this.data.option.action : 'merge';
   }
 
   onNoClick(): void {
