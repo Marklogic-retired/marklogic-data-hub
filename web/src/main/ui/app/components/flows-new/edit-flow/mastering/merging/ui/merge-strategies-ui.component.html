@@ -34,11 +34,11 @@
         <!-- Max Values Column -->
         <ng-container matColumnDef="maxValues">
           <mat-header-cell id="merge-strategy-max-values-sort-btn" *matHeaderCellDef mat-sort-header>Max Values</mat-header-cell>
-          <mat-cell class="merge-strategy-max-values" *matCellDef="let mStr">
+          <mat-cell class="merge-strategy-max-values" *matCellDef="let mStr; let i = index">
             <a *ngIf="mStr.editing !== 'maxValues'" (click)="valueClicked($event, mStr, 'maxValues')" class="max-values-value">
               {{mStr.maxValues}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'maxValues'" (keypress)="valueKeyPress($event, mStr, 'maxValues')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'maxValues'" (keypress)="valueKeyPress($event, mStr, i, 'maxValues')" class="editing-field">
               <input matInput [value]="mStr.maxValues" [(ngModel)]="mStr.maxValues" [focusElement]="valueFocus[mStr.propertyName]">
             </mat-form-field>
           </mat-cell>
@@ -47,11 +47,11 @@
         <!-- Max Sources Column -->
         <ng-container matColumnDef="maxSources">
           <mat-header-cell id="merge-strategy-max-sources-sort-btn" *matHeaderCellDef mat-sort-header>Max Sources</mat-header-cell>
-          <mat-cell class="merge-strategy-max-sources" *matCellDef="let mStr">
+          <mat-cell class="merge-strategy-max-sources" *matCellDef="let mStr; let i = index">
             <a *ngIf="mStr.editing !== 'maxSources'" (click)="valueClicked($event, mStr, 'maxSources')" class="max-sources-value">
               {{mStr.maxSources}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'maxSources'" (keypress)="valueKeyPress($event, mStr, 'maxSources')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'maxSources'" (keypress)="valueKeyPress($event, mStr, i, 'maxSources')" class="editing-field">
               <input matInput [value]="mStr.maxSources" [(ngModel)]="mStr.maxSources" [focusElement]="valueFocus[mStr.propertyName]">
             </mat-form-field>
           </mat-cell>
@@ -60,7 +60,7 @@
         <!-- Source Weights Column -->
         <ng-container matColumnDef="sourceWeights">
           <mat-header-cell id="merge-strategy-source-weights-sort-btn" *matHeaderCellDef mat-sort-header>Source Weights</mat-header-cell>
-          <mat-cell class="merge-strategy-source-weights" *matCellDef="let mStr">
+          <mat-cell class="merge-strategy-source-weights" *matCellDef="let mStr; let i = index">
 
             <div *ngIf="mStr.sourceWeights.length > 0" class="other-content">
               <div *ngFor="let sw of mStr.sourceWeights; let i = index;" class="other-item">
@@ -68,7 +68,7 @@
                 <a *ngIf="mStr.editing !== getIdSW(sw,i)" (click)="valueClicked($event, mStr, getIdSW(sw,i))" class="source-weights-value">
                   {{sw.source.weight}}
                 </a>
-                <mat-form-field floatLabel="never" *ngIf="mStr.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mStr, getIdSW(sw,i))" class="editing-field">
+                <mat-form-field floatLabel="never" *ngIf="mStr.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mStr, i, getIdSW(sw,i))" class="editing-field">
                   <input matInput [value]="mStr.sourceWeights[i].source.weight" [(ngModel)]="mStr.sourceWeights[i].source.weight" [focusElement]="valueFocus[mStr.propertyName]">
                 </mat-form-field>
               </div>
@@ -80,11 +80,11 @@
         <!-- Length Weight Column -->
         <ng-container matColumnDef="length">
           <mat-header-cell id="merge-strategy-length-sort-btn" *matHeaderCellDef mat-sort-header>Length Weight</mat-header-cell>
-          <mat-cell class="merge-strategy-length" *matCellDef="let mStr">
+          <mat-cell class="merge-strategy-length" *matCellDef="let mStr; let i = index">
             <a *ngIf="mStr.editing !== 'length'" (click)="valueClicked($event, mStr, 'length')" class="length-value">
               {{(mStr.length) ? mStr.length.weight : ''}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'length'" (keypress)="valueKeyPress($event, mStr, 'length')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mStr.editing === 'length'" (keypress)="valueKeyPress($event, mStr, i, 'length')" class="editing-field">
               <input matInput [value]="mStr.length.weight" [(ngModel)]="mStr.length.weight" [focusElement]="valueFocus[mStr.propertyName]">
             </mat-form-field>
           </mat-cell>

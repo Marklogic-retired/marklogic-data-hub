@@ -60,7 +60,9 @@ export class MergeStrategiesUiComponent {
   openConfirmDialog(str): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
-      data: {title: 'Delete Merge Strategy', confirmationMessage: `Delete the strategy?`}
+      data: {
+        title: 'Delete Merge Strategy',
+        confirmationMessage: `Delete the strategy? Warning: Any merge options defined with this strategy will also be deleted.`}
     });
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
@@ -82,10 +84,11 @@ export class MergeStrategiesUiComponent {
     this.valueFocus[mStr.propertyName] = true;
   }
 
-  valueKeyPress(event, mOpt, type): void {
+  valueKeyPress(event, mOpt, index, type): void {
     if (event.key === 'Enter') {
       mOpt.editing = '';
       this.valueFocus[mOpt.propertyName] = false;
+      this.updateStrategy.emit({str: mOpt, index: index});
     }
   }
 
