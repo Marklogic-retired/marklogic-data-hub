@@ -21,24 +21,24 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
+import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FlowManagerService {
@@ -55,24 +55,50 @@ public class FlowManagerService {
     @Autowired
     private StepManagerService stepManagerService;
 
-    public List<Flow> getFlows() {
-        return flowManager.getFlows();
+    public List<FlowStepModel> getFlows() {
+        List<Flow> flows = flowManager.getFlows();
+        List<FlowStepModel> flowSteps = new ArrayList<>();
+        for (Flow flow : flows) {
+            FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+            flowSteps.add(fsm);
+        }
+        return flowSteps;
     }
 
-    public Flow createFlow(String flowJson, boolean checkExists) {
-        Flow flow = flowManager.createFlowFromJSON(flowJson);
-        if (flow != null && StringUtils.isEmpty(flow.getName())) {
-            return null;
+    public FlowStepModel createFlow(String flowJson, boolean checkExists)  {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(flowJson);
+        } catch (IOException e) {
+            throw new DataHubException("Unable to parse flow json string : "+ e.getMessage());
         }
-        if (checkExists && flowManager.isFlowExisted(flow.getName())) {
-            throw new DataHubException(flow.getName() + " is existed.");
+        String flowName = jsonObject.getString("name");
+        Flow flow = null;
+        if (checkExists) {
+            if (flowManager.isFlowExisted(flowName)) {
+                throw new DataHubException(flowName + " is existed.");
+            }
+            flow = new FlowImpl();
+            flow.setName(flowName);
+        } else if (!checkExists) { //for PUT updating
+            flow = flowManager.getFlow(flowName);
+            if (flow == null) {
+                throw new DataHubException("Flow request payload is invalid.");
+            }
         }
+
+        FlowStepModel.createFlowSteps(flow, jsonObject);
+
         flowManager.saveFlow(flow);
-        return flow;
+
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        return fsm;
     }
 
-    public Flow getFlow(String flowName) {
-        return flowManager.getFlow(flowName);
+    public FlowStepModel getFlow(String flowName) {
+        Flow flow = flowManager.getFlow(flowName);
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        return fsm;
     }
 
     public List<String> getFlowNames() {
