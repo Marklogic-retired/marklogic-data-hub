@@ -116,12 +116,15 @@ export class MergingComponent implements OnInit {
   onUpdateStrategy(event): void {
     this.mergeStrategies.updateStrategy(event.str, event.index);
     this.mergeStrategiesUi.renderRows();
+    this.mergeOptions.updateOptionsByStrategy(event.str);
     this.onSaveStep();
   }
 
   onDeleteStrategy(event): void {
     this.mergeStrategies.deleteStrategy(event);
     this.mergeStrategiesUi.renderRows();
+    this.mergeOptions.deleteOptionsByStrategy(event);
+    this.mergeOptionsUi.renderRows();
     this.onSaveStep();
   }
 
