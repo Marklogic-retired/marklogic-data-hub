@@ -36,20 +36,6 @@ public interface Flow {
     void setName(String flowName);
 
     /**
-     * Returns flow id
-     *
-     * @return
-     */
-    String getId();
-
-    /**
-     * Sets flow Id
-     *
-     * @param id
-     */
-    void setId(String id);
-
-    /**
      * Returns flow description
      *
      * @return
@@ -196,6 +182,18 @@ public interface Flow {
      * @return
      */
     boolean isStopOnError();
+
+    /**
+     * Gets version
+     * @return
+     */
+    int getVersion();
+
+    /**
+     * Sets version
+     * @param version
+     */
+    void setVersion(int version);
 
     /**
      * Deserialize a json response and applies it to this flow

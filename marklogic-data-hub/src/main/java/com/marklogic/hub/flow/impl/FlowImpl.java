@@ -31,15 +31,14 @@ public class FlowImpl implements Flow {
     public final static boolean DEFAULT_STOP_ONERROR = false;
 
     private String name;
-    private String id;
     private String description;
     private int batchSize;
     private int threadCount;
     private boolean stopOnError;
     private JsonNode options;
+    private int version;
 
     private Map<String, Step> steps = new LinkedHashMap<>();
-
 
     @JsonIgnore
     private Integer overrideBatchSize;
@@ -99,16 +98,6 @@ public class FlowImpl implements Flow {
 
     public void setName(String flowName) {
         this.name = flowName;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getDescription() {
@@ -173,11 +162,20 @@ public class FlowImpl implements Flow {
     }
 
     @Override
+    public int getVersion() {
+        return this.version;
+    }
+
+    @Override
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @Override
     public Flow deserialize(JsonNode json) {
         JSONObject jsonObject = new JSONObject(json);
         setName(jsonObject.getString("name"));
         setDescription(jsonObject.getString("description"));
-        setId(jsonObject.getString("id", getName()));
         setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
         setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
         setOptions(jsonObject.getNode("options"));

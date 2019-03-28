@@ -18,9 +18,7 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.step.Step;
-
 import java.util.List;
 import java.util.Map;
 
@@ -115,9 +113,25 @@ public interface FlowManager {
      */
     boolean isFlowExisted(String flowName);
 
-    Map<String, Step> getSteps(String flowName);
+    /**
+     *
+     * @param flow
+     * @return
+     */
+    Map<String, Step> getSteps(Flow flow);
 
-    Flow setSteps(String flowName, Map<String, Step> stepMap);
+    /**
+     *
+     * @param flow
+     * @param stepMap
+     */
+    void setSteps(Flow flow, Map<String, Step> stepMap);
 
-    Step getStep(String flowName, String stepNum);
+    /**
+     *
+     * @param flow
+     * @param stepNum
+     * @return
+     */
+    Step getStep(Flow flow, String stepNum);
 }
