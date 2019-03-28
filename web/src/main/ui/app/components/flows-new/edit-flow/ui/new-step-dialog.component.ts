@@ -19,6 +19,7 @@ export interface DialogData {
   styleUrls: ['./new-step-dialog.component.scss'],
 })
 export class NewStepDialogComponent implements OnInit {
+
   public newStep: Step = new Step;
   readonly stepOptions = ['ingestion', 'mapping', 'mastering', 'custom'];
   public databases = Object.values(this.data.databases).slice(0, -1);

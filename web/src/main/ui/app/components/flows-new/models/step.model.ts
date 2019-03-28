@@ -8,7 +8,7 @@ export class Step {
   public description: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
-  public config: Object = {
+  public config: any = {
     matchOptions: new Matching,
     mergeOptions: new Merging,
     targetEntity: ''
