@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StepImpl implements Step {
-    public final static int DEFAULT_BATCH_SIZE = 100;
-    public final static int DEFAULT_THREAD_COUNT = 4;
     private String language = "zxx";
     private String name;
     private String description;
@@ -194,8 +192,8 @@ public class StepImpl implements Step {
         setModulePath(jsonObject.getString("modulePath"));
         setIdentifier(jsonObject.getString("identifier"));
         setRetryLimit(jsonObject.getInt("retryLimit"));
-        setBatchSize(jsonObject.getInt("batchSize", DEFAULT_BATCH_SIZE));
-        setThreadCount(jsonObject.getInt("threadCount", DEFAULT_THREAD_COUNT));
+        setBatchSize(jsonObject.getInt("batchSize"));
+        setThreadCount(jsonObject.getInt("threadCount"));
         setSourceDatabase(jsonObject.getString("sourceDatabase"));
         setDestinationDatabase(jsonObject.getString("destinationDatabase"));
     }
