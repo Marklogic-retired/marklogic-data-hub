@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { EditFlowUiComponent } from './edit-flow-ui.component';
 import { Step } from '../../models/step.model';
+import { Config } from '../../models/step-config.model';
 import { Matching } from '../mastering/matching/matching.model';
+import { Merging } from '../mastering/merging/merging.model';
 
 export interface DialogData {
   title: string;
@@ -32,13 +34,20 @@ export class NewStepDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   ngOnInit() {
+    this.newStep.config = new Config;
+    this.newStep.config.matchOptions = new Matching;
+    this.newStep.config.mergeOptions = new Merging;
+
+    if (this.data.step) {
+      this.newStep = this.data.step;
+    }
     this.newStepForm = this.formBuilder.group({
       name: [this.data.step ? this.data.step.name : '', Validators.required],
       type: [this.data.step ? this.data.step.type : '', Validators.required],
       description: [this.data.step ? this.data.step.description : ''],
-      sourceQuery: [this.data.step ? this.data.step.sourceQuery : ''],
-      sourceCollection: [this.data.step ? this.data.step.sourceCollection : ''],
-      targetEntity: [this.data.step ? this.data.step.targetEntity : ''],
+      sourceQuery: [this.data.step ? this.data.step.config.sourceQuery : ''],
+      sourceCollection: [this.data.step ? this.data.step.config.sourceCollection : ''],
+      targetEntity: [this.data.step ? this.data.step.config.targetEntity : ''],
       sourceDatabase: [this.data.step ? this.data.step.sourceDatabase : ''],
       targetDatabase: [this.data.step ? this.data.step.targetDatabase : '']
     });
@@ -77,9 +86,9 @@ export class NewStepDialogComponent implements OnInit {
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.type = this.newStepForm.value.type;
     this.newStep.description = this.newStepForm.value.description;
-    this.newStep.sourceQuery = this.newStepForm.value.sourceQuery;
-    this.newStep.sourceCollection = this.newStepForm.value.sourceCollection;
-    this.newStep.targetEntity = this.newStepForm.value.targetEntity;
+    this.newStep.config.sourceQuery = this.newStepForm.value.sourceQuery;
+    this.newStep.config.sourceCollection = this.newStepForm.value.sourceCollection;
+    this.newStep.config.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.targetDatabase = this.newStepForm.value.targetDatabase;
 

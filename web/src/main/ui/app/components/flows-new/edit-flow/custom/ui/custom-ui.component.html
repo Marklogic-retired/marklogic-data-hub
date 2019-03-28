@@ -1,13 +1,13 @@
-<button id="save-custom" mat-raised-button color="primary" [disabled]="!uriChanged()" (click)="uriChanged() && onSave()">Save</button>
+<!-- <button id="save-custom" mat-raised-button color="primary" [disabled]="!uriChanged()" (click)="uriChanged() && onSave()">Save</button> -->
 <div class="custom-container">
   <div>
     <span class="h2">Modules Database:</span>
-    <span class="h4">{{module}}</span> 
+    <span id="custom-module" class="h4">{{module}}</span> 
   </div>
   <mat-form-field appearance="outline">
     <mat-label>Custom Module URI</mat-label>
-    <input matInput 
-      [(ngModel)]="step.customModuleUri"
+    <input matInput id="custom-module-uri"
+      [(ngModel)]="step.config.customModuleUri"
     />
   </mat-form-field>
 </div>
