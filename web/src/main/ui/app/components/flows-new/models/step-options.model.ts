@@ -1,7 +1,7 @@
 import { Matching } from '../edit-flow/mastering/matching/matching.model';
 import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
-export class Config {
+export class Options {
   public input_file_path: string;
   public input_file_type: string;
   public output_collections: string = '';

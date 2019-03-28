@@ -39,7 +39,7 @@ export class EditFlowComponent implements OnInit {
   };
   collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
-
+  running: any;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -112,11 +112,11 @@ export class EditFlowComponent implements OnInit {
   runFlow(flowId): void {
     this.manageFlowsService.runFlow(flowId).subscribe(resp => {
       // TODO add response check
-      const running = timer(0, 750)
+      this.running = timer(0, 750)
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           this.flow = Flow.fromJSON(poll);
           if (this.flow.latestJob.stepRunningPerect === null) {
-            running.unsubscribe();
+            this.running.unsubscribe();
           }
         })
       );
@@ -126,6 +126,7 @@ export class EditFlowComponent implements OnInit {
     this.manageFlowsService.stopFlow(flowid).subscribe(resp => {
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
+      this.running.unsubscribe();
     });
   }
   createStep(stepObject) {

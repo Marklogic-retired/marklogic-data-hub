@@ -17,7 +17,7 @@ import * as _ from "lodash";
   <app-merge-options-ui
     [mergeOptions]="mergeOptions"
     [targetEntity]="targetEntity"
-    [targetEntityName]="this.step.config.targetEntity"
+    [targetEntityName]="this.step.options.targetEntity"
     [mergeStrategies]="mergeStrategies"
     (createOption)="this.onCreateOption($event)"
     (updateOption)="this.onUpdateOption($event)"
@@ -61,7 +61,7 @@ export class MergingComponent implements OnInit {
 
     this.stepId = this.activatedRoute.snapshot.paramMap.get('stepId');
 
-    this.merging = Merging.fromConfig(this.step.config.mergeOptions);
+    this.merging = Merging.fromConfig(this.step.options.mergeOptions);
     console.log('this.merging', this.merging);
 
     // Parse merging data and instantiate models for UI
@@ -72,7 +72,7 @@ export class MergingComponent implements OnInit {
     this.mergeCollections = MergeCollections.fromMerging(this.merging);
     console.log('this.mergeCollections', this.mergeCollections);
 
-    this.getEntity(this.step.config.targetEntity);
+    this.getEntity(this.step.options.targetEntity);
 
   }
 
@@ -145,7 +145,7 @@ export class MergingComponent implements OnInit {
 
   onSaveStep(): void {
     this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections);
-    this.step.config.mergeOptions = this.merging;
+    this.step.options.mergeOptions = this.merging;
     this.saveStep.emit(this.step);
   }
 

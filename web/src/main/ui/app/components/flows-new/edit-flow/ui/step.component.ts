@@ -13,6 +13,7 @@ export class StepComponent {
   @Input() step: any;
   @Input() databases: any;
   @Input() collections: any;
+  @Input() entities: any;
   @Output() updateStep = new EventEmitter();
 
   showBody = true;
@@ -29,6 +30,7 @@ export class StepComponent {
         title: 'Edit Step',
         databases: this.databases,
         collections: this.collections,
+        entities: this.entities,
         step: this.step
       }
     });
