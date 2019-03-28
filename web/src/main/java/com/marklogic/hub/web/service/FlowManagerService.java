@@ -237,11 +237,13 @@ public class FlowManagerService {
     }
 
     public Flow stop(String flowName) {
-        if (flowRunner.getRunningFlow().equals(flowName)) {
-            flowRunner.stopJob(flowRunner.getRunningJobId());
-        }
-        else{
+        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
+        Iterator<String> itr = jobIds.iterator();
+        if(!itr.hasNext()){
             throw new BadRequestException("Flow not running.");
+        }
+        while(itr.hasNext()){
+            flowRunner.stopJob(itr.next());
         }
         return this.getFlow(flowName);
     }
@@ -344,7 +346,7 @@ public class FlowManagerService {
             String[] key = new String[1];
 
             flowManager.getSteps(flowName).forEach((k, v) -> {
-                if (name.equals(v.getName()) && type.equals(v.getType().toString())) {
+                if (name.equals(v.getName()) && type.toLowerCase().equals(v.getType().toString().toLowerCase())) {
                     key[0] = k;
                 }
             });
