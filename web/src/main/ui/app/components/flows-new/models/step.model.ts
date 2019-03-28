@@ -1,4 +1,4 @@
-import { Config } from './step-config.model';
+import { Options } from './step-options.model';
 
 export class Step {
   public id: string;
@@ -11,5 +11,5 @@ export class Step {
   public isValid: boolean = false;
   public version: string;
 
-  public config: Config;
+  public options: Options;
 }
