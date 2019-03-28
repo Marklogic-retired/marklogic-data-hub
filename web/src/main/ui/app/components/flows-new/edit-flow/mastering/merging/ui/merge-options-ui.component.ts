@@ -33,7 +33,6 @@ export class MergeOptionsUiComponent {
   ) {}
 
   ngOnInit() {
-    console.log('ngOnInit this.mergeOptions', this.mergeOptions);
     this.dataSource = new MatTableDataSource<MergeOption>(this.mergeOptions.options);
   }
 
@@ -43,8 +42,6 @@ export class MergeOptionsUiComponent {
   }
 
   openMergeOptionDialog(optionToEdit: MergeOption, index: number, entityProps: any, strategies: any): void {
-    // Don't allow editing of strategies from Merge Options table
-    // if (optionToEdit && optionToEdit.strategy) return;
     const dialogRef = this.dialog.open(AddMergeOptionDialogComponent, {
       width: '500px',
       data: {option: optionToEdit, index: index, entityProps: entityProps, strategies: this.mergeStrategies}

@@ -75,10 +75,13 @@
         <ng-container matColumnDef="maxValues">
           <mat-header-cell id="merge-option-max-values-sort-btn" *matHeaderCellDef mat-sort-header>Max Values</mat-header-cell>
           <mat-cell class="merge-option-max-values" *matCellDef="let mOpt">
-            <a *ngIf="mOpt.editing !== 'maxValues'" (click)="valueClicked($event, mOpt, 'maxValues')" class="max-values-value">
+            <span *ngIf="mOpt.mergeType === 'strategy'">
+              {{mOpt.maxValues}}
+            </span>
+            <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== 'maxValues'" (click)="valueClicked($event, mOpt, 'maxValues')" class="max-values-value">
               {{mOpt.maxValues}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'maxValues'" (keypress)="valueKeyPress($event, mOpt, 'maxValues')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === 'maxValues'" (keypress)="valueKeyPress($event, mOpt, 'maxValues')" class="editing-field">
               <input matInput [value]="mOpt.maxValues" [(ngModel)]="mOpt.maxValues" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>
@@ -88,10 +91,13 @@
         <ng-container matColumnDef="maxSources">
           <mat-header-cell id="merge-option-max-sources-sort-btn" *matHeaderCellDef mat-sort-header>Max Sources</mat-header-cell>
           <mat-cell class="merge-option-max-sources" *matCellDef="let mOpt">
-            <a *ngIf="mOpt.editing !== 'maxSources'" (click)="valueClicked($event, mOpt, 'maxSources')" class="max-sources-value">
+            <span *ngIf="mOpt.mergeType === 'strategy'">
+              {{mOpt.maxSources}}
+            </span>
+            <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== 'maxSources'" (click)="valueClicked($event, mOpt, 'maxSources')" class="max-sources-value">
               {{mOpt.maxSources}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'maxSources'" (keypress)="valueKeyPress($event, mOpt, 'maxSources')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === 'maxSources'" (keypress)="valueKeyPress($event, mOpt, 'maxSources')" class="editing-field">
               <input matInput [value]="mOpt.maxSources" [(ngModel)]="mOpt.maxSources" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>
@@ -105,10 +111,13 @@
             <div *ngIf="mOpt.sourceWeights.length > 0" class="other-content">
               <div *ngFor="let sw of mOpt.sourceWeights; let i = index;" class="other-item">
                 {{sw.source.name}}:
-                <a *ngIf="mOpt.editing !== getIdSW(sw,i)" (click)="valueClicked($event, mOpt, getIdSW(sw,i))" class="source-weights-value">
+                <span *ngIf="mOpt.mergeType === 'strategy'">
+                  {{sw.source.weight}}
+                </span>
+                <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== getIdSW(sw,i)" (click)="valueClicked($event, mOpt, getIdSW(sw,i))" class="source-weights-value">
                   {{sw.source.weight}}
                 </a>
-                <mat-form-field floatLabel="never" *ngIf="mOpt.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mOpt, getIdSW(sw,i))" class="editing-field">
+                <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mOpt, getIdSW(sw,i))" class="editing-field">
                   <input matInput [value]="mOpt.sourceWeights[i].source.weight" [(ngModel)]="mOpt.sourceWeights[i].source.weight" [focusElement]="valueFocus[mOpt.propertyName]">
                 </mat-form-field>
               </div>
@@ -121,10 +130,13 @@
         <ng-container matColumnDef="length">
           <mat-header-cell id="merge-option-length-sort-btn" *matHeaderCellDef mat-sort-header>Length Weight</mat-header-cell>
           <mat-cell class="merge-option-length" *matCellDef="let mOpt">
-            <a *ngIf="mOpt.editing !== 'length'" (click)="valueClicked($event, mOpt, 'length')" class="length-value">
+            <span *ngIf="mOpt.mergeType === 'strategy'">
+              {{(mOpt.length) ? mOpt.length.weight : ''}}
+            </span>
+            <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== 'length'" (click)="valueClicked($event, mOpt, 'length')" class="length-value">
               {{(mOpt.length) ? mOpt.length.weight : ''}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'length'" (keypress)="valueKeyPress($event, mOpt, 'length')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === 'length'" (keypress)="valueKeyPress($event, mOpt, 'length')" class="editing-field">
               <input matInput [value]="mOpt.length.weight" [(ngModel)]="mOpt.length.weight" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>
