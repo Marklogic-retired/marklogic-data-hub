@@ -16,18 +16,17 @@
 package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
+import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -35,16 +34,17 @@ public class FlowController {
     @Autowired
     private FlowManagerService flowManagerService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Flow> getFlows() {
-        return flowManagerService.getFlows();
+    public ResponseEntity<?> getFlows() {
+        List<FlowStepModel> flowSteps = flowManagerService.getFlows();
+        return new ResponseEntity<List<FlowStepModel>>(flowSteps, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> createFlow(@RequestBody String flowJson) {
-        Flow flow = null;
+        FlowStepModel flow = null;
         try {
             flow = flowManagerService.createFlow(flowJson, true);
             if (flow == null) {
@@ -53,28 +53,25 @@ public class FlowController {
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
-        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateFlow(@RequestBody String flowJson) {
-        Flow flow = null;
+    public ResponseEntity<?> updateFlow(@PathVariable String flowName, @RequestBody String flowJson) {
+        FlowStepModel flow = null;
         try {
             flow = flowManagerService.createFlow(flowJson, false);
-            if (flow == null) {
-                throw new DataHubException("Flow request payload is invalid.");
-            }
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
-        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getFlow(@PathVariable String flowName) {
-        Flow flow = null;
+        FlowStepModel flow = null;
         try {
             flow = flowManagerService.getFlow(flowName);
             if (flow == null) {
@@ -83,7 +80,7 @@ public class FlowController {
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
-        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/names/", method = RequestMethod.GET)
