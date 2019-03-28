@@ -57,6 +57,7 @@ public class MasterTest extends HubTestBase {
     @AfterEach
     public void clearProjectData() {
         this.deleteProjectDir();
+        clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
     private void installProject() throws IOException, URISyntaxException {
             String[] directoriesToCopy = new String[]{"flows", "steps", "plugins"};
@@ -83,7 +84,7 @@ public class MasterTest extends HubTestBase {
     }
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
+        String timestampFile = getHubFlowRunnerConfig().getHubProject().getUserModulesDeployTimestampFile();
         return new HubModuleManager(timestampFile);
     }
 
@@ -97,7 +98,7 @@ public class MasterTest extends HubTestBase {
         getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getFlowDeveloperConfig(), true);
 
         // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
         Thread.sleep(1000);
@@ -114,9 +115,6 @@ public class MasterTest extends HubTestBase {
                     "\"output_collections\":\"\\\"mdm-content,default-ingest\\\"\"," +
                     "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"" +
-                    "\"transform_module\":\"\\\"/data-hub/5/transforms/mlcp-flow-transform.sjs\\\"\"," +
-                    "\"transform_function\":\"transform\"," +
-                    "\"transform_param\":\"options={},flow-name=myNewFlow,step=1\"" +
                     "}";
             mlcpOptions = new ObjectMapper().readTree(optionsJson);
         } catch (IOException e) {
@@ -131,15 +129,13 @@ public class MasterTest extends HubTestBase {
             .withDataFormat(DataFormat.JSON)
             .build();
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
-        mlcpRunner.setDatabase(flowRunnerClient.getDatabase());
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getFlowDeveloperConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
         mlcpRunner.start();
         try {
             mlcpRunner.join();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        logger.error(mlcpRunner.getProcessOutput());
         Flow flow = flowManager.getFlow("myNewFlow");
         if (flow == null) {
             throw new Exception("myNewFlow Not Found");
@@ -148,14 +144,13 @@ public class MasterTest extends HubTestBase {
             .withFlow(flow)
             // Jumping straight to step 3 - mastering
             .withStep(3)
-            .withBatchSize(75)
+            .withBatchSize(300)
             .withThreadCount(4)
             .withSourceClient(flowRunnerClient)
-            .withDestinationDatabase(flowRunnerClient.getDatabase())
-            .withJobId("test-mastering");
+            .withDestinationDatabase(flowRunnerClient.getDatabase());
         Job job = flowRunner.run();
         flowRunner.awaitCompletion();
-        assertEquals(getStagingDocCount("mdm-notification"), 40);
-        assertEquals(getStagingDocCount("mdm-merged"), 66);
+        assertEquals(40, getStagingDocCount("mdm-notification"));
+        assertEquals(10,getStagingDocCount("mdm-merged"));
     }
 }

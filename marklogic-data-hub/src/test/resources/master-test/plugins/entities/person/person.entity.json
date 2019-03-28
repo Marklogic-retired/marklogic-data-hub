@@ -6,46 +6,14 @@
     "description": "An person entity"
   },
   "definitions": {
-    "addressType": {
-      "description" : "Fields for storing a street address.  Includes geo-coordinates",
-      "pii": [
-        "street"
-      ],
-      "properties": {
-        "id": {
-          "datatype": "string"
-        },
-        "firstName": {
-          "datatype": "string"
-        },
-        "lastName": {
-          "datatype": "string"
-        },
-        "email": {
-          "datatype": "string"
-        },
-        "gender": {
-          "datatype": "string"
-        }
-      }
-    },
     "person": {
       "description": "The person entity root.",
       "required": [],
       "rangeIndex": [
-        "id",
-        "dateOfBirth"
+        "id"
       ],
       "elementRangeIndex": [],
       "wordLexicon": [],
-      "pii": [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "gender",
-        "dateOfBirth"
-      ],
       "properties": {
         "id": {
           "datatype": "string"
@@ -59,17 +27,8 @@
         "gender": {
           "datatype": "string"
         },
-        "dateOfBirth": {
-          "datatype": "date"
-        },
         "email": {
           "datatype": "string"
-        },
-        "phoneNumber": {
-          "datatype": "string"
-        },
-        "address": {
-          "$ref": "#/definitions/addressType"
         }
       },
       "primaryKey": "id"

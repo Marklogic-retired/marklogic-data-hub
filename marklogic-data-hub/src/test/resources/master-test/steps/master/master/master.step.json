@@ -1,10 +1,10 @@
 {
   "name" : "master",
   "type" : "MASTER",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-STAGING",
   "version" : 1,
   "options" : {
-    "sourceDb": "data-hub-STAGING",
-    "targetDb": "data-hub-STAGING",
     "acceptsBatch": true,
     "stepUpdate": true,
     "collections" : [ "master" ],

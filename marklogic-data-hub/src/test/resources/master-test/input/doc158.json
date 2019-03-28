@@ -1,9 +1,0 @@
-{
-  "person": {
-    "id": 10,
-    "firstName": "otherName-1",
-    "lastName": "Snow",
-    "email": "asnow0@geocities.com",
-    "gender": "Female"
-  }
-}
