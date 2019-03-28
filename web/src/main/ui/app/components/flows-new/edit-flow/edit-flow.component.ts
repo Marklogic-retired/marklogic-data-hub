@@ -115,7 +115,7 @@ export class EditFlowComponent implements OnInit {
       const running = timer(0, 750)
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           this.flow = Flow.fromJSON(poll);
-          if (!this.flow.isRunning) {
+          if (this.flow.latestJob.stepRunningPerect === null) {
             running.unsubscribe();
           }
         })
@@ -130,8 +130,11 @@ export class EditFlowComponent implements OnInit {
   }
   createStep(stepObject) {
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
-      this.flow = Flow.fromJSON(resp);
-      this.getSteps();
+      this.stepsArray.splice(stepObject.index, 0, resp);
+      console.log('stepsArray', this.stepsArray);
+      this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
+        this.flow = Flow.fromJSON(resp);
+      });
     });
   }
   updateStep(step) {
@@ -145,8 +148,9 @@ export class EditFlowComponent implements OnInit {
   }
   deleteStep(stepId) {
     this.manageFlowsService.deleteStep(this.flow.id, stepId).subscribe(resp => {
-      this.flow = Flow.fromJSON(resp);
-      this.getSteps();
+      console.log('delete response', resp);
+      // TODO update based off of response
+      this.getFlow();
     });
   }
 }

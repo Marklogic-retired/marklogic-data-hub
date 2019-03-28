@@ -25,7 +25,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   stepAdded = false;
 
   ngOnChanges(changes: SimpleChanges) {
-    if ( changes.hasOwnProperty('stepsArray') && !changes.stepsArray.firstChange && changes.stepsArray.currentValue.length > changes.stepsArray.previousValue.length ) {
+    if ( changes.hasOwnProperty('flow') && !changes.flow.firstChange && changes.flow.currentValue.steps.length > changes.flow.previousValue.steps.length ) {
       this.stepAdded = true;
     }
   }
