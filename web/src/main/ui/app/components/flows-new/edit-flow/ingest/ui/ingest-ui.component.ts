@@ -81,7 +81,7 @@ const settings = {
   templateUrl: './ingest-ui.component.html',
   styleUrls: ['./ingest-ui.component.scss']
 })
-export class IngestUiComponent {
+export class IngestUiComponent implements OnInit {
 
   @Input() step: any;
   @Output() saveStep = new EventEmitter();
@@ -90,13 +90,18 @@ export class IngestUiComponent {
   }
 
   config = settings;
-  folder = settings.inputFilePath.value;
+  folder: string;
+
+  ngOnInit(): void {
+    this.folder = this.step.config.inputFilePath;
+  }
 
   changeFolder(folder){
     this.folder = folder.relativePath;
   }
 
   getStep(flow): Step {
+    this.step.config.inputFilePath = this.folder;
     this.step.config.transformParams = `entity-name=${this.step.targetEntity},flow-name=${flow.name}`;
     this.step.config.outputCollections = `${this.step.targetEntity}`;
     return this.step;
