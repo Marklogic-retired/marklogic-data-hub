@@ -21,11 +21,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
-import com.marklogic.hub.web.model.entity_services.JsonPojo;
 
 import java.util.Iterator;
 
-public class StepModel extends JsonPojo {
+public class StepModel {
 
     protected String id;
     protected Step.StepType type;
