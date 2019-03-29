@@ -25,9 +25,11 @@ import * as _ from "lodash";
   ></app-merge-options-ui>
   <app-merge-strategies-ui
     [mergeStrategies]="mergeStrategies"
+    [timestamp]="mergeTimestamp"
     (createStrategy)="this.onCreateStrategy($event)"
     (updateStrategy)="this.onUpdateStrategy($event)"
     (deleteStrategy)="this.onDeleteStrategy($event)"
+    (saveTimestamp)="this.onSaveTimestamp($event)"
   ></app-merge-strategies-ui>
   <app-merge-collections-ui
     [mergeCollections]="mergeCollections"
@@ -51,6 +53,7 @@ export class MergingComponent implements OnInit {
   public mergeStrategies: MergeStrategies;
   public mergeCollections: MergeCollections;
   public targetEntity: any;
+  public mergeTimestamp: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -67,8 +70,11 @@ export class MergingComponent implements OnInit {
     // Parse merging data and instantiate models for UI
     this.mergeOptions = MergeOptions.fromMerging(this.merging);
     console.log('this.mergeOptions', this.mergeOptions);
+
     this.mergeStrategies = MergeStrategies.fromMerging(this.merging);
     console.log('this.mergeStrategies', this.mergeStrategies);
+    this.mergeTimestamp = this.merging.getTimestamp();
+
     this.mergeCollections = MergeCollections.fromMerging(this.merging);
     console.log('this.mergeCollections', this.mergeCollections);
 
@@ -146,8 +152,13 @@ export class MergingComponent implements OnInit {
     this.onSaveStep();
   }
 
+  onSaveTimestamp(event): void {
+    this.mergeTimestamp = event;
+    this.onSaveStep();
+  }
+
   onSaveStep(): void {
-    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections);
+    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections, this.mergeTimestamp);
     this.step.config.mergeOptions = this.merging;
     this.saveStep.emit(this.step);
   }

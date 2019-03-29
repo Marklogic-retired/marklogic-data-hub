@@ -3,6 +3,7 @@ import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@
 import { MergeStrategy } from "../merge-strategies.model";
 import { AddMergeStrategyDialogComponent } from './add-merge-strategy-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-merge-strategies-ui',
@@ -15,15 +16,19 @@ export class MergeStrategiesUiComponent {
   @ViewChild(MatSort) sort: MatSort;
 
   @Input() mergeStrategies: any;
+  @Input() timestamp: string;
 
   @Output() createStrategy = new EventEmitter();
   @Output() updateStrategy = new EventEmitter();
   @Output() deleteStrategy = new EventEmitter();
+  @Output() saveTimestamp = new EventEmitter();
 
   public displayedColumns = ['strategyName', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
   public dataSource: MatTableDataSource<MergeStrategy>;
 
   public valueFocus: object = {};
+
+  public timestampOrig: string;
 
   constructor(
     public dialog: MatDialog
@@ -32,6 +37,7 @@ export class MergeStrategiesUiComponent {
   ngOnInit() {
     console.log('ngOnInit this.mergeStrategies', this.mergeStrategies);
     this.dataSource = new MatTableDataSource<MergeStrategy>(this.mergeStrategies.strategies);
+    this.timestampOrig = this.timestamp;
   }
 
   ngAfterViewInit() {
@@ -99,6 +105,14 @@ export class MergeStrategiesUiComponent {
   // Close value input on outside click
   @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
     this.mergeStrategies.strategies.forEach(m => { m.editing = ''; })
+  }
+
+  onSaveTimestamp() {
+    this.saveTimestamp.emit(this.timestamp);
+    this.timestampOrig = this.timestamp;
+  }
+  timestampChanged() {
+    return !_.isEqual(this.timestamp, this.timestampOrig);
   }
 
 }

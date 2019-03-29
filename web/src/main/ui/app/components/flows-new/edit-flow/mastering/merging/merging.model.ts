@@ -13,7 +13,7 @@ export class Merging {
     namespaces: {}
   };
   public algorithms: Object = {
-    stdAlgorithm: {},
+    stdAlgorithm: { timestamp: {} },
     custom: [],
     collections: {}
   };
@@ -69,7 +69,7 @@ export class Merging {
   /**
    * Construct based on a UI configuration.
    */
-  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
+  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections, mergeTimestamp: string) {
     const result = new Merging();
     if (mergeOptions) {
       mergeOptions.options.forEach(mOpt => {
@@ -90,6 +90,9 @@ export class Merging {
       mergeCollections.collections.forEach(mColl => {
         result.addCollection(mColl);
       })
+    }
+    if (mergeTimestamp) {
+      result.algorithms['stdAlgorithm']['timestamp']['path'] = mergeTimestamp;
     }
     console.log('fromUI', result);
     return result;
@@ -166,6 +169,14 @@ export class Merging {
     if (mColl.set) mColl2['set'] = { collection: mColl.set };
     let coll = new Collection(mColl2);
     this.algorithms['collections'][mColl.event] = coll;
+  }
+
+  getTimestamp(): string {
+    let result = '';
+    if (this.algorithms['stdAlgorithm']['timestamp']['path']) {
+      result = this.algorithms['stdAlgorithm']['timestamp']['path'];
+    }
+    return result;
   }
 
 }
