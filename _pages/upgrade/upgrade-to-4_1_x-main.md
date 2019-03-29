@@ -1,3 +1,9 @@
+---
+layout: inner
+title: Upgrade to DHF 4.1.x
+permalink: /upgrade/upgrade-to-4_1_x/
+---
+
 # Upgrade to DHF 4.1.x / 4.2.x
 
 ## Prerequisites
