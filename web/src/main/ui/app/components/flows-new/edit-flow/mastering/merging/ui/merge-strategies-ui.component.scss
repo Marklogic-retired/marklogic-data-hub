@@ -67,6 +67,21 @@ button {
   outline: none;
 }
 
+.timestamp-container {
+  padding: 20px 30px 0 30px;
+  width: 600px;
+  font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  /deep/ div.h2 {
+    margin-bottom: 0 !important;
+  }
+  .mat-form-field {
+    width: 450px;
+  }
+  button {
+    margin-left: 15px;
+  }
+}
+
 .page-layout {
   position: relative;
   overflow: hidden;

@@ -126,3 +126,11 @@
     <div class="merge-strategy-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mStr)">Delete</div>
   </ng-template>
 </mat-menu>
+
+<div class="timestamp-container">
+  <div class="h2">Timestamp Path</div>
+  <mat-form-field appearance="standard">
+    <input matInput [(ngModel)]="timestamp" />
+  </mat-form-field>
+  <button id="save-timestamp" mat-raised-button color="primary" [disabled]="!timestampChanged()" (click)="onSaveTimestamp()">SAVE</button>
+</div>
