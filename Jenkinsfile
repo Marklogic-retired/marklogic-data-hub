@@ -35,7 +35,7 @@ pipeline{
 				}
 				println(BRANCH_NAME)
 				sh 'echo $JAVA_HOME;export JAVA_HOME=`$JAVA_HOME_DIR`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean --stacktrace;./gradlew build -x test;'
-				archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* ', onlyIfSuccessful: true			}
+				archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/web/build/libs/*', onlyIfSuccessful: true			}
 				post{
                    failure {
                       println("Datahub Build FAILED")
