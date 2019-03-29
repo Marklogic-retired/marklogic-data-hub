@@ -17,24 +17,17 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.client.DatabaseClient
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
-import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.flow.RunFlowResponse
-import com.marklogic.hub.step.StepItemCompleteListener
-import com.marklogic.hub.step.StepItemFailureListener
-import com.marklogic.hub.step.StepRunner
-import com.marklogic.hub.job.Job
 import groovy.json.JsonBuilder
-import groovy.json.JsonParserType
-import groovy.json.JsonSlurper
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskExecutionException
 
 class RunFlowTask extends HubTask {
 
@@ -131,14 +124,19 @@ class RunFlowTask extends HubTask {
         }
 
         Map<String, Object> options = new HashMap<>()
-        def jsonSlurper = new JsonSlurper(type: JsonParserType.INDEX_OVERLAY)
+        def optionsString;
         if(project.ext.properties.containsKey("optionsFile")){
             def jsonFile = new File(project.ext.optionsFile)
-            options = jsonSlurper.parseText(jsonFile.text)
+            optionsString = jsonFile.text
         }
         else if(project.ext.properties.containsKey("options")) {
-            def optionsString = String.valueOf(project.ext.options)
-            options = jsonSlurper.parseText(optionsString)
+            optionsString = String.valueOf(project.ext.options)
+        }
+        if (optionsString?.trim()) {
+            ObjectMapper mapper = new ObjectMapper();
+            options = mapper.readValue(optionsString,
+                new TypeReference<Map<String, Object>>() {
+                });
         }
 
         if(batchSize != null){
@@ -154,9 +152,9 @@ class RunFlowTask extends HubTask {
             runFlowString.append("\n\twith Destination DB: " + destDB.toString())
         }
         if (showOptions) {
-            runFlowString.append("\tand options:")
+            runFlowString.append("\n\tand options:")
             options.each { key, value ->
-                runFlowString.append("\t\t" + key + " = " + value)
+                runFlowString.append("\n\t\t" + key + " = " + value)
             }
         }
 
@@ -166,20 +164,8 @@ class RunFlowTask extends HubTask {
         RunFlowResponse runFlowResponse = dataHub.getFlowRunner().runFlow(flow.getName(), steps, jobId, options, batchSize, threadCount, sourceDB, destDB)
         dataHub.getFlowRunner().awaitCompletion()
 
-        JsonBuilder jobResp = new JsonBuilder()
-        def jobOutput = runFlowResponse.getStepResponses()
-        if (jobOutput != null && jobOutput.size() > 0) {
-            def output = prettyPrint(jobOutput.get(0))
-            if (failHard) {
-                throw new TaskExecutionException(this, new Throwable(output))
-            } else {
-                println("\n\nERROR Output:")
-                println(output)
-            }
-
-        } else {
-            println("\n\nOutput:")
-            println(jobResp.toPrettyString())
-        }
+        JsonBuilder jobResp = new JsonBuilder(runFlowResponse)
+        println("\n\nOutput:")
+        println(jobResp.toPrettyString())
     }
 }

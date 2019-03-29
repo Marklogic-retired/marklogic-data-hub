@@ -16,17 +16,19 @@
 package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -128,9 +130,17 @@ public class FlowController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/flows/{flowName}/run", method = RequestMethod.POST)
+    @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
-    public String runFlow(@PathVariable String flowName, @RequestBody String[] steps) {
-        return flowManagerService.runFlow(flowName, steps);
+    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
+        Flow flow = flowManagerService.runFlow(flowName, steps);
+        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
+        Flow flow = flowManagerService.stop(flowName);
+        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
     }
 }
