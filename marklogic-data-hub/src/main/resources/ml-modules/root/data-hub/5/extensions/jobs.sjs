@@ -55,6 +55,7 @@ function post(context, params, input) {
     jobDoc.job.jobStatus = status;
     if(status === "finished") {
       jobDoc.job.lastCompletedStep = step;
+      jobDoc.job.timeEnded = fn.currentDateTime();
     }
     else {
       if(status === "finished_with_errors" || status === "failed" ) {

@@ -16,10 +16,12 @@ import com.marklogic.hub.step.StepRunnerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Component
 public class FlowRunnerImpl implements FlowRunner{
@@ -30,8 +32,12 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private FlowManager flowManager;
 
+    @Autowired
+    private StepRunnerFactory stepRunnerFactory;
+
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
+    private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
 
     private String runningJobId;
     private Step runningStep;
@@ -45,6 +51,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
+    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
     private ExecutorService threadPool;
     private JobUpdate jobUpdate;
@@ -114,7 +121,6 @@ public class FlowRunnerImpl implements FlowRunner{
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
         while(stepItr.hasNext()) {
             String stepNum = stepItr.next();
-            // TODO: use Map<String, Step> getSteps()
             Step tmpStep = flow.getStep(stepNum);
             if(tmpStep == null){
                 throw new RuntimeException("Step " + stepNum + " not found in the flow");
@@ -143,6 +149,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private void initializeFlow(String jobId) {
         isRunning.set(true);
+        isJobSuccess.set(true);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
         if(jobUpdate == null) {
@@ -155,10 +162,15 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public void stopJob(String jobId) {
-        if (jobId.equals(runningJobId)) {
+        if(stepsMap.get(jobId) != null){
             stepsMap.get(jobId).clear();
             stepsMap.remove(jobId);
             isJobCancelled.set(true);
+        }
+        else {
+            throw new RuntimeException("Job not running");
+        }
+        if (jobId.equals(runningJobId)) {
             stepRunner.stop();
         }
     }
@@ -167,7 +179,7 @@ public class FlowRunnerImpl implements FlowRunner{
         private String jobId;
         private Flow flow;
 
-        public FlowRunnerTask(Flow flow, String jobId) {
+        FlowRunnerTask(Flow flow, String jobId) {
             this.jobId = jobId;
             this.flow = flow;
         }
@@ -175,7 +187,7 @@ public class FlowRunnerImpl implements FlowRunner{
         @Override
         public void run() {
             RunFlowResponse resp = flowResp.get(runningJobId);
-            resp.setStartTime(Calendar.getInstance());
+            resp.setStartTime(DATE_TIME_FORMAT.format(new Date()));
             Queue<String> stepQueue = stepsMap.get(jobQueue.peek());
 
             AtomicInteger errorCount = new AtomicInteger();
@@ -192,12 +204,11 @@ public class FlowRunnerImpl implements FlowRunner{
                     runningStep.setSourceDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
                 }
 
-                stepRunner = new StepRunnerFactory().getStepRunner(runningFlow, stepNum)
+                stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
                     .withOptions(flow.getOverrideOptions())
                     .onItemFailed((jobId, itemId)-> {
                         errorCount.incrementAndGet();
-                        // TODO: Add to Flow Model
                         if(flow.isStopOnError()){
                             stopJob(jobId);
                         }
@@ -207,6 +218,17 @@ public class FlowRunnerImpl implements FlowRunner{
                             listener.onStatusChanged(jobId, runningStep, percentComplete, runningStep.getName() + " " + message);
                         });
                     });
+                //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
+                Map<String,Step> steps = runningFlow.getSteps();
+                Step step = steps.get(stepNum);
+
+                if(step.getThreadCount() == 0){
+                    stepRunner.withThreadCount(flow.getThreadCount());
+                }
+                if(step.getBatchSize() == 0) {
+                    stepRunner.withBatchSize(flow.getBatchSize());
+                }
+                //If property values are overriden in UI, use those values over any other.
                 if(flow.getOverrideBatchSize() != null) {
                     stepRunner.withBatchSize(flow.getOverrideBatchSize());
                 }
@@ -221,10 +243,13 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
 
                 Job stepResp = stepRunner.run();
-                stepOutputs.put(stepNum, stepResp);
                 stepRunner.awaitCompletion();
+                stepOutputs.put(stepNum, stepResp);
+                if(! stepResp.isSuccess()) {
+                    isJobSuccess.set(false);
+                }
             }
-            if(errorCount.get() > 0){
+            if(! isJobSuccess.get()){
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
             }
             else if(isJobCancelled.get()) {
@@ -234,8 +259,8 @@ public class FlowRunnerImpl implements FlowRunner{
                 jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
             }
             resp.setStepResponses(stepOutputs);
-            resp.setEndTime(Calendar.getInstance());
-            jobQueue.remove(jobQueue.peek());
+            resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
+            jobQueue.remove();
             if(!jobQueue.isEmpty()) {
                 initializeFlow((String) jobQueue.peek());
             }
@@ -257,5 +282,16 @@ public class FlowRunnerImpl implements FlowRunner{
         if (threadPool != null) {
             threadPool.awaitTermination(timeout, unit);
         }
+    }
+
+    //This method is for UI. We can expose them in interface if required
+
+    public List<String> getQueuedJobIdsFromFlow(String flowName) {
+        return flowMap
+            .entrySet()
+            .stream()
+            .filter(entry -> flowName.equals(entry.getValue().getName()))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
     }
 }
