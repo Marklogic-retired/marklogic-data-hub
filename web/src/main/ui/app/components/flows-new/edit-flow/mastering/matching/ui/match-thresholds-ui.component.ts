@@ -91,7 +91,12 @@ export class MatchThresholdsUiComponent {
 
   // Close weight input on outside click
   @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mThr){
-    this.matchThresholds.thresholds.forEach(m => { m.editing = false; })
+    this.matchThresholds.thresholds.forEach((m, i) => {
+      if (m.editing) {
+        this.updateThreshold.emit({thr: m, index: i});
+        m.editing = false;
+      }
+    })
   }
 
 }

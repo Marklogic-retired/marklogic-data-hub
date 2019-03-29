@@ -104,7 +104,12 @@ export class MergeStrategiesUiComponent {
 
   // Close value input on outside click
   @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
-    this.mergeStrategies.strategies.forEach(m => { m.editing = ''; })
+    this.mergeStrategies.strategies.forEach((m, i) => {
+      if (m.editing) {
+        this.updateStrategy.emit({str: m, index: i});
+        m.editing = false;
+      }
+    })
   }
 
   onSaveTimestamp() {
