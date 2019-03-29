@@ -113,9 +113,19 @@ pipeline{
 				sh 'exit 0'
 			}else{
 			script{
-                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    def email=getEmailFromGITUser author 
-			sendMail email,'Check: ${BUILD_URL}/console',false,'Waiting for code review $BRANCH_NAME '
+                    withCredentials([usernameColonPassword(credentialsId: 'rahul-git', variable: 'Credentials')]) {
+                  def  reviewersList = sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
+                   ''')
+                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
+                    def emailList="";
+                    for(def user:slurper.users){
+                        email=getEmailFromGITUser user.login;
+                        emailList+=email+',';
+                    }
+                      sendMail emailList,'Check: ${BUILD_URL}/console',false,'Waiting for code review $BRANCH_NAME '
+                     
+                 }
 			}
 			try{
 			 timeout(time:60, unit:'MINUTES') {
@@ -153,6 +163,19 @@ pipeline{
     					}
     				}else if(response.equals("blocked")){
     					println("retry blocked");
+    					withCredentials([usernameColonPassword(credentialsId: 'rahul-git', variable: 'Credentials')]) {
+                  def  reviewersList = sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
+                   ''')
+                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
+                    def emailList="";
+                    for(def user:slurper.users){
+                        email=getEmailFromGITUser user.login;
+                        emailList+=email+',';
+                    }
+                      sendMail emailList,'Check: ${BUILD_URL}/console',false,'Waiting for code review $BRANCH_NAME '
+                     
+                 }
     					sleep time: 30, unit: 'MINUTES'
     					throw new Exception("Waiting for all the status checks to pass");
     				}else if(response.equals("unstable")){
