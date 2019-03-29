@@ -75,7 +75,7 @@ public class WriteStepRunner implements StepRunner {
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
     private String filePath = null;
-    private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+    private JobUpdate jobUpdate ;
 
     //TODO: Change source and destination db
     public WriteStepRunner(HubConfig hubConfig) {
@@ -185,6 +185,7 @@ public class WriteStepRunner implements StepRunner {
     public Job run() {
         runningThread = null;
         Job job = createJob();
+        jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
 
         if (options == null || options.get("input_location") == null) {
             throw new RuntimeException("File type and location cannot be empty");
