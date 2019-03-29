@@ -132,11 +132,12 @@ class RunFlowTask extends HubTask {
         else if(project.ext.properties.containsKey("options")) {
             optionsString = String.valueOf(project.ext.options)
         }
-        ObjectMapper mapper = new ObjectMapper();
-
-        options = mapper.readValue(optionsString,
-            new TypeReference<Map<String, Object>>() {
-            });
+        if (optionsString?.trim()) {
+            ObjectMapper mapper = new ObjectMapper();
+            options = mapper.readValue(optionsString,
+                new TypeReference<Map<String, Object>>() {
+                });
+        }
 
         if(batchSize != null){
             runFlowString.append("\n\twith batch size: " + batchSize)
