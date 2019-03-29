@@ -77,16 +77,14 @@ export class MergeOptionsUiComponent {
   }
 
   valueClicked(event, mOpt, type) {
-    console.log('valueClicked', type);
     event.preventDefault();
     event.stopPropagation();
-    this.mergeOptions.options.forEach(m => { m.editing = false; })
+    this.mergeOptions.options.forEach(m => { m.editing = ''; })
     mOpt.editing = type;
     this.valueFocus[mOpt.propertyName] = true;
   }
 
   valueKeyPress(event, mOpt, index, type): void {
-    console.log('valueKeyPress', type);
     if (event.key === 'Enter') {
       mOpt.editing = '';
       this.valueFocus[mOpt.propertyName] = false;
@@ -103,7 +101,7 @@ export class MergeOptionsUiComponent {
     this.mergeOptions.options.forEach((m, i) => {
       if (m.editing) {
         this.updateOption.emit({opt: m, index: i});
-        m.editing = false;
+        m.editing = '';
       }
     })
   }

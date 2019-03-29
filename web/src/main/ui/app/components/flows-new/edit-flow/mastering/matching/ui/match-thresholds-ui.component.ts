@@ -23,7 +23,7 @@ export class MatchThresholdsUiComponent {
   public displayedColumns = ['label', 'above', 'action', 'actions'];
   public dataSource: MatTableDataSource<MatchThreshold>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
@@ -73,18 +73,18 @@ export class MatchThresholdsUiComponent {
     this.table.renderRows();
   }
 
-  weightClicked(event, mThr) {
+  valueClicked(event, mThr, type) {
     event.preventDefault();
     event.stopPropagation();
-    this.matchThresholds.thresholds.forEach(m => { m.editing = false; })
-    mThr.editing = !mThr.editing;
-    this.weightFocus[mThr.label] = true;
+    this.matchThresholds.thresholds.forEach(m => { m.editing = ''; })
+    mThr.editing = type;
+    this.valueFocus[mThr.label] = true;
   }
 
-  weightKeyPress(event, mThr, index): void {
+  valueKeyPress(event, mThr, index, type): void {
     if (event.key === 'Enter') {
-      mThr.editing = !mThr.editing;
-      this.weightFocus[mThr.label] = false;
+      mThr.editing = '';
+      this.valueFocus[mThr.label] = false;
       this.updateThreshold.emit({thr: mThr, index: index});
     }
   }
@@ -94,7 +94,7 @@ export class MatchThresholdsUiComponent {
     this.matchThresholds.thresholds.forEach((m, i) => {
       if (m.editing) {
         this.updateThreshold.emit({thr: m, index: i});
-        m.editing = false;
+        m.editing = '';
       }
     })
   }

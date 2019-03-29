@@ -63,7 +63,13 @@ a:hover {
 /deep/ .mat-column-weight div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
-  width: 30px;
+  width: 40px;
+}
+
+/deep/ .mat-column-other div.mat-form-field-wrapper {
+  position: absolute;
+  top: -30px;
+  width: 40px;
 }
 
 /deep/ .mat-cell a.weight-value {
