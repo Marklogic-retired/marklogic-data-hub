@@ -25,7 +25,7 @@ export class MatchOptionsUiComponent {
   public displayedColumns = ['propertyName', 'matchType', 'weight', 'other', 'actions'];
   public dataSource: MatTableDataSource<MatchOption>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
@@ -75,18 +75,18 @@ export class MatchOptionsUiComponent {
     this.table.renderRows();
   }
 
-  weightClicked(event, mOpt) {
+  valueClicked(event, mOpt, type) {
     event.preventDefault();
     event.stopPropagation();
-    this.matchOptions.options.forEach(m => { m.editing = false; })
-    mOpt.editing = !mOpt.editing;
-    this.weightFocus[mOpt.propertyName] = true;
+    this.matchOptions.options.forEach(m => { m.editing = ''; })
+    mOpt.editing = type;
+    this.valueFocus[mOpt.propertyName] = true;
   }
 
-  weightKeyPress(event, mOpt, index): void {
+  valueKeyPress(event, mOpt, index, type): void {
     if (event.key === 'Enter') {
-      mOpt.editing = !mOpt.editing;
-      this.weightFocus[mOpt.propertyName] = false;
+      mOpt.editing = '';
+      this.valueFocus[mOpt.propertyName] = false;
       this.updateOption.emit({opt: mOpt, index: index});
     }
   }
@@ -96,7 +96,7 @@ export class MatchOptionsUiComponent {
     this.matchOptions.options.forEach((m, i) => {
       if (m.editing) {
         this.updateOption.emit({opt: m, index: i});
-        m.editing = false;
+        m.editing = '';
       }
     })
   }

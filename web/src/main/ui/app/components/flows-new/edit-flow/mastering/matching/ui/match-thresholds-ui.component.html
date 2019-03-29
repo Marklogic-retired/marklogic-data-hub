@@ -35,11 +35,11 @@
         <ng-container matColumnDef="above">
           <mat-header-cell id="match-threshold-weight-sort-btn" *matHeaderCellDef mat-sort-header start="desc">Weight</mat-header-cell>
           <mat-cell class="match-threshold-weight" *matCellDef="let mThr; let i = index">
-            <a *ngIf="!mThr.editing" (click)="weightClicked($event, mThr)" class="weight-value">
+            <a *ngIf="!mThr.editing" (click)="valueClicked($event, mThr, 'weight')" class="weight-value">
               {{mThr.above}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mThr.editing" (keypress)="weightKeyPress($event, mThr, i)" class="editing-field">
-              <input matInput [value]="mThr.above" [(ngModel)]="mThr.above" [focusElement]="weightFocus[mThr.label]">
+            <mat-form-field floatLabel="never" *ngIf="mThr.editing" (keypress)="valueKeyPress($event, mThr, i, 'weight')" class="editing-field">
+              <input matInput [value]="mThr.above" [(ngModel)]="mThr.above" [focusElement]="valueFocus[mThr.label]">
             </mat-form-field>
           </mat-cell>
         </ng-container>

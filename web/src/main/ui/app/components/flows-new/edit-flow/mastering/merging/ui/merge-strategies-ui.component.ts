@@ -85,7 +85,7 @@ export class MergeStrategiesUiComponent {
   valueClicked(event, mStr, type) {
     event.preventDefault();
     event.stopPropagation();
-    this.mergeStrategies.strategies.forEach(m => { m.editing = false; })
+    this.mergeStrategies.strategies.forEach(m => { m.editing = ''; })
     mStr.editing = type;
     this.valueFocus[mStr.propertyName] = true;
   }
@@ -107,7 +107,7 @@ export class MergeStrategiesUiComponent {
     this.mergeStrategies.strategies.forEach((m, i) => {
       if (m.editing) {
         this.updateStrategy.emit({str: m, index: i});
-        m.editing = false;
+        m.editing = '';
       }
     })
   }
