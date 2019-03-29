@@ -93,7 +93,12 @@ export class MatchOptionsUiComponent {
 
   // Close weight input on outside click
   @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mOpt){
-    this.matchOptions.options.forEach(m => { m.editing = false; })
+    this.matchOptions.options.forEach((m, i) => {
+      if (m.editing) {
+        this.updateOption.emit({opt: m, index: i});
+        m.editing = false;
+      }
+    })
   }
 
 }

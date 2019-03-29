@@ -100,7 +100,12 @@ export class MergeOptionsUiComponent {
 
   // Close value input on outside click
   @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
-    this.mergeOptions.options.forEach(m => { m.editing = ''; })
+    this.mergeOptions.options.forEach((m, i) => {
+      if (m.editing) {
+        this.updateOption.emit({opt: m, index: i});
+        m.editing = false;
+      }
+    })
   }
 
 }
