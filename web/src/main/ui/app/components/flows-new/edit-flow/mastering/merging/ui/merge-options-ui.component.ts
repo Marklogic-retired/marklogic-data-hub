@@ -50,7 +50,7 @@ export class MergeOptionsUiComponent {
       if (!!result) {
         if (optionToEdit) {
           console.log('updateOption');
-          this.updateOption.emit(result);
+          this.updateOption.emit({opt: result.opt, index: result.index});
         }else{
           console.log('createOption');
           this.createOption.emit(result);
@@ -85,11 +85,12 @@ export class MergeOptionsUiComponent {
     this.valueFocus[mOpt.propertyName] = true;
   }
 
-  valueKeyPress(event, mOpt, type): void {
+  valueKeyPress(event, mOpt, index, type): void {
     console.log('valueKeyPress', type);
     if (event.key === 'Enter') {
       mOpt.editing = '';
       this.valueFocus[mOpt.propertyName] = false;
+      this.updateOption.emit({opt: mOpt, index: index});
     }
   }
 

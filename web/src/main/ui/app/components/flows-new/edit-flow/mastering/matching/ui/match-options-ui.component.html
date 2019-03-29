@@ -48,11 +48,11 @@
         <!-- Weight Column -->
         <ng-container matColumnDef="weight">
           <mat-header-cell id="match-option-weight-sort-btn" *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
-          <mat-cell class="match-option-weight" *matCellDef="let mOpt">
+          <mat-cell class="match-option-weight" *matCellDef="let mOpt; let i = index">
             <a *ngIf="!mOpt.editing" (click)="weightClicked($event, mOpt)" class="weight-value">
               {{mOpt.weight}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing" (keypress)="weightKeyPress($event, mOpt)" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.editing" (keypress)="weightKeyPress($event, mOpt, i)" class="editing-field">
               <input matInput [value]="mOpt.weight" [(ngModel)]="mOpt.weight" [focusElement]="weightFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>

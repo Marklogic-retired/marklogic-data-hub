@@ -49,7 +49,7 @@ export class MatchOptionsUiComponent {
       if (!!result) {
         if (optionToEdit) {
           console.log('updateOption');
-          this.updateOption.emit(result);
+          this.updateOption.emit({opt: result, index: result.index});
         }else{
           console.log('createOption');
           this.createOption.emit(result);
@@ -83,10 +83,11 @@ export class MatchOptionsUiComponent {
     this.weightFocus[mOpt.propertyName] = true;
   }
 
-  weightKeyPress(event, mOpt): void {
+  weightKeyPress(event, mOpt, index): void {
     if (event.key === 'Enter') {
       mOpt.editing = !mOpt.editing;
       this.weightFocus[mOpt.propertyName] = false;
+      this.updateOption.emit({opt: mOpt, index: index});
     }
   }
 
