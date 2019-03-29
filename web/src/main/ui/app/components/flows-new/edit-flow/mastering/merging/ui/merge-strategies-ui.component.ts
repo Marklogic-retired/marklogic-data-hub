@@ -54,7 +54,7 @@ export class MergeStrategiesUiComponent {
       if (!!result) {
         if (strategyToEdit) {
           console.log('updateStrategy');
-          this.updateStrategy.emit(result);
+          this.updateStrategy.emit({str: result.str, index: result.index});
         }else{
           console.log('createStrategy');
           this.createStrategy.emit(result);

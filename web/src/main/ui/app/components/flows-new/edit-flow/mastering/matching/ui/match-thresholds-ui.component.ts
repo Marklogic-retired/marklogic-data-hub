@@ -47,7 +47,7 @@ export class MatchThresholdsUiComponent {
       if (!!result) {
         if (thresholdToEdit) {
           console.log('saveThreshold');
-          this.updateThreshold.emit(result);
+          this.updateThreshold.emit({thr: result, index: result.index});
         }else{
           console.log('createThreshold', result);
           this.createThreshold.emit(result);
@@ -81,10 +81,11 @@ export class MatchThresholdsUiComponent {
     this.weightFocus[mThr.label] = true;
   }
 
-  weightKeyPress(event, mThr): void {
+  weightKeyPress(event, mThr, index): void {
     if (event.key === 'Enter') {
       mThr.editing = !mThr.editing;
       this.weightFocus[mThr.label] = false;
+      this.updateThreshold.emit({thr: mThr, index: index});
     }
   }
 

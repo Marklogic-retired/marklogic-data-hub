@@ -81,7 +81,7 @@ export class MatchingComponent implements OnInit {
   }
 
   onUpdateOption(event): void {
-    this.matchOptions.updateOption(event, event.index);
+    this.matchOptions.updateOption(event.opt, event.index);
     this.matchOptionsUi.renderRows();
     this.onSaveStep();
   }
@@ -99,7 +99,7 @@ export class MatchingComponent implements OnInit {
   }
 
   onUpdateThreshold(event): void {
-    this.matchThresholds.updateThreshold(event, event.index);
+    this.matchThresholds.updateThreshold(event.thr, event.index);
     this.matchThresholdsUi.renderRows();
     this.onSaveStep();
   }

@@ -131,7 +131,8 @@ export class AddMergeOptionDialogComponent {
   getValidSourceWeights(formSourceWeights) {
     let validSourceWeights = [];
     formSourceWeights.forEach(sw => {
-      if (sw.source !== '' && sw.weight !== '') {
+      if (sw.source !== '' && sw.weight !== '' &&
+          sw.source !== null && sw.weight !== null) {
         validSourceWeights.push({ source: sw.source, weight: sw.weight });
       }
     });
