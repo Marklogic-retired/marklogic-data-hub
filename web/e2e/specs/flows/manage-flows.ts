@@ -31,6 +31,7 @@ export default function(tmpDir) {
       await manageFlowPage.setFlowForm("name", "Test Flow 1");
       await manageFlowPage.setFlowForm("desc", "Description Flow 1");
       await manageFlowPage.clickAdvSettingsExpandCollapse();
+      browser.wait(EC.visibilityOf(manageFlowPage.flowForm("batch-size")));
       await manageFlowPage.flowForm("batch-size").clear();
       await manageFlowPage.setFlowForm("batch-size", "10");
       browser.wait(EC.visibilityOf(manageFlowPage.flowForm("thread-count")));

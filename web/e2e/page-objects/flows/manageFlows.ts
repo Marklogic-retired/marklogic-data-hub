@@ -12,7 +12,7 @@ export class ManageFlows extends AppPage {
   }
 
   get manageFlowPageHeader() {
-    return element(by.css("#flows-page .logo-text"));
+    return element(by.css("#flows-page h1"));
   }
 
   get newFlowButton() {
