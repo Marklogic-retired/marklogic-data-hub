@@ -17,13 +17,15 @@
 
 package com.marklogic.gradle.task
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.Flow
 import com.marklogic.hub.flow.RunFlowResponse
-import groovy.json.*
+import groovy.json.JsonBuilder
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
@@ -122,15 +124,19 @@ class RunFlowTask extends HubTask {
         }
 
         Map<String, Object> options = new HashMap<>()
-        def jsonSlurper = new JsonSlurper(type: JsonParserType.INDEX_OVERLAY)
+        def optionsString;
         if(project.ext.properties.containsKey("optionsFile")){
             def jsonFile = new File(project.ext.optionsFile)
-            options = jsonSlurper.parseText(jsonFile.text)
+            optionsString = jsonFile.text
         }
         else if(project.ext.properties.containsKey("options")) {
-            def optionsString = String.valueOf(project.ext.options)
-            options = jsonSlurper.parseText(optionsString)
+            optionsString = String.valueOf(project.ext.options)
         }
+        ObjectMapper mapper = new ObjectMapper();
+
+        options = mapper.readValue(optionsString,
+            new TypeReference<Map<String, Object>>() {
+            });
 
         if(batchSize != null){
             runFlowString.append("\n\twith batch size: " + batchSize)
@@ -145,9 +151,9 @@ class RunFlowTask extends HubTask {
             runFlowString.append("\n\twith Destination DB: " + destDB.toString())
         }
         if (showOptions) {
-            runFlowString.append("\tand options:")
+            runFlowString.append("\n\tand options:")
             options.each { key, value ->
-                runFlowString.append("\t\t" + key + " = " + value)
+                runFlowString.append("\n\t\t" + key + " = " + value)
             }
         }
 
