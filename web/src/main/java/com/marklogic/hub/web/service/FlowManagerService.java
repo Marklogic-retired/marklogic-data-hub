@@ -19,9 +19,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.exception.BadRequestException;
@@ -29,13 +29,16 @@ import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FlowManagerService {
@@ -247,8 +250,9 @@ public class FlowManagerService {
         if (steps == null || steps.size() ==0 ) {
             resp = flowRunner.runFlow(flowName);
         } else {
+            Flow flow = flowManager.getFlow(flowName);
             List<String> restrictedSteps = new ArrayList<>();
-            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flowName, step)));
+            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
             resp = flowRunner.runFlow(flowName, restrictedSteps);
         }
         return flowManager.getFlow(flowName);
