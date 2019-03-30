@@ -197,10 +197,16 @@ public class QueryStepRunner implements StepRunner {
         } catch (Exception e) {
             job.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED.toString());
+            job.withSuccess(false);
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             job.withJobOutput(errors.toString());
-            jobUpdate.postJobs(jobId, JobStatus.FAILED.toString(), step);
+            try {
+                jobUpdate.postJobs(jobId, JobStatus.FAILED.toString(), step);
+            }
+            catch (Exception ex) {
+                throw (ex);
+            }
             return job;
         }
         this.runHarmonizer(job,uris);
@@ -229,7 +235,12 @@ public class QueryStepRunner implements StepRunner {
         });
 
         final DiskQueue<String> uris;
-        uris = c.run(this.flow.getName(), step, this.jobId, options);
+        try {
+            uris = c.run(this.flow.getName(), step, this.jobId, options);
+        }
+        catch (Exception e) {
+            throw e;
+        }
         return uris;
     }
 
@@ -250,7 +261,14 @@ public class QueryStepRunner implements StepRunner {
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             job.setCounts(0,0,0,0,0);
             job.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
+            job.withSuccess(true);
+            try {
+                jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
+            }
+            catch (Exception e) {
+                throw (e);
+            }
+
             return job;
         }
 
@@ -272,16 +290,16 @@ public class QueryStepRunner implements StepRunner {
             .onUrisReady((QueryBatch batch) -> {
                 try {
                     FlowResource flowResource;
-
+                    Map<String,Object> optsMap = new HashMap<>(options);
                     if (databaseClientMap.containsKey(batch.getClient())) {
                         flowResource = databaseClientMap.get(batch.getClient());
                     } else {
                         flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
                         databaseClientMap.put(batch.getClient(), flowResource);
                     }
-                    options.put("uris", batch.getItems());
+                    optsMap.put("uris", batch.getItems());
 
-                    RunStepResponse response = flowResource.run(job.getJobId(), step, options);
+                    RunStepResponse response = flowResource.run(job.getJobId(), step, optsMap);
                     failedEvents.addAndGet(response.errorCount);
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
@@ -357,20 +375,30 @@ public class QueryStepRunner implements StepRunner {
             dataMovementManager.stopJob(queryBatcher);
 
             String status;
-
+            boolean success;
 
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR.toString();
+                success = false;
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                status = JobStatus.FINISHED_WITH_ERRORS.toString();
+                status = JobStatus.COMPLETED_WITH_ERRORS_PREFIX.toString() + step;
+                success = false;
             } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
-                status = JobStatus.COMPLETED_PREFIX + step ;
+                status = JobStatus.COMPLETED_PREFIX + step;
+                success = true;
             } else {
                 status = JobStatus.FAILED.toString();
+                success = false;
             }
             job.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             job.withStatus(status);
-            jobUpdate.postJobs(jobId, status, step);
+            job.withSuccess(success);
+            try {
+                jobUpdate.postJobs(jobId, status, step);
+            }
+            catch (Exception e) {
+                throw e;
+            }
             if (errorMessages.size() > 0) {
                 job.withJobOutput(errorMessages);
             }

@@ -13,6 +13,7 @@ import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
@@ -103,15 +104,15 @@ public class FlowRunnerImpl implements FlowRunner{
             flow.setOverrideDestDB(destDB);
         }
 
-        if(sourceDB == null){
+        if(sourceDB != null){
             flow.setOverrideSourceDB(sourceDB);
         }
 
-        if(threadCount == null){
+        if(threadCount != null){
             flow.setOverrideThreadCount(threadCount);
         }
 
-        if(batchSize == null){
+        if(batchSize != null){
             flow.setOverrideBatchSize(batchSize);
         }
 
@@ -190,23 +191,28 @@ public class FlowRunnerImpl implements FlowRunner{
             resp.setStartTime(DATE_TIME_FORMAT.format(new Date()));
             Queue<String> stepQueue = stepsMap.get(jobQueue.peek());
 
-            AtomicInteger errorCount = new AtomicInteger();
             Map<String, Job> stepOutputs = new HashMap<>();
             while (! stepQueue.isEmpty()){
                 String stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
 
                 //now we check and validate we have no nulls
-                if(runningStep.getDestinationDatabase() == null) {
+                if(StringUtils.isEmpty(runningStep.getDestinationDatabase())) {
                     runningStep.setDestinationDatabase(hubConfig.getDbName(DatabaseKind.FINAL));
                 }
-                if(runningStep.getSourceDatabase() == null) {
+                if(StringUtils.isEmpty(runningStep.getSourceDatabase())) {
                     runningStep.setSourceDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
                 }
+                Map<String, Object> optsMap = new HashMap<>(flow.getOverrideOptions());
+                AtomicLong errorCount = new AtomicLong();
+                AtomicLong successCount = new AtomicLong();
 
                 stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                     .withJobId(jobId)
-                    .withOptions(flow.getOverrideOptions())
+                    .withOptions(optsMap)
+                    .onItemComplete((jobID, itemID) -> {
+                        successCount.incrementAndGet();
+                    })
                     .onItemFailed((jobId, itemId)-> {
                         errorCount.incrementAndGet();
                         if(flow.isStopOnError()){
@@ -221,16 +227,19 @@ public class FlowRunnerImpl implements FlowRunner{
                 //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
                 Map<String,Step> steps = runningFlow.getSteps();
                 Step step = steps.get(stepNum);
-
+                //default batch size
+                int stepBatchSize = 100;
                 if(step.getThreadCount() == 0){
                     stepRunner.withThreadCount(flow.getThreadCount());
                 }
                 if(step.getBatchSize() == 0) {
-                    stepRunner.withBatchSize(flow.getBatchSize());
+                    stepBatchSize = flow.getBatchSize();
+                    stepRunner.withBatchSize(stepBatchSize);
                 }
                 //If property values are overriden in UI, use those values over any other.
                 if(flow.getOverrideBatchSize() != null) {
-                    stepRunner.withBatchSize(flow.getOverrideBatchSize());
+                    stepBatchSize = flow.getOverrideBatchSize();
+                    stepRunner.withBatchSize(stepBatchSize);
                 }
                 if(flow.getOverrideThreadCount() != null) {
                     stepRunner.withThreadCount(flow.getOverrideThreadCount());
@@ -241,22 +250,36 @@ public class FlowRunnerImpl implements FlowRunner{
                 if(flow.getOverrideDestDB() != null){
                     stepRunner.withDestinationDatabase(flow.getOverrideDestDB());
                 }
-
-                Job stepResp = stepRunner.run();
-                stepRunner.awaitCompletion();
+                /*  If an exception occurs in step execution, we don't want the thread to die and affect other step execution.
+                    If an exception occurs, the exception message is written to job output
+                 */
+                Job stepResp = null;
+                try {
+                    stepResp = stepRunner.run();
+                    stepRunner.awaitCompletion();
+                }
+                catch (Exception e) {
+                    stepResp.setCounts(successCount.get() + errorCount.get()  , successCount.get(), errorCount.get()  , (long)Math.ceil((double)successCount.get()/stepBatchSize), (long)Math.ceil((double)errorCount.get()/stepBatchSize));
+                    stepResp.withJobOutput(e.getMessage());
+                    stepResp.withSuccess(false);
+                    stepResp.withStatus(JobStatus.COMPLETED_WITH_ERRORS_PREFIX + stepNum);
+                }
                 stepOutputs.put(stepNum, stepResp);
                 if(! stepResp.isSuccess()) {
                     isJobSuccess.set(false);
                 }
             }
-            if(! isJobSuccess.get()){
-                jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
+            try {
+                if (!isJobSuccess.get()) {
+                    jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
+                } else if (isJobCancelled.get()) {
+                    jobUpdate.postJobs(jobId, JobStatus.CANCELED.toString(), runningStep.getName());
+                } else {
+                    jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
+                }
             }
-            else if(isJobCancelled.get()) {
-                jobUpdate.postJobs(jobId, JobStatus.CANCELED.toString(), runningStep.getName());
-            }
-            else {
-                jobUpdate.postJobs(jobId, JobStatus.FINISHED.toString(), runningStep.getName());
+            catch (Exception e) {
+                throw e;
             }
             resp.setStepResponses(stepOutputs);
             resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
@@ -275,6 +298,7 @@ public class FlowRunnerImpl implements FlowRunner{
             awaitCompletion(Long.MAX_VALUE, TimeUnit.DAYS);
         }
         catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

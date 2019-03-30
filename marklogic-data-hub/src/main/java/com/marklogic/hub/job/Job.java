@@ -74,8 +74,12 @@ public class Job {
     }
 
     public Job withStatus(String status) {
-        success = status.startsWith(JobStatus.COMPLETED_PREFIX);
         this.status = status;
+        return this;
+    }
+
+    public Job withSuccess(boolean success) {
+        this.success = success;
         return this;
     }
 
