@@ -16,7 +16,6 @@
 package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
@@ -133,14 +132,14 @@ public class FlowController {
     @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
-        Flow flow = flowManagerService.runFlow(flowName, steps);
-        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+        FlowStepModel flow = flowManagerService.runFlow(flowName, steps);
+        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
-        Flow flow = flowManagerService.stop(flowName);
-        return new ResponseEntity<Flow>(flow, HttpStatus.OK);
+        FlowStepModel flow = flowManagerService.stop(flowName);
+        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
     }
 }
