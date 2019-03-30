@@ -255,7 +255,7 @@ public class FlowManagerService {
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
             resp = flowRunner.runFlow(flowName, restrictedSteps);
         }
-        return FlowStepModel.transformFromFlow(flowManager.getFlow(flowName));
+        return getFlow(flowName);
     }
 
     public FlowStepModel stop(String flowName) {
@@ -267,7 +267,7 @@ public class FlowManagerService {
         while(itr.hasNext()){
             flowRunner.stopJob(itr.next());
         }
-        return FlowStepModel.transformFromFlow(flowManager.getFlow(flowName));
+        return getFlow(flowName);
     }
 
     private StepModel convertToWebModel(Step step) throws IOException {

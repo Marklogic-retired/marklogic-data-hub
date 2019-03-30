@@ -205,7 +205,7 @@ public class QueryStepRunner implements StepRunner {
                 jobUpdate.postJobs(jobId, JobStatus.FAILED.toString(), step);
             }
             catch (Exception ex) {
-                throw (ex);
+                throw ex;
             }
             return job;
         }
@@ -266,7 +266,7 @@ public class QueryStepRunner implements StepRunner {
                 jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
             }
             catch (Exception e) {
-                throw (e);
+                throw e;
             }
 
             return job;

@@ -100,11 +100,11 @@ public class FlowRunnerImpl implements FlowRunner{
             stepNums = new ArrayList<String>(flow.getSteps().keySet());
         }
 
-        if(destDB != null){
+        if(StringUtils.isNotEmpty(destDB)){
             flow.setOverrideDestDB(destDB);
         }
 
-        if(sourceDB != null){
+        if(StringUtils.isNotEmpty(sourceDB)){
             flow.setOverrideSourceDB(sourceDB);
         }
 
