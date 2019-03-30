@@ -245,7 +245,7 @@ public class FlowManagerService {
 
     }
 
-    public Flow runFlow(String flowName, List<String> steps) {
+    public FlowStepModel runFlow(String flowName, List<String> steps) {
         RunFlowResponse resp = null;
         if (steps == null || steps.size() ==0 ) {
             resp = flowRunner.runFlow(flowName);
@@ -255,10 +255,10 @@ public class FlowManagerService {
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
             resp = flowRunner.runFlow(flowName, restrictedSteps);
         }
-        return flowManager.getFlow(flowName);
+        return getFlow(flowName);
     }
 
-    public Flow stop(String flowName) {
+    public FlowStepModel stop(String flowName) {
         List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
         Iterator<String> itr = jobIds.iterator();
         if(!itr.hasNext()){
@@ -267,7 +267,7 @@ public class FlowManagerService {
         while(itr.hasNext()){
             flowRunner.stopJob(itr.next());
         }
-        return flowManager.getFlow(flowName);
+        return getFlow(flowName);
     }
 
     private StepModel convertToWebModel(Step step) throws IOException {

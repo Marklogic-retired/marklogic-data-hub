@@ -28,5 +28,6 @@ public enum JobStatus {
     }
 
     public static final String COMPLETED_PREFIX = "completed step ";
+    public static final String COMPLETED_WITH_ERRORS_PREFIX = "completed with errors step ";
 
 }
