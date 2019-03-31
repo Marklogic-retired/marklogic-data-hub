@@ -23,8 +23,10 @@ public class StepRunnerFactory {
         switch (step.getType()) {
             case MAPPING:
                 stepRunner = new QueryStepRunner(hubConfig);
+                break;
             case INGEST:
                 stepRunner = new WriteStepRunner(hubConfig);
+                break;
             default:
                 stepRunner = new QueryStepRunner(hubConfig);
         }
@@ -33,7 +35,8 @@ public class StepRunnerFactory {
             .withBatchSize(step.getBatchSize())
             .withThreadCount(step.getThreadCount())
             .withSourceClient(hubConfig.newStagingClient(step.getSourceDatabase()))
-            .withDestinationDatabase(step.getDestinationDatabase());
+            .withDestinationDatabase(step.getDestinationDatabase())
+            .withOptions(step.getOptions());
     }
 
 }
