@@ -54,16 +54,16 @@ if(method === 'GET') {
     resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
   } else {
     let stepDoc = flowDoc.steps[step];
-    let baseStep = datahub.flow.step.getStepByNameAndType(stepDoc.name, stepDoc.type);
+    let baseStep = datahub.flow.step.getStepByNameAndType("default-ingest", "INGEST");
     let combinedOptions = Object.assign({}, baseStep.options, stepDoc.options, flowDoc.options, options);
     if (stepDoc) {
-      if(!combinedOptions.identifier && flowDoc.identifier) {
-        combinedOptions.identifier = flowDoc.identifier;
+      if(!baseStep.identifier && stepDoc.identifier) {
+        baseStep.identifier = stepDoc.identifier;
       }
-      let query = combinedOptions.identifier;
+      let query = baseStep.identifier;
       if (query) {
         try {
-          resp = xdmp.eval(query, {options: options}, {database: xdmp.database(database)});
+          resp = xdmp.eval(query, {options: combinedOptions}, {database: xdmp.database(database)});
         } catch (err) {
           //TODO log error message from 'err'
 
