@@ -159,7 +159,7 @@ export class MergingComponent implements OnInit {
 
   onSaveStep(): void {
     this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections, this.mergeTimestamp);
-    this.step.config.mergeOptions = this.merging;
+    this.step.options.mergeOptions = this.merging;
     this.saveStep.emit(this.step);
   }
 

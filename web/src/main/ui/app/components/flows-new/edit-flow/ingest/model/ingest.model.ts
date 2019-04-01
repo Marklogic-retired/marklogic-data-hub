@@ -29,7 +29,7 @@ export class Ingestion {
     result.transformModule = options && options['transform_module'] || '/data-hub/5/transforms/mlcp-flow-transform.sjs';
     result.transformNamespace = options && options['transform_namespace'] || 'http://marklogic.com/data-hub/mlcp-flow-transform';
     result.transformParams = options && options['transform_param'] || '';
-    newStep.config = result;
+    newStep.options = result;
     return newStep;
   }
 
