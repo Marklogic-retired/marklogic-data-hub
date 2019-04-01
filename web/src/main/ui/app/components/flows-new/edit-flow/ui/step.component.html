@@ -3,7 +3,7 @@
     <header>
       <div class="steps-header">
         <h2 id="step-details-name">{{step.name}}</h2>
-        <button id="save-step-btn" *ngIf="step.type === 'ingestion'" (click)=saveStep(); mat-raised-button color="primary">Save</button>
+        <button id="save-step-btn" *ngIf="step.type === 'ingest'||'custom'" (click)=saveStep(); mat-raised-button color="primary">Save</button>
         <!-- <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
       </div>
       <div class="steps-header">
@@ -12,7 +12,7 @@
       </div>
     </header>
     <div *ngIf="showBody" class="steps-body">
-      <div id="step-type-ingestion-container" *ngIf="step.type === 'ingestion'">
+      <div id="step-type-ingestion-container" *ngIf="step.type === 'ingest'">
         <app-ingest
           [step]="step"
           (saveStep)="saveStep($event)"

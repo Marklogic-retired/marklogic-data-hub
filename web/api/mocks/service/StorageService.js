@@ -5,8 +5,8 @@ const _ = require('lodash');
 
 let defaultObjects = {
   flows: {'name':'','description':'','batchSize':100,'threadCount':4,'options':{},'steps':[],'jobs':[],'latestJob':null,'isValid':true,'version':1},
-  steps: {'name':'','description':'','type':'ingest','sourceDatabase':'staging','targetDatabase':'staging','config':{},'isValid':true,'version':1},
-  jobs: {'startTime':'2019-01-31T12:10:00','endTime':null,'output':[],'status':'running','stepRunningPercent':0,'successfulEvents':0,'failedEvents':0}
+  steps: {'name':'','description':'','type':'ingest','sourceDatabase':'staging','targetDatabase':'staging','options':{},'isValid':true,'version':1},
+  jobs: {'startTime':'2019-01-31T12:10:00','endTime':null,'output':[],'status':'never run','stepRunningPercent':null,'successfulEvents':0,'failedEvents':0}
 }
 
 let collections = {

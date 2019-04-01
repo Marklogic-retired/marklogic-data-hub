@@ -12,7 +12,7 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-1", "name": "Flow 01 Ingest Step", "type": "ingestion"
+        "id": "step-1-flow-1", "name": "Flow 01 Ingest Step", "type": "ingest"
       },
       { 
         "id": "step-2-flow-1", "name": "Flow 01 Mapping Step", "type": "mapping", "targetEntity": "Order"
@@ -58,7 +58,7 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-2", "name": "Flow 02 Ingest Step", "type": "ingestion"
+        "id": "step-1-flow-2", "name": "Flow 02 Ingest Step", "type": "ingest"
       },
       { 
         "id": "step-2-flow-2", "name": "Flow 02 Mapping Step", "type": "mapping", "targetEntity": "Order"
@@ -104,7 +104,7 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-3", "name": "Flow 03 Ingest Step", "type": "ingestion"
+        "id": "step-1-flow-3", "name": "Flow 03 Ingest Step", "type": "ingest"
       },
       { 
         "id": "step-2-flow-3", "name": "Flow 03 Mapping Step", "type": "mapping", "targetEntity": "Order"
