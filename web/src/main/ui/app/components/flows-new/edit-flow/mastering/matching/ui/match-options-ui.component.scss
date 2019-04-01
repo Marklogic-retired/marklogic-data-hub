@@ -38,16 +38,10 @@
 
 .other-label {
   display: inline-block;
-  width: 140px;
+  width: 125px;
   font-size: 12px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.54);
-}
-
-.otherContent {
-  width: 480px;
-  min-width: 480px;
-  max-width: 480px;
 }
 
 .editing-field {
@@ -69,7 +63,13 @@ a:hover {
 /deep/ .mat-column-weight div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
-  width: 30px;
+  width: 40px;
+}
+
+/deep/ .mat-column-other div.mat-form-field-wrapper {
+  position: absolute;
+  top: -30px;
+  width: 40px;
 }
 
 /deep/ .mat-cell a.weight-value {

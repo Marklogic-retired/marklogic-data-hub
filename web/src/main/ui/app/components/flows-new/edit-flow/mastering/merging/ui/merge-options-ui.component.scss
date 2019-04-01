@@ -20,13 +20,18 @@
     min-height: 38px !important;
 }
 
-.other-content {
+.details-content {
   padding: 4px 0;
-}
-
-.other-item {
-  padding: 1px 0;
-  width: 250px;
+  .details-strategy-label,
+  .details-custom-label {
+    width: 70px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.54);
+  }
+  .details-custom-label {
+    display: inline-block;
+  }
 }
 
 a {
@@ -50,13 +55,13 @@ a:hover {
 /deep/ .mat-column-length div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
-  width: 30px;
+  width: 40px;
 }
 
 /deep/ .mat-column-sourceWeights div.mat-form-field-wrapper {
   position: absolute;
   top: -30px;
-  width: 30px;
+  width: 40px;
 }
 
 /deep/ .mat-cell a.max-values-value,
@@ -163,10 +168,14 @@ button {
 
   /* .mat-column-propertyName {
     flex: 0 1 200px;
-  } */
+  }
 
   .mat-column-mergeType {
     flex: 0 1 250px;
+  } */
+
+  .mat-column-details {
+    flex: 0 1 200px;
   }
 
   .mat-column-maxValues {

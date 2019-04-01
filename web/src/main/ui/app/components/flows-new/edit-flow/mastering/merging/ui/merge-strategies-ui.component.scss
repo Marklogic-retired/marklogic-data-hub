@@ -20,6 +20,11 @@
     min-height: 38px !important;
 }
 
+.default-name {
+  font-style: italic;
+  text-transform: capitalize;
+}
+
 .other-content {
   padding: 4px 0;
 }
@@ -46,7 +51,7 @@
 /deep/ .mat-column-sourceWeights div.mat-form-field-wrapper {
   position: absolute;
   top: -30px;
-  width: 30px;
+  width: 40px;
 }
 
 /deep/ .mat-cell a.max-values-value,
@@ -60,6 +65,21 @@ $header-height: 70px !default;
 
 button {
   outline: none;
+}
+
+.timestamp-container {
+  padding: 20px 30px 0 30px;
+  width: 600px;
+  font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  /deep/ div.h2 {
+    margin-bottom: 0 !important;
+  }
+  .mat-form-field {
+    width: 450px;
+  }
+  button {
+    margin-left: 15px;
+  }
 }
 
 .page-layout {

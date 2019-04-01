@@ -7,6 +7,14 @@ export class Step {
   public description: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
+<<<<<<< HEAD
+=======
+  public config: any = {
+    matchOptions: new Matching,
+    mergeOptions: new Merging,
+    targetEntity: ''
+  };
+>>>>>>> develop
   public language: string;
   public isValid: boolean = false;
   public version: string;

@@ -25,7 +25,7 @@ export class MatchOptionsUiComponent {
   public displayedColumns = ['propertyName', 'matchType', 'weight', 'other', 'actions'];
   public dataSource: MatTableDataSource<MatchOption>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
@@ -41,7 +41,6 @@ export class MatchOptionsUiComponent {
   }
 
   openMatchOptionDialog(optionToEdit: MatchOption, index: number, entityProps: any): void {
-    console.log('entityProps', entityProps);
     const dialogRef = this.dialog.open(AddMatchOptionDialogComponent, {
       width: '500px',
       data: {option: optionToEdit, index: index, entityProps: entityProps}
@@ -50,7 +49,7 @@ export class MatchOptionsUiComponent {
       if (!!result) {
         if (optionToEdit) {
           console.log('updateOption');
-          this.updateOption.emit(result);
+          this.updateOption.emit({opt: result, index: result.index});
         }else{
           console.log('createOption');
           this.createOption.emit(result);
@@ -71,36 +70,35 @@ export class MatchOptionsUiComponent {
     });
   }
 
-  // TODO Use TruncateCharactersPipe
-  truncate(value: string, limit: number, trail: string = '...'): string {
-    return value.length > limit ?
-      value.substring(0, limit) + trail :
-      value;
-  }
-
   renderRows(): void {
     this.dataSource.data = this.matchOptions['options'];
     this.table.renderRows();
   }
 
-  weightClicked(event, mOpt) {
+  valueClicked(event, mOpt, type) {
     event.preventDefault();
     event.stopPropagation();
-    this.matchOptions.options.forEach(m => { m.editing = false; })
-    mOpt.editing = !mOpt.editing;
-    this.weightFocus[mOpt.propertyName] = true;
+    this.matchOptions.options.forEach(m => { m.editing = ''; })
+    mOpt.editing = type;
+    this.valueFocus[mOpt.propertyName] = true;
   }
 
-  weightKeyPress(event, mOpt): void {
+  valueKeyPress(event, mOpt, index, type): void {
     if (event.key === 'Enter') {
-      mOpt.editing = !mOpt.editing;
-      this.weightFocus[mOpt.propertyName] = false;
+      mOpt.editing = '';
+      this.valueFocus[mOpt.propertyName] = false;
+      this.updateOption.emit({opt: mOpt, index: index});
     }
   }
 
   // Close weight input on outside click
   @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mOpt){
-    this.matchOptions.options.forEach(m => { m.editing = false; })
+    this.matchOptions.options.forEach((m, i) => {
+      if (m.editing) {
+        this.updateOption.emit({opt: m, index: i});
+        m.editing = '';
+      }
+    })
   }
 
 }

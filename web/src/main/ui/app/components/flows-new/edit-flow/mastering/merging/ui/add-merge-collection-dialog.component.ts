@@ -87,7 +87,7 @@ export class AddMergeCollectionDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.collection ? 'Save' : 'Create';
+    return this.data.collection ? 'SAVE' : 'CREATE';
   }
 
   onSave() {

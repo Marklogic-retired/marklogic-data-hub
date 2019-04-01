@@ -18,8 +18,8 @@ export class AddMergeStrategyDialogComponent {
 
   form: FormGroup;
   props: FormArray;
-  selectedType: string;
   sourceWeights: FormArray;
+  selectedDefault: string;
 
   constructor(
     private fb: FormBuilder,
@@ -30,7 +30,9 @@ export class AddMergeStrategyDialogComponent {
   ngOnInit() {
     console.log('this.data.strategy', this.data.strategy);
     this.form = this.fb.group({
-      name: [this.data.strategy ? this.data.strategy.name : ''],
+      // Clear name if default strategy
+      name: [this.data.strategy && !this.data.strategy.default ? this.data.strategy.name : ''],
+      default: [this.data.strategy && this.data.strategy.default ? 'true' : 'false'],
       algorithmRef: [this.data.strategy ? this.data.strategy.algorithmRef : ''],
       maxValues: [this.data.strategy ? this.data.strategy.maxValues : ''],
       maxSources: [this.data.strategy ? this.data.strategy.maxSources : ''],
@@ -39,6 +41,8 @@ export class AddMergeStrategyDialogComponent {
       customFunction: [this.data.strategy ? this.data.strategy.customFunction : ''],
       index: this.data.index
     })
+    this.selectedDefault = (this.data.strategy && this.data.strategy.default) ?
+      'true' : 'false';
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
     console.log('ngOnInit this.sourceWeights', this.sourceWeights);
@@ -85,7 +89,7 @@ export class AddMergeStrategyDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.strategy ? 'Save' : 'Create';
+    return this.data.strategy ? 'SAVE' : 'CREATE';
   }
 
   onSave() {
@@ -95,8 +99,23 @@ export class AddMergeStrategyDialogComponent {
     if (this.form.value.length) {
       resultStrategy.length = { weight: this.form.value.length };
     }
+    resultStrategy.sourceWeights = this.getValidSourceWeights(this.form.value.sourceWeights);
     console.log('onSave resultStrategy', resultStrategy);
     this.dialogRef.close({str: resultStrategy, index: this.form.value.index});
+  }
+
+  /**
+   * Build source-weight data structure from form data.
+   */
+  getValidSourceWeights(formSourceWeights) {
+    let validSourceWeights = [];
+    formSourceWeights.forEach(sw => {
+      if (sw.source !== '' && sw.weight !== '' &&
+          sw.source !== null && sw.weight !== null) {
+        validSourceWeights.push({ source: sw.source, weight: sw.weight });
+      }
+    });
+    return validSourceWeights;
   }
 
 }

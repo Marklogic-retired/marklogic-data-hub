@@ -74,11 +74,11 @@
 
   <div *ngIf="selectedType === 'zip'">
     <mat-form-field layout-fill>
-      <mat-label>5-matches-9 Boost</mat-label>
+      <mat-label>5-Matches-9 Boost</mat-label>
       <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9"/>
     </mat-form-field>
     <mat-form-field layout-fill>
-      <mat-label>9-matches-5 Weight</mat-label>
+      <mat-label>9-Matches-5 Weight</mat-label>
       <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5"/>
     </mat-form-field>
   </div>
@@ -92,11 +92,15 @@
       <mat-label>Function</mat-label>
       <input id="match-option-custom-function" matInput formControlName="customFunction"/>
     </mat-form-field>
+    <mat-form-field layout-fill>
+      <mat-label>Namespace</mat-label>
+      <input id="match-option-custom-namespace" matInput formControlName="customNs"/>
+    </mat-form-field>
   </div>
 
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="match-option-cancel-btn" mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" id="match-option-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
   <button mat-raised-button color="primary" id="match-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

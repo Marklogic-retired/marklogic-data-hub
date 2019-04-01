@@ -69,36 +69,9 @@ export class MergeCollectionsUiComponent {
     });
   }
 
-  // TODO Use TruncateCharactersPipe
-  truncate(value: string, limit: number, trail: string = '...'): string {
-    return value.length > limit ?
-      value.substring(0, limit) + trail :
-      value;
-  }
-
   renderRows(): void {
     this.dataSource.data = this.mergeCollections.collections;
     this.table.renderRows();
   }
-
-  // weightClicked(event, mOpt) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   this.matchOptions.options.forEach(m => { m.editing = false; })
-  //   mOpt.editing = !mOpt.editing;
-  //   this.weightFocus[mOpt.propertyName] = true;
-  // }
-
-  // weightKeyPress(event, mOpt): void {
-  //   if (event.key === 'Enter') {
-  //     mOpt.editing = !mOpt.editing;
-  //     this.weightFocus[mOpt.propertyName] = false;
-  //   }
-  // }
-
-  // Close weight input on outside click
-  // @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mOpt){
-  //   this.matchOptions.options.forEach(m => { m.editing = false; })
-  // }
 
 }
