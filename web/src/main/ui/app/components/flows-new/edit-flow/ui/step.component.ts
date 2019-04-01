@@ -1,8 +1,7 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { NewStepDialogComponent } from './new-step-dialog.component';
-import { MatchingComponent } from '../mastering/matching/matching.component';
-import { MergingComponent } from '../mastering/merging/merging.component';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {NewStepDialogComponent} from './new-step-dialog.component';
+import {IngestComponent} from "../ingest/ingest.component";
 
 @Component({
   selector: 'app-step',
@@ -11,9 +10,13 @@ import { MergingComponent } from '../mastering/merging/merging.component';
 })
 export class StepComponent {
   @Input() step: any;
+  @Input() flow: any;
   @Input() databases: any;
   @Input() collections: any;
   @Output() updateStep = new EventEmitter();
+
+  @ViewChild(IngestComponent) ingestionStep: IngestComponent;
+
 
   showBody = true;
   constructor(
@@ -40,9 +43,13 @@ export class StepComponent {
     });
   }
 
-  saveStep(event) {
-    console.log('this.updateStep.emit', event);
-    this.updateStep.emit(event);
+  saveStep() {
+    let step = this.step;
+    if (this.step.type === 'ingestion') {
+      step = this.ingestionStep.getStep(this.flow);
+    }
+    console.log('this.updateStep.emit', step);
+    this.updateStep.emit(step);
   }
 
 }
