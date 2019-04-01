@@ -16,7 +16,6 @@
     (deleteFlow)="deleteFlowDialog()"
     (updateFlow)="updateFlow()">
     <cdk-step *ngFor="let step of stepsArray; let i = index" label="{{stepsArray[i].name}}">
-<<<<<<< HEAD
       <app-step 
         [step]="step" 
         [databases]="databases" 
@@ -24,10 +23,6 @@
         [entities]="entities"
         (updateStep)="updateStep($event)"
       ></app-step>
-=======
-      <app-step [step]="step" [flow]="flow" [databases]="databases" [collections]="collections"
-                (updateStep)="updateStep($event)"></app-step>
->>>>>>> develop
     </cdk-step>
   </app-stepper>
 </div>
