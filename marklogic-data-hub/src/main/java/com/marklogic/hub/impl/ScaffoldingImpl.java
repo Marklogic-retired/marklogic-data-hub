@@ -94,8 +94,8 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override
-    public void createCustomModule(String stepName) {
-        Path customModuleDir = project.getCustomModuleDir(stepName);
+    public void createCustomModule(String stepName, String stepType) {
+        Path customModuleDir = project.getCustomModuleDir(stepName, stepType.toLowerCase());
         customModuleDir.toFile().mkdirs();
 
         if (customModuleDir.toFile().exists()) {

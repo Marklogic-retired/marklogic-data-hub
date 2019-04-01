@@ -238,7 +238,7 @@ public interface HubProject {
 
     Path getMappingDir(String mappingName);
 
-    Path getCustomModuleDir(String stepName);
+    Path getCustomModuleDir(String stepName, String stepType);
 
     /**
      * Returns the base directory for this project

@@ -763,8 +763,8 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getCustomModuleDir(String stepName) {
-        return getCustomModulesDir().resolve(stepName);
+    public Path getCustomModuleDir(String stepName, String stepType) {
+        return getCustomModulesDir().resolve(stepType).resolve(stepName);
     }
 
     @Override

@@ -47,9 +47,9 @@ class CreateStepTask extends HubTask {
 
         if (stepManager.getStep(step.name, step.type) == null) {
             Scaffolding scaffolding = getScaffolding()
-            scaffolding.createCustomModule(stepName)
+            scaffolding.createCustomModule(stepName, stepType)
 
-            step.setModulePath("/custom-modules/" + stepName + "/main.sjs")
+            step.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepName + "/main.sjs")
 
             stepManager.saveStep(step)
         } else {
