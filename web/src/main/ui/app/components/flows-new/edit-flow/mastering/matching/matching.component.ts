@@ -51,6 +51,7 @@ export class MatchingComponent implements OnInit {
     this.stepId = this.activatedRoute.snapshot.paramMap.get('stepId');
 
     this.matching = Matching.fromConfig(this.step.options.matchOptions);
+    console.log('this.matching', this.matching);
 
     // Parse matching data and instantiate models for UI
     this.matchOptions = MatchOptions.fromMatching(this.matching);
