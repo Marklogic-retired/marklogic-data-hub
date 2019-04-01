@@ -208,11 +208,11 @@ class Flow {
     }
     let resp = {
       "jobId": this.globalContext.jobId,
-      "totalCount": this.writeQueue.length,
+      "totalCount": uris.length,
       // TODO should error counts, completedItems, etc. be all or nothing?
-      "errorCount": this.globalContext.batchErrors.length ? this.writeQueue.length: 0,
-      "completedItems": this.globalContext.batchErrors.length ? this.writeQueue.map((content) => content.uri): uris,
-      "failedItems": this.globalContext.batchErrors.length ? this.writeQueue.map((content) => content.uri): [],
+      "errorCount": this.globalContext.batchErrors.length ? uris.length: 0,
+      "completedItems": this.globalContext.batchErrors.length ? []: uris,
+      "failedItems": this.globalContext.batchErrors.length ? uris: [],
       "errors": this.globalContext.batchErrors
     };
     if (combinedOptions.fullOutput) {
