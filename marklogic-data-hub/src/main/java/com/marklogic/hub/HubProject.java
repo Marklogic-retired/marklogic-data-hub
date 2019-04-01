@@ -199,6 +199,13 @@ public interface HubProject {
     Path getUserFinalModulesDir();
 
     /**
+     * Gets the path for the custom modules directory
+     *
+     * @return the path for the custom modules directory
+     */
+    Path getCustomModulesDir();
+
+    /**
      * Checks if the project has been initialized or not
      *
      * @return true if initialized, false if not
@@ -230,6 +237,8 @@ public interface HubProject {
     Path getEntityDir(String entityName);
 
     Path getMappingDir(String mappingName);
+
+    Path getCustomModuleDir(String stepName);
 
     /**
      * Returns the base directory for this project
