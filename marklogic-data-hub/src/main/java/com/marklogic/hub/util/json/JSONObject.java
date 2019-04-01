@@ -69,7 +69,7 @@ public class JSONObject {
     }
 
     /**
-     *
+     * Returns a Json node instance from a json String
      * @param jsonString
      * @return
      * @throws IOException
@@ -80,6 +80,7 @@ public class JSONObject {
     }
 
     /**
+     * Returns a Json node instance from an input stream
      * @param istream
      * @return
      * @throws IOException
@@ -90,6 +91,7 @@ public class JSONObject {
     }
 
     /**
+     * Returns a Json node instance from an input reader
      * @param reader
      * @return
      * @throws IOException
@@ -100,6 +102,7 @@ public class JSONObject {
     }
 
     /**
+     * Returns a json string from an Object with pretty print
      * @param obj
      * @return
      * @throws JsonProcessingException
@@ -109,6 +112,7 @@ public class JSONObject {
     }
 
     /**
+     * Returns a json string from an Object with pretty print as a flag
      * @param obj
      * @param hasPrettyPrint
      * @return
@@ -122,10 +126,18 @@ public class JSONObject {
         return mapper.writeValueAsString(obj);
     }
 
+    /**
+     * Returns the json instance
+     * @return
+     */
     public JsonNode jsonNode() {
         return this.json;
     }
 
+    /**
+     * Returns the mapper
+     * @return
+     */
     public ObjectMapper getMapper() {
         return mapper;
     }
@@ -136,6 +148,7 @@ public class JSONObject {
     }
 
     /**
+     * Checks if the key is existed or not
      * @param key
      * @return
      */
@@ -144,6 +157,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets json size if it is an array
      * @param key
      * @return
      */
@@ -154,11 +168,17 @@ public class JSONObject {
         return 0;
     }
 
+    /**
+     * Gets a JsonNode value by key
+     * @param key
+     * @return
+     */
     public JsonNode getNode(Object key) {
         return getNode(key, null);
     }
 
     /**
+     * Gets a JsonNode value by key with a default value
      * @param key
      * @param defaultVal
      * @return
@@ -177,6 +197,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a String value by key
      * @param key
      * @return
      */
@@ -185,6 +206,7 @@ public class JSONObject {
     }
 
     /**
+     *  Gets a String value by key with a default value
      * @param key
      * @param defaultVal
      * @return
@@ -200,6 +222,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a int value by key with 0 as default value
      * @param key
      * @return
      */
@@ -208,6 +231,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a int value by key with a default value
      * @param key
      * @param defaultVal
      * @return
@@ -217,6 +241,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a Boolean value by key
      * @param key
      * @return
      */
@@ -225,6 +250,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a Boolean value by key with a default value
      * @param key
      * @param defaultVal
      * @return
@@ -234,6 +260,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a Long value by key
      * @param key
      * @return
      */
@@ -242,6 +269,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a Long value by key with a default value
      * @param key
      * @param defaultVal
      * @return
@@ -265,6 +293,7 @@ public class JSONObject {
     }
 
     /**
+     * Gets a list of Objects by key
      * @param key
      * @return
      */
@@ -276,6 +305,11 @@ public class JSONObject {
         return listObj;
     }
 
+    /**
+     * Gets a Map (String, Object) by key
+     * @param key
+     * @return
+     */
     public Map<String, Object> getMap(String key) {
         Map<String, Object> mapObj = new HashMap<>();
         if (json.get(key) == null) {
@@ -291,6 +325,31 @@ public class JSONObject {
     }
 
     /**
+     * Converts a Map (String, Object) to a Json String
+     * @param map
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String convertMapToJsonString(Map<String, Object> map) throws JsonProcessingException {
+        putMap(map);
+        if (map == null) {
+            mapper = new ObjectMapper();
+        }
+        return mapper.writeValueAsString(json);
+    }
+
+    /**
+     * Puts map entries to the json instance
+     * @param map
+     */
+    public void putMap(Map<String, Object> map) {
+        for (String key : map.keySet()) {
+            put(key, map.get(key));
+        }
+    }
+
+    /**
+     * Gets a list of String by key
      * @param key
      * @return
      */
@@ -303,6 +362,7 @@ public class JSONObject {
     }
 
     /**
+     * Puts (key, value) pairs to the json instance
      * @param key
      * @param val
      */
@@ -329,7 +389,7 @@ public class JSONObject {
     }
 
     /**
-     * single key array node
+     * Puts a number of Objects into Json Array of the json instance
      *
      * @param key
      * @param vals
@@ -341,7 +401,7 @@ public class JSONObject {
     }
 
     /**
-     * single key array node
+     * Puts a list of Objects into Json Array of the json instance
      *
      * @param key
      * @param valList
@@ -368,6 +428,9 @@ public class JSONObject {
         }
     }
 
+    /**
+     * Makes pretty print for the json instance
+     */
     public void prettyPrint() {
         try {
             logger.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
