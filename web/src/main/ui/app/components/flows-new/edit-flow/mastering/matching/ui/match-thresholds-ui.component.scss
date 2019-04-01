@@ -27,9 +27,9 @@
   padding: 4px 0;
 }
 
-.actionLabel {
+.action-label {
   display: inline-block;
-  width: 80px;
+  width: 70px;
   font-size: 12px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.54);
@@ -44,7 +44,7 @@
 /deep/ .mat-column-above div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
-  width: 30px;
+  width: 40px;
 }
 
 /deep/ .mat-cell a.weight-value {

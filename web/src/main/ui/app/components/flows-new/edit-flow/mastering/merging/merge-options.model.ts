@@ -25,14 +25,14 @@ export class MergeOptions {
   }
 
   /**
-   * Add a new match option to the set.
+   * Add a new merge option to the set.
    */
   addOption(opt) {
     this.options.push(new MergeOption(opt));
   }
 
   /**
-   * Update a match option in the set.
+   * Update a merge option in the set.
    */
   updateOption(opt, index) {
     let mOpt = new MergeOption(opt);
@@ -40,7 +40,21 @@ export class MergeOptions {
   }
 
   /**
-   * Delete a match option from the set.
+   * Update merge options based on a strategy.
+   */
+  updateOptionsByStrategy(str) {
+    this.options.forEach((mOpt, i) => {
+      if (str.name === mOpt.strategy) {
+        this.options[i].maxValues = str.maxValues;
+        this.options[i].maxSources = str.maxSources;
+        this.options[i].sourceWeights = str.sourceWeights;
+        this.options[i].length = str.length;
+      }
+    })
+  }
+
+  /**
+   * Delete a merge option from the set.
    */
   deleteOption(opt) {
     let i = this.options.findIndex(o => {
@@ -49,6 +63,17 @@ export class MergeOptions {
     if (i >= 0) {
       this.options.splice(i, 1);
     }
+  }
+
+  /**
+   * Update merge options based on a strategy.
+   */
+  deleteOptionsByStrategy(str) {
+    this.options.forEach((mOpt, i) => {
+      if (str.name === mOpt.strategy) {
+        this.options.splice(i, 1);
+      }
+    })
   }
 
 }
@@ -66,6 +91,7 @@ export class MergeOption {
   public strategy: string;
   public customUri: string;
   public customFunction: string;
+  public customNs: string;
   public mergeType: string;
   public editing: string = '';
 
@@ -79,6 +105,7 @@ export class MergeOption {
     if (mOpt.strategy) this.strategy = mOpt.strategy;
     if (mOpt.customUri) this.customUri = mOpt.customUri;
     if (mOpt.customFunction) this.customFunction = mOpt.customFunction;
+    if (mOpt.customNs) this.customNs = mOpt.customNs;
     if (mOpt.mergeType) this.mergeType = mOpt.mergeType;
   }
 
@@ -104,6 +131,7 @@ export class MergeOption {
       });
       if (alg.at) result.customUri = alg.at;
       if (alg.function) result.customFunction = alg.function;
+      if (alg.namespace) result.customNs = alg.namespace;
       result.mergeType = 'custom';
     } else {
       // Handle standard type

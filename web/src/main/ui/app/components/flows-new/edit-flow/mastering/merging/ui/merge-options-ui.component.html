@@ -11,7 +11,7 @@
             Merge Options
           </span>
         </div>
-        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties, mergeStrategies)">Add</button>
+        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMergeOptionDialog(null, null, targetEntity.definition.properties, mergeStrategies)">ADD</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
@@ -40,18 +40,48 @@
           <mat-header-cell id="merge-option-type-sort-btn" *matHeaderCellDef mat-sort-header>Merge Type</mat-header-cell>
           <mat-cell class="merge-option-type" *matCellDef="let mOpt">
             <span class="capitalize">{{mOpt.mergeType}}</span>
-            <span *ngIf="mOpt.mergeType === 'strategy'">: {{mOpt.strategy}}</span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Details Column -->
+        <ng-container matColumnDef="details">
+          <mat-header-cell id="merge-option-details-sort-btn" *matHeaderCellDef mat-sort-header>Type Details</mat-header-cell>
+          <mat-cell class="merge-option-details" *matCellDef="let mOpt">
+            <div *ngIf="mOpt.mergeType === 'strategy'" class="details-content">
+              <div>{{mOpt.strategy}}</div>
+            </div>
+            <div *ngIf="mOpt.mergeType === 'custom'" class="details-content">
+              <div>
+                <span class="details-custom-label">URI</span>
+                <span title="{{mOpt.customUri}}">
+                  {{mOpt.customUri | truncate : -40}}
+                </span>
+              </div>
+              <div>
+                <span class="details-custom-label">Function</span>
+                {{mOpt.customFunction}}
+              </div>
+              <div *ngIf="mOpt.customNs">
+                <span class="details-custom-label">Namespace</span>
+                <span title="{{mOpt.customNs}}">
+                  {{mOpt.customNs | truncate : -40}}
+                </span>
+              </div>
+            </div>
           </mat-cell>
         </ng-container>
 
         <!-- Max Values Column -->
         <ng-container matColumnDef="maxValues">
           <mat-header-cell id="merge-option-max-values-sort-btn" *matHeaderCellDef mat-sort-header>Max Values</mat-header-cell>
-          <mat-cell class="merge-option-max-values" *matCellDef="let mOpt">
-            <a *ngIf="mOpt.editing !== 'maxValues'" (click)="valueClicked($event, mOpt, 'maxValues')" class="max-values-value">
+          <mat-cell class="merge-option-max-values" *matCellDef="let mOpt; let i = index">
+            <span *ngIf="mOpt.mergeType === 'strategy'">
+              {{mOpt.maxValues}}
+            </span>
+            <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== 'maxValues'" (click)="valueClicked($event, mOpt, 'maxValues')" class="max-values-value">
               {{mOpt.maxValues}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'maxValues'" (keypress)="valueKeyPress($event, mOpt, 'maxValues')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === 'maxValues'" (keypress)="valueKeyPress($event, mOpt, i, 'maxValues')" class="editing-field">
               <input matInput [value]="mOpt.maxValues" [(ngModel)]="mOpt.maxValues" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>
@@ -60,11 +90,14 @@
         <!-- Max Sources Column -->
         <ng-container matColumnDef="maxSources">
           <mat-header-cell id="merge-option-max-sources-sort-btn" *matHeaderCellDef mat-sort-header>Max Sources</mat-header-cell>
-          <mat-cell class="merge-option-max-sources" *matCellDef="let mOpt">
-            <a *ngIf="mOpt.editing !== 'maxSources'" (click)="valueClicked($event, mOpt, 'maxSources')" class="max-sources-value">
+          <mat-cell class="merge-option-max-sources" *matCellDef="let mOpt; let i = index">
+            <span *ngIf="mOpt.mergeType === 'strategy'">
+              {{mOpt.maxSources}}
+            </span>
+            <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== 'maxSources'" (click)="valueClicked($event, mOpt, 'maxSources')" class="max-sources-value">
               {{mOpt.maxSources}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'maxSources'" (keypress)="valueKeyPress($event, mOpt, 'maxSources')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === 'maxSources'" (keypress)="valueKeyPress($event, mOpt, i, 'maxSources')" class="editing-field">
               <input matInput [value]="mOpt.maxSources" [(ngModel)]="mOpt.maxSources" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>
@@ -73,15 +106,18 @@
         <!-- Source Weights Column -->
         <ng-container matColumnDef="sourceWeights">
           <mat-header-cell id="merge-option-source-weights-sort-btn" *matHeaderCellDef mat-sort-header>Source Weights</mat-header-cell>
-          <mat-cell class="merge-option-source-weights" *matCellDef="let mOpt">
+          <mat-cell class="merge-option-source-weights" *matCellDef="let mOpt; let i = index">
 
             <div *ngIf="mOpt.sourceWeights.length > 0" class="other-content">
               <div *ngFor="let sw of mOpt.sourceWeights; let i = index;" class="other-item">
                 {{sw.source.name}}:
-                <a *ngIf="mOpt.editing !== getIdSW(sw,i)" (click)="valueClicked($event, mOpt, getIdSW(sw,i))" class="source-weights-value">
+                <span *ngIf="mOpt.mergeType === 'strategy'">
+                  {{sw.source.weight}}
+                </span>
+                <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== getIdSW(sw,i)" (click)="valueClicked($event, mOpt, getIdSW(sw,i))" class="source-weights-value">
                   {{sw.source.weight}}
                 </a>
-                <mat-form-field floatLabel="never" *ngIf="mOpt.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mOpt, getIdSW(sw,i))" class="editing-field">
+                <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === getIdSW(sw,i)" (keypress)="valueKeyPress($event, mOpt, i, getIdSW(sw,i))" class="editing-field">
                   <input matInput [value]="mOpt.sourceWeights[i].source.weight" [(ngModel)]="mOpt.sourceWeights[i].source.weight" [focusElement]="valueFocus[mOpt.propertyName]">
                 </mat-form-field>
               </div>
@@ -93,11 +129,14 @@
         <!-- Length Weight Column -->
         <ng-container matColumnDef="length">
           <mat-header-cell id="merge-option-length-sort-btn" *matHeaderCellDef mat-sort-header>Length Weight</mat-header-cell>
-          <mat-cell class="merge-option-length" *matCellDef="let mOpt">
-            <a *ngIf="mOpt.editing !== 'length'" (click)="valueClicked($event, mOpt, 'length')" class="length-value">
+          <mat-cell class="merge-option-length" *matCellDef="let mOpt; let i = index">
+            <span *ngIf="mOpt.mergeType === 'strategy'">
+              {{(mOpt.length) ? mOpt.length.weight : ''}}
+            </span>
+            <a *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing !== 'length'" (click)="valueClicked($event, mOpt, 'length')" class="length-value">
               {{(mOpt.length) ? mOpt.length.weight : ''}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'length'" (keypress)="valueKeyPress($event, mOpt, 'length')" class="editing-field">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.mergeType !== 'strategy' && mOpt.editing === 'length'" (keypress)="valueKeyPress($event, mOpt, i, 'length')" class="editing-field">
               <input matInput [value]="mOpt.length.weight" [(ngModel)]="mOpt.length.weight" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>

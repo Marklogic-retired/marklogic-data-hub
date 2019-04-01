@@ -77,6 +77,7 @@ export class MatchOption {
   public zip9match5: number;
   public customUri: string;
   public customFunction: string;
+  public customNs: string;
   public editing: boolean = false;
 
   constructor (mOpt: any = {}) {
@@ -93,6 +94,7 @@ export class MatchOption {
     if (mOpt.zip9match5) this.zip9match5 = mOpt.zip9match5;
     if (mOpt.customUri) this.customUri = mOpt.customUri;
     if (mOpt.customFunction) this.customFunction = mOpt.customFunction;
+    if (mOpt.customNs) this.customNs = mOpt.customNs;
     // Adjust property names if reduce type
     if (mOpt.matchType === 'reduce' && mOpt.propertiesReduce) {
       this.propertyName = mOpt.propertiesReduce.map(prop => {
@@ -139,6 +141,7 @@ export class MatchOption {
       });
       if (alg.at) result.customUri = alg.at;
       if (alg.function) result.customFunction = alg.function;
+      if (alg.namespace) result.customNs = alg.namespace;
     }
     return result;
   }
