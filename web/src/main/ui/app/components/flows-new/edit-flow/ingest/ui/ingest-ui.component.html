@@ -5,7 +5,7 @@
       [tooltipText]="config.inputFilePath.description"
     ></info-label>
     <app-folder-browser
-      [startPath]="step.config.inputFilePath"
+      [startPath]="step.options.inputFilePath"
       (folderChosen)="changeFolder($event)"
       showFiles="true"
     ></app-folder-browser>
@@ -18,7 +18,7 @@
     <mat-form-field layout-fill appearance="outline">
       <mat-select
         id="file_type_select"
-        [(ngModel)]="step.config.inputFileType"
+        [(ngModel)]="step.options.inputFileType"
         name="filetype"
       >
         <mat-option
@@ -36,7 +36,7 @@
     ></info-label>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
-        [(ngModel)]="step.config.documentType"
+        [(ngModel)]="step.options.documentType"
         name="doctype"
       >
         <mat-option
@@ -53,7 +53,7 @@
       [tooltipText]="config.outputPermissions.description"
     ></info-label>
     <mat-form-field layout-fill appearance="outline">
-      <input matInput [(ngModel)]="this.step.config.outputPermissions" name="permissions"
+      <input matInput [(ngModel)]="this.step.options.outputPermissions" name="permissions"
       />
     </mat-form-field>
 </div>

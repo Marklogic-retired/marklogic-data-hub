@@ -12,7 +12,7 @@
     <input id="step-description" matInput formControlName="description" placeholder="Description">
     <mat-hint>Optional</mat-hint>
   </mat-form-field>
-  <div *ngIf="newStepForm.value.type != 'ingestion'">
+  <div *ngIf="newStepForm.value.type != 'ingest'">
     <label>Source Type: </label>
     <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource" [ngModelOptions]="{standalone: true}">
       <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
@@ -24,7 +24,7 @@
       <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'  && newStepForm.value.type != 'ingestion'" >
+  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'  && newStepForm.value.type != 'ingest'" >
     <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 
@@ -42,7 +42,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <mat-form-field *ngIf="newStepForm.value.type != 'ingestion'">
+      <mat-form-field *ngIf="newStepForm.value.type != 'ingest'">
         <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
           <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
         </mat-select>
