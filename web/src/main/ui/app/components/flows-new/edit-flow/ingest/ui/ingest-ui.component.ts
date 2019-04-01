@@ -102,8 +102,8 @@ export class IngestUiComponent implements OnInit {
 
   getStep(flow): Step {
     this.step.options.inputFilePath = this.folder;
-    this.step.options.transformParams = `entity-name=${this.step.targetEntity},flow-name=${flow.name}`;
-    this.step.options.outputCollections = `${this.step.targetEntity}`;
+    this.step.options.transformParams = `entity-name=${this.step.options.targetEntity},flow-name=${flow.name}`;
+    this.step.options.outputCollections = `${this.step.options.targetEntity}`;
     return this.step;
   }
 

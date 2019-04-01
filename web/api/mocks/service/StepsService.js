@@ -24,7 +24,6 @@ exports.createFlowStep = function(flowId, stepOrder, body) {
           id: step.id,
           name: step.name,
           type: step.type,
-          name: step.name,
           targetEntity: step.options && step.options.targetEntity || null 
         };
         if(index === flow.steps.length){
