@@ -47,7 +47,7 @@ export class StepComponent {
 
   saveStep() {
     let step = this.step;
-    if (this.step.type === 'ingestion') {
+    if (this.step.type === 'ingest') {
       step = this.ingestionStep.getStep(this.flow);
     }
     console.log('this.updateStep.emit', step);
