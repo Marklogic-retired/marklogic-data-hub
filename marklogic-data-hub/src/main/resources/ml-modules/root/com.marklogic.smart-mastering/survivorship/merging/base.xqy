@@ -2161,13 +2161,15 @@ declare private function merge-impl:construct-algorithms-element($options-json a
       if (fn:exists($options-json/*:options/*:algorithms/*:collections)) then
         element merging:collections {
           let $config := json:config("custom")
+                          => map:with("element-namespace", "http://marklogic.com/smart-mastering/merging")
                           => map:with("camel-case", fn:true())
                           => map:with("whitespace", "ignore")
                           => map:with("attribute-names", ("namespace", "at", "function"))
           for $event in $options-json/*:options/*:algorithms/*:collections/*
-          let $config := $config => map:with("array-element-names", if (fn:empty($event/*:function)) then "collection" else ())
+          let $qn := fn:node-name($event)
+          let $config := map:new($config) => map:with("array-element-names", if (fn:empty($event/*:function)) then "collection" else ())
           return
-            json:transform-from-json($event, $config)
+            json:transform-from-json(object-node{ $qn: $event}, $config)
         }
       else ()
     }
@@ -2194,22 +2196,51 @@ declare private function merge-impl:construct-merging-element($options-json as o
 {
   element merging:merging {
     attribute xmlns { "http://marklogic.com/smart-mastering/merging" },
+    let $all-merge-options := $options-json/*:options/*:merging
+    let $all-merge-strategy-options := $options-json/*:options/*:mergeStrategies
+    let $array-element-names :=
+      fn:distinct-values(
+        ($all-merge-options,$all-merge-strategy-options)//array-node() !
+          xs:QName("merging:"||fn:lower-case(fn:replace(fn:string(fn:node-name(.)), "([a-z])([A-Z])", "$1-$2")))
+      )
     let $config := json:config("custom")
+      => map:with("element-namespace", "http://marklogic.com/smart-mastering/merging")
       => map:with("camel-case", fn:true())
       => map:with("whitespace", "ignore")
-      => map:with("attribute-names", ("name", "weight", "strategy", "propertyName", "algorithmRef", "maxValues", "maxSources"))
-    return (
+      => map:with("array-element-names", $array-element-names)
+      => map:with("attribute-names", ("name", "weight", "strategy", "propertyName", "algorithmRef", "maxValues", "maxSources", "documentUri"))
+    let $all-xml := (
       for $merge in $options-json/*:options/*:merging
       return
         element merging:merge {
           json:transform-from-json($merge, $config)
         },
-      for $merge-strategy in $options-json/*:options/*:mergeStrategies
+      for $merge-strategy in $all-merge-strategy-options
       return
         element merging:merge-strategy {
           json:transform-from-json($merge-strategy, $config)
         }
-    )
+      )
+    for $xml in $all-xml
+    let $array-elements := $xml//*[fn:node-name(.) = $array-element-names]
+    return
+      if (fn:exists($array-elements)) then
+        mem:execute(
+          mem:transform(
+            mem:copy($xml),
+            $array-elements,
+            function($node) {
+              let $qn := fn:node-name($node)
+              where fn:empty($node/preceding-sibling::*[fn:node-name(.) = $qn])
+              return element {$qn} {
+                $node/*,
+                $node/following-sibling::*[fn:node-name(.) = $qn]/*
+              }
+            }
+          )
+        )
+      else
+        $xml
   }
 };
 
@@ -2301,10 +2332,37 @@ declare function merge-impl:option-names-to-json($options-xml)
 
 declare function merge-impl:propertyspec-to-json($property-spec as element()) as object-node()
 {
+  let $array-element-names := fn:distinct-values((
+      xs:QName("merging:source-weights"),
+      for $child-element in $property-spec//*
+      let $current-qn := fn:node-name($child-element)
+      let $siblings-with-same-name := $child-element/(preceding-sibling::*|following-sibling::*)[fn:node-name(.) eq $current-qn]
+      where $current-qn ne xs:QName("merging:source") and fn:exists($siblings-with-same-name)
+      return $current-qn
+    ))
+  let $source-weights-to-transform := $property-spec//merging:source-weights
+  let $transformed-xml :=
+    if (fn:exists($source-weights-to-transform)) then
+      mem:execute(mem:transform(
+        mem:copy($property-spec),
+        $source-weights-to-transform,
+        function($node) {
+          let $node-name := fn:node-name($node)
+          for $child in $node/*
+          return
+            element {$node-name} {
+              $node/@*,
+              $child
+            }
+        }
+      ))
+    else
+      $property-spec
   let $config := json:config("custom")
     => map:with("camel-case", fn:true())
     => map:with("whitespace", "ignore")
+    => map:with("array-element-names", $array-element-names)
     => map:with("ignore-element-names", xs:QName("merging:merge"))
   return
-    json:transform-to-json($property-spec, $config)/*
+    json:transform-to-json($transformed-xml, $config)/*
 };
