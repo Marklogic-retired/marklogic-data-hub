@@ -276,6 +276,11 @@ public class JSONObject {
         return listObj;
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     public Map<String, Object> getMap(String key) {
         Map<String, Object> mapObj = new HashMap<>();
         if (json.get(key) == null) {
@@ -288,6 +293,30 @@ public class JSONObject {
         }
 
         return mapObj;
+    }
+
+    /**
+     *
+     * @param map
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String convertMapToJsonString(Map<String, Object> map) throws JsonProcessingException {
+        putMap(map);
+        if (map == null) {
+            mapper = new ObjectMapper();
+        }
+        return mapper.writeValueAsString(json);
+    }
+
+    /**
+     *
+     * @param map
+     */
+    public void putMap(Map<String, Object> map) {
+        for (String key : map.keySet()) {
+            put(key, map.get(key));
+        }
     }
 
     /**
