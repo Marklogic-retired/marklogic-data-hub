@@ -93,6 +93,24 @@ public class ScaffoldingImpl implements Scaffolding {
         mappingDir.toFile().mkdirs();
     }
 
+    @Override
+    public void createCustomModule(String stepName, String stepType) {
+        Path customModuleDir = project.getCustomModuleDir(stepName, stepType.toLowerCase());
+        customModuleDir.toFile().mkdirs();
+
+        if (customModuleDir.toFile().exists()) {
+            String moduleScaffoldingSrcFile = "scaffolding/custom-module/main.sjs";
+            InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(moduleScaffoldingSrcFile);
+            File moduleFile = customModuleDir.resolve("main.sjs").toFile();
+
+            try {
+                FileUtils.copyInputStreamToFile(inputStream, moduleFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     @Override public void createFlow(String entityName, String flowName,
                                        FlowType flowType, CodeFormat codeFormat,
                                        DataFormat dataFormat) {
