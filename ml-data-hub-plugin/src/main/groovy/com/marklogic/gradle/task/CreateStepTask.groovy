@@ -20,6 +20,7 @@ package com.marklogic.gradle.task
 import com.marklogic.gradle.exception.StepAlreadyPresentException
 import com.marklogic.gradle.exception.StepNameRequiredException
 import com.marklogic.hub.StepManager
+import com.marklogic.hub.scaffold.Scaffolding
 import com.marklogic.hub.step.Step
 import org.gradle.api.tasks.TaskAction
 
@@ -29,11 +30,12 @@ class CreateStepTask extends HubTask {
     void createStep() {
         def propName = "stepName"
         def propType = "stepType"
-        def stepName = project.hasProperty(propName) ? project.property(propName) : null
+
+        String stepName = project.hasProperty(propName) ? project.property(propName) : null
         if (stepName == null) {
             throw new StepNameRequiredException()
         }
-        def stepType = project.hasProperty(propType) ? project.property(propType) : Step.StepType.CUSTOM
+        String stepType = project.hasProperty(propType) ? project.property(propType) : Step.StepType.CUSTOM
 
         def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "stepName: " + stepName
@@ -41,12 +43,16 @@ class CreateStepTask extends HubTask {
         println "projectDir: " + projectDir.toString()
 
         StepManager stepManager = getStepManager()
-        Step step = Step.create(stepName.toString(), Step.StepType.getStepType(stepType.toString()))
+        Step step = Step.create(stepName.toString(), Step.StepType.getStepType(stepType))
 
         if (stepManager.getStep(step.name, step.type) == null) {
+            Scaffolding scaffolding = getScaffolding()
+            scaffolding.createCustomModule(stepName, stepType)
+
+            step.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepName + "/main.sjs")
+
             stepManager.saveStep(step)
-        }
-        else {
+        } else {
             throw new StepAlreadyPresentException()
         }
 
