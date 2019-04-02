@@ -213,7 +213,7 @@ pipeline{
 		}
 		stage('rh7-singlenode'){
 		when {
-  			branch '4.x-develop'
+  			branch 'develop'
 			}
 			agent { label 'dhfLinuxAgent'}
 			steps{
@@ -293,7 +293,7 @@ pipeline{
 		}
 		stage('Parallel Execution'){
 		when {
-  			branch '4.x-develop'
+  			branch 'develop'
   			beforeAgent true
 		}
 		parallel{
@@ -403,7 +403,7 @@ pipeline{
 		stage('w12_cluster_9.0-6'){
 			agent { label 'master'}
 			steps{ 
-				build 'dhf-core-4.x-develop-winserver2012-cluster_9.0-6'
+				build 'dhf-core-develop-winserver2012-cluster_9.0-6'
 					script{
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -429,10 +429,10 @@ pipeline{
                   }
                   }
 		}
-		stage('qs_rh7_singlenode'){
+		stage('w12_cluster_9.0-5'){
 			agent { label 'master'}
 			steps{ 
-				build 'NO_CI_dhf-qs-4.x-develop-rh7'
+				build 'dhf-core-develop-winserver2012-cluster_9.0-5'
 					script{
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -441,7 +441,65 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins qs_rh7_singlenode.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				jiraAddComment comment: 'Jenkins w12_cluster_9.0-5 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
+			}
+			post{
+				always{
+				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  }
+                  success {
+                    println("w12_cluster_9.0-6 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 9.0-5 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_9.0-5 Tests for $BRANCH_NAME Passed'
+                   }
+                   failure {
+                      println("w12_cluster_9.0-6 Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-5 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_9.0-5 Tests for $BRANCH_NAME Failed'
+                  }
+                  }
+		}
+		stage('w12_cluster'){
+			agent { label 'master'}
+			steps{ 
+				build 'dhf-core-develop-winserver2012-cluster'
+					script{
+				 commitMessage = sh (returnStdout: true, script:'''
+			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+				def commit=slurper.message.toString().trim();
+				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+				JIRA_ID=JIRA_ID.split(" ")[0];
+				commitMessage=null;
+				jiraAddComment comment: 'Jenkins w12_cluster Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
+			}
+			post{
+				always{
+				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  }
+                  success {
+                    println("w12_cluster Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster on latest server build of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster on latest server build Tests for $BRANCH_NAME Passed'
+                   }
+                   failure {
+                      println("w12_cluster Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on latest server build w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster Tests on latest server build for $BRANCH_NAME Failed'
+                  }
+                  }
+		}
+		stage('qs_rh7_singlenode'){
+			agent { label 'master'}
+			steps{ 
+				build 'NO_CI_dhf-qs-develop-rh7'
+					script{
+				 commitMessage = sh (returnStdout: true, script:'''
+			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+				def commit=slurper.message.toString().trim();
+				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+				JIRA_ID=JIRA_ID.split(" ")[0];
+				commitMessage=null;
+				jiraAddComment comment: 'Jenkins qs_rh7_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -453,35 +511,6 @@ pipeline{
                    failure {
                       println("qs_rh7_singlenode.0-8 Tests Failed")
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_singlenode Tests for $BRANCH_NAME Failed'
-                  }
-                  }
-		}
-		stage('qs_w12_singlenode'){
-			agent { label 'master'}
-			steps{ 
-				build 'NO_CI_dhf-qs-4.x-develop-winserver2012'
-					script{
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				jiraAddComment comment: 'Jenkins qs_w12_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
-			}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
-                    println("qs_w12_singlenode Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on W2k12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_w12_singlenode Tests for $BRANCH_NAME Passed'
-                   }
-                   failure {
-                      println("qs_w12_singlenode Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start tests of the branch $BRANCH_NAME on w2k12 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_w12_singlenode Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
