@@ -35,6 +35,7 @@ export class IngestComponent implements OnInit {
   private checkDefaults(): void {
     const targetEntity = this.step.config.targetEntity;
     // if no config or not valid config, initialize with default
+    // TODO: bette way to house-keep ingest options in the Step schema
     if (!this.step.config || this.step.config.matchOptions) {
       this.step.config = {
         input_file_path: '.',
@@ -44,7 +45,7 @@ export class IngestComponent implements OnInit {
         output_collections: `${targetEntity || ''}`,
         transform_module: '/data-hub/5/transforms/mlcp-flow-transform.sjs',
         transform_namespace: 'http://marklogic.com/data-hub/mlcp-flow-transform',
-        transform_param: `entity-name=${targetEntity || ' '},flow-name=${this.flow.name}`,
+        transform_param: `entity-name=${targetEntity || ''},flow-name=${this.flow.name}`,
         targetEntity: targetEntity
       };
     }
