@@ -293,9 +293,9 @@ public interface HubConfig {
 
     /**
      * Sets the username for the hub to use in MarkLogic
-     * @param flowOperatorName - username to use
+     * @param flowOperatorUserName - username to use
      */
-    void setFlowOperatorUserName(String flowOperatorName);
+    void setFlowOperatorUserName(String flowOperatorUserName);
 
 
     /**
