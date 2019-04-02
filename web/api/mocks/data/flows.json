@@ -151,18 +151,7 @@
       }
     ],
     "jobs": [],
-    "latestJob": {
-      "id": "job-1-flow-3",
-      "startTime": "2019-02-02 12:10:00",
-      "endTime": "2019-02-02 16:10:00",
-      "output": [],
-      "status": "failed",
-      "stepId": "step-3-flow-3",
-      "stepName": "Flow 03 Mastering Step",
-      "stepRunningPercent": null,
-      "successfulEvents": 0,
-      "failedEvents": 500
-    },
+    "latestJob": null,
     "isValid": false,
     "version": 1
   }
