@@ -88,20 +88,20 @@
 
         <!-- Docs Committed Column -->
         <ng-container matColumnDef="docsCommitted">
-          <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Docs Committed</mat-header-cell>
+          <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Records Committed</mat-header-cell>
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
             <a [routerLink]="['/traces']">
-              {{flow.docsCommitted | number}}
+              {{flow.recordsCommitted | number}}
             </a>
           </mat-cell>
         </ng-container>
 
         <!-- Docs Failed Column -->
         <ng-container matColumnDef="docsFailed">
-          <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Docs Failed</mat-header-cell>
+          <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Records Failed</mat-header-cell>
           <mat-cell class="flow-docs-failed" *matCellDef="let flow">
             <a [routerLink]="['/traces']">
-              {{flow.docsFailed | number}}
+              {{flow.recordsFailed | number}}
             </a>
           </mat-cell>
         </ng-container>
