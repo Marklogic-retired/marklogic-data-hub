@@ -81,8 +81,8 @@
         <!-- Last Job Finished -->
         <ng-container matColumnDef="lastJobFinished">
           <mat-header-cell id="flow-last-job-finished-sort-btn" *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
-          <mat-cell class="flow-last-job-finished" *matCellDef="let flow">
-            {{friendlyDate(flow.lastJobFinished)}}
+          <mat-cell class="flow-last-job-finished" *matCellDef="let flow" >
+            <span *ngIf="flow.latestJob">{{friendlyDate(flow.lastJobFinished)}}</span>
           </mat-cell>
         </ng-container>
 
@@ -91,7 +91,7 @@
           <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Docs Committed</mat-header-cell>
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
             <a [routerLink]="['/traces']">
-              {{flow.docsCommitted | number}}
+              <span *ngIf="flow.latestJob">{{flow.docsCommitted | number}}</span>
             </a>
           </mat-cell>
         </ng-container>
@@ -101,7 +101,7 @@
           <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Docs Failed</mat-header-cell>
           <mat-cell class="flow-docs-failed" *matCellDef="let flow">
             <a [routerLink]="['/traces']">
-              {{flow.docsFailed | number}}
+              <span *ngIf="flow.latestJob">{{flow.docsFailed | number}}</span>
             </a>
           </mat-cell>
         </ng-container>
