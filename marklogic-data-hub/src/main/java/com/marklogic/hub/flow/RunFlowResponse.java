@@ -1,8 +1,8 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.hub.job.Job;
-
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RunFlowResponse {
     String jobId;
@@ -48,7 +48,11 @@ public class RunFlowResponse {
 
     @Override
     public String toString() {
-        return String.format("{jobId: %d, startTime: %d, endTime: %d, stepResponses: %d}", jobId, startTime, endTime, stepResponses);
+        return String.format("{jobId: %s, startTime: %s, endTime: %s, stepResponses: %s}", jobId, startTime,
+            endTime, stepResponses.keySet()
+                .stream()
+                .map(key -> key + "=" + stepResponses.get(key))
+                .collect(Collectors.joining(", ", "{", "}")));
     }
 
 }
