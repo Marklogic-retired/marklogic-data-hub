@@ -79,6 +79,11 @@
       "privilege-name": "any-uri",
       "action": "http://marklogic.com/xdmp/privileges/any-uri",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "ps-user",
+      "action": "http://marklogic.com/xdmp/privileges/ps-user",
+      "kind": "execute"
     }
   ]
 }

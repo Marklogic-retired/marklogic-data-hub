@@ -1,0 +1,6 @@
+{
+  "user-name": "%%mlDataHubAdminUserName%%",
+  "description": "A user that is used for administrating the MarkLogic Data Hub databases, including installation",
+  "password": "%%mlDataHubAdminUserPassword%%",
+  "role": ["%%mlDataHubAdminRole%%","%%mlFlowDeveloperRole%%","%%mlFlowOperatorRole%%"]
+}

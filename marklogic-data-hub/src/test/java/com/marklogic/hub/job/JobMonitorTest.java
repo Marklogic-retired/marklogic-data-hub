@@ -105,7 +105,7 @@ class JobMonitorTest extends HubTestBase {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("Jobs");
         meta.getCollections().add("Job");
-        meta.getPermissions().add("flow-developer-role", READ, UPDATE, EXECUTE);
+        meta.getPermissions().add("data-hub-admin-role", READ, UPDATE, EXECUTE);
         installJobDoc("/jobs/1442529761390935690.json", meta, "job-monitor-test/job1.json");
         installJobDoc("/jobs/10584668255644629399.json", meta, "job-monitor-test/job2.json");
         installJobDoc("/jobs/1552529761390935680.json", meta, "job-monitor-test/job3.json");
@@ -114,7 +114,7 @@ class JobMonitorTest extends HubTestBase {
         DocumentMetadataHandle meta1 = new DocumentMetadataHandle();
         meta1.getCollections().add("Batch");
         meta1.getCollections().add("Jobs");
-        meta1.getPermissions().add("flow-developer-role", READ, UPDATE, EXECUTE);
+        meta1.getPermissions().add("data-hub-admin-role", READ, UPDATE, EXECUTE);
         installJobDoc("/jobs/batches/11368953415268525918.json", meta1, "job-monitor-test/batch1.json");
         installJobDoc("/jobs/batches/11345653515268525918.json", meta1, "job-monitor-test/batch2.json");
 

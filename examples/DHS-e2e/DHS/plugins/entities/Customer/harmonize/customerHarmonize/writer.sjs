@@ -10,10 +10,10 @@
 function write(id, envelope, options) {
   var options = {
 		     permissions : [
-				    xdmp.permission('flowDeveloper', 'read'),
-           			    xdmp.permission('flowDeveloper', 'update'),
-				    xdmp.permission('flowDeveloper', 'insert'),
-				    xdmp.permission('flowDeveloper', 'execute'),
+				    xdmp.permission('dataHubAdmin', 'read'),
+           			    xdmp.permission('dataHubAdmin', 'update'),
+				    xdmp.permission('dataHubAdmin', 'insert'),
+				    xdmp.permission('dataHubAdmin', 'execute'),
 				    xdmp.permission('flowOperator', 'read'),
                                     xdmp.permission('flowOperator', 'update'),
 				    xdmp.permission('flowOperator', 'insert'),

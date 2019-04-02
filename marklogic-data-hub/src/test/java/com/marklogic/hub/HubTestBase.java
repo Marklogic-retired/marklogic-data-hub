@@ -200,7 +200,7 @@ public class HubTestBase {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-            flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
+            flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin.p12"));
             flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
@@ -351,7 +351,7 @@ public class HubTestBase {
         } else {
             if (isCertAuth()) {
                 /*certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-                flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
+                flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin.p12"));
                 flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
@@ -407,7 +407,7 @@ public class HubTestBase {
         LegacyTracing.create(stagingClient).disable();
     }
 
-    protected HubConfig getFlowDeveloperConfig(String projectDir) {
+    protected HubConfig getDataHubAdminConfig(String projectDir) {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -417,7 +417,7 @@ public class HubTestBase {
         return adminHubConfig;
     }
 
-    protected HubConfigImpl getFlowDeveloperConfig() {
+    protected HubConfigImpl getDataHubAdminConfig() {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -523,9 +523,9 @@ public class HubTestBase {
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
             
-            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
-            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
-            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-admin.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-admin.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-admin.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB,flowdevelopercertContext);
             manageConfig.setSslContext(flowdevelopercertContext);
             adminConfig.setSslContext(flowdevelopercertContext);
@@ -744,7 +744,7 @@ public class HubTestBase {
                     handle.setFormat(Format.TEXT);
             }
             DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-                .withPermission(getFlowDeveloperConfig().getflowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+                .withPermission(getDataHubAdminConfig().getflowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
             writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
@@ -755,7 +755,7 @@ public class HubTestBase {
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
         DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-            .withPermission(getFlowDeveloperConfig().getflowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            .withPermission(getDataHubAdminConfig().getflowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
@@ -895,7 +895,7 @@ public class HubTestBase {
         }
     }
 
-    //installHubModules(), installUserModules() and clearUserModules() must be run as 'flow-developer'.
+    //installHubModules(), installUserModules() and clearUserModules() must be run as 'data-hub-admin'.
     protected void installHubModules() {
         logger.debug("Installing Data Hub Framework modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
