@@ -78,7 +78,7 @@ exports.save = function(cName, id, obj) {
     if (collections[cName]) {
       let index = _.findIndex(collections[cName], ['id', id]);
       let item = _.find(collections[cName], ['id', id]);
-      let data = Object.assign(item || {}, obj);
+      let data = Object.assign({}, item || {}, obj);
       if (index !== -1) {
         // update record and increment version, if Flow or Step
         data.version = (['flows','steps'].includes(cName) && 
@@ -86,7 +86,7 @@ exports.save = function(cName, id, obj) {
         collections[cName][index] = data; 
       } else {
         // new record
-        data = Object.assign(getDefaultObject(cName), data);
+        data = Object.assign({}, getDefaultObject(cName), data);
         collections[cName].push(data); 
       }
       resolve(data);
