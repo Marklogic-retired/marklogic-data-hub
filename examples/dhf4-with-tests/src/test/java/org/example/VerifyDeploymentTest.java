@@ -128,7 +128,7 @@ public class VerifyDeploymentTest extends AbstractDataHubTest {
 
         RoleManager roleManager = new RoleManager(manageClient);
         assertTrue(roleManager.exists("flow-operator-role"));
-        assertTrue(roleManager.exists("flow-developer-role"));
+        assertTrue(roleManager.exists("data-hub-admin-role"));
         assertTrue(roleManager.exists("example-role1"));
 
         PrivilegeManager privilegeManager = new PrivilegeManager(manageClient);

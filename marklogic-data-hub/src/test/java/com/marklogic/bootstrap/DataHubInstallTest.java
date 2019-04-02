@@ -79,7 +79,7 @@ public class DataHubInstallTest extends HubTestBase
         createProjectDir();
 
         if (!setupDone) {
-            HubProject project = getFlowDeveloperConfig().getHubProject();
+            HubProject project = getDataHubAdminConfig().getHubProject();
 
             //creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
@@ -120,7 +120,7 @@ public class DataHubInstallTest extends HubTestBase
                 throw new RuntimeException(e);
             }
             getDataHub().install(null);
-            getFlowDeveloperConfig().refreshProject();
+            getDataHubAdminConfig().refreshProject();
             setupDone = true;
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
@@ -193,7 +193,7 @@ public class DataHubInstallTest extends HubTestBase
     {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, versions.getHubVersion());
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
     }
 
     @Test
@@ -205,7 +205,7 @@ public class DataHubInstallTest extends HubTestBase
         FileUtils.copyDirectory(src.toFile(), dest.toFile());
 
         createProjectDir();
-        HubConfig hubConfig = getFlowDeveloperConfig();
+        HubConfig hubConfig = getDataHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         installUserModules(hubConfig, false);

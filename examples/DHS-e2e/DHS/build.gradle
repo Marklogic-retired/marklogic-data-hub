@@ -59,7 +59,7 @@ task importAllCustomers(type: com.marklogic.gradle.task.MlcpTask) {
 		input_file_path = "$mlInput" + "$customersPath"
 		input_file_type = "documents"
 		output_collections = "Customer,DHS"
-		output_permissions = "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowDeveloper,update,flowOperator,read,flowOperator,update,flowOperator,execute,flowOperator,insert"
+		output_permissions = "dataHubAdmin,read,dataHubAdmin,execute,dataHubAdmin,insert,dataHubAdmin,update,flowOperator,read,flowOperator,update,flowOperator,execute,flowOperator,insert"
 		output_uri_replace = input_file_path + ",''" 
 		document_type = "json"
 		transform_module =  "/data-hub/4/transforms/mlcp-flow-transform.sjs"

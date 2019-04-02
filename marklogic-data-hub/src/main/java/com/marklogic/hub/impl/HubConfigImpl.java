@@ -157,6 +157,9 @@ public class HubConfigImpl implements HubConfig
     private String flowDeveloperRoleName;
     private String flowDeveloperUserName;
 
+    private String dataHubAdminRoleName;
+    private String dataHubAdminUserName;
+
     private String DHFVersion;
 
     private String hubLogLevel;
@@ -806,6 +809,24 @@ public class HubConfigImpl implements HubConfig
     @Override public String getFlowOperatorUserName() {
         return flowOperatorUserName;
     }
+    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
+        this.flowOperatorUserName = flowOperatorUserName;
+    }
+
+    @Override public String getflowDeveloperRoleName() {
+        return flowDeveloperRoleName;
+    }
+    @Override public void setflowDeveloperRoleName(String flowDeveloperRoleName) {
+        this.flowDeveloperRoleName = flowDeveloperRoleName;
+    }
+
+    @Override public String getFlowDeveloperUserName() {
+        return flowDeveloperUserName;
+    }
+    @Override  public void setFlowDeveloperUserName(String flowDeveloperUserName) {
+        this.flowDeveloperUserName = flowDeveloperUserName;
+    }
+
 
     // impl only pending refactor to Flow Component
     public String getMlUsername() {
@@ -825,9 +846,7 @@ public class HubConfigImpl implements HubConfig
     public void setMlPassword(String mlPassword) {
         this.mlPassword = mlPassword;
     }
-    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
-        this.flowOperatorUserName = flowOperatorUserName;
-    }
+
 
 
     @JsonIgnore
@@ -1308,6 +1327,20 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlFlowDeveloperUserName", flowDeveloperUserName);
         }
 
+        if (dataHubAdminRoleName == null) {
+            dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
+        }
+        else {
+            projectProperties.setProperty("mlDataHubAdminRole", dataHubAdminRoleName);
+        }
+
+        if (dataHubAdminUserName == null) {
+            dataHubAdminUserName = getEnvPropString(projectProperties, "mlDataHubAdminUserName", environment.getProperty("mlDataHubAdminUserName"));
+        }
+        else {
+            projectProperties.setProperty("mlDataHubAdminUserName", dataHubAdminUserName);
+        }
+
         if (modulePermissions == null) {
             modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));
         }
@@ -1701,14 +1734,14 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlFlowOperatorRole%%", flowOperatorRoleName == null ? environment.getProperty("mlFlowOperatorRole") : flowOperatorRoleName);
         customTokens.put("%%mlFlowOperatorUserName%%", flowOperatorUserName == null ? environment.getProperty("mlFlowOperatorUserName") : flowOperatorUserName);
 
-        customTokens.put("%%mlFlowDeveloperRole%%", flowDeveloperRoleName == null ? environment.getProperty("mlFlowDeveloperRole") : flowDeveloperRoleName);
-        customTokens.put("%%mlFlowDeveloperUserName%%", flowDeveloperUserName == null ? environment.getProperty("mlFlowDeveloperUserName") : flowDeveloperUserName);
+        customTokens.put("%%mlDataHubAdminRole%%", dataHubAdminRoleName == null ? environment.getProperty("mlDataHubAdminRole") : dataHubAdminRoleName);
+        customTokens.put("%%mlDataHubAdminUserName%%", dataHubAdminUserName == null ? environment.getProperty("mlDataHubAdminUserName") : dataHubAdminUserName);
 
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
         customTokens.put("%%mlFlowOperatorUserPassword%%", randomStringGenerator.generate(20));
         // and another random password for hub Admin User
-        customTokens.put("%%mlFlowDeveloperUserPassword%%", randomStringGenerator.generate(20));
+        customTokens.put("%%mlDataHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath == null ? environment.getProperty("mlCustomForestPath") : customForestPath);
 
@@ -1722,8 +1755,11 @@ public class HubConfigImpl implements HubConfig
         if (projectProperties.containsKey("mlFlowOperatorUserPassword")) {
             customTokens.put("%%mlFlowOperatorUserPassword%%", projectProperties.getProperty("mlFlowOperatorUserPassword"));
         }
-        if (projectProperties.containsKey("mlFlowDeveloperUserPassword")) {
-            customTokens.put("%%mlFlowDeveloperUserPassword%%", projectProperties.getProperty("mlFlowDeveloperUserPassword"));
+        if (projectProperties.containsKey("mlFlowOperatorUserPassword")) {
+            customTokens.put("%%mlFlowOperatorUserPassword%%", projectProperties.getProperty("mlFlowOperatorUserPassword"));
+        }
+        if (projectProperties.containsKey("mlDataHubAdminUserPassword")) {
+            customTokens.put("%%mlDataHubAdminUserPassword%%", projectProperties.getProperty("mlDataHubAdminUserPassword"));
         }
         /* can't iterate through env properties, so rely on custom tokens itself?
         if (environment != null) {

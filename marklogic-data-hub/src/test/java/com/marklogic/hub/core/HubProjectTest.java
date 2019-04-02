@@ -163,7 +163,7 @@ public class HubProjectTest extends HubTestBase {
     
     @Test
     public void upgrade300To403ToCurrentVersion() throws Exception {
-        Assumptions.assumeFalse((isCertAuth() || isSslRun() || getFlowDeveloperConfig().getIsProvisionedEnvironment()));
+        Assumptions.assumeFalse((isCertAuth() || isSslRun() || getDataHubAdminConfig().getIsProvisionedEnvironment()));
         final String projectPath = "build/tmp/upgrade-projects/dhf403from300";
         final File projectDir = Paths.get(projectPath).toFile();
 

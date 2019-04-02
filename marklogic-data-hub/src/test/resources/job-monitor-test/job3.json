@@ -2,7 +2,7 @@
   "job": {
     "jobId": "1552529761390935680",
     "flow": "hub2",
-    "user": "flow-developer",
+    "user": "data-hub-admin",
     "lastAttemptedStep": 1,
     "lastCompletedStep": 1,
     "jobStatus": "running step 2",
