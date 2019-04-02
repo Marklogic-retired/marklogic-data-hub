@@ -11,7 +11,7 @@ export class Flow {
   public options = {};
   public steps: Array<any> = [];
   public jobs: Array<string> = [];
-  public latestJob: any = {};
+  public latestJob: any = null;
   public isValid: boolean = false;
   public version: number = 0;
 
