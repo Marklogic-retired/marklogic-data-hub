@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.step.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -34,6 +35,7 @@ public class StepImpl implements Step {
     private Map<String, Object> options;
     private JsonNode customHook;
     private String modulePath;
+    @JsonIgnore
     private String identifier;
     private int retryLimit;
     private int batchSize;
@@ -55,6 +57,7 @@ public class StepImpl implements Step {
             options.put("outputFormat", "json");
         } else if (type == StepType.MAPPING || type == StepType.CUSTOM) {
             identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
+            options.put("identifier", this.identifier);
         }
         modulePath = "/path/to/your/step/module/main.sjs";
         customHook = new JSONObject().jsonNode();
@@ -190,6 +193,12 @@ public class StepImpl implements Step {
         }
         setCustomHook(jsonObject.getNode("customHook"));
         setModulePath(jsonObject.getString("modulePath"));
+        if (this.options != null) {
+            Object identifier = this.options.get("identifier");
+            if (identifier != null) {
+                setIdentifier(identifier.toString());
+            }
+        }
         setIdentifier(jsonObject.getString("identifier"));
         setRetryLimit(jsonObject.getInt("retryLimit"));
         setBatchSize(jsonObject.getInt("batchSize"));
