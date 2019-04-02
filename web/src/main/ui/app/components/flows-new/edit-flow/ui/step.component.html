@@ -3,8 +3,6 @@
     <header>
       <div class="steps-header">
         <h2 id="step-details-name">{{step.name}}</h2>
-        <button id="save-step-btn" *ngIf="step.type === 'ingestion'" (click)=saveStep(); mat-raised-button color="primary">Save</button>
-        <!-- <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
       </div>
       <div class="steps-header">
         <mat-icon id="step-menu" class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
@@ -15,6 +13,7 @@
       <div id="step-type-ingestion-container" *ngIf="step.type === 'ingestion'">
         <app-ingest
           [step]="step"
+          [flow]="flow"
           (saveStep)="saveStep($event)"
         ></app-ingest>
       </div>

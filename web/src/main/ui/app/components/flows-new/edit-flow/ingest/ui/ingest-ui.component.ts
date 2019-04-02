@@ -84,6 +84,7 @@ const settings = {
 export class IngestUiComponent implements OnInit {
 
   @Input() step: any;
+  @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
   constructor() {
@@ -93,18 +94,27 @@ export class IngestUiComponent implements OnInit {
   folder: string;
 
   ngOnInit(): void {
-    this.folder = this.step.config.inputFilePath;
+    this.folder = this.step.config.input_file_path;
   }
 
   changeFolder(folder){
     this.folder = folder.relativePath;
+    this.onChange();
   }
 
-  getStep(flow): Step {
-    this.step.config.inputFilePath = this.folder;
-    this.step.config.transformParams = `entity-name=${this.step.targetEntity},flow-name=${flow.name}`;
-    this.step.config.outputCollections = `${this.step.targetEntity}`;
-    return this.step;
+  onKeyChange(event) {
+    if (event.key === 'Enter') {
+      this.onChange();
+    }
+  }
+
+  onChange() {
+    if (this.step.config) {
+      this.step.config.input_file_path = this.folder;
+      this.step.config.transform_param = `entity-name=${this.step.targetEntity},flow-name=${this.flow.name}`;
+      this.step.config.output_collections = `${this.step.targetEntity}`;
+      this.saveStep.emit(this.step);
+    }
   }
 
 }

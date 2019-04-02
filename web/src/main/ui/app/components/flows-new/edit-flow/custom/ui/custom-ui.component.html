@@ -1,13 +1,27 @@
-<button id="save-custom" mat-raised-button color="primary" [disabled]="!uriChanged()" (click)="uriChanged() && onSave()">Save</button>
-<div class="custom-container">
-  <div>
-    <span class="h2">Modules Database:</span>
-    <span class="h4">{{module}}</span> 
-  </div>
-  <mat-form-field appearance="outline">
-    <mat-label>Custom Module URI</mat-label>
-    <input matInput 
+<div layout-padding layout="column" class="custom-page">
+  <info-label
+    labelText="Modules Database"
+    tooltipPlacement="right"
+    tooltipText="Tooltip here about Module Database"
+  ></info-label>
+  <mat-form-field class="read-only" appearance="outline" layout-fill>
+    <input
+      matInput
+      [value]="module"
+      [readonly]="true"
+    />
+  </mat-form-field>
+  <info-label
+    labelText="Custom Module URI"
+    tooltipPlacement="right"
+    tooltipText="Tooltip here about Custom Module URI"
+  ></info-label>
+  <mat-form-field appearance="outline" >
+    <input
+      matInput
       [(ngModel)]="step.customModuleUri"
+      (blur)="onChange()"
+      (keypress)="onKeyChange($event)"
     />
   </mat-form-field>
 </div>

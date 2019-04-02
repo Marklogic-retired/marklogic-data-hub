@@ -43,12 +43,11 @@ export class StepComponent {
     });
   }
 
-  saveStep() {
+  saveStep(stepToSave) {
     let step = this.step;
-    if (this.step.type === 'ingestion') {
-      step = this.ingestionStep.getStep(this.flow);
+    if (stepToSave){
+      step = stepToSave;
     }
-    console.log('this.updateStep.emit', step);
     this.updateStep.emit(step);
   }
 
