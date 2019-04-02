@@ -115,7 +115,7 @@ export class EditFlowComponent implements OnInit {
       this.running = timer(0, 750)
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           this.flow = Flow.fromJSON(poll);
-          if (this.flow.latestJob.stepRunningPerect === null) {
+          if (this.flow.latestJob.status !== 'running') {
             this.running.unsubscribe();
           }
         })
