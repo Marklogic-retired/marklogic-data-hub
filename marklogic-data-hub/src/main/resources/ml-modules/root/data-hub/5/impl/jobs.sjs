@@ -143,7 +143,7 @@ class Jobs {
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
         uris:[],
-        totalCount: 0,
+        totalEvents: 0,
         successfulEvents: 0,
         failedEvents: 0
       }

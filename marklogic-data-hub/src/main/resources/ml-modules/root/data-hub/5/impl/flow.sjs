@@ -189,15 +189,15 @@ class Flow {
     let failedEvents = 0;
     let totalEvents = 0;
 
-    if(this.globalContext.batchErrors && this.globalContext.batchErrors.length){
-        failedEvents = this.globalContext.batchErrors.length;
+    if (this.globalContext.batchErrors && this.globalContext.batchErrors.length) {
+      failedEvents = this.globalContext.batchErrors.length;
     }
 
-    if(uris) {
+    if (uris) {
       totalEvents = uris.length;
     }
 
-    failedEvents = totalEvents - successfulEvents;
+    successfulEvents = totalEvents - failedEvents;
 
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
