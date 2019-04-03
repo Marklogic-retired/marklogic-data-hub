@@ -86,7 +86,7 @@ public class MappingManagerTest extends HubTestBase {
 
         //now let's see if it's on disk!
         String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
-        assertTrue(Paths.get((getHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertTrue(Paths.get((getDataHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
 
@@ -197,22 +197,22 @@ public class MappingManagerTest extends HubTestBase {
         assertTrue(testMap != null);
         //check to make sure its on disk
         String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
-        assertTrue(Paths.get((getHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertTrue(Paths.get((getDataHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
         //now let's delete it
         mappingManager.deleteMapping(mappingName);
 
         //make sure it's gone off disk
-        assertFalse(Paths.get((getHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertFalse(Paths.get((getDataHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
 
     private void copyTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void copySecondTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void installMappings() {
@@ -242,7 +242,7 @@ public class MappingManagerTest extends HubTestBase {
     }
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
+        String timestampFile = getDataHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }

@@ -85,7 +85,7 @@ public interface DataHub {
 
     /**
      * Updates the indexes in the database based on the project
-     * Must be run as a user with hub-admin-role or equivalent
+     * Must be run as a user with data-hub-admin-role or equivalent
      */
     void updateIndexes();
 

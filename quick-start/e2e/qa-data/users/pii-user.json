@@ -2,5 +2,5 @@
   "user-name": "pii-user",
   "description": "A user that can read pii property",
   "password": "x",
-  "role": ["hub-admin-role", "data-hub-role", "pii-reader"]
+  "role": ["data-hub-admin-role", "flow-operator-role", "pii-reader"]
 }

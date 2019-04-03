@@ -248,10 +248,13 @@ public class HubProjectImpl implements HubProject {
             logger.error("Failed to load amp resource", e);
         }
 
-        writeResourceFile("hub-internal-config/security/roles/data-hub-role.json", rolesDir.resolve("data-hub-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/data-hub-user.json", usersDir.resolve("data-hub-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/hub-admin-role.json", rolesDir.resolve("hub-admin-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/hub-admin-user.json", usersDir.resolve("hub-admin-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/flow-operator-role.json", rolesDir.resolve("flow-operator-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/flow-developer-role.json", rolesDir.resolve("flow-developer-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/data-hub-admin-role.json", rolesDir.resolve("data-hub-admin-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/data-hub-admin-user.json", usersDir.resolve("data-hub-admin-user.json"), true);
+
 
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);

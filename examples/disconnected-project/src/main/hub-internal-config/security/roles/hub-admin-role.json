@@ -1,5 +1,5 @@
 {
-  "role-name": "%%mlHubAdminRole%%",
+  "role-name": "%%mlDataHubAdminRole%%",
   "description": "A role can deploy modules to a data hub instance.",
   "role": [
     "rest-admin","manage-admin", "tde-admin"

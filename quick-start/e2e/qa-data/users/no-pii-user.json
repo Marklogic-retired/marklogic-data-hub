@@ -2,5 +2,5 @@
   "user-name": "no-pii-user",
   "description": "A user that cannot read pii property",
   "password": "x",
-  "role": ["hub-admin-role", "data-hub-role"]
+  "role": ["data-hub-admin-role", "flow-operator-role"]
 }

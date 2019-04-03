@@ -21,7 +21,7 @@ public class GeneratePiiCommand extends AbstractCommand {
         entityManager.savePii();
     }
 
-    public void setHubConfig(HubConfig hubAdminConfig) {
-        this.hubConfig = hubAdminConfig;
+    public void setHubConfig(HubConfig dataHubAdminConfig) {
+        this.hubConfig = dataHubAdminConfig;
     }
 }

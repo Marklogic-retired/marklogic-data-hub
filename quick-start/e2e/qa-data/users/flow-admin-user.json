@@ -2,5 +2,5 @@
   "user-name": "flow-admin-user",
   "description": "A user that is used for reading and writing from MarkLogic Data Hub databases and for maintaining DHF modules",
   "password": "flow-admin-user",
-  "role": ["%%mlHubAdminRole%%","%%mlHubUserRole%%"]
+  "role": ["%%mlDataHubAdminRole%%","%%mlFlowOperatorRole%%"]
 }

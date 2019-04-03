@@ -80,7 +80,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
         String entityFilename = ENTITY + EntityManagerService.ENTITY_FILE_EXTENSION;
         FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
         scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -110,7 +110,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     @AfterEach

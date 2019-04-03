@@ -70,7 +70,7 @@ public class FlowRunnerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        getHubAdminConfig(); // to set the deployement user back to dhf-admin-user
+        getDataHubAdminConfig(); // to set the deployement user back to dhf-admin-user
         scaffolding.createEntity(ENTITY);
         clearUserModules();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
@@ -80,7 +80,7 @@ public class FlowRunnerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getHubAdminConfig().getHubRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getDataHubAdminConfig().getFlowDeveloperRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-runner-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-runner-test/input/employee2.xml");
     }
@@ -96,7 +96,7 @@ public class FlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
@@ -154,7 +154,7 @@ public class FlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
@@ -190,7 +190,7 @@ public class FlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
                 FlowType.HARMONIZE);
@@ -225,7 +225,7 @@ public class FlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
@@ -283,7 +283,7 @@ public class FlowRunnerTest extends HubTestBase {
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-ns-xml/headers.sjs"),
             StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-ns-xml",
@@ -345,7 +345,7 @@ public class FlowRunnerTest extends HubTestBase {
             projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-ns-xml/headers.xqy"),
             StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-ns-xml",
@@ -390,7 +390,7 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
 
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
@@ -416,10 +416,10 @@ public class FlowRunnerTest extends HubTestBase {
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
         //deploys the entity to final db
-        installUserModules(getHubAdminConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
         ObjectMapper mapper = new ObjectMapper();
         Mapping testMap = Mapping.create("test");
@@ -441,7 +441,7 @@ public class FlowRunnerTest extends HubTestBase {
         // Mapping should not be deployed
         assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
         scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
         try {

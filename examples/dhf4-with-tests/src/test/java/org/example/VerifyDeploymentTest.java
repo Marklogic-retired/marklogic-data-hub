@@ -121,14 +121,14 @@ public class VerifyDeploymentTest extends AbstractDataHubTest {
     @Test
     public void verifySecurityResourcesWereDeployed() {
         UserManager userManager = new UserManager(manageClient);
-        assertTrue(userManager.exists("data-hub-user"));
+        assertTrue(userManager.exists("flow-operator"));
         assertTrue(userManager.exists("example-user1"));
         assertTrue(userManager.exists("example-user2"),
             "This verifies that all locations in mlConfigPaths are being processed, as this user is defined in src/test/ml-config");
 
         RoleManager roleManager = new RoleManager(manageClient);
-        assertTrue(roleManager.exists("data-hub-role"));
-        assertTrue(roleManager.exists("hub-admin-role"));
+        assertTrue(roleManager.exists("flow-operator-role"));
+        assertTrue(roleManager.exists("data-hub-admin-role"));
         assertTrue(roleManager.exists("example-role1"));
 
         PrivilegeManager privilegeManager = new PrivilegeManager(manageClient);

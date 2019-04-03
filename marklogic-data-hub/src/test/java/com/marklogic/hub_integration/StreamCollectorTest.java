@@ -94,7 +94,7 @@ public class StreamCollectorTest extends HubTestBase {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         clearUserModules();
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
         getDataHub().updateIndexes();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
@@ -145,7 +145,7 @@ public class StreamCollectorTest extends HubTestBase {
         // there is a custom content plugin that throws an error. This code uses the stopOnFailure
         // option to halt execution. This allows us to test that the collector runs to completion while not
         // having to wait for the entire harmonize flow to finish.
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         assertEquals(DOC_COUNT, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
         Flow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",

@@ -55,7 +55,7 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void applyFinalConnectionPropsToDefaultRestConnection() {
 
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         AppConfig config = adminHubConfig.getAppConfig();
 
         assertEquals(new Integer(8011), config.getRestPort(),
