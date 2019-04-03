@@ -142,7 +142,10 @@ class Jobs {
         batchStatus: "started",
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
-        uris:[]
+        uris:[],
+        totalCount: 0,
+        successfulEvents: 0,
+        failedEvents: 0
       }
     };
 
@@ -173,13 +176,16 @@ class Jobs {
      }, this.config.JOBDATABASE));
   }
 
-  updateBatch(jobId, batchId, batchStatus, uris) {
+  updateBatch(jobId, batchId, batchStatus, uris, totalCount, successfulCount, failedCount) {
     let docObj = this.getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
     docObj.batch.batchStatus = batchStatus;
     docObj.batch.uris = uris;
+    docObj.batch.totalEvents = totalCount;
+    docObj.batch.successfulEvents = successfulCount;
+    docObj.batch.failedEvents = failedCount;
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }

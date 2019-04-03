@@ -185,6 +185,20 @@ class Flow {
       );
     }
 
+    let successfulEvents = 0;
+    let failedEvents = 0;
+    let totalEvents = 0;
+
+    if(this.globalContext.batchErrors && this.globalContext.batchErrors.length){
+        failedEvents = this.globalContext.batchErrors.length;
+    }
+
+    if(uris) {
+      totalEvents = uris.length;
+    }
+
+    failedEvents = totalEvents - successfulEvents;
+
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
       if (!combinedOptions.noWrite) {
@@ -201,9 +215,9 @@ class Flow {
         this.datahub.prov.createStepRecord(jobId, flowName, stepRef.type.toLowerCase(), content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
+      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris, totalEvents, successfulEvents, failedEvents);
     } else {
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
+      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris,  totalEvents, successfulEvents, failedEvents);
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
     let resp = {
