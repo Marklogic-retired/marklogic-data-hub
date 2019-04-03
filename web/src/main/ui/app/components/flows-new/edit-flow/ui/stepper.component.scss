@@ -113,8 +113,8 @@ header {
     .bar.mastering {
       background: $color-mastering;
     }
-    .bar.ingestion {
-      background: $color-ingestion;
+    .bar.ingest {
+      background: $color-ingest;
     }
     .bar.custom {
       background: $color-custom;
@@ -135,7 +135,7 @@ header {
     .step-title.mastering {
       color: #009688;
     }
-    .step-title.ingestion {
+    .step-title.ingest {
       color: #AD1457;
     }
     .step-title.custom {
@@ -217,7 +217,8 @@ button {
 }
 
 mat-progress-bar {
-  width: 100px;
+  width: 90%;
+  margin: auto;
   height: 15px;
 }
 

@@ -13,6 +13,7 @@ export class StepComponent {
   @Input() flow: any;
   @Input() databases: any;
   @Input() collections: any;
+  @Input() entities: any;
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
@@ -32,6 +33,7 @@ export class StepComponent {
         title: 'Edit Step',
         databases: this.databases,
         collections: this.collections,
+        entities: this.entities,
         step: this.step
       }
     });
@@ -45,7 +47,7 @@ export class StepComponent {
 
   saveStep() {
     let step = this.step;
-    if (this.step.type === 'ingestion') {
+    if (this.step.type === 'ingest') {
       step = this.ingestionStep.getStep(this.flow);
     }
     console.log('this.updateStep.emit', step);

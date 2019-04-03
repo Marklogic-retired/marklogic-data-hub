@@ -45,13 +45,13 @@ class FlowManagerTest extends HubTestBase {
     private String flowString = "{\n" +
         "  \"name\": \"test-flow\",\n" +
         "  \"description\": \"this is an example\",\n" +
+        "  \"options\": {\"identifier\": \"(some identifier or search)\"},\n" +
         "  \"steps\": {\n" +
         "    \"1\": {\n" +
         "      \"type\": \"MAPPING\",\n" +
         "      \"name\": \"person-mapping1.json\",\n" +
-        "      \"identifier\": \"null\",\n" +
         "      \"retryLimit\": 0,\n" +
-        "      \"options\": {}\n" +
+        "      \"options\": {\"identifier\": \"null\"}\n" +
         "    }\n" +
         "  }\n" +
         "}\n";

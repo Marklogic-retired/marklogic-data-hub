@@ -106,6 +106,9 @@ public class HubProjectImpl implements HubProject {
                 case MAPPING:
                     path = this.stepsDir.resolve("mapping");
                     break;
+                case MASTER:
+                    path = this.stepsDir.resolve("master");
+                    break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
             }
