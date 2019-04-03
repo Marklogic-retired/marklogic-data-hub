@@ -6,13 +6,10 @@
     <!-- HEADER -->
     <div class="header accent">
       <mat-toolbar style="background: transparent">
-        <div class="logo">
-          <span class="logo-text h1">
-            Manage Flows
-          </span>
-        </div>
+        <h1>Manage Flows</h1>
         <button id="new-flow-btn"
                 mat-raised-button
+                color="primary"
                 class="new-flow-button"
                 (click)="openFlowSettingsDialog(null)"
         >
@@ -21,6 +18,7 @@
         <span class="fill-space"></span>
         <button id="flows-redeploy-btn" 
                 mat-raised-button
+                color="primary"
                 class="redeploy-button"
                 (click)="openConfirmRedeployDialog()"
         >
@@ -56,9 +54,7 @@
         <ng-container matColumnDef="targetEntity">
           <mat-header-cell id="flow-entity-sort-btn" *matHeaderCellDef mat-sort-header>Target Entity</mat-header-cell>
           <mat-cell class="flow-entity" *matCellDef="let flow">
-            <a>
-              {{flow.targetEntity}}
-            </a>
+            {{flow.targetEntity}}
           </mat-cell>
         </ng-container>
 
@@ -66,9 +62,9 @@
         <ng-container matColumnDef="status">
           <mat-header-cell id="flow-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="flow-status" *matCellDef="let flow">
-            <a class="capitalize">
+            <span class="capitalize">
               {{flow.status}}
-            </a>
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -86,38 +82,37 @@
         <ng-container matColumnDef="lastJobFinished">
           <mat-header-cell id="flow-last-job-finished-sort-btn" *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
           <mat-cell class="flow-last-job-finished" *matCellDef="let flow">
-            <a>
-              {{friendlyDate(flow.lastJobFinished)}}
-            </a>
+            {{friendlyDate(flow.lastJobFinished)}}
           </mat-cell>
         </ng-container>
 
         <!-- Docs Committed Column -->
         <ng-container matColumnDef="docsCommitted">
-          <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Docs Committed</mat-header-cell>
+          <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Records Committed</mat-header-cell>
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
             <a [routerLink]="['/traces']">
-              {{flow.docsCommitted | number}}
+              {{flow.recordsCommitted | number}}
             </a>
           </mat-cell>
         </ng-container>
 
         <!-- Docs Failed Column -->
         <ng-container matColumnDef="docsFailed">
-          <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Docs Failed</mat-header-cell>
+          <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Records Failed</mat-header-cell>
           <mat-cell class="flow-docs-failed" *matCellDef="let flow">
             <a [routerLink]="['/traces']">
-              {{flow.docsFailed | number}}
+              {{flow.recordsFailed | number}}
             </a>
           </mat-cell>
         </ng-container>
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
           <mat-cell *matCellDef="let flow">
             <button class="flow-run"
                     mat-raised-button
+                    color="primary"
                     class="run-flow-button"
                     (click)="openRunDialog(flow)"
             >

@@ -15,21 +15,24 @@ export class MergeOptions {
     const strategies = merging.mergeStrategies;
     if (merging.merging) {
       merging.merging.forEach(mOpt => {
-        result.options.push(MergeOption.fromMerging(mOpt, algs, strategies));
+        // Do not add default to options (add to strategies)
+        if (!mOpt.default) {
+          result.options.push(MergeOption.fromMerging(mOpt, algs, strategies));
+        }
       })
     }
     return result;
   }
 
   /**
-   * Add a new match option to the set.
+   * Add a new merge option to the set.
    */
   addOption(opt) {
     this.options.push(new MergeOption(opt));
   }
 
   /**
-   * Update a match option in the set.
+   * Update a merge option in the set.
    */
   updateOption(opt, index) {
     let mOpt = new MergeOption(opt);
@@ -37,7 +40,21 @@ export class MergeOptions {
   }
 
   /**
-   * Delete a match option from the set.
+   * Update merge options based on a strategy.
+   */
+  updateOptionsByStrategy(str) {
+    this.options.forEach((mOpt, i) => {
+      if (str.name === mOpt.strategy) {
+        this.options[i].maxValues = str.maxValues;
+        this.options[i].maxSources = str.maxSources;
+        this.options[i].sourceWeights = str.sourceWeights;
+        this.options[i].length = str.length;
+      }
+    })
+  }
+
+  /**
+   * Delete a merge option from the set.
    */
   deleteOption(opt) {
     let i = this.options.findIndex(o => {
@@ -46,6 +63,17 @@ export class MergeOptions {
     if (i >= 0) {
       this.options.splice(i, 1);
     }
+  }
+
+  /**
+   * Update merge options based on a strategy.
+   */
+  deleteOptionsByStrategy(str) {
+    this.options.forEach((mOpt, i) => {
+      if (str.name === mOpt.strategy) {
+        this.options.splice(i, 1);
+      }
+    })
   }
 
 }
@@ -58,14 +86,17 @@ export class MergeOption {
   public algorithmRef: string;
   public maxValues: number;
   public maxSources: number;
-  public sourceWeights: string;
-  public length: string;
+  public sourceWeights: Array<any> = [];
+  public length: Object;
   public strategy: string;
   public customUri: string;
   public customFunction: string;
+  public customNs: string;
+  public mergeType: string;
+  public editing: string = '';
 
   constructor (mOpt: any = {}) {
-    if (mOpt.propertyName) this.propertyName = [mOpt.propertyName];
+    if (mOpt.propertyName) this.propertyName = mOpt.propertyName;
     if (mOpt.algorithmRef) this.algorithmRef = mOpt.algorithmRef;
     if (mOpt.maxValues) this.maxValues = mOpt.maxValues;
     if (mOpt.maxSources) this.maxSources = mOpt.maxSources;
@@ -74,6 +105,8 @@ export class MergeOption {
     if (mOpt.strategy) this.strategy = mOpt.strategy;
     if (mOpt.customUri) this.customUri = mOpt.customUri;
     if (mOpt.customFunction) this.customFunction = mOpt.customFunction;
+    if (mOpt.customNs) this.customNs = mOpt.customNs;
+    if (mOpt.mergeType) this.mergeType = mOpt.mergeType;
   }
 
   /**
@@ -89,6 +122,7 @@ export class MergeOption {
       result = new MergeOption(strategy);
       result.propertyName = mOpt.propertyName;
       result.strategy = mOpt.strategy;
+      result.mergeType = 'strategy';
     } else if (mOpt.algorithmRef !== undefined) {
       // Handle custom type
       result = new MergeOption(mOpt);
@@ -97,9 +131,12 @@ export class MergeOption {
       });
       if (alg.at) result.customUri = alg.at;
       if (alg.function) result.customFunction = alg.function;
+      if (alg.namespace) result.customNs = alg.namespace;
+      result.mergeType = 'custom';
     } else {
       // Handle standard type
       result = new MergeOption(mOpt);
+      result.mergeType = 'standard';
     }
     return result;
   }

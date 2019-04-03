@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.step;
 
-public interface FlowFinishedListener {
+public interface StepFinishedListener {
     /**
      * Listens for when the flow is complete
      */
-    void onFlowFinished();
+    void onStepFinished();
 }

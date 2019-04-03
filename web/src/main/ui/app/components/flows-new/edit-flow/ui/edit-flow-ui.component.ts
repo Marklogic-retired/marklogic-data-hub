@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
 import { RunFlowDialogComponent } from './run-flow-dialog.component';
@@ -28,10 +29,11 @@ export class EditFlowUiComponent {
   @Output() stepDelete = new EventEmitter();
 
   constructor(
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {}
 
-  openStepDialog(): void {
+  openStepDialog(index): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
       width: '600px',
       data: {
@@ -45,20 +47,26 @@ export class EditFlowUiComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.stepCreate.emit(response);
+        const stepObject = {
+          step: response,
+          index: index
+        };
+        this.stepCreate.emit(stepObject);
       }
     });
   }
-  openRunDialog(flow: Flow): void {
+  openRunDialog(): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
-      data: {steps: this.stepsArray.map(step => step.name)}
+      data: {steps: this.flow.steps}
     });
 
     dialogRef.afterClosed().subscribe(response => {
       // TODO add ability to run individual steps
       console.log('The run dialog was closed', response);
-      this.runFlow.emit(this.flow.id);
+      if ( response ) {
+        this.runFlow.emit(this.flow.id);
+      }
     });
   }
   deleteStepDialog(step: Step): void {
@@ -86,19 +94,6 @@ export class EditFlowUiComponent {
         this.flow.batchSize = response.batchSize;
         this.flow.threadCount = response.threadCount;
         this.saveFlow.emit(this.flow);
-      }
-    });
-  }
-  redeployDialog(): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px',
-      data: {title: 'Redeploy Flow?', confirmationMessage: `Redeploy ${this.flow.name} to database?`}
-    });
-
-    dialogRef.afterClosed().subscribe(response => {
-      if (response) {
-        // TODO Redeploy endpoint
-        console.log('redeploy');
       }
     });
   }

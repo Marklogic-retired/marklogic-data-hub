@@ -41,6 +41,7 @@ export class AddMatchOptionDialogComponent {
       zip9match5: [this.data.option ? this.data.option.zip9match5 : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
+      customNs: [this.data.option ? this.data.option.customNs : ''],
       index: this.data.index,
       entityProps:  [this.data.entityProps ? this.data.entityProps : []]
     })
@@ -86,11 +87,11 @@ export class AddMatchOptionDialogComponent {
   }
 
   getDialogTitle(){
-    return this.data.option ? 'Add Match Option' : 'New Match Option';
+    return this.data.option ? 'Edit Match Option' : 'New Match Option';
   }
 
   getSubmitButtonTitle() {
-    return this.data.option ? 'Save' : 'Create';
+    return this.data.option ? 'SAVE' : 'CREATE';
   }
 
   getMatchType() {
@@ -99,7 +100,6 @@ export class AddMatchOptionDialogComponent {
   }
 
   onSave() {
-    console.log('onSave', this.form);
     this.dialogRef.close(this.form.value);
   }
 

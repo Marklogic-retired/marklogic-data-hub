@@ -19,6 +19,7 @@ package com.marklogic.hub;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.flow.FlowRunner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +86,7 @@ public interface DataHub {
 
     /**
      * Updates the indexes in the database based on the project
-     * Must be run as a user with hub-admin-role or equivalent
+     * Must be run as a user with flow-developer-role or equivalent
      */
     void updateIndexes();
 
@@ -172,4 +173,10 @@ public interface DataHub {
      */
     boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException;
 
+    /**
+     * Creates and returns the FlowRunner object using the datahub's autowired hubconfig
+     *
+     * @return FlowRunner object with current hubconfig already set
+     */
+    FlowRunner getFlowRunner();
 }

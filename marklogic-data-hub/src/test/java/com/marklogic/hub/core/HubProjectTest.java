@@ -65,8 +65,8 @@ public class HubProjectTest extends HubTestBase {
 
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
 
-        config.setHubRoleName("myrole");
-        config.setHubUserName("myuser");
+        config.setflowOperatorRoleName("myrole");
+        config.setFlowOperatorUserName("myuser");
 
         config.initHubProject();
 
@@ -142,8 +142,8 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.STAGING_SCHEMAS), props.getProperty("mlStagingSchemasDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_SCHEMAS).toString(), props.getProperty("mlStagingSchemasForestsPerHost"));
 
-        assertEquals(config.getHubRoleName(), props.getProperty("mlHubUserRole"));
-        assertEquals(config.getHubUserName(), props.getProperty("mlHubUserName"));
+        assertEquals(config.getflowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
+        assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
@@ -163,7 +163,7 @@ public class HubProjectTest extends HubTestBase {
     
     @Test
     public void upgrade300To403ToCurrentVersion() throws Exception {
-        Assumptions.assumeFalse((isCertAuth() || isSslRun() || getHubAdminConfig().getIsProvisionedEnvironment()));
+        Assumptions.assumeFalse((isCertAuth() || isSslRun() || getFlowDeveloperConfig().getIsProvisionedEnvironment()));
         final String projectPath = "build/tmp/upgrade-projects/dhf403from300";
         final File projectDir = Paths.get(projectPath).toFile();
 

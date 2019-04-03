@@ -108,8 +108,8 @@ export class Matching {
   /**
    * Add an algorithm definition.
    */
-  addAlgorithm(name, at, fn) {
-    let alg = new Algorithm({ name: name, function: fn });
+  addAlgorithm(name, at, fn, ns) {
+    let alg = new Algorithm({ name: name, function: fn, namespace: ns });
     // reduce doesn't require at property
     if (at) alg.at = at;
     this.algorithms['algorithm'].push(alg);
@@ -126,7 +126,7 @@ export class Matching {
       ['standard-reduction', null]
     ]
     defaultAlgs.forEach(a => {
-      this.addAlgorithm(a[0], a[1], a[0]);
+      this.addAlgorithm(a[0], a[1], a[0], '');
     })
   }
 
@@ -194,31 +194,30 @@ export class Matching {
         this.scoring['reduce'].push(opt);
         break;
       case "custom":
-        this.addAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction)
+        this.addAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction, mOpt.customNs)
         opt = new Expand({
           propertyName: mOpt.propertyName[0],
-          algorithmRef: mOpt.algorithmRef,
+          algorithmRef: mOpt.customFunction,
           weight: mOpt.weight
         });
         this.scoring['expand'].push(opt);
         break;
     }
-    console.log('matching.addOption', this);
   }
 
   /**
    * Add a match threshold.
    */
   addThreshold(mThr: MatchThreshold) {
-    let thr;
-    console.log('addThreshold', mThr);
-    thr = new Threshold({
+    let thr = new Threshold({
       label: mThr.label,
       above: mThr.above,
-      action: mThr.action
     });
     if (mThr.action !== 'merge' && mThr.action !== 'notify') {
-      this.addAction(mThr.customFunction, mThr.customUri, mThr.customFunction)
+      this.addAction(mThr.customFunction, mThr.customUri, mThr.customFunction, mThr.customNs)
+      thr.action = mThr.customFunction;
+    } else {
+      thr.action = mThr.action;
     }
     this.thresholds['threshold'].push(thr);
   }
@@ -226,8 +225,8 @@ export class Matching {
   /**
    * Add a match threshold action.
    */
-  addAction(name, at, fn) {
-    let alg = new Action({ name: name, at: at, function: fn });
+  addAction(name, at, fn, ns) {
+    let alg = new Action({ name: name, at: at, function: fn, namespace: ns });
     this.actions['action'].push(alg);
   }
 
@@ -252,13 +251,14 @@ export class Property {
  */
 export class Algorithm {
   public name: string;
-  public namespace: string;
   public function: string;
   public at: string;
+  public namespace: string;
   constructor(a) {
     if (a.name) this.name = a.name;
     if (a.function) this.function = a.function;
     if (a.at) this.at = a.at;
+    if (a.namespace) this.namespace = a.namespace;
   }
 }
 
@@ -327,10 +327,12 @@ export class Action {
   public name: string;
   public at: string;
   public function: string;
+  public namespace: string;
   constructor(a) {
     if (a.name) this.name = a.name;
     if (a.at) this.at = a.at;
     if (a.function) this.function = a.function;
+    if (a.namespace) this.namespace = a.namespace;
   }
 }
 
@@ -341,15 +343,11 @@ export class Threshold {
   public above: number;
   public label: string;
   public action: string;
-  public thresholdType: string;
+  public type: string;
   constructor(t) {
     if (t.above) this.above = t.above;
     if (t.label) this.label = t.label;
     if (t.action) this.action = t.action;
-    if (t.action && (t.action !== 'merge' && t.action !== 'notify')) {
-      this.thresholdType = 'custom';
-    } else {
-      this.thresholdType = t.action;
-    }
+    if (t.type) this.type = t.type;
   }
 }

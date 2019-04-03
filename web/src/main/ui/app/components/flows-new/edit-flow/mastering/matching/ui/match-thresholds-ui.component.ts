@@ -23,7 +23,7 @@ export class MatchThresholdsUiComponent {
   public displayedColumns = ['label', 'above', 'action', 'actions'];
   public dataSource: MatTableDataSource<MatchThreshold>;
 
-  public weightFocus: object = {};
+  public valueFocus: object = {};
 
   constructor(
     public dialog: MatDialog
@@ -47,7 +47,7 @@ export class MatchThresholdsUiComponent {
       if (!!result) {
         if (thresholdToEdit) {
           console.log('saveThreshold');
-          this.updateThreshold.emit(result);
+          this.updateThreshold.emit({thr: result, index: result.index});
         }else{
           console.log('createThreshold', result);
           this.createThreshold.emit(result);
@@ -68,36 +68,35 @@ export class MatchThresholdsUiComponent {
     });
   }
 
-  // TODO Use TruncateCharactersPipe
-  truncate(value: string, limit: number, trail: string = '...'): string {
-    return value.length > limit ?
-      value.substring(0, limit) + trail :
-      value;
-  }
-
   renderRows(): void {
     this.dataSource.data = this.matchThresholds['thresholds'];
     this.table.renderRows();
   }
 
-  weightClicked(event, mThr) {
+  valueClicked(event, mThr, type) {
     event.preventDefault();
     event.stopPropagation();
-    this.matchThresholds.thresholds.forEach(m => { m.editing = false; })
-    mThr.editing = !mThr.editing;
-    this.weightFocus[mThr.label] = true;
+    this.matchThresholds.thresholds.forEach(m => { m.editing = ''; })
+    mThr.editing = type;
+    this.valueFocus[mThr.label] = true;
   }
 
-  weightKeyPress(event, mThr): void {
+  valueKeyPress(event, mThr, index, type): void {
     if (event.key === 'Enter') {
-      mThr.editing = !mThr.editing;
-      this.weightFocus[mThr.label] = false;
+      mThr.editing = '';
+      this.valueFocus[mThr.label] = false;
+      this.updateThreshold.emit({thr: mThr, index: index});
     }
   }
 
   // Close weight input on outside click
   @HostListener('document:click', ['$event', 'this']) weightClickOutside($event, mThr){
-    this.matchThresholds.thresholds.forEach(m => { m.editing = false; })
+    this.matchThresholds.thresholds.forEach((m, i) => {
+      if (m.editing) {
+        this.updateThreshold.emit({thr: m, index: i});
+        m.editing = '';
+      }
+    })
   }
 
 }

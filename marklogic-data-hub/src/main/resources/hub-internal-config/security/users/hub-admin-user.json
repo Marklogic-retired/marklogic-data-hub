@@ -1,6 +1,0 @@
-{
-  "user-name": "%%mlHubAdminUserName%%",
-  "description": "A user that is used for reading and writing from MarkLogic Data Hub databases and for maintaining DHF modules",
-  "password": "%%mlHubAdminUserPassword%%",
-  "role": ["%%mlHubAdminRole%%","%%mlHubUserRole%%"]
-}

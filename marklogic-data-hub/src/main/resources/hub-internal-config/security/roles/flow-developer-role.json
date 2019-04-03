@@ -1,5 +1,5 @@
 {
-  "role-name": "%%mlHubAdminRole%%",
+  "role-name": "%%mlFlowDeveloperRole%%",
   "description": "A role can deploy modules to a data hub instance.",
   "role": [
     "rest-admin","manage-admin", "tde-admin"
@@ -78,6 +78,11 @@
     {
       "privilege-name": "any-uri",
       "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "ps-user",
+      "action": "http://marklogic.com/xdmp/privileges/ps-user",
       "kind": "execute"
     }
   ]

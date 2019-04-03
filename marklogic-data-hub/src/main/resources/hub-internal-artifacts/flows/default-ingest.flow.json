@@ -1,12 +1,13 @@
 {
   "name" : "default-ingest",
   "description" : "This is the default flow for ingesting into data hub",
-  "identifier" : null,
+  "options": {
+    "identifier" : null
+  },
   "steps" : {
 	  "1": {	 
 	   "type": "ingest",
 	   "name": "default-ingest",
-	   "identifier": null,
 	   "retryLimit": 0,
 	   "options": {
 		"outputFormat" : "json",

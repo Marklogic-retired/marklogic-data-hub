@@ -61,7 +61,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
-    FlowManagerService fm;
+    LegacyFlowManagerService fm;
 
     @Autowired
     LegacyFlowManager flowManager;
@@ -114,7 +114,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getFlowDeveloperConfig(), true);
     }
 
     protected void setEnvConfig() {

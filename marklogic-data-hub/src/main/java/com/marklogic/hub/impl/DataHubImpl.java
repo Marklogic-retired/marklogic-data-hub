@@ -45,6 +45,7 @@ import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -104,7 +105,13 @@ public class DataHubImpl implements DataHub {
     private Versions versions;
     
     @Autowired
-    private LegacyFlowManagerImpl flowManager;
+    private LegacyFlowManagerImpl legacyFlowManager;
+
+    @Autowired
+    private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunner flowRunner;
 
     private AdminManager _adminManager;
 
@@ -146,6 +153,11 @@ public class DataHubImpl implements DataHub {
 
     public void setServerManager(ServerManager manager) {
         this._serverManager = manager;
+    }
+
+    @Override
+    public FlowRunner getFlowRunner() {
+        return  this.flowRunner;
     }
 
     @Override
@@ -870,7 +882,7 @@ public class DataHubImpl implements DataHub {
                 text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
                 text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
                 FileUtils.writeStringToFile(buildGradle, text);
-                hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+                hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
             
             hubConfig.initHubProject();
@@ -899,7 +911,7 @@ public class DataHubImpl implements DataHub {
             
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
-            List<String> flows = flowManager.updateLegacyFlows(currentVersion);
+            List<String> flows = legacyFlowManager.updateLegacyFlows(currentVersion);
             if (updatedFlows != null) {
                 updatedFlows.addAll(flows);
             }

@@ -11,13 +11,17 @@
             Match Options
           </span>
         </div>
-        <button mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">Add</button>
+        <button *ngIf="targetEntity" mat-raised-button class="new-option-button" color="primary" (click)="openMatchOptionDialog(null, null, targetEntity.definition.properties)">ADD</button>
         <span class="fill-space"></span>
       </mat-toolbar>
     </div>
     <!-- / HEADER -->
 
-    <div class="content-card">
+    <div *ngIf="!targetEntity">
+      Configuring match options requires a target entity. The target entity "{{targetEntityName}}" is not defined. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
+    </div>
+
+    <div *ngIf="targetEntity" class="content-card">
 
       <mat-table id="match-options-table"
                  class="matching-table"
@@ -44,12 +48,12 @@
         <!-- Weight Column -->
         <ng-container matColumnDef="weight">
           <mat-header-cell id="match-option-weight-sort-btn" *matHeaderCellDef mat-sort-header>Weight</mat-header-cell>
-          <mat-cell class="match-option-weight" *matCellDef="let mOpt">
-            <a *ngIf="!mOpt.editing" (click)="weightClicked($event, mOpt)" class="weight-value">
+          <mat-cell class="match-option-weight" *matCellDef="let mOpt; let i = index">
+            <a *ngIf="mOpt.editing !== 'weight'" (click)="valueClicked($event, mOpt, 'weight')" class="weight-value">
               {{mOpt.weight}}
             </a>
-            <mat-form-field floatLabel="never" *ngIf="mOpt.editing" (keypress)="weightKeyPress($event, mOpt)" class="editing-field">
-              <input matInput [value]="mOpt.weight" [(ngModel)]="mOpt.weight" [focusElement]="weightFocus[mOpt.propertyName]">
+            <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'weight'" (keypress)="valueKeyPress($event, mOpt, i, 'weight')" class="editing-field">
+              <input matInput [value]="mOpt.weight" [(ngModel)]="mOpt.weight" [focusElement]="valueFocus[mOpt.propertyName]">
             </mat-form-field>
           </mat-cell>
         </ng-container>
@@ -57,7 +61,7 @@
         <!-- Other Column -->
         <ng-container matColumnDef="other">
           <mat-header-cell *matHeaderCellDef>Other</mat-header-cell>
-          <mat-cell class="match-option-other" *matCellDef="let mOpt">
+          <mat-cell class="match-option-other" *matCellDef="let mOpt; let i = index">
 
             <div *ngIf="mOpt.matchType === 'exact'" class="other-content">
               <div>&nbsp;</div>
@@ -68,7 +72,9 @@
             <div *ngIf="mOpt.matchType === 'synonym'" class="other-content">
               <div>
                 <span class="other-label">Thesaurus</span>
-                {{truncate(mOpt.thesaurus, 40)}}
+                <span title="{{mOpt.thesaurus}}">
+                  {{mOpt.thesaurus | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="other-label">Filter</span>
@@ -78,37 +84,62 @@
             <div *ngIf="mOpt.matchType === 'double metaphone'" class="other-content">
               <div>
                 <span class="other-label">Dictionary</span>
-                {{truncate(mOpt.dictionary, 40)}}
+                <span title="{{mOpt.dictionary}}">
+                  {{mOpt.dictionary | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="other-label">Distance Threshold</span>
-                {{mOpt.distanceThreshold}}
+                <a *ngIf="mOpt.editing !== 'distanceThreshold'" (click)="valueClicked($event, mOpt, 'distanceThreshold')" class="distance-threshold-value">
+                  {{mOpt.distanceThreshold}}
+                </a>
+                <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'distanceThreshold'" (keypress)="valueKeyPress($event, mOpt, i, 'distanceThreshold')" class="editing-field">
+                  <input matInput [value]="mOpt.distanceThreshold" [(ngModel)]="mOpt.distanceThreshold" [focusElement]="valueFocus[mOpt.propertyName]">
+                </mat-form-field>
               </div>
               <div>
                 <span class="other-label">Collation</span>
                 <span title="{{mOpt.collation}}">
-                  {{truncate(mOpt.collation, 40)}}
+                  {{mOpt.collation | truncate : -40}}
                 </span>
               </div>
             </div>
             <div *ngIf="mOpt.matchType === 'custom'" class="other-content">
               <div>
                 <span class="other-label">URI</span>
-                {{truncate(mOpt.customUri, 40)}}
+                <span title="{{mOpt.customUri}}">
+                  {{mOpt.customUri | truncate : -40}}
+                </span>
               </div>
               <div>
                 <span class="other-label">Function</span>
                 {{mOpt.customFunction}}
               </div>
+              <div *ngIf="mOpt.customNs">
+                <span class="other-label">Namespace</span>
+                <span title="{{mOpt.customNs}}">
+                  {{mOpt.customNs | truncate : -40}}
+                </span>
+              </div>
             </div>
             <div *ngIf="mOpt.matchType === 'zip'" class="other-content">
               <div>
                 <span class="other-label">5-Matches-9 Boost</span>
-                {{mOpt.zip5match9}}
+                <a *ngIf="mOpt.editing !== 'zip5match9'" (click)="valueClicked($event, mOpt, 'zip5match9')" class="distance-zip5match9-value">
+                  {{mOpt.zip5match9}}
+                </a>
+                <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'zip5match9'" (keypress)="valueKeyPress($event, mOpt, i, 'zip5match9')" class="editing-field">
+                  <input matInput [value]="mOpt.zip5match9" [(ngModel)]="mOpt.zip5match9" [focusElement]="valueFocus[mOpt.propertyName]">
+                </mat-form-field>
               </div>
               <div>
                 <span class="other-label">9-Matches-5 Weight</span>
-                {{mOpt.zip9match5}}
+                <a *ngIf="mOpt.editing !== 'zip9match5'" (click)="valueClicked($event, mOpt, 'zip9match5')" class="distance-zip9match5-value">
+                  {{mOpt.zip9match5}}
+                </a>
+                <mat-form-field floatLabel="never" *ngIf="mOpt.editing === 'zip9match5'" (keypress)="valueKeyPress($event, mOpt, i, 'zip9match5')" class="editing-field">
+                  <input matInput [value]="mOpt.zip9match5" [(ngModel)]="mOpt.zip9match5" [focusElement]="valueFocus[mOpt.propertyName]">
+                </mat-form-field>
               </div>
             </div>
 
@@ -145,7 +176,7 @@
 
 <mat-menu class="match-option-menu-dialog" #matchMenu="matMenu">
   <ng-template matMenuContent let-mOpt="mOpt" let-i="i">
-    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i, targetEntity.definition.properties)">Edit Settings {{index}}</div>
+    <div class="match-option-menu-edit-btn" mat-menu-item (click)="openMatchOptionDialog(mOpt, i, targetEntity.definition.properties)">Edit Settings</div>
     <div class="match-option-menu-delete-btn" mat-menu-item (click)="openConfirmDialog(mOpt)">Delete</div>
   </ng-template>
 </mat-menu>

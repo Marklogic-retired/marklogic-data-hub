@@ -2,9 +2,9 @@
   <div class="bar {{step.type}}"></div>
     <header>
       <div class="steps-header">
-        <h3 id="step-details-name">{{step.name}}</h3>
-        <!-- <button id="save-step-btn" mat-raised-button color="primary">Save</button>
-        <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
+        <h2 id="step-details-name">{{step.name}}</h2>
+        <button id="save-step-btn" *ngIf="step.type === 'ingestion'" (click)=saveStep(); mat-raised-button color="primary">Save</button>
+        <!-- <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
       </div>
       <div class="steps-header">
         <mat-icon id="step-menu" class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
@@ -13,8 +13,10 @@
     </header>
     <div *ngIf="showBody" class="steps-body">
       <div id="step-type-ingestion-container" *ngIf="step.type === 'ingestion'">
-        <p>{{step.type}}</p>
-        <p>{{step.description}}</p>
+        <app-ingest
+          [step]="step"
+          (saveStep)="saveStep($event)"
+        ></app-ingest>
       </div>
       <div id="step-type-mapping-container" *ngIf="step.type === 'mapping'">
         <app-mapping
@@ -23,18 +25,27 @@
         ></app-mapping>
       </div>
       <div id="step-type-mastering-container" *ngIf="step.type === 'mastering'">
-        <app-merging
-          [step]="step"
-          (saveStep)="saveStep($event)"
-        ></app-merging>
-        <app-matching
-          [step]="step"
-          (saveStep)="saveStep($event)"
-        ></app-matching>
+        <mat-tab-group>
+          <mat-tab label="Matching">
+            <app-matching
+              [step]="step"
+              (saveStep)="saveStep($event)"
+            ></app-matching>
+          </mat-tab>
+          <mat-tab label="Merging">
+            <app-merging
+              [step]="step"
+              (saveStep)="saveStep($event)"
+            ></app-merging>
+          </mat-tab>
+        </mat-tab-group>
       </div>
       <div id="step-type-custom-container" *ngIf="step.type === 'custom'">
-        <p>{{step.type}}</p>
-        <p>{{step.description}}</p>
+        <app-custom
+          [step]="step"
+          (saveStep)="saveStep($event)"
+          [module]="databases.modules"
+        ></app-custom>
       </div>
     </div>
 </div>
