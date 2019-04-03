@@ -185,7 +185,7 @@ public class HubTestBase {
     private  static boolean sslRun = false;
     private  static boolean certAuth = false;
     public static SSLContext certContext;
-    static SSLContext flowdevelopercertContext;
+    static SSLContext dataHubAdmincertContext;
     static SSLContext flowOperatorcertContext;
     private  Properties properties = new Properties();
     public  GenericDocumentManager stagingDocMgr;
@@ -200,8 +200,8 @@ public class HubTestBase {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-            flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin.p12"));
-            flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));
+            dataHubAdmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
+            flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator-user.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
             throw new DataHubConfigurationException("Root ca not loaded", e);
@@ -331,7 +331,7 @@ public class HubTestBase {
             if (isCertAuth()) {
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowdevelopercertContext, SSLHostnameVerifier.ANY),
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : dataHubAdmincertContext, SSLHostnameVerifier.ANY),
                     DatabaseClient.ConnectionType.GATEWAY);
             } else if (isSslRun()) {
                 switch (authMethod) {
@@ -351,11 +351,11 @@ public class HubTestBase {
         } else {
             if (isCertAuth()) {
                 /*certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-                flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin.p12"));
+                dataHubAdmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin.p12"));
                 flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowdevelopercertContext, SSLHostnameVerifier.ANY));
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : dataHubAdmincertContext, SSLHostnameVerifier.ANY));
             } else if (isSslRun()) {
                 switch (authMethod) {
                     case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
@@ -526,9 +526,9 @@ public class HubTestBase {
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-admin.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-admin.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-admin.p12");
-            adminHubConfig.setSslContext(DatabaseKind.JOB,flowdevelopercertContext);
-            manageConfig.setSslContext(flowdevelopercertContext);
-            adminConfig.setSslContext(flowdevelopercertContext);
+            adminHubConfig.setSslContext(DatabaseKind.JOB,dataHubAdmincertContext);
+            manageConfig.setSslContext(dataHubAdmincertContext);
+            adminConfig.setSslContext(dataHubAdmincertContext);
             
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
