@@ -1,0 +1,162 @@
+<div id="jobs-page" class="page-layout carded fullwidth">
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HEADER -->
+    <div class="header accent">
+      <mat-toolbar style="background: transparent">
+
+        <h1>Jobs</h1>
+
+        <span class="fill-space"></span>
+
+        <div id="filters">
+
+          <span class="filter-label">Filters</span>
+          <mat-form-field id="name-filter">
+            <mat-select id="name-filter-type" value="" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)">
+              <mat-option class="name-option" *ngFor="let val of getMenuVals('flow')" [value]="val">{{val ? val : 'All'}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field id="target-entity-filter">
+            <mat-select id="target-entity-filter-type" value="" placeholder="Target Entity" (selectionChange)="applyFilter('targetEntity', $event.value)">
+              <mat-option class="target-entity-option" *ngFor="let val of getMenuVals('targetEntity')" [value]="val">{{val ? val : 'All'}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field id="status-filter">
+            <mat-select id="status-filter-type" value="" placeholder="Status" (selectionChange)="applyFilter('jobStatus', $event.value)">
+              <mat-option class="status-option" *ngFor="let val of getMenuVals('jobStatus')" [value]="val">{{val ? val : 'All'}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field id="text-filter">
+            <input matInput (keyup)="applyFilter('text', $event.target.value)" placeholder="Text">
+          </mat-form-field>
+
+        </div>
+
+      </mat-toolbar>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content-card">
+
+      <mat-table id="jobs-table"
+                 class="jobs-table"
+                 #table [dataSource]="dataSource"
+                 matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell id="job-name-sort-btn" *matHeaderCellDef mat-sort-header>Flow Name/Job ID</mat-header-cell>
+          <mat-cell class="job-name" *matCellDef="let job">
+            <div class="name-container">
+              <div class="flow-name">
+                <a [routerLink]="['/jobs', job.jobId]">
+                  {{job.flow}}
+                </a>
+              </div>
+              <div class="job-id">
+                {{job.jobId | truncate : 40}}
+              </div>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Target Entity -->
+        <ng-container matColumnDef="targetEntity">
+          <mat-header-cell id="job-entity-sort-btn" *matHeaderCellDef mat-sort-header>Target Entity</mat-header-cell>
+          <mat-cell class="job-entity" *matCellDef="let job">
+            {{job.targetEntity}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="jobStatus">
+          <mat-header-cell id="job-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+          <mat-cell class="job-status" *matCellDef="let job">
+            {{job.jobStatus}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Ended Column -->
+        <ng-container matColumnDef="timeEnded">
+          <mat-header-cell id="jobs-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
+          <mat-cell class="job-ended" *matCellDef="let job">
+            {{friendlyDate(job.timeEnded)}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Duration Column -->
+        <ng-container matColumnDef="duration">
+          <mat-header-cell id="job-duration-sort-btn" *matHeaderCellDef mat-sort-header>Duration</mat-header-cell>
+          <mat-cell class="job-duration" *matCellDef="let job">
+            {{friendlyDuration(job.timeStarted, job.timeEnded)}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Committed Column -->
+        <ng-container matColumnDef="committed">
+          <mat-header-cell id="job-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
+          <mat-cell class="job-committed" *matCellDef="let job">
+            <a *ngIf="job.committed !== 0" [routerLink]="">
+              {{job.committed | number}}
+            </a>
+            <span *ngIf="job.committed === 0">
+              {{job.committed}}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Errors Column -->
+        <ng-container matColumnDef="errors">
+          <mat-header-cell id="job-errors-sort-btn" *matHeaderCellDef mat-sort-header>Errors</mat-header-cell>
+          <mat-cell class="job-errors" *matCellDef="let job">
+            <a *ngIf="job.errors !== 0" [routerLink]="">
+              {{job.errors | number}}
+            </a>
+            <span *ngIf="job.errors === 0">
+              {{job.errors}}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell class="job-actions" *matCellDef="let job">
+            <mat-icon class="job-menu" [matMenuTriggerFor]="jobMenu" [matMenuTriggerData]="{job: job}"
+                      disableRipple>more_vert</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row
+          *matRowDef="let job; columns: displayedColumns;"
+          class="{{ 'job-' + job.flow.toLowerCase().split(' ').join('-') }}"
+        >
+        </mat-row>
+
+      </mat-table>
+
+      <mat-paginator id="job-pagination"
+                     #paginator
+                     [length]="jobs.length"
+                     [pageIndex]="0"
+                     [pageSize]="5"
+                     [pageSizeOptions]="[3, 5, 15, 30]">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+<mat-menu class="job-menu-dialog" #jobMenu="matMenu">
+  <ng-template matMenuContent let-job="job">
+    <div class="job-menu-output -btn" mat-menu-item (click)="openOutputDialog(job)">Output</div>
+    <div class="job-menu-view-btn" mat-menu-item (click)="viewFlow(job)">View Flow</div>
+  </ng-template>
+</mat-menu>
