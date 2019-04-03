@@ -351,8 +351,8 @@ public class HubTestBase {
         } else {
             if (isCertAuth()) {
                 /*certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-                dataHubAdmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin.p12"));
-                flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
+                dataHubAdmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
+                flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator-user.p12"));*/
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
                     new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : dataHubAdmincertContext, SSLHostnameVerifier.ANY));
@@ -435,9 +435,9 @@ public class HubTestBase {
         manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
         adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
         if(isCertAuth()) {
-            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-operator.p12");
-            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-operator.p12");
-            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-operator.p12");
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-operator-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-operator-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-operator-user.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB,flowOperatorcertContext);
             manageConfig.setSslContext(flowOperatorcertContext);
             adminConfig.setSslContext(flowOperatorcertContext);
@@ -523,9 +523,9 @@ public class HubTestBase {
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
             
-            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-admin.p12");
-            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-admin.p12");
-            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-admin.p12");
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-admin-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-admin-user.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-admin-user.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB,dataHubAdmincertContext);
             manageConfig.setSslContext(dataHubAdmincertContext);
             adminConfig.setSslContext(dataHubAdmincertContext);
