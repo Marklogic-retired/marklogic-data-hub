@@ -1,188 +1,329 @@
 /*
  * Copyright 2012-2019 MarkLogic Corporation
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.legacy.flow.LegacyFlow;
-import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
-import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
-import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.web.model.FlowModel;
-import com.marklogic.hub.web.model.PluginModel;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.step.Step;
+import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.web.exception.BadRequestException;
+import com.marklogic.hub.web.exception.DataHubException;
+import com.marklogic.hub.web.exception.NotFoundException;
+import com.marklogic.hub.web.model.FlowStepModel;
+import com.marklogic.hub.web.model.StepModel;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class FlowManagerService {
 
-    private static final String PROJECT_TMP_FOLDER = ".tmp";
+    @Autowired
+    private FlowManager flowManager;
 
     @Autowired
-    private LegacyFlowManager flowManager;
+    private FlowRunnerImpl flowRunner;
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    private StepManagerService stepManagerService;
 
+    public List<FlowStepModel> getFlows() {
+        List<Flow> flows = flowManager.getFlows();
+        List<FlowStepModel> flowSteps = new ArrayList<>();
+        for (Flow flow : flows) {
+            FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+            flowSteps.add(fsm);
+        }
+        return flowSteps;
+    }
 
-    public List<FlowModel> getFlows(String entityName, FlowType flowType) {
-        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entityName);
-        return flowManager.getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
-            FlowModel flowModel = new FlowModel(entityName, flow.getName());
-            flowModel.codeFormat = flow.getCodeFormat();
-            flowModel.dataFormat = flow.getDataFormat();
-            flowModel.flowType = flow.getType();
+    public FlowStepModel createFlow(String flowJson, boolean checkExists)  {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(flowJson);
+        } catch (IOException e) {
+            throw new DataHubException("Unable to parse flow json string : "+ e.getMessage());
+        }
+        String flowName = jsonObject.getString("name");
+        Flow flow = null;
+        if (checkExists) {
+            if (flowManager.isFlowExisted(flowName)) {
+                throw new DataHubException(flowName + " is existed.");
+            }
+            flow = new FlowImpl();
+            flow.setName(flowName);
+        } else if (!checkExists) { //for PUT updating
+            flow = flowManager.getFlow(flowName);
+            if (flow == null) {
+                throw new DataHubException("Flow request payload is invalid.");
+            }
+        }
 
-            Path flowPath = entityPath.resolve(flowType.toString()).resolve(flow.getName());
-            List<String> pluginNames = FileUtil.listDirectFolders(flowPath.toFile());
-            for (String pluginName : pluginNames) {
-                Path pluginPath = flowPath.resolve(pluginName);
-                List<String> pluginFiles = FileUtil.listDirectFiles(pluginPath.toString());
-                PluginModel pm = new PluginModel();
-                pm.pluginType = pluginName;
-                for (String pluginFile : pluginFiles) {
-                    pm.pluginPath = pluginPath.resolve(pluginFile).toString();
-                    try {
-                        pm.fileContents = new String(Files.readAllBytes(pluginPath.resolve(pluginFile)));
-                    } catch (IOException e) {}
-                }
+        FlowStepModel.createFlowSteps(flow, jsonObject);
 
-                flowModel.plugins.add(pm);
+        flowManager.saveFlow(flow);
+
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        return fsm;
+    }
+
+    public FlowStepModel getFlow(String flowName) {
+        Flow flow = flowManager.getFlow(flowName);
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        return fsm;
+    }
+
+    public List<String> getFlowNames() {
+        return flowManager.getFlowNames();
+    }
+
+    public void deleteFlow(String flowName) {
+        flowManager.deleteFlow(flowName);
+    }
+
+    public List<StepModel> getSteps(String flowName) {
+        Flow flow = flowManager.getFlow(flowName);
+        Map<String, Step> stepMap = flowManager.getSteps(flow);
+
+        List<StepModel> stepModelList = new ArrayList<>();
+        for (String key : stepMap.keySet()) {
+            Step step = stepMap.get(key);
+            StepModel stepModel = null;
+
+            try {
+                stepModel = convertToWebModel(step);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            File[] pluginFiles = flowPath.toFile().listFiles(pathname -> pathname.isFile() && !pathname.getName().endsWith("properties"));
-            for (File pluginFile : pluginFiles) {
-                PluginModel pm = new PluginModel();
-                pm.pluginType = FilenameUtils.getBaseName(pluginFile.getName());
-                pm.pluginPath = pluginFile.getAbsolutePath();
+            stepModelList.add(stepModel);
+        }
+
+        return stepModelList;
+    }
+
+    public StepModel createStep(String flowName, Integer stepOrder, String stepId, String stringStep) {
+        StepModel stepModel;
+        JsonNode stepJson;
+        try {
+            stepJson = JSONObject.readInput(stringStep);
+            stepModel = StepModel.fromJson(stepJson);
+        } catch (IOException e) {
+            throw new BadRequestException("Error parsing JSON");
+        }
+
+        if (stepModel != null) {
+            Flow flow = flowManager.getFlow(flowName);
+            Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
+
+            // Only save step if step is of Custom type, for rest use the default steps.
+            switch (step.getType()) {
+                case INGEST:
+                    Step defaultIngest = getDefaultStepFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", Step.StepType.INGEST);
+                    step = StepModel.mergeFields(stepModel, defaultIngest, step);
+                    break;
+                case MAPPING:
+                    Step defaultMapping = getDefaultStepFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", Step.StepType.MAPPING);
+                    step = StepModel.mergeFields(stepModel, defaultMapping, step);
+                    break;
+                case CUSTOM:
+                    if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
+                        stepManagerService.saveStep(step);
+                    } else {
+                        stepManagerService.createStep(step);
+                    }
+                    break;
+                default:
+                    throw new BadRequestException("Invalid Step Type");
+            }
+
+            if (stepOrder != null) {
+                // Create
                 try {
-                    pm.fileContents = new String(Files.readAllBytes(pluginFile.toPath()));
-                } catch (IOException e) {}
-                flowModel.plugins.add(pm);
+                    Map<String, Step> stepMap = flowManager.getSteps(flow);
+                    if (!stepMap.containsKey(String.valueOf(stepOrder))) {
+                        stepMap.put(String.valueOf(stepOrder), step);
+                        flowManager.setSteps(flow, stepMap);
+                        flowManager.saveFlow(flow);
+                    } else {
+                        throw new BadRequestException("Invalid Step Order. A Step is already present at Step Order: " + stepOrder);
+                    }
+                } catch (DataHubProjectException e) {
+                    throw new NotFoundException(e.getMessage());
+                }
+            } else if (stepId != null) {
+                // Save
+                try {
+                    String key = getStepKeyInStepMap(flow, stepId);
+
+                    if (key != null && !key.isEmpty()) {
+                        Map<String, Step> stepMap = flowManager.getSteps(flow);
+                        stepMap.put(key, step);
+                        flowManager.setSteps(flow, stepMap);
+                        flowManager.saveFlow(flow);
+                    } else {
+                        throw new BadRequestException("Invalid Step Id");
+                    }
+                } catch (DataHubProjectException e) {
+                    throw new NotFoundException(e.getMessage());
+                }
+            } else {
+                //  Create at last
+                try {
+                    Map<String, Step> stepMap = flowManager.getSteps(flow);
+
+                    String key = "1";
+                    if (stepMap.size() != 0) {
+                        key = (String) stepMap.keySet().toArray()[stepMap.size() - 1];
+                        key = String.valueOf(Integer.parseInt(key) + 1);
+                    }
+
+                    if (!stepMap.containsKey(key)) {
+                        stepMap.put(key, step);
+                        flowManager.setSteps(flow, stepMap);
+                        flowManager.saveFlow(flow);
+                    } else {
+                        throw new BadRequestException("Invalid Step Order");
+                    }
+                } catch (DataHubProjectException e) {
+                    throw new NotFoundException(e.getMessage());
+                }
             }
-
-            flowModel.plugins.sort(Comparator.comparing(o -> o.pluginType));
-
-            return flowModel;
-        }).collect(Collectors.toList());
-    }
-
-    public LegacyFlow getServerFlow(String entityName, String flowName, FlowType flowType) {
-        return flowManager.getFlow(entityName, flowName, flowType);
-    }
-
-    public JobTicket runFlow(LegacyFlow flow, int batchSize, int threadCount, Map<String, Object> options, LegacyFlowStatusListener statusListener) {
-
-        LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(flow)
-            .withOptions(options)
-            .withBatchSize(batchSize)
-            .withThreadCount(threadCount)
-            .onStatusChanged(statusListener);
-        return flowRunner.run();
-    }
-
-    private Path getHarmonizeOptionsFilePath(Path destFolder, String entityName, String flowName) {
-        return destFolder.resolve(entityName + "-harmonize-" + flowName + ".txt");
-    }
-
-    public Map<String, Object> getHarmonizeFlowOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
-        File file = filePath.toFile();
-        if(file.exists()) {
-            return new ObjectMapper().readValue(file, Map.class);
+        } else {
+            throw new BadRequestException();
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("harmonize_file_path", hubConfig.getHubConfigDir());
-        return result;
+        return stepModel;
     }
 
-    public void saveOrUpdateHarmonizeFlowOptionsToFile(String entityName, String flowName, String harmonizeOptionsFileContent) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        File destFolderFile = destFolder.toFile();
-        if (!destFolderFile.exists()) {
-            FileUtils.forceMkdir(destFolderFile);
-        }
-        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
-        FileWriter fw = new FileWriter(filePath.toString());
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(harmonizeOptionsFileContent);
-        bw.close();
-    }
+    public void deleteStep(String flowName, String stepId) {
+        Flow flow = flowManager.getFlow(flowName);
+        String key = getStepKeyInStepMap(flow, stepId);
 
+        if (key != null && !key.isEmpty()) {
+            try {
+                Map<String, Step> stepMap = flowManager.getSteps(flow);
+                Step step = stepMap.remove(key);
+                flowManager.setSteps(flow, stepMap);
+                flowManager.saveFlow(flow);
 
-    private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
-        return destFolder.resolve(entityName + "-" + flowName + ".txt");
-    }
-
-    public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        File destFolderFile = destFolder.toFile();
-        if (!destFolderFile.exists()) {
-            FileUtils.forceMkdir(destFolderFile);
-        }
-        Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
-        FileWriter fw = new FileWriter(filePath.toString());
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(mlcpOptionsFileContent);
-        bw.close();
-    }
-
-    public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
-        File file = filePath.toFile();
-        if(file.exists()) {
-            return new ObjectMapper().readValue(file, Map.class);
+//                // Don't delete the Step from the filesystem so that we can later on reuse the step.
+//                if (step.getType().equals(Step.StepType.CUSTOM)) {
+//                    stepManagerService.deleteStep(step);
+//                }
+            } catch (DataHubProjectException e) {
+                throw new NotFoundException(e.getMessage());
+            }
+        } else {
+            throw new BadRequestException("Invalid Step Id");
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("input_file_path", hubConfig.getHubProject().getProjectDirString());
-        return result;
     }
 
-    public void runMlcp(LegacyFlow flow, JsonNode json, LegacyFlowStatusListener statusListener) {
-        String mlcpPath = json.get("mlcpPath").textValue();
-        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
-        runner.start();
+    public FlowStepModel runFlow(String flowName, List<String> steps) {
+        RunFlowResponse resp = null;
+        if (steps == null || steps.size() ==0 ) {
+            resp = flowRunner.runFlow(flowName);
+        } else {
+            Flow flow = flowManager.getFlow(flowName);
+            List<String> restrictedSteps = new ArrayList<>();
+            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
+            resp = flowRunner.runFlow(flowName, restrictedSteps);
+        }
+        return getFlow(flowName);
     }
 
-    public LegacyFlowManager getFlowManager() {
-        return flowManager;
+    public FlowStepModel stop(String flowName) {
+        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
+        Iterator<String> itr = jobIds.iterator();
+        if(!itr.hasNext()){
+            throw new BadRequestException("Flow not running.");
+        }
+        while(itr.hasNext()){
+            flowRunner.stopJob(itr.next());
+        }
+        return getFlow(flowName);
+    }
+
+    private StepModel convertToWebModel(Step step) throws IOException {
+        StepModel stepModel = new StepModel();
+
+        stepModel.setId(step.getName() + "-" + step.getType());
+        stepModel.setType(step.getType());
+        stepModel.setName(step.getName());
+        stepModel.setDescription(step.getDescription());
+        stepModel.setSourceDatabase(step.getSourceDatabase());
+        stepModel.setTargetDatabase(step.getDestinationDatabase());
+
+        JSONObject jsonObject = new JSONObject(JSONObject.writeValueAsString(step.getOptions()));
+        stepModel.setConfig(jsonObject.jsonNode());
+
+        stepModel.setLanguage(step.getLanguage());
+
+        // TODO: Sending true for now
+        stepModel.setValid(true);
+        stepModel.setCustomHook(step.getCustomHook());
+        stepModel.setVersion(String.valueOf(step.getVersion()));
+
+        return stepModel;
+    }
+
+    private String getStepKeyInStepMap(Flow flow, String stepId) {
+        // Split on the last occurrence of "-"
+        String[] stepStr = stepId.split("-(?!.*-)");
+
+        if (stepStr.length == 2) {
+            String name = stepStr[0];
+            String type = stepStr[1];
+            String[] key = new String[1];
+
+            flowManager.getSteps(flow).forEach((k, v) -> {
+                if (name.equals(v.getName()) && type.equalsIgnoreCase(v.getType().toString())) {
+                    key[0] = k;
+                }
+            });
+
+            return key[0];
+        }
+
+        return null;
+    }
+
+    private Step getDefaultStepFromResources(String resourcePath, Step.StepType stepType) {
+        try {
+            InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream(resourcePath);
+            JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
+            Step defaultStep = Step.create(stepType.toString(), stepType);
+            defaultStep.deserialize(jsonObject.jsonNode());
+
+            return defaultStep;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -17,9 +17,11 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.step.impl.StepImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 public interface Step {
 
@@ -71,6 +73,13 @@ public interface Step {
     String getName();
 
     /**
+     * Sets the name of the step
+     *
+     * @param name - a step name
+     */
+    void setName(String name);
+
+    /**
      * Returns the language setting of the step
      *
      * @return 'zxx', the default setting
@@ -78,11 +87,88 @@ public interface Step {
     String getLanguage();
 
     /**
-     * Sets the name of the step
+     * Return the step version
      *
-     * @param name - a step name
+     * @return - a step version
      */
-    void setName(String name);
+    Integer getVersion();
+
+    /**
+     * Sets the step version number
+     *
+     * @param version - a step version
+     */
+    void setVersion(Integer version);
+
+    /**
+     * Returns the step options as a map
+     *
+     * @return - options map
+     */
+    Map<String, Object> getOptions();
+
+    /**
+     * Sets the step options
+     *
+     * @param options - a options map
+     */
+    void setOptions(Map<String, Object> options);
+
+    /**
+     * Returns path to the module
+     *
+     * @return - a string path to the module
+     */
+    String getModulePath();
+
+    /**
+     * Sets the module path
+     *
+     * @param path - a string path to the module
+     */
+    void setModulePath(String path);
+
+    /**
+     * Returns the customHook
+     *
+     * @return - a customHook node
+     */
+    JsonNode getCustomHook();
+
+    /**
+     * Sets the customHook
+     *
+     * @param hookObj - a customHook node
+     */
+    void setCustomHook(JsonNode hookObj);
+
+    /**
+     * Returns the step identifier
+     *
+     * @return - a string identifier
+     */
+    String getIdentifier();
+
+    /**
+     * Sets the identifier for the step
+     *
+     * @param identifier - a string identifier
+     */
+    void setIdentifier(String identifier);
+
+    /**
+     * Returns the retry limit for the step
+     *
+     * @return - an integer retry limit
+     */
+    int getRetryLimit();
+
+    /**
+     * Sets the retry limit for the step
+     *
+     * @param retryLimit - an integer retry limit
+     */
+    void setRetryLimit(int retryLimit);
 
     /**
      * Returns the type of the Step
@@ -97,6 +183,81 @@ public interface Step {
      * @param type - a step type
      */
     void setType(StepType type);
+
+    /**
+     * Returns the description of the Step
+     *
+     * @return - a step description
+     */
+    String getDescription();
+
+    /**
+     * Sets the description for the step
+     *
+     * @param description - a string description
+     */
+    void setDescription(String description);
+
+    /**
+     * Returns the batch size
+     *
+     * @return - an integer batch size
+     */
+    int getBatchSize();
+
+    /**
+     * Sets the batch size for running this step
+     *
+     * @param batchSize - an integer
+     */
+    void setBatchSize(int batchSize);
+
+    /**
+     * Returns the thread count
+     *
+     * @return - thread count as integer
+     */
+    int getThreadCount();
+
+    /**
+     * Sets the thread count for running this step
+     *
+     * @param threadCount - an integer
+     */
+    void setThreadCount(int threadCount);
+
+    /**
+     * Returns the name of the source DB
+     *
+     * @return - source DB name as String
+     */
+    String getSourceDatabase();
+
+    /**
+     * Sets the name of the source DB
+     *
+     * @param sourceDatabase - a String
+     */
+    void setSourceDatabase(String sourceDatabase);
+
+    /**
+     * Returns the name of the destination DB
+     *
+     * @return - destination DB name as String
+     */
+    String getDestinationDatabase();
+
+    /**
+     * Sets the name of the destination DB
+     *
+     * @param destinationDatabase - a String
+     */
+    void setDestinationDatabase(String destinationDatabase);
+
+    /**
+     * Automatically increments the version of the mapping by 1
+     */
+    void incrementVersion();
 
     /**
      * Deserialize a json response and applies it to this mapping

@@ -1,0 +1,21 @@
+{
+  "collection": "http://marklogic.com/provenance-services/record",
+  "permission": [
+    {
+      "role-name": "flow-operator",
+      "capability": "insert"
+    },
+	{
+      "role-name": "flow-developer",
+      "capability": "insert"
+    ,
+	{
+      "role-name": "flow-developer",
+      "capability": "read"
+    },
+	{
+      "role-name": "flow-developer",
+      "capability": "execute"
+    }
+  ]
+}

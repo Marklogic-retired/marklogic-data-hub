@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.flow;
+package com.marklogic.hub.step;
 
-public interface FlowItemCompleteListener {
+public interface StepStatusListener {
     /**
-     * Listener interface for each flow item completing successfully
-     * @param jobId - the id of the job as a string
-     * @param itemId - the id of the item as a string
+     *
+     * @param jobId - the id of the job to change
+     * @param percentComplete - the percentage of completeness expressed as an int
+     * @param message - the message you'd like to send along with it
      */
-    void processCompletion(String jobId, String itemId);
+    void onStatusChange(String jobId, int percentComplete, String message);
 }

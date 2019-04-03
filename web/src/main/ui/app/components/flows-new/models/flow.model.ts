@@ -15,11 +15,11 @@ export class Flow {
   public isValid: boolean = false;
   public version: number = 0;
 
-  get docsCommitted(): number {
+  get recordsCommitted(): number {
     return this.latestJob.successfulEvents;
   }
 
-  get docsFailed(): number {
+  get recordsFailed(): number {
     return this.latestJob.failedEvents;
   }
 
