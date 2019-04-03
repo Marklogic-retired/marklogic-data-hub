@@ -1734,12 +1734,16 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlFlowOperatorRole%%", flowOperatorRoleName == null ? environment.getProperty("mlFlowOperatorRole") : flowOperatorRoleName);
         customTokens.put("%%mlFlowOperatorUserName%%", flowOperatorUserName == null ? environment.getProperty("mlFlowOperatorUserName") : flowOperatorUserName);
 
+        customTokens.put("%%mlFlowDeveloperRole%%", flowDeveloperRoleName == null ? environment.getProperty("mlFlowDeveloperRole") : flowDeveloperRoleName);
+        customTokens.put("%%mlFlowDeveloperUserName%%", flowDeveloperUserName == null ? environment.getProperty("mlFlowDeveloperUserName") : flowDeveloperUserName);
+
         customTokens.put("%%mlDataHubAdminRole%%", dataHubAdminRoleName == null ? environment.getProperty("mlDataHubAdminRole") : dataHubAdminRoleName);
         customTokens.put("%%mlDataHubAdminUserName%%", dataHubAdminUserName == null ? environment.getProperty("mlDataHubAdminUserName") : dataHubAdminUserName);
 
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
         customTokens.put("%%mlFlowOperatorUserPassword%%", randomStringGenerator.generate(20));
+        customTokens.put("%%mlFlowDeveloperUserPassword%%", randomStringGenerator.generate(20));
         // and another random password for hub Admin User
         customTokens.put("%%mlDataHubAdminUserPassword%%", randomStringGenerator.generate(20));
 
@@ -1755,8 +1759,8 @@ public class HubConfigImpl implements HubConfig
         if (projectProperties.containsKey("mlFlowOperatorUserPassword")) {
             customTokens.put("%%mlFlowOperatorUserPassword%%", projectProperties.getProperty("mlFlowOperatorUserPassword"));
         }
-        if (projectProperties.containsKey("mlFlowOperatorUserPassword")) {
-            customTokens.put("%%mlFlowOperatorUserPassword%%", projectProperties.getProperty("mlFlowOperatorUserPassword"));
+        if (projectProperties.containsKey("mlFlowDeveloperUserPassword")) {
+            customTokens.put("%%mlFlowDeveloperUserPassword%%", projectProperties.getProperty("mlFlowDeveloperUserPassword"));
         }
         if (projectProperties.containsKey("mlDataHubAdminUserPassword")) {
             customTokens.put("%%mlDataHubAdminUserPassword%%", projectProperties.getProperty("mlDataHubAdminUserPassword"));
