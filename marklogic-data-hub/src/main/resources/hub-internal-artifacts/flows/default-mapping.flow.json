@@ -1,16 +1,18 @@
 {
   "name" : "default-mapping",
   "description" : "This is the default flow for mapping into data hub",
-  "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
-    "steps" : {
+  "options": {
+    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))"
+  },
+  "steps" : {
 	  "1": {	 
 	   "type": "mapping",
 	   "name": "default-mapping",
 	   "retryLimit": 0,
 	   "options": {
-		"outputFormat" : "json",
-		"collections" : "default-mapping"
-		}
+       "outputFormat" : "json",
+       "collections" : "default-mapping"
+     }
 	  }
 	}
 }

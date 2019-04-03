@@ -6,6 +6,7 @@
   ></info-label>
   <mat-form-field class="read-only" appearance="outline" layout-fill>
     <input
+      id="custom-module"
       matInput
       [value]="module"
       [readonly]="true"
@@ -18,6 +19,7 @@
   ></info-label>
   <mat-form-field appearance="outline" >
     <input
+      id="custom-module-uri"
       matInput
       [(ngModel)]="step.customModuleUri"
       (blur)="onChange()"

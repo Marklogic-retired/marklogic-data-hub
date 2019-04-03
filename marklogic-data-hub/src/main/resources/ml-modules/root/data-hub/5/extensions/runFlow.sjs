@@ -53,13 +53,13 @@ function post(context, params, input) {
             uri: xdmp.nodeUri(doc),
             value: doc,
             context: {
-              collections: xdmp.nodeCollections(doc),
+              collections: options.collections || xdmp.nodeCollections(doc),
               permissions: xdmp.nodePermissions(doc),
               metadata: xdmp.nodeMetadata(doc)
             }
           });
         }
-      }, flow.sourceDb || datahub.flow.globalContext.sourceDb);
+      }, flow.sourceDatabase || datahub.flow.globalContext.sourceDb);
     }
     return datahub.flow.runFlow(flowName, jobId, content, options, params.step);
   }

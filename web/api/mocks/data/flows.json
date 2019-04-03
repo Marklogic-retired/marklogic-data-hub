@@ -1,0 +1,158 @@
+[
+  {
+    "id": "flow-01",
+    "name": "Order Flow 01",
+    "description": "My Flow01 flow desc",
+    "batchSize": 100,
+    "threadCount": 4,
+    "options": {
+      "key": "value",
+      "key2": "value1",
+      "key3": "value1"
+    },
+    "steps": [
+      { 
+        "id": "step-1-flow-1", "name": "Flow 01 Ingest Step", "type": "ingest"
+      },
+      { 
+        "id": "step-2-flow-1", "name": "Flow 01 Mapping Step", "type": "mapping", "targetEntity": "Order"
+      },
+      { 
+        "id": "step-3-flow-1", "name": "Flow 01 Mastering Step", "type": "mastering", "targetEntity": "Order"
+      },
+      { 
+        "id": "step-4-flow-1", "name": "Flow 01 Custom Step", "type": "custom", "targetEntity": "Order"
+      }
+    ],
+    "jobs": [
+      "job-1-flow-1",
+      "job-2-flow-1",
+      "job-3-flow-1",
+      "job-4-flow-1"
+    ],
+    "latestJob": {
+      "id": "job-4-flow-1",
+      "startTime": "2019-01-31 12:10:00",
+      "endTime": "2019-01-31 13:10:00",
+      "output": [],
+      "status": "finished",
+      "stepId": "step-4-flow-1",
+      "stepName": "Flow 01 Custom Step",
+      "stepRunningPercent": null,
+      "successfulEvents": 500,
+      "failedEvents": 0
+    },
+    "isValid": true,
+    "version": 1
+  },
+  {
+    "id": "flow-02",
+    "name": "Order Flow 2",
+    "description": "My Flow2 flow desc",
+    "batchSize": 100,
+    "threadCount": 4,
+    "options": {
+      "key": "value",
+      "key2": "value1",
+      "key3": "value1"
+    },
+    "steps": [
+      { 
+        "id": "step-1-flow-2", "name": "Flow 02 Ingest Step", "type": "ingest"
+      },
+      { 
+        "id": "step-2-flow-2", "name": "Flow 02 Mapping Step", "type": "mapping", "targetEntity": "Order"
+      },
+      { 
+        "id": "step-3-flow-2", "name": "Flow 02 Mastering Step", "type": "mastering", "targetEntity": "Order"
+      },
+      { 
+        "id": "step-4-flow-2", "name": "Flow 02 Custom Step", "type": "custom", "targetEntity": "Order"
+      }
+    ],
+    "jobs": [
+      "job-1-flow-2",
+      "job-2-flow-2",
+      "job-3-flow-2",
+      "job-4-flow-2"
+    ],
+    "latestJob": {
+      "id": "job-4-flow-2",
+      "startTime": "2019-02-01 12:10:00",
+      "endTime": "2019-02-01 16:10:00",
+      "output": [],
+      "status": "finished with errors",
+      "stepId": "step-4-flow-2",
+      "stepName": "Flow 02 Custom Step",
+      "stepRunningPercent": null,
+      "successfulEvents": 13429,
+      "failedEvents": 63
+    },
+    "isValid": true,
+    "version": 1
+  },
+  {
+    "id": "flow-03",
+    "name": "Customer Flow",
+    "description": "My Customer Flow flow desc",
+    "batchSize": 100,
+    "threadCount": 4,
+    "options": {
+      "key": "value",
+      "key2": "value1",
+      "key3": "value1"
+    },
+    "steps": [
+      { 
+        "id": "step-1-flow-3", "name": "Flow 03 Ingest Step", "type": "ingest"
+      },
+      { 
+        "id": "step-2-flow-3", "name": "Flow 03 Mapping Step", "type": "mapping", "targetEntity": "Order"
+      },
+      { 
+        "id": "step-3-flow-3", "name": "Flow 03 Mastering Step", "type": "mastering", "targetEntity": "Order"
+      },
+      { 
+        "id": "step-4-flow-3", "name": "Flow 03 Custom Step", "type": "custom", "targetEntity": "Order"
+      }
+    ],
+    "jobs": [
+      "job-1-flow-3"
+    ],
+    "latestJob": {
+      "id": "job-1-flow-3",
+      "startTime": "2019-02-02 12:10:00",
+      "endTime": "2019-02-02 16:10:00",
+      "output": [],
+      "status": "failed",
+      "stepId": "step-3-flow-3",
+      "stepName": "Flow 03 Mastering Step",
+      "stepRunningPercent": null,
+      "successfulEvents": 0,
+      "failedEvents": 500
+    },
+    "isValid": true,
+    "version": 1
+  },
+  {
+    "id": "flow-04",
+    "name": "Product Ingestion",
+    "description": "My Product Ingestion Flow flow desc",
+    "batchSize": 100,
+    "threadCount": 4,
+    "options": {
+      "key": "value",
+      "key2": "value1",
+      "key3": "value1"
+    },
+    "steps": [
+      { 
+        "id": "step-1-flow-4", "name": "Flow 04 Custom Step", "type": "custom", "targetEntity": "Order"
+      }
+    ],
+    "jobs": [],
+    "latestJob": null,
+    "isValid": false,
+    "version": 1
+  }
+]

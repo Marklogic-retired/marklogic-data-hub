@@ -23,7 +23,7 @@ export class MergeOptionsUiComponent {
   @Output() updateOption = new EventEmitter();
   @Output() deleteOption = new EventEmitter();
 
-  public displayedColumns = ['propertyName', 'mergeType', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
+  public displayedColumns = ['propertyName', 'mergeType', 'details', 'maxValues', 'maxSources', 'sourceWeights', 'length', 'actions'];
   public dataSource: MatTableDataSource<MergeOption>;
 
   public valueFocus: object = {};
@@ -33,7 +33,6 @@ export class MergeOptionsUiComponent {
   ) {}
 
   ngOnInit() {
-    console.log('ngOnInit this.mergeOptions', this.mergeOptions);
     this.dataSource = new MatTableDataSource<MergeOption>(this.mergeOptions.options);
   }
 
@@ -43,8 +42,6 @@ export class MergeOptionsUiComponent {
   }
 
   openMergeOptionDialog(optionToEdit: MergeOption, index: number, entityProps: any, strategies: any): void {
-    // Don't allow editing of strategies from Merge Options table
-    // if (optionToEdit && optionToEdit.strategy) return;
     const dialogRef = this.dialog.open(AddMergeOptionDialogComponent, {
       width: '500px',
       data: {option: optionToEdit, index: index, entityProps: entityProps, strategies: this.mergeStrategies}
@@ -53,7 +50,7 @@ export class MergeOptionsUiComponent {
       if (!!result) {
         if (optionToEdit) {
           console.log('updateOption');
-          this.updateOption.emit(result);
+          this.updateOption.emit({opt: result.opt, index: result.index});
         }else{
           console.log('createOption');
           this.createOption.emit(result);
@@ -74,32 +71,24 @@ export class MergeOptionsUiComponent {
     });
   }
 
-  // TODO Use TruncateCharactersPipe
-  truncate(value: string, limit: number, trail: string = '...'): string {
-    return value.length > limit ?
-      value.substring(0, limit) + trail :
-      value;
-  }
-
   renderRows(): void {
     this.dataSource.data = this.mergeOptions.options;
     this.table.renderRows();
   }
 
   valueClicked(event, mOpt, type) {
-    console.log('valueClicked', type);
     event.preventDefault();
     event.stopPropagation();
-    this.mergeOptions.options.forEach(m => { m.editing = false; })
+    this.mergeOptions.options.forEach(m => { m.editing = ''; })
     mOpt.editing = type;
     this.valueFocus[mOpt.propertyName] = true;
   }
 
-  valueKeyPress(event, mOpt, type): void {
-    console.log('valueKeyPress', type);
+  valueKeyPress(event, mOpt, index, type): void {
     if (event.key === 'Enter') {
       mOpt.editing = '';
       this.valueFocus[mOpt.propertyName] = false;
+      this.updateOption.emit({opt: mOpt, index: index});
     }
   }
 
@@ -109,7 +98,12 @@ export class MergeOptionsUiComponent {
 
   // Close value input on outside click
   @HostListener('document:click', ['$event', 'this']) valueClickOutside($event, mOpt){
-    this.mergeOptions.options.forEach(m => { m.editing = ''; })
+    this.mergeOptions.options.forEach((m, i) => {
+      if (m.editing) {
+        this.updateOption.emit({opt: m, index: i});
+        m.editing = '';
+      }
+    })
   }
 
 }

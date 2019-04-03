@@ -41,13 +41,16 @@ export class AddMergeOptionDialogComponent {
       strategy: [this.data.option ? this.data.option.strategy : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
+      customNs: [this.data.option ? this.data.option.customNs : ''],
       index: this.data.index,
       entityProps:  [this.data.entityProps ? this.data.entityProps : []]
     })
     this.selectedType = (this.data.option && this.data.option.mergeType) ?
       this.data.option.mergeType : 'standard';
     this.strategies = (this.data.strategies && this.data.strategies.strategies) ?
-      this.data.strategies.strategies.map(s => { return s.name; }) : [];
+      this.data.strategies.strategies.map(s => {
+        if (!s.default) return s.name;
+      }) : [];
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
   }
@@ -93,7 +96,7 @@ export class AddMergeOptionDialogComponent {
   }
 
   getSubmitButtonTitle() {
-    return this.data.option ? 'Save' : 'Create';
+    return this.data.option ? 'SAVE' : 'CREATE';
   }
 
   onSave() {
@@ -128,7 +131,8 @@ export class AddMergeOptionDialogComponent {
   getValidSourceWeights(formSourceWeights) {
     let validSourceWeights = [];
     formSourceWeights.forEach(sw => {
-      if (sw.source !== '' && sw.weight !== '') {
+      if (sw.source !== '' && sw.weight !== '' &&
+          sw.source !== null && sw.weight !== null) {
         validSourceWeights.push({ source: sw.source, weight: sw.weight });
       }
     });

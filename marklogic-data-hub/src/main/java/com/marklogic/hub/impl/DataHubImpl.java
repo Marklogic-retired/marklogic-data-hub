@@ -45,6 +45,7 @@ import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -104,7 +105,13 @@ public class DataHubImpl implements DataHub {
     private Versions versions;
     
     @Autowired
-    private LegacyFlowManagerImpl flowManager;
+    private LegacyFlowManagerImpl legacyFlowManager;
+
+    @Autowired
+    private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunner flowRunner;
 
     private AdminManager _adminManager;
 
@@ -146,6 +153,11 @@ public class DataHubImpl implements DataHub {
 
     public void setServerManager(ServerManager manager) {
         this._serverManager = manager;
+    }
+
+    @Override
+    public FlowRunner getFlowRunner() {
+        return  this.flowRunner;
     }
 
     @Override
@@ -899,7 +911,7 @@ public class DataHubImpl implements DataHub {
             
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
-            List<String> flows = flowManager.updateLegacyFlows(currentVersion);
+            List<String> flows = legacyFlowManager.updateLegacyFlows(currentVersion);
             if (updatedFlows != null) {
                 updatedFlows.addAll(flows);
             }

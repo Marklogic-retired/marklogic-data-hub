@@ -17,10 +17,9 @@ package com.marklogic.hub.job;
 
 import com.marklogic.client.pojo.annotation.Id;
 import com.marklogic.hub.flow.Flow;
-
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 public class Job {
     private String jobId;
@@ -78,6 +77,11 @@ public class Job {
         return this;
     }
 
+    public Job withSuccess(boolean success) {
+        this.success = success;
+        return this;
+    }
+
     public Job setCounts(long totalEvents,long successfulEvents, long failedEvents, long successfulBatches, long failedBatches) {
         this.totalEvents = totalEvents;
         this.successfulEvents = successfulEvents;
@@ -125,5 +129,12 @@ public class Job {
 
     public long getFailedBatches() {
         return failedBatches;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[flowName: %s, success: %s, status: %s, totalEvents: %d, successfulEvents: %d, " +
+            "failedEvents: %d, successfulBatches: %d, failedBatches: %d]", flowName, String.valueOf(success),
+            status, totalEvents, successfulEvents, failedEvents, successfulBatches, failedBatches);
     }
 }

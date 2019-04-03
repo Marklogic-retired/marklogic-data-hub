@@ -41,8 +41,10 @@ class DeployHubArtifactTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubDeployArtifacts").outcome == SUCCESS
 
-        getStagingDocCount("http://marklogic.com/data-hub/step") == 2
-        getStagingDocCount("http://marklogic.com/data-hub/flow") == 2
+        // Steps ingest, mapping, and master
+        getStagingDocCount("http://marklogic.com/data-hub/step") == 3
+        // Flows ingest, mapping, mastering, map-and-master
+        getStagingDocCount("http://marklogic.com/data-hub/flow") == 4
         getModulesDocCount() == modCount
     }
 

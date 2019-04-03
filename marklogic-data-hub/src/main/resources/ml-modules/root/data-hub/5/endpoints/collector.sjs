@@ -54,7 +54,13 @@ if(method === 'GET') {
     resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
   } else {
     let stepDoc = flowDoc.steps[step];
+    if (!stepDoc) {
+      resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `The step number "${step}" of the flow was not found`]));
+    }
     let baseStep = datahub.flow.step.getStepByNameAndType(stepDoc.name, stepDoc.type);
+    if (!baseStep) {
+      resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `A step with name "${stepDoc.name}" and type of "${stepDoc.type}" was not found`]));
+    }
     let combinedOptions = Object.assign({}, baseStep.options, stepDoc.options, flowDoc.options, options);
     if (stepDoc) {
       if(!combinedOptions.identifier && flowDoc.identifier) {

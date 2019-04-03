@@ -17,7 +17,7 @@ import * as _ from "lodash";
   <app-merge-options-ui
     [mergeOptions]="mergeOptions"
     [targetEntity]="targetEntity"
-    [targetEntityName]="this.step.config.targetEntity"
+    [targetEntityName]="this.step.options.targetEntity"
     [mergeStrategies]="mergeStrategies"
     (createOption)="this.onCreateOption($event)"
     (updateOption)="this.onUpdateOption($event)"
@@ -25,9 +25,11 @@ import * as _ from "lodash";
   ></app-merge-options-ui>
   <app-merge-strategies-ui
     [mergeStrategies]="mergeStrategies"
+    [timestamp]="mergeTimestamp"
     (createStrategy)="this.onCreateStrategy($event)"
     (updateStrategy)="this.onUpdateStrategy($event)"
     (deleteStrategy)="this.onDeleteStrategy($event)"
+    (saveTimestamp)="this.onSaveTimestamp($event)"
   ></app-merge-strategies-ui>
   <app-merge-collections-ui
     [mergeCollections]="mergeCollections"
@@ -51,6 +53,7 @@ export class MergingComponent implements OnInit {
   public mergeStrategies: MergeStrategies;
   public mergeCollections: MergeCollections;
   public targetEntity: any;
+  public mergeTimestamp: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -61,18 +64,21 @@ export class MergingComponent implements OnInit {
 
     this.stepId = this.activatedRoute.snapshot.paramMap.get('stepId');
 
-    this.merging = Merging.fromConfig(this.step.config.mergeOptions);
+    this.merging = Merging.fromConfig(this.step.options.mergeOptions);
     console.log('this.merging', this.merging);
 
     // Parse merging data and instantiate models for UI
     this.mergeOptions = MergeOptions.fromMerging(this.merging);
     console.log('this.mergeOptions', this.mergeOptions);
+
     this.mergeStrategies = MergeStrategies.fromMerging(this.merging);
     console.log('this.mergeStrategies', this.mergeStrategies);
+    this.mergeTimestamp = this.merging.getTimestamp();
+
     this.mergeCollections = MergeCollections.fromMerging(this.merging);
     console.log('this.mergeCollections', this.mergeCollections);
 
-    this.getEntity(this.step.config.targetEntity);
+    this.getEntity(this.step.options.targetEntity);
 
   }
 
@@ -116,12 +122,15 @@ export class MergingComponent implements OnInit {
   onUpdateStrategy(event): void {
     this.mergeStrategies.updateStrategy(event.str, event.index);
     this.mergeStrategiesUi.renderRows();
+    this.mergeOptions.updateOptionsByStrategy(event.str);
     this.onSaveStep();
   }
 
   onDeleteStrategy(event): void {
     this.mergeStrategies.deleteStrategy(event);
     this.mergeStrategiesUi.renderRows();
+    this.mergeOptions.deleteOptionsByStrategy(event);
+    this.mergeOptionsUi.renderRows();
     this.onSaveStep();
   }
 
@@ -143,9 +152,14 @@ export class MergingComponent implements OnInit {
     this.onSaveStep();
   }
 
+  onSaveTimestamp(event): void {
+    this.mergeTimestamp = event;
+    this.onSaveStep();
+  }
+
   onSaveStep(): void {
-    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections);
-    this.step.config.mergeOptions = this.merging;
+    this.merging = Merging.fromUI(this.mergeOptions, this.mergeStrategies, this.mergeCollections, this.mergeTimestamp);
+    this.step.options.mergeOptions = this.merging;
     this.saveStep.emit(this.step);
   }
 

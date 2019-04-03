@@ -156,7 +156,12 @@ task copyIndexHtml(type: Copy) {
 }
 
 task runUI(type: NpmTask) {
-  args = ['start']
+  args = ['run', 'start']
+  dependsOn tasks.npmInstallUI
+}
+
+task runUIMocks(type: NpmTask) {
+  args = ['run', 'startmocks']
   dependsOn tasks.npmInstallUI
 }
 

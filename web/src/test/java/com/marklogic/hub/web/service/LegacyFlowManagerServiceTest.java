@@ -61,7 +61,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
-    FlowManagerService fm;
+    LegacyFlowManagerService fm;
 
     @Autowired
     LegacyFlowManager flowManager;

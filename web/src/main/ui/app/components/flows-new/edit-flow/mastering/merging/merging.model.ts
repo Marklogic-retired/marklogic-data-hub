@@ -13,7 +13,7 @@ export class Merging {
     namespaces: {}
   };
   public algorithms: Object = {
-    stdAlgorithm: {},
+    stdAlgorithm: { timestamp: {} },
     custom: [],
     collections: {}
   };
@@ -69,7 +69,7 @@ export class Merging {
   /**
    * Construct based on a UI configuration.
    */
-  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections) {
+  static fromUI(mergeOptions: MergeOptions, mergeStrategies: MergeStrategies,  mergeCollections: MergeCollections, mergeTimestamp: string) {
     const result = new Merging();
     if (mergeOptions) {
       mergeOptions.options.forEach(mOpt => {
@@ -78,13 +78,21 @@ export class Merging {
     }
     if (mergeStrategies) {
       mergeStrategies.strategies.forEach(mStr => {
-        result.addStrategy(mStr);
+        if (mStr.default === true) {
+          // Default option is represented as a strategy in UI
+          result.addOption(mStr);
+        } else {
+          result.addStrategy(mStr);
+        }
       })
     }
     if (mergeCollections) {
       mergeCollections.collections.forEach(mColl => {
         result.addCollection(mColl);
       })
+    }
+    if (mergeTimestamp) {
+      result.algorithms['stdAlgorithm']['timestamp']['path'] = mergeTimestamp;
     }
     console.log('fromUI', result);
     return result;
@@ -104,11 +112,11 @@ export class Merging {
   }
 
   /**
-   * Add an algorithm definition.
+   * Add a custom algorithm definition.
    */
-  addAlgorithm(name, at, fn) {
-    let alg = new Algorithm({ name: name, at: at, function: fn });
-    this.algorithms['algorithm'].push(alg);
+  addCustomAlgorithm(name, at, fn, ns) {
+    let alg = new Algorithm({ name: name, at: at, function: fn, namespace: ns });
+    this.algorithms['custom'].push(alg);
   }
 
   /**
@@ -127,6 +135,11 @@ export class Merging {
     // Transform any new length-weight from UI
     if (typeof mOpt.length === 'string' || typeof mOpt.length === 'number') {
       mOpt.length = { weight: mOpt.length };
+    }
+    // Handle custom merge option
+    if (mOpt.mergeType === 'custom') {
+      this.addCustomAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction, mOpt.customNs)
+      mOpt.algorithmRef = mOpt.customFunction;
     }
     let opt = new Option(mOpt);
     this.merging.push(opt);
@@ -158,6 +171,14 @@ export class Merging {
     this.algorithms['collections'][mColl.event] = coll;
   }
 
+  getTimestamp(): string {
+    let result = '';
+    if (this.algorithms['stdAlgorithm']['timestamp']['path']) {
+      result = this.algorithms['stdAlgorithm']['timestamp']['path'];
+    }
+    return result;
+  }
+
 }
 
 /**
@@ -181,13 +202,14 @@ export class Property {
  */
 export class Algorithm {
   public name: string;
-  public namespace: string;
   public function: string;
   public at: string;
+  public namespace: string;
   constructor(a) {
     if (a.name) this.name = a.name;
     if (a.function) this.function = a.function;
     if (a.at) this.at = a.at;
+    if (a.namespace) this.namespace = a.namespace;
   }
 }
 

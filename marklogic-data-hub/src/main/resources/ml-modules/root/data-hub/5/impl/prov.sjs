@@ -45,7 +45,7 @@ class Provenance {
    * @param {string} stepType - step type ['ingest','mapping','mastering','custom']
    */
   _validStepType(stepType) {
-    return ['ingest','mapping','mastering','custom'].includes(stepType)
+    return ['ingest','mapping','master','custom'].includes(stepType)
   }
   /**
    * Vaidate that the info Object to ensure the metadata passed doesn't stomp on roles or location values
@@ -61,14 +61,14 @@ class Provenance {
 
   /**
    * Vaidate that the info Object 
-   * @param {string} stepType - step type ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - step type ['ingest','mapping','master','custom']
    * @param {Object} info - object representing the information required to create prov info
    */
   _validProvInfoForStepType(stepType, info) {
     let requiredInfoParams = { 
       'ingest': ['derivedFrom'],  // the entity, file or document URI that this ingested document was derived from
       'mapping': ['derivedFrom','influencedBy'],
-      'mastering': ['influencedBy'],
+      'master': ['derivedFrom','influencedBy'],
       'custom': ['derivedFrom','influencedBy']
     };
     let provTypes = {
@@ -78,8 +78,8 @@ class Provenance {
       'mapping': function () {
         return requiredInfoParams['mapping'].every(val => Object.keys(info).includes(val));
       },
-      'mastering': function () {
-        return requiredInfoParams['mastering'].every(val => Object.keys(info).includes(val));
+      'master': function () {
+        return requiredInfoParams['master'].every(val => Object.keys(info).includes(val));
       },
       'custom': function () {
         return requiredInfoParams['custom'].every(val => Object.keys(info).includes(val));
@@ -118,7 +118,7 @@ class Provenance {
           isValid = (isProvInfoForStepTypeValid instanceof Error) ? isProvInfoForStepTypeValid : isProvInfoMetaValid;  
         }
       } else {
-        isValid = new Error(`Step type ${stepType} not defined.  Must be of type: 'ingest','mapping','mastering','custom'.`);
+        isValid = new Error(`Step type ${stepType} not defined.  Must be of type: 'ingest','mapping','master','custom'.`);
       }
     } else {
       isValid = new Error(`Function requires all params 'flowId','stepType' and 'info' to be defined.`);
@@ -136,7 +136,7 @@ class Provenance {
     metadata = metadata || null;
     xdmp.eval(`
       const ps = require('/MarkLogic/provenance');
-      xdmp.securityAssert("http://marklogic.com//xdmp/privileges/provenance/ps-user", "execute");
+      xdmp.securityAssert("http://marklogic.com/xdmp/privileges/ps-user", "execute");
 
       options = options || {};
       options.dateTime = String(fn.currentDateTime());
@@ -172,7 +172,7 @@ class Provenance {
    * @desc Create a provenance record when a document is run through an ingest step
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
-   * @param {string} docURI - the URI of the document being modified by this step
+\   * @param {string} docURI - the URI of the document being modified by this step
    * @param {Object} info
    * @param {string} info.derivedFrom - the entity, file or document URI that this ingested document was derived from
    * @param {string} info.influencedBy - the ingest step the document was modified by
@@ -273,7 +273,7 @@ class Provenance {
    *    attributes:
    *      - location (doc URI)
    */
-  _createMasteringStepRecord(jobId, flowId, docURI, info) {
+  _createMasterStepRecord(jobId, flowId, docURI, info) {
     let provId = `${jobId + flowId + 'mastering' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MasteringStep','dhf:MasteringStepEntity'];
     if (info && info.status)

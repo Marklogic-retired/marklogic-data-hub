@@ -27,15 +27,58 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page # of the paginated data",
+            "type": "string"
+          },
+          {
+            "name": "length",
+            "in": "query",
+            "description": "Length paginated data",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/flow"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -63,14 +106,40 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/flow"
             }
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
@@ -97,10 +166,39 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/flow"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -129,20 +227,43 @@
             "description": "Updated flow",
             "required": true,
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/flow"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation"
+            "description": "Successful Operation"
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           },
           "404": {
-            "description": "flow not found"
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       },
@@ -167,13 +288,37 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation"
+            "description": "Successful Operation"
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           },
           "404": {
-            "description": "Flow not found"
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
@@ -196,21 +341,55 @@
             "description": "Id of flow to run",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Array of Step ids to run, no body if all are being executed",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
-              "type": "object",
-              "$ref": "#/definitions/step"
+              "$ref": "#/definitions/flow"
             }
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           },
           "404": {
-            "description": "Step not found"
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
@@ -237,26 +416,44 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/flow"
             }
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           },
           "404": {
-            "description": "Flow not found"
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
     },
-
-
-
-
-
     "/flows/{flowId}/steps": {
       "get": {
         "tags": [
@@ -279,12 +476,42 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/step"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -308,6 +535,12 @@
             "type": "string"
           },
           {
+            "name": "stepOrder",
+            "in": "query",
+            "description": "The location in the Array of Steps this new Step will be inserted.  Defaults to end of the Array, if not set.",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "description": "Step to create",
@@ -319,19 +552,44 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/step"
             }
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
     },
-
     "/flows/{flowId}/steps/{stepId}": {
       "put": {
         "tags": [
@@ -364,20 +622,43 @@
             "description": "Updated step",
             "required": true,
             "schema": {
-              "type": "object",
               "$ref": "#/definitions/step"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation"
+            "description": "Successful Operation"
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           },
           "404": {
-            "description": "flow not found"
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       },
@@ -409,18 +690,41 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation"
+            "description": "Successful Operation"
           },
           "400": {
-            "description": "Invalid parameter supplied"
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           },
           "404": {
-            "description": "Flow not found"
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
     },
-
     "/collections/{databaseId}": {
       "get": {
         "tags": [
@@ -443,22 +747,107 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful Operation",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
-    }
-
-
-
-
-    
+    },
+    "/jobs/{jobId}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get a Job by Id",
+        "description": "....",
+        "operationId": "getJob",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Id of Job to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "schema": {
+              "$ref": "#/definitions/job"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    }    
   },
   "definitions": {
     "flow": {
@@ -514,13 +903,9 @@
           "type": "boolean",
           "description": "Boolean flag used for UI to tell whether all Steps associated with this Flow are valid, making the Flow valid"
         },
-        "isRunning": {
-          "type": "boolean",
-          "description": "(shouldn't this be on the job level? Flows don't run)"
-        },
         "version": {
           "type": "integer",
-          "description": "(Is this valid?)",
+          "description": "version of the flow, incremented with each update",
           "minimum": 0,
           "format": "int64"
         }
@@ -549,7 +934,7 @@
           "type": "string",
           "description": "Type of a step",
           "enum": [
-            "ingestion",
+            "ingest",
             "mapping",
             "mastering",
             "custom"
@@ -565,15 +950,8 @@
           "type": "boolean",
           "description": "Boolean flag to tell whether a Step is valid"
         },
-        "isRunning": {
-          "type": "boolean",
-          "description": "Boolean flag to tell whether a Step is running"
-        },
         "config": {
           "type": "object"
-        },
-        "language": {
-          "type": "string"
         },
         "version": {
           "type": "string"
@@ -581,25 +959,17 @@
         "customHook": {
           "$ref": "#/definitions/customHook"
         }
-      },
-      "xml": {
-        "name": "Process"
       }
     },
     "job": {
       "type": "object",
       "required": [
-        "id",
-        "flowId"
+        "id"
       ],
       "properties": {
         "id": {
           "type": "string",
           "description": "Id of the job"
-        },
-        "flowId": {
-          "type": "string",
-          "description": "Id of the flow associated with this job"
         },
         "startTime": {
           "type": "string",
@@ -611,31 +981,69 @@
           "format": "date-time",
           "description": "Timestamp job started"
         },
+        "output": {
+          "type": "array",
+          "description": "Array with Job output info (not required for UI atm - skip implementation)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stepId": {
+          "type": "string",
+          "description": "ID of the step being processed"
+        },
+        "stepName": {
+          "type": "string",
+          "description": "Name of the step being processed"
+        },
+        "stepRunningPercent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "format": "int64",
+          "description": "integer representing percent complete, null if not running"
+        },
         "status": {
           "type": "string",
-          "description": "Status of a job",
+          "description": "Status of the job",
           "enum": [
-            "running",
             "canceled",
             "failed",
+            "running",
+            "finished with errors",
             "completed"
           ]
         },
         "successfulEvents": {
           "type": "integer",
+          "description": "# of documents successfully processed",
           "minimum": 0,
           "format": "int64"
         },
         "failedEvents": {
           "type": "integer",
+          "description": "# of documents that failed to process",
           "minimum": 0,
           "format": "int64"
         }
-      },
-      "xml": {
-        "name": "Process"
       }
     },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },    
     "customHook": {
       "type": "object",
       "properties": {
@@ -651,9 +1059,6 @@
         "runBefore": {
           "type": "boolean"
         }
-      },
-      "xml": {
-        "name": "Tag"
       }
     }
   },

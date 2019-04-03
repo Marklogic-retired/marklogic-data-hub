@@ -23,14 +23,44 @@ paths:
       operationId: "getFlows"
       produces:
       - "application/json"
-      parameters: []
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "Page # of the paginated data"
+        required: false
+        type: "string"
+      - name: "length"
+        in: "query"
+        description: "Length paginated data"
+        required: false
+        type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
             type: "array"
             items:
               $ref: "#/definitions/flow"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
     post:
       tags:
@@ -49,11 +79,29 @@ paths:
           $ref: "#/definitions/flow"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
             $ref: "#/definitions/flow"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
   /flows/{flowId}:
     get:
@@ -72,9 +120,29 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
             $ref: "#/definitions/flow"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
     put:
       tags:
@@ -98,11 +166,27 @@ paths:
           $ref: "#/definitions/flow"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
         404:
-          description: "flow not found"
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
     delete:
       tags:
@@ -120,11 +204,27 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
         404:
-          description: "Flow not found"
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
   /flows/{flowId}/run:
     post:
@@ -141,15 +241,39 @@ paths:
         description: "Id of flow to run"
         required: true
         type: "string"
+      - in: "body"
+        name: "body"
+        description: "Array of Step ids to run, no body if all are being executed"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
-            $ref: "#/definitions/step"
+            $ref: "#/definitions/flow"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
         404:
-          description: "Step not found"
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
   /flows/{flowId}/stop:
     post:
@@ -168,13 +292,29 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
-            $ref: "#/definitions/step"
+            $ref: "#/definitions/flow"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
         404:
-          description: "Step not found"
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Flows"
   /flows/{flowId}/steps:
     get:
@@ -193,13 +333,32 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
             type: "array"
             items:
               $ref: "#/definitions/step"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Steps"
-  /flows/{flowId}/stepIndex/{stepIndex}:
     post:
       tags:
       - "steps"
@@ -214,10 +373,11 @@ paths:
         description: "Id of flow"
         required: true
         type: "string"
-      - name: "stepIndex"
-        in: "path"
-        description: "Index to place step"
-        required: true
+      - name: "stepOrder"
+        in: "query"
+        description: "The location in the Array of Steps this new Step will be inserted.\
+          \  Defaults to end of the Array, if not set."
+        required: false
         type: "string"
       - in: "body"
         name: "body"
@@ -227,11 +387,29 @@ paths:
           $ref: "#/definitions/step"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
-            $ref: "#/definitions/flow"
+            $ref: "#/definitions/step"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Steps"
   /flows/{flowId}/steps/{stepId}:
     put:
@@ -261,11 +439,27 @@ paths:
           $ref: "#/definitions/step"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
         404:
-          description: "flow not found"
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Steps"
     delete:
       tags:
@@ -288,11 +482,27 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
         400:
-          description: "Invalid parameter supplied"
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
         404:
-          description: "Flow not found"
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Steps"
   /collections/{databaseId}:
     get:
@@ -311,12 +521,73 @@ paths:
         type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful Operation"
           schema:
             type: "array"
             items:
               type: "string"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
       x-swagger-router-controller: "Collections"
+  /jobs/{jobId}:
+    get:
+      tags:
+      - "jobs"
+      summary: "Get a Job by Id"
+      description: "...."
+      operationId: "getJob"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "jobId"
+        in: "path"
+        description: "Id of Job to get"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/job"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Jobs"
 definitions:
   flow:
     type: "object"
@@ -363,17 +634,13 @@ definitions:
         type: "boolean"
         description: "Boolean flag used for UI to tell whether all Steps associated\
           \ with this Flow are valid, making the Flow valid"
-      isRunning:
-        type: "boolean"
-        description: "(shouldn't this be on the job level? Flows don't run)"
       version:
         type: "integer"
         format: "int64"
-        description: "(Is this valid?)"
+        description: "version of the flow, incremented with each update"
         minimum: 0
     example:
       latestJob: "{}"
-      isRunning: true
       jobs:
       - "jobs"
       - "jobs"
@@ -407,7 +674,7 @@ definitions:
         type: "string"
         description: "Type of a step"
         enum:
-        - "ingestion"
+        - "ingest"
         - "mapping"
         - "mastering"
         - "custom"
@@ -418,23 +685,15 @@ definitions:
       isValid:
         type: "boolean"
         description: "Boolean flag to tell whether a Step is valid"
-      isRunning:
-        type: "boolean"
-        description: "Boolean flag to tell whether a Step is running"
       config:
         type: "object"
         properties: {}
-      language:
-        type: "string"
       version:
         type: "string"
       customHook:
         $ref: "#/definitions/customHook"
-    xml:
-      name: "Process"
     example:
       sourceDatabase: "sourceDatabase"
-      isRunning: true
       isValid: true
       customHook:
         runBefore: true
@@ -443,24 +702,19 @@ definitions:
         user: "user"
       name: "name"
       description: "description"
-      language: "language"
       id: "id"
-      type: "ingestion"
+      type: "ingest"
       config: "{}"
       version: "version"
       targetDatabase: "targetDatabase"
   job:
     type: "object"
     required:
-    - "flowId"
     - "id"
     properties:
       id:
         type: "string"
         description: "Id of the job"
-      flowId:
-        type: "string"
-        description: "Id of the flow associated with this job"
       startTime:
         type: "string"
         format: "date-time"
@@ -469,24 +723,66 @@ definitions:
         type: "string"
         format: "date-time"
         description: "Timestamp job started"
+      output:
+        type: "array"
+        description: "Array with Job output info (not required for UI atm - skip implementation)"
+        items:
+          type: "string"
+      stepId:
+        type: "string"
+        description: "ID of the step being processed"
+      stepName:
+        type: "string"
+        description: "Name of the step being processed"
+      stepRunningPercent:
+        type: "integer"
+        format: "int64"
+        description: "integer representing percent complete, null if not running"
+        minimum: 0
+        maximum: 100
       status:
         type: "string"
-        description: "Status of a job"
+        description: "Status of the job"
         enum:
-        - "running"
         - "canceled"
         - "failed"
+        - "running"
+        - "finished with errors"
         - "completed"
       successfulEvents:
         type: "integer"
         format: "int64"
+        description: "# of documents successfully processed"
         minimum: 0
       failedEvents:
         type: "integer"
         format: "int64"
+        description: "# of documents that failed to process"
         minimum: 0
-    xml:
-      name: "Process"
+    example:
+      output:
+      - "output"
+      - "output"
+      stepRunningPercent: 8
+      stepName: "stepName"
+      failedEvents: 0
+      stepId: "stepId"
+      successfulEvents: 0
+      startTime: "2000-01-23T04:56:07.000+00:00"
+      id: "id"
+      endTime: "2000-01-23T04:56:07.000+00:00"
+      status: "canceled"
+  error:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int64"
+      message:
+        type: "string"
+      timestamp:
+        type: "string"
+        format: "date-time"
   customHook:
     type: "object"
     properties:
@@ -499,8 +795,6 @@ definitions:
         type: "string"
       runBefore:
         type: "boolean"
-    xml:
-      name: "Tag"
     example:
       runBefore: true
       module: "module"

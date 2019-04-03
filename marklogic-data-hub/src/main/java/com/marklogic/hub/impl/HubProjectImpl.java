@@ -106,6 +106,9 @@ public class HubProjectImpl implements HubProject {
                 case MAPPING:
                     path = this.stepsDir.resolve("mapping");
                     break;
+                case MASTER:
+                    path = this.stepsDir.resolve("master");
+                    break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
             }
@@ -188,6 +191,11 @@ public class HubProjectImpl implements HubProject {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
+    @Override
+    public Path getCustomModulesDir() {
+        return getModulesDir().resolve("root").resolve("custom-modules");
+    }
+
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
         File gradleProperties = this.projectDir.resolve("gradle.properties").toFile();
@@ -221,6 +229,9 @@ public class HubProjectImpl implements HubProject {
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();
+
+        Path customModulesDir = getCustomModulesDir();
+        customModulesDir.toFile().mkdirs();
 
         Path hubServersDir = getHubServersDir();
         hubServersDir.toFile().mkdirs();
@@ -752,6 +763,11 @@ public class HubProjectImpl implements HubProject {
     @Override
     public Path getMappingDir(String mappingName) {
         return getHubMappingsDir().resolve(mappingName);
+    }
+
+    @Override
+    public Path getCustomModuleDir(String stepName, String stepType) {
+        return getCustomModulesDir().resolve(stepType).resolve(stepName);
     }
 
     @Override

@@ -39,7 +39,7 @@ export class EditFlowComponent implements OnInit {
   };
   collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
-
+  running: any;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -112,11 +112,11 @@ export class EditFlowComponent implements OnInit {
   runFlow(flowId): void {
     this.manageFlowsService.runFlow(flowId).subscribe(resp => {
       // TODO add response check
-      const running = timer(0, 750)
+      this.running = timer(0, 750)
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           this.flow = Flow.fromJSON(poll);
-          if (!this.flow.isRunning) {
-            running.unsubscribe();
+          if (this.flow.latestJob.status !== 'running') {
+            this.running.unsubscribe();
           }
         })
       );
@@ -126,12 +126,16 @@ export class EditFlowComponent implements OnInit {
     this.manageFlowsService.stopFlow(flowid).subscribe(resp => {
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
+      this.running.unsubscribe();
     });
   }
   createStep(stepObject) {
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
-      this.flow = Flow.fromJSON(resp);
-      this.getSteps();
+      this.stepsArray.splice(stepObject.index, 0, resp);
+      console.log('stepsArray', this.stepsArray);
+      this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
+        this.flow = Flow.fromJSON(resp);
+      });
     });
   }
   updateStep(step) {
@@ -145,8 +149,9 @@ export class EditFlowComponent implements OnInit {
   }
   deleteStep(stepId) {
     this.manageFlowsService.deleteStep(this.flow.id, stepId).subscribe(resp => {
-      this.flow = Flow.fromJSON(resp);
-      this.getSteps();
+      console.log('delete response', resp);
+      // TODO update based off of response
+      this.getFlow();
     });
   }
 }

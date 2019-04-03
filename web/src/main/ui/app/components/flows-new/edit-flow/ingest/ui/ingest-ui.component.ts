@@ -94,7 +94,7 @@ export class IngestUiComponent implements OnInit {
   folder: string;
 
   ngOnInit(): void {
-    this.folder = this.step.config.input_file_path;
+    this.folder = this.step.options.input_file_path;
   }
 
   changeFolder(folder){
@@ -110,9 +110,9 @@ export class IngestUiComponent implements OnInit {
 
   onChange() {
     if (this.step.config) {
-      this.step.config.input_file_path = this.folder;
-      this.step.config.transform_param = `entity-name=${this.step.targetEntity},flow-name=${this.flow.name}`;
-      this.step.config.output_collections = `${this.step.targetEntity}`;
+      this.step.options.input_file_path = this.folder;
+      this.step.options.transform_param = `entity-name=${this.step.targetEntity},flow-name=${this.flow.name}`;
+      this.step.options.output_collections = `${this.step.targetEntity}`;
       this.saveStep.emit(this.step);
     }
   }
