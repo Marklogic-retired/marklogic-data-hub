@@ -191,10 +191,10 @@ public class HubTestBase {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
             datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
-            flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));
+            flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-flow-operator-user.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
-            throw new DataHubConfigurationException("Root ca lot loaded", e);
+            throw new DataHubConfigurationException("Root ca not loaded", e);
         }
     }
 
