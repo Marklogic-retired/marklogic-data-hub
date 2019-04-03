@@ -229,7 +229,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7-singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7-singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -314,7 +314,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7_cluster_9.0-6 Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-6 Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -349,7 +349,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7_cluster_9.0-7 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-7 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -383,7 +383,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7_cluster_9.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -412,7 +412,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins w12_cluster_9.0-6 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-6 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -441,7 +441,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins w12_cluster_9.0-5 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-5 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -470,7 +470,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins w12_cluster Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -499,7 +499,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins qs_rh7_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins qs_rh7_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -586,7 +586,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
