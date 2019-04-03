@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ManageJobsComponent } from "./manage-jobs.component";
+import { JobDetailsComponent } from "./job-details.component";
 import { MaterialModule } from "../theme/material.module";
 import { ManageJobsUiComponent } from "./ui/manage-jobs-ui.component";
+import { JobDetailsUiComponent } from "./ui/job-details-ui.component";
 import { AppCommonModule } from "../common";
 import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from '@angular/common';
@@ -14,7 +16,9 @@ import { EditFlowModule } from '../flows-new/edit-flow/edit-flow.module';
     //OutputDialogComponent,
     //TruncateCharactersPipe,
     ManageJobsUiComponent,
-    ManageJobsComponent
+    ManageJobsComponent,
+    JobDetailsUiComponent,
+    JobDetailsComponent
   ],
   imports     : [
     MaterialModule,
