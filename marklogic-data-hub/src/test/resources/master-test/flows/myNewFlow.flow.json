@@ -2,6 +2,7 @@
   "name" : "myNewFlow",
   "description" : "flow description",
   "identifier" : "",
+  "batchSize": 300,
   "steps" : { "1": {
   "name": "ingest",
   "type": "INGEST"

@@ -6,6 +6,7 @@ import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.*;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.util.HubModuleManager;
@@ -26,8 +27,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -42,6 +45,8 @@ public class MasterTest extends HubTestBase {
     HubConfig hubConfig;
     @Autowired
     private FlowManager flowManager;
+    @Autowired
+    private FlowRunner flowRunner;
 
     @BeforeAll
     public static void setup() {
@@ -140,16 +145,10 @@ public class MasterTest extends HubTestBase {
         if (flow == null) {
             throw new Exception("myNewFlow Not Found");
         }
-        FlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(flow)
-            // Jumping straight to step 3 - mastering
-            .withStep(3)
-            .withBatchSize(300)
-            .withThreadCount(4)
-            .withSourceClient(flowRunnerClient)
-            .withDestinationDatabase(flowRunnerClient.getDatabase());
-        Job job = flowRunner.run();
+        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("3"));
         flowRunner.awaitCompletion();
+        Job masterJob = flowResponse.getStepResponses().get("3");
+        assertTrue(masterJob.isSuccess());
         assertEquals(40, getStagingDocCount("mdm-notification"));
         assertEquals(10,getStagingDocCount("mdm-merged"));
     }
