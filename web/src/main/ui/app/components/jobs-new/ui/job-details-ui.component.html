@@ -1,0 +1,182 @@
+<div id="job-details-page" class="page-layout carded fullwidth">
+
+  <div class="back-link">
+    <a [routerLink]="['/jobs']">
+      <span class="back-symbol">&lt;</span> Jobs
+    </a>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HEADER -->
+    <div class="header accent">
+      <mat-toolbar style="background: transparent">
+        <h1>Job Details</h1>
+      </mat-toolbar>
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content-card">
+
+      <div id="job-summary">
+        <section class="name">
+          <div class="flow-name">
+            {{job.flow}}
+          </div>
+          <div class="job-id">
+            {{job.jobId}}
+          </div>
+        </section>
+        <section>
+          <div class="status">
+            <span class="label medium">Status</span>{{job.jobStatus}}
+          </div>
+          <div class="target-entity">
+            <span class="label medium">Target Entity</span>{{job.targetEntity}}
+          </div>
+        </section>
+        <section>
+          <div class="ended">
+            <span class="label">Ended</span>{{friendlyDate(job.timeEnded)}}
+          </div>
+          <div class="duration">
+            <span class="label">Duration</span>{{friendlyDuration(job.timeStarted, job.timeEnded)}}
+          </div>
+        </section>
+        <section>
+          <div class="committed">
+            <span class="label">Committed</span>
+            <a *ngIf="job.committed !== 0" [routerLink]="">
+              {{job.committed | number}}
+            </a>
+            <span *ngIf="job.committed === 0">
+              {{job.committed}}
+            </span>
+          </div>
+          <div class="errors">
+            <span class="label">Errors</span>
+            <a *ngIf="job.errors !== 0" [routerLink]="">
+              {{job.errors | number}}
+            </a>
+            <span *ngIf="job.errors === 0">
+              {{job.errors}}
+            </span>
+          </div>
+        </section>
+      </div>
+
+      <mat-table id="job-details-table"
+                 class="job-details-table"
+                 #table [dataSource]="dataSource"
+                 matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell id="job-name-sort-btn" *matHeaderCellDef mat-sort-header>Step Name</mat-header-cell>
+          <mat-cell class="step-name" *matCellDef="let step">
+            <div class="name-container">
+              {{step.stepName}}
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Target Entity -->
+        <ng-container matColumnDef="targetEntity">
+          <mat-header-cell id="step-entity-sort-btn" *matHeaderCellDef mat-sort-header>Target Entity</mat-header-cell>
+          <mat-cell class="step-entity" *matCellDef="let step">
+            {{step.options.targetEntity}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="stepStatus">
+          <mat-header-cell id="step-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+          <mat-cell class="step-status" *matCellDef="let step">
+            <span *ngIf="step.stepStatus">
+              {{step.stepStatus}}
+            </span>
+            <span *ngIf="!step.stepStatus" >
+              not run
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Ended Column -->
+        <ng-container matColumnDef="timeEnded">
+          <mat-header-cell id="step-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
+          <mat-cell class="step-ended" *matCellDef="let step">
+            {{friendlyDate(step.timeEnded)}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Duration Column -->
+        <ng-container matColumnDef="duration">
+          <mat-header-cell id="step-duration-sort-btn" *matHeaderCellDef mat-sort-header>Duration</mat-header-cell>
+          <mat-cell class="step-duration" *matCellDef="let step">
+            {{friendlyDuration(step.timeStarted, step.timeEnded)}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Committed Column -->
+        <ng-container matColumnDef="committed">
+          <mat-header-cell id="step-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
+          <mat-cell class="step-committed" *matCellDef="let step">
+            <a *ngIf="step.committed !== 0" [routerLink]="">
+              {{step.committed | number}}
+            </a>
+            <span *ngIf="step.committed === 0">
+              {{step.committed}}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Errors Column -->
+        <ng-container matColumnDef="errors">
+          <mat-header-cell id="step-errors-sort-btn" *matHeaderCellDef mat-sort-header>Errors</mat-header-cell>
+          <mat-cell class="step-errors" *matCellDef="let step">
+            <a *ngIf="step.errors !== 0" [routerLink]="">
+              {{step.errors | number}}
+            </a>
+            <span *ngIf="step.errors === 0">
+              {{step.errors}}
+            </span>
+            <span></span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell class="step-actions" *matCellDef="let step">
+            <mat-icon class="step-menu" [matMenuTriggerFor]="jobMenu" [matMenuTriggerData]="{step: step}"
+                      disableRipple>more_vert</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row
+          *matRowDef="let step; columns: displayedColumns;"
+          class="{{ 'step-' + step.stepName.toLowerCase().split(' ').join('-') }}"
+        >
+        </mat-row>
+
+      </mat-table>
+
+      <mat-paginator id="step-pagination"
+                     #paginator
+                     [length]="job.steps.length"
+                     [pageIndex]="0"
+                     [pageSize]="5"
+                     [pageSizeOptions]="[3, 5, 15, 30]">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+<mat-menu class="step-menu-dialog" #jobMenu="matMenu">
+  <ng-template matMenuContent let-step="step">
+    <div class="step-menu-output-btn" mat-menu-item (click)="openOutputDialog(step)">Output</div>
+  </ng-template>
+</mat-menu>

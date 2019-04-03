@@ -13,6 +13,7 @@ import {EditFlowComponent} from './components/flows-new/edit-flow/edit-flow.comp
 import {AuthGuard} from './services/auth/auth-guard.service';
 import {ManageFlowsComponent} from "./components/flows-new/manage-flows/manage-flows.component";
 import {ManageJobsComponent} from "./components/jobs-new/manage-jobs.component";
+import {JobDetailsComponent} from "./components/jobs-new/job-details.component";
 
 export const ROUTES: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
@@ -36,6 +37,7 @@ export const ROUTES: Routes = [
   { path: 'edit-flow/:flowId', component: EditFlowComponent, canActivate: [AuthGuard] },
   { path: 'jobs', component: ManageJobsComponent, canActivate: [AuthGuard] },
   { path: 'jobs-old', component: JobsComponent, canActivate: [AuthGuard] },
+  { path: 'jobs/:jobId', component: JobDetailsComponent, canActivate: [AuthGuard] },
   { path: 'traces', component: TracesComponent, canActivate: [AuthGuard] },
   { path: 'traces/:id', component: TraceViewerComponent, canActivate: [AuthGuard] },
   { path: 'browse', component: SearchComponent, canActivate: [AuthGuard] },
