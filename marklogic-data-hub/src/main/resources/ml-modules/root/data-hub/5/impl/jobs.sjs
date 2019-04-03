@@ -1,18 +1,15 @@
 /**
-  Copyright 2012-2019 MarkLogic Corporation
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+   Copyright 2012-2019 MarkLogic Corporation
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+   http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 'use strict';
 // Batch documents can be cached because they should never be altered across transactions
 const cachedBatchDocuments = {};
@@ -36,19 +33,19 @@ class Jobs {
   createJob(flowName, id = null ) {
     let job = null;
     if(!id) {
-     id = this.hubutils.uuid();
+      id = this.hubutils.uuid();
     }
     job = {
-     job: {
-       jobId: id,
-       flow: flowName,
-       user: xdmp.getCurrentUser(),
-       lastAttemptedStep: 0,
-       lastCompletedStep: 0 ,
-       jobStatus: "started" ,
-       timeStarted:  fn.currentDateTime(),
-       timeEnded: "N/A"
-     }
+      job: {
+        jobId: id,
+        flow: flowName,
+        user: xdmp.getCurrentUser(),
+        lastAttemptedStep: 0,
+        lastCompletedStep: 0 ,
+        jobStatus: "started" ,
+        timeStarted:  fn.currentDateTime(),
+        timeEnded: "N/A"
+      }
     };
 
     this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobsPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
@@ -66,21 +63,31 @@ class Jobs {
     );
   }
 
+  getJobDocsByFlow(flowName) {
+    return this.hubutils.queryLatest(function() {
+      let query = [cts.collectionQuery('Job'),  cts.jsonPropertyValueQuery('flow', flowName, "case-insensitive")];
+      let jobDoc = cts.search(cts.andQuery(query));
+      if (jobDoc) {
+        return jobDoc.toObject();
+      }
+    }, this.config.JOBDATABASE);
+  }
+
   getJobDocWithUri(jobUri) {
     return fn.head(this.hubutils.queryLatest(function() {
-        if (xdmp.documentGetCollections(jobUri).includes("Job")) {
-          return cts.doc(jobUri).toObject();
-        }
-      }, this.config.JOBDATABASE));
+      if (xdmp.documentGetCollections(jobUri).includes("Job")) {
+        return cts.doc(jobUri).toObject();
+      }
+    }, this.config.JOBDATABASE));
   }
 
   deleteJob(jobId) {
     let uris = cts.uris("", null ,cts.andQuery([cts.orQuery([cts.directoryQuery("/jobs/"),cts.directoryQuery("/jobs/batches/")]),
-    cts.jsonPropertyValueQuery("jobId", jobId)]));
+      cts.jsonPropertyValueQuery("jobId", jobId)]));
     for (let doc of uris) {
-     if (fn.docAvailable(doc)){
-       this.hubutils.deleteDocument(doc, this.config.JOBDATABASE);
-     }
+      if (fn.docAvailable(doc)){
+        this.hubutils.deleteDocument(doc, this.config.JOBDATABASE);
+      }
     }
   }
 
@@ -169,11 +176,11 @@ class Jobs {
   }
 
   getBatchDocWithUri(batchUri) {
-     return fn.head(this.hubutils.queryLatest(function() {
-       if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
-         return cts.doc(batchUri).toObject();
-       }
-     }, this.config.JOBDATABASE));
+    return fn.head(this.hubutils.queryLatest(function() {
+      if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
+        return cts.doc(batchUri).toObject();
+      }
+    }, this.config.JOBDATABASE));
   }
 
   updateBatch(jobId, batchId, batchStatus, uris, totalCount, successfulCount, failedCount) {

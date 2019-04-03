@@ -22,6 +22,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.exception.BadRequestException;
@@ -29,16 +30,15 @@ import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FlowManagerService {
@@ -52,11 +52,18 @@ public class FlowManagerService {
     @Autowired
     private StepManagerService stepManagerService;
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
+    @Autowired
+    JobService jobService;
+
     public List<FlowStepModel> getFlows() {
         List<Flow> flows = flowManager.getFlows();
         List<FlowStepModel> flowSteps = new ArrayList<>();
         for (Flow flow : flows) {
             FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+            fsm.setJobs(getJobs(flow.getName()), flowRunner);
             flowSteps.add(fsm);
         }
         return flowSteps;
@@ -83,19 +90,25 @@ public class FlowManagerService {
                 throw new DataHubException("Flow request payload is invalid.");
             }
         }
-
         FlowStepModel.createFlowSteps(flow, jsonObject);
-
         flowManager.saveFlow(flow);
-
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+
         return fsm;
     }
 
     public FlowStepModel getFlow(String flowName) {
         Flow flow = flowManager.getFlow(flowName);
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        fsm.setJobs(getJobs(flowName), flowRunner);
         return fsm;
+    }
+
+    private FlowJobsService.JobInfo getJobs(String flowName) {
+        FlowJobsService flowJobs = new FlowJobsService(hubConfig.newJobDbClient());
+        FlowJobsService.JobInfo jobInfo = flowJobs.getJobs(flowName);
+        flowJobs.release();
+        return jobInfo;
     }
 
     public List<String> getFlowNames() {
@@ -253,7 +266,11 @@ public class FlowManagerService {
             Flow flow = flowManager.getFlow(flowName);
             List<String> restrictedSteps = new ArrayList<>();
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
-            resp = flowRunner.runFlow(flowName, restrictedSteps);
+            try {
+                resp = flowRunner.runFlow(flowName, restrictedSteps);
+            } catch (Exception e) {
+                throw new DataHubException(e.getLocalizedMessage());
+            }
         }
         return getFlow(flowName);
     }
