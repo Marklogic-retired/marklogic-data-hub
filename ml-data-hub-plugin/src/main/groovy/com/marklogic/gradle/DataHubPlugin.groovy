@@ -72,13 +72,13 @@ class DataHubPlugin implements Plugin<Project> {
 
         String deployGroup = "MarkLogic Data Hub Setup"
         project.task("hubEnableDebugging", group: deployGroup, type: EnableDebuggingTask,
-            description: "Enables debugging on the running DHF server. Requires hub-admin-role or equivalent.")
+            description: "Enables debugging on the running DHF server. Requires data-hub-admin-role or equivalent.")
         project.task("hubDisableDebugging", group: deployGroup, type: DisableDebuggingTask,
-            description: "Disables debugging on the running DHF server. Requires hub-admin-role or equivalent.")
+            description: "Disables debugging on the running DHF server. Requires data-hub-admin-role or equivalent.")
         project.task("hubEnableTracing", group: deployGroup, type: EnableTracingTask,
-            description: "Enables tracing on the running DHF server. Requires hub-admin-role or equivalent.")
+            description: "Enables tracing on the running DHF server. Requires data-hub-admin-role or equivalent.")
         project.task("hubDisableTracing", group: deployGroup, type: DisableTracingTask,
-            description: "Disables tracing on the running DHF server. Requires hub-admin-role or equivalent.")
+            description: "Disables tracing on the running DHF server. Requires data-hub-admin-role or equivalent.")
         project.task("hubPreInstallCheck", group: deployGroup, type: PreinstallCheckTask,
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
@@ -117,7 +117,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.tasks.mlReloadSchemas.finalizedBy(["hubDeployUserArtifacts"])
 
         project.task("hubInstallModules", group: deployGroup, type: DeployHubModulesTask,
-            description: "Installs DHF internal modules.  Requires hub-admin-role or equivalent.")
+            description: "Installs DHF internal modules.  Requires data-hub-admin-role or equivalent.")
             .mustRunAfter(["mlClearModulesDatabase"])
 
         // This isn't likely to be used, but it's being kept for regression purposes for now

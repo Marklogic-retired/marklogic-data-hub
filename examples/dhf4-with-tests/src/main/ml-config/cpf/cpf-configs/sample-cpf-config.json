@@ -1,6 +1,6 @@
 {
   "domain-name": "sample-domain",
-  "restart-user-name": "%%mlHubUserName%%",
+  "restart-user-name": "%%mlFlowOperatorUserName%%",
   "eval-module": "%%MODULES_DATABASE%%",
   "eval-root": "/",
   "conversion-enabled": false,

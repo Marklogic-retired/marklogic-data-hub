@@ -56,7 +56,7 @@ public class EmptyCollectorTest extends HubTestBase {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         clearUserModules();
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 

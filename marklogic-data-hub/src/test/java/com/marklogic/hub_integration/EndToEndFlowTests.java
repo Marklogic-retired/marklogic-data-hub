@@ -183,7 +183,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(4, legacyFlows.size(), String.join("\n", legacyFlows));
         assertEquals(4, flowManager.updateLegacyFlows("2.0.0").size());
         assertEquals(0, flowManager.getLegacyFlows().size());
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     @AfterEach
@@ -192,7 +192,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private JsonNode validateUserModules() {
-        EntitiesValidator ev = EntitiesValidator.create(getHubAdminConfig().newStagingClient());
+        EntitiesValidator ev = EntitiesValidator.create(getDataHubAdminConfig().newStagingClient());
         return ev.validateAll();
     }
 
@@ -573,7 +573,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
                 createFlow(prefix, codeFormat, dataFormat, flowType, useEs, null);
                 clearUserModules();
-                installUserModules(getHubAdminConfig(), true);
+                installUserModules(getDataHubAdminConfig(), true);
 
                 JsonNode actual = validateUserModules();
 
@@ -597,7 +597,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "content-syntax-error." + codeFormat1.toString(), flowDir.resolve("content." + codeFormat1.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubAdminConfig(), true);
+                installUserModules(getDataHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
 
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -634,7 +634,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "headers-syntax-error." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubAdminConfig(), true);
+                installUserModules(getDataHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
@@ -663,7 +663,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "triples-syntax-error." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubAdminConfig(), true);
+                installUserModules(getDataHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
@@ -692,7 +692,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     copyFile(srcDir + "main-syntax-error." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getHubAdminConfig(), true);
+                installUserModules(getDataHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 String expected;
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -722,7 +722,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         copyFile(srcDir + "collector-syntax-error." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
                     });
                     clearUserModules();
-                    installUserModules(getHubAdminConfig(), true);
+                    installUserModules(getDataHubAdminConfig(), true);
                     JsonNode actual = validateUserModules();
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                         String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
@@ -756,7 +756,7 @@ public class EndToEndFlowTests extends HubTestBase {
                         copyFile(srcDir + "writer-syntax-error." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
                     });
                     clearUserModules();
-                    installUserModules(getHubAdminConfig(), true);
+                    installUserModules(getDataHubAdminConfig(), true);
                     JsonNode actual = validateUserModules();
                     String expected;
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -931,7 +931,7 @@ public class EndToEndFlowTests extends HubTestBase {
             Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
             copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
         }
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     private void createFlows(String prefix, CreateFlowListener listener) {
@@ -947,7 +947,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
         if (useEs) {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-            installUserModules(getHubAdminConfig(), true);
+            installUserModules(getDataHubAdminConfig(), true);
         }
 
         scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
@@ -976,7 +976,7 @@ public class EndToEndFlowTests extends HubTestBase {
         if (listener != null) {
             listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir, useEs);
         }
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     private void copyFile(String srcDir, Path dstDir) {
@@ -1394,7 +1394,7 @@ public class EndToEndFlowTests extends HubTestBase {
             }
         }
         //Reset HubConfig to hubadmin user/password
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         return new Tuple<>(flowRunner, jobTicket);
     }
 

@@ -94,7 +94,7 @@ public class ScaffoldingE2E extends HubTestBase {
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
         FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
-        installUserModules(getHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
     }
     private void createFlow(CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEsModel) {

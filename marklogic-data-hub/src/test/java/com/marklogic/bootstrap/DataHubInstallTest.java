@@ -81,7 +81,7 @@ public class DataHubInstallTest extends HubTestBase
         createProjectDir();
 
         if (!setupDone) {
-            HubProject project = getHubAdminConfig().getHubProject();
+            HubProject project = getDataHubAdminConfig().getHubProject();
 
             //creating directories for adding final schemas/ modules and trigger files
             Path userSchemasDir = Paths.get(PROJECT_PATH).resolve(HubProject.PATH_PREFIX).resolve("ml-schemas");
@@ -120,7 +120,7 @@ public class DataHubInstallTest extends HubTestBase
                 throw new RuntimeException(e);
             }
             getDataHub().install(null);
-            getHubAdminConfig().refreshProject();
+            getDataHubAdminConfig().refreshProject();
             setupDone = true;
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
@@ -193,7 +193,7 @@ public class DataHubInstallTest extends HubTestBase
     {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, versions.getHubVersion());
-        getHubAdminConfig();
+        getDataHubAdminConfig();
     }
 
     @Test
@@ -205,7 +205,7 @@ public class DataHubInstallTest extends HubTestBase
         FileUtils.copyDirectory(src.toFile(), dest.toFile());
 
         createProjectDir();
-        HubConfig hubConfig = getHubAdminConfig();
+        HubConfig hubConfig = getDataHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         installUserModules(hubConfig, false);
@@ -214,7 +214,7 @@ public class DataHubInstallTest extends HubTestBase
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
             getModulesFile("/entities/test-entity/harmonize/final/collector.xqy"));
 
-        /* this test requires a privilege we don't want to give to data-hub-role
+        /* this test requires a privilege we don't want to give to flow-operator-role
           TODO implement admin testing for specific assertions.
         EvalResultIterator resultItr = runInModules(
             "xquery version \"1.0-ml\";\n" +
@@ -231,7 +231,7 @@ public class DataHubInstallTest extends HubTestBase
                 "    order by $x ascending" +
                 "    return $x, \",\")");
         EvalResult res = resultItr.next();
-        assertEquals("data-hub-role,rest-admin,rest-reader,rest-writer", res.getString());
+        assertEquals("flow-operator-role,rest-admin,rest-reader,rest-writer", res.getString());
          */
 
         assertEquals(
