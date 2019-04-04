@@ -12,6 +12,7 @@ let defaultObjects = {
 let collections = {
   'flows': require('../data/flows.json'),
   'steps': require('../data/steps.json'),
+  'collections': require('../data/collections.json'),
   'jobs': require('../data/jobs.json'),
 }
 
