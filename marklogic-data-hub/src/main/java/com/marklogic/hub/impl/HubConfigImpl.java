@@ -1295,10 +1295,10 @@ public class HubConfigImpl implements HubConfig
         }
 
         if (flowDeveloperRoleName == null) {
-            flowDeveloperRoleName = getEnvPropString(projectProperties, "mlFlowOperatorRole", environment.getProperty("mlFlowOperatorRole"));
+            flowDeveloperRoleName = getEnvPropString(projectProperties, "mlFlowDeveloperRole", environment.getProperty("mlFlowDeveloperRole"));
         }
         else {
-            projectProperties.setProperty("mlFlowOperatorRole", flowDeveloperRoleName);
+            projectProperties.setProperty("mlFlowDeveloperRole", flowDeveloperRoleName);
         }
 
         if (flowOperatorUserName == null) {
