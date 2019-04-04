@@ -109,7 +109,7 @@ export class IngestUiComponent implements OnInit {
   }
 
   onChange() {
-    if (this.step.config) {
+    if (this.step.options) {
       this.step.options.input_file_path = this.folder;
       this.step.options.transform_param = `entity-name=${this.step.targetEntity},flow-name=${this.flow.name}`;
       this.step.options.output_collections = `${this.step.targetEntity}`;
