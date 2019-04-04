@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
 public class JobModel {
+    @JsonProperty("id")
     public String jobId;
     public String name; //flowName
     public String targetEntity;
