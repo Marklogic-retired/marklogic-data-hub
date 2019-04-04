@@ -1,6 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+var mapping = null;
+var entityModel = null;
 
 function main(content, options) {
   let id = content.uri;
@@ -34,8 +36,7 @@ function main(content, options) {
   let instance = lib.getInstance(doc);
 
   //then we grab our mapping
-  let mapping = null;
-  if (options.mapping && options.mapping.name && options.mapping.version) {
+  if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     mapping = lib.getMappingWithVersion(options.mapping.name, options.mapping.version);
   } else if (options.mapping && options.mapping.name) {
     mapping = lib.getMapping(options.mapping.name);
@@ -44,9 +45,10 @@ function main(content, options) {
     throw Error('You must specify a mapping name.');
   }
 
-  if (mapping) {
+  if (mapping && (mapping.constructor.name === "Document" || mapping.constructor.name === "ObjectNode")) {
     mapping = mapping.toObject();
-  } else {
+  }
+  if(!mapping) {
     let mapError = 'Could not find mapping: ' + options.mapping.name;
     if (options.mapping.version) {
       mapError += ' with version #' + options.mapping.version;
@@ -60,10 +62,13 @@ function main(content, options) {
   let entityName = targetArr[targetArr.length - 1];
   let tVersion = targetArr[targetArr.length - 2].split('-');
   let modelVersion = tVersion[tVersion.length - 1];
-  let entityModel = fn.head(lib.getModel(entityName, modelVersion));
-  if (entityModel) {
+  if(!entityModel) {
+    entityModel = fn.head(lib.getModel(entityName, modelVersion));
+  }
+  if (entityModel && (entityModel.constructor.name === "Document" || entityModel.constructor.name === "ObjectNode")) {
     entityModel = entityModel.toObject();
-  } else {
+  }
+  if(!entityModel){
     datahub.debug.log({message: 'Could not find a target entity: ' + mapping.targetEntityType, type: 'error'});
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
   }

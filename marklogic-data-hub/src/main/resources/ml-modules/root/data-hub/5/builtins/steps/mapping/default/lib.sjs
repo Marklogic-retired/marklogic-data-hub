@@ -17,7 +17,6 @@ function getMappingWithVersion(mappingName, version) {
 
 function processInstance(model, mapping, content) {
   let instance = {};
-
   instance = extractInstanceFromModel(model, model.info.title, mapping, content);
 
   return instance;
@@ -25,6 +24,9 @@ function processInstance(model, mapping, content) {
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
+  if(fn.count(content.xpath('/*:envelope/*:instance')) > 0){
+    sourceContext = '/*:envelope/*:instance' + sourceContext;
+  }
   let mappingProperties = mapping.properties;
   let instance = {};
   if (model.info && model.info.title === modelName) {
@@ -52,7 +54,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
       valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
     } else{
-      valueSource = content.xpath('/' + property);
+      valueSource = content.xpath(sourceContext + property);
     }
     if (dataType !== 'array') {
         valueSource = fn.head(valueSource);
@@ -176,9 +178,9 @@ function castDataType(dataType, value) {
 function getInstance(doc) {
   let instance = doc;
 
-  if (instance instanceof Element || instance instanceof ObjectNode) {
-    let instancePath = '/';
-    if (instance instanceof Element) {
+  if (instance instanceof Element || instance instanceof ObjectNode || instance instanceof Document || instance instanceof XMLDocument || instance instanceof Node) {
+    var instancePath = '/';
+    if (instance instanceof Element || instance instanceof XMLDocument ) {
       //make sure we grab content root only
       instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
     }
