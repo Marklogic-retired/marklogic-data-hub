@@ -12,7 +12,7 @@ let Error = require('./ErrorService');
 exports.getJob = function(jobId) {
   let resp;
   if (jobId) {
-    resp = Storage.get('job-detail', jobId);
+    resp = Storage.get('jobs', jobId);
   } else {
     resp = new Promise((resolve, reject) => {
       reject(Error.create(400, `Bad Request: 'jobId' required`));
@@ -29,7 +29,7 @@ exports.getJob = function(jobId) {
  * returns array of jobs
  **/
 exports.getJobs = function() {
-  return Storage.getCollection('job-all');
+  return Storage.getCollection('jobs');
 }
 
 
@@ -43,8 +43,7 @@ exports.getJobs = function() {
 exports.deleteJob = function(jobId) {
   let resp;
   if (jobId) {
-    Storage.delete('job-all', jobId);
-    Storage.delete('job-detail', jobId);
+    Storage.delete('jobs', jobId);
     resp = new Promise((resolve, reject) => {
       resolve({200: 'success'});
     });

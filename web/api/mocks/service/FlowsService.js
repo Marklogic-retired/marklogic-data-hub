@@ -115,17 +115,88 @@ exports.runFlow = function(flowId, body) {
         let stepId = fromBody ? steps[0] : steps[0].id;
         let step = await Storage.get('steps', stepId); 
         let newJobId = Storage.uuid();
-        let currentJob = await Storage.save('jobs', newJobId, {
+        // Create new job 
+        let newJob = await Storage.save('jobs', newJobId, {
+          jobId: newJobId,
+          flowId: flowId,
+          flow: "Order Flow 01",
+          targetEntity: "Order",
+          user: "admin",
+          lastAttemptedStep: 3,
+          lastCompletedStep: 3,
+          status: "completed",
+          startTime: "2019-03-20T09:54:31.330356-07:00",
+          endTime: "2019-03-20T10:54:35.385579-07:00",
+          successfulEvents: 100,
+          failedEvents: 3,
+          steps: [
+            {
+              stepNumber: 1,
+              type: "ingest",
+              name: "default-ingest",
+              stepName: "Flow 01 Ingest Step",
+              identifier: null,
+              retryLimit: 0,
+              options: {
+                outputFormat: "json",
+                collections: "defaultIngest"
+              },
+              status: "finished-with-errors",
+              startTime: "2019-03-20T09:54:31.330356-07:00",
+              endTime: "2019-03-20T10:10:05.123456-07:00",
+              successfulEvents: 13429,
+              failedEvents: 100
+            },
+            {
+              stepNumber: 2,
+              type: "mapping",
+              name: "default-mapping",
+              stepName: "Flow 01 Mapping Step",
+              identifier: null,
+              retryLimit: 0,
+              options: {
+                outputFormat: "json",
+                collections: "Flow 01 Ingest Step",
+                targetEntity: "Order"
+              },
+              status: "failed",
+              startTime: "2019-03-20T10:10:05.123456-07:00",
+              endTime: "2019-03-20T10:54:35.385579-07:00",
+              successfulEvents: 286,
+              failedEvents: 3
+            },
+            {
+              stepNumber: 3,
+              type: "mastering",
+              name: "default-mastering",
+              stepName: "Flow 01 Mastering Step",
+              identifier: null,
+              retryLimit: 0,
+              options: {
+                outputFormat: "json",
+                collections: "Flow 01 Mapping Step",
+                targetEntity: "Order"
+              },
+              status: null,
+              startTime: null,
+              endTime: null,
+              successfulEvents: null,
+              failedEvents: null
+            }
+          ]
+        });
+
+        let currentJob = {
           id: newJobId,
           stepId: step && step.id || null,
           stepName: step && step.name || null,
           stepRunningPercent: 0,
           startTime: (new Date()).toISOString(),
-          status: 'running'
-        });
+          status: 'running'       
+        }
         currentFlow.latestJob = currentJob;
         await Storage.save('flows', currentFlow.id, currentFlow);
-
+        await Storage.save('jobs', newJobId, newJob);
         // Add 10 percent every 1 second
         runningFlowInterval = setInterval( function() { updateProgress(); }, 750 );
         let stepCount = steps.length;
@@ -161,7 +232,6 @@ exports.runFlow = function(flowId, body) {
             currentJob.stepRunningPercent += 10;
           }
           Storage.save('flows', currentFlow.id, currentFlow);
-          Storage.save('jobs', currentJob.id, currentJob);
         }
         // return flow with new latestJob info
         resolve(currentFlow);

@@ -573,7 +573,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/jobs"
+              $ref: "#/definitions/job"
         400:
           description: "Bad Request"
           schema:
@@ -796,11 +796,14 @@ definitions:
   job:
     type: "object"
     required:
-    - "id"
+    - "jobId"
     properties:
-      id:
+      jobId:
         type: "string"
         description: "Id of the job"
+      flowId:
+        type: "string"
+        description: "Id of the flow for this job"
       startTime:
         type: "string"
         format: "date-time"
@@ -828,7 +831,7 @@ definitions:
         type: "integer"
         format: "int64"
         description: "last step that was completed"
-      jobStatus:
+      status:
         type: "string"
         description: "Status of the job"
         enum:
@@ -856,69 +859,10 @@ definitions:
       lastAttemptedStep: 0
       lastCompletedStep: 0
       startTime: "2000-01-23T04:56:07.000+00:00"
-      id: "id"
+      jobId: "job-id"
+      flowId: "flow-id"
       endTime: "2000-01-23T04:56:07.000+00:00"
-      jobStatus: "canceled"
-  jobs:
-    type: "object"
-    required:
-    - "id"
-    properties:
-      id:
-        type: "string"
-        description: "Id of the job"
-      startTime:
-        type: "string"
-        format: "date-time"
-        description: "Timestamp job started"
-      endTime:
-        type: "string"
-        format: "date-time"
-        description: "Timestamp job started"
-      user:
-        type: "string"
-        description: "User that started the job"
-      flow:
-        type: "string"
-        description: "Name of the flow being processed"
-      lastAttemptedStep:
-        type: "integer"
-        format: "int64"
-        description: "last step that was attempted to run"
-      lastCompletedStep:
-        type: "integer"
-        format: "int64"
-        description: "last step that was completed"
-      jobStatus:
-        type: "string"
-        description: "Status of the job"
-        enum:
-        - "canceled"
-        - "failed"
-        - "running"
-        - "finished with errors"
-        - "completed"
-      successfulEvents:
-        type: "integer"
-        format: "int64"
-        description: "# of documents successfully processed"
-        minimum: 0
-      failedEvents:
-        type: "integer"
-        format: "int64"
-        description: "# of documents that failed to process"
-        minimum: 0
-    example:
-      user: "admin"
-      failedEvents: 0
-      successfulEvents: 0
-      flow: "Flow 01"
-      lastAttemptedStep: 0
-      lastCompletedStep: 0
-      startTime: "2000-01-23T04:56:07.000+00:00"
-      id: "id"
-      endTime: "2000-01-23T04:56:07.000+00:00"
-      jobStatus: "canceled"
+      status: "canceled"
   error:
     type: "object"
     properties:
