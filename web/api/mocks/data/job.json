@@ -6,7 +6,7 @@
     "user": "admin",
     "lastAttemptedStep": 3,
     "lastCompletedStep": 3,
-    "jobStatus": "finished",
+    "jobStatus": "completed",
     "startTime": "2019-03-20T09:54:31.330356-07:00",
     "endTime": "2019-03-20T10:54:35.385579-07:00",
     "successfulEvents": 100,
@@ -23,11 +23,11 @@
           "outputFormat": "json",
           "collections": "defaultIngest"
         },
-        "status": "finished",
+        "status": "finished with errors",
         "startTime": "2019-03-20T09:54:31.330356-07:00",
         "endTime": "2019-03-20T10:10:05.123456-07:00",
         "successfulEvents": 13429,
-        "failedEvents": 0
+        "failedEvents": 100
       },
       {
         "stepNumber": 2,
@@ -69,12 +69,12 @@
   },
   {
     "id": "f745f0a4-6f43-42ad-981d-ecef5c581650",
-    "flow": "Order Flow 01",
+    "flow": "Order Flow 02",
     "targetEntity": "Order",
     "user": "admin",
     "lastAttemptedStep": 3,
     "lastCompletedStep": 3,
-    "jobStatus": "finished",
+    "jobStatus": "completed",
     "timeStarted": "2019-03-19T07:54:31.330356-07:00",
     "timeEnded": "2019-03-19T08:23:35.385579-07:00",
     "successfulEvents": 90,
@@ -84,14 +84,14 @@
         "stepNumber": 1,
         "type": "ingest",
         "name": "default-ingest",
-        "stepName": "Flow 01 Ingest Step",
+        "stepName": "Flow 02 Ingest Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
           "outputFormat": "json",
           "collections": "defaultIngest"
         },
-        "status": "finished",
+        "status": "canceled",
         "startTime": "2019-03-20T09:54:31.330356-07:00",
         "endTime": "2019-03-20T10:10:05.123456-07:00",
         "successfulEvents": 13429,
@@ -101,7 +101,7 @@
         "stepNumber": 2,
         "type": "mapping",
         "name": "default-mapping",
-        "stepName": "Flow 01 Mapping Step",
+        "stepName": "Flow 02 Mapping Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
@@ -109,7 +109,7 @@
           "collections": "Flow 01 Ingest Step",
           "targetEntity": "Order"
         },
-        "status": "failed",
+        "status": "running",
         "startTime": "2019-03-20T10:10:05.123456-07:00",
         "endTime": "2019-03-20T10:54:35.385579-07:00",
         "successfulEvents": 286,
@@ -119,12 +119,12 @@
         "stepNumber": 3,
         "type": "mastering",
         "name": "default-mastering",
-        "stepName": "Flow 01 Mastering Step",
+        "stepName": "Flow 02 Mastering Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
           "outputFormat": "json",
-          "collections": "Flow 01 Mapping Step",
+          "collections": "Flow 02 Mapping Step",
           "targetEntity": "Order"
         },
         "status": null,
@@ -152,24 +152,24 @@
         "stepNumber": 1,
         "type": "ingest",
         "name": "default-ingest",
-        "stepName": "Flow 01 Ingest Step",
+        "stepName": "Customer Ingest Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
           "outputFormat": "json",
           "collections": "defaultIngest"
         },
-        "status": "finished",
+        "status": "finished with errors",
         "startTime": "2019-03-20T09:54:31.330356-07:00",
         "endTime": "2019-03-20T10:10:05.123456-07:00",
         "successfulEvents": 13429,
-        "failedEvents": 0
+        "failedEvents": 1000
       },
       {
         "stepNumber": 2,
         "type": "mapping",
         "name": "default-mapping",
-        "stepName": "Flow 01 Mapping Step",
+        "stepName": "Customer Mapping Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
@@ -177,7 +177,7 @@
           "collections": "Flow 01 Ingest Step",
           "targetEntity": "Order"
         },
-        "status": "failed",
+        "status": "canceled",
         "startTime": "2019-03-20T10:10:05.123456-07:00",
         "endTime": "2019-03-20T10:54:35.385579-07:00",
         "successfulEvents": 286,
@@ -187,7 +187,7 @@
         "stepNumber": 3,
         "type": "mastering",
         "name": "default-mastering",
-        "stepName": "Flow 01 Mastering Step",
+        "stepName": "Customer Mastering Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
@@ -195,7 +195,7 @@
           "collections": "Flow 01 Mapping Step",
           "targetEntity": "Order"
         },
-        "status": null,
+        "status": "failed",
         "startTime": null,
         "endTime": null,
         "successfulEvents": null,
@@ -210,7 +210,7 @@
     "user": "admin",
     "lastAttemptedStep": 1,
     "lastCompletedStep": 1,
-    "jobStatus": "finished",
+    "jobStatus": "completed",
     "timeStarted": "2018-03-11T01:54:31.330356-07:00",
     "timeEnded": "2018-03-16T13:54:35.385579-07:00",
     "successfulEvents": 321,
@@ -220,14 +220,14 @@
         "stepNumber": 1,
         "type": "ingest",
         "name": "default-ingest",
-        "stepName": "Flow 01 Ingest Step",
+        "stepName": "Another Ingest Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
           "outputFormat": "json",
           "collections": "defaultIngest"
         },
-        "status": "finished",
+        "status": "running",
         "startTime": "2019-03-20T09:54:31.330356-07:00",
         "endTime": "2019-03-20T10:10:05.123456-07:00",
         "successfulEvents": 13429,
@@ -237,7 +237,7 @@
         "stepNumber": 2,
         "type": "mapping",
         "name": "default-mapping",
-        "stepName": "Flow 01 Mapping Step",
+        "stepName": "Another Mapping Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
@@ -255,7 +255,7 @@
         "stepNumber": 3,
         "type": "mastering",
         "name": "default-mastering",
-        "stepName": "Flow 01 Mastering Step",
+        "stepName": "Another Mastering Step",
         "identifier": null,
         "retryLimit": 0,
         "options": {
@@ -263,7 +263,7 @@
           "collections": "Flow 01 Mapping Step",
           "targetEntity": "Order"
         },
-        "status": null,
+        "status": "finished with errors",
         "startTime": null,
         "endTime": null,
         "successfulEvents": null,
