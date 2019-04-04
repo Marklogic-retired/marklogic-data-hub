@@ -23,7 +23,7 @@
           "outputFormat": "json",
           "collections": "defaultIngest"
         },
-        "status": "finished with errors",
+        "status": "finished-with-errors",
         "startTime": "2019-03-20T09:54:31.330356-07:00",
         "endTime": "2019-03-20T10:10:05.123456-07:00",
         "successfulEvents": 13429,
@@ -159,7 +159,7 @@
           "outputFormat": "json",
           "collections": "defaultIngest"
         },
-        "status": "finished with errors",
+        "status": "finished-with-errors",
         "startTime": "2019-03-20T09:54:31.330356-07:00",
         "endTime": "2019-03-20T10:10:05.123456-07:00",
         "successfulEvents": 13429,
@@ -263,7 +263,7 @@
           "collections": "Flow 01 Mapping Step",
           "targetEntity": "Order"
         },
-        "status": "finished with errors",
+        "status": "finished-with-errors",
         "startTime": null,
         "endTime": null,
         "successfulEvents": null,

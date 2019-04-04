@@ -835,7 +835,7 @@ definitions:
         - "canceled"
         - "failed"
         - "running"
-        - "finished with errors"
+        - "finished-with-errors"
         - "completed"
       successfulEvents:
         type: "integer"
