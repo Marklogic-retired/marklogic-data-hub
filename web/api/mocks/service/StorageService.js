@@ -13,7 +13,9 @@ let collections = {
   'flows': require('../data/flows.json'),
   'steps': require('../data/steps.json'),
   'collections': require('../data/collections.json'),
-  'jobs': []  // generated on the fly when /flow/{flow id}/run triggered
+  'jobs': [],  // generated on the fly when /flow/{flow id}/run triggered
+  'job-detail': require('../data/job.json'),
+  'job-all': require('../data/jobs.json'),
 }
 
 let getDefaultObject = function(type) {
