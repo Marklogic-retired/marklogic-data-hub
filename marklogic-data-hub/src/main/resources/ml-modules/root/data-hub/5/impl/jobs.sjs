@@ -142,6 +142,11 @@ class Jobs {
         batchStatus: "started",
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
+        hostName: xdmp.hostName(),
+        reqTimeStamp: xdmp.requestTimestamp(),
+        reqTrnxID: xdmp.transaction(),
+        writeTimeStamp: fn.currentDateTime(),
+        writeTrnxID: xdmp.transaction(),
         uris:[]
       }
     };
