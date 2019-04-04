@@ -32,7 +32,7 @@ public class StepModel {
     protected String description;
     protected String sourceDatabase;
     protected String targetDatabase;
-    protected JsonNode config;
+    protected JsonNode options;
     protected String language;
     protected Boolean isValid;
     protected String version;
@@ -86,12 +86,12 @@ public class StepModel {
         this.targetDatabase = targetDatabase;
     }
 
-    public JsonNode getConfig() {
-        return config;
+    public JsonNode getOptions() {
+        return options;
     }
 
-    public void setConfig(JsonNode config) {
-        this.config = config;
+    public void setOptions(JsonNode options) {
+        this.options = options;
     }
 
     public String getLanguage() {
@@ -102,11 +102,11 @@ public class StepModel {
         this.language = language;
     }
 
-    public Boolean getValid() {
+    public Boolean getIsValid() {
         return isValid;
     }
 
-    public void setValid(Boolean valid) {
+    public void setIsValid(Boolean valid) {
         isValid = valid;
     }
 
@@ -144,9 +144,9 @@ public class StepModel {
         step.setDescription(jsonObject.getString("description"));
         step.setSourceDatabase(jsonObject.getString("sourceDatabase"));
         step.setTargetDatabase(jsonObject.getString("targetDatabase"));
-        step.setConfig(jsonObject.getNode("config"));
+        step.setOptions(jsonObject.getNode("options"));
         step.setLanguage("zxx");
-        step.setValid(jsonObject.getBoolean("isValid"));
+        step.setIsValid(jsonObject.getBoolean("isValid"));
         step.setVersion(jsonObject.getString("version"));
         step.setCustomHook(jsonObject.getNode("customHook"));
 
@@ -170,9 +170,9 @@ public class StepModel {
         node.put("description", getDescription());
         node.put("sourceDatabase", getSourceDatabase());
         node.put("targetDatabase", getTargetDatabase());
-        node.set("config", getConfig());
+        node.set("options", getOptions());
         node.put("language", getLanguage());
-        node.put("isValid", getValid());
+        node.put("isValid", getIsValid());
         node.put("version", getVersion());
         node.set("customHook", getCustomHook());
 
@@ -184,28 +184,51 @@ public class StepModel {
 
         step.setName(stepModel.getName());
         step.setType(stepModel.getType());
+        step.setDescription(stepModel.getDescription());
         step.setSourceDatabase(stepModel.getSourceDatabase());
         step.setDestinationDatabase(stepModel.getTargetDatabase());
         step.setCustomHook(stepModel.getCustomHook());
-        step.setDescription(stepModel.getDescription());
 
         if (stepModel.getVersion() != null) {
             step.setVersion(Integer.parseInt(stepModel.getVersion()));
         }
 
         JSONObject jsonObject = new JSONObject(stepJson);
-        step.setOptions(jsonObject.getMap("config"));
+        step.setOptions(jsonObject.getMap("options"));
 
         return step;
     }
 
+    public static StepModel transformToWebStepModel(Step step) {
+        StepModel stepModel = new StepModel();
+
+        stepModel.setId(step.getName() + "-" + step.getType());
+        stepModel.setName(step.getName());
+        stepModel.setType(step.getType());
+        stepModel.setDescription(step.getDescription());
+        stepModel.setSourceDatabase(step.getSourceDatabase());
+        stepModel.setTargetDatabase(step.getDestinationDatabase());
+        stepModel.setCustomHook(step.getCustomHook());
+        stepModel.setVersion(String.valueOf(step.getVersion()));
+        stepModel.setLanguage(step.getLanguage());
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.putMap(step.getOptions());
+        stepModel.setOptions(jsonObject.jsonNode());
+
+        // TODO: Sending true for now
+        stepModel.setIsValid(true);
+
+        return stepModel;
+    }
+
     public static Step mergeFields(StepModel stepModel, Step defaultStep, Step step) {
         // merge options
-        if (stepModel.getConfig() != null) {
-            Iterator<String> iterator = stepModel.getConfig().fieldNames();
+        if (stepModel.getOptions() != null) {
+            Iterator<String> iterator = stepModel.getOptions().fieldNames();
             while (iterator.hasNext()) {
                 String key = iterator.next();
-                defaultStep.getOptions().put(key, stepModel.getConfig().get(key));
+                defaultStep.getOptions().put(key, stepModel.getOptions().get(key));
             }
         }
 

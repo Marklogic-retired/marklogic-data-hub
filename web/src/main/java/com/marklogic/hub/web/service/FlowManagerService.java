@@ -62,12 +62,12 @@ public class FlowManagerService {
         return flowSteps;
     }
 
-    public FlowStepModel createFlow(String flowJson, boolean checkExists)  {
+    public FlowStepModel createFlow(String flowJson, boolean checkExists) {
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(flowJson);
         } catch (IOException e) {
-            throw new DataHubException("Unable to parse flow json string : "+ e.getMessage());
+            throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
         }
         String flowName = jsonObject.getString("name");
         Flow flow = null;
@@ -113,14 +113,7 @@ public class FlowManagerService {
         List<StepModel> stepModelList = new ArrayList<>();
         for (String key : stepMap.keySet()) {
             Step step = stepMap.get(key);
-            StepModel stepModel = null;
-
-            try {
-                stepModel = convertToWebModel(step);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            StepModel stepModel = StepModel.transformToWebStepModel(step);
             stepModelList.add(stepModel);
         }
 
@@ -137,88 +130,96 @@ public class FlowManagerService {
             throw new BadRequestException("Error parsing JSON");
         }
 
-        if (stepModel != null) {
-            Flow flow = flowManager.getFlow(flowName);
-            Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
-
-            // Only save step if step is of Custom type, for rest use the default steps.
-            switch (step.getType()) {
-                case INGEST:
-                    Step defaultIngest = getDefaultStepFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", Step.StepType.INGEST);
-                    step = StepModel.mergeFields(stepModel, defaultIngest, step);
-                    break;
-                case MAPPING:
-                    Step defaultMapping = getDefaultStepFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", Step.StepType.MAPPING);
-                    step = StepModel.mergeFields(stepModel, defaultMapping, step);
-                    break;
-                case CUSTOM:
-                    if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
-                        stepManagerService.saveStep(step);
-                    } else {
-                        stepManagerService.createStep(step);
-                    }
-                    break;
-                default:
-                    throw new BadRequestException("Invalid Step Type");
-            }
-
-            if (stepOrder != null) {
-                // Create
-                try {
-                    Map<String, Step> stepMap = flowManager.getSteps(flow);
-                    if (!stepMap.containsKey(String.valueOf(stepOrder))) {
-                        stepMap.put(String.valueOf(stepOrder), step);
-                        flowManager.setSteps(flow, stepMap);
-                        flowManager.saveFlow(flow);
-                    } else {
-                        throw new BadRequestException("Invalid Step Order. A Step is already present at Step Order: " + stepOrder);
-                    }
-                } catch (DataHubProjectException e) {
-                    throw new NotFoundException(e.getMessage());
-                }
-            } else if (stepId != null) {
-                // Save
-                try {
-                    String key = getStepKeyInStepMap(flow, stepId);
-
-                    if (key != null && !key.isEmpty()) {
-                        Map<String, Step> stepMap = flowManager.getSteps(flow);
-                        stepMap.put(key, step);
-                        flowManager.setSteps(flow, stepMap);
-                        flowManager.saveFlow(flow);
-                    } else {
-                        throw new BadRequestException("Invalid Step Id");
-                    }
-                } catch (DataHubProjectException e) {
-                    throw new NotFoundException(e.getMessage());
-                }
-            } else {
-                //  Create at last
-                try {
-                    Map<String, Step> stepMap = flowManager.getSteps(flow);
-
-                    String key = "1";
-                    if (stepMap.size() != 0) {
-                        key = (String) stepMap.keySet().toArray()[stepMap.size() - 1];
-                        key = String.valueOf(Integer.parseInt(key) + 1);
-                    }
-
-                    if (!stepMap.containsKey(key)) {
-                        stepMap.put(key, step);
-                        flowManager.setSteps(flow, stepMap);
-                        flowManager.saveFlow(flow);
-                    } else {
-                        throw new BadRequestException("Invalid Step Order");
-                    }
-                } catch (DataHubProjectException e) {
-                    throw new NotFoundException(e.getMessage());
-                }
-            }
-        } else {
+        if (stepModel == null) {
             throw new BadRequestException();
         }
 
-        return stepModel;
+        Flow flow = flowManager.getFlow(flowName);
+        Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
+
+        if (step.getType() == null) {
+            throw new BadRequestException("Invalid Step Type");
+        }
+
+        // Only save step if step is of Custom type, for rest use the default steps.
+        switch (step.getType()) {
+            case INGEST:
+                Step defaultIngest = getDefaultStepFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", Step.StepType.INGEST);
+                step = StepModel.mergeFields(stepModel, defaultIngest, step);
+                break;
+            case MAPPING:
+                Step defaultMapping = getDefaultStepFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", Step.StepType.MAPPING);
+                step = StepModel.mergeFields(stepModel, defaultMapping, step);
+                break;
+            case MASTER:
+                Step defaultMaster = getDefaultStepFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", Step.StepType.MASTER);
+                step = StepModel.mergeFields(stepModel, defaultMaster, step);
+                break;
+            case CUSTOM:
+                if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
+                    stepManagerService.saveStep(step);
+                } else {
+                    stepManagerService.createStep(step);
+                }
+                break;
+            default:
+                throw new BadRequestException("Invalid Step Type");
+        }
+
+        if (stepOrder != null) {
+            // Create
+            try {
+                Map<String, Step> stepMap = flowManager.getSteps(flow);
+                if (!stepMap.containsKey(String.valueOf(stepOrder))) {
+                    stepMap.put(String.valueOf(stepOrder), step);
+                    flowManager.setSteps(flow, stepMap);
+                    flowManager.saveFlow(flow);
+                } else {
+                    throw new BadRequestException("Invalid Step Order. A Step is already present at Step Order: " + stepOrder);
+                }
+            } catch (DataHubProjectException e) {
+                throw new NotFoundException(e.getMessage());
+            }
+        } else if (stepId != null) {
+            // Save
+            try {
+                String key = getStepKeyInStepMap(flow, stepId);
+
+                if (key != null && !key.isEmpty()) {
+                    Map<String, Step> stepMap = flowManager.getSteps(flow);
+                    stepMap.put(key, step);
+                    flowManager.setSteps(flow, stepMap);
+                    flowManager.saveFlow(flow);
+                } else {
+                    throw new BadRequestException("Invalid Step Id");
+                }
+            } catch (DataHubProjectException e) {
+                throw new NotFoundException(e.getMessage());
+            }
+        } else {
+            //  Create at last
+            try {
+                Map<String, Step> stepMap = flowManager.getSteps(flow);
+
+                String key = "1";
+                if (stepMap.size() != 0) {
+                    key = (String) stepMap.keySet().toArray()[stepMap.size() - 1];
+                    key = String.valueOf(Integer.parseInt(key) + 1);
+                }
+
+                if (!stepMap.containsKey(key)) {
+                    stepMap.put(key, step);
+                    flowManager.setSteps(flow, stepMap);
+                    flowManager.saveFlow(flow);
+                } else {
+                    throw new BadRequestException("Invalid Step Order");
+                }
+            } catch (DataHubProjectException e) {
+                throw new NotFoundException(e.getMessage());
+            }
+        }
+
+        return StepModel.transformToWebStepModel(step);
     }
 
     public void deleteStep(String flowName, String stepId) {
@@ -247,7 +248,7 @@ public class FlowManagerService {
 
     public FlowStepModel runFlow(String flowName, List<String> steps) {
         RunFlowResponse resp = null;
-        if (steps == null || steps.size() ==0 ) {
+        if (steps == null || steps.size() == 0) {
             resp = flowRunner.runFlow(flowName);
         } else {
             Flow flow = flowManager.getFlow(flowName);
@@ -261,37 +262,15 @@ public class FlowManagerService {
     public FlowStepModel stop(String flowName) {
         List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
         Iterator<String> itr = jobIds.iterator();
-        if(!itr.hasNext()){
+        if (!itr.hasNext()) {
             throw new BadRequestException("Flow not running.");
         }
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
             flowRunner.stopJob(itr.next());
         }
         return getFlow(flowName);
     }
 
-    private StepModel convertToWebModel(Step step) throws IOException {
-        StepModel stepModel = new StepModel();
-
-        stepModel.setId(step.getName() + "-" + step.getType());
-        stepModel.setType(step.getType());
-        stepModel.setName(step.getName());
-        stepModel.setDescription(step.getDescription());
-        stepModel.setSourceDatabase(step.getSourceDatabase());
-        stepModel.setTargetDatabase(step.getDestinationDatabase());
-
-        JSONObject jsonObject = new JSONObject(JSONObject.writeValueAsString(step.getOptions()));
-        stepModel.setConfig(jsonObject.jsonNode());
-
-        stepModel.setLanguage(step.getLanguage());
-
-        // TODO: Sending true for now
-        stepModel.setValid(true);
-        stepModel.setCustomHook(step.getCustomHook());
-        stepModel.setVersion(String.valueOf(step.getVersion()));
-
-        return stepModel;
-    }
 
     private String getStepKeyInStepMap(Flow flow, String stepId) {
         // Split on the last occurrence of "-"
