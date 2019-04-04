@@ -151,6 +151,10 @@ public class FlowManagerService {
                 Step defaultMapping = getDefaultStepFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", Step.StepType.MAPPING);
                 step = StepModel.mergeFields(stepModel, defaultMapping, step);
                 break;
+            case MASTER:
+                Step defaultMaster = getDefaultStepFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", Step.StepType.MASTER);
+                step = StepModel.mergeFields(stepModel, defaultMaster, step);
+                break;
             case CUSTOM:
                 if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
                     stepManagerService.saveStep(step);
