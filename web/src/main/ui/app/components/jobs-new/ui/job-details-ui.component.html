@@ -30,7 +30,11 @@
         </section>
         <section>
           <div class="status">
-            <span class="label medium">Status</span>{{job.jobStatus}}
+            <span class="label medium">Status</span>
+            <span *ngIf="job.jobStatus !== 'failed'">{{job.jobStatus}}</span>
+            <span *ngIf="job.jobStatus === 'failed'">
+              <a (click)="openStatusDialog(job)">{{job.jobStatus}}</a>
+            </span>
           </div>
           <div class="target-entity">
             <span class="label medium">Target Entity</span>{{job.targetEntity}}
@@ -94,7 +98,14 @@
           <mat-header-cell id="step-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="step-status" *matCellDef="let step">
             <span *ngIf="step.stepStatus">
-              {{step.stepStatus}}
+              <span *ngIf="step.stepStatus !== 'failed'">
+                {{step.stepStatus}}
+              </span>
+              <span *ngIf="step.stepStatus === 'failed'">
+                <a (click)="openStatusDialog(step)">
+                  {{step.stepStatus}}
+                </a>
+              </span>
             </span>
             <span *ngIf="!step.stepStatus" >
               not run

@@ -3,6 +3,7 @@ export const jobsData = [
   {
     "jobId": "7e59df5c-3e9f-4109-bb8e-f52cb926aa8e",
     "flow": "Order Flow 01",
+    "flowId": "flow-01",
     "targetEntity": "Order",
     "user": "admin",
     "lastAttemptedStep": 3,
@@ -17,6 +18,7 @@ export const jobsData = [
   {
     "jobId": "f745f0a4-6f43-42ad-981d-ecef5c581650",
     "flow": "Order Flow 01",
+    "flowId": "flow-02",
     "targetEntity": "Order",
     "user": "admin",
     "lastAttemptedStep": 3,
@@ -31,6 +33,7 @@ export const jobsData = [
   {
     "jobId": "45011709-2198-436f-8585-8a880e32806a",
     "flow": "Customer Flow",
+    "flowId": "flow-03",
     "targetEntity": "Customer",
     "user": "admin",
     "lastAttemptedStep": 3,
@@ -45,6 +48,7 @@ export const jobsData = [
   {
     "jobId": "12345678-1234-1234-1234-1234567890ab",
     "flow": "Another Flow",
+    "flowId": "flow-04",
     "targetEntity": "Order",
     "user": "admin",
     "lastAttemptedStep": 1,

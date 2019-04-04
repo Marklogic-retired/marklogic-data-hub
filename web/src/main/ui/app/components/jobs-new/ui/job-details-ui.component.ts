@@ -1,7 +1,8 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../common";
-//import {OutputDialogComponent} from "./output-dialog.component";
+import {OutputDialogComponent} from "./output-dialog.component";
+import {StatusDialogComponent} from "./status-dialog.component";
 //import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
 import { differenceInSeconds,
@@ -31,15 +32,6 @@ export class JobDetailsUiComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     console.log('this.job', this.job);
     this.dataSource = new MatTableDataSource<any>(this.job['steps']);
-    // this.dataSource.sortingDataAccessor = (item, property) => {
-    //   switch (property) {
-    //     case 'name':
-    //       return item['flow'];
-    //     case 'duration':
-    //       return differenceInSeconds(item['timeStarted'], item['timeEnded']);
-    //     default: return item[property];
-    //   }
-    // };
   }
 
   ngAfterViewInit() {
@@ -51,14 +43,23 @@ export class JobDetailsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.job;
   }
 
-  openOutputDialog(job) {
-    // TODO open output popup
-    return false;
-  }
-
   renderRows(): void {
     this.updateDataSource();
     this.table.renderRows();
+  }
+
+  openOutputDialog(job): void {
+    const dialogRef = this.dialog.open(OutputDialogComponent, {
+      width: '500px',
+      data: { output: 'The output content'}
+    });
+  }
+
+  openStatusDialog(job): void {
+    const dialogRef = this.dialog.open(StatusDialogComponent, {
+      width: '500px',
+      data: { statusDetails: 'The status details content'}
+    });
   }
 
   friendlyDate(dt): string {

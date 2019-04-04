@@ -78,7 +78,14 @@
         <ng-container matColumnDef="jobStatus">
           <mat-header-cell id="job-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="job-status" *matCellDef="let job">
-            {{job.jobStatus}}
+            <span *ngIf="job.jobStatus !== 'failed'">
+              {{job.jobStatus}}
+            </span>
+            <span *ngIf="job.jobStatus === 'failed'">
+              <a (click)="openStatusDialog(job)">
+                {{job.jobStatus}}
+              </a>
+            </span>
           </mat-cell>
         </ng-container>
 
