@@ -11,9 +11,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 //import { TruncateCharactersPipe } from '../../pipes/truncate';
 import { EditFlowModule } from '../flows-new/edit-flow/edit-flow.module';
+import { OutputDialogComponent } from "./ui/output-dialog.component";
+import { StatusDialogComponent } from "./ui/status-dialog.component";
+
 @NgModule({
   declarations: [
-    //OutputDialogComponent,
+    OutputDialogComponent,
+    StatusDialogComponent,
     //TruncateCharactersPipe,
     ManageJobsUiComponent,
     ManageJobsComponent,
@@ -33,7 +37,8 @@ import { EditFlowModule } from '../flows-new/edit-flow/edit-flow.module';
   providers   : [
   ],
   entryComponents: [
-    //OutputDialogComponent
+    OutputDialogComponent,
+    StatusDialogComponent
   ]
 })
 export class ManageJobsModule {}

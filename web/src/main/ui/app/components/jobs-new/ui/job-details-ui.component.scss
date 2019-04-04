@@ -4,6 +4,11 @@ button {
   outline: none;
 }
 
+.step-status a,
+.status a {
+  cursor: pointer;
+}
+
 #job-details-page {
   padding: 10px 3% 20px 3%;
   font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;

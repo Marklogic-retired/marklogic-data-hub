@@ -46,6 +46,10 @@ button {
   }
 }
 
+.job-status a {
+  cursor: pointer;
+}
+
 #filters {
   display: flex;
   justify-content: flex-end;

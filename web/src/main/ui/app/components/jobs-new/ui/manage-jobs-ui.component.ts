@@ -1,7 +1,9 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
+import { Router } from "@angular/router";
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../common";
-//import {OutputDialogComponent} from "./output-dialog.component";
+import {OutputDialogComponent} from "./output-dialog.component";
+import {StatusDialogComponent} from "./status-dialog.component";
 //import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
 import { differenceInSeconds,
@@ -25,8 +27,10 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public dialog: MatDialog){
-  }
+  constructor(
+    public dialog: MatDialog,
+    private router: Router
+  ){}
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource<any>(this.jobs);
@@ -86,14 +90,22 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = JSON.stringify(this.filterValues)
   }
 
-  openOutputDialog(job) {
-    // TODO open output popup
-    return false;
+  openOutputDialog(job): void {
+    const dialogRef = this.dialog.open(OutputDialogComponent, {
+      width: '500px',
+      data: { output: 'The output content'}
+    });
   }
 
-  viewFlow(job) {
-    // TODO route to flow view
-    return false;
+  openStatusDialog(job): void {
+    const dialogRef = this.dialog.open(StatusDialogComponent, {
+      width: '500px',
+      data: { statusDetails: 'The status details content'}
+    });
+  }
+
+  viewFlow(job): void {
+    this.router.navigate(['/edit-flow', job.flowId]);
   }
 
   renderRows(): void {
