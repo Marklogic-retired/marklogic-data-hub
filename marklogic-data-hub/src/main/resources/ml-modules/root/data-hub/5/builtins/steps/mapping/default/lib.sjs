@@ -24,7 +24,10 @@ function processInstance(model, mapping, content) {
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
-  if(fn.count(content.xpath('/*:envelope/*:instance')) > 0){
+  if(fn.count(content.xpath('/*:envelope/*:instance/*:'+ modelName)) > 0){
+    sourceContext = '/*:envelope/*:instance/*:' + modelName + sourceContext;
+  }
+  else if(fn.count(content.xpath('/*:envelope/*:instance')) > 0){
     sourceContext = '/*:envelope/*:instance' + sourceContext;
   }
   let mappingProperties = mapping.properties;
