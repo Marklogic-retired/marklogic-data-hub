@@ -33,11 +33,11 @@ export class IngestComponent implements OnInit {
   }
 
   private checkDefaults(): void {
-    const targetEntity = this.step.config.targetEntity;
+    const targetEntity = this.step.options.targetEntity;
     // if no config or not valid config, initialize with default
     // TODO: bette way to house-keep ingest options in the Step schema
-    if (!this.step.config || this.step.config.matchOptions) {
-      this.step.config = {
+    if (!this.step.options || this.step.options.matchOptions) {
+      this.step.options = {
         input_file_path: '.',
         input_file_type: 'documents',
         output_permissions: 'rest-reader,read,rest-writer,update',
