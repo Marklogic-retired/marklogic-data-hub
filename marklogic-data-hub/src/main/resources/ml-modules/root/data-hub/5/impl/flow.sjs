@@ -154,14 +154,17 @@ class Flow {
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     let stepDetails = this.step.getStepByNameAndType(stepRef.name, stepRef.type);
-    let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
-    this.globalContext.batchId = batchDoc.batch.batchId;
 
     this.globalContext.targetDb = stepRef.targetDatabase || stepDetails.targetDatabase || this.globalContext.targetDb;
     this.globalContext.sourceDb = stepRef.sourceDatabase || stepDetails.targetDatabase || this.globalContext.sourceDb;
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDetails.options, stepRef.options, options);
+
+    if (!combinedOptions.noBatchWrite) {
+      let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
+      this.globalContext.batchId = batchDoc.batch.batchId;
+    }
 
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
@@ -201,9 +204,13 @@ class Flow {
         this.datahub.prov.createStepRecord(jobId, flowName, stepRef.type.toLowerCase(), content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
+      if (!combinedOptions.noBatchWrite) {
+        this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
+      }
     } else {
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
+      if (!combinedOptions.noBatchWrite) {
+        this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
+      }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
     }
     let resp = {
