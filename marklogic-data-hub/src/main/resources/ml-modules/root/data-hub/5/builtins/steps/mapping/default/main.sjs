@@ -18,10 +18,10 @@ function main(content, options) {
   }
 
   //let's see if our doc is in the cluster at update time
-  if (!fn.docAvailable(id)) {
-    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
-    throw Error('The document with the uri: ' + id + ' could not be found.')
-  }
+  //if (!fn.docAvailable(id)) {
+  //  datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
+  //  throw Error('The document with the uri: ' + id + ' could not be found.')
+  //}
 
   //grab the doc
   // let doc = cts.doc(id);

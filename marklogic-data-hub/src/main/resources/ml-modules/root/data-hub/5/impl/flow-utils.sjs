@@ -188,7 +188,14 @@ class FlowUtils {
           } else {
             let config = json.config('custom');
             let cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty'));
-            nb.addNode(json.transformFromJson(attachments, config));
+            let xmlAttachments = json.transformFromJson(attachments, config);
+            if(xmlAttachments instanceof Sequence){
+                for(let xmlNode of xmlAttachments){
+                  nb.addNode(xmlNode);
+                }
+            } else {
+              nb.addNode(xmlAttachments);
+            }
           }
         }
         nb.endElement();
