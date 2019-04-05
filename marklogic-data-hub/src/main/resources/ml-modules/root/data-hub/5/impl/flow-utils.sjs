@@ -479,6 +479,30 @@ class FlowUtils {
 
     return metaData;
   }
+
+  getInstance(doc) {
+    let instance = fn.head(doc.xpath('/*:envelope/*:instance'));
+    if(fn.count(instance) === 0) {
+      instance = null;
+    }
+    return instance;
+  }
+
+  getHeaders(doc) {
+    let headers = fn.head(doc.xpath('/*:envelope/*:headers'));
+    if(fn.count(headers) === 0) {
+      headers = null;
+    }
+    return headers;
+  }
+
+  getTriples(doc) {
+    let triples = doc.xpath('/*:envelope/*:triples');
+    if(fn.count(triples) === 0) {
+      triples = null;
+    }
+    return triples;
+  }
 }
 
 module.exports = FlowUtils;
