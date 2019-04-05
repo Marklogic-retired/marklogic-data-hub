@@ -175,7 +175,6 @@ class Jobs {
 
   updateBatch(jobId, batchId, batchStatus, uris, stackTrace) {
     let docObj = this.getBatchDoc(jobId, batchId);
-    let stackTraceObj = stackTrace[0];
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
@@ -184,13 +183,10 @@ class Jobs {
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
-    for (const [key, value] of Object.entries(stackTraceObj)) {
-      if(key == "uri"){
-       docObj.batch.fileName=value;
-      }
-      if(key =="line"){
-        docObj.batch.lineNumber=value;
-      }
+    if(stackTrace != null){
+      let stackTraceObj = stackTrace[0];
+      docObj.batch.fileName = stackTraceObj.uri;
+      docObj.batch.lineNumber = stackTraceObj.line;
     }
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
