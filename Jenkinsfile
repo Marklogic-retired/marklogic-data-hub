@@ -154,12 +154,13 @@ pipeline{
     				println(response)
     				if(response.equals("clean")){
     					println("merging can be done")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -1 > mergeResult.txt"
+    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult==200){
+    					if(mergeResult=="200"){
     						println("Merge successful")
     					}else{
     						println("Merge Failed")
+                sh 'exit 1'
     					}
     				}else if(response.equals("blocked")){
     					println("retry blocked");
@@ -180,8 +181,14 @@ pipeline{
     					throw new Exception("Waiting for all the status checks to pass");
     				}else if(response.equals("unstable")){
     					println("retry unstable")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -1 > mergeResult.txt"
+    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
+              if(mergeResult=="200"){
+                println("Merge successful")
+              }else{
+                println("Merge Failed")
+                sh 'exit 1'
+              }
     					println("Result is"+ mergeResult)
     				}else{
     					println("merging not possible")
@@ -270,12 +277,13 @@ pipeline{
                 }
              withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
              script{
-             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -1 > mergeResult.txt"
+             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult==200){
+    					if(mergeResult=="200"){
     						println("Merge successful")
     					}else{
     						println("Merge Failed")
+                sh 'exit 1'
     					}
     			}
              }
@@ -517,12 +525,13 @@ pipeline{
                 }
                 withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
               script{
-             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -1 > mergeResult.txt"
+             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult==200){
+    					if(mergeResult=="200"){
     						println("Merge successful")
     					}else{
     						println("Merge Failed")
+                sh 'exit 1'
     					}
     			}
              }
