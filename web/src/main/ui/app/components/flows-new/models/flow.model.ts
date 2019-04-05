@@ -11,9 +11,8 @@ export class Flow {
   public options = {};
   public steps: Array<any> = [];
   public jobs: Array<string> = [];
-  public latestJob: any = {};
+  public latestJob: any = null;
   public isValid: boolean = false;
-  public isRunning: boolean = false;
   public version: number = 0;
 
   get recordsCommitted(): number {
@@ -80,9 +79,6 @@ export class Flow {
     if (json.isValid) {
       result.isValid = json.isValid;
     }
-    if (json.isRunning) {
-      result.isRunning = json.isRunning;
-    }
     if (json.version && isNumber(parseInt(json.version))) {
       result.version = json.version;
     }
@@ -101,7 +97,6 @@ export class Flow {
     result.jobs = this.jobs;
     result.latestJob = this.latestJob;
     result.isValid = this.isValid;
-    result.isRunning = this.isRunning;
     result.version = this.version;
     return result;
   }

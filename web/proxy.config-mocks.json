@@ -1,0 +1,15 @@
+{
+  "/api/*": {
+    "target": "http://localhost:8081",
+    "secure": false
+  },
+  "/topic/*": {
+    "target": "http://localhost:8081",
+    "secure": false
+  },
+  "/websocket/*": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "ws": true
+  }
+}

@@ -152,7 +152,8 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row class="{{ 'merge-option-' + mOpt.propertyName.toLowerCase().split(' ').join('-') }}"
+        <!-- <mat-row class="{{ 'merge-option-' + mOpt.propertyName.toLowerCase().split(' ').join('-') }}" -->
+        <mat-row class="{{ 'merge-option-' + mOpt.propertyName}}"
                  *matRowDef="let mOpt; columns: displayedColumns;">
         </mat-row>
 

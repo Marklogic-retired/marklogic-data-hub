@@ -8,7 +8,7 @@
     *ngIf="flow && stepsArray"
     [flow]="flow"
     [stepsArray]="stepsArray"
-    (newStep)="openStepDialog()"
+    (newStep)="openStepDialog($event)"
     (runFlow)="openRunDialog(flow)"
     (stopFlow)="stopFlow.emit($event)"
     (deleteStep)="deleteStepDialog($event)"
@@ -16,8 +16,14 @@
     (deleteFlow)="deleteFlowDialog()"
     (updateFlow)="updateFlow()">
     <cdk-step *ngFor="let step of stepsArray; let i = index" label="{{stepsArray[i].name}}">
-      <app-step [step]="step" [flow]="flow" [databases]="databases" [collections]="collections"
-                (updateStep)="updateStep($event)"></app-step>
+      <app-step 
+        [step]="step"
+        [flow]="flow"
+        [databases]="databases" 
+        [collections]="collections" 
+        [entities]="entities"
+        (updateStep)="updateStep($event)"
+      ></app-step>
     </cdk-step>
   </app-stepper>
 </div>

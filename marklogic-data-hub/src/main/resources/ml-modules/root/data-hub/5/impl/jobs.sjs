@@ -24,6 +24,7 @@ class Jobs {
       config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
+    this.jobsPermissions = `xdmp.defaultPermissions().concat([xdmp.permission('${config.FLOWDEVELOPERROLE}','update'),xdmp.permission('${config.FLOWOPERATORROLE}','update')])`;
     if (datahub) {
       this.hubutils = datahub.hubUtils;
     } else {
@@ -50,7 +51,7 @@ class Jobs {
      }
     };
 
-    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, "xdmp.defaultPermissions()",  ['Jobs','Job'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobsPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
     return job;
   }
 
@@ -94,7 +95,7 @@ class Jobs {
     if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
       docObj.job.timeEnded = fn.currentDateTime();
     }
-    this.hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Job'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, this.jobsPermissions, ['Jobs','Job'], this.config.JOBDATABASE);
   }
 
   getLastStepAttempted(jobId) {
@@ -141,11 +142,16 @@ class Jobs {
         batchStatus: "started",
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
+        hostName: xdmp.hostName(),
+        reqTimeStamp: xdmp.requestTimestamp(),
+        reqTrnxID: xdmp.transaction(),
+        writeTimeStamp: fn.currentDateTime(),
+        writeTrnxID: xdmp.transaction(),
         uris:[]
       }
     };
 
-    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , this.jobsPermissions, ['Jobs','Batch'], this.config.JOBDATABASE);
     return batch;
   }
 
@@ -184,7 +190,7 @@ class Jobs {
     }
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
-    this.hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, "xdmp.defaultPermissions()", ['Jobs','Batch'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, this.jobsPermissions, ['Jobs','Batch'], this.config.JOBDATABASE);
 
   }
 

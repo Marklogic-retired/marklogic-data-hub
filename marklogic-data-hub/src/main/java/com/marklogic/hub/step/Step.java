@@ -28,6 +28,7 @@ public interface Step {
     enum StepType {
         INGEST("ingest"),
         MAPPING("mapping"),
+        MASTER("master"),
         CUSTOM("custom");
 
         private String type;

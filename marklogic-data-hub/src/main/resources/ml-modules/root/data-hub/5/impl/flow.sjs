@@ -148,42 +148,38 @@ class Flow {
     //set the context for the attempted step
     this.globalContext.attemptStep = stepNumber;
 
-    let step = this.globalContext.flow.steps[stepNumber];
-    if(!step) {
+    let stepRef = this.globalContext.flow.steps[stepNumber];
+    if(!stepRef) {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
-    let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, step, stepNumber);
+    let stepDetails = this.step.getStepByNameAndType(stepRef.name, stepRef.type);
+    let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
     this.globalContext.batchId = batchDoc.batch.batchId;
 
-    if(step.targetDb) {
-      this.globalContext.targetDb = step.targetDb;
-    }
-    if(step.sourceDb) {
-      this.globalContext.sourceDb = step.sourceDb;
-    }
-    //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, step.options, options);
+    this.globalContext.targetDb = stepRef.targetDatabase || stepDetails.targetDatabase || this.globalContext.targetDb;
+    this.globalContext.sourceDb = stepRef.sourceDatabase || stepDetails.targetDatabase || this.globalContext.sourceDb;
 
-    //let stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
+    let combinedOptions = Object.assign({}, stepDetails.options, stepRef.options, options);
+
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
       this.datahub = this.datahub.hubUtils.cloneInstance(this.datahub);
       delete this.datahub.flow;
     }
     let flowInstance = this;
-    let stepResult = null;
 
-
-    if (this.isContextDB(combinedOptions.sourceDb) && !options.stepUpdate) {
-      this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    if (this.isContextDB(this.globalContext.sourceDb) && !combinedOptions.stepUpdate) {
+      this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
     } else {
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber},
+        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
         {
           database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
-          update: !options.stepUpdate,
+          update: combinedOptions.stepUpdate ? 'true': 'false',
+          commit: 'auto',
           ignoreAmps: true
         }
       );
@@ -192,17 +188,17 @@ class Flow {
     //let's update our jobdoc now
     if (!this.globalContext.batchErrors.length) {
       if (!combinedOptions.noWrite) {
-        this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
+        this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', null, this.globalContext.targetDb);
       }
       for (let content of this.writeQueue) {
         let info = {
-            derivedFrom: content.uri,
-            influencedBy: step.name,
-            status: (flow.type === 'ingest') ? 'created' : 'updated',
+            derivedFrom: content.previousUri || content.uri,
+            influencedBy: stepRef.name,
+            status: (stepDetails.type === 'INGEST') ? 'created' : 'updated',
             metadata: {}
           }
         ;
-        this.datahub.prov.createStepRecord(jobId, flowName, step.type, content.uri, info);
+        this.datahub.prov.createStepRecord(jobId, flowName, stepRef.type.toLowerCase(), content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
       this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
@@ -259,15 +255,16 @@ class Flow {
       if (hook && hook.runBefore) {
         hookOperation();
       }
-      let self = this;
-      for (let contentItem of content) {
-        flowInstance.globalContext.uri = contentItem.uri;
-        let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
-        //add our metadata to this
-        if(result && result.context) {
-          result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
-        }
-        flowInstance.addToWriteQueue(result, flowInstance.globalContext);
+      let normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
+      if (combinedOptions.acceptsBatch) {
+        let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), combinedOptions, processor.run));
+        flowInstance.processResults(results, combinedOptions, flowName, step);
+      } else {
+          for (let contentItem of content) {
+            flowInstance.globalContext.uri = contentItem.uri;
+            let results = normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
+            flowInstance.processResults(results, combinedOptions, flowName, step);
+          }
       }
       flowInstance.globalContext.uri = null;
       if (hook && !hook.runBefore) {
@@ -288,6 +285,31 @@ class Flow {
       flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
  //     xdmp.rollback();
       return flowInstance.globalContext.batchErrors;
+    }
+  }
+
+  processResults(results, combinedOptions, flowName, step) {
+    let self = this;
+    let normalizeToArray = self.datahub.hubUtils.normalizeToArray;
+    for (let result of results) {
+      if (result) {
+        if (!combinedOptions.acceptsBatch) {
+          result.previousUri = self.globalContext.uri;
+        }
+        //add our metadata to this
+        result.context = result.context || {};
+        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+        // normalize context values to arrays
+        if (result.context.collections) {
+          result.context.collections = normalizeToArray(result.context.collections);
+        }
+        if (result.context.permissions) {
+          // normalize permissions to array of JSON permissions
+          result.context.permissions = normalizeToArray(result.context.permissions)
+            .map((perm) => (perm instanceof Element) ? xdmp.permission(xdmp.roleName(fn.string(perm.xpath('*:role-id'))), fn.string(perm.xpath('*:capability')), "object") : perm);
+        }
+        self.addToWriteQueue(result, self.globalContext);
+      }
     }
   }
 

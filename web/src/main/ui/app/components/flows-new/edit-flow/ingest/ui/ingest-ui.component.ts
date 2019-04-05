@@ -13,42 +13,34 @@ const settings = {
     label: 'Input File Type',
     field: 'input_file_type',
     type: 'type',
-    description: 'The input file type. Accepted value: aggregates, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile.\nDefault: documents.',
+    description: 'The input file type. Accepted value: txt, json, xml, binary, csv, or all.\nDefault: json.',
     options: [
       {
-        label: 'Aggregates',
-        value: 'aggregates',
+        label: 'Text',
+        value: 'txt',
       },
       {
-        label: 'Archive',
-        value: 'archive',
+        label: 'JSON',
+        value: 'json',
       },
       {
-        label: 'Delimited Text',
-        value: 'delimited_text',
+        label: 'XML',
+        value: 'xml',
       },
       {
-        label: 'Delimited Json',
-        value: 'delimited_json',
+        label: 'Binary',
+        value: 'binary',
       },
       {
-        label: 'Documents',
-        value: 'documents',
+        label: 'CSV',
+        value: 'csv',
       },
       {
-        label: 'Forest',
-        value: 'forest',
-      },
-      {
-        label: 'RDF',
-        value: 'rdf',
-      },
-      {
-        label: 'Sequence File',
-        value: 'sequencefile',
-      },
+        label: 'All',
+        value: 'all',
+      }
     ],
-    value: 'documents'
+    value: 'json'
   },
   outputDocTypes: {
     label: 'Output File Type',
@@ -84,6 +76,7 @@ const settings = {
 export class IngestUiComponent implements OnInit {
 
   @Input() step: any;
+  @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
   constructor() {
@@ -93,18 +86,27 @@ export class IngestUiComponent implements OnInit {
   folder: string;
 
   ngOnInit(): void {
-    this.folder = this.step.config.inputFilePath;
+    this.folder = this.step.options.input_file_path;
   }
 
   changeFolder(folder){
     this.folder = folder.relativePath;
+    this.onChange();
   }
 
-  getStep(flow): Step {
-    this.step.config.inputFilePath = this.folder;
-    this.step.config.transformParams = `entity-name=${this.step.targetEntity},flow-name=${flow.name}`;
-    this.step.config.outputCollections = `${this.step.targetEntity}`;
-    return this.step;
+  onKeyChange(event) {
+    if (event.key === 'Enter') {
+      this.onChange();
+    }
+  }
+
+  onChange() {
+    if (this.step.options) {
+      this.step.options.input_file_path = this.folder;
+      this.step.options.transform_param = `entity-name=${this.step.options.targetEntity},flow-name=${this.flow.name}`;
+      this.step.options.output_collections = `${this.step.options.targetEntity}`;
+      this.saveStep.emit(this.step);
+    }
   }
 
 }
