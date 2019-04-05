@@ -71,7 +71,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row class="{{ 'merge-option-' + mColl.event.toLowerCase().split(' ').join('-') }}"
+        <mat-row class="{{ 'merge-collections-' + mColl.event.toLowerCase().split(' ').join('-') }}"
                  *matRowDef="let mColl; columns: displayedColumns;">
         </mat-row>
 
