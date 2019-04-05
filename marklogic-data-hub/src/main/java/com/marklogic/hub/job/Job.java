@@ -73,6 +73,9 @@ public class Job {
     }
 
     public Job withStatus(String status) {
+        if(status.contains(JobStatus.COMPLETED_PREFIX) || status.contains(JobStatus.FINISHED.toString())) {
+            this.success = true;
+        }
         this.status = status;
         return this;
     }

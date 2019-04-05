@@ -1,6 +1,5 @@
 package com.marklogic.hub.flow.impl;
 
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
@@ -196,13 +195,6 @@ public class FlowRunnerImpl implements FlowRunner{
                 String stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
 
-                //now we check and validate we have no nulls
-                if(StringUtils.isEmpty(runningStep.getDestinationDatabase())) {
-                    runningStep.setDestinationDatabase(hubConfig.getDbName(DatabaseKind.FINAL));
-                }
-                if(StringUtils.isEmpty(runningStep.getSourceDatabase())) {
-                    runningStep.setSourceDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
-                }
                 Map<String, Object> optsMap = new HashMap<>(flow.getOverrideOptions());
                 AtomicLong errorCount = new AtomicLong();
                 AtomicLong successCount = new AtomicLong();
@@ -227,7 +219,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
                 Map<String,Step> steps = runningFlow.getSteps();
                 Step step = steps.get(stepNum);
-                //default batch size
+                //Initializing stepBatchSize to default flow batch size
                 int stepBatchSize = 100;
                 if(step.getThreadCount() == 0){
                     stepRunner.withThreadCount(flow.getThreadCount());
@@ -259,10 +251,18 @@ public class FlowRunnerImpl implements FlowRunner{
                     stepRunner.awaitCompletion();
                 }
                 catch (Exception e) {
-                    stepResp.setCounts(successCount.get() + errorCount.get()  , successCount.get(), errorCount.get()  , (long)Math.ceil((double)successCount.get()/stepBatchSize), (long)Math.ceil((double)errorCount.get()/stepBatchSize));
+                    stepResp = Job.withFlow(flow);
+                    stepResp.withJobId(runningJobId);
+                    stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepBatchSize), (long) Math.ceil((double) errorCount.get() / stepBatchSize));
                     stepResp.withJobOutput(e.getMessage());
                     stepResp.withSuccess(false);
-                    stepResp.withStatus(JobStatus.COMPLETED_WITH_ERRORS_PREFIX + stepNum);
+                    if(successCount.get() > 0) {
+                        stepResp.withStatus(JobStatus.COMPLETED_WITH_ERRORS_PREFIX + stepNum);
+                    }
+                    else{
+                        stepResp.withStatus(JobStatus.FAILED.toString());
+                    }
+
                 }
                 stepOutputs.put(stepNum, stepResp);
                 if(! stepResp.isSuccess()) {
@@ -270,6 +270,11 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
             }
             try {
+                //If only one step is run and it failed before creating a job doc, a job doc is created
+                if(jobUpdate.getJobs(jobId) == null){
+                    jobUpdate.postJobs(jobId,flow.getName());
+                }
+                //Update status of job
                 if (!isJobSuccess.get()) {
                     jobUpdate.postJobs(jobId, JobStatus.FINISHED_WITH_ERRORS.toString(), runningStep.getName());
                 } else if (isJobCancelled.get()) {
@@ -281,14 +286,15 @@ public class FlowRunnerImpl implements FlowRunner{
             catch (Exception e) {
                 throw e;
             }
-            resp.setStepResponses(stepOutputs);
-            resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
-            jobQueue.remove();
-            if(!jobQueue.isEmpty()) {
-                initializeFlow((String) jobQueue.peek());
-            }
-            else {
-                threadPool.shutdownNow();
+            finally {
+                resp.setStepResponses(stepOutputs);
+                resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
+                jobQueue.remove();
+                if (!jobQueue.isEmpty()) {
+                    initializeFlow((String) jobQueue.peek());
+                } else {
+                    threadPool.shutdownNow();
+                }
             }
         }
     }
