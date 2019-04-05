@@ -27,6 +27,9 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   if(fn.count(content.xpath('/*:envelope/*:instance/*:'+ modelName)) > 0){
     sourceContext = '/*:envelope/*:instance/*:' + modelName + sourceContext;
   }
+  else if(fn.count(content.xpath('/*:envelope/*:instance/*:root')) > 0) {
+    sourceContext = '/*:envelope/*:instance/*:root' + sourceContext;
+  }
   else if(fn.count(content.xpath('/*:envelope/*:instance')) > 0){
     sourceContext = '/*:envelope/*:instance' + sourceContext;
   }
