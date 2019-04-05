@@ -20,7 +20,7 @@ const settings = {
         value: 'txt',
       },
       {
-        label: 'Json',
+        label: 'JSON',
         value: 'json',
       },
       {
