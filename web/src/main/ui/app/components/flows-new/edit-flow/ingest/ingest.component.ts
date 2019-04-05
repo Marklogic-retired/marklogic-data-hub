@@ -39,7 +39,7 @@ export class IngestComponent implements OnInit {
     if (!this.step.options || this.step.options.matchOptions) {
       this.step.options = {
         input_file_path: '.',
-        input_file_type: 'documents',
+        input_file_type: 'json',
         output_permissions: 'rest-reader,read,rest-writer,update',
         document_type: 'json',
         output_collections: `${targetEntity || ''}`,

@@ -13,7 +13,7 @@ const settings = {
     label: 'Input File Type',
     field: 'input_file_type',
     type: 'type',
-    description: 'The input file type. Accepted value: txt, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile.\nDefault: documents.',
+    description: 'The input file type. Accepted value: txt, json, xml, binary, csv, or all.\nDefault: json.',
     options: [
       {
         label: 'Text',
@@ -40,7 +40,7 @@ const settings = {
         value: 'all',
       }
     ],
-    value: 'documents'
+    value: 'json'
   },
   outputDocTypes: {
     label: 'Output File Type',
