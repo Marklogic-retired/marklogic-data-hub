@@ -26,6 +26,7 @@ export class NewStepDialogComponent implements OnInit {
   readonly stepOptions = ['ingest', 'mapping', 'mastering', 'custom'];
   public databases = Object.values(this.data.databases).slice(0, -1);
   selectedSource = '';
+  selectedCollection = '';
   newStepForm: FormGroup;
 
   constructor(
@@ -51,6 +52,11 @@ export class NewStepDialogComponent implements OnInit {
       sourceDatabase: [this.data.step ? this.data.step.sourceDatabase : ''],
       targetDatabase: [this.data.step ? this.data.step.targetDatabase : '']
     });
+    if (this.data.step && this.data.step.options.sourceCollection) {
+      this.selectedSource = 'collection';
+    } else if (this.data.step && this.data.step.options.sourceQuery) {
+      this.selectedSource = 'query';
+    }
   }
   onNoClick(): void {
     this.dialogRef.close(false);

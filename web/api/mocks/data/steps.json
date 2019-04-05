@@ -29,22 +29,12 @@
     "isValid": true,
     "options": {
       "sourceCollection": "Flow 01 Ingest Step",
-      "sourceURI": "source-doc-01.json",
+      "sourceURI": "",
       "sourceQuery": "",
       "targetEntity": "Order",
       "targetEntityType": "http://example.org/Order-0.0.1/Order",
       "sourceContext": "//",
-      "properties": {
-        "id": {
-          "sourcedFrom": "id"
-        },
-        "price": {
-          "sourcedFrom": "price"
-        },
-        "products": {
-          "sourcedFrom": "product_id"
-        }
-      }
+      "properties": null
     },
     "version": "1"
   },
@@ -56,7 +46,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "options": {     
+    "options": {
       "sourceCollection": "Flow 01 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -465,7 +455,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "options": {     
+    "options": {
       "sourceCollection": "Flow 02 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -874,7 +864,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "options": {     
+    "options": {
       "sourceCollection": "Flow 03 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",

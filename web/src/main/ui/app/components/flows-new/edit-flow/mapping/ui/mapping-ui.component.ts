@@ -15,7 +15,7 @@ import { Mapping } from "../../../../mappings/mapping.model";
 export class MappingUiComponent implements OnChanges {
 
   @Input() mapping: Mapping = new Mapping();
-  @Input() chosenEntity: Entity = null;
+  @Input() targetEntity: Entity = null;
   @Input() conns: object = {};
   @Input() sampleDocSrcProps: Array<any> = [];
   @Input() editURIVal: string = '';
@@ -23,7 +23,6 @@ export class MappingUiComponent implements OnChanges {
   @Output() updateDesc = new EventEmitter();
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
-  @Output() resetMap = new EventEmitter();
 
   private uriOrig: string = '';
   private connsOrig: object = {};
@@ -175,10 +174,12 @@ export class MappingUiComponent implements OnChanges {
 
     if (this.sampleDocSrcProps.length > 0 && this.conns[entityPropName]) {
       let obj = _.find(this.sampleDocSrcProps, function(o) { return o && (o.key === propertyKey); });
-      data = obj[srcKey];
+      if (obj) {
+        data = obj[srcKey];
+      }
     }
 
-    return String(data);
+    return (data) ? String(data) : data;
   }
 
   /**
@@ -188,22 +189,6 @@ export class MappingUiComponent implements OnChanges {
     console.log(this.conns, this.connsOrig);
     this.updateMap.emit(this.conns);
     this.connsOrig = _.cloneDeep(this.conns);
-  }
-
-  /**
-   * Handle reset button event.
-   */
-  onResetMap(): void {
-    let result = this.dialogService.confirm(
-      'Reset map to previously saved version?',
-      'Cancel', 'OK');
-    result.subscribe( () => {
-        this.resetMap.emit();
-      },(err: any) => {
-        console.log('reset map aborted');
-      },
-      () => {}
-    );
   }
 
   /**
@@ -292,7 +277,7 @@ export class MappingUiComponent implements OnChanges {
    * @returns {boolean}
    */
   hasElementRangeIndex(name) {
-    return _.includes(this.chosenEntity.definition.elementRangeIndex, name);
+    return _.includes(this.targetEntity.definition.elementRangeIndex, name);
   }
 
   /**
@@ -301,7 +286,7 @@ export class MappingUiComponent implements OnChanges {
    * @returns {boolean}
    */
   hasRangeIndex(name) {
-    return _.includes(this.chosenEntity.definition.rangeIndex, name);
+    return _.includes(this.targetEntity.definition.rangeIndex, name);
   }
 
   /**
@@ -310,7 +295,7 @@ export class MappingUiComponent implements OnChanges {
    * @returns {boolean}
    */
   hasWordLexicon(name) {
-    return _.includes(this.chosenEntity.definition.wordLexicon, name);
+    return _.includes(this.targetEntity.definition.wordLexicon, name);
   }
 
   /**
@@ -319,7 +304,7 @@ export class MappingUiComponent implements OnChanges {
    * @returns {boolean}
    */
   isRequired(name) {
-    return _.includes(this.chosenEntity.definition.required, name);
+    return _.includes(this.targetEntity.definition.required, name);
   }
 
   /**
@@ -328,7 +313,7 @@ export class MappingUiComponent implements OnChanges {
    * @returns {boolean}
    */
   isPII(name) {
-    return _.includes(this.chosenEntity.definition.pii, name);
+    return _.includes(this.targetEntity.definition.pii, name);
   }
 
       /**
@@ -337,7 +322,7 @@ export class MappingUiComponent implements OnChanges {
    * @returns {boolean}
    */
   isPrimaryKey(name) {
-    return _.includes(this.chosenEntity.definition.primaryKey, name);
+    return _.includes(this.targetEntity.definition.primaryKey, name);
   }
 
 }
