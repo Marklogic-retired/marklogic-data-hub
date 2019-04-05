@@ -13,40 +13,32 @@ const settings = {
     label: 'Input File Type',
     field: 'input_file_type',
     type: 'type',
-    description: 'The input file type. Accepted value: aggregates, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile.\nDefault: documents.',
+    description: 'The input file type. Accepted value: txt, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile.\nDefault: documents.',
     options: [
       {
-        label: 'Aggregates',
-        value: 'aggregates',
+        label: 'Text',
+        value: 'txt',
       },
       {
-        label: 'Archive',
-        value: 'archive',
+        label: 'Json',
+        value: 'json',
       },
       {
-        label: 'Delimited Text',
-        value: 'delimited_text',
+        label: 'XML',
+        value: 'xml',
       },
       {
-        label: 'Delimited Json',
-        value: 'delimited_json',
+        label: 'Binary',
+        value: 'binary',
       },
       {
-        label: 'Documents',
-        value: 'documents',
+        label: 'CSV',
+        value: 'csv',
       },
       {
-        label: 'Forest',
-        value: 'forest',
-      },
-      {
-        label: 'RDF',
-        value: 'rdf',
-      },
-      {
-        label: 'Sequence File',
-        value: 'sequencefile',
-      },
+        label: 'All',
+        value: 'all',
+      }
     ],
     value: 'documents'
   },
