@@ -47,12 +47,10 @@ import java.util.stream.Collectors;
 
 public class QueryStepRunner implements StepRunner {
 
-    private static final int DEFAULT_BATCH_SIZE = 100;
-    private static final int DEFAULT_THREAD_COUNT = 4;
     private static final int MAX_ERROR_MESSAGES = 10;
     private Flow flow;
-    private int batchSize = DEFAULT_BATCH_SIZE;
-    private int threadCount = DEFAULT_THREAD_COUNT;
+    private int batchSize;
+    private int threadCount;
     private DatabaseClient stagingClient;
     private String destinationDatabase;
     private Map<String, Object> options;
@@ -197,7 +195,6 @@ public class QueryStepRunner implements StepRunner {
         } catch (Exception e) {
             job.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED.toString());
-            job.withSuccess(false);
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             job.withJobOutput(errors.toString());
@@ -261,7 +258,6 @@ public class QueryStepRunner implements StepRunner {
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             job.setCounts(0,0,0,0,0);
             job.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            job.withSuccess(true);
             try {
                 jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
             }
@@ -375,24 +371,19 @@ public class QueryStepRunner implements StepRunner {
             dataMovementManager.stopJob(queryBatcher);
 
             String status;
-            boolean success;
 
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR.toString();
-                success = false;
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
                 status = JobStatus.COMPLETED_WITH_ERRORS_PREFIX.toString() + step;
-                success = false;
             } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
                 status = JobStatus.COMPLETED_PREFIX + step;
-                success = true;
             } else {
                 status = JobStatus.FAILED.toString();
-                success = false;
             }
             job.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             job.withStatus(status);
-            job.withSuccess(success);
+
             try {
                 jobUpdate.postJobs(jobId, status, step);
             }
