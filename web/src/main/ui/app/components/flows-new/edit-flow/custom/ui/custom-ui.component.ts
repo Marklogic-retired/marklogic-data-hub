@@ -1,6 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Step } from '../../../models/step.model';
-import * as _ from 'lodash';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Step} from '../../../models/step.model';
 
 @Component({
   selector: 'app-custom-ui',
@@ -12,17 +11,16 @@ export class CustomUiComponent {
   @Input() module: string;
   @Output() updateCustom = new EventEmitter();
 
-  private uriOrig: string = '';
-
-  constructor(
-
-  ) {}
-  onSave() {
-    console.log(this.step.options.customModuleUri, this.uriOrig);
-    this.uriOrig = _.cloneDeep(this.step.options.customModuleUri);
-    this.updateCustom.emit(this.step);
+  constructor() {
   }
-  uriChanged() {
-    return !_.isEqual(this.step.options.customModuleUri, this.uriOrig);
+
+  onKeyChange(event) {
+    if (event.key === 'Enter') {
+      this.onChange();
+    }
+  }
+
+  onChange() {
+    this.updateCustom.emit(this.step);
   }
 }
