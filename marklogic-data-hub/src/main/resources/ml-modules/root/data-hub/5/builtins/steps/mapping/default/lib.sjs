@@ -21,6 +21,9 @@ function processInstance(model, mapping, content) {
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
+  if(sourceContext[sourceContext.length-1] !== '/'){
+    sourceContext += '/';
+  }
   let mappingProperties = mapping.properties;
   let instance = {};
   if (model.info && model.info.title === modelName) {
@@ -92,7 +95,6 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
         }
       }
       value = valueArray;
-      //Todo implement arrays so it employs recursion
 
     } else {
       if(valueSource) {
