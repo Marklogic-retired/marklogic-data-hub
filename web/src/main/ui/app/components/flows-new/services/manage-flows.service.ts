@@ -50,7 +50,11 @@ export class ManageFlowsService {
   }
   createStep(flowId: string, stepIndex: number, step: Step) {
     console.log(`POST api/flows/${flowId}/steps?stepOrder=${stepIndex}`);
-    return this.http.post<Step>(`api/flows/${flowId}/steps?stepOrder=${stepIndex}`, step);
+    if (stepIndex === null) {
+      return this.http.post<Step>(`api/flows/${flowId}/steps`, step);
+    } else {
+      return this.http.post<Step>(`api/flows/${flowId}/steps?stepOrder=${stepIndex}`, step);
+    }
   }
   updateStep(flowId: string, stepId: string, step: Step) {
     console.log(`PUT api/flows/${flowId}/steps/${stepId}`);
@@ -65,9 +69,9 @@ export class ManageFlowsService {
     console.log('GET api/collections/' + database);
     return this.http.get<Array<string>>('api/collections/' + database);
   }
-  runFlow(flowId: string) {
-    console.log(`POST api/flows/${flowId}/run`);
-    return this.http.post(`api/flows/${flowId}/run`, {});
+  runFlow(runObject: any) {
+    console.log(`POST api/flows/${runObject.id}/run`);
+    return this.http.post(`api/flows/${runObject.id}/run`, runObject.runArray);
   }
   stopFlow(flowId: string) {
     console.log(`POST api/flows/${flowId}/stop`);
