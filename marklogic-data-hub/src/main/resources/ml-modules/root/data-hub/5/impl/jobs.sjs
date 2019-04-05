@@ -173,8 +173,9 @@ class Jobs {
      }, this.config.JOBDATABASE));
   }
 
-  updateBatch(jobId, batchId, batchStatus, uris) {
+  updateBatch(jobId, batchId, batchStatus, uris, stackTrace) {
     let docObj = this.getBatchDoc(jobId, batchId);
+    let stackTraceObj = stackTrace[0];
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
@@ -182,6 +183,14 @@ class Jobs {
     docObj.batch.uris = uris;
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
+    }
+    for (const [key, value] of Object.entries(stackTraceObj)) {
+      if(key == "uri"){
+       docObj.batch.fileName=value;
+      }
+      if(key =="line"){
+        docObj.batch.lineNumber=value;
+      }
     }
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
