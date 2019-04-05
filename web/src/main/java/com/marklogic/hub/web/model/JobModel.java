@@ -7,6 +7,7 @@ import java.util.List;
 public class JobModel {
     @JsonProperty("id")
     public String jobId;
+    @JsonProperty("flowId")
     public String name; //flowName
     public String targetEntity;
     public String user;
