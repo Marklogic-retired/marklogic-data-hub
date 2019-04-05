@@ -16,34 +16,27 @@ function getMappingWithVersion(mappingName, version) {
 }
 
 function processInstance(model, mapping, content) {
-  let instance = {};
-  instance = extractInstanceFromModel(model, model.info.title, mapping, content);
-
-  return instance;
+ return  extractInstanceFromModel(model, model.info.title, mapping, content);
 }
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
-  if(fn.count(content.xpath('/*:envelope/*:instance/*:'+ modelName)) > 0){
-    sourceContext = '/*:envelope/*:instance/*:' + modelName + sourceContext;
-  }
-  else if(fn.count(content.xpath('/*:envelope/*:instance/*:root')) > 0) {
-    sourceContext = '/*:envelope/*:instance/*:root' + sourceContext;
-  }
-  else if(fn.count(content.xpath('/*:envelope/*:instance')) > 0){
-    sourceContext = '/*:envelope/*:instance' + sourceContext;
-  }
   let mappingProperties = mapping.properties;
   let instance = {};
   if (model.info && model.info.title === modelName) {
     instance['$type'] = model.info.title;
     instance['$version'] = model.info.version;
-    instance['$attachments'] = content;
   } else {
     instance['$type'] = modelName;
     instance['$version'] = '0.0.1';
   }
 
+  if (content.nodeName === 'envelope' || (content.nodeKind === 'document' && content.root && content.root.envelope)) {
+    sourceContext = '/*:envelope/*:instance' + sourceContext;
+  }
+  else{
+    content = new NodeBuilder().addNode(fn.head(content)).toNode();
+  }
 
   //grab the model definition
   let definition = model.definitions[modelName];
@@ -58,7 +51,11 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let dataType = prop["datatype"];
     let valueSource = null;
     if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
-      valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
+      if(mappingProperties[property].sourcedFrom.indexOf(':') > -1 ) {
+        valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
+      } else {
+        valueSource = content.xpath(sourceContext + '*:'+mappingProperties[property].sourcedFrom);
+      }
     } else{
       valueSource = content.xpath(sourceContext + property);
     }
@@ -181,27 +178,9 @@ function castDataType(dataType, value) {
   return convertedValue;
 }
 
-function getInstance(doc) {
-  let instance = doc;
-
-  if (instance instanceof Element || instance instanceof ObjectNode || instance instanceof Document || instance instanceof XMLDocument || instance instanceof Node) {
-    var instancePath = '/';
-    if (instance instanceof Element || instance instanceof XMLDocument ) {
-      //make sure we grab content root only
-      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
-    }
-    instance = new NodeBuilder().addNode(fn.head(instance.xpath(instancePath))).toNode();
-  } else {
-    instance = new NodeBuilder().addNode(fn.head(instance)).toNode();
-  }
-
-  return instance;
-}
-
 module.exports = {
   castDataType: castDataType,
   extractInstanceFromModel: extractInstanceFromModel,
-  getInstance: getInstance,
   getMapping: getMapping,
   getMappingWithVersion: getMappingWithVersion,
   processInstance: processInstance,

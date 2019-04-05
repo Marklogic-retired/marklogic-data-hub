@@ -25,8 +25,6 @@ function main(content, options) {
         triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
       }
     }
-
-    //set the content value which is our envelope
     content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
     return content;

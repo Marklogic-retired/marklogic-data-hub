@@ -32,9 +32,6 @@ function main(content, options) {
     doc = fn.head(doc.root);
   }
 
-  //let's prep the instance of the document
-  let instance = lib.getInstance(doc);
-
   //then we grab our mapping
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     mapping = lib.getMappingWithVersion(options.mapping.name, options.mapping.version);
@@ -73,12 +70,35 @@ function main(content, options) {
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
   }
 
+  let source;
+  // for xml we need to use xpath
+  if(doc && doc instanceof XMLDocument) {
+    source = doc.root;
+  }
+  // for json we need to return the instance
+  else if(doc && (doc instanceof Document)) {
+    source = fn.head(doc.root);
+  }
+  // for everything else
+  else {
+    source = doc;
+  }
   //Then we obtain the document from the source context
-  instance = lib.processInstance(entityModel, mapping, instance);
+  let instance = lib.processInstance(entityModel, mapping, source);
+  if(source instanceof XMLDocument || source.nodeKind === 'element') {
+    instance['$attachments'] =  datahub.flow.flowUtils.xmlToJson(source);
+  } else {
+    instance['$attachments'] = source;
+  }
 
   let triples = [];
-  let headers = datahub.flow.flowUtils.createHeaders(options);
+  let headers = datahub.flow.flowUtils.createHeaders(options)
 
+  if (options.triples && Array.isArray(options.triples)) {
+    for (let triple of options.triples) {
+      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+    }
+  }
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
   content.value = envelope;
 

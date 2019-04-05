@@ -112,7 +112,11 @@ class FlowUtils {
         }
       }
     } else if (inputFormat === dataFormat) {
-      instance = content;
+      if(content instanceof Element && fn.count(content.xpath('/root') > 0)){
+        instance = Sequence.from(content.xpath('/root/node()'));
+      } else {
+        instance = content;
+      }
     } else if (dataFormat === this.consts.XML && inputFormat === this.consts.JSON) {
       instance = this.jsonToXml(content);
     } else if (dataFormat === this.consts.JSON && inputFormat === this.consts.XML) {
@@ -120,6 +124,9 @@ class FlowUtils {
     }
 
     if (dataFormat === this.consts.JSON) {
+      if(instance.root) {
+        instance = instance.root;
+      }
       return {
         envelope: {
           headers: headers,
@@ -159,11 +166,19 @@ class FlowUtils {
         }
       }
       nb.endElement();
-
-      nb.startElement("instance", "http://marklogic.com/entity-services");
-      nb.addNode(instance);
-      nb.endElement();
-
+      if(instance.nodeName === 'instance') {
+        nb.addNode(instance);
+      } else {
+        nb.startElement("instance", "http://marklogic.com/entity-services");
+        if (instance instanceof Sequence) {
+          for (let n of instance) {
+            nb.addNode(n);
+          }
+        } else {
+          nb.addNode(instance);
+        }
+        nb.endElement();
+      }
       if (attachments) {
         nb.startElement("attachments", "http://marklogic.com/entity-services");
         if (content instanceof Object && content.hasOwnProperty("$attachments")) {
@@ -303,7 +318,7 @@ class FlowUtils {
     let typeQName = this.getElementName(namespace, namespacePrefix, typeName);
     let ns = this.getElementNamespace(namespace, namespacePrefix);
     const nb = new NodeBuilder();
-    nb.startDocument();
+    nb.startElement("instance", "http://marklogic.com/entity-services");
     nb.startElement("info", "http://marklogic.com/entity-services");
     nb.startElement("title", "http://marklogic.com/entity-services");
     nb.addText(entityInstance["$type"]);
@@ -365,7 +380,7 @@ class FlowUtils {
       }
     }
     nb.endElement();
-    nb.endDocument();
+    nb.endElement();
     return nb.toNode();
   }
 
@@ -420,7 +435,10 @@ class FlowUtils {
     if (content instanceof ObjectNode || content instanceof ArrayNode) {
       contentInput = content.toObject();
     }
-    return this.jsonToXmlNodeBuilder(contentInput).toNode();
+    if(contentInput instanceof Sequence){
+      return contentInput;
+    }
+    return  this.jsonToXmlNodeBuilder(contentInput).toNode();
   }
 
   jsonToXmlNodeBuilder(content, nb = new NodeBuilder()) {
