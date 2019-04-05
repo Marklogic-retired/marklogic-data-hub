@@ -547,6 +547,54 @@ paths:
           schema:
             $ref: "#/definitions/error"
       x-swagger-router-controller: "Collections"
+  /jobs:
+    get:
+      tags:
+      - "jobs"
+      summary: "Returns all jobs"
+      description: "Returns all jobs"
+      operationId: "getJobs"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "Page # of the paginated data"
+        required: false
+        type: "string"
+      - name: "length"
+        in: "query"
+        description: "Length paginated data"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Successful Operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/job"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Jobs"
   /jobs/{jobId}:
     get:
       tags:
@@ -567,6 +615,44 @@ paths:
           description: "Successful Operation"
           schema:
             $ref: "#/definitions/job"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Jobs"
+    delete:
+      tags:
+      - "jobs"
+      summary: "Delete job by Id"
+      description: ""
+      operationId: "deleteJob"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "jobId"
+        in: "path"
+        description: "Id of job to be fetched"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful Operation"
         400:
           description: "Bad Request"
           schema:
@@ -710,11 +796,14 @@ definitions:
   job:
     type: "object"
     required:
-    - "id"
+    - "jobId"
     properties:
-      id:
+      jobId:
         type: "string"
         description: "Id of the job"
+      flowId:
+        type: "string"
+        description: "Id of the flow for this job"
       startTime:
         type: "string"
         format: "date-time"
@@ -723,23 +812,25 @@ definitions:
         type: "string"
         format: "date-time"
         description: "Timestamp job started"
-      output:
+      steps:
         type: "array"
-        description: "Array with Job output info (not required for UI atm - skip implementation)"
+        description: "Array of Step output info"
         items:
-          type: "string"
-      stepId:
+          type: "object"
+      user:
         type: "string"
-        description: "ID of the step being processed"
-      stepName:
+        description: "User that started the job"
+      flow:
         type: "string"
-        description: "Name of the step being processed"
-      stepRunningPercent:
+        description: "Name of the flow being processed"
+      lastAttemptedStep:
         type: "integer"
         format: "int64"
-        description: "integer representing percent complete, null if not running"
-        minimum: 0
-        maximum: 100
+        description: "last step that was attempted to run"
+      lastCompletedStep:
+        type: "integer"
+        format: "int64"
+        description: "last step that was completed"
       status:
         type: "string"
         description: "Status of the job"
@@ -747,7 +838,7 @@ definitions:
         - "canceled"
         - "failed"
         - "running"
-        - "finished with errors"
+        - "finished-with-errors"
         - "completed"
       successfulEvents:
         type: "integer"
@@ -760,16 +851,16 @@ definitions:
         description: "# of documents that failed to process"
         minimum: 0
     example:
-      output:
-      - "output"
-      - "output"
-      stepRunningPercent: 8
-      stepName: "stepName"
+      user: "admin"
       failedEvents: 0
-      stepId: "stepId"
       successfulEvents: 0
+      flow: "Flow 01"
+      steps: []
+      lastAttemptedStep: 0
+      lastCompletedStep: 0
       startTime: "2000-01-23T04:56:07.000+00:00"
-      id: "id"
+      jobId: "job-id"
+      flowId: "flow-id"
       endTime: "2000-01-23T04:56:07.000+00:00"
       status: "canceled"
   error:
