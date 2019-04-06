@@ -847,7 +847,7 @@
           }
         }
       }
-    }    
+    }
   },
   "definitions": {
     "flow": {
@@ -950,7 +950,7 @@
           "type": "boolean",
           "description": "Boolean flag to tell whether a Step is valid"
         },
-        "config": {
+        "options": {
           "type": "object"
         },
         "version": {
@@ -1010,7 +1010,7 @@
             "canceled",
             "failed",
             "running",
-            "finished with errors",
+            "finished-with-errors",
             "completed"
           ]
         },
@@ -1043,7 +1043,7 @@
           "format": "date-time"
         }
       }
-    },    
+    },
     "customHook": {
       "type": "object",
       "properties": {
