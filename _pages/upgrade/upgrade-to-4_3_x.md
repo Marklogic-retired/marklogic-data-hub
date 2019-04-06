@@ -19,35 +19,68 @@ Data Hub Framework 4.3.x requires the following software:
 
 ## Upgrade Notes and Steps
 
-To replace the security roles,
-1. Delete the old roles from a remote installation of MarkLogic Server. (DHF will delete the old roles from a local installation of the MarkLogic Server.)
-1. Edit your `gradle.properties` file as follows:
-  - Delete the following properties:
-      ???
-  - Replace the values of the following properties:
-      ???
-  - Add the following properties:
-      ???
-1. Run the Gradle task `hubInstallModules`.
+If your current DHF version is 4.0.0 or earlier, you must first [upgrade to 4.1.1 or 4.2.2]({{site.baseurl}}/upgrade/upgrade-to-4_1_x/) before upgrading to 4.3.
+
+
+### Upgrade Notes
+
+Security roles changed from 4.2 to 4.3.
+
+  | old roles      | old default users | new roles           | new default users |
+  |---|---|---|---|
+  | hub-admin-role | hub-admin-user    | data-hub-admin-role | (no default)      |
+  |                |                   | flow-developer-role | flow-developer    |
+  | data-hub-role  | data-hub-user     | flow-operator-role  | flow-operator     |
+  {:.table-b1gray}
+
+You can use your old custom users instead of the new default users. Remember to assign them to the new roles.
+
+If you are deploying to the Data Hub Service on the cloud, the new `flow-developer-role` and `flow-developer` user are required. Otherwise, you can use `data-hub-admin-role` the same way you used the old `hub-admin-role`.
+
+For more information on roles in DHF, see [Security]({{site.baseurl}}/refs/security/).
+
+
+### Steps
+
+1. In your `build.gradle` file, replace all occurrences of your old DHF version number with `4.3.0`.
+
+    **Example:** In the `plugins` section and the `dependencies` section,
+
+      ```
+      plugins {
+          id 'net.saliman.properties' version '1.4.6'
+          id 'com.marklogic.ml-data-hub' version '4.3.0'
+      }
+      ...
+      dependencies {
+        compile 'com.marklogic:marklogic-data-hub:4.3.0'
+        compile 'com.marklogic:marklogic-xcc:9.0.6'
+      }
+      ```
+
+      <!-- See build script. -->
+
+1. {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
+
+1. Edit your `gradle.properties` file, and update the values of the following properties.
+
+      ```
+      mlDHFVersion=4.3.0
+      mlUsername=your-hub-admin-user-username
+      mlPassword=your-hub-admin-user-password
+      mlFlowOperatorUserName=your-data-hub-user-username
+      mlFlowOperatorUserPassword=your-data-hub-user-password
+      ```
+
 1. If your custom code refers to the old roles, change them to refer to the new roles.
 
+1. (Optional) Delete the old roles from a remote installation of MarkLogic Server. (DHF will delete the old roles from a local installation of the MarkLogic Server.)
 
-<!-- Tab links -->
-<!--
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'DHF401422to430')" id="defaultOpen">From 4.0.1, 4.1.x, 4.2.x</button>
-  <button class="tablinks" onclick="openTab(event, 'DHF400to430')">From 4.0.0</button>
-  <button class="tablinks" onclick="openTab(event, 'DHF300204to430')">From 3.0.0 or 2.0.4+</button>
-  <button class="tablinks" onclick="openTab(event, 'DHFpre204to430')">From earlier versions</button>
-</div>
--->
-<!-- Tab content -->
-<!--
-{  % include_relative upgrade-to-4_3_x-tab-DHF403401to430.md      }
-{  % include_relative upgrade-to-4_3_x-tab-DHF400to430.md %    }
-{  % include_relative upgrade-to-4_3_x-tab-DHF300204to430.md %    }
-{  % include_relative upgrade-to-4_3_x-tab-DHFpre204to430.md %    }
--->
+      - hub-admin-role
+      - data-hub-role
+
+1. {% include ostabs-run-gradle-step.html grtask="mlDeploy" %}
+{:.ol-steps}
 
 
 ## See Also

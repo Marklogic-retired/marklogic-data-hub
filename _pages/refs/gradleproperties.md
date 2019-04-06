@@ -7,7 +7,7 @@ redirect_from: "/docs/gradleproperties/"
 
 # Gradle Properties
 
-The following are DHF-specific gradle properties required by the hub to install and run properly.
+The following are DHF-specific Gradle properties required by the data hub to install and run properly.
 
 | Property  | Description |
 | --- | --- |
@@ -30,6 +30,8 @@ The following are DHF-specific gradle properties required by the hub to install 
 | mlFinalSchemasDbName | The schemas database to be used along with the final app server. |
 | mlModulePermissions | Comma-delimited string of role/capability/role/capability/etc. that defines permissions for deployed modules. |
 | mlIsHostLoadBalancer | Indicates if the value specified for `mlhost` should be treated as a load balancer or not. |
+| mlFlowOperatorRole<br/> mlFlowOperatorUserName<br/> mlFlowOperatorUserPassword | (For v4.3 or later) The role, username, and password associated with the account to use to run flows in the production environment. |
+| mlFlowDeveloperRole<br/> mlFlowDeveloperUserName<br/> mlFlowDeveloperUserPassword | (For v4.3 or later) The role, username, and password associated with the account to use to create and deploy flows to the production environment. |
 {:.table-b1gray}
 
 {% include note.html type="NOTE" content="Other properties conform to the ml-gradle properties. See [the ml-gradle Property Reference](https://github.com/marklogic-community/ml-gradle/wiki/property-reference)" %}

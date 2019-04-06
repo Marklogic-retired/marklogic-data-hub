@@ -8,7 +8,7 @@ permalink: /upgrade/upgrade-to-4_1_x/
 
 ## Prerequisites
 
-Data Hub Framework 4.1.0 / 4.2.x requires the following software:
+Data Hub Framework 4.1.x / 4.2.x requires the following software:
 
 - MarkLogic Server 9.0-5 or later
 

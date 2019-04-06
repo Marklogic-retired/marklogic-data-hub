@@ -59,12 +59,11 @@ Analytics REST: 8011
 
   | DHF                 | DHS                 |
   |:-------------------:|:-------------------:|
-  | `data-hub-role`     |                     |
-  | `hub-admin-role`    |                     |
+  | `data-hub-admin`    |                     |
   |                     | `endpointDeveloper` |
   |                     | `endpointUser`      |
-  |                     | `flowDeveloper`     |
-  |                     | `flowOperator`      |
+  | `flow-developer`    | `flowDeveloper`     |
+  | `flow-operator`     | `flowOperator`      |
   {:.table-b1gray}
 
 - Database names, if customized in the DHF environment
@@ -176,6 +175,7 @@ If your endpoints are publicly available, you can use any machine that is set up
    {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize -PenvironmentName=DHS" %}
 
    {% include conrefs/conref-note-gradle-double-quotes.md %}
+
 1. Verify that your documents are in the databases.
 
     a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
