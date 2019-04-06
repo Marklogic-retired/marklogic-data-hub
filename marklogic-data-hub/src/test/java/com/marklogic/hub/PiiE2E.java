@@ -110,8 +110,9 @@ public class PiiE2E extends HubTestBase
         Assumptions.assumeTrue(!(isCertAuth() || isSslRun()));
         Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
+        getHubFlowDeveloperConfig();
         installHubModules();
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(getHubFlowDeveloperConfig(), true);
         // Hardcoding to "digest" auth for now
         // needs to be final db
         clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(), finalPort, HubConfig.DEFAULT_FINAL_NAME,
@@ -127,7 +128,7 @@ public class PiiE2E extends HubTestBase
         }
 
         // command list for deploying/undeploying security
-        HubConfigImpl hubConfig = (HubConfigImpl) getDataHubAdminConfig();
+        HubConfigImpl hubConfig = (HubConfigImpl) getHubFlowDeveloperConfig();
         // Security
         List<Command> securityCommands = new ArrayList<Command>();
         // these two should already be there... we don't want to remove them
@@ -136,7 +137,7 @@ public class PiiE2E extends HubTestBase
         securityCommands.add(new DeployRolesCommand());
         securityCommands.add(new DeployUsersCommand());
         // deploy just these users now...
-        deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(securityCommands);
         secAppConfig = hubConfig.getAppConfig();
         secAppConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
@@ -211,7 +212,7 @@ public class PiiE2E extends HubTestBase
             });
 
         // save pii, install user modules and deploy security
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(getHubFlowDeveloperConfig(), true);
         entityManager.savePii();
 
         try {
@@ -241,6 +242,7 @@ public class PiiE2E extends HubTestBase
 
         } finally {
             undeploySecurity();
+            getDataHubAdminConfig();
         }
     }
 
@@ -250,7 +252,8 @@ public class PiiE2E extends HubTestBase
         installEntities();
         entityManager.savePii();
 
-        verifyResults(getDataHubAdminConfig().getUserSecurityDir());
+        verifyResults(getHubFlowDeveloperConfig().getUserSecurityDir());
+        getDataHubAdminConfig();
 
     }
 

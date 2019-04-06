@@ -142,7 +142,9 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.STAGING_SCHEMAS), props.getProperty("mlStagingSchemasDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_SCHEMAS).toString(), props.getProperty("mlStagingSchemasForestsPerHost"));
 
-        assertEquals(config.getFlowDeveloperRoleName(), props.getProperty("mlFlowOperatorRole"));
+        assertEquals(config.getFlowDeveloperRoleName(), props.getProperty("mlFlowDeveloperRole"));
+        assertEquals(config.getFlowDeveloperUserName(), props.getProperty("mlFlowDeveloperUserName"));
+        assertEquals(config.getFlowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
         assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
