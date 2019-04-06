@@ -152,6 +152,8 @@ public class HubTestBase {
     public  String managePassword;
     public  String secUser;
     public  String secPassword;
+    public static String flowDeveloperUser;
+    public static String flowDeveloperPassword;
     public static String flowRunnerUser;
     public static String flowRunnerPassword;
     protected  Authentication stagingAuthMethod;
@@ -176,6 +178,7 @@ public class HubTestBase {
     private  static boolean certAuth = false;
     public static SSLContext certContext;
     static SSLContext datahubadmincertContext;
+    static SSLContext flowDevelopercertContext;
     static SSLContext flowRunnercertContext;
     private  Properties properties = new Properties();
     public  GenericDocumentManager stagingDocMgr;
@@ -191,6 +194,7 @@ public class HubTestBase {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
             datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
+            //flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer-user.p12"));
             flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-flow-operator-user.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
@@ -250,6 +254,8 @@ public class HubTestBase {
         managePassword = properties.getProperty("mlManagePassword");
         secUser = properties.getProperty("mlSecurityUsername");
         secPassword = properties.getProperty("mlSecurityPassword");
+        flowDeveloperUser = properties.getProperty("mlFlowDeveloperUserName");
+        flowDeveloperPassword = properties.getProperty("mlFlowDeveloperPassword");
         flowRunnerUser = properties.getProperty("mlFlowOperatorUserName");
         flowRunnerPassword = properties.getProperty("mlFlowOperatorPassword");
         String isHostLB = properties.getProperty("mlIsHostLoadBalancer");
@@ -411,6 +417,55 @@ public class HubTestBase {
         }
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
+        wireClients();
+        return adminHubConfig;
+    }
+
+    protected HubConfigImpl getHubFlowDeveloperConfig() {
+        adminHubConfig.setMlUsername(flowDeveloperUser);
+        adminHubConfig.setMlPassword(flowDeveloperPassword);
+        appConfig = adminHubConfig.getAppConfig();
+        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
+        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
+        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
+        appConfig.setAppServicesUsername(flowDeveloperUser);
+        appConfig.setAppServicesPassword(flowDeveloperPassword);
+        manageConfig.setUsername(flowDeveloperUser);
+        manageConfig.setPassword(flowDeveloperPassword);
+        if(isCertAuth()) {
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
+            adminHubConfig.setSslContext(DatabaseKind.JOB,flowDevelopercertContext);
+            manageConfig.setSslContext(flowDevelopercertContext);
+            adminConfig.setSslContext(flowDevelopercertContext);
+
+            appConfig.setAppServicesCertPassword("abcd");
+            appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
+            appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
+            appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
+            appConfig.setAppServicesPassword(null);
+
+            adminHubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
+            adminHubConfig.setCertPass(DatabaseKind.STAGING, "abcd");
+
+            adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
+            adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
+
+            //manageConfig.setConfigureSimpleSsl(false);
+
+            manageConfig.setSecuritySslContext(certContext);
+            manageConfig.setPassword(null);
+            manageConfig.setSecurityPassword(null);
+
+            //adminConfig.setConfigureSimpleSsl(false);
+            adminConfig.setPassword(null);
+        }
+        adminHubConfig.setAppConfig(appConfig);
+        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
+        manageClient.setManageConfig(manageConfig);
+        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
+        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
         wireClients();
         return adminHubConfig;
     }
@@ -738,7 +793,7 @@ public class HubTestBase {
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
         DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-            .withPermission(getDataHubAdminConfig().getFlowDeveloperRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            .withPermission(getDataHubAdminConfig().getFlowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
