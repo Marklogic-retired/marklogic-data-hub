@@ -21,9 +21,6 @@ function processInstance(model, mapping, content) {
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
-  if(sourceContext[sourceContext.length-1] !== '/'){
-    sourceContext += '/';
-  }
   let mappingProperties = mapping.properties;
   let instance = {};
   if (model.info && model.info.title === modelName) {
@@ -54,11 +51,14 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let dataType = prop["datatype"];
     let valueSource = null;
     if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
-      if(mappingProperties[property].sourcedFrom.indexOf(':') > -1 ) {
-        valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
-      } else {
-        valueSource = content.xpath(sourceContext + '*:'+mappingProperties[property].sourcedFrom);
+      let connector = "";
+      if(sourceContext[sourceContext.length-1] !== '/' &&  mappingProperties[property].startsWith('/') && mappingProperties[property].startsWith('[')){
+        connector += '/';
       }
+      if(mappingProperties[property].sourcedFrom.indexOf(':') > -1 ) {
+        connector += '*:';
+      }
+      valueSource = content.xpath(sourceContext + connector + mappingProperties[property].sourcedFrom);
     } else{
       valueSource = content.xpath(sourceContext + property);
     }
