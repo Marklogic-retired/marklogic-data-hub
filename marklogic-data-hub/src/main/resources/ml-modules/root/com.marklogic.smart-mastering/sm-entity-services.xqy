@@ -9,3 +9,16 @@ declare function sm-es:get-entity-descriptors()
 {
   es-impl:get-entity-descriptors()
 };
+
+declare function sm-es:get-entity-def($target-entity as item()?) as object-node()?
+{
+  es-impl:get-entity-def($target-entity)
+};
+
+declare function sm-es:get-entity-def-property(
+  $entity-def as object-node()?,
+  $property-title as xs:string?
+) as object-node()?
+{
+  es-impl:get-entity-def-property($entity-def, $property-title)
+};
