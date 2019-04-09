@@ -43,7 +43,7 @@ const settings = {
   },
   outputDocTypes: {
     label: 'Output File Type',
-    field: 'documentType',
+    field: 'outputFileType',
     type: 'type',
     description: 'The type of document to create when -input_file_type is documents, sequencefile or delimited_text. Accepted values: mixed (documents only), xml, json, text, binary. Default: mixed for documents, xml for sequencefile, and xml for delimited_text.',
     options: [

@@ -31,7 +31,7 @@ export class IngestComponent implements OnInit {
         inputFileType: 'json',
         outputCollections: `${targetEntity || ''}`,
         outputPermissions: 'rest-reader,read,rest-writer,update',
-        documentType: 'json',
+        outputFileType: 'json',
         outputURIReplacement: '',
         targetEntity: targetEntity
       };

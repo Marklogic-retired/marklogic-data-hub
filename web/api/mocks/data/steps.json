@@ -12,7 +12,7 @@
       "inputFileType": "xml",
       "outputCollections": "Order,Flow 01 Ingest Step,input,newCollection",
       "outputPermissions": "rest-reader,read,rest-writer,update",
-      "documentType": "json",
+      "outputFileType": "json",
       "outputURIReplacement": ""
     },
     "version": "1"
@@ -419,7 +419,7 @@
       "inputFileType": "xml",
       "outputCollections": "Order,Flow 02 Ingest Step,input,newCollection",
       "outputPermissions": "rest-reader,read,rest-writer,update",
-      "documentType": "json",
+      "outputFileType": "json",
       "outputURIReplacement": ""
     },
     "version": "1"
@@ -826,7 +826,7 @@
       "inputFileType": "xml",
       "outputCollections": "Order,Flow 3 Ingest Step,input,newCollection",
       "outputPermissions": "rest-reader,read,rest-writer,update",
-      "documentType": "json",
+      "outputFileType": "json",
       "outputURIReplacement": ""
     },
     "version": "1"
@@ -1233,7 +1233,7 @@
       "inputFileType": "xml",
       "outputCollections": "Order,Flow 4 Ingest Step,input,newCollection",
       "outputPermissions": "rest-reader,read,rest-writer,update",
-      "documentType": "json",
+      "outputFileType": "json",
       "outputURIReplacement": ""
     },
     "version": "1"
