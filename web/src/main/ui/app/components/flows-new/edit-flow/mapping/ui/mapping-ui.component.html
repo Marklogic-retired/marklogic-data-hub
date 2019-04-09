@@ -1,13 +1,13 @@
-<div layout-padding layout="column" class="map-page"> <!--layout-align="center center"> -->
+<div layout-padding layout="column" class="map-page">
 
-  <div *ngIf="targetEntity && !targetEntity.hasDocs" class="map-container2">
+  <div *ngIf="targetEntity && !targetEntity.hasDocs" class="map-container">
     <p>Before configuring this mapping you must ingest source documents</p>
   </div>
 
-  <div *ngIf="targetEntity && targetEntity.hasDocs" class="map-container2">
+  <div *ngIf="targetEntity && targetEntity.hasDocs" class="map-container">
 
     <div id="source">
-      <div id="src-heading" #srcheading>
+      <div id="source-heading" #srcheading>
         <div class="item-title">
           <div class="item-type">Source</div>
           <span class="help-icon">
@@ -77,8 +77,8 @@
 
     </div><!-- source -->
 
-    <div id="harmonized">
-      <div id="harm-heading">
+    <div id="target">
+      <div id="target-heading">
         <div class="item-title">
           <div class="item-type">Entity</div>
           <span class="help-icon">
@@ -110,7 +110,7 @@
         </div>
 
       </div><!-- ngFor -->
-    </div><!-- harmonized -->
+    </div><!-- target -->
 
   </div><!-- map-container -->
 

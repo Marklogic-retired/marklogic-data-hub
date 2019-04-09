@@ -121,7 +121,6 @@ export class MappingComponent implements OnInit {
           self.targetEntity.hasDocs = (response.results.length > 0);
           // Can only load sample doc if docs exist
           if (self.targetEntity.hasDocs) {
-
             if (!this.mapping.sourceURI) {
               this.sampleDocURI = response.results[0].uri;
             } else {
