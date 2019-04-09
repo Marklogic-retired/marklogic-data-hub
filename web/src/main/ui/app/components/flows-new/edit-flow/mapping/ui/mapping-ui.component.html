@@ -7,7 +7,7 @@
   <div *ngIf="targetEntity && targetEntity.hasDocs" class="map-container">
 
     <div id="source">
-      <div id="source-heading" #srcheading>
+      <div id="source-heading">
         <div class="item-title">
           <div class="item-type">Source</div>
           <span class="help-icon">
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Dropdown row for each entity property -->
-      <div *ngFor="let entityProp of targetEntity?.definition.properties; let i = index;" class="src-prop-container">
+      <div *ngFor="let entityProp of targetEntity?.definition.properties; let i = index;" class="source-prop-container">
 
           <div class="btn-group" dropdown #dropdown="bs-dropdown" (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
             <button dropdownToggle type="button" class="btn prop-select {{ 'prop-entity-' + entityProp.name }}">
