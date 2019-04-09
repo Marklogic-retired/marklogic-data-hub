@@ -16,15 +16,11 @@
  */
 package com.marklogic.hub.web.model;
 
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
 
-public class SearchQuery {
-    public String query;
-    public String sort;
-    public boolean entitiesOnly;
+public class CTSSearchQuery {
+    public JsonNode ctsQuery;
     public long start;
     public long count;
     public String database;
-    public Map<String, List<String>> facets;
 }
