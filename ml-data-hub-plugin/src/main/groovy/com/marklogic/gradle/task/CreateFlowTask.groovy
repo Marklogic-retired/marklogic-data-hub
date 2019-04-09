@@ -12,18 +12,18 @@ class CreateFlowTask extends HubTask {
     @TaskAction
     void createFlow() {
         def propName = "flowName"
-        def propNoDefaultSteps = "noDefaultSteps"
+        def propEmptySteps = "emptySteps"
 
         def flowName = project.hasProperty(propName) ? project.property(propName) : null
         if (flowName == null) {
             throw new FlowNameRequiredException()
         }
 
-        def noDefaultSteps = project.hasProperty(propNoDefaultSteps) ? Boolean.parseBoolean(project.property(propNoDefaultSteps) as String) : false
+        def emptySteps = project.hasProperty(propEmptySteps) ? Boolean.parseBoolean(project.property(propEmptySteps) as String) : false
 
         FlowManager flowManager = getFlowManager()
         if (flowManager.getFlow(flowName.toString()) == null) {
-            if (noDefaultSteps) {
+            if (emptySteps) {
                 Flow flow = flowManager.createFlow(flowName.toString())
                 flowManager.saveFlow(flow)
             }
