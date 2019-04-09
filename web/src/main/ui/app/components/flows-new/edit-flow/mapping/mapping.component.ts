@@ -3,6 +3,7 @@ import { Entity } from '../../../../models';
 import { EntitiesService } from '../../../../models/entities.service';
 import { SearchService } from '../../../search/search.service';
 import { MapService } from '../../../mappings/map.service';
+import { EnvironmentService } from '../../../../services/environment';
 import { MappingUiComponent } from './ui/mapping-ui.component';
 
 import * as _ from 'lodash';
@@ -35,7 +36,7 @@ export class MappingComponent implements OnInit {
   public targetEntity: Entity;
 
   // Source Document
-  private currentDatabase: string = 'STAGING';
+  private sourceDbType: string;
   private entitiesOnly: boolean = false;
   private searchText: string = null;
   private activeFacets: any = {};
@@ -64,14 +65,6 @@ export class MappingComponent implements OnInit {
   }
 
   /**
-   * Update the mapping description by saving the mapping.
-   */
-  updateDesc(mapping) {
-    this.mapping = mapping;
-    this.saveMap();
-  }
-
-  /**
    * Update the mapping based on new connections submitted.
    */
   updateMap(conns) {
@@ -82,7 +75,8 @@ export class MappingComponent implements OnInit {
   constructor(
     private searchService: SearchService,
     private mapService: MapService,
-    private entitiesService: EntitiesService
+    private entitiesService: EntitiesService,
+    private envService: EnvironmentService
   ) {}
 
   ngOnInit() {
@@ -91,6 +85,9 @@ export class MappingComponent implements OnInit {
       this.mapping = this.step.options;
       this.loadEntity();
     }
+    this.sourceDbType =
+      (this.step.sourceDatabase === this.envService.settings.stagingDbName)
+      ? 'STAGING' : 'FINAL';
   }
 
   loadEntity(): void {
@@ -118,13 +115,17 @@ export class MappingComponent implements OnInit {
       query = this.mapping.sourceQuery;
     }
 
-    this.searchService.getResults(this.currentDatabase, false, query, activeFacets, 1, 1)
+    this.searchService.getResults(this.sourceDbType, false, query, activeFacets, 1, 1)
       .subscribe(response => {
           self.targetEntity.hasDocs = (response.results.length > 0);
           // Can only load sample doc if docs exist
           if (self.targetEntity.hasDocs) {
 
-            this.sampleDocURI = response.results[0].uri;
+            if (!this.mapping.sourceURI) {
+              this.sampleDocURI = response.results[0].uri;
+            } else {
+              this.sampleDocURI = this.mapping.sourceURI;
+            }
             this.editURIVal = this.sampleDocURI;
             this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
 
@@ -149,7 +150,7 @@ export class MappingComponent implements OnInit {
   loadSampleDocByURI(uri: string, uriOrig: string, connsOrig: Object, save: boolean): void {
     let self = this;
     this.editURIVal = uri;
-    this.searchService.getDoc(this.currentDatabase, uri).subscribe(doc => {
+    this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
       this.sampleDocSrc = doc;
       _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {

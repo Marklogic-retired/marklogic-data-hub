@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { Entity } from '../../../../../models/index';
 import { MdlDialogService } from '@angular-mdl/core';
-import { MdlSnackbarService } from '@angular-mdl/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -20,7 +19,6 @@ export class MappingUiComponent implements OnChanges {
   @Input() sampleDocSrcProps: Array<any> = [];
   @Input() editURIVal: string = '';
 
-  @Output() updateDesc = new EventEmitter();
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
 
@@ -32,8 +30,6 @@ export class MappingUiComponent implements OnChanges {
   public filterFocus: object = {};
   public filterText: object = {};
 
-  public editDescVal: string;
-  public editingDesc: boolean = false;
   public editingURI: boolean = false;
 
   /**
@@ -111,19 +107,8 @@ export class MappingUiComponent implements OnChanges {
     )
   }
 
-  /**
-   * Display snackbar popup.
-   * @param msg Message text to display in popup.
-   */
-  showSnackbar(msg) {
-    this.snackbar.showSnackbar({
-      message: msg
-    });
-  }
-
   constructor(
-    private dialogService: MdlDialogService,
-    private snackbar: MdlSnackbarService
+    private dialogService: MdlDialogService
   ) {}
 
   /**
@@ -133,7 +118,6 @@ export class MappingUiComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     // Keep values up to date when mapping changes
     if (changes.mapping) {
-      this.editDescVal = this.mapping.description;
       this.editURIVal = this.mapping.sourceURI;
     }
     if (changes.conns) {
