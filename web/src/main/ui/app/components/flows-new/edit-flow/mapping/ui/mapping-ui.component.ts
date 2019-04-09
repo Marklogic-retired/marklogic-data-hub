@@ -132,6 +132,9 @@ export class MappingUiComponent implements OnChanges {
    */
   handleSelection(entityPropName, srcPropName): void {
     this.conns[entityPropName] = srcPropName;
+    if (!_.isEqual(this.conns, this.connsOrig)) {
+      this.onSaveMap();
+    }
   }
 
   /**
@@ -142,6 +145,9 @@ export class MappingUiComponent implements OnChanges {
   clearSelection(event, entityPropName): void {
     if (this.conns[entityPropName])
       delete this.conns[entityPropName];
+    if (!_.isEqual(this.conns, this.connsOrig)) {
+      this.onSaveMap();
+    }
     this.editingURI = false; // close edit box if open
     event.stopPropagation();
   }
@@ -167,10 +173,9 @@ export class MappingUiComponent implements OnChanges {
   }
 
   /**
-   * Handle save button event by emitting connection object.
+   * Handle save event by emitting connection object.
    */
   onSaveMap() {
-    console.log(this.conns, this.connsOrig);
     this.updateMap.emit(this.conns);
     this.connsOrig = _.cloneDeep(this.conns);
   }

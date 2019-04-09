@@ -6,16 +6,6 @@
 
   <div *ngIf="targetEntity && targetEntity.hasDocs" class="map-container2">
 
-    <div id="map-heading">
-
-      <!-- Save/Reset happens via header buttons -->
-      <div id="save-map">
-        <button mat-raised-button color="primary" [disabled]="!mapChanged()" (click)="mapChanged() && onSaveMap()">Save</button>
-        <!-- <button mat-raised-button color="primary" [disabled]="!mapChanged()" (click)="mapChanged() && onResetMap()">Reset</button> -->
-      </div>
-
-    </div>
-
     <div id="source">
       <div id="src-heading" #srcheading>
         <div class="item-title">

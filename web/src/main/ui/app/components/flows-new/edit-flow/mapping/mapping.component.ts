@@ -20,7 +20,6 @@ import { Step } from "../../models/step.model";
       [conns]="this.conns"
       [sampleDocSrcProps]="this.sampleDocSrcProps"
       [editURIVal]="this.editURIVal"
-      (updateDesc)="this.updateDesc($event)"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
