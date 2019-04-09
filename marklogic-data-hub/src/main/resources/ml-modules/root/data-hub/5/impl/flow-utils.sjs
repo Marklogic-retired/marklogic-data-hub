@@ -112,7 +112,7 @@ class FlowUtils {
         }
       }
     } else if (inputFormat === dataFormat) {
-      if(content instanceof Element && fn.count(content.xpath('/root') > 0)){
+      if(content instanceof Element &&  content.nodeName.toLowerCase() === 'root' && content.namespaceURI.toLowerCase() === ""){
         instance = Sequence.from(content.xpath('/root/node()'));
       } else {
         instance = content;
@@ -221,10 +221,9 @@ class FlowUtils {
     if (resp instanceof BinaryNode) {
       return xs.hexBinary(resp);
     }
-
     let kind = xdmp.nodeKind(resp);
     let isXml = (kind === 'element');
-    if (!isXml) {
+    if (!isXml && resp) {
       // object with $type key is ES response type
       if (resp instanceof Object && resp.hasOwnProperty('$type')) {
         return resp;
@@ -235,24 +234,23 @@ class FlowUtils {
       else {
         return resp;
       }
-    } else if (resp instanceof ArrayNode || resp instanceof Array) {
-      if (dataFormat === this.consts.XML) {
-        return json.arrayValues(resp);
-      }
-      else {
-        return resp;
+    } else if(isXml && resp) {
+      if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === this.consts.XML) {
+          return json.arrayValues(resp);
+        } else {
+          return resp;
       }
     } else if (resp === null) {
-      if (destination === "headers" && dataFormat === this.consts.JSON) {
-        return {};
+        if (destination === "headers" && dataFormat === this.consts.JSON) {
+          return {};
+        }
+        else if (destination === "triples" && dataFormat === this.consts.JSON) {
+          return [];
+        }
+        else {
+          return resp;
+        }
       }
-      else if (destination === "triples" && dataFormat === this.consts.JSON) {
-        return [];
-      }
-      else {
-        return resp;
-      }
-    }
 
     if (dataFormat === this.consts.JSON &&
       destination === "triples") {
