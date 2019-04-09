@@ -1,4 +1,4 @@
-import {Component, ViewChild} from "@angular/core";
+import {Component, ViewChild, OnInit} from "@angular/core";
 import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
@@ -17,7 +17,7 @@ import * as _ from "lodash";
     </flows-page-ui>
   `
 })
-export class ManageFlowsComponent {
+export class ManageFlowsComponent implements OnInit {
 
   @ViewChild(ManageFlowsUiComponent)
   flowsPageUi: ManageFlowsUiComponent;
