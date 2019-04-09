@@ -22,6 +22,7 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawCtsQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.DatabaseKind;
@@ -70,6 +71,15 @@ public class SearchService extends SearchableService {
 
         ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
 
+        if (searchQuery.query != null && !searchQuery.query.isNull()) {
+            RawCtsQueryDefinition queryDefinition = queryMgr.newRawCtsQueryDefinitionAs(Format.JSON, searchQuery.query.toString());
+
+            StringHandle sh = new StringHandle();
+            sh.setFormat(Format.JSON);
+
+            return queryMgr.search(queryDefinition, sh, searchQuery.start);
+        }
+
         if (searchQuery.entitiesOnly) {
             sb = queryMgr.newStructuredQueryBuilder(dbPrefix + "entity-options");
             queries.add(
@@ -101,7 +111,9 @@ public class SearchService extends SearchableService {
         }
 
         StructuredQueryDefinition sqd = sb.and(queries.toArray(new StructuredQueryDefinition[0]));
-        sqd.setCriteria(searchQuery.query);
+        if (!searchQuery.query.isNull()) {
+            sqd.setCriteria(searchQuery.query.toString());
+        }
 
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
