@@ -1,0 +1,69 @@
+{
+  "name":"flowName",
+  "description":"flow description",
+  "options":{
+    "identifier":""
+  },
+  "steps":{
+    "1":{
+      "language":"zxx",
+      "name":"custom-step",
+      "type":"CUSTOM",
+      "version":1,
+      "modulePath":"/path/to/your/step/module/main.sjs",
+      "customHook":{
+
+      },
+      "options":{
+        "identifier":null,
+        "outputFormat":"json",
+        "collections":[
+          "default-ingest"
+        ]
+      }
+    },
+    "2":{
+      "language":"zxx",
+      "name":"default-ingest",
+      "type":"INGEST",
+      "version":1,
+      "modulePath":"/data-hub/5/builtins/steps/ingest/default/main.sjs",
+      "customHook":{
+
+      },
+      "options":{
+        "identifier":null,
+        "outputFormat":"json",
+        "collections":[
+          "default-ingest"
+        ]
+      }
+    },
+    "3":{
+      "language":"zxx",
+      "name":"default-mapping",
+      "type":"MAPPING",
+      "version":1,
+      "modulePath":"/data-hub/5/builtins/steps/mapping/default/main.sjs",
+      "options":{
+        "identifier":"cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+        "collections":[
+          "default-mapping"
+        ]
+      }
+    },
+    "4":{
+      "language":"zxx",
+      "name":"default-mastering",
+      "type":"MASTER",
+      "version":1,
+      "modulePath":"/data-hub/5/builtins/steps/master/default/main.sjs",
+      "options":{
+        "identifier":"cts.uris(null, null, cts.collectionQuery('default-mapping'))",
+        "collections":[
+          "default-mastering, mastered"
+        ]
+      }
+    }
+  }
+}
