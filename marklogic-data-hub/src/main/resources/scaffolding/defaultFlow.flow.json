@@ -1,6 +1,6 @@
 {
-  "name":"flowName",
-  "description":"flow description",
+  "name":"defaultFlow",
+  "description":"This is the default flow containing all of the default steps",
   "options":{
     "identifier":""
   },
