@@ -859,7 +859,10 @@ public class DataHubImpl implements DataHub {
                 text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
                 text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
                 FileUtils.writeStringToFile(buildGradle, text);
-                hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
+                hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-role.json").toFile().delete();
+                hubConfig.getHubSecurityDir().resolve("roles").resolve("hub-admin-role.json").toFile().delete();
+                hubConfig.getHubSecurityDir().resolve("users").resolve("hub-admin-user.json").toFile().delete();
+                hubConfig.getHubSecurityDir().resolve("users").resolve("data-hub-user.json").toFile().delete();
             }
             
             hubConfig.initHubProject();
