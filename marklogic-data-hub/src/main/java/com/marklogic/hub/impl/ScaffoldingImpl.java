@@ -132,9 +132,11 @@ public class ScaffoldingImpl implements Scaffolding {
                 JsonNode flowNode = JSONObject.readInput(inputStream);
                 Flow flow = flowManager.createFlowFromJSON(flowNode);
                 flow.setName(flowName);
-
-                // Step 1 is Custom Step
-                flow.getStep("1").setModulePath("/custom-modules/custom/custom-step/main.sjs");
+                flow.getSteps().forEach((k, v) -> {
+                    if (v.getType() == Step.StepType.CUSTOM) {
+                        v.setModulePath("/custom-modules/custom/custom-step/main.sjs");
+                    }
+                });
                 createCustomModule("custom-step", Step.StepType.CUSTOM.toString());
                 flowManager.saveFlow(flow);
             }
