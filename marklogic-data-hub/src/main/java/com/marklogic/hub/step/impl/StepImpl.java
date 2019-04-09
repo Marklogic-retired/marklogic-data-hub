@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 public class StepImpl implements Step {
+    public final static int DEFAULT_BATCH_SIZE = 100;
+    public final static int DEFAULT_THREAD_COUNT = 4;
+
     private String language = "zxx";
     private String name;
     private String description;
@@ -85,6 +88,8 @@ public class StepImpl implements Step {
         }
         customHook = new JSONObject().jsonNode();
         retryLimit = 0;
+        batchSize = DEFAULT_BATCH_SIZE;
+        threadCount = DEFAULT_THREAD_COUNT;
     }
 
     public String getLanguage() {
@@ -206,27 +211,61 @@ public class StepImpl implements Step {
     @Override
     public void deserialize(JsonNode json) {
         JSONObject jsonObject = new JSONObject(json);
-        setName(jsonObject.getString("name"));
-        setDescription(jsonObject.getString("description"));
-        setType(StepType.getStepType(jsonObject.getString("type")));
-        setVersion(jsonObject.getInt("version"));
+
+        if (jsonObject.isExist("name")) {
+            setName(jsonObject.getString("name"));
+        }
+
+        if (jsonObject.isExist("description")) {
+            setDescription(jsonObject.getString("description"));
+        }
+
+        if (jsonObject.isExist("type")) {
+            setType(StepType.getStepType(jsonObject.getString("type")));
+        }
+
+        if (jsonObject.isExist("version")) {
+            setVersion(jsonObject.getInt("version"));
+        }
+
         Map<String, Object> options = jsonObject.getMap("options");
         if (!options.isEmpty()) {
             setOptions(jsonObject.getMap("options"));
         }
-        setCustomHook(jsonObject.getNode("customHook"));
-        setModulePath(jsonObject.getString("modulePath"));
+
+        if (jsonObject.isExist("customHook")) {
+            setCustomHook(jsonObject.getNode("customHook"));
+        }
+
+        if (jsonObject.isExist("modulePath")) {
+            setModulePath(jsonObject.getString("modulePath"));
+        }
+
         if (this.options != null) {
             Object identifier = this.options.get("identifier");
             if (identifier != null) {
                 setIdentifier(identifier.toString());
             }
         }
-        setIdentifier(jsonObject.getString("identifier"));
-        setRetryLimit(jsonObject.getInt("retryLimit"));
-        setBatchSize(jsonObject.getInt("batchSize"));
-        setThreadCount(jsonObject.getInt("threadCount"));
-        setSourceDatabase(jsonObject.getString("sourceDatabase"));
-        setDestinationDatabase(jsonObject.getString("destinationDatabase"));
+
+        if (jsonObject.isExist("retryLimit")) {
+            setRetryLimit(jsonObject.getInt("retryLimit"));
+        }
+
+        if (jsonObject.isExist("batchSize")) {
+            setBatchSize(jsonObject.getInt("batchSize"));
+        }
+
+        if (jsonObject.isExist("threadCount")) {
+            setThreadCount(jsonObject.getInt("threadCount"));
+        }
+
+        if (jsonObject.isExist("sourceDatabase")) {
+            setSourceDatabase(jsonObject.getString("sourceDatabase"));
+        }
+
+        if (jsonObject.isExist("destinationDatabase")) {
+            setDestinationDatabase(jsonObject.getString("destinationDatabase"));
+        }
     }
 }
