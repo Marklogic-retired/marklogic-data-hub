@@ -859,6 +859,11 @@ public class DataHubImpl implements DataHub {
                 text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
                 text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
                 FileUtils.writeStringToFile(buildGradle, text);
+
+                // Back up the gradle.properties to .old so hubUpdate will generate new gradle.properties to compare against
+                File oldGradlePropsFile = Paths.get(project.getProjectDirString()).resolve("gradle.properties.old").toFile();
+                File newgradlePropsFile = Paths.get(project.getProjectDirString(), "gradle.properties").toFile();
+                FileUtils.moveFile(newgradlePropsFile, oldGradlePropsFile);
             }
             
             hubConfig.initHubProject();
