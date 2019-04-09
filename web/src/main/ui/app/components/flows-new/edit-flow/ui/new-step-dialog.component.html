@@ -20,7 +20,7 @@
     </mat-radio-group>
   </div>
   <mat-form-field *ngIf="selectedSource === 'collection' && newStepForm.value.type != 'ingest'">
-    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
+    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection" formControlName="sourceQuery">
       <mat-option class="type-option" *ngFor="let collection of data.collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>

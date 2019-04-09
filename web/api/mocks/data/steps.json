@@ -8,14 +8,11 @@
     "targetDatabase": "staging",
     "isValid": true,
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
+      "inputFilePath": ".",
+      "inputFileType": "documents",
       "output_collections": "Order,Flow 01 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 01 Ingest Step"
+      "outputPermissions": "rest-reader,read,rest-writer,update",
+      "outputFileType": "json"
     },
     "version": "1"
   },
@@ -404,7 +401,7 @@
       "targetEntity": "Order",
       "sourceCollection": "Flow 01 Mastering Step",
       "sourceQuery": "",
-      "customModuleUri": "/some/path/to/my/module"
+      "modulePath": "/some/path/to/my/module"
     },
     "version": "1"
   },
@@ -417,14 +414,11 @@
     "targetDatabase": "staging",
     "isValid": true,
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
+      "inputFilePath": ".",
+      "inputFileType": "documents",
       "output_collections": "Order,Flow 02 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 02 Ingest Step"
+      "outputPermissions": "rest-reader,read,rest-writer,update",
+      "outputFileType": "json"
     },
     "version": "1"
   },
@@ -813,7 +807,7 @@
       "targetEntity": "Order",
       "sourceCollection": "Flow 02 Mastering Step",
       "sourceQuery": "",
-      "customModuleUri": "/some/path/to/my/module"
+      "modulePath": "/some/path/to/my/module"
     },
     "version": "1"
   },
@@ -826,14 +820,11 @@
     "targetDatabase": "staging",
     "isValid": true,
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
+      "inputFilePath": ".",
+      "inputFileType": "documents",
       "output_collections": "Order,Flow 3 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 3 Ingest Step"
+      "outputPermissions": "rest-reader,read,rest-writer,update",
+      "outputFileType": "json"
     },
     "version": "1"
   },
@@ -1222,7 +1213,7 @@
       "targetEntity": "Order",
       "sourceCollection": "Flow 3 Mastering Step",
       "sourceQuery": "",
-      "customModuleUri": "/some/path/to/my/module"
+      "modulePath": "/some/path/to/my/module"
     },
     "version": "1"
   },
@@ -1235,14 +1226,11 @@
     "targetDatabase": "staging",
     "isValid": false,
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
+      "inputFilePath": ".",
+      "inputFileType": "documents",
       "output_collections": "Order,Flow 4 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 4 Ingest Step"
+      "outputPermissions": "rest-reader,read,rest-writer,update",
+      "outputFileType": "json"
     },
     "version": "1"
   }

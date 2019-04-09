@@ -29,7 +29,8 @@ export class IngestComponent implements OnInit {
   @Output() saveStep = new EventEmitter();
 
   ngOnInit(): void {
-    this.checkDefaults();
+    // Not needed
+    // this.checkDefaults();
   }
 
   private checkDefaults(): void {

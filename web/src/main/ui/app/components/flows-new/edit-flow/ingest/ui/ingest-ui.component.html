@@ -5,7 +5,7 @@
       [tooltipText]="config.inputFilePath.description"
     ></info-label>
     <app-folder-browser
-      [startPath]="step.options.input_file_path"
+      [startPath]="step.options.inputFilePath"
       (folderChosen)="changeFolder($event)"
       showFiles="true"
     ></app-folder-browser>
@@ -18,7 +18,7 @@
     <mat-form-field layout-fill appearance="outline">
       <mat-select
         id="file_type_select"
-        [(ngModel)]="step.options.input_file_type"
+        [(ngModel)]="step.options.inputFileType"
         name="filetype"
         (selectionChange)="onChange()"
       >
@@ -31,18 +31,18 @@
     </mat-form-field>
 
     <info-label
-      [labelText]="config.outputDocTypes.label"
+      [labelText]="config.outputFileType.label"
       tooltipPlacement="right"
-      [tooltipText]="config.outputDocTypes.description"
+      [tooltipText]="config.outputFileType.description"
     ></info-label>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
-        [(ngModel)]="step.options.document_type"
+        [(ngModel)]="step.options.outputFileType"
         name="doctype"
         (selectionChange)="onChange()"
       >
         <mat-option
-          *ngFor="let option of config.outputDocTypes.options"
+          *ngFor="let option of config.outputFileType.options"
           [value]="option.value"
         >{{option.label}}
         </mat-option>
@@ -57,7 +57,7 @@
     <mat-form-field layout-fill appearance="outline">
       <input
         matInput
-        [(ngModel)]="this.step.options.output_permissions"
+        [(ngModel)]="this.step.options.outputPermissions"
         name="permissions"
         (blur)="onChange()"
         (keypress)="onKeyChange($event)"
