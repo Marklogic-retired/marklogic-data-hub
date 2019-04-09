@@ -16,11 +16,13 @@
  */
 package com.marklogic.hub.web.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.List;
 import java.util.Map;
 
 public class SearchQuery {
-    public String query;
+    public JsonNode query;
     public String sort;
     public boolean entitiesOnly;
     public long start;
