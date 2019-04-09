@@ -83,11 +83,13 @@ export class MappingComponent implements OnInit {
     if (this.step) {
       this.entityName = this.step.options['targetEntity'];
       this.mapping = this.step.options;
+      if (this.step.sourceDatabase === this.envService.settings.stagingDbName) {
+        this.sourceDbType = 'STAGING';
+      } else if (this.step.sourceDatabase === this.envService.settings.finalDbName) {
+        this.sourceDbType = 'FINAL';
+      }
       this.loadEntity();
     }
-    this.sourceDbType =
-      (this.step.sourceDatabase === this.envService.settings.stagingDbName)
-      ? 'STAGING' : 'FINAL';
   }
 
   loadEntity(): void {
@@ -189,6 +191,11 @@ export class MappingComponent implements OnInit {
   stepEdited(step): void {
     if (step.id === this.step.id) {
       this.entityName = step.options['targetEntity'];
+      if (step.sourceDatabase === this.envService.settings.stagingDbName) {
+        this.sourceDbType = 'STAGING';
+      } else if (step.sourceDatabase === this.envService.settings.finalDbName) {
+        this.sourceDbType = 'FINAL';
+      }
       this.loadEntity();
     }
   }
