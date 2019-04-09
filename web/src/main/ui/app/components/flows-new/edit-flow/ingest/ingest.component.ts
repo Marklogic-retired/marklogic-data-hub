@@ -1,17 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {IngestUiComponent} from "./ui/ingest-ui.component";
 
-const configDefaults = {
-  input_file_path: '.',
-  input_file_type: 'documents',
-  output_collections: '',
-  output_permissions: 'rest-reader,read,rest-writer,update',
-  document_type: 'json',
-  transform_module: '/data-hub/5/transforms/mlcp-flow-transform.sjs',
-  transform_namespace: 'http://marklogic.com/data-hub/mlcp-flow-transform',
-  transform_param: ''
-};
-
 @Component({
   selector: 'app-ingest',
   template: `
@@ -35,17 +24,15 @@ export class IngestComponent implements OnInit {
   private checkDefaults(): void {
     const targetEntity = this.step.options.targetEntity;
     // if no config or not valid config, initialize with default
-    // TODO: bette way to house-keep ingest options in the Step schema
+    // TODO: better way to house-keep ingest options in the Step schema
     if (!this.step.options || this.step.options.matchOptions) {
       this.step.options = {
-        input_file_path: '.',
-        input_file_type: 'json',
-        output_permissions: 'rest-reader,read,rest-writer,update',
-        document_type: 'json',
-        output_collections: `${targetEntity || ''}`,
-        transform_module: '/data-hub/5/transforms/mlcp-flow-transform.sjs',
-        transform_namespace: 'http://marklogic.com/data-hub/mlcp-flow-transform',
-        transform_param: `entity-name=${targetEntity || ''},flow-name=${this.flow.name}`,
+        inputFilePath: '.',
+        inputFileType: 'json',
+        outputCollections: `${targetEntity || ''}`,
+        outputPermissions: 'rest-reader,read,rest-writer,update',
+        documentType: 'json',
+        outputURIReplacement: '',
         targetEntity: targetEntity
       };
     }

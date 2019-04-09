@@ -1,17 +1,16 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {Step} from "../../../models/step.model";
 
 const settings = {
   inputFilePath: {
     label: 'Input File Path',
-    field: 'input_file_path',
+    field: 'inputFilePath',
     type: 'string',
     description: 'A regular expression describing the filesystem location(s) to use for input.',
     value: '.'
   },
   fileTypes: {
     label: 'Input File Type',
-    field: 'input_file_type',
+    field: 'inputFileType',
     type: 'type',
     description: 'The input file type. Accepted value: txt, json, xml, binary, csv, or all.\nDefault: json.',
     options: [
@@ -44,7 +43,7 @@ const settings = {
   },
   outputDocTypes: {
     label: 'Output File Type',
-    field: 'document_type',
+    field: 'documentType',
     type: 'type',
     description: 'The type of document to create when -input_file_type is documents, sequencefile or delimited_text. Accepted values: mixed (documents only), xml, json, text, binary. Default: mixed for documents, xml for sequencefile, and xml for delimited_text.',
     options: [
@@ -61,11 +60,16 @@ const settings = {
   },
   outputPermissions: {
     label: 'Output Permissions',
-    field: 'output_permissions',
-    type: 'comma-list',
+    field: 'outputPermissions',
     description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: -output_permissions role1,read,role2,update',
     value: 'rest-reader,read,rest-writer,update',
   },
+  outputURIReplacement: {
+    label: 'Output URI Replacement',
+    field: 'outputURIReplacement',
+    description: 'Specify a prefix to prepend to the default URI. Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.',
+    value: ''
+  }
 };
 
 @Component({
@@ -86,10 +90,10 @@ export class IngestUiComponent implements OnInit {
   folder: string;
 
   ngOnInit(): void {
-    this.folder = this.step.options.input_file_path;
+    this.folder = this.step.options.inputFilePath;
   }
 
-  changeFolder(folder){
+  changeFolder(folder) {
     this.folder = folder.relativePath;
     this.onChange();
   }
@@ -102,9 +106,8 @@ export class IngestUiComponent implements OnInit {
 
   onChange() {
     if (this.step.options) {
-      this.step.options.input_file_path = this.folder;
-      this.step.options.transform_param = `entity-name=${this.step.options.targetEntity},flow-name=${this.flow.name}`;
-      this.step.options.output_collections = `${this.step.options.targetEntity}`;
+      this.step.options.inputFilePath = this.folder;
+      this.step.options.outputCollections = `${this.step.options.targetEntity}`;
       this.saveStep.emit(this.step);
     }
   }
