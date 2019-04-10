@@ -1,296 +1,84 @@
 {
-  "role-name":"%%mlFlowDeveloperRole%%",
-  "description":"A role can deploy modules to a data hub instance.",
-  "role":[
-    "rest-admin",
-    "manage-user",
-    "tde-admin"
+  "role-name": "%%mlFlowDeveloperRole%%",
+  "description": "A role that can create/update and deploy flows, user modules and security configurations to a data hub instance.",
+  "role": [
+    "rest-admin","manage-admin", "tde-admin"
   ],
-  "privilege":[
+  "privilege": [
     {
-      "privilege-name":"xdmp:set-server-field",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-set-server-field",
+      "privilege-name": "xdmp:set-server-field",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-set-server-field",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:get-server-field",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-get-server-field",
       "kind":"execute"
     },
     {
-      "privilege-name":"xdmp:get-server-field",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-get-server-field",
+      "privilege-name": "manage",
+      "action": "http://marklogic.com/xdmp/privileges/manage",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval",
       "kind":"execute"
     },
     {
-      "privilege-name":"manage",
-      "action":"http://marklogic.com/xdmp/privileges/manage",
+      "privilege-name": "xdbc:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
       "kind":"execute"
     },
     {
-      "privilege-name":"xdmp:eval",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-eval",
-      "kind":"execute"
+      "privilege-name": "xdmp:document-load",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-document-load",
+      "kind": "execute"
     },
     {
-      "privilege-name":"xdmp:eval-in",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-eval-in",
-      "kind":"execute"
+      "privilege-name": "xdmp:get-server-field-names",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-get-server-field-names",
+      "kind": "execute"
     },
     {
-      "privilege-name":"xdmp:invoke",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-invoke",
-      "kind":"execute"
+      "privilege-name": "unprotected-collections",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
+      "kind": "execute"
     },
     {
-      "privilege-name":"xdmp:invoke-in",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-invoke-in",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdbc:invoke",
-      "action":"http://marklogic.com/xdmp/privileges/xdbc-invoke",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdbc:invoke-in",
-      "action":"http://marklogic.com/xdmp/privileges/xdbc-invoke-in",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdbc:eval",
-      "action":"http://marklogic.com/xdmp/privileges/xdbc-eval",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdbc:eval-in",
-      "action":"http://marklogic.com/xdmp/privileges/xdbc-eval-in",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:document-load",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-document-load",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:get-server-field-names",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-get-server-field-names",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"unprotected-collections",
-      "action":"http://marklogic.com/xdmp/privileges/unprotected-collections",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"any-uri",
-      "action":"http://marklogic.com/xdmp/privileges/any-uri",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"rest-reader",
-      "action":"http://marklogic.com/xdmp/privileges/rest-reader",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"rest-writer",
-      "action":"http://marklogic.com/xdmp/privileges/rest-writer",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"protect-path",
-      "action":"http://marklogic.com/xdmp/privileges/protect-path",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"add-query-rolesets",
-      "action":"http://marklogic.com/xdmp/privileges/add-query-rolesets",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"get-role-ids",
-      "action":"http://marklogic.com/xdmp/privileges/get-role-ids",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"complete-my-transactions",
-      "action":"http://marklogic.com/xdmp/privileges/complete-my-transactions",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"my-transaction-locks",
-      "action":"http://marklogic.com/xdmp/privileges/my-transaction-locks",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"profile-my-requests",
-      "action":"http://marklogic.com/xdmp/privileges/profile-my-requests",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"redaction-user",
-      "action":"http://marklogic.com/xdmp/privileges/redaction-user",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"sem:sparql",
-      "action":"http://marklogic.com/xdmp/privileges/sem-sparql",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"sem:sparql-update",
-      "action":"http://marklogic.com/xdmp/privileges/sem-sparql-update",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"set-my-transaction-name",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-set-transaction-name-my",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"temporal:document-protect",
-      "action":"http://marklogic.com/xdmp/privileges/temporal-document-protect",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"temporal:document-wipe",
-      "action":"http://marklogic.com/xdmp/privileges/temporal-document-wipe",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"temporal:statement-set-system-time",
-      "action":"http://marklogic.com/xdmp/privileges/temporal-statement-set-system-time",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"term-query",
-      "action":"http://marklogic.com/xdmp/privileges/term-query",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"unprotected-uri",
-      "action":"http://marklogic.com/xdmp/privileges/unprotected-uri",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:alert-user",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-alert-user",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:external-binary",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-external-binary",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:get-session-field",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-get-session-field",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:get-session-field-names",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-get-session-field-names",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:plan",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-plan",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:set-session-field",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-set-session-field",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:spawn",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-spawn",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:sql",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-sql",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:timestamp",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-timestamp",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:transaction-create",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-transaction-create",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:user-roles",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-user-roles",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:username",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-username",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:value",
-      "action":"http://marklogic.com/xdmp/privileges/xdmp-value",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:xslt-eval",
-      "action":"http://marklogic.com/xdmp/privileges/xslt-eval",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdmp:xslt-invoke",
-      "action":"http://marklogic.com/xdmp/privileges/xslt-invoke",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"create-domain",
-      "action":"http://marklogic.com/xdmp/privileges/create-domain",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"create-pipeline",
-      "action":"http://marklogic.com/xdmp/privileges/create-pipeline",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"create-trigger",
-      "action":"http://marklogic.com/xdmp/privileges/create-trigger",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"cts:write-dictionary",
-      "action":"http://marklogic.com/xdmp/privileges/cts-write-dictionary",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"get-appserver-logs",
-      "action":"http://marklogic.com/xdmp/privileges/logs/appserver",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"get-taskserver-logs",
-      "action":"http://marklogic.com/xdmp/privileges/logs/taskserver",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"status-builtins",
-      "action":"http://marklogic.com/xdmp/privileges/status",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"temporal:set-lsqt-automation",
-      "action":"http://marklogic.com/xdmp/privileges/temporal-set-lsqt-automation",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"temporal:set-use-lsqt",
-      "action":"http://marklogic.com/xdmp/privileges/temporal-set-use-lsqt",
-      "kind":"execute"
-    },
-    {
-      "privilege-name":"xdbc:insert",
-      "action":"http://marklogic.com/xdmp/privileges/xdbc-insert",
-      "kind":"execute"
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
     }
   ]
 }
