@@ -253,7 +253,7 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/security/roles/flow-developer-role.json", rolesDir.resolve("flow-developer-role.json"), true);
         writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
         writeResourceFile("hub-internal-config/security/roles/data-hub-admin-role.json", rolesDir.resolve("data-hub-admin-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/data-hub-admin-user.json", usersDir.resolve("data-hub-admin-user.json"), true);
+//        writeResourceFile("hub-internal-config/security/users/data-hub-admin-user.json", usersDir.resolve("data-hub-admin-user.json"), true);
 
 
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);

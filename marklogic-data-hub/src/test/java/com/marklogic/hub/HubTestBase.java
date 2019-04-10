@@ -178,7 +178,6 @@ public class HubTestBase {
     private  static boolean certAuth = false;
     public static SSLContext certContext;
     static SSLContext datahubadmincertContext;
-    static SSLContext flowDevelopercertContext;
     static SSLContext flowRunnercertContext;
     private  Properties properties = new Properties();
     public  GenericDocumentManager stagingDocMgr;
@@ -194,7 +193,6 @@ public class HubTestBase {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
             datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
-            //flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer-user.p12"));
             flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-flow-operator-user.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
@@ -417,55 +415,6 @@ public class HubTestBase {
         }
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-        wireClients();
-        return adminHubConfig;
-    }
-
-    protected HubConfigImpl getHubFlowDeveloperConfig() {
-        adminHubConfig.setMlUsername(flowDeveloperUser);
-        adminHubConfig.setMlPassword(flowDeveloperPassword);
-        appConfig = adminHubConfig.getAppConfig();
-        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
-        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
-        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
-        appConfig.setAppServicesUsername(flowDeveloperUser);
-        appConfig.setAppServicesPassword(flowDeveloperPassword);
-        manageConfig.setUsername(flowDeveloperUser);
-        manageConfig.setPassword(flowDeveloperPassword);
-        if(isCertAuth()) {
-            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
-            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
-            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
-            adminHubConfig.setSslContext(DatabaseKind.JOB,flowDevelopercertContext);
-            manageConfig.setSslContext(flowDevelopercertContext);
-            adminConfig.setSslContext(flowDevelopercertContext);
-
-            appConfig.setAppServicesCertPassword("abcd");
-            appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
-            appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
-            appConfig.setAppServicesSecurityContextType(SecurityContextType.CERTIFICATE);
-            appConfig.setAppServicesPassword(null);
-
-            adminHubConfig.setTrustManager(DatabaseKind.STAGING, (X509TrustManager) tmf.getTrustManagers()[0]);
-            adminHubConfig.setCertPass(DatabaseKind.STAGING, "abcd");
-
-            adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
-            adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
-
-            //manageConfig.setConfigureSimpleSsl(false);
-
-            manageConfig.setSecuritySslContext(certContext);
-            manageConfig.setPassword(null);
-            manageConfig.setSecurityPassword(null);
-
-            //adminConfig.setConfigureSimpleSsl(false);
-            adminConfig.setPassword(null);
-        }
-        adminHubConfig.setAppConfig(appConfig);
-        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
-        manageClient.setManageConfig(manageConfig);
-        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
-        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
         wireClients();
         return adminHubConfig;
     }
