@@ -92,17 +92,21 @@ export class NewStepDialogComponent implements OnInit {
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.type = this.newStepForm.value.type;
     this.newStep.description = this.newStepForm.value.description;
-    this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
-    this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+    if (this.selectedSource === 'collection') {
+      this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+      this.newStep.options.sourceQuery = '';
+    }
+    if (this.selectedSource === 'query') {
+      this.newStep.options.sourceCollection = '';
+      this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+    }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.targetDatabase = this.newStepForm.value.targetDatabase;
-
+    // TODO more complete validation
     if (this.newStep.name !== '' && this.newStep.type !== '') {
       this.dialogRef.close(this.newStep);
     }
   }
-  // targetEntityChange(entity) {
-  //   this.newStep.options['targetEntity'] = entity;
-  // }
+
 }

@@ -105,39 +105,39 @@ export class MappingComponent implements OnInit {
   loadSampleDoc() {
     let self = this,
         activeFacets = { Collection: { values: [] } },
-        query = null;
+        query = null,
+        searchResult;
 
     if (this.mapping.sourceCollection) {
       activeFacets.Collection.values = [this.mapping.sourceCollection];
-    }
-    // TODO update searchService to handle cts.query
-    // Currently does not accept cts.query or structured query
-    else if (this.mapping.sourceQuery) {
+      searchResult = this.searchService.getResults(this.sourceDbType, false, query, activeFacets, 1, 1);
+    } else if (this.mapping.sourceQuery) {
       query = this.mapping.sourceQuery;
+      searchResult = this.searchService.getResultsByQuery(this.sourceDbType, query, 1, 1)
     }
 
-    this.searchService.getResults(this.sourceDbType, false, query, activeFacets, 1, 1)
-      .subscribe(response => {
-          self.targetEntity.hasDocs = (response.results.length > 0);
-          // Can only load sample doc if docs exist
-          if (self.targetEntity.hasDocs) {
-            if (!this.mapping.sourceURI) {
-              this.sampleDocURI = response.results[0].uri;
-            } else {
-              this.sampleDocURI = this.mapping.sourceURI;
-            }
-            this.editURIVal = this.sampleDocURI;
-            this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
-
-            self.conns = {};
-            _.forEach(this.mapping.properties, function(srcObj, entityPropName) {
-              self.conns[entityPropName] = srcObj.sourcedFrom;
-            });
-            self.connsOrig = _.clone(self.conns);
+    searchResult.subscribe(response => {
+        self.targetEntity.hasDocs = (response.results.length > 0);
+        // Can only load sample doc if docs exist
+        if (self.targetEntity.hasDocs) {
+          if (!this.mapping.sourceURI) {
+            this.sampleDocURI = response.results[0].uri;
+          } else {
+            this.sampleDocURI = this.mapping.sourceURI;
           }
-        },
-        () => {},
-        () => {});
+          this.editURIVal = this.sampleDocURI;
+          this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
+
+          self.conns = {};
+          _.forEach(this.mapping.properties, function(srcObj, entityPropName) {
+            self.conns[entityPropName] = srcObj.sourcedFrom;
+          });
+          self.connsOrig = _.clone(self.conns);
+        }
+      },
+      () => {},
+      () => {});
+
   }
 
   /**
