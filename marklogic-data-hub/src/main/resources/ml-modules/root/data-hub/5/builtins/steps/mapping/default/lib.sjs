@@ -52,10 +52,10 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let valueSource = null;
     if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
       let connector = "";
-      if(sourceContext[sourceContext.length-1] !== '/' &&  mappingProperties[property].startsWith('/') && mappingProperties[property].startsWith('[')){
+      if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].startsWith('/') && !mappingProperties[property].startsWith('[')){
         connector += '/';
       }
-      if(mappingProperties[property].sourcedFrom.indexOf(':') > -1 ) {
+      if(mappingProperties[property].sourcedFrom.indexOf(':') === -1 ) {
         connector += '*:';
       }
       valueSource = content.xpath(sourceContext + connector + mappingProperties[property].sourcedFrom);
