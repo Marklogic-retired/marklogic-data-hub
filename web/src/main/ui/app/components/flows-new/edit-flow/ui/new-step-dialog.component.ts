@@ -10,6 +10,7 @@ export interface DialogData {
   entities: any;
   collections: any;
   step: any;
+  projectDirectory: string;
 }
 
 @Component({
@@ -56,6 +57,7 @@ export class NewStepDialogComponent implements OnInit {
         targetDatabase: this.data.databases.staging
       });
       this.newStep.stepOption = 'ingest';
+      this.newStep.options.projectDirectory = this.data.projectDirectory;
     }
     if (type === 'mapping') {
       this.newStepForm.patchValue({

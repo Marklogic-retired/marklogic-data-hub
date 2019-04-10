@@ -14,6 +14,7 @@ export class StepComponent {
   @Input() databases: any;
   @Input() collections: any;
   @Input() entities: any;
+  @Input() projectDirectory: string;
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
@@ -34,7 +35,8 @@ export class StepComponent {
         databases: this.databases,
         collections: this.collections,
         entities: this.entities,
-        step: this.step
+        step: this.step,
+        projectDirectory: this.projectDirectory
       }
     });
 

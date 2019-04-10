@@ -20,6 +20,7 @@ export class EditFlowUiComponent {
   @Input() databases: any;
   @Input() entities: any;
   @Input() collections: any;
+  @Input() projectDirectory: string;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -41,7 +42,8 @@ export class EditFlowUiComponent {
         databases: this.databases,
         entities: this.entities,
         collections: this.collections,
-        step: null
+        step: null,
+        projectDirectory: this.projectDirectory
       }
     });
 

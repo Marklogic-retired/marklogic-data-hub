@@ -17,6 +17,7 @@ import { Entity } from '../../../models/entity.model';
     [databases]="databases"
     [collections]="collections"
     [entities]="entities"
+    [projectDirectory]="projectDirectory"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -40,6 +41,7 @@ export class EditFlowComponent implements OnInit {
   collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
   running: any;
+  projectDirectory: string;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -81,6 +83,7 @@ export class EditFlowComponent implements OnInit {
       this.databases.job = resp.mlSettings.jobDbName;
       this.databases.staging = resp.mlSettings.stagingDbName;
       this.databases.modules = resp.mlSettings.modulesDbName;
+      this.projectDirectory = resp.mlSettings.projectDir;
       // this.getCollections(this.databases.final);
     });
   }
