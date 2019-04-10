@@ -1,5 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
-import {IngestUiComponent} from "./ui/ingest-ui.component";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {ProjectService} from "../../../../services/projects";
+import {tap} from "rxjs/operators";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-ingest',
@@ -17,8 +19,26 @@ export class IngestComponent implements OnInit {
   @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
+  projectPath: string;
+
+  constructor(
+    private projects: ProjectService
+  ) {
+  }
+
   ngOnInit(): void {
-    this.checkDefaults();
+    this.projects.getProjects().subscribe(
+      ({projects, lastProject}) => {
+        console.log('Projects end point: ', projects, lastProject);
+        const project = _.find(projects, pr => pr.id === lastProject);
+        if (project) {
+          this.projectPath = project.path;
+        }
+        this.checkDefaults();
+      },
+      ()=>{
+        this.checkDefaults();
+      });
   }
 
   private checkDefaults(): void {
@@ -27,7 +47,7 @@ export class IngestComponent implements OnInit {
     // TODO: better way to house-keep ingest options in the Step schema
     if (!this.step.options || this.step.options.matchOptions) {
       this.step.options = {
-        inputFilePath: '.',
+        inputFilePath: this.projectPath || '.',
         inputFileType: 'json',
         outputCollections: `${targetEntity || ''}`,
         outputPermissions: 'rest-reader,read,rest-writer,update',

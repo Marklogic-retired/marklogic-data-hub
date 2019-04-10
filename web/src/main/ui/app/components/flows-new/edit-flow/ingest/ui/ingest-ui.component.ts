@@ -5,7 +5,7 @@ const settings = {
     label: 'Input File Path',
     field: 'inputFilePath',
     type: 'string',
-    description: 'A regular expression describing the filesystem location(s) to use for input.',
+    description: 'Fhe filesystem location(s) to use for input. Default is current project path relative to the server location',
     value: '.'
   },
   fileTypes: {
@@ -45,7 +45,7 @@ const settings = {
     label: 'Output File Type',
     field: 'outputFileType',
     type: 'type',
-    description: 'The type of document to create when -input_file_type is documents, sequencefile or delimited_text. Accepted values: mixed (documents only), xml, json, text, binary. Default: mixed for documents, xml for sequencefile, and xml for delimited_text.',
+    description: 'The type of document to create. Accepted values: xml, json. Default: json.',
     options: [
       {
         label: 'JSON',
@@ -61,7 +61,7 @@ const settings = {
   outputPermissions: {
     label: 'Output Permissions',
     field: 'outputPermissions',
-    description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: -output_permissions role1,read,role2,update',
+    description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: role1,read,role2,update',
     value: 'rest-reader,read,rest-writer,update',
   },
   outputURIReplacement: {
