@@ -32,6 +32,7 @@ img {
 
 a.active {
   position: relative;
+  text-decoration: underline;
   &::after {
     content: ' ';
     border-bottom: 2px solid rgba(255,255,255,0.65);
@@ -40,6 +41,10 @@ a.active {
     right: 20%;
     bottom: 25%;
   }
+}
+
+a.mdl-navigation__link {
+  cursor: pointer;
 }
 
 mdl-progress.mdl-progress {
