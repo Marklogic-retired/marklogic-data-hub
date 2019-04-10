@@ -28,7 +28,7 @@
     <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field *ngIf="newStepForm.value.type != 'ingest'">
     <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity">
       <mat-option *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
