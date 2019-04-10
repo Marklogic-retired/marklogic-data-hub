@@ -146,44 +146,6 @@ public class EndToEndFlowTests extends HubTestBase {
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
 
         scaffolding.createEntity(ENTITY);
-
-        // create some flows in a format that pre-dates the 2.0 flow format with properties files
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            createLegacyFlow("legacy", codeFormat, dataFormat, flowType, useEs);
-        });
-
-        List<String> legacyFlows = flowManager.getLegacyFlows();
-        assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(8, flowManager.updateLegacyFlows("2.0.0").size()); // don't change this value
-        assertEquals(0, flowManager.getLegacyFlows().size());
-
-        // flows from DHF 1.x
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            createLegacyFlow("1x-legacy", codeFormat, dataFormat, flowType, useEs);
-        });
-
-        // verify that all of the legacy flows get detected
-        // update all of the legacy flows to tne new format
-        // verify that the legacy flows were updated. there should be no more legacy flows (0)
-        legacyFlows = flowManager.getLegacyFlows();
-        assertEquals(8, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(8, flowManager.updateLegacyFlows("1.1.5").size());
-        assertEquals(0, flowManager.getLegacyFlows().size());
-
-
-        // create some flows in a format that pre-dates the 3.0 sjs enhancement
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            create2xFlow("2x-before-3x", codeFormat, dataFormat, flowType, useEs);
-        });
-
-        // verify that all of the legacy flows get detected
-        // update all of the legacy flows to tne new format
-        // verify that the legacy flows were updated. there should be no more legacy flows (0)
-        legacyFlows = flowManager.getLegacyFlows();
-        assertEquals(4, legacyFlows.size(), String.join("\n", legacyFlows));
-        assertEquals(4, flowManager.updateLegacyFlows("2.0.0").size());
-        assertEquals(0, flowManager.getLegacyFlows().size());
-        installUserModules(getFlowDeveloperConfig(), true);
     }
 
     @AfterEach
@@ -194,61 +156,6 @@ public class EndToEndFlowTests extends HubTestBase {
     private JsonNode validateUserModules() {
         EntitiesValidator ev = EntitiesValidator.create(getFlowDeveloperConfig().newStagingClient());
         return ev.validateAll();
-    }
-
-    @TestFactory
-    @Disabled
-    public List<DynamicTest> generateLegacyTests() {
-        List<DynamicTest> tests = new ArrayList<>();
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            // we don't need to worry about legacy tests and ES
-            // so skip creating them if the flag is on
-            if (useEs) {
-                return;
-            }
-            String prefix = "legacy";
-            String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
-            if (flowType.equals(FlowType.INPUT)) {
-//
-//                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-//                        Map<String, Object> options = new HashMap<>();
-//                        FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-//                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", stagingClient, codeFormat, dataFormat, useEs, options, finalCounts);
-//                    }));
-//
-//                    tests.add(DynamicTest.dynamicTest(flowName + " MLCP", () -> {
-//                        Map<String, Object> options = new HashMap<>();
-//                        FinalCounts finalCounts = new FinalCounts(0, 1, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
-//                        testInputFlowViaMlcp(prefix, useEs ? "-es" : "", finalClient, codeFormat, dataFormat, useEs, options, finalCounts);
-//                    }));
-//                }
-//                tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
-//                    Map<String, Object> options = new HashMap<>();
-//                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-//                    testInputFlowViaREST(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
-//                }));
-//                tests.add(DynamicTest.dynamicTest(flowName + " DMSDK", () -> {
-//                    Map<String, Object> options = new HashMap<>();
-//                    FinalCounts finalCounts = new FinalCounts(1, 0, 1, 0, 0, 0, 0, 0, 0, 0, "FINISHED");
-//                    testInputFlowViaDMSDK(prefix, useEs ? "-es" : "", codeFormat, dataFormat, useEs, true, options, finalCounts);
-//                }));
-            } else {
-                Map<String, Object> options = new HashMap<>();
-                tests.add(DynamicTest.dynamicTest(flowName + " wait", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE * 2, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " wait Reverse Dbs", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE * 2, TEST_SIZE, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, finalFlowRunnerClient, HubConfig.DEFAULT_STAGING_NAME, finalCounts, true);
-                }));
-                tests.add(DynamicTest.dynamicTest(flowName + " no-wait", () -> {
-                    FinalCounts finalCounts = new FinalCounts(TEST_SIZE, TEST_SIZE + 1, TEST_SIZE + 1, 1, TEST_SIZE, 0, TEST_SIZE, 0, TEST_SIZE / BATCH_SIZE, 0, "FINISHED");
-                    testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, flowRunnerClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, false);
-                }));
-            }
-        });
-        return tests;
     }
 
 

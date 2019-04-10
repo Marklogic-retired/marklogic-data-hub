@@ -32,10 +32,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -117,11 +114,17 @@ public class HubProjectImpl implements HubProject {
         return path;
     }
 
-    @Override public Path getHubEntitiesDir() {
+    @Override public Path getHubEntitiesDir() { return this.projectDir.resolve("entities"); }
+
+    @Override public Path getHubMappingsDir() {
+        return this.projectDir.resolve("mappings");
+    }
+
+    private Path getLegacyHubEntitiesDir() {
         return this.pluginsDir.resolve("entities");
     }
 
-    @Override public Path getHubMappingsDir() {
+    private Path getLegacyHubMappingsDir() {
         return this.pluginsDir.resolve("mappings");
     }
 
@@ -393,38 +396,28 @@ public class HubProjectImpl implements HubProject {
 
     @Override
     public void upgradeProject() throws IOException {
-
-        //let's check if we have legacy config directories, then we copy them to their new places, and rename the previous ones as .old
-        Path entityConfigDir = this.projectDir.resolve("entity-config");
-        Path hubInternalConfigDir = this.projectDir.resolve("hub-internal-config");
-        Path userConfigDir = this.projectDir.resolve("user-config");
-
-        //and now what we want to name the old directories so they're not copied over again in another update
-        Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
-        Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
-        Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
-        
-        //obsolete database/server/role names in hub-internal-config from 3.0
-        Set<String> obsoleteFiles = Stream.of("trace-database.json", "triggers-database.json", 
-                "schemas-database.json", "trace-server.json", "flow-operator-role.json").collect(Collectors.toSet());
-                
-        //if the entity-config directory exists, we'll copy it to the src/main/entity-config
-        upgradeProjectDir(entityConfigDir, getEntityConfigDir(), oldEntityConfigDir);
-        
-        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles );
-        
-        upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
-       
-        /*If the upgrade path is 3.0 -> 4.0.x -> 4.1.0 or 4.0.0 -> 4.1.0, the obsolete files have to be removed, 
-         * else, they will cause deployment to fail
-         */
-        deleteObsoleteDatabaseFilesFromHubInternalConfig();
-        deleteObsoleteServerFilesFromHubInternalConfig();
-        deleteObsoleteDatabaseFilesFromMlConfig();
-
-        //remove hub-internal-config/schemas dir
-        deleteObsoleteDirsFromHubInternalConfig();
-
+        Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
+        Path oldMappingsDir = this.getLegacyHubMappingsDir();
+        Path newEntitiesDirPath = this.getHubEntitiesDir();
+        File newEntitiesDirFile = newEntitiesDirPath.toFile();
+        if (!newEntitiesDirFile.exists()) {
+            newEntitiesDirFile.mkdir();
+        }
+        Path newMappingsDirPath = this.getHubMappingsDir();
+        File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles();
+        if (oldEntityDirectories != null) {
+            for (File legacyEntityDir : oldEntityDirectories) {
+                if (legacyEntityDir.isDirectory()) {
+                    File[] entityFiles = legacyEntityDir.listFiles((File file, String name) -> name.endsWith(".entity.json"));
+                    if (entityFiles != null) {
+                        for (File entityFile : entityFiles) {
+                            Files.move(entityFile.toPath(), newEntitiesDirPath.resolve(entityFile.getName()));
+                        }
+                    }
+                }
+            }
+        }
+        Files.move(oldMappingsDir, newMappingsDirPath);
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {

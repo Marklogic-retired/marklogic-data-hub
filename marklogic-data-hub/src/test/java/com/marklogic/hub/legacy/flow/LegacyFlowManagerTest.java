@@ -18,15 +18,14 @@ package com.marklogic.hub.legacy.flow;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.legacy.LegacyFlowManager;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.collector.LegacyCollector;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -466,36 +465,5 @@ public class LegacyFlowManagerTest extends HubTestBase {
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
         runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-ns-xml-xqy/\")");
-    }
-
-    @Test
-    public void testHasLegacyflows() throws IOException, InterruptedException, ParserConfigurationException, SAXException, JSONException {
-
-        scaffolding.createEntity("new-entity");
-        scaffolding.createFlow("new-entity", "new-flow", FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
-        assertEquals(0, fm.getLegacyFlows().size());
-
-        Path projectPath = Paths.get(PROJECT_PATH);
-        allCombos((codeFormat, dataFormat, flowType, useEs) -> {
-            Path dir = projectPath.resolve("plugins/entities/my-fun-test/" + flowType.toString());
-            String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
-            try {
-                FileUtils.copyDirectory(getResourceFile("scaffolding-test/" + flowName), dir.resolve(flowName).toFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        List<String> legacyFlows = fm.getLegacyFlows();
-        assertEquals(8, legacyFlows.size());
-        legacyFlows.sort(String::compareToIgnoreCase);
-        assertEquals("my-fun-test => legacy-sjs-json-harmonize-flow", legacyFlows.get(0));
-        assertEquals("my-fun-test => legacy-sjs-json-input-flow", legacyFlows.get(1));
-        assertEquals("my-fun-test => legacy-sjs-xml-harmonize-flow", legacyFlows.get(2));
-        assertEquals("my-fun-test => legacy-sjs-xml-input-flow", legacyFlows.get(3));
-        assertEquals("my-fun-test => legacy-xqy-json-harmonize-flow", legacyFlows.get(4));
-        assertEquals("my-fun-test => legacy-xqy-json-input-flow", legacyFlows.get(5));
-        assertEquals("my-fun-test => legacy-xqy-xml-harmonize-flow", legacyFlows.get(6));
-        assertEquals("my-fun-test => legacy-xqy-xml-input-flow", legacyFlows.get(7));
     }
 }

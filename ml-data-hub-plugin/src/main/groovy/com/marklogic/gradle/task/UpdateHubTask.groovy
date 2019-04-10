@@ -24,15 +24,6 @@ class UpdateHubTask extends HubTask {
 
     @TaskAction
     void updateHub() {
-        if (getLegacyFlowManager().getLegacyFlows().size() > 0) {
-            def updatedFlows = new ArrayList<String>()
-            getDataHub().upgradeHub(updatedFlows)
-
-            println "Legacy Flows Updated:\n\t" + String.join("\n\t", updatedFlows)
-        }
-        else {
-            getDataHub().upgradeHub()
-            println "No Legacy Flows to Update"
-        }
+        getDataHub().upgradeHub()
     }
 }

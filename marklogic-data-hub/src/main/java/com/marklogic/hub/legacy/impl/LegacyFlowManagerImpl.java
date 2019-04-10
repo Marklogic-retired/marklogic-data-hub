@@ -21,14 +21,13 @@ import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.legacy.flow.impl.LegacyFlowRunnerImpl;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -38,7 +37,6 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -232,60 +230,6 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         DOMHandle handle = new DOMHandle();
         Document parent = res.getContent(handle).get();
         return LegacyFlowManager.flowFromXml(parent.getDocumentElement());
-    }
-
-    @Override public List<String> getLegacyFlows() {
-        List<String> oldFlows = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
-
-        File[] entityDirs = entitiesDir.toFile().listFiles(pathname -> pathname.isDirectory());
-        if (entityDirs != null) {
-            for (File entityDir : entityDirs) {
-                Path inputDir = entityDir.toPath().resolve("input");
-                Path harmonizeDir = entityDir.toPath().resolve("harmonize");
-
-                File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                addLegacyFlowToList(oldFlows, entityDir, inputFlows);
-
-                File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-                addLegacyFlowToList(oldFlows, entityDir, harmonizeFlows);
-            }
-        }
-
-        return oldFlows;
-    }
-
-    private void addLegacyFlowToList(List<String> oldFlows, File entityDir, File[] flows) {
-        if (flows != null) {
-            for (File flow : flows) {
-                File[] mainFiles = flow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-                File[] flowFiles = flow.listFiles((dir, name) -> name.matches(flow.getName() + "\\.xml"));
-                if (mainFiles.length < 1 && flowFiles.length == 1) {
-                    oldFlows.add(entityDir.getName() + " => " + flow.getName());
-                } else if (mainFiles.length == 1 && mainFiles[0].getName().contains(".sjs")) {
-                    try {
-                        String mainFile = FileUtils.readFileToString(mainFiles[0]);
-                        if (mainFile.contains("dhf.xqy")) {
-                            oldFlows.add(entityDir.getName() + " => " + flow.getName());
-                        }
-                    }
-                    catch(IOException e) {}
-                }
-            }
-        }
-    }
-
-    @Override public List<String> updateLegacyFlows(String fromVersion) {
-
-        List<String> updatedFlows = new ArrayList<>();
-        File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());
-        if (entityDirs != null) {
-            for (File entityDir : entityDirs) {
-                updatedFlows.addAll(scaffolding.updateLegacyFlows(fromVersion, entityDir.getName()));
-            }
-        }
-
-        return updatedFlows;
     }
 
     @Override public LegacyFlowRunner newFlowRunner() {

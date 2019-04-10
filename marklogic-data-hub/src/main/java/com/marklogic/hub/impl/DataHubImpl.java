@@ -69,8 +69,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -505,7 +503,7 @@ public class DataHubImpl implements DataHub {
             roleDeployer.deploy(roleConfig);
         } catch (HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
-                logger.warn("No manage client for security installs.  Assuming DHS provisioning already threre");
+                logger.warn("No manage client for security installs.  Assuming DHS provisioning already there");
             } else {
                 throw new DataHubConfigurationException(e);
             }
@@ -837,7 +835,7 @@ public class DataHubImpl implements DataHub {
     }
 
     //DataHubUpgrader stuff
-    public static String MIN_UPGRADE_VERSION = "2.0.0";
+    public static String MIN_UPGRADE_VERSION = "4.3.0";
 
     @Override
     public boolean upgradeHub() throws CantUpgradeException {
@@ -865,17 +863,7 @@ public class DataHubImpl implements DataHub {
                 // The version provided in "mlDHFVersion" property in gradle.properties.
 
                 File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
-                
-                // Back up the hub-internal-config and user-config directories in versions > 4.0
-                FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
-                FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
-                  
-                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin. 
-                System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
-                System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
-                System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
-                        + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
-                        + HubProject.USER_CONFIG_DIR);
+
                 // replace the hub version in build.gradle
                 String text = FileUtils.readFileToString(buildGradle);
                 String version = hubConfig.getJarVersion();
@@ -887,34 +875,9 @@ public class DataHubImpl implements DataHub {
             
             hubConfig.initHubProject();
 
-            /*  DHFPROD- 1694
-                Copy contents from hub-internal-config-version/schemas to ml-config/databases/<staging_schemas_db_name>/schemas
-                This has to be done in DataHubImpl as we require HubConfigImpl for getting the staging schemas db name
-             */
-            if(alreadyInitialized) {
-                Path sourceSchemasDir = project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR + "-" + gradleVersion).resolve("schemas");
-                Path destSchemasDir = project.getUserDatabaseDir().resolve(hubConfig.getStagingSchemasDbName()).resolve("schemas");
-                if (sourceSchemasDir.toFile().exists()) {
-                    Files.walk(Paths.get(sourceSchemasDir.toUri()))
-                        .filter(f -> !Files.isDirectory(f))
-                        .forEach(f -> {
-                            try {
-                                FileUtils.copyInputStreamToFile(Files.newInputStream(f), destSchemasDir.resolve(sourceSchemasDir.relativize(f)).toFile());
-                            } catch (IOException e) {
-                                logger.error("Unable to copy file " + f.getFileName());
-                                throw new RuntimeException(e);
-                            }
-                        });
-
-                }
-            }
-            
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
-            List<String> flows = legacyFlowManager.updateLegacyFlows(currentVersion);
-            if (updatedFlows != null) {
-                updatedFlows.addAll(flows);
-            }
+
             if (isHubInstalled) {
                 runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
                 this.hubInstallModules();
