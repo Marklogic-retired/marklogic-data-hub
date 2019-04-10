@@ -35,7 +35,7 @@ export class MappingComponent implements OnInit {
   public targetEntity: Entity;
 
   // Source Document
-  private sourceDbType: string;
+  private sourceDbType: string = 'STAGING';
   private entitiesOnly: boolean = false;
   private searchText: string = null;
   private activeFacets: any = {};
