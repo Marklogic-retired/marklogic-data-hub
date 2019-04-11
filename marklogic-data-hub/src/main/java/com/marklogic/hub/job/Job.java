@@ -15,7 +15,7 @@
  */
 package com.marklogic.hub.job;
 
-import com.marklogic.client.pojo.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.hub.flow.Flow;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class Job {
     private String jobId;
     private String flowName;
 
-    private List<String> jobOutput;
+    private List<String> stepOutput;
     private Map<String, Object> fullOutput;
     private String status;
 
@@ -54,8 +54,8 @@ public class Job {
         return job;
     }
 
-    public Job withJobOutput(List<String> jobOutput) {
-        this.jobOutput = jobOutput;
+    public Job withStepOutput(List<String> stepOutput) {
+        this.stepOutput = stepOutput;
         return this;
     }
 
@@ -64,11 +64,11 @@ public class Job {
         return this;
     }
 
-    public Job withJobOutput(String jobOutput) {
-        if (this.jobOutput == null) {
-            this.jobOutput = new ArrayList<>();
+    public Job withStepOutput(String jobOutput) {
+        if (this.stepOutput == null) {
+            this.stepOutput = new ArrayList<>();
         }
-        this.jobOutput.add(jobOutput);
+        this.stepOutput.add(jobOutput);
         return this;
     }
 
@@ -94,7 +94,7 @@ public class Job {
         return this;
     }
 
-    @Id
+    @JsonIgnore
     public String getJobId() {
         return jobId;
     }
@@ -103,17 +103,12 @@ public class Job {
         return fullOutput;
     }
 
-    public String getFlowName() {
-        return flowName;
-    }
-
-
     public String getStatus() {
         return status;
     }
 
-    public List<String> getJobOutput() {
-        return jobOutput;
+    public List<String> getStepOutput() {
+        return stepOutput;
     }
 
     public long getSuccessfulEvents() {
