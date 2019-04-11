@@ -58,5 +58,5 @@
 </div>
 <div mat-dialog-actions class="bottom">
   <button id="step-cancel-btn" mat-raised-button color="primary" (click)="onNoClick()">CANCEL</button>
-  <button id="step-save-btn" mat-raised-button color="primary" (click)="onSave()">SAVE</button>
+  <button id="step-save-btn" [disabled]="!newStepForm.valid" mat-raised-button color="primary" (click)="onSave()">SAVE</button>
 </div>
