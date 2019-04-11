@@ -101,15 +101,15 @@ public class MappingE2E extends HubTestBase {
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
-            scaffolding.createLegacyEntity(ENTITY);
-            Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+            scaffolding.createEntity(ENTITY);
+            Path entityDir = projectDir.resolve("entities");
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getFlowDeveloperConfig(), true);
             if (modelProperties == null) {
     	        ObjectMapper objectMapper = new ObjectMapper();
     	     	JsonNode rootNode = null;
     			try {
-    				rootNode = objectMapper.readTree(getFlowDeveloperConfig().getHubEntitiesDir().resolve(ENTITY).resolve(ENTITY+".entity.json").toFile());
+    				rootNode = objectMapper.readTree(getFlowDeveloperConfig().getHubEntitiesDir().resolve(ENTITY+".entity.json").toFile());
     			} catch (JsonProcessingException e) {
     			      throw new RuntimeException(e);
     			} catch (IOException e) {
@@ -210,7 +210,7 @@ public class MappingE2E extends HubTestBase {
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, String mapping, int  version, CreateFlowListener listener) {
     	if(useEs && flowType.equals(FlowType.HARMONIZE)) {
     		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
-    		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+    		Path entityDir = projectDir.resolve("entities").resolve(ENTITY);
     		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
 	        scaffolding.createLegacyFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);

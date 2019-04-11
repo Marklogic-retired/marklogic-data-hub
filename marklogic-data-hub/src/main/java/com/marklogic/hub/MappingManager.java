@@ -16,7 +16,6 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
 
 import java.io.IOException;
