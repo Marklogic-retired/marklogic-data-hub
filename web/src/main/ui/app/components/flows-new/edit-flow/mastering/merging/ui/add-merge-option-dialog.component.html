@@ -59,7 +59,7 @@
   <mat-form-field *ngIf="selectedType === 'strategy'"  layout-fill>
     <mat-select id="merge-option-strategy" placeholder="Strategy Name" formControlName="strategy" [(value)]="strategy">
       <div *ngFor="let strName of strategies">
-        <mat-option *ngIf="strName" [class]="'type-option merge-option-strategy-' + strName" [value]="strName">{{strName}}</mat-option>
+        <mat-option *ngIf="strName" [id]="'merge-option-strategy-' + strName" [value]="strName">{{strName}}</mat-option>
       </div>
     </mat-select>
   </mat-form-field>
