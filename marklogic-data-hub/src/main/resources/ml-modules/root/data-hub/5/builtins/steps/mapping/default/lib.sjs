@@ -50,8 +50,8 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let prop = properties[property];
     let dataType = prop["datatype"];
     let valueSource = null;
+    let connector = "";
     if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
-      let connector = "";
       if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].startsWith('/') && !mappingProperties[property].startsWith('[')){
         connector += '/';
       }
@@ -60,6 +60,12 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       }
       valueSource = content.xpath(sourceContext + connector + mappingProperties[property].sourcedFrom);
     } else{
+      if(sourceContext[sourceContext.length-1] !== '/' &&  !property.startsWith('/') && !property.startsWith('[')){
+        connector += '/';
+      }
+      if(property.indexOf(':') === -1 ) {
+        connector += '*:';
+      }
       valueSource = content.xpath(sourceContext + property);
     }
     if (dataType !== 'array') {
