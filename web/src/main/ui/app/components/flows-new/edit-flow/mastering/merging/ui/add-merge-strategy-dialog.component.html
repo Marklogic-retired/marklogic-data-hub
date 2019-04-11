@@ -26,7 +26,7 @@
 
   <div id="merge-strategy-source-weights-container">
     <mat-label>Source Weights</mat-label>
-    <button class="add-merge-strategy-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
+    <button id="add-merge-strategy-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
       <mat-icon>add_circle</mat-icon>
     </button>
     <div
@@ -43,7 +43,7 @@
           <mat-label>Weight</mat-label>
           <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
         </mat-form-field>
-        <button [class]="'remove-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
+        <button [id]="'remove-merge-option-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
           <mat-icon>remove_circle</mat-icon>
         </button>
       </div>
