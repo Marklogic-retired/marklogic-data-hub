@@ -529,11 +529,11 @@ public class WriteStepRunner implements StepRunner {
                         "Illegal role name: " + roleName);
                 }
                 String perm = perms[i].trim();
-                if (!perm.equalsIgnoreCase(DocumentMetadataHandle.Capability.READ.toString()) &&
-                    !perm.equalsIgnoreCase(DocumentMetadataHandle.Capability.EXECUTE.toString()) &&
-                    !perm.equalsIgnoreCase(DocumentMetadataHandle.Capability.INSERT.toString()) &&
-                    !perm.equalsIgnoreCase(DocumentMetadataHandle.Capability.UPDATE.toString()) &&
-                    !perm.equalsIgnoreCase(DocumentMetadataHandle.Capability.NODE_UPDATE.toString())) {
+                if (!DocumentMetadataHandle.Capability.READ.toString().equalsIgnoreCase(perm) &&
+                    !DocumentMetadataHandle.Capability.EXECUTE.toString().equalsIgnoreCase(perm) &&
+                    !DocumentMetadataHandle.Capability.INSERT.toString().equalsIgnoreCase(perm) &&
+                    !DocumentMetadataHandle.Capability.UPDATE.toString().equalsIgnoreCase(perm) &&
+                    !DocumentMetadataHandle.Capability.NODE_UPDATE.toString().equalsIgnoreCase(perm)) {
                     throw new IllegalArgumentException("Illegal capability: " + perm);
                 }
                 metadataHandle.withPermission(roleName, DocumentMetadataHandle.Capability.getValueOf(perm));

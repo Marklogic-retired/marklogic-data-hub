@@ -37,7 +37,7 @@ public class FileCollector {
                 dirPath = file.toPath().toAbsolutePath();
             }
 
-            if(! Files.exists(dirPath) && Files.isDirectory(dirPath)) {
+            if(!(Files.exists(dirPath)) || !(Files.isDirectory(dirPath))) {
                 throw new RuntimeException("The path doesn't exist or is not a directory");
             }
             Files.find(dirPath,
