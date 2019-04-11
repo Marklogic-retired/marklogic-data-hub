@@ -172,7 +172,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
     @Test
     public void testGetLocalFlows() throws IOException {
         createProjectDir(PROJECT_PATH);
-        scaffolding.createEntity("my-entity");
+        scaffolding.createLegacyEntity("my-entity");
 
         assertEquals(0, fm.getLocalFlows().size());
 
@@ -183,7 +183,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
                     String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-                    scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
+                    scaffolding.createLegacyFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
                 }
             }
         }
@@ -200,11 +200,11 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlowFromProperties() throws IOException {
-        scaffolding.createEntity("my-entity");
+        scaffolding.createLegacyEntity("my-entity");
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
-            scaffolding.createFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
+            scaffolding.createLegacyFlow("my-entity", flowName, flowType, codeFormat, dataFormat, false);
         });
 
 

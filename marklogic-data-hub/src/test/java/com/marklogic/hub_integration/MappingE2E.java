@@ -101,7 +101,7 @@ public class MappingE2E extends HubTestBase {
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
-            scaffolding.createEntity(ENTITY);
+            scaffolding.createLegacyEntity(ENTITY);
             Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getFlowDeveloperConfig(), true);
@@ -213,7 +213,7 @@ public class MappingE2E extends HubTestBase {
     		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
     		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
-	        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
+	        scaffolding.createLegacyFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
 
 	        String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
 	        copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));

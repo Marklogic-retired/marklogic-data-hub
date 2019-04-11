@@ -74,6 +74,6 @@ abstract class CreateLegacyFlowTask extends HubTask {
 
         Scaffolding scaffolding = getScaffolding()
         println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName + withMapping
-        scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES, mappingName)
+        scaffolding.createLegacyFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES, mappingName)
     }
 }

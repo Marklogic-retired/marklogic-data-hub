@@ -120,11 +120,11 @@ public class HubProjectImpl implements HubProject {
         return this.projectDir.resolve("mappings");
     }
 
-    private Path getLegacyHubEntitiesDir() {
+    @Override public Path getLegacyHubEntitiesDir() {
         return this.pluginsDir.resolve("entities");
     }
 
-    private Path getLegacyHubMappingsDir() {
+    @Override public Path getLegacyHubMappingsDir() {
         return this.pluginsDir.resolve("mappings");
     }
 
@@ -749,13 +749,19 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
+    @Deprecated
     public Path getEntityDir(String entityName) {
-        return getHubEntitiesDir().resolve(entityName);
+        return getLegacyHubEntitiesDir().resolve(entityName);
     }
 
     @Override
     public Path getMappingDir(String mappingName) {
         return getHubMappingsDir().resolve(mappingName);
+    }
+
+    @Override
+    public Path getLegacyMappingDir(String mappingName) {
+        return getLegacyHubMappingsDir().resolve(mappingName);
     }
 
     @Override

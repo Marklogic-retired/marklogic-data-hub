@@ -84,8 +84,8 @@ public class ScaffoldingE2E extends HubTestBase {
         Path employeeDir = project.getEntityDir("employee");
         assertFalse(employeeDir.toFile().exists());
 
-        scaffolding.createEntity(entityName);
-        scaffolding.createEntity("employee");
+        scaffolding.createLegacyEntity(entityName);
+        scaffolding.createLegacyEntity("employee");
         assertTrue(projectDir.exists());
         assertTrue(entityDir.toFile().exists());
         assertTrue(employeeDir.toFile().exists());
@@ -101,8 +101,8 @@ public class ScaffoldingE2E extends HubTestBase {
         String entityName = "my-fun-test";
         String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
 
-        scaffolding.createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
-        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        scaffolding.createLegacyFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
+        Path flowDir = scaffolding.getLegacyFlowDir(entityName, flowName, flowType);
         assertEquals(Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), flowName), flowDir);
         assertTrue(flowDir.toFile().exists());
 

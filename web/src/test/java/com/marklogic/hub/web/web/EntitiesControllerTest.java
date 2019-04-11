@@ -79,7 +79,7 @@ class EntitiesControllerTest extends BaseTestController {
 
         Path projectDir = Paths.get(".", PROJECT_PATH);
 
-        scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
@@ -119,7 +119,7 @@ class EntitiesControllerTest extends BaseTestController {
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         Path projectDir = Paths.get(".", PROJECT_PATH);
 
-        scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");

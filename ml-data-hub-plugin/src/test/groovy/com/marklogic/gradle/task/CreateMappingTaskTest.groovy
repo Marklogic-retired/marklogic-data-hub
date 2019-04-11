@@ -60,7 +60,7 @@ class CreateMappingTaskTest extends BaseTest {
         result.task(":hubCreateMapping").outcome == SUCCESS
         result.task(":hubDeployUserArtifacts").outcome == SUCCESS
 
-        File mappingDir = Paths.get(testProjectDir.root.toString(), "plugins", "mappings", "my-new-mapping").toFile()
+        File mappingDir = Paths.get(testProjectDir.root.toString(), "mappings", "my-new-mapping").toFile()
         mappingDir.isDirectory() == true
         getStagingDocCount("http://marklogic.com/data-hub/mappings") == 1
     }
