@@ -66,7 +66,7 @@ export class NewStepDialogComponent implements OnInit {
   getNameErrorMessage() {
     const errorCodes = [
       {code: 'required', message: 'You must enter a value'},
-      {code: 'pattern', message: 'Not a valid name. Must start with a symbol, has one or more alphanumeric symbols.Only \'_\' and \'-\' allowed.'},
+      {code: 'pattern', message: 'Not a valid name. It must start with a symbol, have zero or more alphanumeric characters. Only \'_\' or \'-\' are allowed.'},
       {code: 'forbiddenName', message: 'This name already exist in the flow'}
     ];
     const nameCtrl = this.newStepForm.get('name');
