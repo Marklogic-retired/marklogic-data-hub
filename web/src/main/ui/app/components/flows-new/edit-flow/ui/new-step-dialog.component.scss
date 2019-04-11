@@ -36,3 +36,21 @@ h1.mat-dialog-title {
   margin-right: -4px;
   justify-content: flex-end;
 }
+
+.source-type-label {
+  position: relative;
+  top: -3px;
+  .source-req {
+    font-size: 11px;
+    position: relative;
+    top: -2px;
+  }
+}
+
+/deep/ #step-source-type .mat-radio-button.mat-accent.mat-radio-checked div.mat-radio-outer-circle {
+  border-color: #6d8ba5 !important;
+}
+
+/deep/ #step-source-type .mat-radio-button.mat-accent div.mat-radio-inner-circle {
+  background-color: #6d8ba5 !important;
+}
