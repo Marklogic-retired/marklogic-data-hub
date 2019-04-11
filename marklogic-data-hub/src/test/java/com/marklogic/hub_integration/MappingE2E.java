@@ -210,7 +210,7 @@ public class MappingE2E extends HubTestBase {
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, String mapping, int  version, CreateFlowListener listener) {
     	if(useEs && flowType.equals(FlowType.HARMONIZE)) {
     		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
-    		Path entityDir = projectDir.resolve("entities").resolve(ENTITY);
+    		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
     		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
 	        scaffolding.createLegacyFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
@@ -365,7 +365,6 @@ public class MappingE2E extends HubTestBase {
 
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
@@ -419,12 +418,11 @@ public class MappingE2E extends HubTestBase {
             Thread.sleep(2000);
             int stagingCount = getStagingDocCount();
             int finalCount = getFinalDocCount();
-            int tracingCount = getTracingDocCount();
             int jobsCount = getJobDocCount();
 
             assertEquals(finalCounts.stagingCount, stagingCount);
             assertEquals(finalCounts.finalCount, finalCount);
-            assertEquals(finalCounts.tracingCount, tracingCount);
+
             assertEquals(finalCounts.jobCount, jobsCount);
 
             assertEquals(finalCounts.completedCount, completed.size());
