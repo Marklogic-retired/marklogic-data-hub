@@ -35,7 +35,7 @@ public class CollectionsController {
 
     @RequestMapping(value = "/{databaseName}", method = RequestMethod.GET)
     @ResponseBody
-    public List<String> getSteps(@PathVariable String databaseName) {
+    public List<String> getCollections(@PathVariable String databaseName) {
         return collectionsService.getCollections(databaseName);
     }
 
