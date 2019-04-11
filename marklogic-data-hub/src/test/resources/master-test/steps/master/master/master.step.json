@@ -5,12 +5,12 @@
   "targetDatabase": "data-hub-STAGING",
   "version" : 1,
   "options" : {
+    "targetEntity": "person",
     "acceptsBatch": true,
     "stepUpdate": true,
     "collections" : [ "master" ],
     "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
     "mergeOptions": {
-    "matchOptions": "basic",
     "propertyDefs": {
       "properties": [
         {
