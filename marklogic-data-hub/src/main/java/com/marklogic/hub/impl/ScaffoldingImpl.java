@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
@@ -25,14 +24,11 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.step.Step;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -127,21 +123,12 @@ public class ScaffoldingImpl implements Scaffolding {
         if (flowsDir.toFile().exists()) {
             String flowSrcFile = "scaffolding/defaultFlow.flow.json";
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
-
+            File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
             try {
-                JsonNode flowNode = JSONObject.readInput(inputStream);
-                Flow flow = flowManager.createFlowFromJSON(flowNode);
-                flow.setName(flowName);
-                flow.getSteps().forEach((k, v) -> {
-                    if (v.getType() == Step.StepType.CUSTOM) {
-                        v.setModulePath("/custom-modules/custom/custom-step/main.sjs");
-                    }
-                });
-                createCustomModule("custom-step", Step.StepType.CUSTOM.toString());
-                flowManager.saveFlow(flow);
+                FileUtils.copyInputStreamToFile(inputStream, flowFile);
             }
             catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }
