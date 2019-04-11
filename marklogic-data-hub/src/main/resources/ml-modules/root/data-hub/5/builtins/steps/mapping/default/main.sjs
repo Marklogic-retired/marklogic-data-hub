@@ -34,10 +34,15 @@ function main(content, options) {
 
   //then we grab our mapping
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
-    mapping = lib.getMappingWithVersion(options.mapping.name, options.mapping.version);
-  } else if (options.mapping && options.mapping.name) {
+    let version = parseInt(options.mapping.version);
+    if(isNaN(version)){
+      datahub.debug.log({message: 'Mapping version ('+options.mapping.version+') is invalid.', type: 'error'});
+      throw Error('Mapping version ('+options.mapping.version+') is invalid.');
+    }
+    mapping = lib.getMappingWithVersion(options.mapping.name, version);
+  } else if (!mapping && options.mapping && options.mapping.name) {
     mapping = lib.getMapping(options.mapping.name);
-  } else {
+  } else if (!mapping) {
     datahub.debug.log({message: 'You must specify a mapping name.', type: 'error'});
     throw Error('You must specify a mapping name.');
   }
