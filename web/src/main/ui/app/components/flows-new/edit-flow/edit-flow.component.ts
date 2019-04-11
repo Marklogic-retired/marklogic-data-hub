@@ -15,7 +15,6 @@ import { Entity } from '../../../models/entity.model';
     [flow]="flow"
     [stepsArray]="stepsArray"
     [databases]="databases"
-    [collections]="collections"
     [entities]="entities"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"

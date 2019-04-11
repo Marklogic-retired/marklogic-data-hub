@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ManageFlowsService } from '../../services/manage-flows.service';
 import { EditFlowUiComponent } from './edit-flow-ui.component';
 import { Step } from '../../models/step.model';
 import { Options } from '../../models/step-options.model';
@@ -26,11 +27,13 @@ export class NewStepDialogComponent implements OnInit {
   readonly stepOptions = ['ingest', 'mapping', 'mastering', 'custom'];
   public databases = Object.values(this.data.databases).slice(0, -1);
   selectedSource = '';
+  collections: any;
   newStepForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<EditFlowUiComponent>,
     private formBuilder: FormBuilder,
+    private manageFlowsService: ManageFlowsService,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   ngOnInit() {
@@ -57,12 +60,7 @@ export class NewStepDialogComponent implements OnInit {
   }
   stepTypeChange() {
     const type = this.newStepForm.value.type;
-    if (type === 'ingest') {
-      this.newStepForm.patchValue({
-        sourceDatabase: '',
-        targetDatabase: this.data.databases.staging
-      });
-    }
+
     if (type === 'mapping') {
       this.newStepForm.patchValue({
         sourceDatabase: this.data.databases.staging,
@@ -79,6 +77,16 @@ export class NewStepDialogComponent implements OnInit {
       this.newStepForm.patchValue({
         sourceDatabase: this.data.databases.staging,
         targetDatabase: this.data.databases.final
+      });
+    }
+    if (type === 'ingest') {
+      this.newStepForm.patchValue({
+        sourceDatabase: '',
+        targetDatabase: this.data.databases.staging
+      });
+    } else {
+      this.manageFlowsService.getCollections(this.newStepForm.value.sourceDatabase).subscribe( resp => {
+        this.collections = resp;
       });
     }
   }
