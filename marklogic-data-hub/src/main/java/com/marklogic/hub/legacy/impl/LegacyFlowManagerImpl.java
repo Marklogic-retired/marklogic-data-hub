@@ -73,7 +73,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
     @Override public List<LegacyFlow> getLocalFlows() {
         List<LegacyFlow> flows = new ArrayList<>();
 
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         File[] entities = entitiesDir.toFile().listFiles((pathname -> pathname.isDirectory()));
         if (entities != null) {
             for (File entity : entities) {
@@ -91,7 +91,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
     @Override public List<LegacyFlow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
 
         List<LegacyFlow> flows = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         Path entityDir = entitiesDir.resolve(entityName);
         Path inputDir = entityDir.resolve("input");
         Path harmonizeDir = entityDir.resolve("harmonize");
