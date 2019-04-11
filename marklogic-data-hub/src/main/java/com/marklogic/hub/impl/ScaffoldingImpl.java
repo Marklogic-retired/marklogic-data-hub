@@ -20,7 +20,6 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
@@ -61,9 +60,6 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Autowired
     private ScaffoldingValidator validator;
-
-    @Autowired
-    private FlowManager flowManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
