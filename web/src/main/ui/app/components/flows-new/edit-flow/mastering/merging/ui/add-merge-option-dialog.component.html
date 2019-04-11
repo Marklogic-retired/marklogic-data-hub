@@ -11,7 +11,7 @@
 
   <mat-form-field layout-fill>
     <mat-select id="merge-option-property" placeholder="Property to Merge" formControlName="propertyName" [(value)]="propertyName">
-      <mat-option class="{{'type-option merge-option-property-' + prop.name}}" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
+      <mat-option [id]="'merge-option-property-' + prop.name" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 
