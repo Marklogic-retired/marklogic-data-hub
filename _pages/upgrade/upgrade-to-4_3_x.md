@@ -40,7 +40,7 @@ If you are deploying to the Data Hub Service on the cloud, the new `flow-develop
 For more information on roles in DHF, see [Security]({{site.baseurl}}/refs/security/).
 
 
-### Steps
+### Procedure
 
 1. In your `build.gradle` file, replace all occurrences of your old DHF version number with `4.3.0`.
 

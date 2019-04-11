@@ -97,7 +97,7 @@ If your endpoints are publicly available, you can use any machine that is set up
 - [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp/install)
 
 
-## Steps
+## Procedure
 
 1. Copy your entire DHF project directory to the machine from which you will access the endpoints, and perform the following steps on that machine.
     {% include note-in-list.html type="IMPORTANT" content="If your endpoints are private, this machine must be a bastion host." %}

@@ -47,7 +47,7 @@ The notes and steps in this tab are for the following upgrade paths:
 -->
 
 
-### Steps
+### Procedure
 
 1. In your `build.gradle` file, replace all occurrences of your old DHF version number with `4.1.0`.
 
