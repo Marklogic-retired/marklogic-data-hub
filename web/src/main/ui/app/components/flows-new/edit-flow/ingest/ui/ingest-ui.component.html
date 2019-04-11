@@ -25,7 +25,7 @@
         <mat-option
           *ngFor="let option of config.fileTypes.options"
           [value]="option.value"
-          [class]="'file-type-option-' + option.value"
+          [id]="'file-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -46,7 +46,7 @@
         <mat-option
           *ngFor="let option of config.outputDocTypes.options"
           [value]="option.value"
-          [class]="'doc-type-option-' + option.value"
+          [id]="'doc-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
