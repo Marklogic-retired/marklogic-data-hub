@@ -74,10 +74,7 @@ export class NewStepDialogComponent implements OnInit {
       return ''
     }
     const err = errorCodes.find( err => nameCtrl.hasError(err.code));
-    if (err) {
-      return err.message;
-    }
-    return '';
+    return err ? err.message : '';
   }
 
   onNoClick(): void {
