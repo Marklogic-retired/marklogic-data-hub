@@ -2,11 +2,9 @@ import { IngestionOptions } from './ingestion-options.model';
 import { MappingOptions } from './mapping-options.model';
 import { MasteringOptions } from './mastering-options.model';
 import { CustomOptions } from './custom-options.model';
-import { Matching } from '../edit-flow/mastering/matching/matching.model';
-import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
 export class Step {
-  private id: string;
+  public id: string;
   private type: string;
   private name: string;
   private description: string;

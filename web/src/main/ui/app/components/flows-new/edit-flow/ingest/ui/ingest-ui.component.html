@@ -1,70 +1,70 @@
 <div layout-padding layout="column" class="ingest-page">
-    <info-label
-      [labelText]="config.inputFilePath.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.inputFilePath.description"
-    ></info-label>
-    <app-folder-browser
-      [startPath]="step.options.inputFilePath"
-      (folderChosen)="changeFolder($event)"
-      showFiles="true"
-    ></app-folder-browser>
+  <info-label
+    [labelText]="config.inputFilePath.label"
+    tooltipPlacement="right"
+    [tooltipText]="config.inputFilePath.description"
+  ></info-label>
+  <app-folder-browser
+    [startPath]="step.options.input_file_path"
+    (folderChosen)="changeFolder($event)"
+    showFiles="true"
+  ></app-folder-browser>
 
-    <info-label
-      [labelText]="config.fileTypes.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.fileTypes.description"
-    ></info-label>
-    <mat-form-field layout-fill appearance="outline">
-      <mat-select
-        id="file_type_select"
-        [(ngModel)]="step.options.inputFileType"
-        name="filetype"
-        (selectionChange)="onChange()"
-      >
-        <mat-option
-          *ngFor="let option of config.fileTypes.options"
-          [value]="option.value"
-          [id]="'file-type-option-' + option.value"
-        >{{option.label}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <info-label
+    [labelText]="config.fileTypes.label"
+    tooltipPlacement="right"
+    [tooltipText]="config.fileTypes.description"
+  ></info-label>
+  <mat-form-field layout-fill appearance="outline">
+    <mat-select
+      id="file_type_select"
+      [(ngModel)]="step.options.input_file_type"
+      name="filetype"
+      (selectionChange)="onChange()"
+    >
+      <mat-option
+        *ngFor="let option of config.fileTypes.options"
+        [value]="option.value"
+        [id]="'file-type-option-' + option.value"
+      >{{option.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <info-label
-      [labelText]="config.outputFileType.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.outputFileType.description"
-    ></info-label>
-    <mat-form-field layout-fill appearance="outline">
-      <mat-select
-        id="doc_type_select"
-        [(ngModel)]="step.options.outputFileType"
-        name="doctype"
-        (selectionChange)="onChange()"
-      >
-        <mat-option
-          *ngFor="let option of config.outputFileType.options"
-          [value]="option.value"
-          [id]="'doc-type-option-' + option.value"
-        >{{option.label}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <info-label
+    [labelText]="config.outputDocTypes.label"
+    tooltipPlacement="right"
+    [tooltipText]="config.outputDocTypes.description"
+  ></info-label>
+  <mat-form-field layout-fill appearance="outline">
+    <mat-select
+      id="doc_type_select"
+      [(ngModel)]="step.options.document_type"
+      name="doctype"
+      (selectionChange)="onChange()"
+    >
+      <mat-option
+        *ngFor="let option of config.outputDocTypes.options"
+        [value]="option.value"
+        [id]="'doc-type-option-' + option.value"
+      >{{option.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <info-label
-      [labelText]="config.outputPermissions.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.outputPermissions.description"
-    ></info-label>
-    <mat-form-field layout-fill appearance="outline">
-      <input
-        id="output_permissions" 
-        matInput
-        [(ngModel)]="this.step.options.outputPermissions"
-        name="permissions"
-        (blur)="onChange()"
-        (keypress)="onKeyChange($event)"
-      />
-    </mat-form-field>
+  <info-label
+    [labelText]="config.outputPermissions.label"
+    tooltipPlacement="right"
+    [tooltipText]="config.outputPermissions.description"
+  ></info-label>
+  <mat-form-field layout-fill appearance="outline">
+    <input
+      id="output_permissions" 
+      matInput
+      [(ngModel)]="this.step.options.output_permissions"
+      name="permissions"
+      (blur)="onChange()"
+      (keypress)="onKeyChange($event)"
+    />
+  </mat-form-field>
 </div>

@@ -42,7 +42,7 @@ const settings = {
     ],
     value: 'json'
   },
-  outputFileType: {
+  outputDocTypes: {
     label: 'Output File Type',
     field: 'document_type',
     type: 'type',
@@ -86,7 +86,7 @@ export class IngestUiComponent implements OnInit {
   folder: string;
 
   ngOnInit(): void {
-    this.folder = this.step.options.inputFilePath;
+    this.folder = this.step.options.input_file_path;
   }
 
   changeFolder(folder){
@@ -102,9 +102,9 @@ export class IngestUiComponent implements OnInit {
 
   onChange() {
     if (this.step.options) {
-      this.step.options.inputFilePath = this.folder;
-      // this.step.options.transform_param = `entity-name=${this.step.options.targetEntity},flow-name=${this.flow.name}`;
-      // this.step.options.output_collections = `${this.step.options.targetEntity}`;
+      this.step.options.input_file_path = this.folder;
+      this.step.options.transform_param = `entity-name=${this.step.options.targetEntity},flow-name=${this.flow.name}`;
+      this.step.options.output_collections = `${this.step.options.targetEntity}`;
       this.saveStep.emit(this.step);
     }
   }
