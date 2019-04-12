@@ -1,9 +1,0 @@
-{
-  "database-name": "%%mlFinalDbName%%",
-  "range-element-index": [],
-  "schema-database": "%%mlFinalSchemasDbName%%",
-  "triggers-database": "%%mlFinalTriggersDbName%%",
-  "triple-index": true,
-  "collection-lexicon": true,
-  "uri-lexicon": true
-}

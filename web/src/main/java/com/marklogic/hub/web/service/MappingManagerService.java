@@ -71,7 +71,7 @@ public class MappingManagerService {
     }
 
     public MappingModel createMapping(MappingModel newMapping) throws IOException {
-        scaffolding.createMappingDir(newMapping.getName());
+        scaffolding.createLegacyMappingDir(newMapping.getName());
         Path dir = hubConfig.getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
         mappingManager.saveMapping(mapping);

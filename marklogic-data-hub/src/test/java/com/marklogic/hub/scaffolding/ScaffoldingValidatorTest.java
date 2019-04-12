@@ -81,7 +81,7 @@ public class ScaffoldingValidatorTest extends HubTestBase {
    private void createPlugins(String entityName, FlowType flowType, CodeFormat codeFormat) throws IOException {
 
        String flowName = entityName + flowType + "-flow";
-       String flowTypePath = ScaffoldingImpl.getAbsolutePath(projectPath, "entities", entityName, flowType.toString());
+       String flowTypePath = ScaffoldingImpl.getAbsolutePath(projectPath, "plugins", "entities", entityName, flowType.toString());
        String flowPath = ScaffoldingImpl.getAbsolutePath(flowTypePath, flowName);
 
        List<Plugin> plugins = new ArrayList<>();

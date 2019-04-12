@@ -1,0 +1,16 @@
+{
+  "info" : {
+    "title" : "Order",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Order" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : { }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "language" : "zxx",
+  "name" : "Product Mapping",
+  "description" : "",
+  "version" : 4,
+  "targetEntityType" : "http://example.org/Product-0.0.1/Product",
+  "sourceContext" : "//",
+  "sourceURI" : "/board_games.csv-0-10",
+  "properties" : {
+    "price" : {
+      "sourcedFrom" : "price"
+    },
+    "sku" : {
+      "sourcedFrom" : "SKU"
+    }
+  }
+}
