@@ -1,11 +1,15 @@
 export class IngestionOptions {
-  public inputFilePath: string = '.'; // Project directory
-  public inputFileType: string = 'json';
-  public outputPermissions: string = 'rest-reader,read,rest-writer,update';
-  public outputUriReplacement: string = '';
-  public outputFileType: string = 'json';
+  private inputFilePath: string;
+  private inputFileType: string;
+  private outputPermissions: string;
+  private outputUriReplacement: string;
+  private outputFileType: string;
 
-  set projectDirectory(directory: string) {
-    this.inputFilePath = directory;
+  constructor(inputFilePath: string) {
+    this.inputFilePath = inputFilePath;
+    this.inputFileType = 'json';
+    this.outputPermissions = 'rest-reader,read,rest-writer,update';
+    this.outputUriReplacement = '';
+    this.outputFileType = 'json';
   }
 }

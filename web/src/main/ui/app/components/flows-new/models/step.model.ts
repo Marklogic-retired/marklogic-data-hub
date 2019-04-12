@@ -6,22 +6,30 @@ import { Matching } from '../edit-flow/mastering/matching/matching.model';
 import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
 export class Step {
-  public id: string;
-  public type: string;
-  public name: string = '';
-  public description: string = '';
-  public sourceDatabase: string = '';
-  public targetDatabase: string;
-  public language: string;
-  public isValid: boolean = false;
-  public version: string;
+  private id: string;
+  private type: string;
+  private name: string;
+  private description: string;
+  private sourceDatabase: string;
+  private targetDatabase: string;
+  private language: string;
+  private isValid: boolean;
+  private version: string;
+  public options: any;
 
-  public options: any = {};
+  constructor(type: string, inputFilePath: string) {
+    this.type = type;
+    this.name = '';
+    this.description = '';
+    this.sourceDatabase = '';
+    this.targetDatabase = '';
+    this.language = '';
+    this.isValid = false;
+    this.version = '';
 
-  set stepOption(type: string) {
     switch (type) {
       case 'ingest': {
-        this.options = new IngestionOptions();
+        this.options = new IngestionOptions(inputFilePath);
         break;
       }
       case 'mapping': {
@@ -39,6 +47,23 @@ export class Step {
       default: {
         break;
       }
-   }
+    }
+  }
+  get stepId(): string {
+    return this.id;
+  }
+  get stepName(): string {
+    return this.name;
+  }
+  get stepType(): string {
+    return this.type;
+  }
+  set stepOptions(options: any) {
+    this.name = options.name;
+    this.description = options.description;
+    this.options.sourceQuery = options.sourceQuery;
+    this.options.targetEntity = options.targetEntity;
+    this.sourceDatabase = options.sourceDatabase;
+    this.targetDatabase = options.targetDatabase;
   }
 }

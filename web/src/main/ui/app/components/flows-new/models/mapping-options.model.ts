@@ -1,7 +1,13 @@
 export class MappingOptions {
-  public sourceQuery: string = '';
-  public sourceContext: string = '';
-  public targetEntity: string = '';
-  public targetEntityType: string = '';
-  public properties: any = {};
+  private sourceQuery: string;
+  private sourceContext: string;
+  private targetEntity: string;
+  private targetEntityType: string;
+  private properties: any;
+  constructor() {
+    this.sourceQuery = '';
+    this.sourceContext = '';
+    this.targetEntity = '';
+    this.targetEntityType = '';
+  }
 }

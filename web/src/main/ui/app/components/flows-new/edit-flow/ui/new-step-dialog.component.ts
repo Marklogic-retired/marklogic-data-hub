@@ -20,7 +20,7 @@ export interface DialogData {
 })
 export class NewStepDialogComponent implements OnInit {
 
-  public newStep: Step = new Step;
+  public newStep: Step;
   readonly stepOptions = ['ingest', 'mapping', 'mastering', 'custom'];
   public databases = Object.values(this.data.databases).slice(0, -1);
   selectedSource = '';
@@ -56,41 +56,42 @@ export class NewStepDialogComponent implements OnInit {
         sourceDatabase: '',
         targetDatabase: this.data.databases.staging
       });
-      this.newStep.stepOption = 'ingest';
-      this.newStep.options.projectDirectory = this.data.projectDirectory;
+      this.newStep = new Step('ingest', this.data.projectDirectory);
     }
     if (type === 'mapping') {
       this.newStepForm.patchValue({
         sourceDatabase: this.data.databases.staging,
         targetDatabase: this.data.databases.final
       });
-      this.newStep.stepOption = 'mapping';
+      this.newStep = new Step('mapping', this.data.projectDirectory);
     }
     if (type === 'mastering') {
       this.newStepForm.patchValue({
         sourceDatabase: this.data.databases.final,
         targetDatabase: this.data.databases.final
       });
-      this.newStep.stepOption = 'mastering';
+      this.newStep = new Step('mastering', this.data.projectDirectory);
     }
     if (type === 'custom') {
       this.newStepForm.patchValue({
         sourceDatabase: this.data.databases.staging,
         targetDatabase: this.data.databases.final
       });
-      this.newStep.stepOption = 'custom';
+      this.newStep = new Step('custom', this.data.projectDirectory);
     }
   }
   onSave() {
-    this.newStep.name = this.newStepForm.value.name;
-    this.newStep.type = this.newStepForm.value.type;
-    this.newStep.description = this.newStepForm.value.description;
-    this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
-    this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
-    this.newStep.sourceDatabase = this.newStepForm.value.sourceDatabase;
-    this.newStep.targetDatabase = this.newStepForm.value.targetDatabase;
+    const stepOptions = {
+      name: this.newStepForm.value.name,
+      description: this.newStepForm.value.description,
+      sourceQuery: this.newStepForm.value.sourceQuery,
+      targetEntity: this.newStepForm.value.targetEntity,
+      sourceDatabase: this.newStepForm.value.sourceDatabase,
+      targetDatabase: this.newStepForm.value.targetDatabase,
+    };
+    this.newStep.stepOptions = stepOptions;
 
-    if (this.newStep.name !== '' && this.newStep.type !== '') {
+    if (this.newStep.stepName !== '' && this.newStep.stepType !== '') {
       this.dialogRef.close(this.newStep);
     }
   }

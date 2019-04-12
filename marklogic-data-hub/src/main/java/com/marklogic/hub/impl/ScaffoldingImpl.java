@@ -22,8 +22,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -106,6 +106,24 @@ public class ScaffoldingImpl implements Scaffolding {
             try {
                 FileUtils.copyInputStreamToFile(inputStream, moduleFile);
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void createDefaultFlow(String flowName) {
+        Path flowsDir = project.getFlowsDir();
+        flowsDir.toFile().mkdirs();
+
+        if (flowsDir.toFile().exists()) {
+            String flowSrcFile = "scaffolding/defaultFlow.flow.json";
+            InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
+            File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
+            try {
+                FileUtils.copyInputStreamToFile(inputStream, flowFile);
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }

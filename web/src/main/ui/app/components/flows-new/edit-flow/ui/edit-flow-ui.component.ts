@@ -79,12 +79,12 @@ export class EditFlowUiComponent {
     console.log('delete step', step);
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
-      data: {title: 'Delete Step?', confirmationMessage: `Delete ${step.name}?`}
+      data: {title: 'Delete Step?', confirmationMessage: `Delete ${step.stepName}?`}
     });
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.stepDelete.emit(step.id);
+        this.stepDelete.emit(step.stepId);
       }
     });
   }
