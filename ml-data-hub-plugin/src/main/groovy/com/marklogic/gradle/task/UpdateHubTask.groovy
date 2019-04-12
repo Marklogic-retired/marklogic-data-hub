@@ -24,6 +24,6 @@ class UpdateHubTask extends HubTask {
 
     @TaskAction
     void updateHub() {
-        getDataHub().upgradeHub()
+        dataHub.upgradeHub()
     }
 }

@@ -417,7 +417,9 @@ public class HubProjectImpl implements HubProject {
                 }
             }
         }
-        Files.move(oldMappingsDir, newMappingsDirPath);
+        if (oldMappingsDir.toFile().exists()) {
+            Files.move(oldMappingsDir, newMappingsDirPath);
+        }
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {

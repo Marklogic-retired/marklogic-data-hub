@@ -854,6 +854,10 @@ public class DataHubImpl implements DataHub {
         boolean result = false;
         boolean alreadyInitialized = project.isInitialized();
         String gradleVersion = versions.getDHFVersion();
+        compare = Versions.compare(gradleVersion, MIN_UPGRADE_VERSION);
+        if (compare == -1) {
+            throw new CantUpgradeException(gradleVersion, MIN_UPGRADE_VERSION);
+        }
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
              * But since it requires 'hubConfig' and 'versions', for now 
@@ -872,7 +876,7 @@ public class DataHubImpl implements DataHub {
                 FileUtils.writeStringToFile(buildGradle, text);
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
-            
+
             hubConfig.initHubProject();
 
             //now let's try to upgrade the directory structure
