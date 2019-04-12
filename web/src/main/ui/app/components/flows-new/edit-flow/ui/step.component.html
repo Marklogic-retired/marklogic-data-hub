@@ -6,7 +6,7 @@
       </div>
       <div class="steps-header">
         <mat-icon id="step-menu" class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
-        <mat-icon id="step-expand-collapse-btn" class="flow-menu-icon" (click)="this.toggleBody()">arrow_drop_down</mat-icon>
+        <mat-icon id="step-expand-collapse-btn" class="flow-menu-icon" (click)="this.toggleBody()">{{ this.showBody ? 'expand_less' : 'expand_more' }}</mat-icon>
       </div>
     </header>
     <div *ngIf="showBody" class="steps-body">
