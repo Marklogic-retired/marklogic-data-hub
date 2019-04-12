@@ -79,7 +79,6 @@ export class NewStepDialogUiComponent implements OnInit {
         targetDatabase: this.databaseObject.staging
       });
     } else {
-      console.log('source database', this.newStepForm.value.sourceDatabase);
       this.getCollections.emit(this.newStepForm.value.sourceDatabase);
     }
   }
