@@ -26,16 +26,16 @@ If your current DHF version is 4.0.0 or earlier, you must first [upgrade to 4.1.
 
 Security roles changed from 4.2 to 4.3.
 
-  | old roles      | old default users | new roles           | new default users |
+  | old roles      | old default users | new roles           | new default users   |
   |---|---|---|---|
-  | hub-admin-role | hub-admin-user    | data-hub-admin-role | (no default)      |
-  |                |                   | flow-developer-role | flow-developer    |
-  | data-hub-role  | data-hub-user     | flow-operator-role  | flow-operator     |
+  | hub-admin-role | hub-admin-user    | data-hub-admin-role | data-hub-admin-user |
+  |                |                   | flow-developer-role | flow-developer      |
+  | data-hub-role  | data-hub-user     | flow-operator-role  | flow-operator       |
   {:.table-b1gray}
 
 You can use your old custom users instead of the new default users. Remember to assign them to the new roles.
 
-If you are deploying to the Data Hub Service on the cloud, the new `flow-developer-role` and `flow-developer` user are required. Otherwise, you can use `data-hub-admin-role` the same way you used the old `hub-admin-role`.
+If you are deploying to the Data Hub Service on the cloud, the new `flow-developer-role` role and `flow-developer` user are required. Otherwise, you can use `data-hub-admin-role` the same way you used the old `hub-admin-role`.
 
 For more information on roles in DHF, see [Security]({{site.baseurl}}/refs/security/).
 
@@ -66,9 +66,9 @@ For more information on roles in DHF, see [Security]({{site.baseurl}}/refs/secur
 
       ```
       mlDHFVersion=4.3.0
-      mlUsername=your-hub-admin-user-username
-      mlPassword=your-hub-admin-user-password
-      mlFlowOperatorUserName=your-data-hub-user-username
+      mlUsername=data-hub-admin-user
+      mlPassword=your-data-hub-admin-user-password
+      mlFlowOperatorUserName=flow-operator
       mlFlowOperatorUserPassword=your-data-hub-user-password
       ```
 
