@@ -14,26 +14,26 @@
         <div id="filters">
 
           <span class="filter-label">Filters</span>
-          <mat-form-field id="name-filter">
-            <mat-select id="name-filter-type" value="" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)">
-              <mat-option class="name-option" *ngFor="let val of getMenuVals('flow')" [value]="val">{{val ? val : 'All'}}</mat-option>
+          <mat-form-field>
+            <mat-select id="filter-flow-name" value="" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)">
+              <mat-option class="name-option" [id]="'filter-name-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('flow')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field id="target-entity-filter">
-            <mat-select id="target-entity-filter-type" value="" placeholder="Target Entity" (selectionChange)="applyFilter('targetEntity', $event.value)">
-              <mat-option class="target-entity-option" *ngFor="let val of getMenuVals('targetEntity')" [value]="val">{{val ? val : 'All'}}</mat-option>
+          <mat-form-field>
+            <mat-select id="filter-target-entity" value="" placeholder="Target Entity" (selectionChange)="applyFilter('targetEntity', $event.value)">
+              <mat-option class="target-entity-option" [id]="'filter-entity-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('targetEntity')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field id="status-filter">
-            <mat-select id="status-filter-type" value="" placeholder="Status" (selectionChange)="applyFilter('jobStatus', $event.value)">
-              <mat-option class="status-option" *ngFor="let val of getMenuVals('jobStatus')" [value]="val">{{val ? val : 'All'}}</mat-option>
+          <mat-form-field>
+            <mat-select id="filter-status" value="" placeholder="Status" (selectionChange)="applyFilter('jobStatus', $event.value)">
+              <mat-option class="status-option" [id]="'filter-status-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('jobStatus')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field id="text-filter">
-            <input matInput (keyup)="applyFilter('text', $event.target.value)" placeholder="Text">
+          <mat-form-field>
+            <input id="filter-by-text" matInput (keyup)="applyFilter('text', $event.target.value)" placeholder="Text">
           </mat-form-field>
 
         </div>
@@ -82,7 +82,7 @@
               {{job.jobStatus}}
             </span>
             <span *ngIf="job.jobStatus === 'failed'">
-              <a (click)="openStatusDialog(job)">
+              <a class="status-btn" (click)="openStatusDialog(job)">
                 {{job.jobStatus}}
               </a>
             </span>
@@ -91,7 +91,7 @@
 
         <!-- Ended Column -->
         <ng-container matColumnDef="timeEnded">
-          <mat-header-cell id="jobs-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
+          <mat-header-cell id="job-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
           <mat-cell class="job-ended" *matCellDef="let job">
             {{friendlyDate(job.timeEnded)}}
           </mat-cell>
@@ -149,7 +149,7 @@
 
       </mat-table>
 
-      <mat-paginator id="job-pagination"
+      <mat-paginator id="jobs-pagination"
                      #paginator
                      [length]="jobs.length"
                      [pageIndex]="0"
@@ -163,7 +163,7 @@
 
 <mat-menu class="job-menu-dialog" #jobMenu="matMenu">
   <ng-template matMenuContent let-job="job">
-    <div class="job-menu-output -btn" mat-menu-item (click)="openOutputDialog(job)">Output</div>
-    <div class="job-menu-view-btn" mat-menu-item (click)="viewFlow(job)">View Flow</div>
+    <div class="job-menu-output-btn" mat-menu-item (click)="openOutputDialog(job)">Output</div>
+    <div class="job-menu-view-flow-btn" mat-menu-item (click)="viewFlow(job)">View Flow</div>
   </ng-template>
 </mat-menu>
