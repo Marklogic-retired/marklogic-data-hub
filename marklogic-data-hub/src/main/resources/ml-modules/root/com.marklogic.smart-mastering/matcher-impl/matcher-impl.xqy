@@ -26,6 +26,7 @@ import module namespace blocks-impl = "http://marklogic.com/smart-mastering/bloc
   at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services" at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 import module namespace notify-impl = "http://marklogic.com/smart-mastering/notification-impl"
@@ -89,32 +90,56 @@ declare function match-impl:compile-match-options(
           (64 idiv $max-property-score)
     let $algorithms := algorithms:build-algorithms-map($options/matcher:algorithms)
     let $property-defs := $options/matcher:property-defs
+    let $target-entity-def := es-helper:get-entity-def($options/matcher:target-entity)
     let $queries := (
         for $score in $scoring/(matcher:add|matcher:expand)
         let $type := fn:local-name($score)
         let $weight := fn:number($score/@weight)
-        let $property-name := $score/@property-name
-        let $property-def := $property-defs/matcher:property[@name = $property-name]
-        where fn:exists($property-def)
+        let $full-property-name := $score/@property-name
+        let $property-name :=
+          if (fn:contains($full-property-name, ".")) then
+            fn:substring-after($full-property-name, ".")
+          else
+            $full-property-name
+        let $property-details :=
+          if (fn:exists($target-entity-def)) then
+            let $prop-entity-def :=
+              if (fn:contains($full-property-name, ".")) then
+                es-helper:get-entity-def(fn:substring-before($full-property-name, "."))
+              else
+                $target-entity-def
+            return
+              es-helper:get-entity-def-property(
+                $prop-entity-def,
+                $property-name
+              )
+          else ()
+        let $prop-entity-def := $property-details/../..
+        let $property-entity-qname := $prop-entity-def ! fn:QName(./namespaceUri, xdmp:encode-for-NCName(./entityTitle))
+        let $property-def := $property-defs/matcher:property[@name = $full-property-name]
+        where fn:exists($property-def) or fn:exists($property-details)
         order by $weight descending
         return
-          let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
-          return map:new((
-            map:entry("queryID", sem:uuid-string()),
-            map:entry("propertyName",$property-name),
-            map:entry("type",$type),
-            map:entry("weight",$weight),
-            map:entry("qname", $qname),
-            map:entry(
-              "valuesToQueryFunction",
+          let $qname :=
+            if (fn:exists($property-def)) then
+              fn:QName($property-def/@namespace, $property-def/@localname)
+            else
+              fn:QName($prop-entity-def/namespaceUri, xdmp:encode-for-NCName($property-name))
+          let $base-values-query :=
               if ($type eq "add") then
                 if ($is-json) then
-                  cts:json-property-value-query(
-                    fn:string($qname),
-                    ?,
-                    ("case-insensitive"),
-                    $weight
-                  )
+                  function($val) {
+                    cts:json-property-value-query(
+                      fn:string($qname),
+                      (
+                        $val,
+                        $val ! fn:number(.)[fn:string(.) ne "NaN"],
+                        $val[. castable as xs:boolean] ! xs:boolean(.)
+                      ),
+                      ("case-insensitive"),
+                      $weight
+                    )
+                  }
                 else
                   cts:element-value-query(
                     $qname,
@@ -127,6 +152,31 @@ declare function match-impl:compile-match-options(
                 where fn:exists($algorithm)
                 return algorithms:execute-algorithm($algorithm, ?, $score, $options)
               else ()
+          return map:new((
+            map:entry("queryID", sem:uuid-string()),
+            map:entry("propertyName",$property-name),
+            map:entry("type",$type),
+            map:entry("weight",$weight),
+            map:entry("qname", $qname),
+            map:entry(
+              "valuesToQueryFunction",
+              if (fn:exists($property-details)) then
+                if ($is-json) then
+                  function($val) {
+                    cts:json-property-scope-query(
+                      fn:local-name-from-QName($property-entity-qname),
+                      $base-values-query($val)
+                    )
+                  }
+                else
+                  function($val) {
+                    cts:element-query(
+                      $property-entity-qname,
+                      $base-values-query($val)
+                    )
+                  }
+              else
+                $base-values-query
             )
           )),
         for $score in $scoring/matcher:reduce

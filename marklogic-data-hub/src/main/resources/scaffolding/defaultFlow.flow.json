@@ -1,0 +1,54 @@
+{
+  "name": "defaultFlow",
+  "description": "This is the default flow containing all of the default steps",
+  "batchSize": 100,
+  "threadCount": 4,
+  "options": {
+    "sourceQuery": null
+  },
+  "steps": {
+    "1": {
+      "language": "zxx",
+      "name": "default-ingest",
+      "type": "INGESTION",
+      "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
+      "customHook": {
+      },
+      "options": {
+        "sourceQuery": null,
+        "outputFormat": "json",
+        "collections": [
+          "default-ingest"
+        ]
+      }
+    },
+    "2": {
+      "language": "zxx",
+      "name": "default-mapping",
+      "type": "MAPPING",
+      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
+      "options": {
+        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+        "collections": [
+          "default-mapping"
+        ],
+        "mapping": {
+          "name": "mapping-name",
+          "version": 1
+        }
+      }
+    },
+    "3": {
+      "language": "zxx",
+      "name": "default-mastering",
+      "type": "MASTERING",
+      "modulePath": "/data-hub/5/builtins/steps/master/default/main.sjs",
+      "options": {
+        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
+        "collections": [
+          "default-mastering, mastered"
+        ]
+      }
+    }
+  }
+}

@@ -68,8 +68,15 @@ public interface Scaffolding {
     /**
      * Creates a custom module given a string stepName
      * @param stepName - the name of the step as string
+     * @param stepType - the type of the step as string
      */
     void createCustomModule(String stepName, String stepType);
+
+    /**
+     * Create default flow with all the default steps
+     * @param flowName - the name of the flow
+     */
+    void createDefaultFlow(String flowName);
 
     /**
      * Creates a flow for an entity with Entity Services model as default
