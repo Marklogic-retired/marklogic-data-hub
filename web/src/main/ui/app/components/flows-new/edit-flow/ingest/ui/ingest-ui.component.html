@@ -25,6 +25,7 @@
         <mat-option
           *ngFor="let option of config.fileTypes.options"
           [value]="option.value"
+          [id]="'file-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -37,6 +38,7 @@
     ></info-label>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
+        id="doc_type_select"
         [(ngModel)]="step.options.document_type"
         name="doctype"
         (selectionChange)="onChange()"
@@ -44,6 +46,7 @@
         <mat-option
           *ngFor="let option of config.outputDocTypes.options"
           [value]="option.value"
+          [id]="'doc-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -56,6 +59,7 @@
     ></info-label>
     <mat-form-field layout-fill appearance="outline">
       <input
+        id="output_permissions" 
         matInput
         [(ngModel)]="this.step.options.output_permissions"
         name="permissions"

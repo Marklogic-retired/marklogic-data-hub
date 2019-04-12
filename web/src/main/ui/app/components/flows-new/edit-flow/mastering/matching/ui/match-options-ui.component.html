@@ -156,7 +156,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row class="{{ 'match-option-' + mOpt.propertyName.join('-').toLowerCase().split(' ').join('-') }}"
+        <mat-row class="{{ 'match-option-' + (mOpt.propertyName || '').join('-').toLowerCase().split(' ').join('-') }}"
                  *matRowDef="let mOpt; columns: displayedColumns;">
         </mat-row>
 

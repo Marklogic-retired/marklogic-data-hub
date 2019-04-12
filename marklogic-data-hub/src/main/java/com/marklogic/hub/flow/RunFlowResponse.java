@@ -6,12 +6,30 @@ import java.util.stream.Collectors;
 
 public class RunFlowResponse {
     String jobId;
-    String startTime;
     String endTime;
+    String flowName;
+    String jobStatus;
+    String startTime;
     Map<String, Job> stepResponses;
 
     public RunFlowResponse(String jobId) {
         this.jobId = jobId;
+    }
+
+    public String getFlowName() {
+        return flowName;
+    }
+
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
+
+    public String getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(String jobStatus) {
+        this.jobStatus = jobStatus;
     }
 
     public String getStartTime() {
@@ -48,8 +66,8 @@ public class RunFlowResponse {
 
     @Override
     public String toString() {
-        return String.format("{jobId: %s, startTime: %s, endTime: %s, stepResponses: %s}", jobId, startTime,
-            endTime, stepResponses.keySet()
+        return String.format("{flowName: %s, jobId: %s, startTime: %s, endTime: %s, jobStatus: %s, stepResponses: %s}", flowName, jobId, startTime,
+            endTime, jobStatus, stepResponses.keySet()
                 .stream()
                 .map(key -> key + "=" + stepResponses.get(key))
                 .collect(Collectors.joining(", ", "{", "}")));

@@ -3,15 +3,15 @@
 
   <mat-form-field layout-fill>
     <mat-select id="merge-option-type" placeholder="Merge Type" formControlName="mergeType" [(value)]="selectedType">
-      <mat-option value="standard">Standard</mat-option>
-      <mat-option value="strategy">Strategy</mat-option>
-      <mat-option value="custom">Custom</mat-option>
+      <mat-option id="merge-option-type-standard" value="standard">Standard</mat-option>
+      <mat-option id="merge-option-type-strategy" value="strategy">Strategy</mat-option>
+      <mat-option id="merge-option-type-custom" value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field layout-fill>
     <mat-select id="merge-option-property" placeholder="Property to Merge" formControlName="propertyName" [(value)]="propertyName">
-      <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
+      <mat-option [id]="'merge-option-property-' + prop.name" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -27,7 +27,7 @@
 
   <div *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" id="source-weights">
     <mat-label>Source Weights</mat-label>
-    <button class="add-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
+    <button id="add-merge-option-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
       <mat-icon>add_circle</mat-icon>
     </button>
     <div
@@ -37,14 +37,14 @@
       <div [formGroupName]="i" class="source-weights-group">
         <mat-form-field>
           <mat-label>Source Name</mat-label>
-          <input [class]="'source-weights-source-' + i" matInput formControlName="source"/>
+          <input [class]="'source-weights-name-' + i" matInput formControlName="source"/>
         </mat-form-field>
         <mat-icon></mat-icon>
         <mat-form-field>
           <mat-label>Weight</mat-label>
           <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
         </mat-form-field>
-        <button class="remove-source-weight-btn" mat-icon-button (click)="onRemoveSourceWeight(i)">
+        <button [id]="'remove-merge-option-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
           <mat-icon>remove_circle</mat-icon>
         </button>
       </div>
@@ -59,7 +59,7 @@
   <mat-form-field *ngIf="selectedType === 'strategy'"  layout-fill>
     <mat-select id="merge-option-strategy" placeholder="Strategy Name" formControlName="strategy" [(value)]="strategy">
       <div *ngFor="let strName of strategies">
-        <mat-option *ngIf="strName" class="type-option"[value]="strName">{{strName}}</mat-option>
+        <mat-option *ngIf="strName" [id]="'merge-option-strategy-' + strName" [value]="strName">{{strName}}</mat-option>
       </div>
     </mat-select>
   </mat-form-field>

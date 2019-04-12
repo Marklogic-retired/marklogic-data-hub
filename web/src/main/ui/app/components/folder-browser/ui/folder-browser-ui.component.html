@@ -1,20 +1,20 @@
 <div class="container">
   <div class="current-folder" flex layout="column">
-    <mdl-textfield type="text" label="Current Folder" [(value)]="currentPath" (keydown)="onFolderChange($event)" floating-label></mdl-textfield>
+    <mdl-textfield class="folder-path" type="text" label="Current Folder" [(value)]="currentPath" (keydown)="onFolderChange($event)" floating-label></mdl-textfield>
   </div>
   <div class="foldertree-container">
     <div *ngIf="isLoading" layout="row" layout-sm="column" class="ajax-progress" layout-align="center start">
       <mdl-spinner single-color active></mdl-spinner>
     </div>
-    <ul class="foldertree">
-      <li *ngFor="let folder of folders">
+    <ul class="foldertree folder-browser">
+      <li *ngFor="let folder of folders" [class]="'folder-item-' + (folder.name || '')">
         <div class="entry" (click)="onEntryClicked(folder)">
           <i class="fa fa-folder-o"></i>
           <p>{{folder.name}}</p>
         </div>
       </li>
       <ng-template [ngIf]="showFiles">
-        <li *ngFor="let file of files">
+        <li *ngFor="let file of files" [class]="'file-item-' + (file.name || '')">
           <div class="entry" (click)="onFileClicked(file)">
             <i class="fa fa-file-o"></i>
             <p>{{file.name}}</p>
