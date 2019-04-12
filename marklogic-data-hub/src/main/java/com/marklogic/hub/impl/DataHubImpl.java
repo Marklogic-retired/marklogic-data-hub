@@ -862,11 +862,15 @@ public class DataHubImpl implements DataHub {
 
                 // Back up the gradle.properties to .old so hubUpdate will generate new gradle.properties to compare against
                 File oldGradlePropsFile = Paths.get(project.getProjectDirString()).resolve("gradle.properties.old").toFile();
-                File newgradlePropsFile = Paths.get(project.getProjectDirString(), "gradle.properties").toFile();
-                FileUtils.moveFile(newgradlePropsFile, oldGradlePropsFile);
+                File currentGradlePropsFile = Paths.get(project.getProjectDirString(), "gradle.properties").toFile();
+                FileUtils.moveFile(currentGradlePropsFile, oldGradlePropsFile);
             }
             
             hubConfig.initHubProject();
+
+            //Renaming gradle.properties to gradle-GENERATED.properties which is the properties file generated after hubUpdate
+            FileUtils.moveFile(Paths.get(project.getProjectDirString()).resolve("gradle.properties").toFile(), Paths.get(project.getProjectDirString()).resolve("gradle-GENERATED.properties").toFile());
+            FileUtils.moveFile(Paths.get(project.getProjectDirString()).resolve("gradle.properties.old").toFile(), Paths.get(project.getProjectDirString()).resolve("gradle.properties").toFile());
             
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();

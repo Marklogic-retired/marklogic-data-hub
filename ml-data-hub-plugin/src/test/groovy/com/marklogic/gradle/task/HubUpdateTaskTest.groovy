@@ -20,6 +20,8 @@ package com.marklogic.gradle.task
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
+import java.nio.file.Paths
+
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class HubUpdateTaskTest extends BaseTest {
@@ -64,6 +66,7 @@ class HubUpdateTaskTest extends BaseTest {
         harmonizeDir.toFile().mkdirs()
         FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
         FileUtils.copyDirectory(new File("src/test/resources/legacy-harmonize-flow"), harmonizeDir.resolve("legacy-harmonize-flow").toFile())
+        FileUtils.forceDelete(new File(BaseTest.testProjectDir.root.toString(),"gradle-GENERATED.properties"))
         when:
         def result = runTask("hubUpdate")
 
@@ -83,6 +86,7 @@ class HubUpdateTaskTest extends BaseTest {
         harmonizeDir.toFile().mkdirs()
         FileUtils.copyDirectory(new File("src/test/resources/2x-input-flow"), inputDir.resolve("2x-input-flow").toFile())
         FileUtils.copyDirectory(new File("src/test/resources/2x-harmonize-flow"), harmonizeDir.resolve("2x-harmonize-flow").toFile())
+        FileUtils.forceDelete(new File(BaseTest.testProjectDir.root.toString(),"gradle-GENERATED.properties"))
         when:
         def result = runTask("hubUpdate")
 
