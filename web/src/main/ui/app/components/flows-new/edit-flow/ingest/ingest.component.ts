@@ -36,25 +36,34 @@ export class IngestComponent implements OnInit {
         }
         this.checkDefaults();
       },
-      ()=>{
+      () => {
         this.checkDefaults();
       });
   }
 
+  /*
+    Checking if the options are exist if not then initiate it with default value.
+    This is the last barrier for the case if the backend has some options omitted.
+   */
   private checkDefaults(): void {
-    const targetEntity = this.step.options.targetEntity;
-    // if no config or not valid config, initialize with default
-    // TODO: better way to house-keep ingest options in the Step schema
-    if (!this.step.options || this.step.options.matchOptions) {
-      this.step.options = {
-        inputFilePath: this.projectPath || '.',
-        inputFileType: 'json',
-        outputCollections: `${targetEntity || ''}`,
-        outputPermissions: 'rest-reader,read,rest-writer,update',
-        outputFileType: 'json',
-        outputURIReplacement: '',
-        targetEntity: targetEntity
-      };
-    }
+    const {
+      inputFilePath,
+      inputFileType,
+      collections,
+      outputPermissions,
+      outputFileType,
+      outputURIReplacement
+    } = this.step.options;
+
+    const options = {
+      inputFilePath: inputFilePath || this.projectPath || '.',
+      inputFileType: inputFileType || 'json',
+      collections: collections || [`${this.step.name}`],
+      outputPermissions: outputPermissions || "rest-reader,read,rest-writer,update",
+      outputFileType: outputFileType || 'json',
+      outputURIReplacement: outputURIReplacement || ''
+    };
+
+    this.step.options = options;
   }
 }

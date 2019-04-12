@@ -1,7 +1,7 @@
 [
   {
     "id": "step-1-flow-1",
-    "name": "Flow 01 Ingest Step",
+    "name": "Flow01IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
@@ -10,7 +10,7 @@
     "options": {
       "inputFilePath": ".",
       "inputFileType": "xml",
-      "outputCollections": "Order,Flow 01 Ingest Step,input,newCollection",
+      "collections": ["Flow01IngestStep"],
       "outputPermissions": "rest-reader,read,rest-writer,update",
       "outputFileType": "json",
       "outputURIReplacement": ""
@@ -19,7 +19,7 @@
   },
   {
     "id": "step-2-flow-1",
-    "name": "Flow 01 Mapping Step",
+    "name": "Flow01Mapping Step",
     "description": "My Step 2 description",
     "type": "mapping",
     "sourceDatabase": "",
@@ -48,7 +48,7 @@
   },
   {
     "id": "step-3-flow-1",
-    "name": "Flow 01 Mastering Step",
+    "name": "Flow01MasteringStep",
     "description": "My Step 3 description",
     "type": "mastering",
     "sourceDatabase": "",
@@ -392,7 +392,7 @@
   },
   {
     "id": "step-4-flow-1",
-    "name": "Flow 01 Custom Step",
+    "name": "Flow01CustomStep",
     "description": "My Step 4 description",
     "type": "custom",
     "sourceDatabase": "",
@@ -408,7 +408,7 @@
   },
   {
     "id": "step-1-flow-2",
-    "name": "Flow 02 Ingest Step",
+    "name": "Flow02IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
@@ -417,7 +417,7 @@
     "options": {
       "inputFilePath": ".",
       "inputFileType": "xml",
-      "outputCollections": "Order,Flow 02 Ingest Step,input,newCollection",
+      "collections": ["Flow02IngestStep"],
       "outputPermissions": "rest-reader,read,rest-writer,update",
       "outputFileType": "json",
       "outputURIReplacement": ""
@@ -426,7 +426,7 @@
   },
   {
     "id": "step-2-flow-2",
-    "name": "Flow 02 Mapping Step",
+    "name": "Flow02MappingStep",
     "description": "My Step 2 description",
     "type": "mapping",
     "sourceDatabase": "",
@@ -455,7 +455,7 @@
   },
   {
     "id": "step-3-flow-2",
-    "name": "Flow 02 Mastering Step",
+    "name": "Flow02MasteringStep",
     "description": "My Step 3 description",
     "type": "mastering",
     "sourceDatabase": "",
@@ -799,7 +799,7 @@
   },
   {
     "id": "step-4-flow-2",
-    "name": "Flow 02 Custom Step",
+    "name": "Flow02CustomStep",
     "description": "My Step 4 description",
     "type": "custom",
     "sourceDatabase": "",
@@ -815,7 +815,7 @@
   },
   {
     "id": "step-1-flow-3",
-    "name": "Flow 3 Ingest Step",
+    "name": "Flow3IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
@@ -824,7 +824,7 @@
     "options": {
       "inputFilePath": ".",
       "inputFileType": "xml",
-      "outputCollections": "Order,Flow 3 Ingest Step,input,newCollection",
+      "collections": ["Flow3IngestStep"],
       "outputPermissions": "rest-reader,read,rest-writer,update",
       "outputFileType": "json",
       "outputURIReplacement": ""
@@ -833,7 +833,7 @@
   },
   {
     "id": "step-2-flow-3",
-    "name": "Flow 3 Mapping Step",
+    "name": "Flow3MappingStep",
     "description": "My Step 2 description",
     "type": "mapping",
     "sourceDatabase": "",
@@ -1206,7 +1206,7 @@
   },
   {
     "id": "step-4-flow-3",
-    "name": "Flow 3 Custom Step",
+    "name": "Flow3CustomStep",
     "description": "My Step 4 description",
     "type": "custom",
     "sourceDatabase": "",
@@ -1222,7 +1222,7 @@
   },
   {
     "id": "step-1-flow-4",
-    "name": "Flow 4 Ingest Step",
+    "name": "Flow4IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
@@ -1231,7 +1231,7 @@
     "options": {
       "inputFilePath": ".",
       "inputFileType": "xml",
-      "outputCollections": "Order,Flow 4 Ingest Step,input,newCollection",
+      "collections": ["Flow4IngestStep"],
       "outputPermissions": "rest-reader,read,rest-writer,update",
       "outputFileType": "json",
       "outputURIReplacement": ""

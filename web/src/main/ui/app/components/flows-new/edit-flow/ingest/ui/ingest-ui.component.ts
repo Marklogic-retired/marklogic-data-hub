@@ -91,6 +91,7 @@ export class IngestUiComponent implements OnInit {
 
   ngOnInit(): void {
     this.folder = this.step.options.inputFilePath;
+    console.log('init done')
   }
 
   changeFolder(folder) {
@@ -105,11 +106,9 @@ export class IngestUiComponent implements OnInit {
   }
 
   onChange() {
-    if (this.step.options) {
-      this.step.options.inputFilePath = this.folder;
-      this.step.options.outputCollections = `${this.step.options.targetEntity}`;
-      this.saveStep.emit(this.step);
-    }
+    this.step.options.inputFilePath = this.folder;
+    this.step.options.collections = [`${this.step.name}`];
+    this.saveStep.emit(this.step);
   }
 
 }

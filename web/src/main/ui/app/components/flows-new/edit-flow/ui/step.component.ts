@@ -34,7 +34,8 @@ export class StepComponent {
         databases: this.databases,
         collections: this.collections,
         entities: this.entities,
-        step: this.step
+        step: this.step,
+        flow: this.flow
       }
     });
 
