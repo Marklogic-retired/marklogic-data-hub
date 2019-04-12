@@ -1,37 +1,41 @@
 package com.marklogic.hub.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
+@JsonPropertyOrder({"id", "flowId", "flowName", "user", "status", "successfulEvents", "failedEvents", "startTime", "endTime", "lastAttemptedStep", "lastCompletedStep"})
 public class JobModel {
-    @JsonProperty("id")
-    public String jobId;
-    @JsonProperty("flowId")
-    public String name; //flowName
-    public String targetEntity;
+    public String id;
+    public String flowId;
+    public String flowName;
     public String user;
-    public String lastAttemptedStep;
-    public String lastCompletedStep;
     public String status;
-    public String startTime;
-    public String endTime;
     public long successfulEvents;
     public long failedEvents;
+    public String startTime;
+    public String endTime;
+    public String lastAttemptedStep;
+    public String lastCompletedStep;
 
     public static class JobStep {
         public int stepNumber;
-        public String type;
-        public String name;
         public String id;
-        public String identifier;
-        public int retryLimit;
-        public JsonNode options;
+        public String name;
+        public String type;
+        public String targetEntity;
         public String status;
-        public String startTime;
-        public String endTime;
+        public long totalEvents;
         public long successfulEvents;
         public long failedEvents;
+        public long successfulBatches;
+        public long failedBatches;
+        public boolean success;
+        public String startTime;
+        public String endTime;
+        public JsonNode stepOutput;
+        public String fullOutput;
     }
 
     @JsonProperty("steps")
