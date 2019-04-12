@@ -28,7 +28,7 @@
       Options
     </mat-label>
     <button class="flow-add-option-btn" mat-icon-button (click)="onAddOption()">
-      <mat-icon>add</mat-icon>
+      <mat-icon>add_circle</mat-icon>
     </button>
     <div
       id="flow-dialog"
@@ -45,7 +45,7 @@
           <input [class]="'flow-option-value-' + i" matInput formControlName="value"/>
         </mat-form-field>
         <button class="flow-remove-option-btn" mat-icon-button (click)="onRemoveOption(i)">
-          <mat-icon>remove</mat-icon>
+          <mat-icon>remove_circle</mat-icon>
         </button>
       </div>
     </div>
