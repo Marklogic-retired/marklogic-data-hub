@@ -102,14 +102,14 @@ public class MappingE2E extends HubTestBase {
         if (!isSetup) {
             isSetup = true;
             scaffolding.createEntity(ENTITY);
-            Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+            Path entityDir = projectDir.resolve("entities");
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getFlowDeveloperConfig(), true);
             if (modelProperties == null) {
     	        ObjectMapper objectMapper = new ObjectMapper();
     	     	JsonNode rootNode = null;
     			try {
-    				rootNode = objectMapper.readTree(getFlowDeveloperConfig().getHubEntitiesDir().resolve(ENTITY).resolve(ENTITY+".entity.json").toFile());
+    				rootNode = objectMapper.readTree(getFlowDeveloperConfig().getHubEntitiesDir().resolve(ENTITY+".entity.json").toFile());
     			} catch (JsonProcessingException e) {
     			      throw new RuntimeException(e);
     			} catch (IOException e) {
@@ -213,7 +213,7 @@ public class MappingE2E extends HubTestBase {
     		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
     		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
-	        scaffolding.createFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
+	        scaffolding.createLegacyFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);
 
 	        String srcDir = "e2e-test/" + codeFormat.toString() + "-flow/";
 	        copyFile(srcDir + "collector." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
@@ -365,7 +365,6 @@ public class MappingE2E extends HubTestBase {
 
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
         assertEquals(0, getJobDocCount());
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
@@ -419,12 +418,11 @@ public class MappingE2E extends HubTestBase {
             Thread.sleep(2000);
             int stagingCount = getStagingDocCount();
             int finalCount = getFinalDocCount();
-            int tracingCount = getTracingDocCount();
             int jobsCount = getJobDocCount();
 
             assertEquals(finalCounts.stagingCount, stagingCount);
             assertEquals(finalCounts.finalCount, finalCount);
-            assertEquals(finalCounts.tracingCount, tracingCount);
+
             assertEquals(finalCounts.jobCount, jobsCount);
 
             assertEquals(finalCounts.completedCount, completed.size());

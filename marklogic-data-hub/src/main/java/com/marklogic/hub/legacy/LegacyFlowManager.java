@@ -101,20 +101,6 @@ public interface LegacyFlowManager {
     LegacyFlow getFlow(String entityName, String flowName, FlowType flowType);
 
     /**
-     * Updates the indexes in the database based on the project
-     * @return - a list of names for all the flows that are legacy
-     */
-
-    List<String> getLegacyFlows();
-
-    /**
-     * Sets the version that the legacy flow is to be updated from
-     * @param fromVersion - string representation of DHF version
-     * @return a list of updated flow names that were updated
-     */
-    List<String> updateLegacyFlows(String fromVersion);
-
-    /**
      * Creates and returns a new LegacyFlowRunner object using the FlowManager's hubconfig
      * @return LegacyFlowRunner object with current hubconfig already set
      */

@@ -68,11 +68,11 @@ public class LegacyJobManagerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        scaffolding.createEntity(ENTITY);
+        scaffolding.createLegacyEntity(ENTITY);
         // Traces can be XML or JSON, depending on the DataFormat of the flow that created them. Get some of each
         // to make sure export and import work correctly.
-        scaffolding.createFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
-        scaffolding.createFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
+        scaffolding.createLegacyFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
+        scaffolding.createLegacyFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         clearUserModules();
         installUserModules(getFlowDeveloperConfig(), false);

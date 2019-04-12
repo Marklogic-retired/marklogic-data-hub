@@ -25,17 +25,14 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
-import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -43,11 +40,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class ScaffoldingImpl implements Scaffolding {
@@ -72,20 +66,35 @@ public class ScaffoldingImpl implements Scaffolding {
         return absolutePath.toString();
     }
 
-    @Override public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
+    @Override public Path getLegacyFlowDir(String entityName, String flowName, FlowType flowType) {
         Path entityDir = project.getEntityDir(entityName);
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
         return flowDir;
     }
 
-    @Override public void createEntity(String entityName) {
+    @Override public void createLegacyEntity(String entityName) {
         Path entityDir = project.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
         if(entityDir.toFile().exists()){
             String fileContents = getFileContent("scaffolding/Entity.json", entityName);
             writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
         }
+    }
+
+    @Override public void createEntity(String entityName) {
+        Path entityDir = project.getHubEntitiesDir();
+        File entityDirFile = entityDir.toFile();
+        if(!entityDirFile.exists()){
+            entityDirFile.mkdirs();
+        }
+        String fileContents = getFileContent("scaffolding/Entity.json", entityName);
+        writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
+    }
+
+    @Override public void createLegacyMappingDir(String mappingName) {
+        Path mappingDir = project.getLegacyMappingDir(mappingName);
+        mappingDir.toFile().mkdirs();
     }
 
     @Override public void createMappingDir(String mappingName) {
@@ -129,23 +138,23 @@ public class ScaffoldingImpl implements Scaffolding {
         }
     }
 
-    @Override public void createFlow(String entityName, String flowName,
-                                       FlowType flowType, CodeFormat codeFormat,
-                                       DataFormat dataFormat) {
-        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, true);
+    @Override public void createLegacyFlow(String entityName, String flowName,
+                                           FlowType flowType, CodeFormat codeFormat,
+                                           DataFormat dataFormat) {
+        createLegacyFlow(entityName, flowName, flowType, codeFormat, dataFormat, true);
     }
 
-    @Override public void createFlow(String entityName, String flowName,
-                                     FlowType flowType, CodeFormat codeFormat,
-                                     DataFormat dataFormat, boolean useEsModel) {
-        createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel, null);
+    @Override public void createLegacyFlow(String entityName, String flowName,
+                                           FlowType flowType, CodeFormat codeFormat,
+                                           DataFormat dataFormat, boolean useEsModel) {
+        createLegacyFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel, null);
     }
 
-    @Override public void createFlow(String entityName, String flowName,
-                           FlowType flowType, CodeFormat codeFormat,
-                           DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
+    @Override public void createLegacyFlow(String entityName, String flowName,
+                                           FlowType flowType, CodeFormat codeFormat,
+                                           DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
         try {
-            Path flowDir = getFlowDir(entityName, flowName, flowType);
+            Path flowDir = getLegacyFlowDir(entityName, flowName, flowType);
             flowDir.toFile().mkdirs();
 
             if (useEsModel) {
@@ -206,195 +215,14 @@ public class ScaffoldingImpl implements Scaffolding {
         }
     }
 
-    @Override public List<String> updateLegacyFlows(String fromVersion, String entityName) {
-        Path entityDir = project.getHubEntitiesDir().resolve(entityName);
-        Path inputDir = entityDir.resolve("input");
-        Path harmonizeDir = entityDir.resolve("harmonize");
-
-
-        updateLegacyEntity(entityName);
-
-        List<String> updatedFlows = new ArrayList<>();
-        File[] inputFlows = inputDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-        if (inputFlows != null) {
-            for (File inputFlow : inputFlows) {
-                if (updateLegacyFlow(fromVersion, entityName, inputFlow.getName(), FlowType.INPUT)) {
-                    updatedFlows.add(entityName + " => " + inputFlow.getName());
-                }
-                else if(update2xFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
-                    updatedFlows.add(entityName + " => " + inputFlow.getName());
-                }
-            }
-        }
-
-        File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
-        if (harmonizeFlows != null) {
-            for (File harmonizeFlow : harmonizeFlows) {
-                if(updateLegacyFlow(fromVersion, entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
-                    updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
-                }
-                else if(update2xFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
-                    updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
-                }
-            }
-        }
-
-        return updatedFlows;
-    }
-
     @Override public void updateLegacyEntity(String entityName) {
-        Path entityDir = project.getHubEntitiesDir().resolve(entityName);
-
-        File[] entityFiles = entityDir.toFile().listFiles((dir, name) -> name.matches("[^.]+\\.entity\\.json"));
-        if (entityFiles != null && entityFiles.length == 0) {
-            String fileContents = getFileContent("scaffolding/Entity.json", entityName);
-            writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
-        }
-    }
-
-    @Override public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) {
-        boolean updated = false;
-
-        Path flowDir = getFlowDir(entityName, flowName, flowType);
-        File[] mainFiles = flowDir.toFile().listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-        if (mainFiles.length < 1 || !flowDir.resolve(flowName + ".properties").toFile().exists()) {
-            File[] files = flowDir.toFile().listFiles((dir, name) -> name.endsWith(".xml"));
-
-            for (File file : files) {
-                    Document doc = readLegacyFlowXml(file);
-                    if (doc.getDocumentElement().getLocalName().equals("flow")) {
-                        DataFormat dataFormat = null;
-                        CodeFormat codeFormat = null;
-                        NodeList nodes = doc.getElementsByTagName("data-format");
-                        if (nodes.getLength() == 1) {
-                            String format = nodes.item(0).getTextContent();
-                            if (format.equals("application/json")) {
-                                dataFormat = DataFormat.JSON;
-                            } else if (format.equals("application/xml")) {
-                                dataFormat = DataFormat.XML;
-                            } else {
-                                throw new RuntimeException("Invalid Data Format");
-                            }
-                        }
-
-                        if (flowDir.resolve("content").resolve("content.sjs").toFile().exists()) {
-                            codeFormat = CodeFormat.JAVASCRIPT;
-                        } else if (flowDir.resolve("content").resolve("content.xqy").toFile().exists()) {
-                            codeFormat = CodeFormat.XQUERY;
-                        } else {
-                            throw new RuntimeException("Invalid Code Format");
-                        }
-
-                        String suffix = "";
-                        if (fromVersion.startsWith("1.")) {
-                            suffix = "-1x";
-                        }
-                        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy" + suffix + "." + codeFormat,
-                            flowDir.resolve("main." + codeFormat));
-
-                        file.delete();
-
-                        LegacyFlowBuilder flowBuilder = LegacyFlowBuilder.newFlow()
-                            .withEntityName(entityName)
-                            .withName(flowName)
-                            .withType(flowType)
-                            .withCodeFormat(codeFormat)
-                            .withDataFormat(dataFormat)
-                            .withMain(new MainPluginImpl("main." + codeFormat, codeFormat));
-
-                        if (flowType.equals(FlowType.HARMONIZE)) {
-                            flowBuilder.withCollector(new LegacyCollectorImpl("collector/collector." + codeFormat, codeFormat));
-
-                            if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                                updateLegacySjsWriter(flowDir);
-                            }
-                        }
-
-                        LegacyFlow flow = flowBuilder.build();
-                        try {
-                            FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
-                            flow.toProperties().store(fw, "");
-                            fw.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        updated = true;
-                    }
-            }
-        }
-        return updated;
-    }
-
-    public boolean update2xFlow(String entityName, String flowName, FlowType flowType) {
-        boolean updated = false;
-
-        Path flowDir = getFlowDir(entityName, flowName, flowType);
-        Path mainPath = flowDir.resolve("main.sjs");
-        Path xqyMainPath = flowDir.resolve("main.xqy");
-        if (mainPath.toFile().exists()) {
-            try {
-                String mainFile = FileUtils.readFileToString(mainPath.toFile());
-                // determine if this main needs to be updated to the 3.0 format
-                if (mainFile.contains("dhf.xqy")) {
-                    // switch out dhf.xqy for dhf.sjs
-                    mainFile = mainFile.replaceAll("dhf\\.xqy", "dhf.sjs");
-
-                    // update the write reference for harmonize flows
-                    if (flowType.equals(FlowType.HARMONIZE)) {
-                        Pattern pattern = Pattern.compile("dhf\\.runWriter\\(xdmp\\.function\\(null,\\s*'\\.(.*)/writer\\.sjs'\\),\\s*id,\\s*envelope,\\s*options\\);");
-                        Matcher matcher = pattern.matcher(mainFile);
-                        String writerPath = "";
-                        if (matcher.find()) {
-                            writerPath = matcher.group(1);
-                        }
-                        mainFile = mainFile.replaceFirst("(const\\s+triplesPlugin\\s*=\\s*require.*)", "$1\nconst writerPlugin = require('." + writerPath + "/writer.sjs');");
-                        mainFile = mainFile.replaceFirst("dhf\\.runWriter\\(([^;]*)\\);", "dhf.runWriter(writerPlugin, id, envelope, options);");
-                    }
-
-                    FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
-                    IOUtils.write(mainFile, fileOutputStream);
-                    fileOutputStream.close();
-                    updated = true;
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        if (mainPath.toFile().exists() || xqyMainPath.toFile().exists()) {
-            if (xqyMainPath.toFile().exists()) {
-                mainPath = xqyMainPath;
-            }
-            try {
-                String mainFile = FileUtils.readFileToString(mainPath.toFile());
-                // 2.x upgrade
-                mainFile = mainFile.replaceFirst("com\\.marklogic\\.hub", "data-hub/4");
-                // 3.0.0 upgrade
-                mainFile = mainFile.replaceFirst("MarkLogic/data-hub-framework", "data-hub/4");
-                FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
-                IOUtils.write(mainFile, fileOutputStream);
-                fileOutputStream.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return updated;
-    }
-
-    private void updateLegacySjsWriter(Path flowDir) {
-        Path writerFile = flowDir.resolve("writer").resolve("writer.sjs");
-        if (writerFile.toFile().exists()) {
-            try {
-                String contents = FileUtils.readFileToString(writerFile.toFile());
-                Pattern pattern = Pattern.compile("module.exports[^;]+;", Pattern.MULTILINE);
-                contents = pattern.matcher(contents).replaceAll("module.exports = write;");
-                FileOutputStream fileOutputStream = new FileOutputStream(writerFile.toFile());
-                IOUtils.write(contents, fileOutputStream);
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Path oldEntityDir = project.getEntityDir(entityName);
+        Path newEntityDir = project.getHubEntitiesDir();
+        String entityFileName = entityName + "entity.json";
+        try {
+            Files.move(oldEntityDir.resolve(entityFileName), newEntityDir.resolve(entityFileName));
+        } catch (IOException e) {
+            logger.warn("Unable to move legacy entity '" + entityName + "'", e);
         }
     }
 
@@ -500,7 +328,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
 
     private Path getRestDirectory(String entityName, FlowType flowType) {
-        return getFlowDir(entityName, "REST", flowType);
+        return getLegacyFlowDir(entityName, "REST", flowType);
     }
 
     private void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) {
