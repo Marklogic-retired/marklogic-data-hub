@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>{{data.title}}</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div id="step-dialog" mat-dialog-content class="content" [formGroup]="newStepForm">
   <mat-form-field>
     <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()" formControlName="type" required>
@@ -30,7 +30,7 @@
 
   <mat-form-field>
     <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity">
-      <mat-option *ngFor="let entity of data.entities" [value]="entity.name">{{entity.name}}</mat-option>
+      <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 
