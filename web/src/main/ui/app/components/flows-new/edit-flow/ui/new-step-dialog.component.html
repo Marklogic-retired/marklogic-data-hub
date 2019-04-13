@@ -12,7 +12,7 @@
 
     <mat-form-field class="">
       <input id="step-name" matInput formControlName="name" placeholder="Name" required>
-      <mat-error *ngIf="newStepForm.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
+      <mat-error id="step-name-error" *ngIf="newStepForm.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="">
