@@ -16,6 +16,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   @Output() newStep = new EventEmitter();
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
+  @Output() stepSelected = new EventEmitter();
   @Output() deleteStep = new EventEmitter();
   @Output() editFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
@@ -48,6 +49,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   stepClicked(index: number): void {
     this.selectedIndex = index;
+    this.stepSelected.emit(index);
   }
   newStepClicked(): void {
     let index = this.selectedIndex + 2;

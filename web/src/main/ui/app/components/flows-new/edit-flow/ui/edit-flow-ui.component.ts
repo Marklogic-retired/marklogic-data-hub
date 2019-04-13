@@ -20,10 +20,12 @@ export class EditFlowUiComponent {
   @Input() databases: any;
   @Input() entities: any;
   @Input() collections: any;
+  @Input() selectedStepId: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
+  @Output() stepSelected = new EventEmitter();
   @Output() stepCreate = new EventEmitter();
   @Output() stepUpdate = new EventEmitter();
   @Output() stepDelete = new EventEmitter();

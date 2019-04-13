@@ -24,7 +24,7 @@
         ></app-mapping>
       </div>
       <div id="step-type-mastering-container" *ngIf="step.type === 'mastering'">
-        <mat-tab-group>
+        <mat-tab-group #masteringTabGroup [selectedIndex]="masteringTabIndex">
           <mat-tab label="Matching">
             <app-matching
               [step]="step"
