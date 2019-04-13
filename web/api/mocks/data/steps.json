@@ -7,12 +7,12 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "fileLocations": {
-        "inputFilePath": ".",
-        "inputFileType": "xml",
-        "outputURIReplacement": ""
-      },
       "collections": [
         "Flow01IngestStep"
       ],
@@ -408,12 +408,12 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "fileLocations": {
-        "inputFilePath": ".",
-        "inputFileType": "xml",
-        "outputURIReplacement": ""
-      },
       "collections": [
         "Flow02IngestStep"
       ],
@@ -819,12 +819,12 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "fileLocations": {
-        "inputFilePath": ".",
-        "inputFileType": "xml",
-        "outputURIReplacement": ""
-      },
       "collections": [
         "Flow3IngestStep"
       ],
@@ -1230,12 +1230,12 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": false,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "fileLocations": {
-        "inputFilePath": ".",
-        "inputFileType": "xml",
-        "outputURIReplacement": ""
-      },
       "collections": [
         "Flow4IngestStep"
       ],

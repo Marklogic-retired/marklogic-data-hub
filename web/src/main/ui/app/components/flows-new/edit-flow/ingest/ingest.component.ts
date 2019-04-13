@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {ProjectService} from "../../../../services/projects";
-import {tap} from "rxjs/operators";
 import * as _ from 'lodash';
 
 @Component({
@@ -47,27 +46,30 @@ export class IngestComponent implements OnInit {
    */
   private checkDefaults(): void {
     const {
-      fileLocations: {
-        inputFilePath,
-        inputFileType,
-        outputURIReplacement
-      },
+      inputFilePath,
+      inputFileType,
+      outputURIReplacement
+    } = this.step.fileLocations;
+
+    const {
       collections,
       outputPermissions,
       outputFileType
     } = this.step.options;
 
+    const fileLocations = {
+      inputFilePath: inputFilePath || this.projectPath || '.',
+      inputFileType: inputFileType || 'json',
+      outputURIReplacement: outputURIReplacement || ''
+    };
+
     const options = {
-      fileLocations: {
-        inputFilePath: inputFilePath || this.projectPath || '.',
-        inputFileType: inputFileType || 'json',
-        outputURIReplacement: outputURIReplacement || ''
-      },
       collections: collections || [`${this.step.name}`],
       outputPermissions: outputPermissions || "rest-reader,read,rest-writer,update",
       outputFileType: outputFileType || 'json'
     };
 
+    this.step.fileLocations = fileLocations;
     this.step.options = options;
   }
 }
