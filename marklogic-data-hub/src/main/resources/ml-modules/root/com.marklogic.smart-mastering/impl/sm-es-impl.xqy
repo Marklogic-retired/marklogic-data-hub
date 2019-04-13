@@ -3,36 +3,60 @@ xquery version "1.0-ml";
 (:
  : This is an implementation library, not an interface to the Smart Mastering functionality.
  :
- : Code in this library simply retruns information about known Entity Services
+ : Code in this library simply returns information about known Entity Services
  : entity descriptors.
  :)
 
 module namespace es-impl = "http://marklogic.com/smart-mastering/entity-services-impl";
 
-declare function es-impl:get-entity-descriptors()
-  as array-node()
-{
-  array-node {
+import module namespace const = "http://marklogic.com/smart-mastering/constants"
+  at "/com.marklogic.smart-mastering/constants.xqy";
+
+declare namespace es = "http://marklogic.com/entity-services";
+declare variable $_entity-descriptors as array-node() := array-node {
     let $entities :=
-      sem:sparql("SELECT ?entityIRI ?entityTitle
+      sem:sparql("SELECT ?entityIRI ?entityTitle ?entityVersion
                   WHERE
                   {
                     ?entityIRI a <http://marklogic.com/entity-services#EntityType>;
-                               <http://marklogic.com/entity-services#title> ?entityTitle.
+                               <http://marklogic.com/entity-services#title> ?entityTitle;
+                               <http://marklogic.com/entity-services#version> ?entityVersion.
+                    OPTIONAL {
+                      ?entityIRI <http://marklogic.com/entity-services#primaryKey> ?primaryKey.
+                    }
                   }
                   ORDER BY ?entityTitle")
     for $entity in  $entities
+    let $entity-version := map:get($entity, "entityVersion")
+    let $entity-title := map:get($entity, "entityTitle")
+    let $nc-name := xdmp:encode-for-NCName($entity-title)
+    let $namespace-uri := fn:string(
+        fn:head(
+          fn:collection("http://marklogic.com/entity-services/models")
+            /(object-node()|es:model)[(es:info/es:version|info/version) = $entity-version]
+            /(es:definitions|definitions)/*[fn:string(fn:node-name(.)) eq $nc-name]
+            /(es:namespace-uri|namespaceUri)
+        )
+      )
     return object-node {
       "entityIRI": map:get($entity, "entityIRI"),
-      "entityTitle": map:get($entity, "entityTitle"),
+      "entityTitle": $entity-title,
+      "entityVersion": $entity-version,
+      "namespaceUri": $namespace-uri,
+      "primaryKey": fn:head((map:get($entity, "primaryKey"),null-node{})),
       "properties": array-node {
         let $properties :=
-          sem:sparql("SELECT ?propertyIRI ?datatype ?collation ?items ?title ?itemsDatatype ?itemsRef
+          sem:sparql("SELECT ?propertyIRI ?primaryKey ?ref ?datatype ?collation ?items ?title ?itemsDatatype ?itemsRef
                       WHERE
                       {
                         ?entityIRI <http://marklogic.com/entity-services#property> ?propertyIRI.
-                        ?propertyIRI <http://marklogic.com/entity-services#datatype> ?datatype;
-                                      <http://marklogic.com/entity-services#title>  ?title.
+                        ?propertyIRI <http://marklogic.com/entity-services#title>  ?title.
+                        OPTIONAL {
+                          ?propertyIRI <http://marklogic.com/entity-services#ref> ?ref.
+                        }
+                        OPTIONAL {
+                          ?propertyIRI <http://marklogic.com/entity-services#datatype> ?datatype.
+                        }
                         OPTIONAL {
                           ?propertyIRI <http://marklogic.com/entity-services#items> ?items.
                           OPTIONAL {
@@ -58,5 +82,37 @@ declare function es-impl:get-entity-descriptors()
           ))
       }
     }
-  }
+  };
+
+declare function es-impl:get-entity-descriptors()
+  as array-node()
+{
+  $_entity-descriptors
+};
+
+declare function es-impl:get-entity-def($target-entity as item()?) as object-node()?
+{
+  if (fn:exists($target-entity)) then
+    let $entity-def := es-impl:get-entity-descriptors()/object-node()[(entityIRI,entityTitle) = $target-entity]
+    return
+      if (fn:exists($entity-def)) then
+        $entity-def
+      else
+        fn:error($const:ENTITY-NOT-FOUND-ERROR, ("Specified entity not found"), ($target-entity))
+  else ()
+};
+
+declare function es-impl:get-entity-def-property(
+  $entity-def as object-node()?,
+  $property-title as xs:string?
+) as object-node()?
+{
+  if (fn:exists($entity-def)) then
+    let $property-def := $entity-def/properties[title = $property-title]
+    return
+      if (fn:exists($property-def)) then
+        $property-def
+      else
+        fn:error($const:ENTITY-PROPERTY-NOT-FOUND-ERROR, ("Specified entity property not found"), ($entity-def, $property-title))
+  else ()
 };

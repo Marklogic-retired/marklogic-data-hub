@@ -14,10 +14,8 @@
       <a id="database-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/')}" [routerLink]="['']"><i class="fa fa-dashboard"></i> Dashboard</a>
       <a id="entities-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/entities')}" [routerLink]="['entities']"><i class="fa fa-industry"></i> Entities</a>
       <a id="flows-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/flows')}" [routerLink]="['flows']"><i class="mdi mdi-looks"></i> Flows</a>
-      <a id="mappings-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/mappings')}" [routerLink]="['mappings']"><i class="fa fa-map"></i> Mappings</a>
       <a id="browser-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>
       <a id="jobs-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="runningJobs !== 0" [mdl-badge]="runningJobs">Jobs</span><span *ngIf="runningJobs === 0">Jobs</span></a>
-      <a id="traces-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/traces')}" [routerLink]="['traces']"><i class="fa fa-flash"></i> Traces</a>
       <a id="settings-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
     </nav>
     <mdl-button id="header-menu" #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-button-type="icon" mdl-ripple>

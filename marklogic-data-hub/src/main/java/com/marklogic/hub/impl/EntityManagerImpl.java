@@ -177,8 +177,28 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private List<JsonNode> getAllEntities() {
-        List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> entities = new ArrayList<>(getAllLegacyEntities());
         Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        if (entityDefs != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                for (File entityDef : entityDefs) {
+                    FileInputStream fileInputStream = new FileInputStream(entityDef);
+                    entities.add(objectMapper.readTree(fileInputStream));
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
+    private List<JsonNode> getAllLegacyEntities() {
+        List<JsonNode> entities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
         List<String> entityNames;
         if (entityFiles != null) {
@@ -209,9 +229,41 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         HubModuleManager propsManager = getPropsMgr();
         propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
 
-        List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> entities = new ArrayList<>(getModifiedRawLegacyEntities(minimumFileTimestampToLoad));
         List<JsonNode> tempEntities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        if (entityDefs != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                boolean hasOneChanged = false;
+                for (File entityDef : entityDefs) {
+                    if (propsManager.hasFileBeenModifiedSinceLastLoaded(entityDef)) {
+                        hasOneChanged = true;
+                    }
+                    FileInputStream fileInputStream = new FileInputStream(entityDef);
+                    tempEntities.add(objectMapper.readTree(fileInputStream));
+                    fileInputStream.close();
+                }
+                // all or nothing
+                if (hasOneChanged) {
+                    entities.addAll(tempEntities);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
+    private List<JsonNode> getModifiedRawLegacyEntities(long minimumFileTimestampToLoad) {
+        HubModuleManager propsManager = getPropsMgr();
+        propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
+
+        List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> tempEntities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
         List<String> entityNames;
         if (entityFiles != null) {

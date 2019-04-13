@@ -27,7 +27,12 @@ public enum JobStatus {
         return this.type;
     }
 
+    //Step Status prefix
+    public static final String RUNNING_PREFIX = "running step ";
     public static final String COMPLETED_PREFIX = "completed step ";
     public static final String COMPLETED_WITH_ERRORS_PREFIX = "completed with errors step ";
+    public static final String STOP_ON_ERROR_PREFIX = "stop on error in step ";
+    public static final String FAILED_PREFIX = "failed step ";
+    public static final String CANCELED_PREFIX = "canceled step ";
 
 }

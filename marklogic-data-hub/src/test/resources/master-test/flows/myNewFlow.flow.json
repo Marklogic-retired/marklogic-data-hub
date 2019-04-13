@@ -1,16 +1,21 @@
 {
-  "name" : "myNewFlow",
-  "description" : "flow description",
-  "identifier" : "",
+  "name": "myNewFlow",
+  "description": "flow description",
+  "identifier": "",
   "batchSize": 300,
-  "steps" : { "1": {
-  "name": "ingest",
-  "type": "INGEST"
-},  "2": {
-  "name": "mapping",
-  "type": "MAPPING"
-},  "3": {
-  "name": "master",
-  "type": "MASTER"
-} }
+  "steps": {
+    "1": {
+      "name": "ingest",
+      "type": "INGEST"
+    },
+    "2": {
+      "name": "mapping",
+      "type": "MAPPING"
+    },
+    "3": {
+      "name": "master",
+      "type": "MASTER",
+      "batchSize": 300
+    }
+  }
 }

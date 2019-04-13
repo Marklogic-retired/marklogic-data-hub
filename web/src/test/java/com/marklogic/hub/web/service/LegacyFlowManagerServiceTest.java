@@ -75,23 +75,23 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void setup() {
         createProjectDir();
-        scaffolding.createEntity(ENTITY);
-        scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
-        scaffolding.createFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
-        scaffolding.createFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.JSON, false);
 
-        scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
-        scaffolding.createFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
-        scaffolding.createFlow(ENTITY, "xqy-xml-harmonization-flow", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "xqy-xml-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");

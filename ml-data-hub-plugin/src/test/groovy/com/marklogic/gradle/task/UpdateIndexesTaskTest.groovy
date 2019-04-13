@@ -17,13 +17,8 @@
 
 package com.marklogic.gradle.task
 
-import org.apache.commons.io.FileUtils
-import org.gradle.testkit.runner.UnexpectedBuildFailure
-import org.gradle.testkit.runner.UnexpectedBuildSuccess
-
 import com.marklogic.hub.HubConfig
-import com.marklogic.hub.HubProject
-import com.marklogic.hub.util.FileUtil
+import org.gradle.testkit.runner.UnexpectedBuildFailure
 import spock.lang.IgnoreIf
 
 import java.nio.file.Files
@@ -31,7 +26,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class UpdateIndexesTaskTest extends BaseTest {
@@ -48,7 +42,7 @@ class UpdateIndexesTaskTest extends BaseTest {
             }
         """
 		runTask('hubCreateEntity')
-		File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-order-entity").toFile()
+		File entityDir = Paths.get(testProjectDir.root.toString(), "entities").toFile()
 		entityDir.isDirectory() == true
 
 		// Copying Order.entity.json file to plugins/entities/my-unique-order-entity directory

@@ -73,7 +73,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         hubConfig.initHubProject();
         hubConfig.refreshProject();
 
-        scaffolding.createEntity(ENTITY);
+        scaffolding.createLegacyEntity(ENTITY);
 
         Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
         Path inputDir = entityDir.resolve("input");
@@ -82,16 +82,16 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
         installUserModules(getFlowDeveloperConfig(), true);
 
-        scaffolding.createFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
 
-        scaffolding.createFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "sjs-xml-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.XML);
 
-        scaffolding.createFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "xqy-json-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.JSON);
 
-        scaffolding.createFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
+        scaffolding.createLegacyFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.XML);
 
         FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());

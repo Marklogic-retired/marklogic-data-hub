@@ -22,10 +22,13 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawCtsQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.web.exception.BadRequestException;
+import com.marklogic.hub.web.model.CTSSearchQuery;
 import com.marklogic.hub.web.model.SearchQuery;
 
 import javax.xml.namespace.QName;
@@ -106,6 +109,30 @@ public class SearchService extends SearchableService {
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
         return queryMgr.search(sqd, sh, searchQuery.start);
+    }
+
+    public StringHandle ctsSearch(CTSSearchQuery ctsSearchQuery) {
+        QueryManager queryMgr;
+        if (ctsSearchQuery.database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
+            queryMgr = stagingQueryMgr;
+        }
+        else {
+            queryMgr = finalQueryMgr;
+        }
+
+        queryMgr.setPageLength(ctsSearchQuery.count);
+
+        if (ctsSearchQuery.ctsQuery != null && !ctsSearchQuery.ctsQuery.isNull()) {
+            RawCtsQueryDefinition queryDefinition = queryMgr.newRawCtsQueryDefinitionAs(Format.JSON, ctsSearchQuery.ctsQuery.toString());
+
+            StringHandle sh = new StringHandle();
+            sh.setFormat(Format.JSON);
+
+            return queryMgr.search(queryDefinition, sh, ctsSearchQuery.start);
+        }
+        else {
+            throw new BadRequestException("CTS Search Query is null");
+        }
     }
 
     public String getDoc(String database, String docUri) {
