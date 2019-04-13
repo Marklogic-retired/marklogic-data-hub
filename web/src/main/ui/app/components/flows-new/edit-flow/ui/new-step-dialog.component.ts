@@ -6,6 +6,7 @@ import { Step } from '../../models/step.model';
 import { Options } from '../../models/step-options.model';
 import { Matching } from '../mastering/matching/matching.model';
 import { Merging } from '../mastering/merging/merging.model';
+import { NewStepDialogValidator } from '../../validators/new-step-dialog.validator';
 
 export interface DialogData {
   title: string;
@@ -26,6 +27,7 @@ export class NewStepDialogComponent implements OnInit {
   readonly stepOptions = ['ingest', 'mapping', 'mastering', 'custom'];
   public databases = Object.values(this.data.databases).slice(0, -1);
   selectedSource = '';
+  selectedCollection = '';
   newStepForm: FormGroup;
 
   constructor(
@@ -42,15 +44,20 @@ export class NewStepDialogComponent implements OnInit {
       this.newStep = this.data.step;
     }
     this.newStepForm = this.formBuilder.group({
-      name: [this.data.step ? this.data.step.name : '', Validators.required],
       type: [this.data.step ? this.data.step.type : '', Validators.required],
+      name: [this.data.step ? this.data.step.name : '', Validators.required],
       description: [this.data.step ? this.data.step.description : ''],
       sourceQuery: [this.data.step ? this.data.step.options.sourceQuery : ''],
       sourceCollection: [this.data.step ? this.data.step.options.sourceCollection : ''],
       targetEntity: [this.data.step ? this.data.step.options.targetEntity : ''],
       sourceDatabase: [this.data.step ? this.data.step.sourceDatabase : ''],
       targetDatabase: [this.data.step ? this.data.step.targetDatabase : '']
-    });
+    }, { validators: NewStepDialogValidator });
+    if (this.data.step && this.data.step.options.sourceCollection) {
+      this.selectedSource = 'collection';
+    } else if (this.data.step && this.data.step.options.sourceQuery) {
+      this.selectedSource = 'query';
+    }
   }
   onNoClick(): void {
     this.dialogRef.close(false);
@@ -83,20 +90,28 @@ export class NewStepDialogComponent implements OnInit {
     }
   }
   onSave() {
+    // Validate
+    if (this.newStepForm.value.name === '' ||
+        this.newStepForm.value.type === '' ||
+        this.newStepForm.errors) {
+       return;
+    }
+    // Populate step and close dialog
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.type = this.newStepForm.value.type;
     this.newStep.description = this.newStepForm.value.description;
-    this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
-    this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+    if (this.selectedSource === 'collection') {
+      this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+      this.newStep.options.sourceQuery = '';
+    }
+    if (this.selectedSource === 'query') {
+      this.newStep.options.sourceCollection = '';
+      this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+    }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.targetDatabase = this.newStepForm.value.targetDatabase;
-
-    if (this.newStep.name !== '' && this.newStep.type !== '') {
-      this.dialogRef.close(this.newStep);
-    }
+    this.dialogRef.close(this.newStep);
   }
-  // targetEntityChange(entity) {
-  //   this.newStep.options['targetEntity'] = entity;
-  // }
+
 }
