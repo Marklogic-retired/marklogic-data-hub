@@ -20,6 +20,7 @@ const datahub = new DataHub();
 function get(context, params) {
   let jobId = params["jobid"];
   let status = params["status"];
+  let flow = params["flow-name"];
 
   let resp = null;
 
@@ -31,6 +32,9 @@ function get(context, params) {
   }
   else if(fn.exists(status)) {
     resp = datahub.jobs.getJobDocs(status);
+  }
+  else if (fn.exists(flow)) {
+    resp = datahub.jobs.getJobDocsByFlow(flow);
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
