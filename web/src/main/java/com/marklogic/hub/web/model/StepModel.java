@@ -203,6 +203,12 @@ public class StepModel {
         StepModel stepModel = new StepModel();
 
         stepModel.setId(step.getName() + "-" + step.getType());
+        stepModel.setId(step.getName() + "-" + step.getType());
+        if (step.getName().startsWith("default-")) {
+            stepModel.setId(step.getName());
+        } else {
+            stepModel.setId(step.getName() + "-" + step.getType());
+        }
         stepModel.setName(step.getName());
         stepModel.setType(step.getType().toString().toLowerCase());
         stepModel.setDescription(step.getDescription());

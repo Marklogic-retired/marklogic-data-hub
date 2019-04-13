@@ -154,4 +154,6 @@ public interface StepRunner {
     Job run(Collection<String> uris);
 
     void stop();
+
+    public String getRunningStepKey();
 }

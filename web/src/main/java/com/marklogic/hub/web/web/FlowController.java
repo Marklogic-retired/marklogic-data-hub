@@ -21,13 +21,13 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -131,8 +131,8 @@ public class FlowController {
 
     @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
-        FlowStepModel flow = flowManagerService.runFlow(flowName, steps);
+    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) Object steps) {
+        FlowStepModel flow = flowManagerService.runFlow(flowName, new ArrayList<>());
         return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
     }
 
