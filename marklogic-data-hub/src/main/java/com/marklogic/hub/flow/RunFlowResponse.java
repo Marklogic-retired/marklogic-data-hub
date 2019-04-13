@@ -1,8 +1,11 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.hub.job.Job;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 public class RunFlowResponse {
     String jobId;
@@ -66,11 +69,13 @@ public class RunFlowResponse {
 
     @Override
     public String toString() {
-        return String.format("{flowName: %s, jobId: %s, startTime: %s, endTime: %s, jobStatus: %s, stepResponses: %s}", flowName, jobId, startTime,
-            endTime, jobStatus, stepResponses.keySet()
-                .stream()
-                .map(key -> key + "=" + stepResponses.get(key))
-                .collect(Collectors.joining(", ", "{", "}")));
-    }
+        String stepRes = ofNullable(stepResponses).orElse(new HashMap<String, Job>()).keySet()
+            .stream()
+            .map(key -> key + "=" + stepResponses.get(key))
+            .collect(Collectors.joining(", ", "{", "}"));
 
+        return String.format("{flowName: %s, jobId: %s, jobStatus: %s, startTime: %s, endTime: %s, stepResponses: %s}", flowName, jobId,
+            ofNullable(jobStatus).orElse(""), ofNullable(startTime).orElse(""),
+            ofNullable(endTime).orElse(""), stepRes);
+    }
 }

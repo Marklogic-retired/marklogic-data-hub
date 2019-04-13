@@ -164,4 +164,11 @@ public interface StepRunner {
      *
      */
      int getBatchSize();
+
+    /**
+     * Get the current Running step key
+     * @return
+     */
+    public String getRunningStepKey();
+
 }

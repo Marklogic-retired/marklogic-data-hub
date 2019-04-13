@@ -13,10 +13,6 @@ import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
 import com.marklogic.hub.step.impl.Step;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -25,6 +21,9 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class FlowRunnerImpl implements FlowRunner{
@@ -54,7 +53,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
-    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     private ThreadPoolExecutor threadPool;
     private JobUpdate jobUpdate;
@@ -196,7 +195,11 @@ public class FlowRunnerImpl implements FlowRunner{
 
             Map<String, Job> stepOutputs = new HashMap<>();
             String stepNum = null;
-            while (! stepQueue.isEmpty()){
+
+            final long[] currSuccessfulEvents = {0};
+            final long[] currFailedEvents = {0};
+            final int[] currPercentComplete = {0};
+            while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
                 Map<String, Object> optsMap = new HashMap<>(flow.getOverrideOptions());
@@ -221,9 +224,12 @@ public class FlowRunnerImpl implements FlowRunner{
                                 stopJob(jobId);
                             }
                         })
-                        .onStatusChanged((jobId, percentComplete, successfulEvents, failedEvents, message) ->{
+                        .onStatusChanged((jobId, percentComplete, jobStatus, successfulEvents, failedEvents, message) ->{
                             flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                                listener.onStatusChanged(jobId, runningStep, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
+                                currSuccessfulEvents[0] = successfulEvents;
+                                currFailedEvents[0] = failedEvents;
+                                currPercentComplete[0] = percentComplete;
+                                listener.onStatusChanged(jobId, runningStep, jobStatus, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
                             });
                         });
                     //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
@@ -259,6 +265,14 @@ public class FlowRunnerImpl implements FlowRunner{
                     }
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
+                    }
+                    Job finalStepResp = stepResp;
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0],
+                                runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
+                        });
+                    } catch (Exception ex) {
                     }
                 }
                 finally {
@@ -304,7 +318,21 @@ public class FlowRunnerImpl implements FlowRunner{
                 throw e;
             }
             finally {
-
+                if (!isJobSuccess.get()) {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                        });
+                    } catch (Exception ex) {
+                    }
+                } else {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                        });
+                    } catch (Exception ex) {
+                    }
+                }
                 jobQueue.remove();
                 if (!jobQueue.isEmpty()) {
                     initializeFlow((String) jobQueue.peek());
@@ -377,5 +405,13 @@ public class FlowRunnerImpl implements FlowRunner{
 
     public RunFlowResponse getJobResponseById(String jobId) {
         return flowResp.get(jobId);
+    }
+
+    public boolean jobIsRunning() {
+        return isRunning.get();
+    }
+
+    public String getRunningStepKey() {
+        return this.stepRunner.getRunningStepKey();
     }
 }

@@ -36,9 +36,6 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -198,9 +195,9 @@ public class QueryStepRunner implements StepRunner {
         } catch (Exception e) {
             job.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED.toString());
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
-            job.withStepOutput(errors.toString());
+            //StringWriter errors = new StringWriter();
+            //e.printStackTrace(new PrintWriter(errors));
+            job.withStepOutput(e.getLocalizedMessage());
             try {
                 jobUpdate.postJobs(jobId, JobStatus.FAILED_PREFIX + step);
             }
@@ -239,7 +236,7 @@ public class QueryStepRunner implements StepRunner {
         c.setClient(stagingClient);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(this.jobId, 0, 0, 0,  "running collector");
+            listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING, 0, 0,  "running collector");
         });
 
         final DiskQueue<String> uris ;
@@ -264,12 +261,12 @@ public class QueryStepRunner implements StepRunner {
         AtomicLong failedBatches = new AtomicLong(0);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(job.getJobId(), 0, 0,0, "starting step execution");
+            listener.onStatusChange(job.getJobId(), 0, JobStatus.RUNNING, 0,0, "starting step execution");
         });
 
         if ( !isStopped.get() && (uris == null || uris.size() == 0 )) {
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, 0, 0, "collector returned 0 items");
+                listener.onStatusChange(job.getJobId(), 100, JobStatus.FINISHED, 0, 0, "collector returned 0 items");
             });
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             job.setCounts(0,0,0,0,0);
@@ -334,7 +331,7 @@ public class QueryStepRunner implements StepRunner {
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
                         previousPercentComplete = percentComplete;
                         stepStatusListeners.forEach((StepStatusListener listener) -> {
-                            listener.onStatusChange(job.getJobId(), percentComplete, successfulEvents.get(), failedEvents.get(), "");
+                            listener.onStatusChange(job.getJobId(), percentComplete, JobStatus.RUNNING, successfulEvents.get(), failedEvents.get(), "");
                         });
                     }
 
@@ -379,32 +376,39 @@ public class QueryStepRunner implements StepRunner {
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
 
+            JobStatus jobStatus;
+            String stepStatus;
+
+            if (failedEvents.get() > 0 && stopOnFailure) {
+                jobStatus = JobStatus.STOP_ON_ERROR;
+                stepStatus = JobStatus.STOP_ON_ERROR.toString();
+            } else if( isStopped.get()){
+                jobStatus = JobStatus.CANCELED;
+                stepStatus = JobStatus.CANCELED.toString();
+            } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+                jobStatus = JobStatus.FINISHED_WITH_ERRORS;
+                stepStatus = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
+            } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
+                jobStatus = JobStatus.FINISHED;
+                stepStatus = JobStatus.COMPLETED_PREFIX + step;
+            } else {
+                jobStatus = JobStatus.FAILED;
+                stepStatus = JobStatus.FAILED_PREFIX + step;
+            }
+
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, successfulEvents.get(), failedEvents.get(), "");
+                listener.onStatusChange(job.getJobId(), 100, jobStatus, successfulEvents.get(), failedEvents.get(), "");
             });
 
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
 
             dataMovementManager.stopJob(queryBatcher);
 
-            String status;
-
-            if (failedEvents.get() > 0 && stopOnFailure) {
-                status = JobStatus.STOP_ON_ERROR.toString();
-            } else if(isStopped.get()){
-                status = JobStatus.CANCELED.toString();
-            } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                status = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
-            } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
-                status = JobStatus.COMPLETED_PREFIX + step;
-            } else {
-                status = JobStatus.FAILED_PREFIX + step;
-            }
             job.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
-            job.withStatus(status);
+            job.withStatus(stepStatus);
 
             try {
-                jobUpdate.postJobs(jobId, status, step, status.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step)?step:null);
+                jobUpdate.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null);
             }
             catch (Exception e) {
                 throw e;
@@ -437,6 +441,11 @@ public class QueryStepRunner implements StepRunner {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String getRunningStepKey() {
+        return this.step;
     }
 
     class FlowResource extends ResourceManager {
