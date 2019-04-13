@@ -8,12 +8,16 @@
     "targetDatabase": "staging",
     "isValid": true,
     "options": {
-      "inputFilePath": ".",
-      "inputFileType": "xml",
-      "collections": ["Flow01IngestStep"],
-      "outputPermissions": "rest-reader,read,rest-writer,update",
-      "outputFileType": "json",
-      "outputURIReplacement": ""
+      "fileLocations": {
+        "inputFilePath": ".",
+        "inputFileType": "xml",
+        "outputURIReplacement": ""
+      },
+      "collections": [
+        "Flow01IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   },
@@ -415,12 +419,16 @@
     "targetDatabase": "staging",
     "isValid": true,
     "options": {
-      "inputFilePath": ".",
-      "inputFileType": "xml",
-      "collections": ["Flow02IngestStep"],
-      "outputPermissions": "rest-reader,read,rest-writer,update",
-      "outputFileType": "json",
-      "outputURIReplacement": ""
+      "fileLocations": {
+        "inputFilePath": ".",
+        "inputFileType": "xml",
+        "outputURIReplacement": ""
+      },
+      "collections": [
+        "Flow02IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   },
@@ -822,12 +830,16 @@
     "targetDatabase": "staging",
     "isValid": true,
     "options": {
-      "inputFilePath": ".",
-      "inputFileType": "xml",
-      "collections": ["Flow3IngestStep"],
-      "outputPermissions": "rest-reader,read,rest-writer,update",
-      "outputFileType": "json",
-      "outputURIReplacement": ""
+      "fileLocations": {
+        "inputFilePath": ".",
+        "inputFileType": "xml",
+        "outputURIReplacement": ""
+      },
+      "collections": [
+        "Flow3IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   },
@@ -1229,12 +1241,16 @@
     "targetDatabase": "staging",
     "isValid": false,
     "options": {
-      "inputFilePath": ".",
-      "inputFileType": "xml",
-      "collections": ["Flow4IngestStep"],
-      "outputPermissions": "rest-reader,read,rest-writer,update",
-      "outputFileType": "json",
-      "outputURIReplacement": ""
+      "fileLocations": {
+        "inputFilePath": ".",
+        "inputFileType": "xml",
+        "outputURIReplacement": ""
+      },
+      "collections": [
+        "Flow4IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   }

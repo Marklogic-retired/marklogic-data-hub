@@ -47,21 +47,25 @@ export class IngestComponent implements OnInit {
    */
   private checkDefaults(): void {
     const {
-      inputFilePath,
-      inputFileType,
+      fileLocations: {
+        inputFilePath,
+        inputFileType,
+        outputURIReplacement
+      },
       collections,
       outputPermissions,
-      outputFileType,
-      outputURIReplacement
+      outputFileType
     } = this.step.options;
 
     const options = {
-      inputFilePath: inputFilePath || this.projectPath || '.',
-      inputFileType: inputFileType || 'json',
+      fileLocations: {
+        inputFilePath: inputFilePath || this.projectPath || '.',
+        inputFileType: inputFileType || 'json',
+        outputURIReplacement: outputURIReplacement || ''
+      },
       collections: collections || [`${this.step.name}`],
       outputPermissions: outputPermissions || "rest-reader,read,rest-writer,update",
-      outputFileType: outputFileType || 'json',
-      outputURIReplacement: outputURIReplacement || ''
+      outputFileType: outputFileType || 'json'
     };
 
     this.step.options = options;
