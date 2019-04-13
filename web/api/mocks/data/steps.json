@@ -31,22 +31,12 @@
     "isValid": true,
     "options": {
       "sourceCollection": "Flow 01 Ingest Step",
-      "sourceURI": "source-doc-01.json",
+      "sourceURI": "",
       "sourceQuery": "",
       "targetEntity": "Order",
       "targetEntityType": "http://example.org/Order-0.0.1/Order",
       "sourceContext": "//",
-      "properties": {
-        "id": {
-          "sourcedFrom": "id"
-        },
-        "price": {
-          "sourcedFrom": "price"
-        },
-        "products": {
-          "sourcedFrom": "product_id"
-        }
-      }
+      "properties": null
     },
     "version": "1"
   },

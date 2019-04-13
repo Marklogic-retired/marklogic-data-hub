@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {NewStepDialogComponent} from './new-step-dialog.component';
 import {IngestComponent} from "../ingest/ingest.component";
+import {MappingComponent} from "../mapping/mapping.component";
 
 @Component({
   selector: 'app-step',
@@ -17,6 +18,7 @@ export class StepComponent {
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
+  @ViewChild(MappingComponent) mappingStep: MappingComponent;
 
 
   showBody = true;
@@ -41,6 +43,7 @@ export class StepComponent {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
+        this.mappingStep.stepEdited(response);
         this.updateStep.emit(response);
       }
     });
