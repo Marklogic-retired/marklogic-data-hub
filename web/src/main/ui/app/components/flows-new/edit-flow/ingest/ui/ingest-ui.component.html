@@ -1,5 +1,11 @@
 <div layout-padding layout="column" class="ingest-page">
 
+    <!-- TODO reconsider adding tooltips for inputs
+    <info-label
+      [labelText]="config.inputFilePath.label"
+      tooltipPlacement="right"
+      [tooltipText]="config.inputFilePath.description"
+    ></info-label> -->
     <div class="label">{{config.inputFilePath.label}}</div>
     <app-folder-browser
       [startPath]="this.step.fileLocations.inputFilePath"
