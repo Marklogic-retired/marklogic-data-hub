@@ -379,7 +379,7 @@ public class FlowRunnerImpl implements FlowRunner{
         return flowResp.get(jobId);
     }
 
-    public boolean jobIsRunning() {
+    public boolean isJobRunning() {
         return isRunning.get();
     }
 
