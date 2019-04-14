@@ -64,7 +64,7 @@ public class FlowRunnerChecker {
     }
 
     public LatestJob getLatestJob() {
-        if (!flowRunner.jobIsRunning() && StringUtils.isNotEmpty(latestJob.endTime)) {
+        if (!flowRunner.isJobRunning() && StringUtils.isNotEmpty(latestJob.endTime)) {
             LatestJob retJob = latestJob;
             latestJob = new LatestJob();
             return retJob;
