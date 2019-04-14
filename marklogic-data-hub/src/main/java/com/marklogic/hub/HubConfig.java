@@ -22,7 +22,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -410,7 +410,7 @@ public interface HubConfig {
      */
     Path getHubMappingsDir();
 
-    Path getStepsDirByType(Step.StepType type);
+    Path getStepsDirByType(StepDefinition.StepType type);
 
     /**
      * Gets the path for the hub's config directory

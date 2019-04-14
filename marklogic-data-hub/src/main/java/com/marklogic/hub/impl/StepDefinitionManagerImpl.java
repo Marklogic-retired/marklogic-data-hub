@@ -19,9 +19,9 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.StepManager;
+import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
@@ -35,32 +35,32 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Component
-public class StepManagerImpl implements StepManager {
+public class StepDefinitionManagerImpl implements StepDefinitionManager {
 
     @Autowired
     private HubConfig hubConfig;
 
     @Override
-    public void saveStep(Step step) {
-        saveStep(step, false);
+    public void saveStepDefinition(StepDefinition stepDefinition) {
+        saveStepDefinition(stepDefinition, false);
     }
 
     @Override
-    public void saveStep(Step step, boolean autoIncrement) {
+    public void saveStepDefinition(StepDefinition stepDefinition, boolean autoIncrement) {
         try {
             if (autoIncrement) {
-                step.incrementVersion();
+                stepDefinition.incrementVersion();
             }
 
-            Path dir = resolvePath(hubConfig.getStepsDirByType(step.getType()), step.getName());
+            Path dir = resolvePath(hubConfig.getStepsDirByType(stepDefinition.getType()), stepDefinition.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            String stepFileName = step.getName() + STEP_FILE_EXTENSION;
+            String stepFileName = stepDefinition.getName() + STEP_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), stepFileName).toFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             JSONStreamWriter jw = new JSONStreamWriter(fileOutputStream);
-            jw.write(step);
+            jw.write(stepDefinition);
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize Step for project.");
         } catch (IOException e) {
@@ -69,8 +69,8 @@ public class StepManagerImpl implements StepManager {
     }
 
     @Override
-    public void deleteStep(Step step) {
-        Path dir = resolvePath(hubConfig.getStepsDirByType(step.getType()), step.getName());
+    public void deleteStepDefinition(StepDefinition stepDefinition) {
+        Path dir = resolvePath(hubConfig.getStepsDirByType(stepDefinition.getType()), stepDefinition.getName());
         if (dir.toFile().exists()) {
             try {
                 FileUtils.deleteDirectory(dir.toFile());
@@ -81,25 +81,25 @@ public class StepManagerImpl implements StepManager {
     }
 
     @Override
-    public ArrayList<Step> getSteps() {
-        ArrayList<Step> stepList = new ArrayList<>();
-        for (Step.StepType stepType : Step.StepType.getStepTypes()) {
-            for (String name : getStepNamesByType(stepType)) {
-                stepList.add(getStep(name, stepType));
+    public ArrayList<StepDefinition> getStepDefinitions() {
+        ArrayList<StepDefinition> stepList = new ArrayList<>();
+        for (StepDefinition.StepType stepType : StepDefinition.StepType.getStepTypes()) {
+            for (String name : getStepDefinitionNamesByType(stepType)) {
+                stepList.add(getStepDefinition(name, stepType));
             }
         }
         return stepList;
     }
 
     @Override
-    public Step getStep(String name, Step.StepType type) {
+    public StepDefinition getStepDefinition(String name, StepDefinition.StepType type) {
         Path stepPath = resolvePath(hubConfig.getStepsDirByType(type), name);
 
         try {
             String targetFileName = name + STEP_FILE_EXTENSION;
             FileInputStream fileInputStream = new FileInputStream(stepPath.resolve(targetFileName).toFile());
             JsonNode node = JSONObject.readInput(fileInputStream);
-            Step newStep = createStepFromJSON(node);
+            StepDefinition newStep = createStepDefinitionFromJSON(node);
             if (newStep != null && newStep.getName().length() > 0) {
                 return newStep;
             }
@@ -113,22 +113,22 @@ public class StepManagerImpl implements StepManager {
     }
 
     @Override
-    public ArrayList<Step> getStepsByType(Step.StepType type) {
-        ArrayList<Step> stepList = new ArrayList<>();
-        for (String name : getStepNamesByType(type)) {
-            stepList.add(getStep(name, type));
+    public ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepType type) {
+        ArrayList<StepDefinition> stepList = new ArrayList<>();
+        for (String name : getStepDefinitionNamesByType(type)) {
+            stepList.add(getStepDefinition(name, type));
         }
         return stepList;
     }
 
     @Override
-    public ArrayList<String> getStepNamesByType(Step.StepType type) {
+    public ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepType type) {
         return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepsDirByType(type));
     }
 
     @Override
-    public Step createStepFromJSON(JsonNode json) {
-        Step step = Step.create("default", Step.StepType.CUSTOM);
+    public StepDefinition createStepDefinitionFromJSON(JsonNode json) {
+        StepDefinition step = StepDefinition.create("default", StepDefinition.StepType.CUSTOM);
         step.deserialize(json);
         return step;
     }

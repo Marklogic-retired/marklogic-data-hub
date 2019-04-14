@@ -17,11 +17,11 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 
 import java.util.ArrayList;
 
-public interface StepManager {
+public interface StepDefinitionManager {
 
     /**
      * String value for the mapping file extension
@@ -31,31 +31,31 @@ public interface StepManager {
     /**
      * Saves a Step to disk
      *
-     * @param step - the Step object to be saved
+     * @param stepDefinition - the Step object to be saved
      */
-    void saveStep(Step step);
+    void saveStepDefinition(StepDefinition stepDefinition);
 
     /**
      * Saves a Step to disk
      *
-     * @param step - the Step object to be saved
-     * @param autoIncrement - true to increment version, false if not to
+     * @param stepDefinition - the Step object to be saved
+     * @param autoIncrement  - true to increment version, false if not to
      */
-    void saveStep(Step step, boolean autoIncrement);
+    void saveStepDefinition(StepDefinition stepDefinition, boolean autoIncrement);
 
     /**
      * Deletes a Step from disk
      *
-     * @param step - the Step object to be deleted
+     * @param stepDefinition - the Step object to be deleted
      */
-    void deleteStep(Step step);
+    void deleteStepDefinition(StepDefinition stepDefinition);
 
     /**
      * Returns a list of all Steps currently defined
      *
      * @return - an ArrayList of all Step objects from disk
      */
-    ArrayList<Step> getSteps();
+    ArrayList<StepDefinition> getStepDefinitions();
 
     /**
      * Returns a single Step given a name and a type
@@ -64,7 +64,7 @@ public interface StepManager {
      * @param type - type of the Step
      * @return the Step object
      */
-    Step getStep(String name, Step.StepType type);
+    StepDefinition getStepDefinition(String name, StepDefinition.StepType type);
 
     /**
      * Returns a list of Steps that have the given type
@@ -72,7 +72,7 @@ public interface StepManager {
      * @param type - type of the Step
      * @return an ArrayList of Step objects of a given type
      */
-    ArrayList<Step> getStepsByType(Step.StepType type);
+    ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepType type);
 
     /**
      * Returns a list of Step names that have the given type
@@ -80,7 +80,7 @@ public interface StepManager {
      * @param type - type of the Step
      * @return an ArrayList of Step names of a given type
      */
-    ArrayList<String> getStepNamesByType(Step.StepType type);
+    ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepType type);
 
     /**
      * Creates a Step from a given JsonNode
@@ -88,5 +88,5 @@ public interface StepManager {
      * @param json - a JsonNode
      * @return a Step object
      */
-    Step createStepFromJSON(JsonNode json);
+    StepDefinition createStepDefinitionFromJSON(JsonNode json);
 }

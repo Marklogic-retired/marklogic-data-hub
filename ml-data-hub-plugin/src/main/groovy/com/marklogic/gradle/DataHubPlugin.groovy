@@ -48,7 +48,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
-    private StepManagerImpl stepManager
+    private StepDefinitionManagerImpl stepManager
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
@@ -91,7 +91,7 @@ class DataHubPlugin implements Plugin<Project> {
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
-        project.task("hubCreateStep", group: scaffoldGroup, type: CreateStepTask)
+        project.task("hubCreateStepDefinition", group: scaffoldGroup, type: CreateStepDefinitionTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
@@ -179,7 +179,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
-        stepManager = ctx.getBean(StepManagerImpl.class)
+        stepManager = ctx.getBean(StepDefinitionManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
