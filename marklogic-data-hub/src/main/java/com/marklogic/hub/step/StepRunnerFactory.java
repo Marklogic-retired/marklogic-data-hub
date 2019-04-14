@@ -3,6 +3,7 @@ package com.marklogic.hub.step;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.impl.QueryStepRunner;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,10 @@ public class StepRunnerFactory {
     private StepRunner stepRunner;
 
     public StepRunner getStepRunner(Flow flow, String stepNum) {
-        Map<String,Step> steps = flow.getSteps();
+        Map<String, Step> steps = flow.getSteps();
         Step step = steps.get(stepNum);
 
-        switch (step.getType()) {
+        switch (step.getStepDefinitionType()) {
             case MAPPING:
                 stepRunner = new QueryStepRunner(hubConfig);
                 break;
@@ -39,11 +40,11 @@ public class StepRunnerFactory {
         if(step.getBatchSize() != 0) {
             stepRunner.withThreadCount(step.getThreadCount());
         }
-        if(StringUtils.isNotEmpty(step.getSourceDatabase())) {
-            stepRunner.withSourceClient(hubConfig.newStagingClient(step.getSourceDatabase()));
+        if(StringUtils.isNotEmpty(step.getOptions().get("sourceDatabase").toString())) {
+            stepRunner.withSourceClient(hubConfig.newStagingClient(step.getOptions().get("sourceDatabase").toString()));
         }
-        if(StringUtils.isNotEmpty(step.getDestinationDatabase())){
-            stepRunner.withDestinationDatabase(step.getDestinationDatabase());
+        if(StringUtils.isNotEmpty(step.getOptions().get("targetDatabase").toString())){
+            stepRunner.withDestinationDatabase(step.getOptions().get("targetDatabase").toString());
         }
         return stepRunner;
     }

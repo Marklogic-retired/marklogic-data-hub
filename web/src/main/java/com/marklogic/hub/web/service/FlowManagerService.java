@@ -22,7 +22,8 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
@@ -50,7 +51,7 @@ public class FlowManagerService {
     private FlowRunnerImpl flowRunner;
 
     @Autowired
-    private StepManagerService stepManagerService;
+    private StepDefinitionManagerService stepDefinitionManagerService;
 
     public List<FlowStepModel> getFlows() {
         List<Flow> flows = flowManager.getFlows();
@@ -137,29 +138,36 @@ public class FlowManagerService {
         Flow flow = flowManager.getFlow(flowName);
         Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
 
-        if (step.getType() == null) {
+        if (step.getStepDefinitionType() == null) {
             throw new BadRequestException("Invalid Step Type");
         }
 
         // Only save step if step is of Custom type, for rest use the default steps.
-        switch (step.getType()) {
+        switch (step.getStepDefinitionType()) {
             case INGEST:
-                Step defaultIngest = getDefaultStepFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", Step.StepType.INGEST);
+                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", StepDefinition.StepType.INGEST);
+                Step defaultIngest = defaultIngestDefinition.transformToStep(step.getName(), defaultIngestDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultIngest, step);
                 break;
             case MAPPING:
-                Step defaultMapping = getDefaultStepFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", Step.StepType.MAPPING);
+                StepDefinition defaultMappingDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", StepDefinition.StepType.MAPPING);
+                Step defaultMapping = defaultMappingDefinition.transformToStep(step.getName(), defaultMappingDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultMapping, step);
                 break;
             case MASTER:
-                Step defaultMaster = getDefaultStepFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", Step.StepType.MASTER);
+                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", StepDefinition.StepType.MASTER);
+                Step defaultMaster = defaultMasterDefinition.transformToStep(step.getName(), defaultMasterDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultMaster, step);
                 break;
             case CUSTOM:
-                if (stepManagerService.getStep(step.getName(), step.getType()) != null) {
-                    stepManagerService.saveStep(step);
+                if (stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType()) != null) {
+                    StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
+                    StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
+                    stepDefinitionManagerService.saveStepDefinition(stepDefinition);
                 } else {
-                    stepManagerService.createStep(step);
+                    StepDefinition stepDefinition = StepDefinition.create(step.getStepDefinitionName(), StepDefinition.StepType.CUSTOM);
+                    stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
+                    stepDefinitionManagerService.createStepDefinition(stepDefinition);
                 }
                 break;
             default:
@@ -235,7 +243,7 @@ public class FlowManagerService {
 
 //                // Don't delete the Step from the filesystem so that we can later on reuse the step.
 //                if (step.getType().equals(Step.StepType.CUSTOM)) {
-//                    stepManagerService.deleteStep(step);
+//                    stepManagerService.deleteStepDefinition(step);
 //                }
             } catch (DataHubProjectException e) {
                 throw new NotFoundException(e.getMessage());
@@ -282,7 +290,7 @@ public class FlowManagerService {
             String[] key = new String[1];
 
             flowManager.getSteps(flow).forEach((k, v) -> {
-                if (name.equals(v.getName()) && type.equalsIgnoreCase(v.getType().toString())) {
+                if (name.equals(v.getName()) && type.equalsIgnoreCase(v.getStepDefinitionType().toString())) {
                     key[0] = k;
                 }
             });
@@ -293,11 +301,11 @@ public class FlowManagerService {
         return null;
     }
 
-    private Step getDefaultStepFromResources(String resourcePath, Step.StepType stepType) {
+    private StepDefinition getDefaultStepDefinitionFromResources(String resourcePath, StepDefinition.StepType stepType) {
         try {
             InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream(resourcePath);
             JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
-            Step defaultStep = Step.create(stepType.toString(), stepType);
+            StepDefinition defaultStep = StepDefinition.create(stepType.toString(), stepType);
             defaultStep.deserialize(jsonObject.jsonNode());
 
             return defaultStep;

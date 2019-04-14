@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import java.util.*;
 
@@ -110,7 +110,7 @@ public class FlowStepModel {
         Map<String, String> keyById = new HashMap<>();
         for (String key : existingSteps.keySet()) {
             String name = existingSteps.get(key).getName();
-            String type = existingSteps.get(key).getType().toString();
+            String type = existingSteps.get(key).getStepDefinitionType().toString();
             keyById.put(name + "-" + type, key);
         }
         final String[] count = {"1"};
@@ -145,7 +145,7 @@ public class FlowStepModel {
 
         steps.forEach((name, step) -> {
             StepSummary sm = new StepSummary();
-            String stepType = step.getType() == null ? "" : step.getType().toString();
+            String stepType = step.getStepDefinitionType() == null ? "" : step.getStepDefinitionType().toString();
             sm.id = step.getName() + "-" + stepType;
             sm.name = step.getName();
             sm.type = stepType;

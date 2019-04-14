@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.step.impl;
+package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.ArrayList;
@@ -27,14 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StepImpl implements Step {
-    public final static int DEFAULT_BATCH_SIZE = 100;
-    public final static int DEFAULT_THREAD_COUNT = 4;
+public abstract class AbstractStepDefinition implements StepDefinition {
+    private final static int DEFAULT_BATCH_SIZE = 100;
+    private final static int DEFAULT_THREAD_COUNT = 4;
 
-    private String language = "zxx";
+    private String language;
     private String name;
     private String description;
-    private StepType type;
+    private StepDefinition.StepType type;
     private Integer version;
     private Map<String, Object> options;
     private JsonNode customHook;
@@ -44,12 +43,9 @@ public class StepImpl implements Step {
     private int retryLimit;
     private int batchSize;
     private int threadCount;
-    private String sourceDatabase;
-    private String destinationDatabase;
 
-    public StepImpl(String name, StepType type) {
-        this.name = name;
-        this.type = type;
+    protected AbstractStepDefinition() {
+        language = "zxx";
         version = 1;
 
         options = new HashMap<>();
@@ -57,47 +53,15 @@ public class StepImpl implements Step {
         collectionName.add(name);
         options.put("collections", collectionName);
 
-        if (type == StepType.INGEST) {
-            options.put("outputFormat", "json");
-        } else if (type == StepType.MAPPING  || type == StepType.MASTER || type == StepType.CUSTOM) {
-            identifier = "cts.uris(null, null, cts.collectionQuery('default-ingest'))";
-            options.put("identifier", this.identifier);
-        }
-        switch (type) {
-            case INGEST:
-                options.put("outputFormat", "json");
-                this.modulePath = "/data-hub/5/builtins/steps/ingest/default/main.sjs";
-                break;
-            case MAPPING:
-                this.modulePath = "/data-hub/5/builtins/steps/mapping/default/main.sjs";
-                break;
-            case MASTER:
-                options.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
-                options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-                options.put("mergeOptions", new JSONObject());
-                options.put("matchOptions", new JSONObject());
-                // Step update needed for lock-for-update in Smart Mastering
-                options.put("stepUpdate", true);
-                // Accepts batch needed for Smart Mastering to receive all batch documents at once
-                options.put("acceptsBatch", true);
-                this.modulePath = "/data-hub/5/builtins/steps/master/default/main.sjs";
-                break;
-            default:
-                this.modulePath = "/path/to/your/step/module/main.sjs";
-                break;
-        }
         customHook = new JSONObject().jsonNode();
         retryLimit = 0;
         batchSize = DEFAULT_BATCH_SIZE;
         threadCount = DEFAULT_THREAD_COUNT;
     }
 
+
     public String getLanguage() {
         return language;
-    }
-
-    public void setLanguage() {
-        this.language = "zxx";
     }
 
     public String getName() {
@@ -108,11 +72,11 @@ public class StepImpl implements Step {
         this.name = name;
     }
 
-    public StepType getType() {
+    public StepDefinition.StepType getType() {
         return type;
     }
 
-    public void setType(StepType type) {
+    public void setType(StepDefinition.StepType type) {
         this.type = type;
     }
 
@@ -188,22 +152,6 @@ public class StepImpl implements Step {
         this.threadCount = threadCount;
     }
 
-    public String getSourceDatabase() {
-        return sourceDatabase;
-    }
-
-    public void setSourceDatabase(String sourceDatabase) {
-        this.sourceDatabase = sourceDatabase;
-    }
-
-    public String getDestinationDatabase() {
-        return destinationDatabase;
-    }
-
-    public void setDestinationDatabase(String destinationDatabase) {
-        this.destinationDatabase = destinationDatabase;
-    }
-
     public void incrementVersion() {
         setVersion(getVersion() + 1);
     }
@@ -221,7 +169,7 @@ public class StepImpl implements Step {
         }
 
         if (jsonObject.isExist("type")) {
-            setType(StepType.getStepType(jsonObject.getString("type")));
+            setType(StepDefinition.StepType.getStepType(jsonObject.getString("type")));
         }
 
         if (jsonObject.isExist("version")) {
@@ -259,13 +207,31 @@ public class StepImpl implements Step {
         if (jsonObject.isExist("threadCount")) {
             setThreadCount(jsonObject.getInt("threadCount"));
         }
+    }
 
-        if (jsonObject.isExist("sourceDatabase")) {
-            setSourceDatabase(jsonObject.getString("sourceDatabase"));
-        }
+    public Step transformToStep(String stepName, StepDefinition stepDefinition, Step step) {
+        step.setStepDefinitionName(stepDefinition.getName());
+        step.setStepDefinitionType(stepDefinition.getType());
+        step.setName(stepName);
+        step.setThreadCount(stepDefinition.getThreadCount());
+        step.setBatchSize(stepDefinition.getBatchSize());
+        step.setRetryLimit(stepDefinition.getRetryLimit());
+        step.setCustomHook(stepDefinition.getCustomHook());
+        step.setOptions(stepDefinition.getOptions());
+        step.setDescription(stepDefinition.getDescription());
 
-        if (jsonObject.isExist("destinationDatabase")) {
-            setDestinationDatabase(jsonObject.getString("destinationDatabase"));
-        }
+        return step;
+    }
+
+    public StepDefinition transformFromStep(StepDefinition stepDefinition, Step step) {
+        stepDefinition.setName(step.getName());
+        stepDefinition.setBatchSize(step.getBatchSize());
+        stepDefinition.setDescription(step.getDescription());
+        stepDefinition.setThreadCount(step.getThreadCount());
+        stepDefinition.setOptions(step.getOptions());
+        stepDefinition.setModulePath(step.getModulePath());
+        stepDefinition.setCustomHook(step.getCustomHook());
+
+        return stepDefinition;
     }
 }

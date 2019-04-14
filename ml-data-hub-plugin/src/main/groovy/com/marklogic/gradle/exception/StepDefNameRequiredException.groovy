@@ -19,8 +19,8 @@ package com.marklogic.gradle.exception
 
 import org.gradle.api.GradleException
 
-class StepNameRequiredException extends GradleException {
-    StepNameRequiredException() {
-        super("stepName property is required. Supply the parameter with -PstepName=YourStep")
+class StepDefNameRequiredException extends GradleException {
+    StepDefNameRequiredException() {
+        super("stepDefName property is required. Supply the parameter with -PstepDefName=YourStep")
     }
 }

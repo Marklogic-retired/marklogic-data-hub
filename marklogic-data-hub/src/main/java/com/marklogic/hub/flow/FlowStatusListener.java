@@ -1,6 +1,6 @@
 package com.marklogic.hub.flow;
 
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 
 public interface FlowStatusListener {
 

@@ -16,7 +16,7 @@
 package com.marklogic.hub.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 
 import java.util.Map;
 
