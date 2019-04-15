@@ -85,7 +85,6 @@ class FlowUtils {
     content = this.cleanData(content, "content", dataFormat);
     headers = this.cleanData(headers, "headers", dataFormat);
     triples = this.cleanData(triples, "triples", dataFormat);
-
     let instance = null;
     let attachments = null;
     let inputFormat = this.determineDocumentType(content);
@@ -96,17 +95,15 @@ class FlowUtils {
           title: content['$type'],
           version: content['$version']
         };
-        if (content['$attachments'] instanceof Element) {
-          let config = json.config('custom');
-          config['element-namespace'] = "http://marklogic.com/entity-services";
-          attachments = json.transformToJson(this.cleanXMLforJSON(content['$attachments']), config);
+        if (content['$attachments'] && content['$attachments'] instanceof Element) {
+          attachments =  this.xmlToJson(content['$attachments']);
         } else {
           attachments = content['$attachments'];
         }
       } else if (dataFormat === this.consts.XML) {
         instance = this.instanceToCanonicalXml(content);
-        if (content['$attachments'] instanceof Object || content['$attachments'] instanceof ObjectNode) {
-          attachments = xdmp.toJsonString(content['$attachments']);
+        if ((!content['$attachments'] instanceof Element && !content['$attachments'] instanceof XMLDocument) && (content['$attachments'] instanceof Object || content['$attachments'] instanceof ObjectNode)) {
+          attachments = this.jsonToXml(content['$attachments']);
         } else {
           attachments = content['$attachments'];
         }
@@ -197,7 +194,12 @@ class FlowUtils {
               nb.addNode(xmlAttachments);
             }
           }
+        } else if (attachments instanceof XMLDocument || this.isXmlNode(attachments)) {
+          nb.addNode(attachments);
         }
+        nb.endElement();
+      } else {
+        nb.startElement("attachments", "http://marklogic.com/entity-services");
         nb.endElement();
       }
       nb.endElement();
@@ -240,7 +242,7 @@ class FlowUtils {
         } else {
           return resp;
       }
-    } else if (resp === null) {
+    } else if (!resp) {
         if (destination === "headers" && dataFormat === this.consts.JSON) {
           return {};
         }
@@ -430,6 +432,8 @@ class FlowUtils {
       } else {
         return organizedOutput;
       }
+    } else if(fn.nilled(content)) {
+      return null;
     } else {
       return fn.string(content);
     }
@@ -481,6 +485,16 @@ class FlowUtils {
       return xdmp.getCurrentUser();
     }
     return value;
+  }
+
+  createAttachments(content, dataFormat) {
+    let attachments = new NodeBuilder();
+    attachments.startElement('attachments');
+    attachments.addNode(this.cleanData(content.xpath('/*:envelope/*:instance'), "content", dataFormat));
+    attachments.addNode(this.cleanData(content.xpath('/*:envelope/*:headers'), "headers", dataFormat));
+    attachments.addNode(this.cleanData(content.xpath('/*:envelope/*:triples'), "triples", dataFormat));
+    attachments.endElement();
+    return attachments.toNode();
   }
 
   createHeaders(options) {

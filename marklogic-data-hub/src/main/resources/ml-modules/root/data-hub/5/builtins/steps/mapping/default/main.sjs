@@ -88,16 +88,22 @@ function main(content, options) {
   else {
     source = doc;
   }
-  //Then we obtain the document from the source context
-  let instance = lib.processInstance(entityModel, mapping, source);
-  if(source instanceof XMLDocument || source.nodeKind === 'element') {
-    instance['$attachments'] =  datahub.flow.flowUtils.xmlToJson(source);
-  } else {
-    instance['$attachments'] = source;
+
+  let instance;
+
+  //Then we obtain the instance and process it from the source context
+  try {
+    instance = lib.processInstance(entityModel, mapping, source);
+  } catch (e) {
+    datahub.debug.log({message: e, type: 'error'});
+    throw Error(e);
   }
 
+  //now let's make our attachments, if it's xml, it'll be passed as string
+  instance['$attachments'] = source;
+
   let triples = [];
-  let headers = datahub.flow.flowUtils.createHeaders(options)
+  let headers = datahub.flow.flowUtils.createHeaders(options);
 
   if (options.triples && Array.isArray(options.triples)) {
     for (let triple of options.triples) {

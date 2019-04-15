@@ -104,8 +104,15 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
 
     } else {
       if(valueSource) {
-        value = castDataType(dataType, valueSource)
+        try {
+          value = castDataType(dataType, valueSource);
+        } catch (e) {
+          value = null;
+        }
       }
+    }
+    if(required.indexOf(property) > -1 && !value) {
+      throw Error('The property: '+property+' is required property on the model: '+modelName+' and must have a valid value. Value was: '+valueSource+'.');
     }
     instance[property] = value;
   }
