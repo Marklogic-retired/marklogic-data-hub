@@ -6,7 +6,7 @@
   },
   "steps": {
     "1": {
-      "type": "MAPPING",
+      "stepDefinitionType": "MAPPING",
       "name": "person-mapping1.json",
       "options": {
         "identifier": "null"
