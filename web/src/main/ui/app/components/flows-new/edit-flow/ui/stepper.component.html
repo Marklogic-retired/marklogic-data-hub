@@ -34,10 +34,10 @@
         <section class="step-navigation-bar" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropped($event)" >
           <div class="stepper-container" *ngFor="let step of steps; let i = index;">
             <div
-            class="step {{ 'step-' + i }}"
-            [ngClass]="{'active': selectedIndex === i}"
-            (click)="stepClicked(i)"
-            cdkDrag
+              class="step {{ 'step-' + i }}"
+              [ngClass]="{'active': selectedIndex === i}"
+              (click)="stepClicked(i)"
+              cdkDrag
             >
               <div class="bar {{stepsArray[i].type}}"></div>
               <div *ngIf="!flow.latestJob || flow.latestJob.status !== 'running'" class="step-reorder-handle move-icon" cdkDragHandle>
@@ -83,8 +83,13 @@
                 id="job-progress-bar"
                 class="item"
                 mode="determinate"
-                [value]="flow.latestJob.stepRunningPercent"></mat-progress-bar>
-
+                [value]="flow.latestJob.stepRunningPercent"
+              ></mat-progress-bar>
+              <div class="preview" *cdkDragPreview>
+                <div class="bar {{stepsArray[i].type}}"></div>
+                <div class="step-type step-title {{stepsArray[i].type}}">{{stepsArray[i].type}}</div>
+                <h3 class="step-name">{{step.label}}</h3>
+              </div>
             </div>
             <div *ngIf="i !== (steps.length-1); else spacer" class="line">&rarr;</div>
             <ng-template #spacer><span class="spacer" ></span></ng-template>
