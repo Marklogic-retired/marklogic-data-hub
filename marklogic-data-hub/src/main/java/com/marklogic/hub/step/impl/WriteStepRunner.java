@@ -43,8 +43,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -77,14 +75,14 @@ public class WriteStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
-    private String filePath = null;
+    private String inputFilePath = null;
     private JobUpdate jobUpdate ;
     private String outputCollections;
     private String outputPermissions;
-    private String inputFormat;
-    private String outputFormat;
-    private String outputUriReplace;
+    private String inputFileType;
+    private String outputURIReplacement;
     private AtomicBoolean isStopped = new AtomicBoolean(false);
+    private IngestionStepDefinitionImpl stepDef;
 
     public WriteStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -104,6 +102,11 @@ public class WriteStepRunner implements StepRunner {
 
     public StepRunner withJobId(String jobId) {
         this.jobId = jobId;
+        return this;
+    }
+
+    public StepRunner withStepDefinition(StepDefinition stepDefinition){
+        this.stepDef = (IngestionStepDefinitionImpl) stepDefinition;
         return this;
     }
 
@@ -142,13 +145,20 @@ public class WriteStepRunner implements StepRunner {
     @Override
     public StepRunner withOptions(Map<String, Object> options) {
         if(flow == null){
-            throw new DataHubConfigurationException("Flow and Step has to be set before setting options");
+            throw new DataHubConfigurationException("Flow has to be set before setting options");
         }
         ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> stepDefMap = null;
+        if(stepDef != null) {
+            stepDefMap = mapper.convertValue(stepDef.getOptions(), Map.class);
+        }
         Map<String, Object> stepMap = mapper.convertValue(this.flow.getStep(step).getOptions(), Map.class);
         Map<String,Object> flowMap = mapper.convertValue(flow.getOptions(), Map.class);
-        Map combinedOptions = new HashMap<>();
-        //TODO: Get options from processors to override
+        Map<String, Object> combinedOptions = new HashMap<>();
+
+        if(stepDefMap != null){
+            combinedOptions.putAll(stepMap);
+        }
         if(stepMap != null){
             combinedOptions.putAll(stepMap);
         }
@@ -209,13 +219,16 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
+    public int getBatchSize(){
+        return this.batchSize;
+    }
+
+    @Override
     public Job run() {
         runningThread = null;
         Job job = createJob();
         jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
-        if (options == null || options.get("inputFilePath") == null) {
-            throw new RuntimeException("File type and location cannot be empty");
-        }
+
         JsonNode comboOptions = null;
         try {
             comboOptions = JSONObject.readInput(JSONObject.writeValueAsString(options));
@@ -224,12 +237,31 @@ public class WriteStepRunner implements StepRunner {
         }
         JSONObject obj = new JSONObject(comboOptions);
 
-        filePath = obj.getString("inputFilePath");
-        inputFormat = obj.getString("inputFileType");
-        outputFormat = obj.getString("outputFormat");
+
         outputCollections = StringUtils.join(obj.getArrayString("collections"), ",");
         outputPermissions = (String) options.get("outputPermissions");
-        outputUriReplace = obj.getString("outputURIReplacement");
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> stepDefFileLocation = new HashMap<>();
+        Map<String, Object> stepFileLocation = new HashMap<>();
+        Map<String, Object> fileLocation = new HashMap<>();
+        if(stepDef.getFileLocations() != null) {
+            stepDefFileLocation = mapper.convertValue(stepDef.getFileLocations(), Map.class);
+            fileLocation.putAll(stepDefFileLocation);
+        }
+        if(flow.getStep(step).getFileLocations() != null) {
+            stepFileLocation =  mapper.convertValue(flow.getStep(step).getFileLocations(), Map.class);
+            fileLocation.putAll(stepFileLocation);
+        }
+
+        inputFilePath = (String)fileLocation.get("inputFilePath");
+        inputFileType = (String)fileLocation.get("inputFileType");
+        outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
+
+        if (inputFilePath == null || inputFileType == null) {
+            throw new RuntimeException("File path and type cannot be empty");
+        }
+
         options.put("flow", this.flow.getName());
 
         Collection<String> uris = null;
@@ -284,7 +316,7 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private Collection<String> runFileCollector() throws Exception {
-        FileCollector c = new FileCollector(filePath, inputFormat);
+        FileCollector c = new FileCollector(inputFilePath, inputFileType);
         c.setHubConfig(hubConfig);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
@@ -406,7 +438,7 @@ public class WriteStepRunner implements StepRunner {
         }
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;
-        switch (inputFormat.toLowerCase()) {
+        switch (inputFileType.toLowerCase()) {
             case "xml":
                 format = Format.XML;
                 break;
@@ -465,7 +497,12 @@ public class WriteStepRunner implements StepRunner {
             }
             job.setCounts(successfulEvents.get() + failedEvents.get(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             job.withStatus(status);
-            jobUpdate.postJobs(jobId, status, step, status.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step)?step:null);
+            try {
+                jobUpdate.postJobs(jobId, status, step, status.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null);
+            }
+            catch (Exception e) {
+                throw e;
+            }
             if (errorMessages.size() > 0) {
                 job.withStepOutput(errorMessages);
             }
@@ -480,17 +517,11 @@ public class WriteStepRunner implements StepRunner {
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
-        if(inputFormat.equalsIgnoreCase("csv")) {
+        if(inputFileType.equalsIgnoreCase("csv")) {
             JacksonCSVSplitter splitter = new JacksonCSVSplitter();
             try {
                 Stream<JacksonHandle> contentStream = splitter.split(docStream);
-                Path dirPath = Paths.get(filePath);
-                String uri = null;
-                if(! dirPath.isAbsolute()) {
-                    File csvFile = new File(hubConfig.getProjectDir(), dirPath.toString());
-                    uri = generateAndEncodeURI(csvFile.getParentFile().getAbsolutePath());
-
-                }
+                String uri = generateAndEncodeURI(file.getParent());
                 Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
                     contentStream, DocumentWriteOperation.uriMaker(outputURIReplace(uri)+"/%s.json"));
                 writeBatcher.addAll(documentStream);
@@ -543,12 +574,12 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private String outputURIReplace(String uri) {
-        if (StringUtils.isNotEmpty(outputUriReplace)) {
-            String[] replace = outputUriReplace.split(",");
+        if (StringUtils.isNotEmpty(outputURIReplacement)) {
+            String[] replace = outputURIReplacement.split(",");
             // URI replace comes in pattern and replacement pairs.
             if (replace.length % 2 != 0) {
                 throw new IllegalArgumentException(
-                    "Invalid argument for URI replacement: " + outputUriReplace);
+                    "Invalid argument for URI replacement: " + outputURIReplacement);
             }
             // Replacement string is expected to be in ''
             for (int i = 0; i < replace.length - 1; i++) {
@@ -556,7 +587,7 @@ public class WriteStepRunner implements StepRunner {
                 if (!replacement.startsWith("'") ||
                     !replacement.endsWith("'")) {
                     throw new IllegalArgumentException(
-                        "Invalid argument for URI replacement: " + outputUriReplace);
+                        "Invalid argument for URI replacement: " + outputURIReplacement);
                 }
             }
             for (int i = 0; i < replace.length - 1; i += 2) {
