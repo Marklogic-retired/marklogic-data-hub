@@ -97,15 +97,20 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
 
         try {
             String targetFileName = name + STEP_FILE_EXTENSION;
-            FileInputStream fileInputStream = new FileInputStream(stepPath.resolve(targetFileName).toFile());
-            JsonNode node = JSONObject.readInput(fileInputStream);
+            InputStream inputStream = StepDefinitionManagerImpl.class.getResourceAsStream("/hub-internal-artifacts/steps/" + type.toString().toLowerCase() + "/marklogic/" + targetFileName);
+            if (inputStream == null) {
+                inputStream = new FileInputStream(stepPath.resolve(targetFileName).toFile());
+            }
+            JsonNode node = JSONObject.readInput(inputStream);
             StepDefinition newStep = createStepDefinitionFromJSON(node);
             if (newStep != null && newStep.getName().length() > 0) {
                 return newStep;
             }
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             return null;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new DataHubProjectException("Could not read Step on disk.");
         }
 
