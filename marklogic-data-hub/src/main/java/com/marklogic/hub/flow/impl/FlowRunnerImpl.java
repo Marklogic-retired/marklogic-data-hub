@@ -56,7 +56,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
     static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
-    private ExecutorService threadPool;
+    private ThreadPoolExecutor threadPool;
     private JobUpdate jobUpdate;
 
     @Override
@@ -158,7 +158,8 @@ public class FlowRunnerImpl implements FlowRunner{
             jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
         }
         if(threadPool == null || threadPool.isTerminated()) {
-            threadPool = Executors.newFixedThreadPool(1);
+            threadPool = new CustomPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS
+                , new LinkedBlockingQueue<Runnable>());
         }
         threadPool.submit(new FlowRunnerTask(runningFlow, runningJobId));
     }
@@ -206,7 +207,7 @@ public class FlowRunnerImpl implements FlowRunner{
                  */
                 Job stepResp = null;
                 //Initializing stepBatchSize to default flow batch size
-                int stepBatchSize = 100;
+
                 try {
                     stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
@@ -229,17 +230,9 @@ public class FlowRunnerImpl implements FlowRunner{
                     Map<String,Step> steps = runningFlow.getSteps();
                     Step step = steps.get(stepNum);
 
-                    if(step.getThreadCount() == 0){
-                        stepRunner.withThreadCount(flow.getThreadCount());
-                    }
-                    if(step.getBatchSize() == 0) {
-                        stepBatchSize = flow.getBatchSize();
-                        stepRunner.withBatchSize(stepBatchSize);
-                    }
                     //If property values are overriden in UI, use those values over any other.
                     if(flow.getOverrideBatchSize() != null) {
-                        stepBatchSize = flow.getOverrideBatchSize();
-                        stepRunner.withBatchSize(stepBatchSize);
+                        stepRunner.withBatchSize(flow.getOverrideBatchSize());
                     }
                     if(flow.getOverrideThreadCount() != null) {
                         stepRunner.withThreadCount(flow.getOverrideThreadCount());
@@ -256,7 +249,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 catch (Exception e) {
                     stepResp = Job.withFlow(flow);
                     stepResp.withJobId(runningJobId);
-                    stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepBatchSize), (long) Math.ceil((double) errorCount.get() / stepBatchSize));
+                    stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepRunner.getBatchSize()), (long) Math.ceil((double) errorCount.get() / stepRunner.getBatchSize()));
                     StringWriter errors = new StringWriter();
                     e.printStackTrace(new PrintWriter(errors));
                     stepResp.withStepOutput(errors.toString());
@@ -296,6 +289,7 @@ public class FlowRunnerImpl implements FlowRunner{
             } else {
                 jobStatus = JobStatus.FINISHED.toString();
             }
+            resp.setJobStatus(jobStatus);
             //If only one step is run and it failed before creating a job doc, a job doc is created
             try{
                 jobUpdate.getJobs(jobId);
@@ -305,7 +299,6 @@ public class FlowRunnerImpl implements FlowRunner{
             }
             try {
                 jobUpdate.postJobs(jobId, jobStatus, stepNum, stepOutputs);
-                resp.setJobStatus(jobStatus);
             }
             catch (Exception e) {
                 throw e;
@@ -335,6 +328,39 @@ public class FlowRunnerImpl implements FlowRunner{
     public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException {
         if (threadPool != null) {
             threadPool.awaitTermination(timeout, unit);
+        }
+    }
+
+    class CustomPoolExecutor extends ThreadPoolExecutor {
+        public CustomPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                    TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+        }
+
+        @Override
+        public void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
+            // If submit() method is called instead of execute()
+            if (t == null && r instanceof Future<?>) {
+                try {
+                    Object result = ((Future<?>) r).get();
+                } catch (CancellationException e) {
+                    t = e;
+                } catch (ExecutionException e) {
+                    t = e.getCause();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            if (t != null) {
+                jobQueue.remove();
+                if (!jobQueue.isEmpty()) {
+                    initializeFlow((String) jobQueue.peek());
+                } else {
+                    isRunning.set(false);
+                    threadPool.shutdownNow();
+                }
+            }
         }
     }
 

@@ -228,6 +228,11 @@ public class QueryStepRunner implements StepRunner {
         return this.runHarmonizer(job,uris);
     }
 
+    @Override
+    public int getBatchSize(){
+        return this.batchSize;
+    }
+
     private Collection<String> runCollector() throws Exception {
         Collector c = new CollectorImpl(this.flow, jobId);
         c.setHubConfig(hubConfig);
