@@ -32,7 +32,7 @@ public class Step {
     private int batchSize;
     private int threadCount;
     private String stepDefinitionName;
-    private StepDefinition.StepType stepDefinitionType;
+    private StepDefinition.StepDefinitionType stepDefinitionType;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private JsonNode fileLocations;
@@ -104,11 +104,11 @@ public class Step {
         this.stepDefinitionName = stepDefinitionName;
     }
 
-    public StepDefinition.StepType getStepDefinitionType() {
+    public StepDefinition.StepDefinitionType getStepDefinitionType() {
         return stepDefinitionType;
     }
 
-    public void setStepDefinitionType(StepDefinition.StepType stepDefinitionType) {
+    public void setStepDefinitionType(StepDefinition.StepDefinitionType stepDefinitionType) {
         this.stepDefinitionType = stepDefinitionType;
     }
 
@@ -140,7 +140,7 @@ public class Step {
         step.setBatchSize(jsonObject.getInt("batchSize"));
         step.setThreadCount(jsonObject.getInt("threadCount"));
         step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
-        step.setStepDefinitionType(StepDefinition.StepType.getStepType(jsonObject.getString("stepDefinitionType")));
+        step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
 
         if (jsonObject.isExist("modulePath")) {

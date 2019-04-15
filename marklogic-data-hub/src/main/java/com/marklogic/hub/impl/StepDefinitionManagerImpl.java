@@ -83,16 +83,16 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
     @Override
     public ArrayList<StepDefinition> getStepDefinitions() {
         ArrayList<StepDefinition> stepList = new ArrayList<>();
-        for (StepDefinition.StepType stepType : StepDefinition.StepType.getStepTypes()) {
-            for (String name : getStepDefinitionNamesByType(stepType)) {
-                stepList.add(getStepDefinition(name, stepType));
+        for (StepDefinition.StepDefinitionType stepDefinitionType : StepDefinition.StepDefinitionType.getStepDefinitionTypes()) {
+            for (String name : getStepDefinitionNamesByType(stepDefinitionType)) {
+                stepList.add(getStepDefinition(name, stepDefinitionType));
             }
         }
         return stepList;
     }
 
     @Override
-    public StepDefinition getStepDefinition(String name, StepDefinition.StepType type) {
+    public StepDefinition getStepDefinition(String name, StepDefinition.StepDefinitionType type) {
         Path stepPath = resolvePath(hubConfig.getStepsDirByType(type), name);
 
         try {
@@ -113,7 +113,7 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
     }
 
     @Override
-    public ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepType type) {
+    public ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepDefinitionType type) {
         ArrayList<StepDefinition> stepList = new ArrayList<>();
         for (String name : getStepDefinitionNamesByType(type)) {
             stepList.add(getStepDefinition(name, type));
@@ -122,13 +122,13 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
     }
 
     @Override
-    public ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepType type) {
+    public ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepDefinitionType type) {
         return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepsDirByType(type));
     }
 
     @Override
     public StepDefinition createStepDefinitionFromJSON(JsonNode json) {
-        StepDefinition step = StepDefinition.create("default", StepDefinition.StepType.CUSTOM);
+        StepDefinition step = StepDefinition.create("default", StepDefinition.StepDefinitionType.CUSTOM);
         step.deserialize(json);
         return step;
     }

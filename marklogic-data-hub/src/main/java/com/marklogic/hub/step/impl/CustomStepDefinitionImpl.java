@@ -22,7 +22,7 @@ public class CustomStepDefinitionImpl extends AbstractStepDefinition {
 
     public CustomStepDefinitionImpl(String name) {
         setName(name);
-        setType(StepType.CUSTOM);
+        setType(StepDefinitionType.CUSTOM);
 
         setModulePath("/path/to/your/step/module/main.sjs");
     }

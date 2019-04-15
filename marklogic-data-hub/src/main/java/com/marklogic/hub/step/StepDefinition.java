@@ -25,7 +25,7 @@ import java.util.Map;
 
 public interface StepDefinition {
 
-    enum StepType {
+    enum StepDefinitionType {
         INGEST("ingest"),
         MAPPING("mapping"),
         MASTER("master"),
@@ -33,21 +33,21 @@ public interface StepDefinition {
 
         private String type;
 
-        StepType(String type) {
+        StepDefinitionType(String type) {
             this.type = type;
         }
 
-        public static StepType getStepType(String type) {
-            for (StepType stepType : StepType.values()) {
-                if (stepType.toString().equalsIgnoreCase(type)) {
-                    return stepType;
+        public static StepDefinitionType getStepDefinitionType(String type) {
+            for (StepDefinitionType stepDefinitionType : StepDefinitionType.values()) {
+                if (stepDefinitionType.toString().equalsIgnoreCase(type)) {
+                    return stepDefinitionType;
                 }
             }
             return null;
         }
 
-        public static ArrayList<StepType> getStepTypes() {
-            return new ArrayList<>(Arrays.asList(StepType.values()));
+        public static ArrayList<StepDefinitionType> getStepDefinitionTypes() {
+            return new ArrayList<>(Arrays.asList(StepDefinitionType.values()));
         }
 
         public String toString() {
@@ -62,7 +62,7 @@ public interface StepDefinition {
      * @param type - the type of the mapping
      * @return a Step object
      */
-    static StepDefinition create(String name, StepType type) {
+    static StepDefinition create(String name, StepDefinitionType type) {
         StepDefinition stepDefinition = null;
 
         switch (type) {
@@ -193,14 +193,14 @@ public interface StepDefinition {
      *
      * @return - a step type
      */
-    StepType getType();
+    StepDefinitionType getType();
 
     /**
      * Sets the type of the step
      *
      * @param type - a step type
      */
-    void setType(StepType type);
+    void setType(StepDefinitionType type);
 
     /**
      * Returns the description of the Step

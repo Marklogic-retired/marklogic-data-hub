@@ -31,7 +31,7 @@ public class StepModel {
     protected String id;
     protected String name;
     protected String stepDefinitionName;
-    protected StepDefinition.StepType stepDefinitionType;
+    protected StepDefinition.StepDefinitionType stepDefinitionType;
     protected String description;
     protected JsonNode options;
     protected String language;
@@ -57,11 +57,11 @@ public class StepModel {
         this.stepDefinitionName = stepDefinitionName;
     }
 
-    public StepDefinition.StepType getStepDefinitionType() {
+    public StepDefinition.StepDefinitionType getStepDefinitionType() {
         return stepDefinitionType;
     }
 
-    public void setStepDefinitionType(StepDefinition.StepType stepDefinitionType) {
+    public void setStepDefinitionType(StepDefinition.StepDefinitionType stepDefinitionType) {
         this.stepDefinitionType = stepDefinitionType;
     }
 
@@ -127,7 +127,7 @@ public class StepModel {
         JSONObject jsonObject = new JSONObject(node);
 
         step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
-        step.setStepDefinitionType(StepDefinition.StepType.getStepType(jsonObject.getString("stepDefinitionType")));
+        step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
         step.setName(jsonObject.getString("name"));
 
