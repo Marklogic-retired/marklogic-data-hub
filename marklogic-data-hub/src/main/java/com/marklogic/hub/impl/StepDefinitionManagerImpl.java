@@ -26,6 +26,7 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -133,7 +134,28 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
 
     @Override
     public StepDefinition createStepDefinitionFromJSON(JsonNode json) {
-        StepDefinition step = StepDefinition.create("default", StepDefinition.StepDefinitionType.CUSTOM);
+        String stepDefName = null;
+        String stepDefType = null;
+        if(json.get("name") !=null && !json.get("name").isNull()) {
+            stepDefName = json.get("name").asText();
+        }
+        else{
+            throw new DataHubProjectException("StepDefinition should have a name");
+        }
+        if(json.get("type") !=null && !json.get("type").isNull()) {
+            stepDefType = json.get("type").asText();
+        }
+        else{
+            throw new DataHubProjectException("StepDefinition should have a type");
+        }
+
+        StepDefinition step;
+        if(StringUtils.isNotEmpty(stepDefName) && StringUtils.isNotEmpty(stepDefType)) {
+            step = StepDefinition.create(stepDefName, StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType));
+        }
+        else{
+            step = StepDefinition.create("default", StepDefinition.StepDefinitionType.CUSTOM);
+        }
         step.deserialize(json);
         return step;
     }
