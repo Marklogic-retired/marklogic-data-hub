@@ -130,16 +130,16 @@ header {
       margin: 3px 0 5px 5px;
     }
     .step-title.mapping {
-      color: #3F51B5;
+      color: $color-mapping;
     }
     .step-title.mastering {
-      color: #009688;
+      color: $color-mastering;
     }
     .step-title.ingest {
-      color: #AD1457;
+      color: $color-ingest;
     }
     .step-title.custom {
-      color: #F4511E;
+      color: $color-custom;
     }
     .step-icons {
       margin: 3px 0;

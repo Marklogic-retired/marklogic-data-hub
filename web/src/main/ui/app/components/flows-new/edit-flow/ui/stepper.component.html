@@ -77,14 +77,13 @@
                 <div class="summary-label">Module</div>
                 <div *ngIf="stepsArray[i].options.customModuleUri"  class="summary-content">{{stepsArray[i].options.customModuleUri | truncate : -23}}</div>
               </div>
-
               <mat-progress-bar
                 *ngIf="flow.latestJob && flow.latestJob.stepId === stepsArray[i].id"
                 id="job-progress-bar"
                 class="item"
                 mode="determinate"
-                [value]="flow.latestJob.stepRunningPercent"></mat-progress-bar>
-
+                [value]="flow.latestJob.stepRunningPercent"
+              ></mat-progress-bar>
             </div>
             <div *ngIf="i !== (steps.length-1); else spacer" class="line">&rarr;</div>
             <ng-template #spacer><span class="spacer" ></span></ng-template>
