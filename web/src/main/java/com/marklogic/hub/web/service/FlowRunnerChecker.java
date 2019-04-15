@@ -38,7 +38,7 @@ public class FlowRunnerChecker {
             latestJob.endTime = rfr.getEndTime();
             latestJob.successfulEvents = successfulEvents;
             latestJob.failedEvents = failedEvents;
-            latestJob.status = StringUtils.isNotEmpty(jobStatus.toString()) ? jobStatus.toString() : rfr.getJobStatus();
+            latestJob.status = StringUtils.isNotEmpty(jobStatus) ? jobStatus : rfr.getJobStatus();
 
             if (StringUtils.isEmpty(latestJob.status)) {
                 Map<String, Job> stepResponseByKey = rfr.getStepResponses();

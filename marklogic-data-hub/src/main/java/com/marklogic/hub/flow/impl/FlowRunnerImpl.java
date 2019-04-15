@@ -269,7 +269,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     Job finalStepResp = stepResp;
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0],
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0],
                                 runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
                         });
                     } catch (Exception ex) {
@@ -321,14 +321,14 @@ public class FlowRunnerImpl implements FlowRunner{
                 if (!isJobSuccess.get()) {
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED_WITH_ERRORS.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
                         });
                     } catch (Exception ex) {
                     }
                 } else {
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
                         });
                     } catch (Exception ex) {
                     }

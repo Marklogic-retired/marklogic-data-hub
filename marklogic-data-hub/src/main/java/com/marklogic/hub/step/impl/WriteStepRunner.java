@@ -39,9 +39,7 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -282,12 +280,11 @@ public class WriteStepRunner implements StepRunner {
         try {
             uris = runFileCollector();
         } catch (Exception e) {
-            e.printStackTrace();
             job.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED.toString());
-            //StringWriter errors = new StringWriter();
-            //e.printStackTrace(new PrintWriter(errors));
-            job.withStepOutput(e.getLocalizedMessage());
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            job.withStepOutput(errors.toString());
             try {
                 jobUpdate.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step);
             }
@@ -320,7 +317,7 @@ public class WriteStepRunner implements StepRunner {
         c.setHubConfig(hubConfig);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING, 0, 0,  "fetching files");
+            listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "fetching files");
         });
         final DiskQueue<String> uris ;
         try {
@@ -344,11 +341,11 @@ public class WriteStepRunner implements StepRunner {
         AtomicLong failedBatches = new AtomicLong(0);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(job.getJobId(), 0, JobStatus.STARTED, 0, 0, "starting step execution");
+            listener.onStatusChange(job.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
         if ( !isStopped.get() && (uris == null || uris.size() == 0 )) {
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, JobStatus.FINISHED, 0, 0, "provided file path returned 0 items");
+                listener.onStatusChange(job.getJobId(), 100, JobStatus.COMPLETED_PREFIX + step, 0, 0, "provided file path returned 0 items");
             });
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             job.setCounts(0,0,0,0,0);
@@ -473,27 +470,21 @@ public class WriteStepRunner implements StepRunner {
         runningThread = new Thread(() -> {
             writeBatcher.flushAndWait();
 
-            JobStatus jobStatus;
             String stepStatus;
             if (failedEvents.get() > 0 && stopOnFailure) {
-                jobStatus = JobStatus.STOP_ON_ERROR;
                 stepStatus = JobStatus.STOP_ON_ERROR_PREFIX + step;
             } else if (isStopped.get()){
-                jobStatus = JobStatus.CANCELED;
                 stepStatus = JobStatus.CANCELED_PREFIX + step;
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                jobStatus = JobStatus.FINISHED_WITH_ERRORS;
                 stepStatus = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
             } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
-                jobStatus = JobStatus.FINISHED;
                 stepStatus = JobStatus.COMPLETED_PREFIX + step ;
             } else {
-                jobStatus = JobStatus.FAILED;
                 stepStatus = JobStatus.FAILED_PREFIX + step;
             }
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, JobStatus.FINISHED, successfulEvents.get(), failedEvents.get(), "Ingestion completed");
+                listener.onStatusChange(job.getJobId(), 100, stepStatus, successfulEvents.get(), failedEvents.get(), "Ingestion completed");
             });
 
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
@@ -609,7 +600,7 @@ public class WriteStepRunner implements StepRunner {
         if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
             previousPercentComplete = percentComplete;
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING, successfulEvents.get(), failedEvents.get(), "Ingesting");
+                listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING_PREFIX + step, successfulEvents.get(), failedEvents.get(), "Ingesting");
             });
         }
     }
