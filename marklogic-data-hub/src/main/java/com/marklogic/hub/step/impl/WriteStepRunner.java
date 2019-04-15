@@ -238,8 +238,12 @@ public class WriteStepRunner implements StepRunner {
         JSONObject obj = new JSONObject(comboOptions);
 
 
-        outputCollections = StringUtils.join(obj.getArrayString("collections"), ",");
-        outputPermissions = ((TextNode) options.get("outputPermissions")).asText();
+        if (obj.getArrayString("collections") != null) {
+            outputCollections = StringUtils.join(obj.getArrayString("collections"), ",");
+        }
+        if (options.get("permissions") != null) {
+            outputPermissions = ((TextNode) options.get("permissions")).asText();
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> stepDefFileLocation = new HashMap<>();

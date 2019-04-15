@@ -3,6 +3,7 @@ package com.marklogic.hub.web.service;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.Job;
+import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +31,6 @@ public class FlowRunnerChecker {
             latestJob.stepRunningPercent = percentComplete;
 
             logger.debug(String.format("pct: %s, msg: %s, jobid: %s", latestJob.stepRunningPercent, message, jobId));
-
             RunFlowResponse rfr = flowRunner.getJobResponseById(jobId);
             logger.debug(rfr.toString());
 
@@ -40,14 +40,17 @@ public class FlowRunnerChecker {
             latestJob.failedEvents = failedEvents;
             latestJob.status = StringUtils.isNotEmpty(jobStatus) ? jobStatus : rfr.getJobStatus();
 
-            if (StringUtils.isEmpty(latestJob.status)) {
-                Map<String, Job> stepResponseByKey = rfr.getStepResponses();
-                if (stepResponseByKey != null) {
-                    Job stepJob = stepResponseByKey.get(flowRunner.getRunningStepKey());
-                    if (stepJob != null) {
-                        latestJob.status = stepJob.getStatus();
-                        logger.debug("step job info:" + stepJob.toString());
+            Map<String, Job> stepResponseByKey = rfr.getStepResponses();
+            if (stepResponseByKey != null) {
+                Job stepJob = stepResponseByKey.get(flowRunner.getRunningStepKey());
+                if (stepJob != null) {
+                    latestJob.status = StringUtils.isEmpty(latestJob.status) ? stepJob.getStatus() : latestJob.status;
+                    if (stepJob.getStepOutput() != null) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.putArray("output", stepJob.getStepOutput());
+                        latestJob.output = jsonObject.jsonNode();
                     }
+                    logger.debug("step job info:" + stepJob.toString());
                 }
             }
             logger.debug(latestJob.toString());
