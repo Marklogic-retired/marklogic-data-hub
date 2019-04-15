@@ -1,277 +1,207 @@
 [
   {
-    "jobId": "7e59df5c-3e9f-4109-bb8e-f52cb926aa8e",
-    "flowId": "flow-01",
-    "flow": "Order Flow 01",
-    "targetEntity": "Order",
+    "id": "cc99ba66-6a24-44cc-919d-b0ed59fe6f1b",
+    "flowId": "flow1",
+    "flowName": "flow1",
     "user": "admin",
-    "lastAttemptedStep": 3,
-    "lastCompletedStep": 3,
-    "status": "completed",
-    "startTime": "2019-03-20T09:54:31.330356-07:00",
-    "endTime": "2019-03-20T10:54:35.385579-07:00",
-    "successfulEvents": 100,
-    "failedEvents": 3,
-    "steps": [
-      {
-        "stepNumber": 1,
-        "type": "ingest",
-        "name": "default-ingest",
-        "stepName": "Flow 01 Ingest Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "defaultIngest"
-        },
-        "status": "finished-with-errors",
-        "startTime": "2019-03-20T09:54:31.330356-07:00",
-        "endTime": "2019-03-20T10:10:05.123456-07:00",
-        "successfulEvents": 13429,
-        "failedEvents": 100
-      },
-      {
-        "stepNumber": 2,
-        "type": "mapping",
-        "name": "default-mapping",
-        "stepName": "Flow 01 Mapping Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Ingest Step",
-          "targetEntity": "Order"
-        },
-        "status": "failed",
-        "startTime": "2019-03-20T10:10:05.123456-07:00",
-        "endTime": "2019-03-20T10:54:35.385579-07:00",
-        "successfulEvents": 286,
-        "failedEvents": 3
-      },
-      {
-        "stepNumber": 3,
-        "type": "mastering",
-        "name": "default-mastering",
-        "stepName": "Flow 01 Mastering Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Mapping Step",
-          "targetEntity": "Order"
-        },
-        "status": null,
-        "startTime": null,
-        "endTime": null,
-        "successfulEvents": null,
-        "failedEvents": null
-      }
-    ]
-  },
-  {
-    "jobId": "f745f0a4-6f43-42ad-981d-ecef5c581650",
-    "flowId": "flow-02",
-    "flow": "Order Flow 02",
-    "targetEntity": "Order",
-    "user": "admin",
-    "lastAttemptedStep": 3,
-    "lastCompletedStep": 3,
-    "status": "completed",
-    "timeStarted": "2019-03-19T07:54:31.330356-07:00",
-    "timeEnded": "2019-03-19T08:23:35.385579-07:00",
-    "successfulEvents": 90,
-    "failedEvents": 13,
-    "steps": [
-      {
-        "stepNumber": 1,
-        "type": "ingest",
-        "name": "default-ingest",
-        "stepName": "Flow 02 Ingest Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "defaultIngest"
-        },
-        "status": "canceled",
-        "startTime": "2019-03-20T09:54:31.330356-07:00",
-        "endTime": "2019-03-20T10:10:05.123456-07:00",
-        "successfulEvents": 13429,
-        "failedEvents": 0
-      },
-      {
-        "stepNumber": 2,
-        "type": "mapping",
-        "name": "default-mapping",
-        "stepName": "Flow 02 Mapping Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Ingest Step",
-          "targetEntity": "Order"
-        },
-        "status": "running",
-        "startTime": "2019-03-20T10:10:05.123456-07:00",
-        "endTime": "2019-03-20T10:54:35.385579-07:00",
-        "successfulEvents": 286,
-        "failedEvents": 3
-      },
-      {
-        "stepNumber": 3,
-        "type": "mastering",
-        "name": "default-mastering",
-        "stepName": "Flow 02 Mastering Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 02 Mapping Step",
-          "targetEntity": "Order"
-        },
-        "status": null,
-        "startTime": null,
-        "endTime": null,
-        "successfulEvents": null,
-        "failedEvents": null
-      }
-    ]
-  },
-  {
-    "jobId": "45011709-2198-436f-8585-8a880e32806a",
-    "flowId": "flow-03",
-    "flow": "Customer Flow",
-    "targetEntity": "Customer",
-    "user": "admin",
-    "lastAttemptedStep": 3,
-    "lastCompletedStep": 2,
-    "status": "failed",
-    "timeStarted": "2019-03-11T01:54:31.330356-07:00",
-    "timeEnded": "2019-03-16T13:54:35.385579-07:00",
-    "successfulEvents": 123456,
-    "failedEvents": 1014,
-    "steps": [
-      {
-        "stepNumber": 1,
-        "type": "ingest",
-        "name": "default-ingest",
-        "stepName": "Customer Ingest Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "defaultIngest"
-        },
-        "status": "finished-with-errors",
-        "startTime": "2019-03-20T09:54:31.330356-07:00",
-        "endTime": "2019-03-20T10:10:05.123456-07:00",
-        "successfulEvents": 13429,
-        "failedEvents": 1000
-      },
-      {
-        "stepNumber": 2,
-        "type": "mapping",
-        "name": "default-mapping",
-        "stepName": "Customer Mapping Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Ingest Step",
-          "targetEntity": "Order"
-        },
-        "status": "canceled",
-        "startTime": "2019-03-20T10:10:05.123456-07:00",
-        "endTime": "2019-03-20T10:54:35.385579-07:00",
-        "successfulEvents": 286,
-        "failedEvents": 3
-      },
-      {
-        "stepNumber": 3,
-        "type": "mastering",
-        "name": "default-mastering",
-        "stepName": "Customer Mastering Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Mapping Step",
-          "targetEntity": "Order"
-        },
-        "status": "failed",
-        "startTime": null,
-        "endTime": null,
-        "successfulEvents": null,
-        "failedEvents": null
-      }
-    ]
-  },
-  {
-    "jobId": "12345678-1234-1234-1234-1234567890ab",
-    "flowId": "flow-04",
-    "flow": "Another Flow",
-    "targetEntity": "Order",
-    "user": "admin",
-    "lastAttemptedStep": 1,
-    "lastCompletedStep": 1,
-    "status": "completed",
-    "timeStarted": "2018-03-11T01:54:31.330356-07:00",
-    "timeEnded": "2018-03-16T13:54:35.385579-07:00",
-    "successfulEvents": 321,
+    "stepId": "default-mapping",
+    "stepName": "default-mapping",
+    "successfulEvents": 1000,
     "failedEvents": 0,
+    "status": "finished",
+    "timeStarted": "2019-04-10T14:02:38.229156-07:00",
+    "timeEnded": "2019-04-10T14:02:43.71327-07:00",
     "steps": [
       {
         "stepNumber": 1,
-        "type": "ingest",
+        "id": "default-ingest",
         "name": "default-ingest",
-        "stepName": "Another Ingest Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "defaultIngest"
-        },
-        "status": "running",
-        "startTime": "2019-03-20T09:54:31.330356-07:00",
-        "endTime": "2019-03-20T10:10:05.123456-07:00",
-        "successfulEvents": 13429,
-        "failedEvents": 0
+        "type": "ingest",
+        "targetEntity": null,
+        "status": "completed step 1",
+        "totalEvents": 500,
+        "successfulEvents": 500,
+        "failedEvents": 0,
+        "successfulBatches": 4,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-10T23:18:11.534917-07:00",
+        "endTime": "2019-04-10T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
       },
       {
         "stepNumber": 2,
-        "type": "mapping",
+        "id": "default-mapping",
         "name": "default-mapping",
-        "stepName": "Another Mapping Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Ingest Step",
-          "targetEntity": "Order"
-        },
-        "status": "failed",
-        "startTime": "2019-03-20T10:10:05.123456-07:00",
-        "endTime": "2019-03-20T10:54:35.385579-07:00",
-        "successfulEvents": 286,
-        "failedEvents": 3
+        "type": "mapping",
+        "targetEntity": "order",
+        "status": "completed step 2",
+        "totalEvents": 500,
+        "successfulEvents": 500,
+        "failedEvents": 0,
+        "successfulBatches": 4,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-10T23:18:11.534917-07:00",
+        "endTime": "2019-04-10T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
+      }
+    ]
+  },
+  {
+    "id": "cc99ba66-6a24-44cc-919d-b0ed59fe6999",
+    "flowId": "flow2",
+    "flowName": "flow2",
+    "user": "admin",
+    "stepId": "default-mastering",
+    "stepName": "default-mastering",
+    "successfulEvents": 1600,
+    "failedEvents": 0,
+    "status": "finished",
+    "timeStarted": "2019-04-15T14:02:38.229156-07:00",
+    "timeEnded": "2019-04-15T14:02:43.71327-07:00",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "id": "default-ingest",
+        "name": "default-ingest",
+        "type": "ingest",
+        "targetEntity": null,
+        "status": "completed step 1",
+        "totalEvents": 800,
+        "successfulEvents": 800,
+        "failedEvents": 0,
+        "successfulBatches": 5,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-11T23:18:11.534917-07:00",
+        "endTime": "2019-04-11T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
       },
       {
-        "stepNumber": 3,
-        "type": "mastering",
-        "name": "default-mastering",
-        "stepName": "Another Mastering Step",
-        "identifier": null,
-        "retryLimit": 0,
-        "options": {
-          "outputFormat": "json",
-          "collections": "Flow 01 Mapping Step",
-          "targetEntity": "Order"
-        },
-        "status": "finished-with-errors",
-        "startTime": null,
-        "endTime": null,
-        "successfulEvents": null,
-        "failedEvents": null
+        "stepNumber": 2,
+        "id": "default-mapping",
+        "name": "default-mapping",
+        "type": "mapping",
+        "targetEntity": "product",
+        "status": "completed step 2",
+        "totalEvents": 800,
+        "successfulEvents": 800,
+        "failedEvents": 0,
+        "successfulBatches": 2,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-12T23:18:11.534917-07:00",
+        "endTime": "2019-04-12T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
+      }
+    ]
+  },
+  {
+    "id": "cc99ba66-6a24-44cc-919d-b0ed59fe6123",
+    "flowId": "flow4",
+    "flowName": "flow4",
+    "user": "admin",
+    "stepId": "default-ingest",
+    "stepName": "default-ingest",
+    "successfulEvents": 1300,
+    "failedEvents": 0,
+    "status": "finished",
+    "timeStarted": "2019-04-15T14:02:38.229156-07:00",
+    "timeEnded": "2019-04-15T14:02:43.71327-07:00",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "id": "default-ingest",
+        "name": "default-ingest",
+        "type": "ingest",
+        "targetEntity": null,
+        "status": "completed step 1",
+        "totalEvents": 700,
+        "successfulEvents": 700,
+        "failedEvents": 0,
+        "successfulBatches": 5,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-11T23:18:11.534917-07:00",
+        "endTime": "2019-04-11T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
+      },
+      {
+        "stepNumber": 2,
+        "id": "default-mapping",
+        "name": "default-mapping",
+        "type": "mapping",
+        "targetEntity": "product",
+        "status": "completed step 2",
+        "totalEvents": 600,
+        "successfulEvents": 600,
+        "failedEvents": 0,
+        "successfulBatches": 2,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-12T23:18:11.534917-07:00",
+        "endTime": "2019-04-12T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
+      }
+    ]
+  },
+  {
+    "id": "cc99ba66-6a24-44cc-919d-b0ed59fe6999",
+    "flowId": "flow2",
+    "flowName": "flow2",
+    "user": "admin",
+    "stepId": "default-mastering",
+    "stepName": "default-mastering",
+    "successfulEvents": 1600,
+    "failedEvents": 0,
+    "status": "finished-with-errors",
+    "timeStarted": "2019-04-15T14:02:38.229156-07:00",
+    "timeEnded": "2019-04-15T14:02:43.71327-07:00",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "id": "default-ingest",
+        "name": "default-ingest",
+        "type": "ingest",
+        "targetEntity": null,
+        "status": "completed step 1",
+        "totalEvents": 800,
+        "successfulEvents": 800,
+        "failedEvents": 0,
+        "successfulBatches": 5,
+        "failedBatches": 0,
+        "success": true,
+        "startTime": "2019-04-11T23:18:11.534917-07:00",
+        "endTime": "2019-04-11T23:18:55.006918-07:00",
+        "stepOutput": null,
+        "fullOutput": null
+      },
+      {
+        "stepNumber": 2,
+        "id": "default-mapping",
+        "name": "default-mapping",
+        "type": "mapping",
+        "targetEntity": "product",
+        "status": "failed step 2",
+        "totalEvents": 800,
+        "successfulEvents": 0,
+        "failedEvents": 800,
+        "successfulBatches": 0,
+        "failedBatches": 2,
+        "success": true,
+        "startTime": "2019-04-12T23:18:11.534917-07:00",
+        "endTime": "2019-04-12T23:18:55.006918-07:00",
+        "stepOutput": [
+          "{\"stack\":\"XDMP-STARTELEMENT: There can be only one root node.\\nin /data-hub/5/impl/flow-utils.sjs, at 320:7, in instanceToCanonicalXml() [javascript]\\nin /data-hub/5/impl/flow-utils.sjs, at 111:24, in makeEnvelope() [javascript]\\nin /data-hub/5/builtins/steps/mapping/default/main.sjs, at 78:40, in main() [javascript]\\nin /data-hub/5/impl/flow.sjs, at 330:11, in runMain() [javascript]\\nin /data-hub/5/impl/flow.sjs, at 273:59, in runStep() [javascript]\\nin /data-hub/5/impl/flow.sjs, at 178:11, in runFlow() [javascript]\\nin /data-hub/5/extensions/runFlow.sjs, at 65:24, in post() [javascript]\\nin /data-hub/5/rest-api/lib/extensions-util.sjs, at 94:29, in callExtension() [javascript]\\nin /data-hub/5/rest-api/lib/extensions-util.sjs, at 112:9, in applyOnce() [javascript]\\nin /data-hub/5/rest-api/lib/extensions-util.sjs, at 968:44,\\nin xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")(map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}) [javascript]\\nin /data-hub/5/rest-api/lib/extensions-util.xqy, at 968:44,\\nin extut:call-service(\\\"ml: runFlow\\\", \\\"POST\\\", xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\"), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}) [1.0-ml]\\n  $extension-name = \\\"ml: runFlow\\\"\\n  $method = \\\"POST\\\"\\n  $service = xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")\\n  $context = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $service-params = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $input = document{object-node{}}\\nin /data-hub/5/rest-api/lib/extensions-util.xqy, at 921:20,\\nin function() as item()*() [1.0-ml]\\nin /data-hub/5/rest-api/lib/extensions-util.xqy,\\nin xdmp:invoke(function() as item()*, <options xmlns=\\\"xdmp: eval\\\"><isolation>same-statement</isolation><ignore-amps>...</ignore-amps></options>) [1.0-ml]\\nin /data-hub/5/rest-api/lib/extensions-util.xqy, at 919:12,\\nin extut:invoke-service(\\\"ml: runFlow\\\", \\\"POST\\\", \\\"query\\\", xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\"), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}, fn:false()) [1.0-ml]\\n  $extension-name = \\\"ml: runFlow\\\"\\n  $method = \\\"POST\\\"\\n  $default-txn-mode = \\\"query\\\"\\n  $service = xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")\\n  $context = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $service-params = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $input = document{object-node{}}\\n  $in-txn = fn:false()\\n  $txn-curr = \\\"query\\\"\\n  $txn-mode = \\\"query\\\"\\nin /data-hub/5/rest-api/models/resource-model-query.xqy, at 270:20,\\nin rsrcmodqry:resource-post(\\\"ml: runFlow\\\", map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}, fn:false(), local:rsrcmod-callback#6) [1.0-ml]\\n  $resource-name = \\\"ml: runFlow\\\"\\n  $context = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $resource-params = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $input = document{object-node{}}\\n  $in-txn = fn:false()\\n  $responder = local:rsrcmod-callback#6\\n  $service = xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")\\nin /data-hub/5/rest-api/models/resource-model-query.xqy, at 237:4,\\nin rsrcmodqry:exec-post(map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}, local:rsrcmod-callback#6) [1.0-ml]\\n  $headers = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $endpoint-params = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $input = document{object-node{}}\\n  $responder = local:rsrcmod-callback#6\\nin /data-hub/5/rest-api/endpoints/resource-service-query.xqy, at 79:8 [1.0-ml]\\n  $headers = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $method = \\\"POST\\\"\\n  $body = document{object-node{}}\\n  $params = map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\\n  $extra-names = ()\",\"data\":[\"\",\"\",\"\"],\"message\":\"There can be only one root node.\",\"name\":\"XDMP-STARTELEMENT\",\"retryable\":false,\"stackFrames\":[{\"uri\":\"/data-hub/5/impl/flow-utils.sjs\",\"line\":320,\"column\":7,\"language\":\"javascript\"},{\"uri\":\"/data-hub/5/impl/flow-utils.sjs\",\"line\":111,\"column\":24,\"operation\":\"makeEnvelope\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/builtins/steps/mapping/default/main.sjs\",\"line\":78,\"column\":40,\"operation\":\"main\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/impl/flow.sjs\",\"line\":330,\"column\":11,\"operation\":\"runMain\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/impl/flow.sjs\",\"line\":273,\"column\":59,\"operation\":\"runStep\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/impl/flow.sjs\",\"line\":178,\"column\":11,\"operation\":\"runFlow\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/extensions/runFlow.sjs\",\"line\":65,\"column\":24,\"operation\":\"post\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/rest-api/lib/extensions-util.sjs\",\"line\":94,\"column\":29,\"operation\":\"callExtension\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/rest-api/lib/extensions-util.sjs\",\"line\":112,\"column\":9,\"operation\":\"applyOnce\",\"language\":\"javascript\",\"isEval\":false},{\"uri\":\"/data-hub/5/rest-api/lib/extensions-util.sjs\",\"line\":968,\"column\":44,\"operation\":\"xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")(map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}})\",\"language\":\"javascript\"},{\"uri\":\"/data-hub/5/rest-api/lib/extensions-util.xqy\",\"line\":968,\"column\":44,\"operation\":\"extut:call-service(\\\"ml: runFlow\\\", \\\"POST\\\", xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\"), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}})\",\"language\":\"XQuery 1.0-ml\",\"variables\":[{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"extension-name\\\")\",\"value\":\"\\\"ml: runFlow\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"method\\\")\",\"value\":\"\\\"POST\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"service\\\")\",\"value\":\"xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"context\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"service-params\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"input\\\")\",\"value\":\"document{object-node{}}\"}]},{\"uri\":\"/data-hub/5/rest-api/lib/extensions-util.xqy\",\"line\":921,\"column\":20,\"operation\":\"function() as item()*()\",\"language\":\"XQuery 1.0-ml\"},{\"uri\":\"/data-hub/5/rest-api/lib/extensions-util.xqy\",\"line\":919,\"column\":12,\"operation\":\"extut:invoke-service(\\\"ml: runFlow\\\", \\\"POST\\\", \\\"query\\\", xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\"), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}, fn:false())\",\"language\":\"XQuery 1.0-ml\",\"variables\":[{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"extension-name\\\")\",\"value\":\"\\\"ml: runFlow\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"method\\\")\",\"value\":\"\\\"POST\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"default-txn-mode\\\")\",\"value\":\"\\\"query\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"service\\\")\",\"value\":\"xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"context\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"service-params\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"input\\\")\",\"value\":\"document{object-node{}}\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"in-txn\\\")\",\"value\":\"fn:false()\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"txn-curr\\\")\",\"value\":\"\\\"query\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/lib/extensions-util\\\",\\\"txn-mode\\\")\",\"value\":\"\\\"query\\\"\"}]},{\"uri\":\"/data-hub/5/rest-api/models/resource-model-query.xqy\",\"line\":270,\"column\":20,\"operation\":\"rsrcmodqry:resource-post(\\\"ml: runFlow\\\", map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}, fn:false(), local:rsrcmod-callback#6)\",\"language\":\"XQuery 1.0-ml\",\"variables\":[{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"resource-name\\\")\",\"value\":\"\\\"ml: runFlow\\\"\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"context\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"resource-params\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"input\\\")\",\"value\":\"document{object-node{}}\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"in-txn\\\")\",\"value\":\"fn:false()\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"responder\\\")\",\"value\":\"local:rsrcmod-callback#6\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"service\\\")\",\"value\":\"xdmp:function(fn:QName(\\\"http: //marklogic.com/rest-api/extensions/runFlow\\\",\\\"post\\\"), \\\"/data-hub/5/extensions/runFlow.xqy\\\")\"}]},{\"uri\":\"/data-hub/5/rest-api/models/resource-model-query.xqy\",\"line\":237,\"column\":4,\"operation\":\"rsrcmodqry:exec-post(map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>), document{object-node{}}, local:rsrcmod-callback#6)\",\"language\":\"XQuery 1.0-ml\",\"variables\":[{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"headers\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"endpoint-params\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"input\\\")\",\"value\":\"document{object-node{}}\"},{\"name\":\"fn:QName(\\\"http: //marklogic.com/rest-api/models/resource-model-query\\\",\\\"responder\\\")\",\"value\":\"local:rsrcmod-callback#6\"}]},{\"uri\":\"/data-hub/5/rest-api/endpoints/resource-service-query.xqy\",\"line\":79,\"column\":8,\"language\":\"XQuery 1.0-ml\",\"variables\":[{\"name\":\"fn:QName(\\\"\\\",\\\"headers\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"\\\",\\\"method\\\")\",\"value\":\"\\\"POST\\\"\"},{\"name\":\"fn:QName(\\\"\\\",\\\"body\\\")\",\"value\":\"document{object-node{}}\"},{\"name\":\"fn:QName(\\\"\\\",\\\"params\\\")\",\"value\":\"map:map(<map:map xmlns:xs=\\\"http: //www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http: //www.w3.org/2001/XMLSchema-instance\\\" .../>)\"},{\"name\":\"fn:QName(\\\"\\\",\\\"extra-names\\\")\",\"value\":\"()\"}]}]}"
+        ],
+        "fullOutput": null
       }
     ]
   }
