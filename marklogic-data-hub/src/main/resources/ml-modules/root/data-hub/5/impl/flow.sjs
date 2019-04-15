@@ -281,7 +281,7 @@ class Flow {
         try {
           let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), combinedOptions, processor.run));
           flowInstance.processResults(results, combinedOptions, flowName, step);
-          flowInstance.globalContext.completedItems.concat(uris);
+          flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
         } catch (e) {
           flowInstance.globalContext.batchErrors.push({
             "stack": e.stack,
@@ -292,7 +292,7 @@ class Flow {
             "retryable": e.retryable,
             "stackFrames": e.stackFrames
           });
-          flowInstance.globalContext.failedItems.concat(uris);
+          flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
           flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
         }
       } else {
