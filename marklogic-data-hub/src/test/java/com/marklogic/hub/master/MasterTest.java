@@ -65,7 +65,7 @@ public class MasterTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
     private void installProject() throws IOException, URISyntaxException {
-            String[] directoriesToCopy = new String[]{"flows", "steps", "plugins"};
+            String[] directoriesToCopy = new String[]{"flows", "step-definitions", "plugins"};
             for (final String subDirectory: directoriesToCopy) {
                 final Path subProjectPath = projectPath.resolve(subDirectory);
                 subProjectPath.toFile().mkdir();
