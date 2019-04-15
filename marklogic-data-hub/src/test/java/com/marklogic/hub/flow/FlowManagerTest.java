@@ -48,7 +48,7 @@ class FlowManagerTest extends HubTestBase {
         "  \"options\": {\"identifier\": \"(some identifier or search)\"},\n" +
         "  \"steps\": {\n" +
         "    \"1\": {\n" +
-        "      \"type\": \"MAPPING\",\n" +
+        "      \"stepDefinitionType\": \"MAPPING\",\n" +
         "      \"name\": \"person-mapping1.json\",\n" +
         "      \"retryLimit\": 0,\n" +
         "      \"options\": {\"identifier\": \"null\"}\n" +
