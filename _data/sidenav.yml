@@ -121,6 +121,7 @@ main:
             childPages: [
               { absurl: 'https://docs.marklogic.com/REST/client', text: 'Using the REST Client API' },
               { absurl: 'https://docs.marklogic.com/guide/admin/odbc', text: 'Using ODBC' },
+              { absurl: 'https://docs.marklogic.com/guide/java/DataServices', text: 'Using Java' },
             ]
           },
           {

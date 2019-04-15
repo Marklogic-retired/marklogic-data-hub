@@ -69,7 +69,7 @@ For more information on roles in DHF, see [Security]({{site.baseurl}}/refs/secur
       mlUsername=data-hub-admin-user
       mlPassword=your-data-hub-admin-user-password
       mlFlowOperatorUserName=flow-operator
-      mlFlowOperatorUserPassword=your-data-hub-user-password
+      mlFlowOperatorUserPassword=your-flow-operator-password
       ```
 
 1. If your custom code refers to the old roles, change them to refer to the new roles.
