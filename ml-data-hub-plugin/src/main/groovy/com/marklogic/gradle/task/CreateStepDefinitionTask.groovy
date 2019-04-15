@@ -35,7 +35,7 @@ class CreateStepDefinitionTask extends HubTask {
         if (stepDefName == null) {
             throw new StepDefNameRequiredException()
         }
-        String stepDefType = project.hasProperty(propType) ? project.property(propType) : StepDefinition.StepType.CUSTOM
+        String stepDefType = project.hasProperty(propType) ? project.property(propType) : StepDefinition.StepDefinitionType.CUSTOM
 
         def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "stepDefName: " + stepDefName
@@ -43,7 +43,7 @@ class CreateStepDefinitionTask extends HubTask {
         println "projectDir: " + projectDir.toString()
 
         StepDefinitionManager stepDefinitionManager = getStepDefinitionManager()
-        StepDefinition stepDefinition = StepDefinition.create(stepDefName.toString(), StepDefinition.StepType.getStepType(stepDefType))
+        StepDefinition stepDefinition = StepDefinition.create(stepDefName.toString(), StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType))
 
         if (stepDefinitionManager.getStepDefinition(stepDefinition.name, stepDefinition.type) == null) {
             Scaffolding scaffolding = getScaffolding()

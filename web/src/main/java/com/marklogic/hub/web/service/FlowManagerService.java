@@ -145,17 +145,17 @@ public class FlowManagerService {
         // Only save step if step is of Custom type, for rest use the default steps.
         switch (step.getStepDefinitionType()) {
             case INGEST:
-                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", StepDefinition.StepType.INGEST);
+                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", StepDefinition.StepDefinitionType.INGEST);
                 Step defaultIngest = defaultIngestDefinition.transformToStep(step.getName(), defaultIngestDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultIngest, step);
                 break;
             case MAPPING:
-                StepDefinition defaultMappingDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", StepDefinition.StepType.MAPPING);
+                StepDefinition defaultMappingDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/mapping/marklogic/default-mapping.step.json", StepDefinition.StepDefinitionType.MAPPING);
                 Step defaultMapping = defaultMappingDefinition.transformToStep(step.getName(), defaultMappingDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultMapping, step);
                 break;
             case MASTER:
-                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", StepDefinition.StepType.MASTER);
+                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", StepDefinition.StepDefinitionType.MASTER);
                 Step defaultMaster = defaultMasterDefinition.transformToStep(step.getName(), defaultMasterDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultMaster, step);
                 break;
@@ -165,7 +165,7 @@ public class FlowManagerService {
                     StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
                     stepDefinitionManagerService.saveStepDefinition(stepDefinition);
                 } else {
-                    StepDefinition stepDefinition = StepDefinition.create(step.getStepDefinitionName(), StepDefinition.StepType.CUSTOM);
+                    StepDefinition stepDefinition = StepDefinition.create(step.getStepDefinitionName(), StepDefinition.StepDefinitionType.CUSTOM);
                     stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
                     stepDefinitionManagerService.createStepDefinition(stepDefinition);
                 }
@@ -242,7 +242,7 @@ public class FlowManagerService {
                 flowManager.saveFlow(flow);
 
 //                // Don't delete the Step from the filesystem so that we can later on reuse the step.
-//                if (step.getType().equals(Step.StepType.CUSTOM)) {
+//                if (step.getType().equals(Step.StepDefinitionType.CUSTOM)) {
 //                    stepManagerService.deleteStepDefinition(step);
 //                }
             } catch (DataHubProjectException e) {
@@ -301,11 +301,11 @@ public class FlowManagerService {
         return null;
     }
 
-    private StepDefinition getDefaultStepDefinitionFromResources(String resourcePath, StepDefinition.StepType stepType) {
+    private StepDefinition getDefaultStepDefinitionFromResources(String resourcePath, StepDefinition.StepDefinitionType stepDefinitionType) {
         try {
             InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream(resourcePath);
             JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
-            StepDefinition defaultStep = StepDefinition.create(stepType.toString(), stepType);
+            StepDefinition defaultStep = StepDefinition.create(stepDefinitionType.toString(), stepDefinitionType);
             defaultStep.deserialize(jsonObject.jsonNode());
 
             return defaultStep;

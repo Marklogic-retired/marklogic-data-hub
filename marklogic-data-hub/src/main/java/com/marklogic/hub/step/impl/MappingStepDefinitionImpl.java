@@ -24,7 +24,7 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
 
     public MappingStepDefinitionImpl(String name) {
         setName(name);
-        setType(StepType.MAPPING);
+        setType(StepDefinitionType.MAPPING);
 
         Map<String, Object> options = getOptions();
         setIdentifier("cts.uris(null, null, cts.collectionQuery('default-ingest'))");

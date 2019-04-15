@@ -11,8 +11,8 @@ public class StepDefinitionManagerService {
     @Autowired
     private StepDefinitionManager stepDefinitionManager;
 
-    public StepDefinition getStepDefinition(String stepName, StepDefinition.StepType stepType) {
-        return stepDefinitionManager.getStepDefinition(stepName, stepType);
+    public StepDefinition getStepDefinition(String stepName, StepDefinition.StepDefinitionType stepDefinitionType) {
+        return stepDefinitionManager.getStepDefinition(stepName, stepDefinitionType);
     }
 
     public void createStepDefinition(StepDefinition stepDefinition) {

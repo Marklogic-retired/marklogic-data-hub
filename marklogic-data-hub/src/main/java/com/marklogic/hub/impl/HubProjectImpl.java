@@ -86,7 +86,7 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getStepsDirByType(StepDefinition.StepType type) {
+    public Path getStepsDirByType(StepDefinition.StepDefinitionType type) {
         Path path;
 
         if (type == null) {

@@ -64,7 +64,7 @@ public interface StepDefinitionManager {
      * @param type - type of the Step
      * @return the Step object
      */
-    StepDefinition getStepDefinition(String name, StepDefinition.StepType type);
+    StepDefinition getStepDefinition(String name, StepDefinition.StepDefinitionType type);
 
     /**
      * Returns a list of Steps that have the given type
@@ -72,7 +72,7 @@ public interface StepDefinitionManager {
      * @param type - type of the Step
      * @return an ArrayList of Step objects of a given type
      */
-    ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepType type);
+    ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepDefinitionType type);
 
     /**
      * Returns a list of Step names that have the given type
@@ -80,7 +80,7 @@ public interface StepDefinitionManager {
      * @param type - type of the Step
      * @return an ArrayList of Step names of a given type
      */
-    ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepType type);
+    ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepDefinitionType type);
 
     /**
      * Creates a Step from a given JsonNode

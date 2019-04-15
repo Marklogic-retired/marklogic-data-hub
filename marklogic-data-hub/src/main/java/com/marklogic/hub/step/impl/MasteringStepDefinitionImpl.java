@@ -26,7 +26,7 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
 
     public MasteringStepDefinitionImpl(String name) {
         setName(name);
-        setType(StepType.MASTER);
+        setType(StepDefinitionType.MASTER);
 
         Map<String, Object> options = getOptions();
         setIdentifier("cts.uris(null, null, cts.collectionQuery('default-ingest'))");

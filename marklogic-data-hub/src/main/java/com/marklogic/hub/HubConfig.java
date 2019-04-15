@@ -410,7 +410,7 @@ public interface HubConfig {
      */
     Path getHubMappingsDir();
 
-    Path getStepsDirByType(StepDefinition.StepType type);
+    Path getStepsDirByType(StepDefinition.StepDefinitionType type);
 
     /**
      * Gets the path for the hub's config directory

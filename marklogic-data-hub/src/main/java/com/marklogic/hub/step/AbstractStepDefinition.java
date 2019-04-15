@@ -33,7 +33,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     private String language;
     private String name;
     private String description;
-    private StepDefinition.StepType type;
+    private StepDefinitionType type;
     private Integer version;
     private Map<String, Object> options;
     private JsonNode customHook;
@@ -72,11 +72,11 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         this.name = name;
     }
 
-    public StepDefinition.StepType getType() {
+    public StepDefinitionType getType() {
         return type;
     }
 
-    public void setType(StepDefinition.StepType type) {
+    public void setType(StepDefinitionType type) {
         this.type = type;
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         }
 
         if (jsonObject.isExist("type")) {
-            setType(StepDefinition.StepType.getStepType(jsonObject.getString("type")));
+            setType(StepDefinitionType.getStepDefinitionType(jsonObject.getString("type")));
         }
 
         if (jsonObject.isExist("version")) {
