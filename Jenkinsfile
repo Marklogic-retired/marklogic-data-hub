@@ -154,12 +154,13 @@ pipeline{
     				println(response)
     				if(response.equals("clean")){
     					println("merging can be done")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -1 > mergeResult.txt"
+    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult==200){
+    					if(mergeResult=="200"){
     						println("Merge successful")
     					}else{
     						println("Merge Failed")
+                sh 'exit 1'
     					}
     				}else if(response.equals("blocked")){
     					println("retry blocked");
@@ -180,8 +181,14 @@ pipeline{
     					throw new Exception("Waiting for all the status checks to pass");
     				}else if(response.equals("unstable")){
     					println("retry unstable")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -1 > mergeResult.txt"
+    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
+              if(mergeResult=="200"){
+                println("Merge successful")
+              }else{
+                println("Merge Failed")
+                sh 'exit 1'
+              }
     					println("Result is"+ mergeResult)
     				}else{
     					println("merging not possible")
@@ -229,7 +236,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7-singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7-singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -270,12 +277,13 @@ pipeline{
                 }
              withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
              script{
-             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -1 > mergeResult.txt"
+             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult==200){
+    					if(mergeResult=="200"){
     						println("Merge successful")
     					}else{
     						println("Merge Failed")
+                sh 'exit 1'
     					}
     			}
              }
@@ -314,7 +322,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7_cluster_9.0-6 Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-6 Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -349,7 +357,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7_cluster_9.0-7 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-7 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -383,7 +391,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins rh7_cluster_9.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -412,7 +420,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins w12_cluster_9.0-6 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-6 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -441,7 +449,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins w12_cluster_9.0-5 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-5 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -470,7 +478,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins w12_cluster Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -499,7 +507,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins qs_rh7_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins qs_rh7_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -546,12 +554,13 @@ pipeline{
                 }
                 withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
               script{
-             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -1 > mergeResult.txt"
+             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult==200){
+    					if(mergeResult=="200"){
     						println("Merge successful")
     					}else{
     						println("Merge Failed")
+                sh 'exit 1'
     					}
     			}
              }
@@ -586,7 +595,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{

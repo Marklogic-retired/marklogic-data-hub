@@ -109,17 +109,17 @@ export class EditFlowComponent implements OnInit {
       }
     });
   }
-  runFlow(flowId): void {
-    this.manageFlowsService.runFlow(flowId).subscribe(resp => {
+  runFlow(runObject): void {
+    this.manageFlowsService.runFlow(runObject).subscribe(resp => {
       // TODO add response check
-      this.running = timer(0, 750)
-        .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
-          this.flow = Flow.fromJSON(poll);
-          if (this.flow.latestJob.status !== 'running') {
-            this.running.unsubscribe();
-          }
-        })
-      );
+      // this.running = timer(0, 750)
+      //   .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
+      //     this.flow = Flow.fromJSON(poll);
+      //     if (this.flow.latestJob.status !== 'running') {
+      //       this.running.unsubscribe();
+      //     }
+      //   })
+      // );
     });
   }
   stopFlow(flowid): void {

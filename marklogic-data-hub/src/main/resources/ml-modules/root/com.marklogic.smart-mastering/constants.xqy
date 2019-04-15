@@ -55,6 +55,8 @@ declare variable $TRACE-MERGE-RESULTS := "SM-MERGE";
 
 (: ERRORS :)
 declare variable $NO-MERGE-OPTIONS-ERROR := xs:QName("SM-NO-MERGING-OPTIONS");
+declare variable $ENTITY-NOT-FOUND-ERROR := xs:QName("SM-ENTITY-NOT-FOUND");
+declare variable $ENTITY-PROPERTY-NOT-FOUND-ERROR := xs:QName("SM-ENTITY-PROPERTY-NOT-FOUND");
 
 (: Scope for instance bodies :)
 declare variable $JSON-INSTANCE as xs:string? := "instance";

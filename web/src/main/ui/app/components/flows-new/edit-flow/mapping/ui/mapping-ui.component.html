@@ -1,19 +1,13 @@
-<div layout-padding layout="column" class="map-page"> <!--layout-align="center center"> -->
+<div layout-padding layout="column" class="map-page">
 
-  <div class="map-container2">
+  <div *ngIf="targetEntity && !targetEntity.hasDocs" class="map-container">
+    <p>Before configuring this mapping you must ingest source documents</p>
+  </div>
 
-    <div id="map-heading">
-
-      <!-- Save/Reset happens via header buttons -->
-      <div id="save-map">
-        <button mat-raised-button color="primary" [disabled]="!mapChanged()" (click)="mapChanged() && onSaveMap()">Save</button>
-        <button mat-raised-button color="primary" [disabled]="!mapChanged()" (click)="mapChanged() && onResetMap()">Reset</button>
-      </div>
-
-    </div>
+  <div *ngIf="targetEntity && targetEntity.hasDocs" class="map-container">
 
     <div id="source">
-      <div id="src-heading" #srcheading>
+      <div id="source-heading">
         <div class="item-title">
           <div class="item-type">Source</div>
           <span class="help-icon">
@@ -34,7 +28,7 @@
       </div>
 
       <!-- Dropdown row for each entity property -->
-      <div *ngFor="let entityProp of chosenEntity?.definition.properties; let i = index;" class="src-prop-container">
+      <div *ngFor="let entityProp of targetEntity?.definition.properties; let i = index;" class="source-prop-container">
 
           <div class="btn-group" dropdown #dropdown="bs-dropdown" (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
             <button dropdownToggle type="button" class="btn prop-select {{ 'prop-entity-' + entityProp.name }}">
@@ -47,7 +41,7 @@
               </div>
 
               <!-- Connection exists, display selected item -->
-              <div *ngIf="conns[entityProp.name]">
+              <div *ngIf="conns[entityProp.name] && getConnSrcData(entityProp.name, 'key')">
                 <div class="prop-select-content {{ 'prop-select-content-' + entityProp.name }}">
                   <span class="prop-name">{{ getConnSrcData(entityProp.name, 'key') }}</span>
                   <span class="prop-type">{{ getConnSrcData(entityProp.name, 'type') }}</span>
@@ -56,7 +50,7 @@
               </div>
 
               <!-- Connection does not exist, display placeholder -->
-              <div *ngIf="!conns[entityProp.name]">
+              <div *ngIf="!conns[entityProp.name] || !getConnSrcData(entityProp.name, 'key')">
                 <div class="prop-select-content unselected">Select...</div>
               </div>
 
@@ -83,24 +77,24 @@
 
     </div><!-- source -->
 
-    <div id="harmonized">
-      <div id="harm-heading">
+    <div id="target">
+      <div id="target-heading">
         <div class="item-title">
           <div class="item-type">Entity</div>
           <span class="help-icon">
             <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
           </span>
         </div>
-        <p class="item-identifying-info"ng-class="title-entity-model">{{ chosenEntity?.info.title }}
+        <p class="item-identifying-info"ng-class="title-entity-model">{{ targetEntity?.info.title }}
         </p>
       </div>
 
-      <div *ngIf="chosenEntity?.definition.properties.length === 0">
-        <em>{{ chosenEntity?.info.title }} has no properties to map. Add them in the <a [routerLink]="['/entities']">Entities</a> view.</em>
+      <div *ngIf="targetEntity?.definition.properties.length === 0">
+        <em>{{ targetEntity?.info.title }} has no properties to map. Add them in the <a [routerLink]="['/entities']">Entities</a> view.</em>
       </div>
 
       <!-- Row for each entity property -->
-      <div *ngFor="let prop of chosenEntity?.definition.properties; let i = index;">
+      <div *ngFor="let prop of targetEntity?.definition.properties; let i = index;">
 
         <div class="entity-prop-container {{ 'entity-prop-container-' + prop.name }} ">
           <span class="prop-name">{{prop.name}}</span>
@@ -116,7 +110,7 @@
         </div>
 
       </div><!-- ngFor -->
-    </div><!-- harmonized -->
+    </div><!-- target -->
 
   </div><!-- map-container -->
 

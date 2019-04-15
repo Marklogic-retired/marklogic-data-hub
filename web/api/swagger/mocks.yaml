@@ -771,7 +771,7 @@ definitions:
       isValid:
         type: "boolean"
         description: "Boolean flag to tell whether a Step is valid"
-      config:
+      options:
         type: "object"
         properties: {}
       version:

@@ -41,7 +41,8 @@ export class EditFlowUiComponent {
         databases: this.databases,
         entities: this.entities,
         collections: this.collections,
-        step: null
+        step: null,
+        flow: this.flow
       }
     });
 
@@ -65,7 +66,11 @@ export class EditFlowUiComponent {
       // TODO add ability to run individual steps
       console.log('The run dialog was closed', response);
       if ( response ) {
-        this.runFlow.emit(this.flow.id);
+        const runObject = {
+          id: this.flow.id,
+          runArray: response
+        };
+        this.runFlow.emit(runObject);
       }
     });
   }

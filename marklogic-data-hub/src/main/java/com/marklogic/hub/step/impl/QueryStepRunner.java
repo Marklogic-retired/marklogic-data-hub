@@ -35,6 +35,7 @@ import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
+import com.marklogic.hub.util.json.JSONObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -42,17 +43,16 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class QueryStepRunner implements StepRunner {
 
-    private static final int DEFAULT_BATCH_SIZE = 100;
-    private static final int DEFAULT_THREAD_COUNT = 4;
     private static final int MAX_ERROR_MESSAGES = 10;
     private Flow flow;
-    private int batchSize = DEFAULT_BATCH_SIZE;
-    private int threadCount = DEFAULT_THREAD_COUNT;
+    private int batchSize;
+    private int threadCount;
     private DatabaseClient stagingClient;
     private String destinationDatabase;
     private Map<String, Object> options;
@@ -74,6 +74,7 @@ public class QueryStepRunner implements StepRunner {
     private DataMovementManager dataMovementManager = null;
     private QueryBatcher queryBatcher = null;
     private JobUpdate jobUpdate ;
+    private AtomicBoolean isStopped = new AtomicBoolean(false) ;
 
     public QueryStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -197,12 +198,11 @@ public class QueryStepRunner implements StepRunner {
         } catch (Exception e) {
             job.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED.toString());
-            job.withSuccess(false);
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            job.withJobOutput(errors.toString());
+            job.withStepOutput(errors.toString());
             try {
-                jobUpdate.postJobs(jobId, JobStatus.FAILED.toString(), step);
+                jobUpdate.postJobs(jobId, JobStatus.FAILED_PREFIX + step);
             }
             catch (Exception ex) {
                 throw ex;
@@ -215,7 +215,10 @@ public class QueryStepRunner implements StepRunner {
 
     @Override
     public void stop() {
-        dataMovementManager.stopJob(queryBatcher);
+        isStopped.set(true);
+        if(queryBatcher != null) {
+            dataMovementManager.stopJob(queryBatcher);
+        }
     }
 
     @Override
@@ -231,12 +234,17 @@ public class QueryStepRunner implements StepRunner {
         c.setClient(stagingClient);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(this.jobId, 0, "running collector");
+            listener.onStatusChange(this.jobId, 0, 0, 0,  "running collector");
         });
 
-        final DiskQueue<String> uris;
+        final DiskQueue<String> uris ;
         try {
-            uris = c.run(this.flow.getName(), step, this.jobId, options);
+            if(! isStopped.get()) {
+                uris = c.run(this.flow.getName(), step, this.jobId, options);
+            }
+            else {
+                uris = null;
+            }
         }
         catch (Exception e) {
             throw e;
@@ -251,17 +259,16 @@ public class QueryStepRunner implements StepRunner {
         AtomicLong failedBatches = new AtomicLong(0);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(job.getJobId(), 0, "starting step execution");
+            listener.onStatusChange(job.getJobId(), 0, 0,0, "starting step execution");
         });
 
-        if ( uris == null || uris.size() == 0 ) {
+        if ( !isStopped.get() && (uris == null || uris.size() == 0 )) {
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, "collector returned 0 items");
+                listener.onStatusChange(job.getJobId(), 100, 0, 0, "collector returned 0 items");
             });
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             job.setCounts(0,0,0,0,0);
             job.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            job.withSuccess(true);
             try {
                 jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
             }
@@ -322,7 +329,7 @@ public class QueryStepRunner implements StepRunner {
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
                         previousPercentComplete = percentComplete;
                         stepStatusListeners.forEach((StepStatusListener listener) -> {
-                            listener.onStatusChange(job.getJobId(), percentComplete, "");
+                            listener.onStatusChange(job.getJobId(), percentComplete, successfulEvents.get(), failedEvents.get(), "");
                         });
                     }
 
@@ -348,7 +355,6 @@ public class QueryStepRunner implements StepRunner {
                             dataMovementManager.stopJob(jobTicket);
                         }
                     }
-
                 } catch (Exception e) {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                         errorMessages.add(e.toString());
@@ -360,14 +366,16 @@ public class QueryStepRunner implements StepRunner {
                 failedEvents.addAndGet(batchSize);
             });
 
-        JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
-        ticketWrapper.put("jobTicket", jobTicket);
+        if(! isStopped.get()) {
+            JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
+            ticketWrapper.put("jobTicket", jobTicket);
+        }
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, "");
+                listener.onStatusChange(job.getJobId(), 100, successfulEvents.get(), failedEvents.get(), "");
             });
 
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
@@ -375,32 +383,29 @@ public class QueryStepRunner implements StepRunner {
             dataMovementManager.stopJob(queryBatcher);
 
             String status;
-            boolean success;
 
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR.toString();
-                success = false;
+            } else if(isStopped.get()){
+                status = JobStatus.CANCELED.toString();
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                status = JobStatus.COMPLETED_WITH_ERRORS_PREFIX.toString() + step;
-                success = false;
+                status = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
             } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
                 status = JobStatus.COMPLETED_PREFIX + step;
-                success = true;
             } else {
-                status = JobStatus.FAILED.toString();
-                success = false;
+                status = JobStatus.FAILED_PREFIX + step;
             }
             job.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             job.withStatus(status);
-            job.withSuccess(success);
+
             try {
-                jobUpdate.postJobs(jobId, status, step);
+                jobUpdate.postJobs(jobId, status, step, status.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step)?step:null);
             }
             catch (Exception e) {
                 throw e;
             }
             if (errorMessages.size() > 0) {
-                job.withJobOutput(errorMessages);
+                job.withStepOutput(errorMessages);
             }
             if(isFullOutput) {
                 job.withFullOutput(fullResponse);
@@ -446,7 +451,7 @@ public class QueryStepRunner implements StepRunner {
 
         public RunStepResponse run(String jobId, String step, Map<String, Object> options) {
             RunStepResponse resp;
-            try {
+
                 RequestParameters params = new RequestParameters();
                 params.add("flow-name", flow.getName());
                 params.put("step", step);
@@ -454,8 +459,11 @@ public class QueryStepRunner implements StepRunner {
                 params.put("identifiers", (String) null);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    params.put("options", objectMapper.writeValueAsString(options));
+                    try {
+                        params.put("options", JSONObject.writeValueAsString(options));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
                 try {
@@ -467,19 +475,16 @@ public class QueryStepRunner implements StepRunner {
                         ObjectMapper objectMapper = new ObjectMapper();
                         resp = objectMapper.readValue(res.getContent(handle).get(), RunStepResponse.class);
                     }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 } finally {
                     if (resultItr != null) {
                         resultItr.close();
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
+
             return resp;
         }
 
     }
-
-
 }

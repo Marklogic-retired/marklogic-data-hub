@@ -40,7 +40,7 @@ export class Flow {
 
   get targetEntity(): string {
     let step = this.steps.find(function (step) {
-      return step['targetEntity'] !== undefined && step['targetEntity'] !== '';
+      return step['targetEntity'] !== undefined && step['targetEntity'] !== '' && step['targetEntity'] !== null;
     });
     return (step) ? step['targetEntity'] : '';
   }

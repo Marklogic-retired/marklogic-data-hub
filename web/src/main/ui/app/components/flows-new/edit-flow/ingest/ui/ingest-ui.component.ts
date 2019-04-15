@@ -1,60 +1,40 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {Step} from "../../../models/step.model";
 
 const settings = {
   inputFilePath: {
     label: 'Input File Path',
-    field: 'input_file_path',
-    type: 'string',
-    description: 'A regular expression describing the filesystem location(s) to use for input.',
+    description: 'Fhe filesystem location(s) to use for input. Default is current project path relative to the server location',
     value: '.'
   },
   fileTypes: {
     label: 'Input File Type',
-    field: 'input_file_type',
-    type: 'type',
-    description: 'The input file type. Accepted value: aggregates, archive, delimited_text, delimited_json, documents, forest, rdf, sequencefile.\nDefault: documents.',
+    description: 'The input file type. Accepted value: txt, json, xml, binary, csv, or all.\nDefault: json.',
     options: [
       {
-        label: 'Aggregates',
-        value: 'aggregates',
+        label: 'Text',
+        value: 'txt',
       },
       {
-        label: 'Archive',
-        value: 'archive',
+        label: 'JSON',
+        value: 'json',
       },
       {
-        label: 'Delimited Text',
-        value: 'delimited_text',
+        label: 'XML',
+        value: 'xml',
       },
       {
-        label: 'Delimited Json',
-        value: 'delimited_json',
+        label: 'Binary',
+        value: 'binary',
       },
       {
-        label: 'Documents',
-        value: 'documents',
-      },
-      {
-        label: 'Forest',
-        value: 'forest',
-      },
-      {
-        label: 'RDF',
-        value: 'rdf',
-      },
-      {
-        label: 'Sequence File',
-        value: 'sequencefile',
-      },
-    ],
-    value: 'documents'
+        label: 'CSV',
+        value: 'csv',
+      }
+    ]
   },
   outputDocTypes: {
     label: 'Output File Type',
-    field: 'document_type',
-    type: 'type',
-    description: 'The type of document to create when -input_file_type is documents, sequencefile or delimited_text. Accepted values: mixed (documents only), xml, json, text, binary. Default: mixed for documents, xml for sequencefile, and xml for delimited_text.',
+    description: 'The type of document to create. Accepted values: xml, json. Default: json.',
     options: [
       {
         label: 'JSON',
@@ -64,16 +44,17 @@ const settings = {
         label: 'XML',
         value: 'xml',
       }
-    ],
-    value: 'json'
+    ]
   },
   outputPermissions: {
     label: 'Output Permissions',
-    field: 'output_permissions',
-    type: 'comma-list',
-    description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: -output_permissions role1,read,role2,update',
+    description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: role1,read,role2,update',
     value: 'rest-reader,read,rest-writer,update',
   },
+  outputURIReplacement: {
+    label: 'Output URI Replacement',
+    description: 'Specify a prefix to prepend to the default URI. Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.'
+  }
 };
 
 @Component({
@@ -84,6 +65,7 @@ const settings = {
 export class IngestUiComponent implements OnInit {
 
   @Input() step: any;
+  @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
   constructor() {
@@ -93,18 +75,25 @@ export class IngestUiComponent implements OnInit {
   folder: string;
 
   ngOnInit(): void {
-    this.folder = this.step.options.inputFilePath;
+    this.folder = this.step.fileLocations.inputFilePath;
+    console.log('init done')
   }
 
-  changeFolder(folder){
+  changeFolder(folder) {
     this.folder = folder.relativePath;
+    this.onChange();
   }
 
-  getStep(flow): Step {
-    this.step.options.inputFilePath = this.folder;
-    this.step.options.transformParams = `entity-name=${this.step.options.targetEntity},flow-name=${flow.name}`;
-    this.step.options.outputCollections = `${this.step.options.targetEntity}`;
-    return this.step;
+  onKeyChange(event) {
+    if (event.key === 'Enter') {
+      this.onChange();
+    }
+  }
+
+  onChange() {
+    this.step.fileLocations.inputFilePath = this.folder;
+    this.step.options.collections = [`${this.step.name}`];
+    this.saveStep.emit(this.step);
   }
 
 }

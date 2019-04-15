@@ -1,31 +1,75 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
-import {Ingestion} from "./model/ingest.model";
-import {Step} from "../../models/step.model";
-import {IngestUiComponent} from "./ui/ingest-ui.component";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {ProjectService} from "../../../../services/projects";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-ingest',
   template: `
     <app-ingest-ui
-      [step]="loadedStep"
-      (saveStep)="updateStep.emit($event)"
+      [step]="step"
+      [flow]="flow"
+      (saveStep)="saveStep.emit($event)"
     >
     </app-ingest-ui>
   `
 })
-export class IngestComponent implements OnInit{
+export class IngestComponent implements OnInit {
   @Input() step: any;
-  @Output() updateStep = new EventEmitter();
-  @ViewChild(IngestUiComponent) ingestUi: IngestUiComponent;
+  @Input() flow: any;
+  @Output() saveStep = new EventEmitter();
 
-  loadedStep: Step;
+  projectPath: string;
 
-  ngOnInit(): void {
-    this.loadedStep = Ingestion.fromConfig(this.step);
+  constructor(
+    private projects: ProjectService
+  ) {
   }
 
-  getStep(flow){
-    const uiStep = this.ingestUi.getStep(flow);
-    return Ingestion.fromUI(uiStep);
+  ngOnInit(): void {
+    this.projects.getProjects().subscribe(
+      ({projects, lastProject}) => {
+        console.log('Projects end point: ', projects, lastProject);
+        const project = _.find(projects, pr => pr.id === lastProject);
+        if (project) {
+          this.projectPath = project.path;
+        }
+        this.checkDefaults();
+      },
+      () => {
+        this.checkDefaults();
+      });
+  }
+
+  /*
+    Checking if the options are exist if not then initiate it with default value.
+    This is the last barrier for the case if the backend has some options omitted.
+   */
+  private checkDefaults(): void {
+    const {
+      inputFilePath,
+      inputFileType,
+      outputURIReplacement
+    } = this.step.fileLocations;
+
+    const {
+      collections,
+      outputPermissions,
+      outputFileType
+    } = this.step.options;
+
+    const fileLocations = {
+      inputFilePath: inputFilePath || this.projectPath || '.',
+      inputFileType: inputFileType || 'json',
+      outputURIReplacement: outputURIReplacement || ''
+    };
+
+    const options = {
+      collections: collections || [`${this.step.name}`],
+      outputPermissions: outputPermissions || "rest-reader,read,rest-writer,update",
+      outputFileType: outputFileType || 'json'
+    };
+
+    this.step.fileLocations = fileLocations;
+    this.step.options = options;
   }
 }

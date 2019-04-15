@@ -50,7 +50,12 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
     this.selectedIndex = index;
   }
   newStepClicked(): void {
-    this.newStep.emit(this.selectedIndex + 1);
+    let index = this.selectedIndex + 2;
+    if (this.stepsArray.length === 0) {
+      index = null;
+    }
+    console.log('index', index);
+    this.newStep.emit(index);
   }
   runClicked(): void {
     this.runFlow.emit();

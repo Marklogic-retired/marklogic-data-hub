@@ -24,9 +24,9 @@
     <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
   </mat-form-field>
 
-  <div id="source-weights">
+  <div id="merge-strategy-source-weights-container">
     <mat-label>Source Weights</mat-label>
-    <button class="add-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
+    <button id="add-merge-strategy-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
       <mat-icon>add_circle</mat-icon>
     </button>
     <div
@@ -36,14 +36,14 @@
       <div [formGroupName]="i" class="source-weights-group">
         <mat-form-field>
           <mat-label>Source Name</mat-label>
-          <input [class]="'source-weights-source-' + i" matInput formControlName="source"/>
+          <input [class]="'source-weights-name-' + i" matInput formControlName="source"/>
         </mat-form-field>
         <mat-icon></mat-icon>
         <mat-form-field>
           <mat-label>Weight</mat-label>
           <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
         </mat-form-field>
-        <button class="remove-source-weight-btn" mat-icon-button (click)="onRemoveSourceWeight(i)">
+        <button [id]="'remove-merge-strategy-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
           <mat-icon>remove_circle</mat-icon>
         </button>
       </div>

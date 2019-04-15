@@ -27,7 +27,7 @@ import java.util.Iterator;
 public class StepModel {
 
     protected String id;
-    protected Step.StepType type;
+    protected String type;
     protected String name;
     protected String description;
     protected String sourceDatabase;
@@ -46,11 +46,11 @@ public class StepModel {
         this.id = id;
     }
 
-    public Step.StepType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Step.StepType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -132,7 +132,7 @@ public class StepModel {
         JSONObject jsonObject = new JSONObject(node);
 
 
-        step.setType(Step.StepType.getStepType(jsonObject.getString("type")));
+        step.setType(jsonObject.getString("type"));
         step.setName(jsonObject.getString("name"));
 
         if (jsonObject.getString("id") != null) {
@@ -183,7 +183,7 @@ public class StepModel {
         Step step = Step.create("dummy", Step.StepType.CUSTOM);
 
         step.setName(stepModel.getName());
-        step.setType(stepModel.getType());
+        step.setType(Step.StepType.getStepType(stepModel.getType()));
         step.setDescription(stepModel.getDescription());
         step.setSourceDatabase(stepModel.getSourceDatabase());
         step.setDestinationDatabase(stepModel.getTargetDatabase());
@@ -204,7 +204,7 @@ public class StepModel {
 
         stepModel.setId(step.getName() + "-" + step.getType());
         stepModel.setName(step.getName());
-        stepModel.setType(step.getType());
+        stepModel.setType(step.getType().toString().toLowerCase());
         stepModel.setDescription(step.getDescription());
         stepModel.setSourceDatabase(step.getSourceDatabase());
         stepModel.setTargetDatabase(step.getDestinationDatabase());

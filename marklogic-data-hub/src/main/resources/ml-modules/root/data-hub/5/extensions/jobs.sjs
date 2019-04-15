@@ -47,21 +47,24 @@ function post(context, params, input) {
   let status = params["status"];
   let flow = params["flow-name"];
   let step = params["step"];
+  let lastCompleted = params["lastCompleted"];
+  let stepResponses = params["stepResponses"];
 
   let resp = null;
   let jobDoc = datahub.jobs.getJobDocWithId(jobId);
   if(jobDoc) {
     jobDoc.job.lastAttemptedStep = step;
     jobDoc.job.jobStatus = status;
-    if(status === "finished") {
-      jobDoc.job.lastCompletedStep = step;
+    if(lastCompleted) {
+      jobDoc.job.lastCompletedStep = lastCompleted;
+    }
+    if(stepResponses) {
+      jobDoc.job.stepResponses = JSON.parse(stepResponses);
+    }
+    if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "cancelled"|| status === "stop-on-error") {
       jobDoc.job.timeEnded = fn.currentDateTime();
     }
-    else {
-      if(status === "finished_with_errors" || status === "failed" ) {
-        jobDoc.job.timeEnded = fn.currentDateTime();
-      }
-    }
+
     //Update the job doc
     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, "xdmp.defaultPermissions()", ['Jobs','Job'], datahub.config.JOBDATABASE);
   }
@@ -74,10 +77,6 @@ function post(context, params, input) {
     }
 
   }
-
-
-
-
 };
 
 function put(context, params, input) {};
