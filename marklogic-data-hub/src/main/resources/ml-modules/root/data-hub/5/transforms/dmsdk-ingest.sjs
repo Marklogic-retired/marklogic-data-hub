@@ -17,7 +17,7 @@ function transform(context, params, content) {
     datahub.debug.log({message: params, type: 'error'});
     fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is missing in  " + flowName);
   }
-  if(! stepObj.type.toLowerCase() === "ingest"){
+  if(! stepObj.stepDefinitionType.toLowerCase() === "ingest"){
     datahub.debug.log({message: params, type: 'error'});
     fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is not an ingest step");
   }

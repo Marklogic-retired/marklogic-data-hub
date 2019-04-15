@@ -153,7 +153,7 @@ class Flow {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
-    let stepDetails = this.step.getStepByNameAndType(stepRef.name, stepRef.type);
+    let stepDetails = this.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
 
     this.globalContext.targetDb = stepRef.targetDatabase || stepDetails.targetDatabase || this.globalContext.targetDb;
     this.globalContext.sourceDb = stepRef.sourceDatabase || stepDetails.targetDatabase || this.globalContext.sourceDb;
@@ -196,12 +196,12 @@ class Flow {
       for (let content of this.writeQueue) {
         let info = {
             derivedFrom: content.previousUri || content.uri,
-            influencedBy: stepRef.name,
-            status: (stepDetails.type === 'INGEST') ? 'created' : 'updated',
+            influencedBy: stepRef.stepDefinitionName,
+            status: (stepDetails.stepDefinitionType === 'INGEST') ? 'created' : 'updated',
             metadata: {}
           }
         ;
-        this.datahub.prov.createStepRecord(jobId, flowName, stepRef.type.toLowerCase(), content.uri, info);
+        this.datahub.prov.createStepRecord(jobId, flowName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);
       }
 //      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
       if (!combinedOptions.noBatchWrite) {
@@ -236,9 +236,9 @@ class Flow {
   runStep(uris, content, options, flowName, stepNumber, step) {
     // declareUpdate({explicitCommit: true});
     let flowInstance = this;
-    let processor = flowInstance.step.getStepProcessor(flowInstance, step.name, step.type);
+    let processor = flowInstance.step.getStepProcessor(flowInstance, step.stepDefinitionName, step.stepDefinitionType);
     if(!(processor && processor.run)) {
-      let errorMsq = `Could not find main() function for process ${step.type}/${step.name} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
+      let errorMsq = `Could not find main() function for process ${step.stepDefinitionType}/${step.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
       flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});
       throw Error(errorMsq);
     }
@@ -305,7 +305,7 @@ class Flow {
         }
         //add our metadata to this
         result.context = result.context || {};
-        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.stepDefinitionName);
         // normalize context values to arrays
         if (result.context.collections) {
           result.context.collections = normalizeToArray(result.context.collections);

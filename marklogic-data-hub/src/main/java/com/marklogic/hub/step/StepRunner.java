@@ -153,5 +153,15 @@ public interface StepRunner {
      */
     Job run(Collection<String> uris);
 
-    void stop();
+    /**
+     * Stops the step run
+     *
+     */
+     void stop();
+
+    /**
+     * Returns the batch size
+     *
+     */
+     int getBatchSize();
 }
