@@ -1,7 +1,6 @@
 package com.marklogic.hub.flow;
 
 
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 
 public interface FlowStatusListener {
@@ -16,6 +15,6 @@ public interface FlowStatusListener {
      * @param failedEvents - counter for failure
      * @param message - the message you'd like to send along with it
      */
-    void onStatusChanged(String jobId, Step step, JobStatus jobStatus, int percentComplete, long successfulEvents, long failedEvents, String message) ;
+    void onStatusChanged(String jobId, Step step, String jobStatus, int percentComplete, long successfulEvents, long failedEvents, String message) ;
 
 }
