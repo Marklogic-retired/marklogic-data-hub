@@ -115,6 +115,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
             }
 
 
+            // TODO: Rename internal artifacts step folder to step-definitions, change collections URI
             // lets do steps
             resources = resolver.getResources("classpath*:/hub-internal-artifacts/steps/**/*.step.json");
             for (Resource r : resources) {
