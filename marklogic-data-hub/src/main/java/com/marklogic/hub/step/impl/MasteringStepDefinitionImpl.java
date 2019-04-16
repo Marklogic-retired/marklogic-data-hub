@@ -29,8 +29,8 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
         setType(StepDefinitionType.MASTERING);
 
         Map<String, Object> options = getOptions();
-        setSourceQuery("cts.uris(null, null, cts.collectionQuery('default-ingestion'))");
-        options.put("identifier", getSourceQuery());
+        setSourceQuery("cts.uris(null, null, cts.collectionQuery('default-mapping'))");
+        options.put("sourceQuery", getSourceQuery());
         options.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         options.put("mergeOptions", new JSONObject());
