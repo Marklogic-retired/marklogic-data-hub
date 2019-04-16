@@ -11,7 +11,7 @@
 	   "retryLimit": 0,
 	   "options": {
 		"outputFormat" : "json",
-		"collections" : "defaultIngest"
+		"collections" : "default-ingestion"
 		}
 	  }
 	}
