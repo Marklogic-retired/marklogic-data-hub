@@ -11,7 +11,7 @@
       "language": "zxx",
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "INGESTION",
-      "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
+      "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs",
       "customHook": {
       },
       "options": {
@@ -42,7 +42,7 @@
       "language": "zxx",
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
-      "modulePath": "/data-hub/5/builtins/steps/master/default/main.sjs",
+      "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.sjs",
       "options": {
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
         "collections": [
