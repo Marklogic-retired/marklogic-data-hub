@@ -6,7 +6,7 @@
   },
     "steps" : {
 	  "1": {	 
-	   "type": "master",
+	   "type": "mastering",
 	   "name": "default-mastering",
 	   "retryLimit": 0,
 	   "options": {

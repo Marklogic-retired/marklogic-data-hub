@@ -5,7 +5,7 @@
   },
   "steps" : {
 	  "1": {	 
-	   "type": "ingest",
+	   "type": "ingestion",
 	   "name": "default-ingestion",
 	   "retryLimit": 0,
 	   "options": {
