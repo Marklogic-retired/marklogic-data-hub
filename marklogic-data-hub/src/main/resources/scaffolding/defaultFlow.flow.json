@@ -9,8 +9,8 @@
   "steps": {
     "1": {
       "language": "zxx",
-      "name": "default-ingestion",
-      "type": "INGESTION",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
       "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
       "customHook": {
       },
@@ -24,8 +24,8 @@
     },
     "2": {
       "language": "zxx",
-      "name": "default-mapping",
-      "type": "MAPPING",
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
       "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
       "options": {
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
@@ -40,8 +40,8 @@
     },
     "3": {
       "language": "zxx",
-      "name": "default-mastering",
-      "type": "MASTERING",
+      "stepDefinitionName": "default-mastering",
+      "stepDefinitionType": "MASTERING",
       "modulePath": "/data-hub/5/builtins/steps/master/default/main.sjs",
       "options": {
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",

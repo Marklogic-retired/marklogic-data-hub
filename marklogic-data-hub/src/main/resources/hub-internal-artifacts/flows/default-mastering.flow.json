@@ -6,8 +6,8 @@
   },
     "steps" : {
 	  "1": {	 
-	   "type": "mastering",
-	   "name": "default-mastering",
+	   "stepDefinitionType": "mastering",
+	   "stepDefinitionName": "default-mastering",
 	   "retryLimit": 0,
 	   "options": {
 		"outputFormat" : "json",

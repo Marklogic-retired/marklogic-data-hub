@@ -6,8 +6,8 @@
   },
   "steps" : {
 	  "1": {	 
-	   "type": "mapping",
-	   "name": "default-mapping",
+	   "stepDefinitionType": "mapping",
+	   "stepDefinitionName": "default-mapping",
 	   "retryLimit": 0,
 	   "options": {
        "outputFormat" : "json",
