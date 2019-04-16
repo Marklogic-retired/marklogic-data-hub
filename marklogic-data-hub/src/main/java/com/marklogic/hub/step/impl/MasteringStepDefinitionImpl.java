@@ -26,7 +26,7 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
 
     public MasteringStepDefinitionImpl(String name) {
         setName(name);
-        setType(StepDefinitionType.MASTER);
+        setType(StepDefinitionType.MASTERING);
 
         Map<String, Object> options = getOptions();
         setSourceQuery("cts.uris(null, null, cts.collectionQuery('default-ingestion'))");

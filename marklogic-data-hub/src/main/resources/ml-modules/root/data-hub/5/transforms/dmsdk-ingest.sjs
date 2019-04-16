@@ -17,9 +17,9 @@ function transform(context, params, content) {
     datahub.debug.log({message: params, type: 'error'});
     fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is missing in  " + flowName);
   }
-  if(! stepObj.stepDefinitionType.toLowerCase() === "ingest"){
+  if(! stepObj.stepDefinitionType.toLowerCase() === "ingestion"){
     datahub.debug.log({message: params, type: 'error'});
-    fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is not an ingest step");
+    fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is not an ingestion step");
   }
 
   let jobId = params["job-id"];

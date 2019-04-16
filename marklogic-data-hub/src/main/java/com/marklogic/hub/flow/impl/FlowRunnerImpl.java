@@ -13,6 +13,9 @@ import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
 import com.marklogic.hub.step.impl.Step;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -21,9 +24,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class FlowRunnerImpl implements FlowRunner{
@@ -269,18 +269,28 @@ public class FlowRunnerImpl implements FlowRunner{
             resp.setStepResponses(stepOutputs);
             resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
 
-            String jobStatus = null;
+            final String jobStatus;
             //Update status of job
-            if (!isJobSuccess.get()) {
+            if (isJobCancelled.get()) {
+                jobStatus = JobStatus.CANCELED.toString();
+            }
+            else if (!isJobSuccess.get()) {
                 if(runningFlow.isStopOnError()){
                     jobStatus = JobStatus.STOP_ON_ERROR.toString();
                 }
                 else{
-                    jobStatus = JobStatus.FINISHED_WITH_ERRORS.toString();
+                    Collection<Job> stepResps = stepOutputs.values();
+                    long failedStepCount = stepResps.stream().filter((stepResp)-> stepResp.getStatus()
+                        .contains(JobStatus.FAILED_PREFIX)).collect(Collectors.counting());
+                    if(failedStepCount == stepResps.size()){
+                        jobStatus = JobStatus.FAILED.toString();
+                    }
+                    else {
+                        jobStatus = JobStatus.FINISHED_WITH_ERRORS.toString();
+                    }
                 }
-            } else if (isJobCancelled.get()) {
-                jobStatus = JobStatus.CANCELED.toString();
-            } else {
+            }
+            else {
                 jobStatus = JobStatus.FINISHED.toString();
             }
             resp.setJobStatus(jobStatus);
@@ -301,14 +311,14 @@ public class FlowRunnerImpl implements FlowRunner{
                 if (!isJobSuccess.get()) {
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED_WITH_ERRORS.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
                         });
                     } catch (Exception ex) {
                     }
                 } else {
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
                         });
                     } catch (Exception ex) {
                     }
