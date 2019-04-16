@@ -29,7 +29,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
 
     public IngestionStepDefinitionImpl(String name) {
         setName(name);
-        setType(StepDefinitionType.INGEST);
+        setType(StepDefinitionType.INGESTION);
         setFileLocations(fileLocations);
 
         Map<String, Object> options = getOptions();

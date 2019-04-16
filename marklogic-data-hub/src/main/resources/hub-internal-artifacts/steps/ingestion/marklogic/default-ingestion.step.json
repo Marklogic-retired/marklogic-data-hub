@@ -1,9 +1,9 @@
 {
   "language" : "zxx",
   "name" : "default-ingestion",
-  "type" : "INGEST",
+  "type" : "INGESTION",
   "version" : 1,
-  "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
+  "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs",
   "customHook": {},
   "fileLocations": {
     "inputFileType": "json"

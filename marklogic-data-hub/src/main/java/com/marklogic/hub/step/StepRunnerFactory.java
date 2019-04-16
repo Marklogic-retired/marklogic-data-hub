@@ -35,7 +35,7 @@ public class StepRunnerFactory {
             case MAPPING:
                 stepRunner = new QueryStepRunner(hubConfig);
                 break;
-            case INGEST:
+            case INGESTION:
                 stepRunner = new WriteStepRunner(hubConfig);
                 break;
             default:
@@ -85,7 +85,7 @@ public class StepRunnerFactory {
             targetDatabase = ((TextNode)stepDef.getOptions().get("targetDatabase")).asText();
         }
         else {
-            if(StepDefinition.StepDefinitionType.INGEST.equals(step.getStepDefinitionType())) {
+            if(StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
                 targetDatabase = hubConfig.getDbName(DatabaseKind.STAGING);
             }
             else {
@@ -96,7 +96,7 @@ public class StepRunnerFactory {
         stepRunner.withDestinationDatabase(targetDatabase);
 
         //For ingest flow, set stepDef.
-        if(StepDefinition.StepDefinitionType.INGEST.equals(step.getStepDefinitionType())) {
+        if(StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
             ((WriteStepRunner)stepRunner).withStepDefinition(stepDef);
         }
         return stepRunner;

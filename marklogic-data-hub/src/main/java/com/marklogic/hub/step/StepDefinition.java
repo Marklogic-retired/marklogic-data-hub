@@ -26,9 +26,9 @@ import java.util.Map;
 public interface StepDefinition {
 
     enum StepDefinitionType {
-        INGEST("ingestion"),
+        INGESTION("ingestion"),
         MAPPING("mapping"),
-        MASTER("mastering"),
+        MASTERING("mastering"),
         CUSTOM("custom");
 
         private String type;
@@ -66,13 +66,13 @@ public interface StepDefinition {
         StepDefinition stepDefinition = null;
 
         switch (type) {
-            case INGEST:
+            case INGESTION:
                 stepDefinition = new IngestionStepDefinitionImpl(name);
                 break;
             case MAPPING:
                 stepDefinition = new MappingStepDefinitionImpl(name);
                 break;
-            case MASTER:
+            case MASTERING:
                 stepDefinition = new MasteringStepDefinitionImpl(name);
                 break;
             case CUSTOM:
