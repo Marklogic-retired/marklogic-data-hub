@@ -375,7 +375,7 @@
             "maxSources": 5
           },
           {
-            "name": "id",
+            "propertyName": "id",
             "algorithmRef": "customMerge"
           }
         ],
@@ -786,7 +786,7 @@
             "maxSources": 5
           },
           {
-            "name": "id",
+            "propertyName": "id",
             "algorithmRef": "customMerge"
           }
         ],
@@ -1197,7 +1197,7 @@
             "maxSources": 5
           },
           {
-            "name": "id",
+            "propertyName": "id",
             "algorithmRef": "customMerge"
           }
         ],
