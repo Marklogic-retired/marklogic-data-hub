@@ -18,7 +18,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
-  @Output() redeployAll = new EventEmitter();
+  @Output() redeployModules = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
 
@@ -78,7 +78,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        this.redeployAll.emit();
+        this.redeployModules.emit();
       }
     });
   }
