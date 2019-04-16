@@ -63,10 +63,10 @@ if(method === 'GET') {
     }
     let combinedOptions = Object.assign({}, baseStep.options, stepDoc.options, flowDoc.options, options);
     if (stepDoc) {
-      if(!combinedOptions.identifier && flowDoc.identifier) {
-        combinedOptions.identifier = flowDoc.identifier;
+      if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
+        combinedOptions.sourceQuery = flowDoc.sourceQuery;
       }
-      let query = combinedOptions.identifier;
+      let query = combinedOptions.sourceQuery;
       if (query) {
         try {
           resp = xdmp.eval(query, {options: options}, {database: xdmp.database(database)});

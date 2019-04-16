@@ -6,7 +6,7 @@
   "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
   "customHook": {},
   "options" : {
-    "identifier": null,
+    "sourceQuery": null,
     "outputFormat": "json",
     "collections": ["default-ingestion"]
   }

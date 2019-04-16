@@ -5,7 +5,7 @@
   "version" : 1,
   "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs",
   "options" : {
-    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
+    "sourceQuery" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
     "collections": ["default-mapping"]
   }
 }

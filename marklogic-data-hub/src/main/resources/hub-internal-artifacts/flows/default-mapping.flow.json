@@ -2,7 +2,7 @@
   "name" : "default-mapping",
   "description" : "This is the default flow for mapping into data hub",
   "options": {
-    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))"
+    "sourceQuery" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))"
   },
   "steps" : {
 	  "1": {	 

@@ -165,14 +165,14 @@ public interface StepDefinition {
      *
      * @return - a string identifier
      */
-    String getIdentifier();
+    String getSourceQuery();
 
     /**
      * Sets the identifier for the step
      *
      * @param identifier - a string identifier
      */
-    void setIdentifier(String identifier);
+    void setSourceQuery(String identifier);
 
     /**
      * Returns the retry limit for the step
