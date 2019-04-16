@@ -39,6 +39,10 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,7 +52,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 
 public class WriteStepRunner implements StepRunner {
 
@@ -63,6 +66,7 @@ public class WriteStepRunner implements StepRunner {
     private boolean stopOnFailure = false;
     private String jobId;
     private boolean isFullOutput = false;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String step = "1";
 
@@ -504,7 +508,12 @@ public class WriteStepRunner implements StepRunner {
         }
 
         runningThread = new Thread(() -> {
-            writeBatcher.flushAndWait();
+            try {
+                writeBatcher.flushAndWait();
+            }
+            catch (IllegalStateException e) {
+                logger.error("WriteBatcher has been stopped");
+            }
 
             String stepStatus;
             if (failedEvents.get() > 0 && stopOnFailure) {
@@ -556,7 +565,14 @@ public class WriteStepRunner implements StepRunner {
                 String uri = generateAndEncodeURI(file.getParent());
                 Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
                     contentStream, DocumentWriteOperation.uriMaker(outputURIReplace(uri)+"/%s.json"));
-                writeBatcher.addAll(documentStream);
+                if(! writeBatcher.isStopped()) {
+                    try {
+                        writeBatcher.addAll(documentStream);
+                    }
+                    catch (IllegalStateException e) {
+                        logger.error("WriteBatcher has been stopped");
+                    }
+                }
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -565,7 +581,14 @@ public class WriteStepRunner implements StepRunner {
             InputStreamHandle handle = new InputStreamHandle(docStream);
             handle.setFormat(fileFormat);
             try {
-                writeBatcher.add(outputURIReplace(generateAndEncodeURI(file.getAbsolutePath())), handle);
+                if(! writeBatcher.isStopped()) {
+                    try {
+                        writeBatcher.add(outputURIReplace(generateAndEncodeURI(file.getAbsolutePath())), handle);
+                    }
+                    catch (IllegalStateException e) {
+                        logger.error("WriteBatcher has been stopped");
+                    }
+                }
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
