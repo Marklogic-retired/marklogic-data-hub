@@ -118,20 +118,7 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(EntityModel newEntity) throws IOException {
-        scaffolding.createLegacyEntity(newEntity.getName());
-
-        if (newEntity.inputFlows != null) {
-            for (FlowModel flow : newEntity.inputFlows) {
-                scaffolding.createLegacyFlow(newEntity.getName(), flow.flowName, FlowType.INPUT, flow.codeFormat, flow.dataFormat);
-            }
-        }
-
-        if (newEntity.harmonizeFlows != null) {
-            for (FlowModel flow : newEntity.harmonizeFlows) {
-                scaffolding.createLegacyFlow(newEntity.getName(), flow.flowName, FlowType.HARMONIZE, flow.codeFormat, flow.dataFormat);
-            }
-        }
-
+        scaffolding.createEntity(newEntity.getName());
         return getEntity(newEntity.getName());
     }
 
