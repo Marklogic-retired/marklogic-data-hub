@@ -10,7 +10,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.JobModel;
 import com.marklogic.hub.web.model.JobModel.JobStep;
@@ -213,7 +213,7 @@ public class NewJobService extends ResourceManager {
             JobStep js = new JobStep();
             js.stepNumber = Integer.valueOf(key);
             js.name = step.getName();
-            js.type = step.getType().toString();
+            js.type = step.getStepDefinitionType().toString();
             if (js.name.startsWith("default-")) {
                 js.id = js.name;
             } else {

@@ -1,6 +1,6 @@
 {
   "name" : "master",
-  "type" : "MASTER",
+  "type" : "MASTERING",
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-STAGING",
   "version" : 1,
