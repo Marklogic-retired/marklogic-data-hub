@@ -1,16 +1,51 @@
-import { Options } from './step-options.model';
+import { IngestionOptions } from './ingestions-options.model';
+import { MappingOptions } from './mapping-options.model';
+import { MasteringOptions } from './mastering-options.model';
+import { CustomOptions } from './custom-options.model';
+
 
 export class Step {
   public id: string;
-  public type: string;
   public name: string = '';
   public description: string = '';
-  public sourceDatabase: string = '';
-  public targetDatabase: string;
-  public targetEntity: string;
-  public language: string;
+  public stepDefinitionName: string;
+  public stepDefinitionType: string;
   public isValid: boolean = false;
-  public version: string;
+  public options: any;
+  // Ingestion only
+  public fileLocations: {
+    inputFilePath: string;
+    inputFileType: string;
+    outputURIReplacement: string;
+  };
+  // Custom only
+  public modulePath: string;
 
-  public options: Options;
+  static createIngestionStep(filePath: string): Step {
+    const step = new Step();
+    const fileLocations = {
+      inputFilePath: filePath,
+      inputFileType: '',
+      outputURIReplacement: ''
+    };
+    step.fileLocations = fileLocations;
+    step.options = new IngestionOptions();
+    return step;
+  }
+  static createMappingStep(): Step {
+    const step = new Step();
+    step.options = new MappingOptions();
+    return step;
+  }
+  static createMasteringStep(): Step {
+    const step = new Step();
+    step.options = new MasteringOptions();
+    return step;
+  }
+  static createCustomStep(): Step {
+    const step = new Step();
+    step.modulePath = '';
+    step.options = new CustomOptions();
+    return step;
+  }
 }
