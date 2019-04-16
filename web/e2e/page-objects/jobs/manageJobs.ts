@@ -18,7 +18,7 @@ export class ManageJobs extends AppPage {
   // Filters
 
   get flowNameFilter() {
-    return element(by.css("mat-select#name-filter-type"));
+    return element(by.css("mat-select#filter-flow-name"));
   }
 
   async clickFlowNameFilter() {
@@ -36,7 +36,7 @@ export class ManageJobs extends AppPage {
   }
 
   get targetEntityFilter() {
-    return element(by.css("mat-select#target-entity-filter-type"));
+    return element(by.css("mat-select#filter-target-entity"));
   }
 
   async clickTargetEntityFilter() {
@@ -54,7 +54,7 @@ export class ManageJobs extends AppPage {
   }
 
   get statusFilter() {
-    return element(by.css("mat-select#status-filter-type"));
+    return element(by.css("mat-select#filter-status"));
   }
 
   async clickStatusFilter() {
@@ -72,7 +72,7 @@ export class ManageJobs extends AppPage {
   }
 
   get textFilter() {
-    return element(by.css("#text-filter input"));
+    return element(by.css("#filter-by-text input"));
   }
 
   async setTextFilter(input: string) {
@@ -167,14 +167,14 @@ export class ManageJobs extends AppPage {
   }
 
   /**
-   * @param option = [output/menu-view]
+   * @param option = [output/view-flow]
    */
   jobActionOutputMenuViewButton(option: string) {
     return element(by.id(`job-menu-${option}-btn`));
   }
 
   /**
-   * @param option = [output/menu-view]
+   * @param option = [output/view-flow]
    */
   async clickJobActionOutputMenuViewButton(option: string) {
     let button = this.jobActionOutputMenuViewButton(option)
@@ -184,11 +184,11 @@ export class ManageJobs extends AppPage {
   // Pagination
 
   get jobPagination() {
-    return element(by.id("job-pagination"));
+    return element(by.id("jobs-pagination"));
   }
 
   get jobPaginationMenu() {
-    return element(by.css("#job-pagination .mat-select"));
+    return element(by.css("#jobs-pagination .mat-select"));
   }
 
   async clickJobPaginationMenu() {
@@ -206,14 +206,14 @@ export class ManageJobs extends AppPage {
   }
 
   get jobPaginationRange() {
-    return element(by.css("#job-pagination .mat-paginator-range-label"));
+    return element(by.css("#jobs-pagination .mat-paginator-range-label"));
   }
 
   /**
    * @param direction = [previous/next]
    */
   jobPaginationNavigation(direction: string) {
-    return element(by.css(`#job-pagination .mat-paginator-navigation-${direction}`));
+    return element(by.css(`#jobs-pagination .mat-paginator-navigation-${direction}`));
   }
 
   /**
