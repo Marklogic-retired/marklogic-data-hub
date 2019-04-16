@@ -1,6 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+var mapping = null;
+var entityModel = null;
 
 function main(content, options) {
   let id = content.uri;
@@ -16,10 +18,10 @@ function main(content, options) {
   }
 
   //let's see if our doc is in the cluster at update time
-  if (!fn.docAvailable(id)) {
-    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
-    throw Error('The document with the uri: ' + id + ' could not be found.')
-  }
+  //if (!fn.docAvailable(id)) {
+  //  datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
+  //  throw Error('The document with the uri: ' + id + ' could not be found.')
+  //}
 
   //grab the doc
   // let doc = cts.doc(id);
@@ -30,23 +32,25 @@ function main(content, options) {
     doc = fn.head(doc.root);
   }
 
-  //let's prep the instance of the document
-  let instance = lib.getInstance(doc);
-
   //then we grab our mapping
-  let mapping = null;
-  if (options.mapping && options.mapping.name && options.mapping.version) {
-    mapping = lib.getMappingWithVersion(options.mapping.name, options.mapping.version);
-  } else if (options.mapping && options.mapping.name) {
+  if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
+    let version = parseInt(options.mapping.version);
+    if(isNaN(version)){
+      datahub.debug.log({message: 'Mapping version ('+options.mapping.version+') is invalid.', type: 'error'});
+      throw Error('Mapping version ('+options.mapping.version+') is invalid.');
+    }
+    mapping = lib.getMappingWithVersion(options.mapping.name, version);
+  } else if (!mapping && options.mapping && options.mapping.name) {
     mapping = lib.getMapping(options.mapping.name);
-  } else {
+  } else if (!mapping) {
     datahub.debug.log({message: 'You must specify a mapping name.', type: 'error'});
     throw Error('You must specify a mapping name.');
   }
 
-  if (mapping) {
+  if (mapping && (mapping.constructor.name === "Document" || mapping.constructor.name === "ObjectNode")) {
     mapping = mapping.toObject();
-  } else {
+  }
+  if(!mapping) {
     let mapError = 'Could not find mapping: ' + options.mapping.name;
     if (options.mapping.version) {
       mapError += ' with version #' + options.mapping.version;
@@ -60,20 +64,52 @@ function main(content, options) {
   let entityName = targetArr[targetArr.length - 1];
   let tVersion = targetArr[targetArr.length - 2].split('-');
   let modelVersion = tVersion[tVersion.length - 1];
-  let entityModel = fn.head(lib.getModel(entityName, modelVersion));
-  if (entityModel) {
+  if(!entityModel) {
+    entityModel = fn.head(lib.getModel(entityName, modelVersion));
+  }
+  if (entityModel && (entityModel.constructor.name === "Document" || entityModel.constructor.name === "ObjectNode")) {
     entityModel = entityModel.toObject();
-  } else {
+  }
+  if(!entityModel){
     datahub.debug.log({message: 'Could not find a target entity: ' + mapping.targetEntityType, type: 'error'});
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
   }
 
-  //Then we obtain the document from the source context
-  instance = lib.processInstance(entityModel, mapping, instance);
+  let source;
+  // for xml we need to use xpath
+  if(doc && doc instanceof XMLDocument) {
+    source = doc.root;
+  }
+  // for json we need to return the instance
+  else if(doc && (doc instanceof Document)) {
+    source = fn.head(doc.root);
+  }
+  // for everything else
+  else {
+    source = doc;
+  }
+
+  let instance;
+
+  //Then we obtain the instance and process it from the source context
+  try {
+    instance = lib.processInstance(entityModel, mapping, source);
+  } catch (e) {
+    datahub.debug.log({message: e, type: 'error'});
+    throw Error(e);
+  }
+
+  //now let's make our attachments, if it's xml, it'll be passed as string
+  instance['$attachments'] = source;
 
   let triples = [];
   let headers = datahub.flow.flowUtils.createHeaders(options);
 
+  if (options.triples && Array.isArray(options.triples)) {
+    for (let triple of options.triples) {
+      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+    }
+  }
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
   content.value = envelope;
 

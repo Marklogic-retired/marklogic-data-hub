@@ -16,10 +16,12 @@
  */
 package com.marklogic.hub.web.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.Iterator;
@@ -27,16 +29,17 @@ import java.util.Iterator;
 public class StepModel {
 
     protected String id;
-    protected String type;
     protected String name;
+    protected String stepDefinitionName;
+    protected StepDefinition.StepDefinitionType stepDefinitionType;
     protected String description;
-    protected String sourceDatabase;
-    protected String targetDatabase;
     protected JsonNode options;
     protected String language;
     protected Boolean isValid;
-    protected String version;
     protected JsonNode customHook;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private JsonNode fileLocations;
 
     public String getId() {
         return id;
@@ -46,12 +49,20 @@ public class StepModel {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getStepDefinitionName() {
+        return stepDefinitionName;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setStepDefinitionName(String stepDefinitionName) {
+        this.stepDefinitionName = stepDefinitionName;
+    }
+
+    public StepDefinition.StepDefinitionType getStepDefinitionType() {
+        return stepDefinitionType;
+    }
+
+    public void setStepDefinitionType(StepDefinition.StepDefinitionType stepDefinitionType) {
+        this.stepDefinitionType = stepDefinitionType;
     }
 
     public String getName() {
@@ -68,22 +79,6 @@ public class StepModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getSourceDatabase() {
-        return sourceDatabase;
-    }
-
-    public void setSourceDatabase(String sourceDatabase) {
-        this.sourceDatabase = sourceDatabase;
-    }
-
-    public String getTargetDatabase() {
-        return targetDatabase;
-    }
-
-    public void setTargetDatabase(String targetDatabase) {
-        this.targetDatabase = targetDatabase;
     }
 
     public JsonNode getOptions() {
@@ -110,14 +105,6 @@ public class StepModel {
         isValid = valid;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public JsonNode getCustomHook() {
         return customHook;
     }
@@ -126,28 +113,35 @@ public class StepModel {
         this.customHook = customHook;
     }
 
+    public JsonNode getFileLocations() {
+        return fileLocations;
+    }
+
+    public void setFileLocations(JsonNode fileLocations) {
+        this.fileLocations = fileLocations;
+    }
+
     public static StepModel fromJson(JsonNode node) {
         StepModel step = new StepModel();
 
         JSONObject jsonObject = new JSONObject(node);
 
-
-        step.setType(jsonObject.getString("type"));
+        step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
+        step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
+        step.setFileLocations(jsonObject.getNode("fileLocations"));
         step.setName(jsonObject.getString("name"));
 
         if (jsonObject.getString("id") != null) {
             step.setId(jsonObject.getString("id"));
-        } else {
-            step.setId(step.getName() + "-" + step.getType());
+        }
+        else {
+            step.setId(step.getName() + "-" + step.getStepDefinitionType());
         }
 
         step.setDescription(jsonObject.getString("description"));
-        step.setSourceDatabase(jsonObject.getString("sourceDatabase"));
-        step.setTargetDatabase(jsonObject.getString("targetDatabase"));
         step.setOptions(jsonObject.getNode("options"));
         step.setLanguage("zxx");
         step.setIsValid(jsonObject.getBoolean("isValid"));
-        step.setVersion(jsonObject.getString("version"));
         step.setCustomHook(jsonObject.getNode("customHook"));
 
         return step;
@@ -158,41 +152,42 @@ public class StepModel {
 
         if (getId() != null) {
             node.put("id", getId());
-        } else {
-            node.put("id", getName() + "-" + getType());
+        }
+        else {
+            node.put("id", getName() + "-" + getStepDefinitionType());
         }
 
-        if (getType() != null) {
-            node.put("type", getType().toString());
+        if (getStepDefinitionType() != null) {
+            node.put("stepDefinitionType", getStepDefinitionType().toString());
+        }
+
+        if (getStepDefinitionName() != null) {
+            node.put("stepDefinitionName", getStepDefinitionName());
+        }
+
+        if (getFileLocations() != null) {
+            node.set("fileLocations", fileLocations);
         }
 
         node.put("name", getName());
         node.put("description", getDescription());
-        node.put("sourceDatabase", getSourceDatabase());
-        node.put("targetDatabase", getTargetDatabase());
         node.set("options", getOptions());
         node.put("language", getLanguage());
         node.put("isValid", getIsValid());
-        node.put("version", getVersion());
         node.set("customHook", getCustomHook());
 
         return node;
     }
 
     public static Step transformToCoreStepModel(StepModel stepModel, JsonNode stepJson) {
-        Step step = Step.create("dummy", Step.StepType.CUSTOM);
+        Step step = new Step();
 
         step.setName(stepModel.getName());
-        step.setType(Step.StepType.getStepType(stepModel.getType()));
+        step.setStepDefinitionName(stepModel.getStepDefinitionName());
+        step.setStepDefinitionType(stepModel.getStepDefinitionType());
         step.setDescription(stepModel.getDescription());
-        step.setSourceDatabase(stepModel.getSourceDatabase());
-        step.setDestinationDatabase(stepModel.getTargetDatabase());
         step.setCustomHook(stepModel.getCustomHook());
-
-        if (stepModel.getVersion() != null) {
-            step.setVersion(Integer.parseInt(stepModel.getVersion()));
-        }
-
+        step.setFileLocations(stepModel.getFileLocations());
         JSONObject jsonObject = new JSONObject(stepJson);
         step.setOptions(jsonObject.getMap("options"));
 
@@ -201,16 +196,17 @@ public class StepModel {
 
     public static StepModel transformToWebStepModel(Step step) {
         StepModel stepModel = new StepModel();
-
-        stepModel.setId(step.getName() + "-" + step.getType());
+        if (step.getName().startsWith("default-")) {
+            stepModel.setId(step.getName());
+        } else {
+            stepModel.setId(step.getName() + "-" + step.getStepDefinitionType());
+        }
         stepModel.setName(step.getName());
-        stepModel.setType(step.getType().toString().toLowerCase());
+        stepModel.setStepDefinitionName(step.getStepDefinitionName());
+        stepModel.setStepDefinitionType(step.getStepDefinitionType());
+        stepModel.setFileLocations(step.getFileLocations());
         stepModel.setDescription(step.getDescription());
-        stepModel.setSourceDatabase(step.getSourceDatabase());
-        stepModel.setTargetDatabase(step.getDestinationDatabase());
         stepModel.setCustomHook(step.getCustomHook());
-        stepModel.setVersion(String.valueOf(step.getVersion()));
-        stepModel.setLanguage(step.getLanguage());
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.putMap(step.getOptions());
@@ -237,22 +233,6 @@ public class StepModel {
             defaultStep.setName(step.getName());
         }
 
-        if (step.getType() != null) {
-            defaultStep.setType(step.getType());
-        }
-
-        if (step.getDestinationDatabase() != null) {
-            defaultStep.setDestinationDatabase(step.getDestinationDatabase());
-        }
-
-        if (step.getSourceDatabase() != null) {
-            defaultStep.setSourceDatabase(step.getSourceDatabase());
-        }
-
-        if (step.getVersion() != null) {
-            defaultStep.setVersion(step.getVersion());
-        }
-
         if (step.getDescription() != null) {
             defaultStep.setDescription(step.getDescription());
         }
@@ -261,9 +241,10 @@ public class StepModel {
             defaultStep.setCustomHook(step.getCustomHook());
         }
 
-        if (step.getIdentifier() != null) {
-            defaultStep.setIdentifier(step.getIdentifier());
+        if (step.getFileLocations() != null) {
+            defaultStep.setFileLocations(step.getFileLocations());
         }
+
         return defaultStep;
     }
 }

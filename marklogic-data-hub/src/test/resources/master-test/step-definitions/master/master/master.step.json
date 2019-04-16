@@ -9,7 +9,7 @@
     "acceptsBatch": true,
     "stepUpdate": true,
     "collections" : [ "master" ],
-    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
     "mergeOptions": {
     "propertyDefs": {
       "properties": [

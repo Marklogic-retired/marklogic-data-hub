@@ -9,7 +9,7 @@
     "mapping": {
       "name": "person"
     },
-    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))"
+    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))"
   },
   "customHook" : { },
   "language" : "zxx",

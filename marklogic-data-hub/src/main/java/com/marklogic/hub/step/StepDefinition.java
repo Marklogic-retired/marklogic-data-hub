@@ -17,15 +17,15 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.step.impl.StepImpl;
+import com.marklogic.hub.step.impl.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-public interface Step {
+public interface StepDefinition {
 
-    enum StepType {
+    enum StepDefinitionType {
         INGEST("ingest"),
         MAPPING("mapping"),
         MASTER("master"),
@@ -33,21 +33,21 @@ public interface Step {
 
         private String type;
 
-        StepType(String type) {
+        StepDefinitionType(String type) {
             this.type = type;
         }
 
-        public static StepType getStepType(String type) {
-            for (StepType stepType : StepType.values()) {
-                if (stepType.toString().equalsIgnoreCase(type)) {
-                    return stepType;
+        public static StepDefinitionType getStepDefinitionType(String type) {
+            for (StepDefinitionType stepDefinitionType : StepDefinitionType.values()) {
+                if (stepDefinitionType.toString().equalsIgnoreCase(type)) {
+                    return stepDefinitionType;
                 }
             }
             return null;
         }
 
-        public static ArrayList<StepType> getStepTypes() {
-            return new ArrayList<>(Arrays.asList(StepType.values()));
+        public static ArrayList<StepDefinitionType> getStepDefinitionTypes() {
+            return new ArrayList<>(Arrays.asList(StepDefinitionType.values()));
         }
 
         public String toString() {
@@ -62,8 +62,25 @@ public interface Step {
      * @param type - the type of the mapping
      * @return a Step object
      */
-    static Step create(String name, StepType type) {
-        return new StepImpl(name, type);
+    static StepDefinition create(String name, StepDefinitionType type) {
+        StepDefinition stepDefinition = null;
+
+        switch (type) {
+            case INGEST:
+                stepDefinition = new IngestionStepDefinitionImpl(name);
+                break;
+            case MAPPING:
+                stepDefinition = new MappingStepDefinitionImpl(name);
+                break;
+            case MASTER:
+                stepDefinition = new MasteringStepDefinitionImpl(name);
+                break;
+            case CUSTOM:
+                stepDefinition = new CustomStepDefinitionImpl(name);
+                break;
+        }
+
+        return stepDefinition;
     }
 
     /**
@@ -176,14 +193,14 @@ public interface Step {
      *
      * @return - a step type
      */
-    StepType getType();
+    StepDefinitionType getType();
 
     /**
      * Sets the type of the step
      *
      * @param type - a step type
      */
-    void setType(StepType type);
+    void setType(StepDefinitionType type);
 
     /**
      * Returns the description of the Step
@@ -228,34 +245,6 @@ public interface Step {
     void setThreadCount(int threadCount);
 
     /**
-     * Returns the name of the source DB
-     *
-     * @return - source DB name as String
-     */
-    String getSourceDatabase();
-
-    /**
-     * Sets the name of the source DB
-     *
-     * @param sourceDatabase - a String
-     */
-    void setSourceDatabase(String sourceDatabase);
-
-    /**
-     * Returns the name of the destination DB
-     *
-     * @return - destination DB name as String
-     */
-    String getDestinationDatabase();
-
-    /**
-     * Sets the name of the destination DB
-     *
-     * @param destinationDatabase - a String
-     */
-    void setDestinationDatabase(String destinationDatabase);
-
-    /**
      * Automatically increments the version of the mapping by 1
      */
     void incrementVersion();
@@ -266,4 +255,22 @@ public interface Step {
      * @param json - the JsonNode you want deserialize
      */
     void deserialize(JsonNode json);
+
+
+    /**
+     *
+     * @param stepName
+     * @param stepDefinition
+     * @param step
+     * @return
+     */
+    Step transformToStep(String stepName, StepDefinition stepDefinition, Step step);
+
+    /**
+     *
+     * @param stepDefinition
+     * @param step
+     * @return
+     */
+    StepDefinition transformFromStep(StepDefinition stepDefinition, Step step);
 }

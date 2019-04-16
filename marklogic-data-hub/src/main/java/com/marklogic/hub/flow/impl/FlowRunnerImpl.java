@@ -10,13 +10,9 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
-import com.marklogic.hub.step.Step;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import com.marklogic.hub.step.impl.Step;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -25,6 +21,9 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class FlowRunnerImpl implements FlowRunner{
@@ -54,9 +53,9 @@ public class FlowRunnerImpl implements FlowRunner{
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
-    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-    private ExecutorService threadPool;
+    private ThreadPoolExecutor threadPool;
     private JobUpdate jobUpdate;
 
     @Override
@@ -158,7 +157,8 @@ public class FlowRunnerImpl implements FlowRunner{
             jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
         }
         if(threadPool == null || threadPool.isTerminated()) {
-            threadPool = Executors.newFixedThreadPool(1);
+            threadPool = new CustomPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS
+                , new LinkedBlockingQueue<Runnable>());
         }
         threadPool.submit(new FlowRunnerTask(runningFlow, runningJobId));
     }
@@ -195,7 +195,11 @@ public class FlowRunnerImpl implements FlowRunner{
 
             Map<String, Job> stepOutputs = new HashMap<>();
             String stepNum = null;
-            while (! stepQueue.isEmpty()){
+
+            final long[] currSuccessfulEvents = {0};
+            final long[] currFailedEvents = {0};
+            final int[] currPercentComplete = {0};
+            while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
                 Map<String, Object> optsMap = new HashMap<>(flow.getOverrideOptions());
@@ -206,7 +210,7 @@ public class FlowRunnerImpl implements FlowRunner{
                  */
                 Job stepResp = null;
                 //Initializing stepBatchSize to default flow batch size
-                int stepBatchSize = 100;
+
                 try {
                     stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
@@ -220,26 +224,21 @@ public class FlowRunnerImpl implements FlowRunner{
                                 stopJob(jobId);
                             }
                         })
-                        .onStatusChanged((jobId, percentComplete, successfulEvents, failedEvents, message) ->{
+                        .onStatusChanged((jobId, percentComplete, jobStatus, successfulEvents, failedEvents, message) ->{
                             flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                                listener.onStatusChanged(jobId, runningStep, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
+                                currSuccessfulEvents[0] = successfulEvents;
+                                currFailedEvents[0] = failedEvents;
+                                currPercentComplete[0] = percentComplete;
+                                listener.onStatusChanged(jobId, runningStep, jobStatus, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
                             });
                         });
                     //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
                     Map<String,Step> steps = runningFlow.getSteps();
                     Step step = steps.get(stepNum);
 
-                    if(step.getThreadCount() == 0){
-                        stepRunner.withThreadCount(flow.getThreadCount());
-                    }
-                    if(step.getBatchSize() == 0) {
-                        stepBatchSize = flow.getBatchSize();
-                        stepRunner.withBatchSize(stepBatchSize);
-                    }
                     //If property values are overriden in UI, use those values over any other.
                     if(flow.getOverrideBatchSize() != null) {
-                        stepBatchSize = flow.getOverrideBatchSize();
-                        stepRunner.withBatchSize(stepBatchSize);
+                        stepRunner.withBatchSize(flow.getOverrideBatchSize());
                     }
                     if(flow.getOverrideThreadCount() != null) {
                         stepRunner.withThreadCount(flow.getOverrideThreadCount());
@@ -256,7 +255,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 catch (Exception e) {
                     stepResp = Job.withFlow(flow);
                     stepResp.withJobId(runningJobId);
-                    stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepBatchSize), (long) Math.ceil((double) errorCount.get() / stepBatchSize));
+                    stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepRunner.getBatchSize()), (long) Math.ceil((double) errorCount.get() / stepRunner.getBatchSize()));
                     StringWriter errors = new StringWriter();
                     e.printStackTrace(new PrintWriter(errors));
                     stepResp.withStepOutput(errors.toString());
@@ -266,6 +265,14 @@ public class FlowRunnerImpl implements FlowRunner{
                     }
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
+                    }
+                    Job finalStepResp = stepResp;
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0],
+                                runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
+                        });
+                    } catch (Exception ex) {
                     }
                 }
                 finally {
@@ -296,6 +303,7 @@ public class FlowRunnerImpl implements FlowRunner{
             } else {
                 jobStatus = JobStatus.FINISHED.toString();
             }
+            resp.setJobStatus(jobStatus);
             //If only one step is run and it failed before creating a job doc, a job doc is created
             try{
                 jobUpdate.getJobs(jobId);
@@ -305,13 +313,26 @@ public class FlowRunnerImpl implements FlowRunner{
             }
             try {
                 jobUpdate.postJobs(jobId, jobStatus, stepNum, stepOutputs);
-                resp.setJobStatus(jobStatus);
             }
             catch (Exception e) {
                 throw e;
             }
             finally {
-
+                if (!isJobSuccess.get()) {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED_WITH_ERRORS.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                        });
+                    } catch (Exception ex) {
+                    }
+                } else {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FINISHED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                        });
+                    } catch (Exception ex) {
+                    }
+                }
                 jobQueue.remove();
                 if (!jobQueue.isEmpty()) {
                     initializeFlow((String) jobQueue.peek());
@@ -338,6 +359,39 @@ public class FlowRunnerImpl implements FlowRunner{
         }
     }
 
+    class CustomPoolExecutor extends ThreadPoolExecutor {
+        public CustomPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                    TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+        }
+
+        @Override
+        public void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
+            // If submit() method is called instead of execute()
+            if (t == null && r instanceof Future<?>) {
+                try {
+                    Object result = ((Future<?>) r).get();
+                } catch (CancellationException e) {
+                    t = e;
+                } catch (ExecutionException e) {
+                    t = e.getCause();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            if (t != null) {
+                jobQueue.remove();
+                if (!jobQueue.isEmpty()) {
+                    initializeFlow((String) jobQueue.peek());
+                } else {
+                    isRunning.set(false);
+                    threadPool.shutdownNow();
+                }
+            }
+        }
+    }
+
     //These methods are used by UI.
 
     public List<String> getQueuedJobIdsFromFlow(String flowName) {
@@ -351,5 +405,13 @@ public class FlowRunnerImpl implements FlowRunner{
 
     public RunFlowResponse getJobResponseById(String jobId) {
         return flowResp.get(jobId);
+    }
+
+    public boolean isJobRunning() {
+        return isRunning.get();
+    }
+
+    public String getRunningStepKey() {
+        return this.stepRunner.getRunningStepKey();
     }
 }

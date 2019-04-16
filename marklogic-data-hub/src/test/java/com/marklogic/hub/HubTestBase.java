@@ -136,7 +136,7 @@ public class HubTestBase {
     protected MappingManager mappingManager;
 
     @Autowired
-    protected StepManager stepManager;
+    protected StepDefinitionManager stepDefinitionManager;
 
     @Autowired
     protected LegacyFlowManagerImpl fm;

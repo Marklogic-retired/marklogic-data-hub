@@ -16,11 +16,7 @@ function getMappingWithVersion(mappingName, version) {
 }
 
 function processInstance(model, mapping, content) {
-  let instance = {};
-
-  instance = extractInstanceFromModel(model, model.info.title, mapping, content);
-
-  return instance;
+ return  extractInstanceFromModel(model, model.info.title, mapping, content);
 }
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
@@ -30,12 +26,17 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   if (model.info && model.info.title === modelName) {
     instance['$type'] = model.info.title;
     instance['$version'] = model.info.version;
-    instance['$attachments'] = content;
   } else {
     instance['$type'] = modelName;
     instance['$version'] = '0.0.1';
   }
 
+  if (content.nodeName === 'envelope' || (content.nodeKind === 'document' && content.root && content.root.envelope)) {
+    sourceContext = '/*:envelope/*:instance' + sourceContext;
+  }
+  else{
+    content = new NodeBuilder().addNode(fn.head(content)).toNode();
+  }
 
   //grab the model definition
   let definition = model.definitions[modelName];
@@ -49,10 +50,23 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let prop = properties[property];
     let dataType = prop["datatype"];
     let valueSource = null;
+    let connector = "";
     if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
-      valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
+      if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].startsWith('/') && !mappingProperties[property].startsWith('[')){
+        connector += '/';
+      }
+      if(mappingProperties[property].sourcedFrom.indexOf(':') === -1 ) {
+        connector += '*:';
+      }
+      valueSource = content.xpath(sourceContext + connector + mappingProperties[property].sourcedFrom);
     } else{
-      valueSource = content.xpath('/' + property);
+      if(sourceContext[sourceContext.length-1] !== '/' &&  !property.startsWith('/') && !property.startsWith('[')){
+        connector += '/';
+      }
+      if(property.indexOf(':') === -1 ) {
+        connector += '*:';
+      }
+      valueSource = content.xpath(sourceContext + property);
     }
     if (dataType !== 'array') {
         valueSource = fn.head(valueSource);
@@ -87,12 +101,18 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
         }
       }
       value = valueArray;
-      //Todo implement arrays so it employs recursion
 
     } else {
       if(valueSource) {
-        value = castDataType(dataType, valueSource)
+        try {
+          value = castDataType(dataType, valueSource);
+        } catch (e) {
+          value = null;
+        }
       }
+    }
+    if(required.indexOf(property) > -1 && !value) {
+      throw Error('The property: '+property+' is required property on the model: '+modelName+' and must have a valid value. Value was: '+valueSource+'.');
     }
     instance[property] = value;
   }
@@ -173,27 +193,9 @@ function castDataType(dataType, value) {
   return convertedValue;
 }
 
-function getInstance(doc) {
-  let instance = doc;
-
-  if (instance instanceof Element || instance instanceof ObjectNode) {
-    let instancePath = '/';
-    if (instance instanceof Element) {
-      //make sure we grab content root only
-      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
-    }
-    instance = new NodeBuilder().addNode(fn.head(instance.xpath(instancePath))).toNode();
-  } else {
-    instance = new NodeBuilder().addNode(fn.head(instance)).toNode();
-  }
-
-  return instance;
-}
-
 module.exports = {
   castDataType: castDataType,
   extractInstanceFromModel: extractInstanceFromModel,
-  getInstance: getInstance,
   getMapping: getMapping,
   getMappingWithVersion: getMappingWithVersion,
   processInstance: processInstance,

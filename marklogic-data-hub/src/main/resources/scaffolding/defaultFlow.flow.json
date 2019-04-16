@@ -9,7 +9,7 @@
   "steps": {
     "1": {
       "language": "zxx",
-      "name": "default-ingest",
+      "name": "default-ingestion",
       "type": "INGESTION",
       "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
       "customHook": {
@@ -18,7 +18,7 @@
         "sourceQuery": null,
         "outputFormat": "json",
         "collections": [
-          "default-ingest"
+          "default-ingestion"
         ]
       }
     },
@@ -28,7 +28,7 @@
       "type": "MAPPING",
       "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
       "options": {
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
         "collections": [
           "default-mapping"
         ],
