@@ -1,5 +1,14 @@
 # Change Log
 
+# [v4.3.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.3.0) (2019-04-16)
+
+**Fixed bugs:**
+- [DHFPROD-1417] - Make the title field required on Entity editor 
+- Enable namespace support in dhf [\#1580](https://github.com/marklogic/marklogic-data-hub/issues/1580)
+
+**Improvement**
+-  [DHFPROD-1417] - Adopt 3 new roles (Flow Dev, Flow Op, Data Hub Admin) to align with DHS roles
+
 
 # [v4.2.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.2) (2019-03-13)
 
