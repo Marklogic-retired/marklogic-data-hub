@@ -98,13 +98,13 @@ public class HubProjectImpl implements HubProject {
                     path = this.stepDefinitionsDir.resolve("custom");
                     break;
                 case INGESTION:
-                    path = this.stepDefinitionsDir.resolve("ingest");
+                    path = this.stepDefinitionsDir.resolve("ingestion");
                     break;
                 case MAPPING:
                     path = this.stepDefinitionsDir.resolve("mapping");
                     break;
                 case MASTERING:
-                    path = this.stepDefinitionsDir.resolve("master");
+                    path = this.stepDefinitionsDir.resolve("mastering");
                     break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");

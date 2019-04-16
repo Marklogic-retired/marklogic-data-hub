@@ -42,10 +42,10 @@ class Provenance {
 
   /**
    * Get array of provTypes for a given step type for provenance record creation
-   * @param {string} stepType - step type ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - step type ['ingestion','mapping','mastering','custom']
    */
   _validStepType(stepType) {
-    return ['ingest','mapping','master','custom'].includes(stepType)
+    return ['ingestion','mapping','mastering','custom'].includes(stepType)
   }
   /**
    * Vaidate that the info Object to ensure the metadata passed doesn't stomp on roles or location values
@@ -61,25 +61,25 @@ class Provenance {
 
   /**
    * Vaidate that the info Object 
-   * @param {string} stepType - step type ['ingest','mapping','master','custom']
+   * @param {string} stepType - step type ['ingestion','mapping','mastering','custom']
    * @param {Object} info - object representing the information required to create prov info
    */
   _validProvInfoForStepType(stepType, info) {
     let requiredInfoParams = { 
-      'ingest': ['derivedFrom'],  // the entity, file or document URI that this ingested document was derived from
+      'ingestion': ['derivedFrom'],  // the entity, file or document URI that this ingested document was derived from
       'mapping': ['derivedFrom','influencedBy'],
-      'master': ['derivedFrom','influencedBy'],
+      'mastering': ['derivedFrom','influencedBy'],
       'custom': ['derivedFrom','influencedBy']
     };
     let provTypes = {
-      'ingest': function () {
-        return requiredInfoParams['ingest'].every(val => Object.keys(info).includes(val));
+      'ingestion': function () {
+        return requiredInfoParams['ingestion'].every(val => Object.keys(info).includes(val));
       },
       'mapping': function () {
         return requiredInfoParams['mapping'].every(val => Object.keys(info).includes(val));
       },
-      'master': function () {
-        return requiredInfoParams['master'].every(val => Object.keys(info).includes(val));
+      'mastering': function () {
+        return requiredInfoParams['mastering'].every(val => Object.keys(info).includes(val));
       },
       'custom': function () {
         return requiredInfoParams['custom'].every(val => Object.keys(info).includes(val));
@@ -93,7 +93,7 @@ class Provenance {
    * @desc Validate a provenance record params
    * @param {string} [jobId] - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
-   * @param {string} stepType - the type of step within a flow ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - the type of step within a flow ['ingestion','mapping','mastering','custom']
    * @param {string} [docURI] - the URI of the document being modified by this step
    * @param {Object} info
    * @param {string} info.status - the status of the step: 
@@ -118,7 +118,7 @@ class Provenance {
           isValid = (isProvInfoForStepTypeValid instanceof Error) ? isProvInfoForStepTypeValid : isProvInfoMetaValid;  
         }
       } else {
-        isValid = new Error(`Step type ${stepType} not defined.  Must be of type: 'ingest','mapping','master','custom'.`);
+        isValid = new Error(`Step type ${stepType} not defined.  Must be of type: 'ingestion','mapping','mastering','custom'.`);
       }
     } else {
       isValid = new Error(`Function requires all params 'flowId','stepType' and 'info' to be defined.`);
@@ -169,13 +169,13 @@ class Provenance {
   }
 
   /**
-   * @desc Create a provenance record when a document is run through an ingest step
+   * @desc Create a provenance record when a document is run through an ingestion step
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
 \   * @param {string} docURI - the URI of the document being modified by this step
    * @param {Object} info
    * @param {string} info.derivedFrom - the entity, file or document URI that this ingested document was derived from
-   * @param {string} info.influencedBy - the ingest step the document was modified by
+   * @param {string} info.influencedBy - the ingestion step the document was modified by
    * @param {string} [info.metadata] - key/value pairs to document with the provenance record
    *   Ingest document from outside source
    *    provTypes: [ "ps:Flow", "ps:File" ],
@@ -189,8 +189,8 @@ class Provenance {
    *      - location (doc URI)
    */
   _createIngestStepRecord(jobId, flowId, docURI, info) {
-    let provId = `${jobId + flowId + 'ingest' + docURI}`;
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:IngestStep','dhf:IngestStepEntity'];
+    let provId = `${jobId + flowId + 'ingestion' + docURI}`;
+    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:IngestionStep','dhf:IngestionStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
 
@@ -341,7 +341,7 @@ class Provenance {
    * @desc Create a provenance record when a document is run through a Flow step
    * @param {string} [jobId] - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
-   * @param {string} stepType - the type of step within a flow ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - the type of step within a flow ['ingestion','mapping','mastering','custom']
    * @param {string} [docURI] - the URI of the document being modified by this step
    * @param {Object} info
    * @param {string} info.status - the status of the step: 
@@ -365,7 +365,7 @@ class Provenance {
    * @desc Create a provenance record for a documents properties.  These records will be used to record property merges.
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
-   * @param {string} stepType - the type of step within a flow ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - the type of step within a flow ['ingestion','mapping','mastering','custom']
    * @param {string} docURI - the URI of the document being processed by this step
    * @param {Array}  properties - the properties of the document being processed by this step
    * @param {Object} info
@@ -436,7 +436,7 @@ class Provenance {
    * @desc Create a provenance merge property record for multiple property records
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
-   * @param {string} stepType - the type of step within a flow ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - the type of step within a flow ['ingestion','mapping','mastering','custom']
    * @param {string} propertyName - the name of the property being merged
    * @param {Array}  docURIs - the URIs of the documents associated with this merge
    * @param {Array}  propertyProvIds - the provenance record ids of the properties being merged by this step
@@ -481,7 +481,7 @@ class Provenance {
    * @desc Create a provenance merge record for multiple property records
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
-   * @param {string} stepType - the type of step within a flow ['ingest','mapping','mastering','custom']
+   * @param {string} stepType - the type of step within a flow ['ingestion','mapping','mastering','custom']
    * @param {Array}  docURI - the new URI of the document created after the merge
    * @param {Array}  propertyProvIds - the provenance record ids of the properties being merged by this step
    * @param {Object} info
