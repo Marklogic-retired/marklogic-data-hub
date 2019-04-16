@@ -31,7 +31,7 @@ class Step {
       this.hubUtils = datahub.hubUtils;
       this.performance = datahub.performance;
     }
-    this.stepTypes = ['ingestion', 'mapping', 'custom'];
+    this.stepTypes = ['ingestion', 'mapping', 'custom', 'mastering'];
   }
 
   getStepTypes() {
