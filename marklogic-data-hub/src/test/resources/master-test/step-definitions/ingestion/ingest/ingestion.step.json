@@ -5,5 +5,5 @@
   "options" : { },
   "customHook" : { },
   "language" : "zxx",
-  "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs"
+  "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs"
 }
