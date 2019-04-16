@@ -1,0 +1,16 @@
+{
+  "info" : {
+    "title" : "Customer",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Customer" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : { }
+    }
+  }
+}

@@ -1,10 +1,13 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div id="step-dialog" mat-dialog-content class="content" [formGroup]="newStepForm">
-  <mat-form-field>
-    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()" formControlName="type" required>
+
+  <mat-form-field class="ng-invalid">
+    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()"
+                formControlName="type" required>
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
     </mat-select>
   </mat-form-field>
+  <div *ngIf="newStepForm.value.type">
   <mat-form-field class="">
     <input id="step-name" matInput formControlName="name" placeholder="Name" required>
   </mat-form-field>
@@ -34,28 +37,30 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-accordion>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Advanced Settings (optional)
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Advanced Settings
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
-      <mat-form-field *ngIf="newStepForm.value.type != 'ingest'">
-        <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
-          <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select id="step-target-database" placeholder="Target Database" formControlName="targetDatabase">
-          <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-expansion-panel>
-  </mat-accordion>
+        <mat-form-field *ngIf="newStepForm.value.type != 'ingestion'">
+          <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
+            <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select id="step-target-database" placeholder="Target Database" formControlName="targetDatabase">
+            <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 </div>
 <div mat-dialog-actions class="bottom">
   <button id="step-cancel-btn" mat-raised-button color="primary" (click)="onNoClick()">CANCEL</button>
-  <button id="step-save-btn" mat-raised-button color="primary" (click)="onSave()">SAVE</button>
+  <button id="step-save-btn" [disabled]="!newStepForm.valid" mat-raised-button color="primary" (click)="onSave()">SAVE
+  </button>
 </div>

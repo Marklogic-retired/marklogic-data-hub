@@ -4,7 +4,11 @@ import { Step } from '../../models/step.model';
 import { Options } from '../../models/step-options.model';
 import { Matching } from '../mastering/matching/matching.model';
 import { Merging } from '../mastering/merging/merging.model';
-
+import {NewStepDialogValidator} from '../../validators/new-step-dialog.validator';
+import {
+  ExistingStepNameValidator
+} from "../../../common/form-validators/existing-step-name-validator";
+import {Flow} from "../../models/flow.model";
 
 @Component({
   selector: 'app-new-step-dialog-ui',
@@ -17,6 +21,7 @@ export class NewStepDialogUiComponent implements OnInit {
   @Input() entities: any;
   @Input() collections: any;
   @Input() step: any;
+  @Input() flow: Flow;
   @Output() getCollections = new EventEmitter();
   @Output() cancelClicked = new EventEmitter();
   @Output() saveClicked = new EventEmitter();
@@ -40,7 +45,11 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep = this.step;
     }
     this.newStepForm = this.formBuilder.group({
-      name: [this.step ? this.step.name : '', Validators.required],
+      name: [this.step ? this.step.name : '', [
+        Validators.required,
+        Validators.pattern('[a-zA-Z][a-zA-Z0-9\_\-]*'),
+        ExistingStepNameValidator.forbiddenName(this.flow)
+      ]],
       type: [this.step ? this.step.type : '', Validators.required],
       description: [this.step ? this.step.description : ''],
       sourceQuery: [this.step ? this.step.options.sourceQuery : ''],
@@ -48,7 +57,25 @@ export class NewStepDialogUiComponent implements OnInit {
       targetEntity: [this.step ? this.step.options.targetEntity : ''],
       sourceDatabase: [this.step ? this.step.sourceDatabase : ''],
       targetDatabase: [this.step ? this.step.targetDatabase : '']
-    });
+    }, { validators: NewStepDialogValidator });
+    if (this.step && this.step.options.sourceCollection) {
+      this.selectedSource = 'collection';
+    } else if (this.step && this.step.options.sourceQuery) {
+      this.selectedSource = 'query';
+    }
+  }
+  getNameErrorMessage() {
+    const errorCodes = [
+      {code: 'required', message: 'You must enter a value'},
+      {code: 'pattern', message: 'Not a valid name. It must start with a symbol, have zero or more alphanumeric characters. Only \'_\' or \'-\' are allowed.'},
+      {code: 'forbiddenName', message: 'This name already exist in the flow'}
+    ];
+    const nameCtrl = this.newStepForm.get('name');
+    if (!nameCtrl) {
+      return ''
+    }
+    const err = errorCodes.find( err => nameCtrl.hasError(err.code));
+    return err ? err.message : '';
   }
   onNoClick(): void {
     this.cancelClicked.emit();
@@ -86,8 +113,14 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.type = this.newStepForm.value.type;
     this.newStep.description = this.newStepForm.value.description;
-    this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
-    this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+    if (this.selectedSource === 'collection') {
+      this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+      this.newStep.options.sourceQuery = '';
+    }
+    if (this.selectedSource === 'query') {
+      this.newStep.options.sourceCollection = '';
+      this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+    }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.targetDatabase = this.newStepForm.value.targetDatabase;

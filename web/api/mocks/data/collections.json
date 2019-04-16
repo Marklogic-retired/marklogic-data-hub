@@ -1,13 +1,12 @@
 [
   "Order",
-  "Flow 1 Ingest Step",
-  "Flow 1 Mapping Step",
-  "Flow 1 Mastering Step",
-  "Flow 1 Custom Step",
-  "Flow 4 Ingest Step",
-  "Flow 4 Mapping Step",
-  "Flow 4 Mastering Step",
-  "Flow 4 Custom Step",
+  "Flow 01 Ingest Step",
+  "Flow 01 Mapping Step",
+  "Flow 01 Mastering Step",
+  "Flow 01 Custom Step",
+  "Flow 04 Custom Step",
   "newCollection",
-  "input"
+  "input",
+  "LoadProducts",
+  "LoadOrders"
 ]

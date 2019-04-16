@@ -380,7 +380,7 @@ export class MasteringStep extends AppPage {
   }
 
   matchThresholdAction(name: string) {
-    return element(by.css(`.match-threshold-${name} .match-option-action .capitalize`));
+    return element(by.css(`.match-threshold-${name} .match-option-action`));
   }
 
   matchThresholdMenu(name: string) {
@@ -583,11 +583,11 @@ export class MasteringStep extends AppPage {
   }
 
   mergeOptionType(property: string) {
-    return element(by.css(`.merge-option-${property} .merge-option-type .capitalize`));
+    return element(by.css(`.merge-option-${property} .merge-column-mergeType .capitalize`));
   }
 
   mergeOptionDetails(property: string) {
-    return element(by.css(`.merge-option-${property} .merge-option-details .details-content div`));
+    return element(by.css(`.merge-option-${property} .merge-option-details .details-content`));
   }
 
   mergeOptionMaxValues(property: string) {
@@ -598,12 +598,12 @@ export class MasteringStep extends AppPage {
     return element(by.css(`.merge-option-${property} .merge-option-max-sources .max-sources-value`));
   }
 
-  mergeOptionSourceWeightsName(property: string) {
-    return element(by.css(`.merge-option-${property} .merge-option-source-weights .other-item`));
+  mergeOptionSourceWeightsName(property: string, position: number) {
+    return element(by.css(`.merge-option-${property} .merge-option-source-weights .other-item:nth-child(${position}) .source-weights-name`));
   }
 
-  mergeOptionSourceWeightsValue(property: string) {
-    return element(by.css(`.merge-option-${property} .merge-option-source-weights .other-item .source-weights-value`));
+  mergeOptionSourceWeightsValue(property: string, position: number) {
+    return element(by.css(`.merge-option-${property} .merge-option-source-weights .other-item:nth-child(${position}) .source-weights-value`));
   }
 
   mergeOptionLength(property: string) {
@@ -841,31 +841,31 @@ export class MasteringStep extends AppPage {
   // merge strategy row has the wrong id: merge-option
 
   mergeStrategyProperty(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-property span`));
+    return element(by.css(`.merge-strategy-${name} .mat-column-strategyName .merge-strategy-property`));
   }
 
   mergeStrategyMaxValues(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-max-values .max-values-value`));
+    return element(by.css(`.merge-strategy-${name} .merge-strategy-max-values .max-values-value`));
   }
 
   mergeStrategyMaxSources(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-max-sources .max-sources-value`));
+    return element(by.css(`.merge-strategy-${name} .merge-strategy-max-sources .max-sources-value`));
   }
 
   mergeStrategySourceWeightsName(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-source-weights .other-item`));
+    return element(by.css(`.merge-strategy-${name} .merge-strategy-source-weights .other-item`));
   }
 
   mergeStrategySourceWeightsValue(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-source-weights .other-item .source-weights-value`));
+    return element(by.css(`.merge-strategy-${name} .merge-strategy-source-weights .other-item .source-weights-value`));
   }
 
   mergeStrategyLength(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-length .length-value`));
+    return element(by.css(`.merge-strategy-${name} .merge-strategy-length .length-value`));
   }
 
   mergeStrategyMenu(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-strategy-menu`));
+    return element(by.css(`.merge-strategy-${name} .merge-strategy-menu`));
   }
 
   async clickMergeStrategyMenu(name: string) {
@@ -1030,26 +1030,24 @@ export class MasteringStep extends AppPage {
     return element(by.id("merge-collections-table"));
   }
 
-  // merge collection row has the wrong id: merge-option
-
   mergeCollectionEvent(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-collection-event`));
+    return element(by.css(`.merge-collections-${name} .merge-collection-event`));
   }
 
   mergeCollectionAdd(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-collection-add .add-value`));
+    return element(by.css(`.merge-collections-${name} .merge-collection-add .add-value`));
   }
 
   mergeCollectionRemove(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-collection-remove .remove-value`));
+    return element(by.css(`.merge-collections-${name} .merge-collection-remove .remove-value`));
   }
 
   mergeCollectionSet(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-collection-set .set-value`));
+    return element(by.css(`.merge-collections-${name} .merge-collection-set .set-value`));
   }
 
   mergeCollectionMenu(name: string) {
-    return element(by.css(`.merge-option-${name} .merge-collection-menu`));
+    return element(by.css(`.merge-collections-${name} .merge-collection-menu`));
   }
 
   async clickMergeCollectionMenu(name: string) {

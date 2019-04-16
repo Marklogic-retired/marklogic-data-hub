@@ -65,6 +65,7 @@ import {JobService} from './components/jobs/jobs.service';
 import {JobListenerService} from './components/jobs/job-listener.service';
 import {MapService} from './components/mappings/map.service';
 import {ManageFlowsService} from './components/flows-new/services/manage-flows.service';
+import {ManageJobsService} from './components/jobs-new/manage-jobs.service';
 import {ProjectService} from './services/projects';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
@@ -81,6 +82,7 @@ import {MapComponent, MappingsComponent} from './components/mappings';
 import {NewMapComponent} from "./components/mappings/new-map.component";
 import {FlowsUiComponent} from './components/flows/ui';
 import {EditFlowModule, ManageFlowsModule} from "./components/flows-new";
+import {ManageJobsModule} from "./components/jobs-new/manage-jobs.module";
 import {FolderBrowserModule} from "./components/folder-browser/folder-browser.module";
 
 @NgModule({
@@ -174,6 +176,7 @@ import {FolderBrowserModule} from "./components/folder-browser/folder-browser.mo
     ThemeModule,
     ManageFlowsModule,
     EditFlowModule,
+    ManageJobsModule,
     FolderBrowserModule
   ],
   providers: [
@@ -185,6 +188,7 @@ import {FolderBrowserModule} from "./components/folder-browser/folder-browser.mo
     JobListenerService,
     MapService,
     ManageFlowsService,
+    ManageJobsService,
     ProjectService,
     SettingsService,
     STOMPService,

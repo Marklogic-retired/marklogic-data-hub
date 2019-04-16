@@ -1,16 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
-import {IngestUiComponent} from "./ui/ingest-ui.component";
-
-const configDefaults = {
-  input_file_path: '.',
-  input_file_type: 'documents',
-  output_collections: '',
-  output_permissions: 'rest-reader,read,rest-writer,update',
-  document_type: 'json',
-  transform_module: '/data-hub/5/transforms/mlcp-flow-transform.sjs',
-  transform_namespace: 'http://marklogic.com/data-hub/mlcp-flow-transform',
-  transform_param: ''
-};
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {ProjectService} from "../../../../services/projects";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-ingest',
@@ -28,26 +18,58 @@ export class IngestComponent implements OnInit {
   @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
-  ngOnInit(): void {
-    this.checkDefaults();
+  projectPath: string;
+
+  constructor(
+    private projects: ProjectService
+  ) {
   }
 
+  ngOnInit(): void {
+    this.projects.getProjects().subscribe(
+      ({projects, lastProject}) => {
+        console.log('Projects end point: ', projects, lastProject);
+        const project = _.find(projects, pr => pr.id === lastProject);
+        if (project) {
+          this.projectPath = project.path;
+        }
+        this.checkDefaults();
+      },
+      () => {
+        this.checkDefaults();
+      });
+  }
+
+  /*
+    Checking if the options are exist if not then initiate it with default value.
+    This is the last barrier for the case if the backend has some options omitted.
+   */
   private checkDefaults(): void {
-    const targetEntity = this.step.options.targetEntity;
-    // if no config or not valid config, initialize with default
-    // TODO: bette way to house-keep ingest options in the Step schema
-    if (!this.step.options || this.step.options.matchOptions) {
-      this.step.options = {
-        input_file_path: '.',
-        input_file_type: 'json',
-        output_permissions: 'rest-reader,read,rest-writer,update',
-        document_type: 'json',
-        output_collections: `${targetEntity || ''}`,
-        transform_module: '/data-hub/5/transforms/mlcp-flow-transform.sjs',
-        transform_namespace: 'http://marklogic.com/data-hub/mlcp-flow-transform',
-        transform_param: `entity-name=${targetEntity || ''},flow-name=${this.flow.name}`,
-        targetEntity: targetEntity
-      };
-    }
+    const {
+      inputFilePath,
+      inputFileType,
+      outputURIReplacement
+    } = this.step.fileLocations;
+
+    const {
+      collections,
+      outputPermissions,
+      outputFileType
+    } = this.step.options;
+
+    const fileLocations = {
+      inputFilePath: inputFilePath || this.projectPath || '.',
+      inputFileType: inputFileType || 'json',
+      outputURIReplacement: outputURIReplacement || ''
+    };
+
+    const options = {
+      collections: collections || [`${this.step.name}`],
+      outputPermissions: outputPermissions || "rest-reader,read,rest-writer,update",
+      outputFileType: outputFileType || 'json'
+    };
+
+    this.step.fileLocations = fileLocations;
+    this.step.options = options;
   }
 }

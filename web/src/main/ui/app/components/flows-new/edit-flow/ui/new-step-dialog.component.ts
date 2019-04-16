@@ -2,12 +2,15 @@ import {Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ManageFlowsService } from '../../services/manage-flows.service';
 import { EditFlowUiComponent } from './edit-flow-ui.component';
+import {Flow} from "../../models/flow.model";
+
 
 export interface DialogData {
   title: string;
   databases: any;
   entities: any;
   step: any;
+  flow: Flow;
 }
 @Component({
   selector: 'app-new-step-dialog',
@@ -18,6 +21,7 @@ export interface DialogData {
     [entities]="data.entities"
     [collections]="collections"
     [step]="data.step"
+    [flow]="data.flow"
     (getCollections)="getCollections($event)"
     (cancelClicked)="cancelClicked()"
     (saveClicked)="saveClicked($event)"

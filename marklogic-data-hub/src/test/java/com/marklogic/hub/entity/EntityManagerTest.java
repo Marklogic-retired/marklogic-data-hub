@@ -67,22 +67,21 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private void installEntities() {
-        Path employeeDir = project.getEntityDir("employee");
-        employeeDir.toFile().mkdirs();
-        assertTrue(employeeDir.toFile().exists());
+        Path entitiesDir = project.getHubEntitiesDir();
+        if (!entitiesDir.toFile().exists()) {
+            entitiesDir.toFile().mkdirs();
+        }
+        assertTrue(entitiesDir.toFile().exists());
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"),
-            employeeDir.resolve("employee.entity.json").toFile());
+            entitiesDir.resolve("employee.entity.json").toFile());
 
-        Path managerDir = project.getEntityDir("manager");
-        managerDir.toFile().mkdirs();
-        assertTrue(managerDir.toFile().exists());
-        FileUtil.copy(getResourceStream("scaffolding-test/manager.entity.json"), managerDir.resolve("manager.entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/manager.entity.json"), entitiesDir.resolve("manager.entity.json").toFile());
     }
 
     private void updateManagerEntity() {
-        Path managerDir = project.getEntityDir("manager");
-        assertTrue(managerDir.toFile().exists());
-        File targetFile = managerDir.resolve("manager.entity.json").toFile();
+        Path entitiesDir = project.getHubEntitiesDir();
+        assertTrue(entitiesDir.toFile().exists());
+        File targetFile = entitiesDir.resolve("manager.entity.json").toFile();
         FileUtil.copy(getResourceStream("scaffolding-test/manager2.entity.json"), targetFile);
         try {
             Thread.sleep(1000);

@@ -62,11 +62,25 @@ public interface HubProject {
     Path getHubEntitiesDir();
 
     /**
+     * Gets the legacy path for the hub entities directory
+     *
+     * @return the legacy path for the hub entities directory
+     */
+    Path getLegacyHubEntitiesDir();
+
+    /**
      * Gets the path for the hub mappings directory
      *
      * @return the path for the hub mappings directory
      */
     Path getHubMappingsDir();
+
+    /**
+     * Gets the legacy path for the hub mappings directory
+     *
+     * @return the legacy path for the hub mappings directory
+     */
+    Path getLegacyHubMappingsDir();
 
     /**
      * Gets the path for the hub step directory by step type
@@ -237,6 +251,8 @@ public interface HubProject {
     Path getEntityDir(String entityName);
 
     Path getMappingDir(String mappingName);
+
+    Path getLegacyMappingDir(String mappingName);
 
     Path getCustomModuleDir(String stepName, String stepType);
 

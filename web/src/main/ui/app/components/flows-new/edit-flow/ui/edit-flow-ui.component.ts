@@ -39,7 +39,9 @@ export class EditFlowUiComponent {
         title: 'New Step',
         databases: this.databases,
         entities: this.entities,
-        step: null
+        // collections: this.collections,
+        step: null,
+        flow: this.flow
       }
     });
 
