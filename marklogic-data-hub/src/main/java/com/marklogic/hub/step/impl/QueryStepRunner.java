@@ -465,7 +465,6 @@ public class QueryStepRunner implements StepRunner {
                 params.add("flow-name", flow.getName());
                 params.put("step", step);
                 params.put("job-id", jobId);
-                params.put("identifiers", (String) null);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
                     try {

@@ -120,11 +120,11 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         this.customHook = hookObj;
     }
 
-    public String getIdentifier() {
+    public String getSourceQuery() {
         return identifier;
     }
 
-    public void setIdentifier(String identifier) {
+    public void setSourceQuery(String identifier) {
         this.identifier = identifier;
     }
 
@@ -192,7 +192,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         if (this.options != null) {
             Object identifier = this.options.get("identifier");
             if (identifier != null) {
-                setIdentifier(identifier.toString());
+                setSourceQuery(identifier.toString());
             }
         }
 

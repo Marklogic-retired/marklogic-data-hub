@@ -2,7 +2,6 @@
   "name" : "default-ingestion",
   "description" : "This is the default flow for ingesting into data hub",
   "options": {
-    "identifier" : null
   },
   "steps" : {
 	  "1": {	 
