@@ -188,7 +188,7 @@ class Provenance {
    *    attributes:
    *      - location (doc URI)
    */
-  _createIngestStepRecord(jobId, flowId, docURI, info) {
+  _createIngestionStepRecord(jobId, flowId, docURI, info) {
     let provId = `${jobId + flowId + 'ingestion' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:IngestionStep','dhf:IngestionStepEntity'];
     if (info && info.status)
@@ -273,7 +273,7 @@ class Provenance {
    *    attributes:
    *      - location (doc URI)
    */
-  _createMasterStepRecord(jobId, flowId, docURI, info) {
+  _createMasteringStepRecord(jobId, flowId, docURI, info) {
     let provId = `${jobId + flowId + 'mastering' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MasteringStep','dhf:MasteringStepEntity'];
     if (info && info.status)
