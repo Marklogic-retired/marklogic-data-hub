@@ -433,8 +433,8 @@ public class WriteStepRunner implements StepRunner {
             metadataHandle.withCollections(outputCollections.split(","));
         }
 
-        if(flow.getName().equals("default-ingest")) {
-            metadataHandle.withCollections("default-ingest");
+        if(flow.getName().equals("default-ingestion")) {
+            metadataHandle.withCollections("default-ingestion");
         }
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;

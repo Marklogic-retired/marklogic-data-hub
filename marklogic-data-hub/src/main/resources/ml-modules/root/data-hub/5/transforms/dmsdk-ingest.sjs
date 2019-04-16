@@ -4,7 +4,7 @@ const datahub = new DataHub();
 
 function transform(context, params, content) {
 
-  let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingest";
+  let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
   let flow = datahub.flow.getFlow(flowName);
   if (!flow) {
     datahub.debug.log({message: params, type: 'error'});

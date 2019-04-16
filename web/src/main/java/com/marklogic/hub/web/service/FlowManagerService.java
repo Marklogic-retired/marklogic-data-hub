@@ -157,7 +157,7 @@ public class FlowManagerService {
         // Only save step if step is of Custom type, for rest use the default steps.
         switch (step.getStepDefinitionType()) {
             case INGEST:
-                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/ingest/marklogic/default-ingest.step.json", StepDefinition.StepDefinitionType.INGEST);
+                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/ingestion/marklogic/default-ingestion.step.json", StepDefinition.StepDefinitionType.INGEST);
                 Step defaultIngest = defaultIngestDefinition.transformToStep(step.getName(), defaultIngestDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultIngest, step);
                 break;
@@ -167,7 +167,7 @@ public class FlowManagerService {
                 step = StepModel.mergeFields(stepModel, defaultMapping, step);
                 break;
             case MASTER:
-                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/master/marklogic/default-mastering.step.json", StepDefinition.StepDefinitionType.MASTER);
+                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/steps/mastering/marklogic/default-mastering.step.json", StepDefinition.StepDefinitionType.MASTER);
                 Step defaultMaster = defaultMasterDefinition.transformToStep(step.getName(), defaultMasterDefinition, new Step());
                 step = StepModel.mergeFields(stepModel, defaultMaster, step);
                 break;

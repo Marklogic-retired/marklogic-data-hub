@@ -1,6 +1,6 @@
 {
   "language" : "zxx",
-  "name" : "default-ingest",
+  "name" : "default-ingestion",
   "type" : "INGEST",
   "version" : 1,
   "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
@@ -8,6 +8,6 @@
   "options" : {
     "identifier": null,
     "outputFormat": "json",
-    "collections": ["default-ingest"]
+    "collections": ["default-ingestion"]
   }
 }

@@ -54,9 +54,9 @@ function transform(content, context = {}) {
 
     let jobId = params["job-id"] || `mlcp-${xdmp.transaction()}`;
     let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
-    let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingest";
-    if (flowName === 'default-ingest') {
-      context.collections.push('default-ingest');
+    let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
+    if (flowName === 'default-ingestion') {
+      context.collections.push('default-ingestion');
     }
     let flow = datahub.flow.getFlow(flowName);
 

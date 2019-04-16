@@ -27,7 +27,7 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
         setType(StepDefinitionType.MAPPING);
 
         Map<String, Object> options = getOptions();
-        setIdentifier("cts.uris(null, null, cts.collectionQuery('default-ingest'))");
+        setIdentifier("cts.uris(null, null, cts.collectionQuery('default-ingestion'))");
         options.put("identifier", getIdentifier());
 
         setModulePath("/data-hub/5/builtins/steps/mapping/default/main.sjs");
