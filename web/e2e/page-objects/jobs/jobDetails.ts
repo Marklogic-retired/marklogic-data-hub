@@ -74,48 +74,48 @@ export class JobDetails extends AppPage {
 
   async stepName(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-name`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-name`)); 
   }
 
   async stepEntity(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-entity`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-entity`)); 
   }
 
   async stepStatus(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-status a`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-status a`)); 
   }
 
   async stepEnded(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-ended`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-ended`)); 
   }
 
   async stepDuration(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-duration`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-duration`)); 
   }
 
   async stepCommitted(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-committed a`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-committed a`)); 
   }
 
   async stepErrors(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-errors a`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-errors a`)); 
   }
 
   async stepActions(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-actions`)); 
+    return await element(by.css(`.step-${stepNameClass} .step-actions`)); 
   }
 
   async clickStepActions(stepName: string) {
     let stepNameClass = this.stepNameRowClass(stepName);
     let menu = this.stepActions(stepName);
-    return await element(by.css(`mat-row.step-${stepNameClass} .step-actions`)).click();
+    return await element(by.css(`.step-${stepNameClass} .step-actions`)).click();
   }
 
   /**
@@ -174,6 +174,32 @@ export class JobDetails extends AppPage {
   async clickStepPaginationNavigation(direction: string) {
     let navigation = this.stepPaginationNavigation(direction);
     return await navigation.click();
+  }
+
+  get jobOutputDialog() {
+    return element(by.css("#output-dialog"));
+  }
+
+  get jobOutputCloseButton() {
+    return element(by.css("#output-cancel-btn"));
+  }
+
+  async clickJobOutputCloseButton() {
+    let button = this.jobOutputCloseButton;
+    return await button.click();
+  }
+
+  get jobStatusDialog() {
+    return element(by.css("#status-dialog"));
+  }
+
+  get jobStatusCloseButton() {
+    return element(by.css("#status-cancel-btn"));
+  }
+
+  async clickJobStatusCloseButton() {
+    let button = this.jobStatusCloseButton;
+    return await button.click();
   }
 }
 
