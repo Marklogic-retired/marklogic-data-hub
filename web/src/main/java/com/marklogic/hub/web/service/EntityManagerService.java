@@ -79,7 +79,7 @@ public class EntityManagerService {
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
         for (String entityName : entityNames) {
             EntityModel entityModel = new EntityModel();

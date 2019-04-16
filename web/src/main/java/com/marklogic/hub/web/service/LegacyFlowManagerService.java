@@ -59,7 +59,7 @@ public class LegacyFlowManagerService {
 
 
     public List<FlowModel> getFlows(String entityName, FlowType flowType) {
-        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entityName);
+        Path entityPath = hubConfig.getHubProject().getLegacyHubEntitiesDir().resolve(entityName);
         return flowManager.getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
             FlowModel flowModel = new FlowModel(entityName, flow.getName());
             flowModel.codeFormat = flow.getCodeFormat();
@@ -84,14 +84,17 @@ public class LegacyFlowManagerService {
             }
 
             File[] pluginFiles = flowPath.toFile().listFiles(pathname -> pathname.isFile() && !pathname.getName().endsWith("properties"));
-            for (File pluginFile : pluginFiles) {
-                PluginModel pm = new PluginModel();
-                pm.pluginType = FilenameUtils.getBaseName(pluginFile.getName());
-                pm.pluginPath = pluginFile.getAbsolutePath();
-                try {
-                    pm.fileContents = new String(Files.readAllBytes(pluginFile.toPath()));
-                } catch (IOException e) {}
-                flowModel.plugins.add(pm);
+            if (pluginFiles != null) {
+                for (File pluginFile : pluginFiles) {
+                    PluginModel pm = new PluginModel();
+                    pm.pluginType = FilenameUtils.getBaseName(pluginFile.getName());
+                    pm.pluginPath = pluginFile.getAbsolutePath();
+                    try {
+                        pm.fileContents = new String(Files.readAllBytes(pluginFile.toPath()));
+                    } catch (IOException e) {
+                    }
+                    flowModel.plugins.add(pm);
+                }
             }
 
             flowModel.plugins.sort(Comparator.comparing(o -> o.pluginType));
