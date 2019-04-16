@@ -5,6 +5,9 @@
   "version" : 1,
   "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
   "customHook": {},
+  "fileLocations": {
+    "inputFileType": "json"
+  },
   "options" : {
     "sourceQuery": null,
     "outputFormat": "json",
