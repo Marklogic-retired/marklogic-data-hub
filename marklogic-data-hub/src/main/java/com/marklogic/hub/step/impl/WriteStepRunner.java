@@ -173,6 +173,38 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
+    public StepRunner withStepConfig(Map<String, Object> stepConfig) {
+        if(stepConfig.get("batchSize") != null){
+            this.batchSize = (int) stepConfig.get("batchSize");
+        }
+        if(stepConfig.get("threadCount") != null) {
+            this.threadCount = (int) stepConfig.get("threadCount");
+        }
+        if(stepConfig.get("sourceDB") != null) {
+            hubConfig.newStagingClient(stepConfig.get("sourceDB").toString());
+        }
+        if(stepConfig.get("destDB") != null) {
+            this.destinationDatabase = stepConfig.get("destDB").toString();
+            //will work only for final db in addition to staging db as it has flow/step artifacts
+            this.stagingClient = hubConfig.newStagingClient(destinationDatabase);
+        }
+        if(stepConfig.get("fileLocations") != null) {
+            HashMap<String, String> fileLocations = (HashMap) stepConfig.get("fileLocations");
+            if(fileLocations.get("fileInputPath") != null) {
+                this.inputFilePath = fileLocations.get("fileInputPath");
+            }
+            if(fileLocations.get("fileInputType") != null){
+                this.inputFileType = fileLocations.get("fileInputType");
+            }
+            if(fileLocations.get("outputURIReplacement") != null) {
+                this.outputURIReplacement = fileLocations.get("outputURIReplacement");
+            }
+        }
+
+        return this;
+    }
+
+    @Override
     public StepRunner onItemComplete(StepItemCompleteListener listener) {
         this.stepItemCompleteListeners.add(listener);
         return this;

@@ -113,30 +113,6 @@ public interface Flow {
     Step getStep(String stepNum);
 
     /**
-     * Gets the overridden batch size for the flow
-     * @return an integer representing the batch size
-     */
-    Integer getOverrideBatchSize();
-
-    /**
-     *  Sets the overridden batch size set for the flow
-     * @param overrideBatchSize an integer representing the batch size
-     */
-    void setOverrideBatchSize(Integer overrideBatchSize);
-
-    /**
-     * Gets the overridden thread count set for running the flow
-     * @return an integer representing the number of threads to use
-     */
-    Integer getOverrideThreadCount();
-
-    /**
-     * Sets the thread count temporarily for running a flow
-     * @param overrideThreadCount an integer representing the number of threads desired to use for running the flow
-     */
-    void setOverrideThreadCount(Integer overrideThreadCount);
-
-    /**
      * Gets the overridden options that were set at java runtime
      * @return returns a map object containing the json object submitted at runtime for commands
      */
@@ -149,29 +125,17 @@ public interface Flow {
     void setOverrideOptions(Map<String, Object> overrideOptions);
 
     /**
-     * Gets the string name of the source db that's overridden
-     * @return the string name of the overridden source db
+     * Gets the overridden options that were set at java runtime
+     * @return returns a map object containing the json object submitted at runtime for commands to flow runner
      */
-    String getOverrideSourceDB();
+    Map<String, Object> getOverrideStepConfig();
 
     /**
-     * Sets the string name of the source db that's overridden
-     * @param overrideSourceDB the string name of the overridden source DB
+     * Sets the overridden step configs to use at java runtime
+     * @param overrideStepConfig a map object that represents the json step runner config that are to be used at runtime
      */
-    void setOverrideSourceDB(String overrideSourceDB);
-
-    /**
-     * Gets the string name of the destination db that's overridden
-     * @return the string name of the overridden destination db
-     */
-    String getOverrideDestDB();
-
-    /**
-     * Sets the string name of the destination db that's overridden
-     * @param overrideDestDB the string name of the overridden destination db
-     */
-    void setOverrideDestDB(String overrideDestDB);
-
+    void setOverrideStepConfig(Map<String, Object> overrideStepConfig);
+    
     /**
      *
      * @param stopOnError

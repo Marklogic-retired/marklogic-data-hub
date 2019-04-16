@@ -41,54 +41,26 @@ public class FlowImpl implements Flow {
     private Map<String, Step> steps = new LinkedHashMap<>();
 
     @JsonIgnore
-    private Integer overrideBatchSize;
-    @JsonIgnore
-    private Integer overrideThreadCount;
-    @JsonIgnore
     private Map<String, Object> overrideOptions;
     @JsonIgnore
-    private String overrideSourceDB;
-    @JsonIgnore
-    private String overrideDestDB;
+    private Map<String, Object> overrideStepConfig;
 
-    public Integer getOverrideBatchSize() {
-        return overrideBatchSize;
+
+    public Map<String, Object> getOverrideStepConfig() {
+        return this.overrideStepConfig;
     }
 
-    public void setOverrideBatchSize(Integer overrideBatchSize) {
-        this.overrideBatchSize = overrideBatchSize;
+    public void setOverrideStepConfig(Map<String, Object> overrideStepConfig) {
+        this.overrideStepConfig = overrideStepConfig;
     }
 
-    public Integer getOverrideThreadCount() {
-        return overrideThreadCount;
-    }
-
-    public void setOverrideThreadCount(Integer overrideThreadCount) {
-        this.overrideThreadCount = overrideThreadCount;
-    }
-
-    public Map<String, Object> getOverrideOptions() {
-        return overrideOptions;
-    }
 
     public void setOverrideOptions(Map<String, Object> overrideOptions) {
         this.overrideOptions = overrideOptions;
     }
-
-    public String getOverrideSourceDB() {
-        return overrideSourceDB;
-    }
-
-    public void setOverrideSourceDB(String overrideSourceDB) {
-        this.overrideSourceDB = overrideSourceDB;
-    }
-
-    public String getOverrideDestDB() {
-        return overrideDestDB;
-    }
-
-    public void setOverrideDestDB(String overrideDestDB) {
-        this.overrideDestDB = overrideDestDB;
+    
+    public Map<String, Object> getOverrideOptions() {
+        return this.overrideOptions;
     }
 
 
