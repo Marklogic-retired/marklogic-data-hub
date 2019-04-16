@@ -1,6 +1,6 @@
 {
-  "name" : "ingest",
-  "type" : "INGEST",
+  "name" : "ingestion",
+  "type" : "INGESTION",
   "version" : 1,
   "options" : { },
   "customHook" : { },

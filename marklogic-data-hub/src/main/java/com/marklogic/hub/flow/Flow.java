@@ -149,7 +149,7 @@ public interface Flow {
 
     /**
      * Gets version
-     * @return
+     * @return an integer representing the version
      */
     int getVersion();
 
