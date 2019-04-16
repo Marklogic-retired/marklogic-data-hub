@@ -5,8 +5,8 @@
   },
   "steps" : {
 	  "1": {	 
-	   "type": "ingestion",
-	   "name": "default-ingestion",
+	   "stepDefinitionType": "ingestion",
+	   "stepDefinitionName": "default-ingestion",
 	   "retryLimit": 0,
 	   "options": {
         "outputFormat" : "json",

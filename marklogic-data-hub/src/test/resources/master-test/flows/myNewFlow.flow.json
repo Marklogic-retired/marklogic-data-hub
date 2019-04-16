@@ -4,16 +4,16 @@
   "batchSize": 300,
   "steps": {
     "1": {
-      "name": "ingestion",
-      "type": "INGESTION"
+      "stepDefinitionName": "ingestion",
+      "stepDefinitionType": "INGESTION"
     },
     "2": {
-      "name": "mapping",
-      "type": "MAPPING"
+      "stepDefinitionName": "mapping",
+      "stepDefinitionType": "MAPPING"
     },
     "3": {
-      "name": "mastering",
-      "type": "MASTERING",
+      "stepDefinitionName": "mastering",
+      "stepDefinitionType": "MASTERING",
       "batchSize": 300
     }
   }
