@@ -97,12 +97,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DatabaseClient stagingClient = hubConfig.newStagingClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
-        Path userModulesPath = hubConfig.getHubPluginsDir();
-        String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         Path mappingsPath = hubConfig.getHubMappingsDir();
-        Path legacyEntitiesPath = userModulesPath.resolve("entities");
-        Path legacyMappingsPath = userModulesPath.resolve("mappings");
 
         Path projectPath = Paths.get(hubConfig.getProjectDir());
         Path stepPath = projectPath.resolve("step-definitions");
@@ -146,28 +142,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         FlowDefModulesFinder flowDefModulesFinder = new FlowDefModulesFinder();
         try {
             //first let's do the entities paths
-            if (legacyEntitiesPath.toFile().exists()) {
-                Files.walkFileTree(legacyEntitiesPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        if (isArtifactDir(dir, legacyEntitiesPath.toAbsolutePath())) {
-                            executeWalk(
-                                dir,
-                                entityDefModulesFinder,
-                                propertiesModuleManager,
-                                entityResourceToURI,
-                                "http://marklogic.com/entity-services/models",
-                                stagingEntityDocumentWriteSet,
-                                finalEntityDocumentWriteSet
-                            );
-                            return FileVisitResult.CONTINUE;
-                        }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-                });
-            }
             if (entitiesPath.toFile().exists()) {
                 Files.walkFileTree(entitiesPath, new SimpleFileVisitor<Path>() {
                     @Override
@@ -186,29 +160,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
             //now let's do the mappings paths
-            if (legacyMappingsPath.toFile().exists()) {
-                Files.walkFileTree(legacyMappingsPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        if (isArtifactDir(dir, legacyMappingsPath.toAbsolutePath())) {
-                            executeWalk(
-                                dir,
-                                mappingDefModulesFinder,
-                                propertiesModuleManager,
-                                mappingResourceToURI,
-                                "http://marklogic.com/data-hub/mappings",
-                                stagingEntityDocumentWriteSet,
-                                finalEntityDocumentWriteSet
-                            );
-                            return FileVisitResult.CONTINUE;
-                        }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-                });
-            }
-
             if (mappingsPath.toFile().exists()) {
                 Files.walkFileTree(mappingsPath, new SimpleFileVisitor<Path>() {
                     @Override
