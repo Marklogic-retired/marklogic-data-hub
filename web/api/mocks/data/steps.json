@@ -1183,17 +1183,16 @@
     "id": "step-4-flow-3",
     "name": "Flow3CustomStep",
     "description": "My Step 4 description",
-    "type": "custom",
-    "sourceDatabase": "",
-    "targetDatabase": "staging",
+    "stepDefinitionName": "Flow-01-Custom-Step",
+    "stepDefinitionType": "CUSTOM",
     "isValid": true,
-    "options": {
-      "targetEntity": "Order",
-      "sourceCollection": "Flow 3 Mastering Step",
-      "sourceQuery": "",
-      "customModuleUri": "/some/path/to/my/module"
+    "options": { 
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "sourceQuery": ""
     },
-    "version": "1"
+    "modulePath":"/path/to/main.sjs"
+
   },
   {
     "id": "step-1-flow-4",

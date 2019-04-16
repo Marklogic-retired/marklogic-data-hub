@@ -1081,7 +1081,7 @@
       "type": "object",
       "required": [
         "name",
-        "type"
+        "stepDefinitionType"
       ],
       "properties": {
         "id": {
