@@ -26,9 +26,9 @@ import java.util.Map;
 public interface StepDefinition {
 
     enum StepDefinitionType {
-        INGEST("ingest"),
+        INGEST("ingestion"),
         MAPPING("mapping"),
-        MASTER("master"),
+        MASTER("mastering"),
         CUSTOM("custom");
 
         private String type;
