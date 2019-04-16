@@ -35,7 +35,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
         Map<String, Object> options = getOptions();
         options.put("outputFormat", "json");
 
-        setModulePath("/data-hub/5/builtins/steps/ingest/default/main.sjs");
+        setModulePath("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
     }
 
     public JsonNode getFileLocations() {

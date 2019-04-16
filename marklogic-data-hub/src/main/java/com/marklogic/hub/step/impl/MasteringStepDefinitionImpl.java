@@ -40,6 +40,6 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
         // Accepts batch needed for Smart Mastering to receive all batch documents at once
         options.put("acceptsBatch", true);
 
-        setModulePath("/data-hub/5/builtins/steps/master/default/main.sjs");
+        setModulePath("/data-hub/5/builtins/steps/mastering/default/main.sjs");
     }
 }
