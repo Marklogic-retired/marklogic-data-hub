@@ -128,11 +128,13 @@ public class FlowJobService extends ResourceManager {
 
                 JsonNode stepRes = jobJson.getNode("stepResponses");
 
-                stepRes.forEach(s -> {
-                    latestJob.successfulEvents += s.get("successfulEvents").asLong();
-                    latestJob.failedEvents += s.get("failedEvents").asLong();
-                    latestJob.output = s.get("stepOutput"); //last step output ?
-                });
+                if (stepRes != null) {
+                    stepRes.forEach(s -> {
+                        latestJob.successfulEvents += s.get("successfulEvents").asLong();
+                        latestJob.failedEvents += s.get("failedEvents").asLong();
+                        latestJob.output = s.get("stepOutput"); //last step output ?
+                    });
+                }
 
                 return flowJobs;
             });
