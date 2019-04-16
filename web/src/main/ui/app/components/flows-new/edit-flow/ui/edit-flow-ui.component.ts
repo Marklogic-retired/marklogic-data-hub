@@ -43,7 +43,8 @@ export class EditFlowUiComponent {
         databases: this.databases,
         entities: this.entities,
         collections: this.collections,
-        step: null
+        step: null,
+        flow: this.flow
       }
     });
 

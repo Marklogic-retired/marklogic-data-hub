@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output, ViewChild, OnChanges} from '@ang
 import {MatDialog} from '@angular/material';
 import {NewStepDialogComponent} from './new-step-dialog.component';
 import {IngestComponent} from "../ingest/ingest.component";
+import {MappingComponent} from "../mapping/mapping.component";
 
 @Component({
   selector: 'app-step',
@@ -18,6 +19,7 @@ export class StepComponent implements OnChanges {
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
+  @ViewChild(MappingComponent) mappingStep: MappingComponent;
   @ViewChild('masteringTabGroup') masteringTabGroup;
 
   public masteringTabIndex: number = 0;
@@ -51,12 +53,14 @@ export class StepComponent implements OnChanges {
         databases: this.databases,
         collections: this.collections,
         entities: this.entities,
-        step: this.step
+        step: this.step,
+        flow: this.flow
       }
     });
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
+        this.mappingStep.stepEdited(response);
         this.updateStep.emit(response);
       }
     });

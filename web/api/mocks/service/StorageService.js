@@ -13,7 +13,7 @@ let collections = {
   'flows': require('../data/flows.json'),
   'steps': require('../data/steps.json'),
   'collections': require('../data/collections.json'),
-  'jobs': []  // generated on the fly when /flow/{flow id}/run triggered
+  'jobs': require('../data/jobs.json'),
 }
 
 let getDefaultObject = function(type) {
@@ -76,9 +76,19 @@ exports.getCollection = function(cName) {
 exports.save = function(cName, id, obj) {
   return new Promise(function(resolve, reject) {
     if (collections[cName]) {
-      let index = _.findIndex(collections[cName], ['id', id]);
-      let item = _.find(collections[cName], ['id', id]);
-      let data = Object.assign({}, item || {}, obj);
+      let index = null;
+      let item = '';
+      let data = {};
+
+      if ( cName === 'jobs'){
+        index = _.findIndex(collections[cName], ['jobId', id]);
+        item = _.find(collections[cName], ['jobId', id]);
+      } else {
+        index = _.findIndex(collections[cName], ['id', id]);
+        item = _.find(collections[cName], ['id', id]);
+      }
+
+      data = Object.assign({}, item || {}, obj);
       if (index !== -1) {
         // update record and increment version, if Flow or Step
         data.version = (['flows','steps'].includes(cName) && 
@@ -109,7 +119,12 @@ exports.save = function(cName, id, obj) {
 exports.get = function(cName, id) {
   return new Promise(function(resolve, reject) {
     if (collections[cName]) {
-      let item = _.find(collections[cName], ['id', id]);
+      let item = {}
+      if ( cName === 'jobs') {
+        item = _.find(collections[cName], ['jobId', id]);
+      } else {
+        item = _.find(collections[cName], ['id', id]);
+      }
       if (item) {
         resolve(item);
       } else {
@@ -135,8 +150,16 @@ exports.get = function(cName, id) {
 exports.delete = function(cName, id) {
   return new Promise(function(resolve, reject) {
     if (collections[cName]) {
-      let index = _.findIndex(collections[cName], ['id', id]);
-      let item = _.find(collections[cName], ['id', id]);
+      let index = null;
+      let item = '';
+      if ( cName === 'jobs') {
+        index = _.findIndex(collections[cName], ['jobId', id]);
+        item = _.find(collections[cName], ['jobId', id]);
+      } else {
+        index = _.findIndex(collections[cName], ['id', id]);
+        item = _.find(collections[cName], ['id', id]);
+      }
+
       if (item) {
         collections[cName].splice(index, 1);
         resolve(item);

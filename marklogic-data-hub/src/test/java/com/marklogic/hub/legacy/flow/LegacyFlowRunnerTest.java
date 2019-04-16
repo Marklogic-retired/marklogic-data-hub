@@ -65,14 +65,14 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         enableDebugging();
         enableTracing();
 
-        scaffolding.createEntity(ENTITY);
+        scaffolding.createLegacyEntity(ENTITY);
         clearUserModules();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @Test
     public void testPassOptions() throws IOException, ParserConfigurationException, SAXException {
-        scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.XML, false);
         Files.copy(getResourceStream("flow-runner-test/collector.xqy"),
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy"),
@@ -129,7 +129,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     // bug DHFPROD-500, attachments showing up in two places
     @Test
     public void testEnvelopeSJS() throws IOException {
-        scaffolding.createFlow(ENTITY, "testharmonize-sjs-json", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize-sjs-json", FlowType.HARMONIZE,
                 CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
         //testing sjs JSON canonical instance
         Files.copy(getResourceStream("flow-runner-test/collector.sjs"),
@@ -166,7 +166,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     public void testEnvelopeXQY() throws IOException {
 
         //testing xqy JSON canonical instance
-        scaffolding.createFlow(ENTITY, "testharmonize-xqy-json", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize-xqy-json", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/collector.xqy"),
@@ -200,7 +200,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     // bug DHFPROD-500, attachments showing up in two places
     @Test
     public void testEnvelopeSJSXML() throws IOException, SAXException {
-        scaffolding.createFlow(ENTITY, "testharmonize-sjs-xml", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize-sjs-xml", FlowType.HARMONIZE,
                 CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
         Files.copy(getResourceStream("flow-runner-test/collector2.sjs"),
@@ -252,7 +252,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     public void testCreateandDeployFlowWithHubUser() throws IOException {
         Assumptions.assumeFalse(getFlowDeveloperConfig().getIsProvisionedEnvironment());
 
-        scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/collector.xqy"),
@@ -304,7 +304,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         // Deploys mapping to final db
         installUserModules(getFlowDeveloperConfig(), true);
 
-        scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
+        scaffolding.createLegacyFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
         try {
             installUserModules(getHubFlowRunnerConfig(), false);
         }

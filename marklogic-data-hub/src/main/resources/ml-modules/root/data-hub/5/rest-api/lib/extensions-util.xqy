@@ -36,7 +36,8 @@ declare private variable $system-transforms-40 := map:map()
     =>map:with("ml:prettifyXML",          "prettify");
 
 declare private variable $system-transforms-50 := map:map()
-    =>map:with("ml:runFlow",              "run-flow");
+    =>map:with("ml:runFlow",              "run-flow")
+    =>map:with("ml:runIngest",            "dmsdk-ingest");
 
 declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:dbConfigs",              "db-configs")

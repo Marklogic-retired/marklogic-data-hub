@@ -7,6 +7,7 @@ export class Step {
   public description: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
+  public targetEntity: string;
   public language: string;
   public isValid: boolean = false;
   public version: string;

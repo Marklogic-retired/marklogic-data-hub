@@ -189,7 +189,7 @@ class Jobs {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
     if(error){
-      let stackTraceObj = error.stackTrace[0];
+      let stackTraceObj = error.stackFrames[0];
       docObj.batch.fileName = stackTraceObj.uri;
       docObj.batch.lineNumber = stackTraceObj.line;
     }
