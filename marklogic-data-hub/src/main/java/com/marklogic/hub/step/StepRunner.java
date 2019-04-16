@@ -88,6 +88,14 @@ public interface StepRunner {
      */
     StepRunner withOptions(Map<String, Object> options);
 
+
+    /**
+     * Sets the config to be used in orchestrating the step.
+     * @param stepConfig - the object map of configurations for the step to execute as string/object pair
+     * @return the step runner object
+     */
+    StepRunner withStepConfig(Map<String, Object> stepConfig);
+
     /**
      * Sets if this will stop the job on a failure, or if it will continue on
      * @param stopOnFailure - true to stop the job if a failure happens

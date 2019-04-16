@@ -9,9 +9,9 @@
 	   "name": "default-ingestion",
 	   "retryLimit": 0,
 	   "options": {
-		"outputFormat" : "json",
-		"collections" : "default-ingestion"
-		}
+        "outputFormat" : "json",
+        "collections" : "default-ingestion"
+     }
 	  }
 	}
 }

@@ -65,30 +65,30 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public RunFlowResponse runFlow(String flowName) {
-        return runFlow(flowName, null, null, new HashMap<>(), null, null, null, null);
+        return runFlow(flowName, null, null, new HashMap<>(), new HashMap<>());
     }
 
     public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
-        return runFlow(flowName, stepNums, null, new HashMap<>(), null, null, null, null);
+        return runFlow(flowName, stepNums, null, new HashMap<>(), new HashMap<>());
     }
 
     public RunFlowResponse runFlow(String flowName, String jobId) {
-        return runFlow(flowName, null, jobId, new HashMap<>(), null, null, null, null);
+        return runFlow(flowName, null, jobId, new HashMap<>(), new HashMap<>());
     }
 
     public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId) {
-        return runFlow(flowName, stepNums, jobId, new HashMap<>(), null, null, null, null);
+        return runFlow(flowName, stepNums, jobId, new HashMap<>(), new HashMap<>());
     }
 
     public RunFlowResponse runFlow(String flowName, String jobId, Map<String, Object> options) {
-        return runFlow(flowName, null, jobId, options, null, null, null, null);
+        return runFlow(flowName, null, jobId, options, new HashMap<>());
     }
 
-    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options) {
-        return runFlow(flowName, stepNums, jobId, options, null, null, null, null);
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums,  String jobId, Map<String, Object> options) {
+        return runFlow(flowName, stepNums, jobId, options, new HashMap<>());
     }
 
-    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Integer batchSize, Integer threadCount, String sourceDB, String destDB) {
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
 
         Flow flow = flowManager.getFlow(flowName);
 
@@ -101,20 +101,8 @@ public class FlowRunnerImpl implements FlowRunner{
             stepNums = new ArrayList<String>(flow.getSteps().keySet());
         }
 
-        if(StringUtils.isNotEmpty(destDB)){
-            flow.setOverrideDestDB(destDB);
-        }
-
-        if(StringUtils.isNotEmpty(sourceDB)){
-            flow.setOverrideSourceDB(sourceDB);
-        }
-
-        if(threadCount != null){
-            flow.setOverrideThreadCount(threadCount);
-        }
-
-        if(batchSize != null){
-            flow.setOverrideBatchSize(batchSize);
+        if(stepConfig != null && !stepConfig.isEmpty()) {
+            flow.setOverrideStepConfig(stepConfig);
         }
 
         flow.setOverrideOptions(options);
@@ -237,18 +225,10 @@ public class FlowRunnerImpl implements FlowRunner{
                     Step step = steps.get(stepNum);
 
                     //If property values are overriden in UI, use those values over any other.
-                    if(flow.getOverrideBatchSize() != null) {
-                        stepRunner.withBatchSize(flow.getOverrideBatchSize());
+                    if(flow.getOverrideStepConfig() != null) {
+                        stepRunner.withStepConfig(flow.getOverrideStepConfig());
                     }
-                    if(flow.getOverrideThreadCount() != null) {
-                        stepRunner.withThreadCount(flow.getOverrideThreadCount());
-                    }
-                    if(flow.getOverrideSourceDB() != null){
-                        stepRunner.withSourceClient(hubConfig.newStagingClient(flow.getOverrideSourceDB()));
-                    }
-                    if(flow.getOverrideDestDB() != null){
-                        stepRunner.withDestinationDatabase(flow.getOverrideDestDB());
-                    }
+
                     stepResp = stepRunner.run();
                     stepRunner.awaitCompletion();
                 }

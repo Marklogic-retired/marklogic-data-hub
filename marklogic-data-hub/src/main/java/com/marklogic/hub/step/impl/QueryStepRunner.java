@@ -133,6 +133,25 @@ public class QueryStepRunner implements StepRunner {
     }
 
     @Override
+    public StepRunner withStepConfig(Map<String, Object> stepConfig) {
+        if(stepConfig.get("batchSize") != null){
+            this.batchSize = (int) stepConfig.get("batchSize");
+        }
+        if(stepConfig.get("threadCount") != null) {
+            this.threadCount = (int) stepConfig.get("threadCount");
+        }
+        if(stepConfig.get("sourceDB") != null) {
+            hubConfig.newStagingClient(stepConfig.get("sourceDB").toString());
+        }
+        if(stepConfig.get("destDB") != null) {
+            this.destinationDatabase = stepConfig.get("destDB").toString();
+            //will work only for final db in addition to staging db as it has flow/step artifacts
+            this.stagingClient = hubConfig.newStagingClient(destinationDatabase);
+        }
+        return this;
+    }
+
+    @Override
     public StepRunner onItemComplete(StepItemCompleteListener listener) {
         this.stepItemCompleteListeners.add(listener);
         return this;
