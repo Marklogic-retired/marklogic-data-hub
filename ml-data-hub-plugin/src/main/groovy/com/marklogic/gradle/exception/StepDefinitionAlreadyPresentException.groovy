@@ -19,8 +19,8 @@ package com.marklogic.gradle.exception
 
 import org.gradle.api.GradleException
 
-class StepAlreadyPresentException extends GradleException {
-    StepAlreadyPresentException() {
-        super("Step not created. Step having the same name and type is already present.")
+class StepDefinitionAlreadyPresentException extends GradleException {
+    StepDefinitionAlreadyPresentException() {
+        super("Step Definition not created. Step Definition having the same name and type is already present.")
     }
 }

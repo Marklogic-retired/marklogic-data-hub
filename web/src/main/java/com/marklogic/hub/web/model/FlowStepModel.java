@@ -1,13 +1,23 @@
 package com.marklogic.hub.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
+import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
 public class FlowStepModel {
     private String id;
@@ -19,6 +29,8 @@ public class FlowStepModel {
     private JsonNode options;
 
     static class StepSummary {
+        @JsonIgnore
+        public String stepKey;
         public String id;
         public String name;
         public String type;
@@ -27,6 +39,10 @@ public class FlowStepModel {
 
     @JsonProperty("steps")
     private List<StepSummary> stepModels = new ArrayList<>();
+    @JsonProperty("jobs")
+    public List<String> jobIds;
+    @JsonProperty("latestJob")
+    public LatestJob latestJob;
 
     public String getName() {
         return name;
@@ -110,7 +126,7 @@ public class FlowStepModel {
         Map<String, String> keyById = new HashMap<>();
         for (String key : existingSteps.keySet()) {
             String name = existingSteps.get(key).getName();
-            String type = existingSteps.get(key).getType().toString();
+            String type = existingSteps.get(key).getStepDefinitionType().toString();
             keyById.put(name + "-" + type, key);
         }
         final String[] count = {"1"};
@@ -145,9 +161,15 @@ public class FlowStepModel {
 
         steps.forEach((name, step) -> {
             StepSummary sm = new StepSummary();
-            String stepType = step.getType() == null ? "" : step.getType().toString();
+            String stepType = step.getStepDefinitionType() == null ? "" : step.getStepDefinitionType().toString();
             sm.id = step.getName() + "-" + stepType;
+            sm.stepKey = name;
             sm.name = step.getName();
+            if (sm.name.startsWith("default-")) {
+                sm.id = sm.name;
+            } else {
+                sm.id = step.getName() + "-" + stepType;
+            }
             sm.type = stepType;
             if (step.getOptions() != null && step.getOptions().get("targetEntity") != null) {
                 sm.targetEntity = ((TextNode) step.getOptions().get("targetEntity")).asText();
@@ -155,5 +177,58 @@ public class FlowStepModel {
             stepModels.add(sm);
         });
         return fsm;
+    }
+
+    public void setLatestJob(LatestJob latestJob) {
+        this.latestJob = latestJob;
+    }
+
+    public void setJobs(FlowJobs flowJobs) {
+        this.jobIds = flowJobs.jobIds;
+        if (latestJob != null && latestJob.id != null && !this.jobIds.contains(latestJob.id)) {
+            this.jobIds.add(latestJob.id);
+            flowJobs.jobIds = this.jobIds;
+            flowJobs.latestJob = latestJob;
+            return;
+        }
+        this.latestJob = flowJobs.latestJob;
+    }
+
+    //for testing purpose
+    public static void main(String[] args) throws Exception {
+        PrintWriter pw = null;
+        String outputPath = "/Users/hliu/marklogic/hub5/input/orders/json/";
+        File file = Paths.get(outputPath).toFile();
+        if (file.exists()) {
+            try {
+                FileUtils.forceDelete(file);
+            } catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }
+        file.mkdir();
+
+        JSONObject json = new JSONObject();
+        Random rnd = new Random();
+        ObjectMapper mapper = new ObjectMapper();
+        for (int i = 4000; i <= 5000; i++) {
+            String fileName = outputPath + i + ".json";
+            pw = new PrintWriter(new FileWriter(fileName));
+            json.put("id", String.valueOf(i));
+            json.put("customer", String.valueOf(rnd.nextInt(1000) + 1000));
+            json.put("order_date", "04/12/2019");
+            json.put("ship_date", "04/13/2019");
+            json.put("product_id", rnd.nextInt(1000) + 1000);
+            json.put("sku", rnd.nextInt(100000) + 100000);
+            json.put("price", 10.25);
+            json.put("quantity", 10);
+            json.put("discounted_price", 8.50);
+            json.put("title", i);
+            json.put("description", i + " description");
+
+            mapper.writerWithDefaultPrettyPrinter().writeValue(pw, json.jsonNode());
+        }
+
+        pw.close();
     }
 }

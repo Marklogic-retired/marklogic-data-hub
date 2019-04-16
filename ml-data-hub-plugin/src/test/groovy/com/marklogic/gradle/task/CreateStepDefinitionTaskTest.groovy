@@ -26,7 +26,7 @@ import java.nio.file.Paths
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class CreateStepTaskTest extends BaseTest {
+class CreateStepDefinitionTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
@@ -35,31 +35,31 @@ class CreateStepTaskTest extends BaseTest {
 
     def "create step with no name"() {
         when:
-        def result = runFailTask('hubCreateStep')
+        def result = runFailTask('hubCreateStepDefinition')
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('stepName property is required')
-        result.task(":hubCreateStep").outcome == FAILED
+        result.output.contains('stepDefName property is required')
+        result.task(":hubCreateStepDefinition").outcome == FAILED
     }
 
     def "create step with valid name only"() {
         given:
         propertiesFile << """
             ext {
-                stepName=my-test-step
+                stepDefName=my-test-step
             }
         """
 
         when:
-        def result = runTask('hubCreateStep')
+        def result = runTask('hubCreateStepDefinition')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateStep").outcome == SUCCESS
+        result.task(":hubCreateStepDefinition").outcome == SUCCESS
 
         // It should default to "CUSTOM" type when none specified
-        File stepDir = Paths.get(testProjectDir.root.toString(), "steps", "custom", "my-test-step").toFile()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "custom", "my-test-step").toFile()
         println stepDir.toString()
         stepDir.isDirectory()
     }
@@ -68,19 +68,19 @@ class CreateStepTaskTest extends BaseTest {
         given:
         propertiesFile << """
             ext {
-                stepName=my-new-step
-                stepType=mapping
+                stepDefName=my-new-step
+                stepDefType=mapping
             }
         """
 
         when:
-        def result = runTask('hubCreateStep')
+        def result = runTask('hubCreateStepDefinition')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateStep").outcome == SUCCESS
+        result.task(":hubCreateStepDefinition").outcome == SUCCESS
 
-        File stepDir = Paths.get(testProjectDir.root.toString(), "steps", "mapping", "my-new-step").toFile()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step").toFile()
         stepDir.isDirectory()
     }
 }

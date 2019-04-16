@@ -18,7 +18,7 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.Iterator;
@@ -187,9 +187,7 @@ public class FlowImpl implements Flow {
         Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
         while (iterator.hasNext()) {
             String key = iterator.next();
-            Step step = Step.create("default", Step.StepType.CUSTOM);
-            step.deserialize(stepsNode.getNode(key));
-
+            Step step = Step.deserialize(stepsNode.getNode(key));
             steps.put(key, step);
         }
         setSteps(steps);

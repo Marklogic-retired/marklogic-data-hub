@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.step;
 
-public interface StepStatusListener {
-    /**
-     *
-     * @param jobId - the id of the job to change
-     * @param percentComplete - the percentage of completeness expressed as an int
-     * @param status - indicate intermediate status based on step status
-     * @param message - the message you'd like to send along with it
-     */
-    void onStatusChange(String jobId, int percentComplete, String status, long successfulEvents, long failedEvents, String message);
+package com.marklogic.hub.step.impl;
+
+import com.marklogic.hub.step.AbstractStepDefinition;
+
+public class CustomStepDefinitionImpl extends AbstractStepDefinition {
+
+    public CustomStepDefinitionImpl(String name) {
+        setName(name);
+        setType(StepDefinitionType.CUSTOM);
+
+        setModulePath("/path/to/your/step/module/main.sjs");
+    }
 }

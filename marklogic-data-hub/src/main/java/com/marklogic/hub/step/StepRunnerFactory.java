@@ -1,10 +1,13 @@
 package com.marklogic.hub.step;
 
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.impl.QueryStepRunner;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +18,20 @@ public class StepRunnerFactory {
 
     @Autowired
     private HubConfig hubConfig;
+    @Autowired
+    private StepDefinitionManagerImpl stepDefMgr;
     private StepRunner stepRunner;
+    private int batchSize = 100;
+    private int threadCount = 4;
+    private String sourceDatabase;
+    private String targetDatabase;
 
     public StepRunner getStepRunner(Flow flow, String stepNum) {
-        Map<String,Step> steps = flow.getSteps();
+        Map<String, Step> steps = flow.getSteps();
         Step step = steps.get(stepNum);
+        StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
 
-        switch (step.getType()) {
+        switch (step.getStepDefinitionType()) {
             case MAPPING:
                 stepRunner = new QueryStepRunner(hubConfig);
                 break;
@@ -33,18 +43,63 @@ public class StepRunnerFactory {
         }
         stepRunner = stepRunner.withFlow(flow)
             .withStep(stepNum);
+
         if(step.getBatchSize() != 0) {
-            stepRunner.withBatchSize(step.getBatchSize());
+            batchSize = step.getBatchSize();
         }
-        if(step.getBatchSize() != 0) {
-            stepRunner.withThreadCount(step.getThreadCount());
+        else if(flow.getBatchSize() != 0) {
+            batchSize = flow.getBatchSize();
         }
-        if(StringUtils.isNotEmpty(step.getSourceDatabase())) {
-            stepRunner.withSourceClient(hubConfig.newStagingClient(step.getSourceDatabase()));
+        else if(stepDef!=null && stepDef.getBatchSize() != 0) {
+            batchSize = stepDef.getBatchSize();
         }
-        if(StringUtils.isNotEmpty(step.getDestinationDatabase())){
-            stepRunner.withDestinationDatabase(step.getDestinationDatabase());
+        stepRunner.withBatchSize(batchSize);
+
+        if(step.getThreadCount() != 0) {
+            threadCount = step.getThreadCount();
+        }
+        else if(flow.getThreadCount() != 0) {
+            threadCount = flow.getThreadCount();
+        }
+        else if(stepDef != null && stepDef.getThreadCount() !=0 ){
+            threadCount = stepDef.getThreadCount();
+        }
+
+        stepRunner.withThreadCount(threadCount);
+
+        if(step.getOptions().get("sourceDatabase") != null) {
+            sourceDatabase = ((TextNode)step.getOptions().get("sourceDatabase")).asText();
+        }
+        else if(stepDef.getOptions().get("sourceDatabase") != null) {
+            sourceDatabase = ((TextNode)stepDef.getOptions().get("sourceDatabase")).asText();
+        }
+        else {
+            sourceDatabase = hubConfig.getDbName(DatabaseKind.STAGING);
+        }
+        stepRunner.withSourceClient(hubConfig.newStagingClient(sourceDatabase));
+
+        if(step.getOptions().get("targetDatabase") != null) {
+            targetDatabase = ((TextNode)step.getOptions().get("targetDatabase")).asText();
+        }
+        else if(stepDef.getOptions().get("targetDatabase") != null) {
+            targetDatabase = ((TextNode)stepDef.getOptions().get("targetDatabase")).asText();
+        }
+        else {
+            if(StepDefinition.StepDefinitionType.INGEST.equals(step.getStepDefinitionType())) {
+                targetDatabase = hubConfig.getDbName(DatabaseKind.STAGING);
+            }
+            else {
+                targetDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
+            }
+        }
+
+        stepRunner.withDestinationDatabase(targetDatabase);
+
+        //For ingest flow, set stepDef.
+        if(StepDefinition.StepDefinitionType.INGEST.equals(step.getStepDefinitionType())) {
+            ((WriteStepRunner)stepRunner).withStepDefinition(stepDef);
         }
         return stepRunner;
     }
+
 }

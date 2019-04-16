@@ -26,7 +26,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;

@@ -131,6 +131,16 @@ class Jobs {
     return docs;
   }
 
+  getJobDocsByFlow(flowName) {
+    return this.hubutils.queryLatest(function() {
+      let query = [cts.collectionQuery('Job'),  cts.jsonPropertyValueQuery('flow', flowName, "case-insensitive")];
+      let jobDoc = cts.search(cts.andQuery(query));
+      if (jobDoc) {
+        return jobDoc.toObject();
+      }
+    }, this.config.JOBDATABASE);
+  }
+
   createBatch(jobId, step, stepNumber) {
     let batch = null;
     batch = {

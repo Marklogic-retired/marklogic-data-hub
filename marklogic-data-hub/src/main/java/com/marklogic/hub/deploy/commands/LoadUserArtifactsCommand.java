@@ -105,7 +105,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path legacyMappingsPath = userModulesPath.resolve("mappings");
 
         Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path stepPath = projectPath.resolve("steps");
+        Path stepPath = projectPath.resolve("step-definitions");
         Path flowPath = projectPath.resolve("flows");
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
@@ -137,7 +137,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         };
         ResourceToURI stepResourceToURI = new ResourceToURI(){
             public String toURI(Resource r) throws IOException {
-                return "/steps/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
+                return "/step-definitions/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
             }
         };
         EntityDefModulesFinder entityDefModulesFinder = new EntityDefModulesFinder();
@@ -232,6 +232,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
 
+            // TODO: Rename collection URI after changing server code
             // let's do steps
             if (stepPath.toFile().exists()) {
                 Files.walkFileTree(stepPath, new SimpleFileVisitor<Path>() {

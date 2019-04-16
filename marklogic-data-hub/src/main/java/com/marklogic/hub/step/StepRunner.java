@@ -153,5 +153,22 @@ public interface StepRunner {
      */
     Job run(Collection<String> uris);
 
-    void stop();
+    /**
+     * Stops the step run
+     *
+     */
+     void stop();
+
+    /**
+     * Returns the batch size
+     *
+     */
+     int getBatchSize();
+
+    /**
+     * Get the current Running step key
+     * @return
+     */
+    public String getRunningStepKey();
+
 }

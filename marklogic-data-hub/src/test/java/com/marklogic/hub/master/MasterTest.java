@@ -65,7 +65,7 @@ public class MasterTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
     private void installProject() throws IOException, URISyntaxException {
-            String[] directoriesToCopy = new String[]{"flows", "steps", "plugins"};
+            String[] directoriesToCopy = new String[]{"flows", "step-definitions", "plugins"};
             for (final String subDirectory: directoriesToCopy) {
                 final Path subProjectPath = projectPath.resolve(subDirectory);
                 subProjectPath.toFile().mkdir();
@@ -117,7 +117,7 @@ public class MasterTest extends HubTestBase {
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
                     "\"input_file_type\":\"\\\"documents\\\"\"," +
                     "\"document_type\":\"\\\"json\\\"\"," +
-                    "\"output_collections\":\"\\\"mdm-content,default-ingest\\\"\"," +
+                    "\"output_collections\":\"\\\"mdm-content,default-ingestion\\\"\"," +
                     "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"" +
                     "}";
@@ -128,7 +128,7 @@ public class MasterTest extends HubTestBase {
         // TODO Is there a way to do this with updated flows?
         LegacyFlow legacyFlow = LegacyFlowBuilder.newFlow()
             .withEntityName("mdm-content")
-            .withName("default-ingest")
+            .withName("default-ingestion")
             .withType(FlowType.INPUT)
             .withCodeFormat(CodeFormat.JAVASCRIPT)
             .withDataFormat(DataFormat.JSON)

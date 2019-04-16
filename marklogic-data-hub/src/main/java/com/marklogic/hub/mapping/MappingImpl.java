@@ -42,7 +42,7 @@ public class MappingImpl implements Mapping {
         this.language = "zxx";
         this.version = 1;
         this.description = "Default description";
-        this.sourceContext = "./";
+        this.sourceContext = "/";
         this.sourceURI = "";
         this.properties = new HashMap<>();
         properties.put("id", createProperty("sourcedFrom", "id"));
