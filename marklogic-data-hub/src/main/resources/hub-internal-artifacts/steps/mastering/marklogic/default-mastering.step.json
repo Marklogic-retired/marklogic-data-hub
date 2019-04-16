@@ -1,7 +1,7 @@
 {
   "language" : "zxx",
   "name" : "default-mastering",
-  "type" : "MASTER",
+  "type" : "MASTERING",
   "version" : 1,
   "modulePath" : "/data-hub/5/builtins/steps/master/default/main.sjs",
   "options" : {

@@ -212,7 +212,7 @@ class Flow {
       let info = {
         derivedFrom: content.previousUri || content.uri,
         influencedBy: stepRef.stepDefinitionName,
-        status: (stepDetails.stepDefinitionType === 'INGEST') ? 'created' : 'updated',
+        status: (stepDetails.stepDefinitionType === 'INGESTION') ? 'created' : 'updated',
         metadata: {}
       };
       this.datahub.prov.createStepRecord(jobId, flowName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);

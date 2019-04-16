@@ -97,13 +97,13 @@ public class HubProjectImpl implements HubProject {
                 case CUSTOM:
                     path = this.stepDefinitionsDir.resolve("custom");
                     break;
-                case INGEST:
+                case INGESTION:
                     path = this.stepDefinitionsDir.resolve("ingest");
                     break;
                 case MAPPING:
                     path = this.stepDefinitionsDir.resolve("mapping");
                     break;
-                case MASTER:
+                case MASTERING:
                     path = this.stepDefinitionsDir.resolve("master");
                     break;
                 default:

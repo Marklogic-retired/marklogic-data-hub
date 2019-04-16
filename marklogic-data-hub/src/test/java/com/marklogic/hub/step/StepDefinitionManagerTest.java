@@ -119,7 +119,7 @@ public class StepDefinitionManagerTest extends HubTestBase {
     }
 
     private void copyTestIngestStep() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + ingestStepName + StepDefinitionManager.STEP_FILE_EXTENSION), getFlowDeveloperConfig().getStepsDirByType(StepDefinition.StepDefinitionType.INGEST).resolve(ingestStepName + "/" + ingestStepName + StepDefinitionManager.STEP_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + ingestStepName + StepDefinitionManager.STEP_FILE_EXTENSION), getFlowDeveloperConfig().getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve(ingestStepName + "/" + ingestStepName + StepDefinitionManager.STEP_FILE_EXTENSION).toFile());
     }
 
     private void copyTestCustomStep() {
