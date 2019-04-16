@@ -17,7 +17,6 @@ package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.web.exception.DataHubException;
-import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
@@ -79,9 +78,6 @@ public class FlowController {
         FlowStepModel flow = null;
         try {
             flow = flowManagerService.getFlow(flowName);
-            if (flow == null) {
-                throw new NotFoundException();
-            }
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }

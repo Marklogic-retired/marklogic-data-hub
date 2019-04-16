@@ -97,6 +97,9 @@ public class FlowManagerService {
 
     public FlowStepModel getFlow(String flowName) {
         Flow flow = flowManager.getFlow(flowName);
+        if (flow == null) {
+            throw new NotFoundException(flowName + " not found!");
+        }
         FlowStepModel fsm = getFlowStepModel(flow);
         return fsm;
     }
