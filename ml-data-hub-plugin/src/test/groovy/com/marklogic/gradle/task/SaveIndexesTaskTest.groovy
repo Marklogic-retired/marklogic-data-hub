@@ -17,21 +17,15 @@
 
 package com.marklogic.gradle.task
 
-import org.apache.commons.io.FileUtils
-import org.gradle.testkit.runner.UnexpectedBuildFailure
-import org.gradle.testkit.runner.UnexpectedBuildSuccess
-
 import com.fasterxml.jackson.databind.JsonNode
 import com.marklogic.hub.HubConfig
-import com.marklogic.hub.HubProject
-import com.marklogic.hub.util.FileUtil
+import org.gradle.testkit.runner.UnexpectedBuildFailure
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class SaveIndexesTaskTest extends BaseTest {
@@ -48,7 +42,7 @@ class SaveIndexesTaskTest extends BaseTest {
             }
         """
         runTask('hubCreateEntity')
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-save-index-entity-1").toFile()
+        File entityDir = Paths.get(testProjectDir.root.toString(), "entities").toFile()
         entityDir.isDirectory() == true
 
         // Copying my-unique-save-index-entity-1.entity.json file to plugins/entities/my-unique-save-index-entity-1 directory
@@ -63,7 +57,7 @@ class SaveIndexesTaskTest extends BaseTest {
             }
         """
         runTask('hubCreateEntity')
-        entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-unique-save-index-entity-2").toFile()
+        entityDir = Paths.get(testProjectDir.root.toString(), "entities").toFile()
         entityDir.isDirectory() == true
 
         // Copying my-unique-save-index-entity-2.entity.json file to plugins/entities/my-unique-save-index-entity-2 directory

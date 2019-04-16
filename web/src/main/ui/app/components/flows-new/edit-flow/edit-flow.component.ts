@@ -15,7 +15,6 @@ import { Entity } from '../../../models/entity.model';
     [flow]="flow"
     [stepsArray]="stepsArray"
     [databases]="databases"
-    [collections]="collections"
     [entities]="entities"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
@@ -81,7 +80,6 @@ export class EditFlowComponent implements OnInit {
       this.databases.job = resp.mlSettings.jobDbName;
       this.databases.staging = resp.mlSettings.stagingDbName;
       this.databases.modules = resp.mlSettings.modulesDbName;
-      // this.getCollections(this.databases.final);
     });
   }
   getCollections(db) {

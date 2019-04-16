@@ -31,6 +31,10 @@ header {
   }
 }
 
+.steps-header-buttons {
+  padding-right: 5px;
+}
+
 header > .steps-header:last-child {
   width: 40%;
   justify-content: flex-end;

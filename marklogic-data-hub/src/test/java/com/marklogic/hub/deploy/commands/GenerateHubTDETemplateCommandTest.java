@@ -56,8 +56,10 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
 
 
     private void installEntity(String entityName) {
-        Path entityDir = project.getEntityDir(entityName);
-        entityDir.toFile().mkdirs();
+        Path entityDir = project.getHubEntitiesDir();
+        if (!entityDir.toFile().exists()) {
+            entityDir.toFile().mkdirs();
+        }
         assertTrue(entityDir.toFile().exists());
         FileUtil.copy(getResourceStream(RESOURCES_DIR + entityName + ".entity.json"), entityDir.resolve(entityName + ".entity.json").toFile());
     }

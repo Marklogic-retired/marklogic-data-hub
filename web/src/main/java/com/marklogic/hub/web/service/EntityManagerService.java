@@ -79,7 +79,7 @@ public class EntityManagerService {
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
         for (String entityName : entityNames) {
             EntityModel entityModel = new EntityModel();
@@ -118,17 +118,17 @@ public class EntityManagerService {
     }
 
     public EntityModel createEntity(EntityModel newEntity) throws IOException {
-        scaffolding.createEntity(newEntity.getName());
+        scaffolding.createLegacyEntity(newEntity.getName());
 
         if (newEntity.inputFlows != null) {
             for (FlowModel flow : newEntity.inputFlows) {
-                scaffolding.createFlow(newEntity.getName(), flow.flowName, FlowType.INPUT, flow.codeFormat, flow.dataFormat);
+                scaffolding.createLegacyFlow(newEntity.getName(), flow.flowName, FlowType.INPUT, flow.codeFormat, flow.dataFormat);
             }
         }
 
         if (newEntity.harmonizeFlows != null) {
             for (FlowModel flow : newEntity.harmonizeFlows) {
-                scaffolding.createFlow(newEntity.getName(), flow.flowName, FlowType.HARMONIZE, flow.codeFormat, flow.dataFormat);
+                scaffolding.createLegacyFlow(newEntity.getName(), flow.flowName, FlowType.HARMONIZE, flow.codeFormat, flow.dataFormat);
             }
         }
 
@@ -274,12 +274,12 @@ public class EntityManagerService {
                 throw new DataHubProjectException("Mapping not found in project: " + newFlow.mappingName);
             }
         }
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
+        scaffolding.createLegacyFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String entityName, String flowName, FlowType flowType) throws IOException {
-        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        Path flowDir = scaffolding.getLegacyFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }
 

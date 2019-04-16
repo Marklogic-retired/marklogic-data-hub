@@ -1,27 +1,29 @@
 [
   {
     "id": "step-1-flow-1",
-    "name": "Flow 01 Ingest Step",
+    "name": "Flow01IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
-      "output_collections": "Order,Flow 01 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 01 Ingest Step"
+      "collections": [
+        "Flow01IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   },
   {
     "id": "step-2-flow-1",
-    "name": "Flow 01 Mapping Step",
+    "name": "Flow01Mapping Step",
     "description": "My Step 2 description",
     "type": "mapping",
     "sourceDatabase": "",
@@ -29,34 +31,24 @@
     "isValid": true,
     "options": {
       "sourceCollection": "Flow 01 Ingest Step",
-      "sourceURI": "source-doc-01.json",
+      "sourceURI": "",
       "sourceQuery": "",
       "targetEntity": "Order",
       "targetEntityType": "http://example.org/Order-0.0.1/Order",
       "sourceContext": "//",
-      "properties": {
-        "id": {
-          "sourcedFrom": "id"
-        },
-        "price": {
-          "sourcedFrom": "price"
-        },
-        "products": {
-          "sourcedFrom": "product_id"
-        }
-      }
+      "properties": null
     },
     "version": "1"
   },
   {
     "id": "step-3-flow-1",
-    "name": "Flow 01 Mastering Step",
+    "name": "Flow01MasteringStep",
     "description": "My Step 3 description",
     "type": "mastering",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "options": {     
+    "options": {
       "sourceCollection": "Flow 01 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -383,7 +375,7 @@
             "maxSources": 5
           },
           {
-            "name": "id",
+            "propertyName": "id",
             "algorithmRef": "customMerge"
           }
         ],
@@ -394,7 +386,7 @@
   },
   {
     "id": "step-4-flow-1",
-    "name": "Flow 01 Custom Step",
+    "name": "Flow01CustomStep",
     "description": "My Step 4 description",
     "type": "custom",
     "sourceDatabase": "",
@@ -410,27 +402,29 @@
   },
   {
     "id": "step-1-flow-2",
-    "name": "Flow 02 Ingest Step",
+    "name": "Flow02IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
-      "output_collections": "Order,Flow 02 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 02 Ingest Step"
+      "collections": [
+        "Flow02IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   },
   {
     "id": "step-2-flow-2",
-    "name": "Flow 02 Mapping Step",
+    "name": "Flow02MappingStep",
     "description": "My Step 2 description",
     "type": "mapping",
     "sourceDatabase": "",
@@ -459,13 +453,13 @@
   },
   {
     "id": "step-3-flow-2",
-    "name": "Flow 02 Mastering Step",
+    "name": "Flow02MasteringStep",
     "description": "My Step 3 description",
     "type": "mastering",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "options": {     
+    "options": {
       "sourceCollection": "Flow 02 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -792,7 +786,7 @@
             "maxSources": 5
           },
           {
-            "name": "id",
+            "propertyName": "id",
             "algorithmRef": "customMerge"
           }
         ],
@@ -803,7 +797,7 @@
   },
   {
     "id": "step-4-flow-2",
-    "name": "Flow 02 Custom Step",
+    "name": "Flow02CustomStep",
     "description": "My Step 4 description",
     "type": "custom",
     "sourceDatabase": "",
@@ -819,27 +813,29 @@
   },
   {
     "id": "step-1-flow-3",
-    "name": "Flow 3 Ingest Step",
+    "name": "Flow3IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
-      "output_collections": "Order,Flow 3 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 3 Ingest Step"
+      "collections": [
+        "Flow3IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   },
   {
     "id": "step-2-flow-3",
-    "name": "Flow 3 Mapping Step",
+    "name": "Flow3MappingStep",
     "description": "My Step 2 description",
     "type": "mapping",
     "sourceDatabase": "",
@@ -874,7 +870,7 @@
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": true,
-    "options": {     
+    "options": {
       "sourceCollection": "Flow 03 Mapping Step",
       "sourceQuery": "",
       "targetEntity": "Order",
@@ -1201,7 +1197,7 @@
             "maxSources": 5
           },
           {
-            "name": "id",
+            "propertyName": "id",
             "algorithmRef": "customMerge"
           }
         ],
@@ -1212,7 +1208,7 @@
   },
   {
     "id": "step-4-flow-3",
-    "name": "Flow 3 Custom Step",
+    "name": "Flow3CustomStep",
     "description": "My Step 4 description",
     "type": "custom",
     "sourceDatabase": "",
@@ -1228,21 +1224,23 @@
   },
   {
     "id": "step-1-flow-4",
-    "name": "Flow 4 Ingest Step",
+    "name": "Flow4IngestStep",
     "description": "My Step 1 description",
     "type": "ingest",
     "sourceDatabase": "",
     "targetDatabase": "staging",
     "isValid": false,
+    "fileLocations": {
+      "inputFilePath": ".",
+      "inputFileType": "xml",
+      "outputURIReplacement": ""
+    },
     "options": {
-      "input_file_path": ".",
-      "input_file_type": "documents",
-      "output_collections": "Order,Flow 4 Ingest Step,input,newCollection",
-      "output_permissions": "rest-reader,read,rest-writer,update",
-      "document_type": "json",
-      "transform_module": "/data-hub/5/transforms/mlcp-flow-transform.sjs",
-      "transform_namespace": "http://marklogic.com/data-hub/mlcp-flow-transform",
-      "transform_param": "entity-name=Order,flow-name=Flow 4 Ingest Step"
+      "collections": [
+        "Flow4IngestStep"
+      ],
+      "permissions": "rest-reader,read,rest-writer,update",
+      "outputFormat": "json"
     },
     "version": "1"
   }

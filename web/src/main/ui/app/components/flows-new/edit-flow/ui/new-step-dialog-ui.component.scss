@@ -1,0 +1,56 @@
+button {
+  outline: none;
+}
+
+mat-form-field {
+ width: 100%;
+}
+mat-radio-group {
+  margin-left: 10px;
+}
+mat-radio-button {
+  margin-left: 10px;
+}
+
+.type-select, .type-option {
+  text-transform: capitalize;
+}
+
+.content {
+  background: #f3f3f3;
+  padding: 10px 15px 20px 15px;
+}
+
+h1.mat-dialog-title {
+  margin-top: -12px;
+  margin-left: -4px;
+  margin-bottom: 11px;
+}
+
+.mat-dialog-content {
+  background: #f3f3f3;
+  padding: 20px;
+}
+
+.mat-dialog-actions {
+  margin-right: -4px;
+  justify-content: flex-end;
+}
+
+.source-type-label {
+  position: relative;
+  top: -3px;
+  .source-req {
+    font-size: 11px;
+    position: relative;
+    top: -2px;
+  }
+}
+
+/deep/ #step-source-type .mat-radio-button.mat-accent.mat-radio-checked div.mat-radio-outer-circle {
+  border-color: #6d8ba5 !important;
+}
+
+/deep/ #step-source-type .mat-radio-button.mat-accent div.mat-radio-inner-circle {
+  background-color: #6d8ba5 !important;
+}

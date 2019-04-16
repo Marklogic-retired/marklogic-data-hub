@@ -1,0 +1,66 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div id="step-dialog" mat-dialog-content class="content" [formGroup]="newStepForm">
+
+  <mat-form-field class="ng-invalid">
+    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()"
+                formControlName="type" required>
+      <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div *ngIf="newStepForm.value.type">
+  <mat-form-field class="">
+    <input id="step-name" matInput formControlName="name" placeholder="Name" required>
+  </mat-form-field>
+  <mat-form-field class="">
+    <input id="step-description" matInput formControlName="description" placeholder="Description">
+    <mat-hint>Optional</mat-hint>
+  </mat-form-field>
+  <div *ngIf="newStepForm.value.type != 'ingest'">
+    <label>Source Type: </label>
+    <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource" [ngModelOptions]="{standalone: true}">
+      <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
+      <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <mat-form-field *ngIf="selectedSource === 'collection' && newStepForm.value.type != 'ingest'">
+    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection">
+      <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'  && newStepForm.value.type != 'ingest'" >
+    <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity">
+      <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Advanced Settings
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-form-field *ngIf="newStepForm.value.type != 'ingestion'">
+          <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
+            <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select id="step-target-database" placeholder="Target Database" formControlName="targetDatabase">
+            <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+<div mat-dialog-actions class="bottom">
+  <button id="step-cancel-btn" mat-raised-button color="primary" (click)="onNoClick()">CANCEL</button>
+  <button id="step-save-btn" [disabled]="!newStepForm.valid" mat-raised-button color="primary" (click)="onSave()">SAVE
+  </button>
+</div>

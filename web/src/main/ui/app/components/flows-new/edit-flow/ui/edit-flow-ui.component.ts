@@ -19,7 +19,6 @@ export class EditFlowUiComponent {
   @Input() stepsArray: any;
   @Input() databases: any;
   @Input() entities: any;
-  @Input() collections: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -40,8 +39,9 @@ export class EditFlowUiComponent {
         title: 'New Step',
         databases: this.databases,
         entities: this.entities,
-        collections: this.collections,
-        step: null
+        // collections: this.collections,
+        step: null,
+        flow: this.flow
       }
     });
 

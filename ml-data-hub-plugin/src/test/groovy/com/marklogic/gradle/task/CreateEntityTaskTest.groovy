@@ -60,14 +60,12 @@ class CreateEntityTaskTest extends BaseTest {
         result.task(":hubCreateEntity").outcome == SUCCESS
         result.task(":hubDeployUserArtifacts").outcome == SUCCESS
 
-        File entityFile = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "my-new-entity.entity.json").toFile()
+        File entityFile = Paths.get(testProjectDir.root.toString(), "entities", "my-new-entity.entity.json").toFile()
         entityFile.isFile() == true
         String entityActual = entityFile.getText('UTF-8')
         String entityExpected = new File("src/test/resources/my-new-entity.entity.json").getText('UTF-8')
         assert(entityActual == entityExpected)
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity").toFile()
-        entityDir.isDirectory() == true
         getStagingDocCount("http://marklogic.com/entity-services/models") == 1
         getModulesDocCount() == modCount
     }

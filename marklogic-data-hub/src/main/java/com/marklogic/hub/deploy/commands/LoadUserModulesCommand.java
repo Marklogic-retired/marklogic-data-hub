@@ -30,10 +30,9 @@ import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
-import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
-import com.marklogic.hub.error.LegacyFlowsException;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -44,7 +43,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -162,11 +160,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     @Override
     public void execute(CommandContext context) {
-        List<String> legacyFlows = flowManager.getLegacyFlows();
-        if (legacyFlows.size() > 0) {
-            throw new LegacyFlowsException(legacyFlows);
-        }
-
         if (loadAllModules) {
             loadModulesFromStandardMlGradleLocations(context);
         }
