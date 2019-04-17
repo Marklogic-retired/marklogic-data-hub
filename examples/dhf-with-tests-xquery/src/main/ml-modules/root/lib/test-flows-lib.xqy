@@ -157,8 +157,8 @@ declare function get-root-filename(
   -PflowName=$FLOW \
   -PbatchSize=10 \
   -PthreadCount=4 \
-  -PsourceDB=pubLab-STAGING \
-  -PdestDB=pubLab-FINAL \
+  -PsourceDB=data-hub-STAGING \
+  -PdestDB=data-hub-FINAL \
   -PshowOptions=true \
   -PenvironmentName=$ENV \
   -Pdhf.inputCollections=$COLLS
@@ -208,8 +208,6 @@ declare function tf:exec-http(
 :
 : based on the following http commands extracted from the MarkLogic Access Log
 :
-GET /v1/resources/flow?rs:flow-name=HarmonizePublicationsAcrossSources&rs:flow-type=harmonize&rs:entity-name=Asset&database=pubLab-STAGING
-
 : @param url  url of the custom resource flow endpoint
 : @param entity  name of the entity
 : @param flow-name name of the flow
@@ -248,10 +246,6 @@ declare function tf:get-harmonisation-flow(
 :
 : based on the following http commands extracted from the MarkLogic Access Log
 :
-GET //com.marklogic.hub/endpoints/collector.xqy?job-id=1c7a7862-8183-4e44-b310-8c1eb5727105&entity-name=Asset&flow-name=HarmonizePublicationsAcrossSources
-&database=pubLab-STAGING
-&options=%7B%22dhf.inputCollections%22%3A%22%22%2C%22entity%22%3A%22Asset%22%2C%22flow%22%3A%22HarmonizePublicationsAcrossSources%22%2C%22flowType%22%3A%22harmonize%22%7D
-
 : @param url  url of the custom resource flow endpoint
 : @param job-id  job id
 : @param entity-name  name of the entity
@@ -296,10 +290,6 @@ declare function tf:run-collector(
 : based on the following http commands extracted from the MarkLogic Access Log
 : POST batches of URIs to a flow for processing
 :
-"POST /v1/resources/flow?rs:job-id=1c7a7862-8183-4e44-b310-8c1eb5727105&rs:flow-name=HarmonizePublicationsAcrossSources&rs:target-database=pubLab-FINAL&rs:options={%22dhf.inputCollections%22:%22%22,%22entity%22:%22Asset%22,%22flow%22:%22HarmonizePublicationsAcrossSources%22,%22flowType%22:%22harmonize%22}&rs:entity-name=Asset&rs:identifiers=/content/pmc/3339582.xml--&rs:identifiers=/content/pmc/3339586.xml--&database=pubLab-STAGING HTTP/1.1"
-
-"POST /v1/resources/flow?rs:job-id=1c7a7862-8183-4e44-b310-8c1eb5727105&rs:flow-name=HarmonizePublicationsAcrossSources&rs:target-database=pubLab-FINAL&rs:options={%22dhf.inputCollections%22:%22%22,%22entity%22:%22Asset%22,%22flow%22:%22HarmonizePublicationsAcrossSources%22,%22flowType%22:%22harmonize%22}&rs:entity-name=Asset&rs:identifiers=/content/pmc/3339580.xml--/content/medline/22582158.xml&rs:identifiers=--/content/medline/274718.xml&rs:identifiers=--/content/medline/274720.xml&rs:identifiers=--/content/medline/274721.xml&rs:identifiers=--/content/medline/274722.xml&rs:identifiers=--/content/medline/274723.xml&rs:identifiers=--/content/medline/274724.xml&rs:identifiers=/content/pmc/2291374.xml--&rs:identifiers=/content/pmc/2844510.xml--&rs:identifiers=/content/pmc/3339580.xml--/content/medline/22582158.xml&database=pubLab-STAGING HTTP/1.1"
-
 : @param url  url of the custom resource flow endpoint
 : @param ids  urls from staging of the documents to be written
 : @param job-id  job id
