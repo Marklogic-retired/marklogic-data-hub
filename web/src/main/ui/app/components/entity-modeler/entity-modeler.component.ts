@@ -117,9 +117,11 @@ export class EntityModelerComponent implements AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    if (!this.svgRect && this.svgRoot && this.svgRoot.nativeElement) {
-      const svg = this.svgRoot.nativeElement;
-      this.svgRect = new Rect(svg.getBoundingClientRect());
+    if (!this.svgRect && this.svgRoot && this.svgRoot.nativeElement && this.entitiesLoaded) {
+      setTimeout(() => {
+        const svg = this.svgRoot.nativeElement;
+        this.svgRect = new Rect(svg.getBoundingClientRect());
+      }, 100);
     }
   }
 
