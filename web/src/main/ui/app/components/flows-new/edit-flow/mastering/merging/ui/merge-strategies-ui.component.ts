@@ -77,7 +77,7 @@ export class MergeStrategiesUiComponent {
 
   openDefaultMergeStartegyPopup(strategy, index): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px',
+      width: '390px',
       data: {
         title: 'Update Default Merge Strategy',
         confirmationMessage: `A default merge strategy already exists. Do you want to replace it?`
