@@ -20,9 +20,15 @@
           mat-raised-button
           color="primary"
           (click)="this.stopClicked()">STOP</button>
-        <a id="latest-job-status" *ngIf="flow.latestJob" href="#">{{flow.latestJob.status}}</a>
-        <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">Started: {{flow.latestJob.startTime}}</div>
-        <a id="view-jobs-btn" href="#" *ngIf="flow.latestJob" class="text item">View Jobs</a>
+        <div id="latest-job-info">
+          <a id="latest-job-status" class="capitalize" *ngIf="flow.latestJob" [routerLink]="['/jobs', flow.latestJob.id]">
+          {{flow.latestJob.status}}</a>
+          <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">
+            <span *ngIf="flow.latestJob.status === 'running'">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
+            <span *ngIf="flow.latestJob.status !== 'running'">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
+          </div>
+        </div>
+        <a id="view-jobs-btn" *ngIf="flow.latestJob" class="text item" [routerLink]="['/jobs']" [queryParams]="{flowName:flow.name}">View Jobs</a>
         <div class="icon-container">
           <mat-icon id="flow-menu" class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
           <mat-icon id="flow-expand-collapse-btn" class="flow-menu-icon item" (click)="this.toggleBody()">{{ this.showBody ? 'expand_less' : 'expand_more' }}</mat-icon>

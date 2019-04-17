@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
-import { Router } from "@angular/router";
+import {Router, ActivatedRoute, Params} from '@angular/router';
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../common";
 import {OutputDialogComponent} from "./output-dialog.component";
@@ -22,6 +22,7 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   @Input() jobs: Array<any> = [];
 
   dataSource: MatTableDataSource<any>;
+  enteredFlowName: string = '';
 
   @ViewChild(MatTable) table: MatTable<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -29,7 +30,8 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
 
   constructor(
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ){}
 
   ngOnInit() {
@@ -43,6 +45,10 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
         default: return item[property];
       }
     };
+    if (this.activatedRoute.snapshot.queryParams['flowName']) {
+      this.enteredFlowName = this.activatedRoute.snapshot.queryParams['flowName'];
+      this.applyFilter('flow', this.activatedRoute.snapshot.queryParams['flowName']);
+    }
   }
 
   ngAfterViewInit() {

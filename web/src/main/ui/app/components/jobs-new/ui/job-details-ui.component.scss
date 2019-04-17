@@ -284,6 +284,30 @@ button {
   cursor: pointer;
 }
 
-.capitalize {
+.capitalize:first-letter {
    text-transform: capitalize;
+}
+
+/deep/ #step-committed-sort-btn.mat-header-cell,
+/deep/ #step-errors-sort-btn.mat-header-cell {
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+/deep/ .mat-cell.step-committed,
+/deep/ .mat-cell.step-errors {
+  display:flex !important;
+  justify-content:flex-end !important;
+  padding-right: 20px;
+}
+
+/deep/ .mat-column-actions.mat-header-cell {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/deep/ .mat-cell.step-actions {
+  display:flex !important;
+  justify-content: center !important;
+  padding-right: 24px;
 }

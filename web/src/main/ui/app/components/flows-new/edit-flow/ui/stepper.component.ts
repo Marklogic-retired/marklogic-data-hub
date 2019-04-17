@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterContentChecked } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-stepper',
@@ -73,5 +73,8 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   deleteFlowClicked(): void {
     this.deleteFlow.emit();
+  }
+  friendlyDate(dt): string {
+    return (dt) ? moment(dt).fromNow() : '';
   }
 }
