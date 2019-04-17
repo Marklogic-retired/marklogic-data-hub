@@ -14,8 +14,9 @@ section, header, footer, main, article, nav, aside { position: relative; }
 
 article {
   margin-top: 20px;
-  font-family: Verdana, Geneva, sans-serif;
-  line-height: 1.6;
+  font-family: Calibri, Verdana, Geneva, sans-serif;
+  font-size: 12pt;
+  line-height: 150%;
 }
 
 main {
@@ -553,20 +554,15 @@ h3 {
 
 .side-nav {
   padding: 0;
-  font-size: 85%;
+  font-size: 80%;
 }
 .tut-nav {
   padding: 0;
   margin: 0;
-  font-size: 85%;
-  line-height: 0.85;
+  font-size: 80%;
+  line-height: 0.80;
 }
-.tut-nav {
-  padding: 0;
-  margin: 0;
-  font-size: 85%;
-  line-height: 0.85;
-}
+
 
 .list-group-item.active, .list-group-item.active:hover,
 .list-group-item.active:focus {

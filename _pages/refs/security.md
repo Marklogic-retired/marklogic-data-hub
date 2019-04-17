@@ -7,46 +7,103 @@ redirect_from: "/docs/security/"
 
 # Security
 
-1. [Privileges, users, roles, permissions](#overview)
-1. [Runtimes](#runtimes)
-1. [Roles](#roles)
-1. [Users](#users)
-
-
-## Overview
-
-MarkLogic has a three-part security model, which is described in-depth in the
+MarkLogic implements a role-based security model, which is described in-depth in the
 [Security Guide](https://docs.marklogic.com/guide/security)
 
-Privileges are named capabilities.  When a user is or is not allowed to DO something with MarkLogic server, a privilege is involved.
+In a role-based security model, roles are used to define a set of permissions or privileges, which can also be inherited from other roles. For example, a role might allow reading but not modifying specific information in the database.
 
-Roles are structures for grouping security concerns.  A role contains a set of privileges that the role allows, and also may contain names of other roles from which it inherits sets of privileges.  Roles also have "default permissions."  A document, whose write is secured by a role, will be written with this set of default permissions.
+A user who is assigned one or more roles is granted the union of the permissions in those roles.
 
-Users correspond to people or to accounts that access MarkLogic.  They have credentials, and a set of roles and/or privileges that they possess.  Therefore when a user logs in, they can or cannot accomplish certain tasks within the system, they have access to some documents and not others, and when they write documents, certain default permissions are ascribed to that document.
+Pieces of information in a record can also be restricted further. For example, access to personally identifiable information (PII), such as addresses and credit card numbers, can be more restricted than access to other information in the same record. PII data is visible only to users with the `pii-reader` role. For more information on managing PII in DHF, see [Managing Personally Identifiable Information]({{site.baseurl}}/govern/pii/).
+
+You might use DHF in two typical environments:
+
+  - During development
+
+      - Typically on a local machine.
+      - Frequent iterations of development (creating and modifying components, such as flows, modules, mappings), testing, and re-deploying.
+      - The user account requires more privileges than operators and end-users.
+
+  - In production
+
+      - Typically on a production environment.
+      - All code and settings are already deployed to the production server.
+      - The user account only needs to be able to write documents and to evaluate data across databases. It does NOT need to deploy modules or reconfigure MarkLogic.
 
 
-## Runtimes
+## Security Roles and Users
 
-There are two very distinct environments in which DHF might run.  One is that of developing flows, when you need to modify mappings and flows, test index settings, and re-deploy the hub frequently.  This scenario requires many privileges that normally would not be in the hands of an end user.
-
-The other environment for DHF code is a production or production-like setting.  In this setting, all code to run DHF will have been deployed to a server.  There may be a Java application triggering flows, but such an environment is just that -- a restricted user executes code that runs flows.  This user certainly has permission to write documents, and even to evaluate across databases, but she cannot deploy modules or reconfigure MarkLogic.
-
-
-## Roles
-
-For the first scenario, DHF provides an administrative role.  By default the name of this role is "hub-admin-role".  When the data hub is initially installed, the project's properties are scanned for the `mlHubAdminUserRole` property, and if present, that value overrides "hub-admin-role".  Use "hub-admin-role" for development purposes.  It does not have administrative access to the entire MarkLogic server, but has enough to deploy and undeploy code from a data hub.
-
-For the second scenario, DHF provides a role to run flows.  Its default name is "data-hub-role"  An administrator can set up a system such that this is the role used for data ingestion and for executing data hub flows.
+<!-- Tab links -->
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'DHF430')" id="defaultOpen">DHF 4.3.0 and later</button>
+  <button class="tablinks" onclick="openTab(event, 'DHF42x')">DHF 4.2.2 and earlier</button>
+</div>
 
 
-## Users
+<!-- Tab content -->
 
-Two users are also installed along with DHF.  Similar to roles, the names of these users are configurable at hub install time in gradle.properties.  By default the two users are "hub-admin-user" and "data-hub-user".
+<div id="DHF430" class="tabcontent" markdown="1">
 
-The "data-hub-user" ships with the "data-hub-role", under whatever name was configured at runtime.
+### In DHF 4.3.0 and Later Versions
 
-So that the hub admin can run flows and administer a DHF, it ships with both the "hub-admin-role" AND the "data-hub-role".  A production security model may choose to separate these concerns.
+DHF 4.3.0 and later versions provide the following default roles in your project:
 
-When you configure your application to access DHF, use these two users to develop and test flows, and then to test running them in a production environment.
+  | Role Name             | Role Description | Auto-Generated User | When used |
+  |-----------------------|---|---|---|
+  | `data-hub-admin-role` | &#8226; Installs, uninstalls, and upgrades DHF.<br/> &#8226; Creates DHF roles based on existing ones.<br/> &#8226; Assigns roles to users.<br/> &#8226; Manages MarkLogic Server resources and performs tasks related to databases, indexes, and configuration of the MarkLogic Server.<br/> &#8226; Must be assigned as part of the first deployment (i.e., bootstrapping role).<br/> &#8226; Does not have administrative access to the entire MarkLogic server. | <!-- `data-hub-admin-user` --> For security reasons, DHF does not automatically create a user with this role and does not assign this role to an existing user. You must do so manually, and then update `mlUsername` and `mlPassword` in `gradle.properties`. | During setup |
+  | `flow-developer-role` | &#8226; Creates and updates flows and modules.<br/> &#8226; Deploys flows, modules, and security configurations (including PII).<br/> &#8226; Configures the indexes and TDEs.<br/> (Same role as in Data Hub Service.) | `flow-developer` | During development |
+  | `flow-operator-role`  | &#8226; Runs flows.<br/> &#8226; Monitors activity in the jobs logs.<br/> (Same role as in Data Hub Service.) | `flow-operator` | In a production environment |
+  {:.table-b1gray}
 
-A third user account is required if you are bootstrapping or installing a DHF from scratch.  Whomever installs DHF must have the privilege to create the DHF roles and users, so a special property in gradle.properties, `mlSecurityUsername` and `mlSecurityPasswrod` is used for the very first step of installation, during which the two roles and users are created.  Subsequent steps in the deployment process use `mlUsername` or `mlManageUsername`.
+The following security settings must be in your `gradle.properties` file:
+  ```
+  # You must update this username and password manually.
+  # The account used for mlUsername must be assigned the Data Hub Admin role.
+  mlUsername=data-hub-admin-user
+  mlPassword=your-data-hub-admin-password
+  ...
+  # The flow-developer user is automatically generated by DHF.
+  mlFlowDeveloperRole=flow-developer-role
+  mlFlowDeveloperUserName=flow-developer
+  mlFlowDeveloperUserPassword=your-flow-developer-password
+  ...
+  # The flow-operator user is automatically generated by DHF.
+  mlFlowOperatorRole=flow-operator-role
+  mlFlowOperatorUserName=flow-operator
+  mlFlowOperatorUserPassword=your-flow-operator-password
+  ```
+
+</div>
+
+
+<div id="DHF42x" class="tabcontent" markdown="1">
+
+### In DHF 4.2.2 and Earlier Versions
+
+DHF 4.2.2 and earlier versions provide the following default roles in your project:
+
+  | Default names | Description | When used |
+  |---|---|---|
+  | `hub-admin-role` | Does not have administrative access to the entire MarkLogic server, but has enough to deploy and undeploy code from a data hub. NOTE: When the data hub is initially installed, this role is overridden by the value of the `mlHubAdminUserRole` property in `gradle.properties`, if set. | During development |
+  | `data-hub-role` | Can be used for data ingestion and for flow execution in the data hub. | In a production environment |
+  {:.table-b1gray}
+
+The following default users are also provided:
+
+  | Default names | Default assigned roles | Purpose |
+  |---|---|---|
+  | `hub-admin-user` | `hub-admin-role` and `data-hub-role` | To administer a data hub and to run flows. |
+  | `data-hub-user` | `data-hub-role` | To run flows. |
+  {:.table-b1gray}
+
+The `hub-admin-user` is assigned both roles by default because that user needs to run flows and administer a data hub; however, you can remove the `data-hub-role` in your production environment for improved security.
+
+{% include note.html type="NOTE" content="You can customize the names of roles and users in the `gradle.properties` file during DHF installation." %}
+<!-- Exactly when? -->
+
+
+When installing DHF, you need a MarkLogic Server security admin account with sufficient privileges to create these roles and users. You can specify the username and password of this security admin account in the `mlSecurityUsername` and `mlSecurityPassword` properties in the `gradle.properties` file.
+
+Subsequent steps in the deployment process use the account you specify in `mlUsername` or `mlManageUsername`.
+
+</div>

@@ -59,12 +59,11 @@ Analytics REST: 8011
 
   | DHF                 | DHS                 |
   |:-------------------:|:-------------------:|
-  | `data-hub-role`     |                     |
-  | `hub-admin-role`    |                     |
+  | `data-hub-admin`    |                     |
   |                     | `endpointDeveloper` |
   |                     | `endpointUser`      |
-  |                     | `flowDeveloper`     |
-  |                     | `flowOperator`      |
+  | `flow-developer`    | `flowDeveloper`     |
+  | `flow-operator`     | `flowOperator`      |
   {:.table-b1gray}
 
 - Database names, if customized in the DHF environment
@@ -98,7 +97,7 @@ If your endpoints are publicly available, you can use any machine that is set up
 - [MarkLogic Content Pump](https://docs.marklogic.com/guide/mlcp/install)
 
 
-## Steps
+## Procedure
 
 1. Copy your entire DHF project directory to the machine from which you will access the endpoints, and perform the following steps on that machine.
     {% include note-in-list.html type="IMPORTANT" content="If your endpoints are private, this machine must be a bastion host." %}
@@ -176,6 +175,7 @@ If your endpoints are publicly available, you can use any machine that is set up
    {% include ostabs-run-gradle.html grtask="hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize -PenvironmentName=DHS" %}
 
    {% include conrefs/conref-note-gradle-double-quotes.md %}
+
 1. Verify that your documents are in the databases.
 
     a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
