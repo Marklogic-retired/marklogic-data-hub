@@ -25,7 +25,7 @@ The notes and steps in this tab are for the following upgrade paths:
 
 ### Procedure
 
-1. {% include_relative conref-build-gradle-ver43x.md %}
+1. {% include_relative conref-build-gradle-ver.md ver=site.data.global.hub_version_43x %}
 
 1. {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
 
@@ -48,7 +48,7 @@ The notes and steps in this tab are for the following upgrade paths:
     a. Add the following properties and replace the values accordingly.
 
       ```
-      mlDHFVersion=4.3.0
+      mlDHFVersion={{ site.data.global.hub_version_43x }}
       ...
       mlFlowOperatorRole=flow-operator-role
       mlFlowOperatorUserName=flow-operator

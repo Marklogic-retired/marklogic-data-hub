@@ -35,18 +35,18 @@ You might use DHF in two typical environments:
 
 <!-- Tab links -->
 <div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'DHF430')" id="defaultOpen">DHF 4.3.0 and later</button>
-  <button class="tablinks" onclick="openTab(event, 'DHF42x')">DHF 4.2.2 and earlier</button>
+  <button class="tablinks" onclick="openTab(event, 'DHF43x')" id="defaultOpen">DHF 4.3 and later</button>
+  <button class="tablinks" onclick="openTab(event, 'DHF42x')">DHF 4.2 and earlier</button>
 </div>
 
 
 <!-- Tab content -->
 
-<div id="DHF430" class="tabcontent" markdown="1">
+<div id="DHF43x" class="tabcontent" markdown="1">
 
-### In DHF 4.3.0 and Later Versions
+### In DHF 4.3 and Later Versions
 
-DHF 4.3.0 and later versions provide the following default roles in your project:
+DHF 4.3 and later versions provide the following default roles in your project:
 
   | Role Name             | Role Description | Auto-Generated User | When used |
   |-----------------------|---|---|---|
@@ -78,9 +78,9 @@ The following security settings must be in your `gradle.properties` file:
 
 <div id="DHF42x" class="tabcontent" markdown="1">
 
-### In DHF 4.2.2 and Earlier Versions
+### In DHF 4.2 and Earlier Versions
 
-DHF 4.2.2 and earlier versions provide the following default roles in your project:
+DHF 4.2 and earlier versions provide the following default roles in your project:
 
   | Default names | Description | When used |
   |---|---|---|
