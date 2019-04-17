@@ -239,6 +239,11 @@ button {
    text-transform: capitalize;
 }
 
+/deep/ .status-option .mat-option-text:first-letter,
+/deep/ #filter-status .mat-select-value:first-letter {
+   text-transform: capitalize !important;
+}
+
 /deep/ #job-committed-sort-btn.mat-header-cell,
 /deep/ #job-errors-sort-btn.mat-header-cell {
   display: flex !important;
