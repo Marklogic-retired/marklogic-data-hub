@@ -124,7 +124,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
                 DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                meta.getCollections().add("http://marklogic.com/data-hub/step");
+                meta.getCollections().add("http://marklogic.com/data-hub/step-definition");
 
                 if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
                     stagingStepDocumentWriteSet.add("/steps/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
