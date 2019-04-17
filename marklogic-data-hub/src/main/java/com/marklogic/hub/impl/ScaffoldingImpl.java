@@ -23,7 +23,6 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -71,15 +70,6 @@ public class ScaffoldingImpl implements Scaffolding {
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
         return flowDir;
-    }
-
-    @Override public void createLegacyEntity(String entityName) {
-        Path entityDir = project.getEntityDir(entityName);
-        entityDir.toFile().mkdirs();
-        if(entityDir.toFile().exists()){
-            String fileContents = getFileContent("scaffolding/Entity.json", entityName);
-            writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
-        }
     }
 
     @Override public void createEntity(String entityName) {
