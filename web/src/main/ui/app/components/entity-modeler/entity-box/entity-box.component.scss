@@ -191,10 +191,6 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
   }
 }
 
-/deep/ app-resizable {
-  min-width: $entity-model-min-width;
-}
-
 /* Fix bug showing double tooltip arrows */
 /deep/ .tooltip .arrow::before {
   visibility: hidden;
