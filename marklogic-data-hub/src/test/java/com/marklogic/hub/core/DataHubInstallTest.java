@@ -62,14 +62,14 @@ public class DataHubInstallTest extends HubTestBase {
     //should be removed after DHFPROD-1263 is fixed.
 	private Map<String, Boolean> runPreInstallCheck(){
 		Map<String, Boolean> resp = new HashMap<>();
-		try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.STAGING))) {
+		try (Socket ignored = new Socket(getDataHubAdminConfig().getHost(), getDataHubAdminConfig().getPort(DatabaseKind.STAGING))) {
 	    	resp.put("stagingPortInUse", true);
 	    }
 	    catch (IOException ignored) {
 	    	resp.put("stagingPortInUse", false);
 	    }
 
-	    try (Socket ignored = new Socket(getHubAdminConfig().getHost(), getHubAdminConfig().getPort(DatabaseKind.FINAL))) {
+	    try (Socket ignored = new Socket(getDataHubAdminConfig().getHost(), getDataHubAdminConfig().getPort(DatabaseKind.FINAL))) {
 	    	resp.put("finalPortInUse", true);
 	    }
 	    catch (IOException ignored) {
@@ -86,7 +86,7 @@ public class DataHubInstallTest extends HubTestBase {
 
     @Test
     public void testInstallHubModules() throws IOException {
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         assertTrue(getDataHub().isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
@@ -101,12 +101,12 @@ public class DataHubInstallTest extends HubTestBase {
     public void getHubModulesVersion() throws IOException {
         String version = getHubFlowRunnerConfig().getJarVersion();
         assertEquals(version, versions.getHubVersion());
-        getHubAdminConfig();
+        getDataHubAdminConfig();
     }
 
     @Test
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
-        Assumptions.assumeFalse(getHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         File srcDir = new File(path);
@@ -115,7 +115,7 @@ public class DataHubInstallTest extends HubTestBase {
         createProjectDir(path);
         FileUtils.cleanDirectory(projectDir);
         FileUtils.copyDirectory(srcDir, projectDir);
-        HubConfig hubConfig = getHubAdminConfig();
+        HubConfig hubConfig = getDataHubAdminConfig();
 
         int totalCount = getDocCount(HubConfig.DEFAULT_MODULES_DB_NAME, null);
         installUserModules(hubConfig, false);
@@ -124,7 +124,7 @@ public class DataHubInstallTest extends HubTestBase {
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
             getModulesFile("/entities/test-entity/harmonize/final/collector.xqy"));
 
-        /* this test requires a privilege we don't want to give to data-hub-role
+        /* this test requires a privilege we don't want to give to flow-operator-role
           TODO implement admin testing for specific assertions.
         EvalResultIterator resultItr = runInModules(
             "xquery version \"1.0-ml\";\n" +
@@ -141,7 +141,7 @@ public class DataHubInstallTest extends HubTestBase {
                 "    order by $x ascending" +
                 "    return $x, \",\")");
         EvalResult res = resultItr.next();
-        assertEquals("data-hub-role,rest-admin,rest-reader,rest-writer", res.getString());
+        assertEquals("flow-operator-role,rest-admin,rest-reader,rest-writer", res.getString());
          */
 
         assertEquals(
@@ -246,7 +246,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        HubConfig hubConfig = getHubAdminConfig(path);
+        HubConfig hubConfig = getDataHubAdminConfig(path);
         dataHub.clearUserModules();
 
 

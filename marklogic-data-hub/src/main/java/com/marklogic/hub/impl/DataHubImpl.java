@@ -67,6 +67,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -838,6 +839,11 @@ public class DataHubImpl implements DataHub {
              * But since it requires 'hubConfig' and 'versions', for now 
              * leaving it here 
              */
+
+            File oldGradlePropsFile = new File(Paths.get(project.getProjectDirString(),"gradle.properties.old").toString());
+            File gradlePropsFile = new File(Paths.get(project.getProjectDirString(),"gradle.properties").toString());
+            File genGradlePropsFile = new File(Paths.get(project.getProjectDirString(), "gradle-GENERATED.properties").toString());
+
             if(alreadyInitialized) {
                 // The version provided in "mlDHFVersion" property in gradle.properties.
                 String gradleVersion = versions.getDHFVersion();
@@ -859,10 +865,17 @@ public class DataHubImpl implements DataHub {
                 text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
                 text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
                 FileUtils.writeStringToFile(buildGradle, text);
-                hubConfig.getHubSecurityDir().resolve("roles").resolve("data-hub-user.json").toFile().delete();
+
             }
+
+            // Back up the gradle.properties to .old so hubUpdate will generate new gradle.properties to compare against
+            gradlePropsFile.renameTo(oldGradlePropsFile);
             
             hubConfig.initHubProject();
+
+            //Renaming gradle.properties to gradle-GENERATED.properties which is the properties file generated after hubUpdate
+            gradlePropsFile.renameTo(genGradlePropsFile);
+            oldGradlePropsFile.renameTo(gradlePropsFile);
             
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();

@@ -1,8 +1,10 @@
 {
-  "role-name": "%%mlHubAdminRole%%",
-  "description": "A role can deploy modules to a data hub instance.",
+  "role-name": "%%mlFlowOperatorRole%%",
+  "description": "A role that allows the user to read and write from MarkLogic Data Hub databases",
   "role": [
-    "rest-admin","manage-admin", "tde-admin"
+    "rest-reader",
+    "rest-extension-user",
+    "rest-writer"
   ],
   "privilege": [
     {
@@ -71,13 +73,18 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "xdmp:value",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-value",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "unprotected-collections",
       "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
       "kind": "execute"
     },
     {
-      "privilege-name": "any-uri",
-      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "privilege-name": "unprotected-uri",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
       "kind": "execute"
     }
   ]

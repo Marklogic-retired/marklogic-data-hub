@@ -50,7 +50,7 @@ storiesOf('Components|Trace Viewer', module)
       trace: object('trace', {
         traceId: '6995239382254954168',
         format: 'xml',
-        identifier: 'marklogic-data-hub/examples/healthcare/src/main/hub-internal-config/security/roles/hub-admin-role.json-0-4',
+        identifier: 'marklogic-data-hub/examples/healthcare/src/main/hub-internal-config/security/roles/data-hub-admin-role.json-0-4',
         flowType: 'harmonize',
         created: '2018-11-13T15:13:50.29805-08:00',
         steps: [

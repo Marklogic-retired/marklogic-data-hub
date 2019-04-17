@@ -106,6 +106,8 @@ bootRun {
     enabled = false
 }
 
+group = 'com.marklogic'
+
 publishing {
     publications {
         main(MavenPublication) {

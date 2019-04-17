@@ -44,7 +44,7 @@ public class Installer extends HubTestBase {
 
 	        }
         }
-        if(getHubAdminConfig().getIsProvisionedEnvironment()) {
+        if(getDataHubAdminConfig().getIsProvisionedEnvironment()) {
             installHubModules();
         }
     }

@@ -78,7 +78,7 @@
     <span *ngIf="!isValid" class="alert-text">Property names are required, must be unique and whitespaces are not allowed</span>
   </div>
   <div class="mdl-dialog__actions">
-    <button mdl-button mdl-button-type="raised" mdl-colored="primary" [disabled]="!isValid" (click)="saveEntity()">Save</button>
+    <button mdl-button mdl-button-type="raised" mdl-colored="primary" [disabled]="!isValid || !entity.info.title" (click)="saveEntity()">Save</button>
     <button mdl-button mdl-button-type="raised" (click)="cancel()">Cancel</button>
   </div>
 </div>

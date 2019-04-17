@@ -67,7 +67,7 @@ public class FlowManagerTest extends HubTestBase {
     @BeforeEach
     public void setup() throws IOException {
         basicSetup();
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         enableDebugging();
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
@@ -127,7 +127,7 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getHubAdminConfig().getHubRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getDataHubAdminConfig().getFlowDeveloperRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -136,7 +136,7 @@ public class FlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getHubAdminConfig().getHubRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getDataHubAdminConfig().getFlowDeveloperRoleName(), READ, UPDATE, EXECUTE);
         installFinalDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installFinalDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -299,7 +299,7 @@ public class FlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -326,7 +326,7 @@ public class FlowManagerTest extends HubTestBase {
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -360,7 +360,7 @@ public class FlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -392,7 +392,7 @@ public class FlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );

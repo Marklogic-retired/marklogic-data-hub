@@ -40,7 +40,7 @@ public class HubSettings {
 
         settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
 
-        settings.username = config.getHubUserName();
+        settings.username = config.getFlowOperatorUserName();
         settings.projectDir = config.getHubProject().getProjectDirString();
         return settings;
     }
@@ -303,7 +303,7 @@ public class HubSettings {
     @Value("${mlModulesDbName}")
     String modulesDbName = null;
 
-    @Value("${mlHubUserName}")
+    @Value("${mlFlowOperatorUserName}")
     String username = null;
 
     String projectDir = null;

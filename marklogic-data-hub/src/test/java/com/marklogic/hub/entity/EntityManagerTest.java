@@ -93,7 +93,7 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
+        String timestampFile = getDataHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
         HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
         return propertiesModuleManager;
     }
@@ -186,7 +186,7 @@ public class EntityManagerTest extends HubTestBase {
         getHubFlowRunnerConfig();
         HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
         //Change to admin config
-        getHubAdminConfig();
+        getDataHubAdminConfig();
         //Search options files not written to modules db but created.
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
@@ -199,7 +199,7 @@ public class EntityManagerTest extends HubTestBase {
     public void testSaveDbIndexes() throws IOException {
         installEntities();
 
-        Path dir = getHubAdminConfig().getEntityDatabaseDir();
+        Path dir = getDataHubAdminConfig().getEntityDatabaseDir();
 
         assertFalse(dir.resolve("final-database.json").toFile().exists());
         assertFalse(dir.resolve("staging-database.json").toFile().exists());
@@ -238,14 +238,14 @@ public class EntityManagerTest extends HubTestBase {
         installEntities();
 
         ObjectMapper mapper = new ObjectMapper();
-        Path dir = getHubAdminConfig().getHubEntitiesDir();
+        Path dir = getDataHubAdminConfig().getHubEntitiesDir();
 
         // deploy is separate
         entityManager.savePii();
 
-        File protectedPathConfig = getHubAdminConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File secondProtectedPathConfig = getHubAdminConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File queryRolesetsConfig = getHubAdminConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
+        File protectedPathConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File secondProtectedPathConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
+        File queryRolesetsConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
 
                     // assert that ELS configuation is in project
         JsonNode protectedPaths = mapper.readTree(protectedPathConfig);

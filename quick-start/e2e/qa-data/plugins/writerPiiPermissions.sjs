@@ -8,7 +8,7 @@
  * @return - nothing
  */
 function write(id, envelope, options) {
-  let perms = [xdmp.permission("hub-admin-role", "read"), xdmp.permission("data-hub-role", "read")];
+  let perms = [xdmp.permission("data-hub-admin-role", "read"), xdmp.permission("flow-operator-role", "read")];
   xdmp.documentInsert(id, envelope, perms, options.entity);
 }
 

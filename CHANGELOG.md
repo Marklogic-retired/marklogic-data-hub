@@ -1,15 +1,13 @@
 # Change Log
 
-# [v4.2.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.1) (2019-02-27)
-
+# [v4.3.0](https://github.com/marklogic/marklogic-data-hub/tree/v4.3.0) (2019-04-16)
 
 **Fixed bugs:**
-- Unable to delete harmonize flow with the "trash" icon [\#1877](https://github.com/marklogic/marklogic-data-hub/issues/1877)
-- QuickStart - mlcp transform_param shows the wrong entity when defining input flow [\#1858](https://github.com/marklogic/marklogic-data-hub/issues/1858)
-- flow name no longer stored for errors [\#1845](https://github.com/marklogic/marklogic-data-hub/issues/1845)
+- [DHFPROD-1417] - Make the title field required on Entity editor 
+- Enable namespace support in dhf [\#1580](https://github.com/marklogic/marklogic-data-hub/issues/1580)
 
 **Improvement**
--  [DHFPROD-1819] - Generate ES-created entity schema
+-  [DHFPROD-1417] - Adopt 3 new roles (Flow Dev, Flow Op, Data Hub Admin) to align with DHS roles
 
 
 # [v4.2.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.2) (2019-03-13)
