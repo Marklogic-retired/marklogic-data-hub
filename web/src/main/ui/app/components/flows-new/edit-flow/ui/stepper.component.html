@@ -39,7 +39,7 @@
             (click)="stepClicked(i)"
             cdkDrag
             >
-              <div class="bar {{stepsArray[i].type}}"></div>
+              <div class="bar {{stepsArray[i].stepDefinitionType.toLowerCase()}}"></div>
               <div *ngIf="!flow.latestJob || flow.latestJob.status !== 'running'" class="step-reorder-handle move-icon" cdkDragHandle>
                 <svg width="18px" fill="white" viewBox="0 0 24 24">
                   <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
@@ -47,7 +47,7 @@
                 </svg>
               </div>
               <div class="header">
-                <div class="step-type step-title {{stepsArray[i].type}}">{{stepsArray[i].type}}</div>
+                <div class="step-type step-title {{stepsArray[i].stepDefinitionType.toLowerCase()}}">{{stepsArray[i].stepDefinitionType}}</div>
                 <div class="step-icons header-icons">
                   <mat-icon *ngIf="stepsArray[i].isValid" class="step-valid check-icon">check_circle</mat-icon>
                   <mat-icon *ngIf="!stepsArray[i].isValid"  class="step-invalid grey-icon">lens</mat-icon>
@@ -55,27 +55,27 @@
                 </div>            
               </div>
               <h3 class="step-name">{{step.label}}</h3>
-              <div class="summary" *ngIf="stepsArray[i].type === 'ingest'">
+              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
                 <div class="summary-label">Source</div>
-                <div class="summary-content" *ngIf="stepsArray[i].options.input_file_path">
-                  {{stepsArray[i].options.input_file_path | truncate : -23}}
+                <div class="summary-content" *ngIf="stepsArray[i].fileLocations.inputFilePath">
+                  {{stepsArray[i].fileLocations.inputFilePath | truncate : -23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="stepsArray[i].type === 'mapping'">
+              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.MAPPING">
                 <div class="summary-label">Target Entity</div>
                 <div class="summary-content" *ngIf="stepsArray[i].options.targetEntity">
                   {{stepsArray[i].options.targetEntity | truncate : 23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="stepsArray[i].type === 'mastering'">
+              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.MASTERING">
                 <div class="summary-label">Target Entity</div>
                 <div class="summary-content" *ngIf="stepsArray[i].options.targetEntity">
                   {{stepsArray[i].options.targetEntity | truncate : 23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="stepsArray[i].type === 'custom'">
+              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.CUSTOM">
                 <div class="summary-label">Module</div>
-                <div *ngIf="stepsArray[i].options.customModuleUri"  class="summary-content">{{stepsArray[i].options.customModuleUri | truncate : -23}}</div>
+                <div *ngIf="stepsArray[i].modulePath"  class="summary-content">{{stepsArray[i].modulePath | truncate : -23}}</div>
               </div>
 
               <mat-progress-bar
