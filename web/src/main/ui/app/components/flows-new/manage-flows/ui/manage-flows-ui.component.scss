@@ -128,7 +128,7 @@ button {
     align-items: center;
   }
 
-  /* .mat-column-name {
+  .mat-column-name {
     flex: 0 1 240px;
   }
 
@@ -137,11 +137,11 @@ button {
   }
 
   .mat-column-status {
-    flex: 0 1 120px;
+    flex: 0 1 150px;
   }
 
   .mat-column-jobs {
-    flex: 0 1 100px;
+    flex: 0 1 80px;
   }
 
   .mat-column-lastJobFinished {
@@ -149,12 +149,12 @@ button {
   }
 
   .mat-column-docsCommitted {
-    flex: 0 1 120px;
+    flex: 0 1 110px;
   }
 
   .mat-column-docsFailed {
-    flex: 0 1 120px;
-  } */
+    flex: 0 1 110px;
+  }
 
   .mat-column-actions {
     flex: 0 1 150px;
@@ -210,6 +210,37 @@ button {
   cursor: pointer;
 }
 
-.capitalize {
+.capitalize:first-letter {
    text-transform: capitalize;
+}
+
+/deep/ #flow-last-job-finished-sort-btn.mat-header-cell,
+/deep/ .mat-cell.flow-last-job-finished {
+  padding-left: 30px;
+}
+
+/deep/ #flow-jobs-sort-btn.mat-header-cell,
+/deep/ #flow-docs-committed-sort-btn.mat-header-cell,
+/deep/ #flow-docs-failed-sort-btn.mat-header-cell {
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+/deep/ .mat-cell.flow-jobs,
+/deep/ .mat-cell.flow-docs-committed,
+/deep/ .mat-cell.flow-docs-failed {
+  display:flex !important;
+  justify-content:flex-end !important;
+  padding-right: 20px;
+}
+
+/deep/ .mat-column-actions.mat-header-cell {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/deep/ .mat-cell.mat-column-actions {
+  display:flex !important;
+  justify-content: center !important;
+  padding-right: 24px;
 }

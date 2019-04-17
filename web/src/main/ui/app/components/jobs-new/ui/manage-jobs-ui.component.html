@@ -15,7 +15,7 @@
 
           <span class="filter-label">Filters</span>
           <mat-form-field>
-            <mat-select id="filter-flow-name" value="" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)">
+            <mat-select id="filter-flow-name" value="" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)" [value]="enteredFlowName">
               <mat-option class="name-option" [id]="'filter-name-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('flow')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -78,10 +78,10 @@
         <ng-container matColumnDef="jobStatus">
           <mat-header-cell id="job-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="job-status" *matCellDef="let job">
-            <span *ngIf="job.jobStatus !== 'failed'">
+            <span class="capitalize" *ngIf="job.jobStatus !== 'failed'">
               {{job.jobStatus}}
             </span>
-            <span *ngIf="job.jobStatus === 'failed'">
+            <span class="capitalize" *ngIf="job.jobStatus === 'failed'">
               <a class="status-btn" (click)="openStatusDialog(job)">
                 {{job.jobStatus}}
               </a>
@@ -93,7 +93,9 @@
         <ng-container matColumnDef="timeEnded">
           <mat-header-cell id="job-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
           <mat-cell class="job-ended" *matCellDef="let job">
-            {{friendlyDate(job.timeEnded)}}
+            <span class="capitalize">
+              {{friendlyDate(job.timeEnded)}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -101,7 +103,9 @@
         <ng-container matColumnDef="duration">
           <mat-header-cell id="job-duration-sort-btn" *matHeaderCellDef mat-sort-header>Duration</mat-header-cell>
           <mat-cell class="job-duration" *matCellDef="let job">
-            {{friendlyDuration(job.timeStarted, job.timeEnded)}}
+            <span class="capitalize">
+              {{friendlyDuration(job.timeStarted, job.timeEnded)}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -109,7 +113,7 @@
         <ng-container matColumnDef="committed">
           <mat-header-cell id="job-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="job-committed" *matCellDef="let job">
-            <a *ngIf="job.committed !== 0" [routerLink]="">
+            <a *ngIf="job.committed !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.jobId}">
               {{job.committed | number}}
             </a>
             <span *ngIf="job.committed === 0">
@@ -120,7 +124,7 @@
 
         <!-- Errors Column -->
         <ng-container matColumnDef="errors">
-          <mat-header-cell id="job-errors-sort-btn" *matHeaderCellDef mat-sort-header>Errors</mat-header-cell>
+          <mat-header-cell id="job-errors-sort-btn" *matHeaderCellDef mat-sort-header>Failed</mat-header-cell>
           <mat-cell class="job-errors" *matCellDef="let job">
             <a *ngIf="job.errors !== 0" [routerLink]="">
               {{job.errors | number}}

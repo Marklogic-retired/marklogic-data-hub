@@ -31,9 +31,13 @@
         <section>
           <div class="status">
             <span class="label medium">Status</span>
-            <span *ngIf="job.jobStatus !== 'failed'">{{job.jobStatus}}</span>
+            <span class="capitalize" *ngIf="job.jobStatus !== 'failed'">
+              <span class="capitalize">{{job.jobStatus}}</span>
+            </span>
             <span *ngIf="job.jobStatus === 'failed'">
-              <a (click)="openStatusDialog(job)">{{job.jobStatus}}</a>
+              <a class="capitalize" (click)="openStatusDialog(job)">
+                <span class="capitalize">{{job.jobStatus}}</span>
+              </a>
             </span>
           </div>
           <div class="target-entity">
@@ -42,16 +46,18 @@
         </section>
         <section>
           <div class="ended">
-            <span class="label">Ended</span>{{friendlyDate(job.timeEnded)}}
+            <span class="label">Ended</span>
+              <span class="capitalize">{{friendlyDate(job.timeEnded)}}</span>
           </div>
-          <div class="duration">
-            <span class="label">Duration</span>{{friendlyDuration(job.timeStarted, job.timeEnded)}}
+          <div class="duration capitalize">
+            <span class="label">Duration</span>
+              <span class="capitalize">{{friendlyDuration(job.timeStarted, job.timeEnded)}}</span>
           </div>
         </section>
         <section>
           <div class="committed">
             <span class="label">Committed</span>
-            <a *ngIf="job.committed !== 0" [routerLink]="">
+            <a *ngIf="job.committed !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.jobId}">
               {{job.committed | number}}
             </a>
             <span *ngIf="job.committed === 0">
@@ -97,7 +103,7 @@
         <ng-container matColumnDef="stepStatus">
           <mat-header-cell id="step-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="step-status" *matCellDef="let step">
-            <span *ngIf="step.stepStatus">
+            <span class="capitalize" *ngIf="step.stepStatus">
               <span *ngIf="step.stepStatus !== 'failed'">
                 {{step.stepStatus}}
               </span>
@@ -107,7 +113,7 @@
                 </a>
               </span>
             </span>
-            <span *ngIf="!step.stepStatus" >
+            <span class="capitalize" *ngIf="!step.stepStatus">
               not run
             </span>
           </mat-cell>
@@ -117,7 +123,9 @@
         <ng-container matColumnDef="timeEnded">
           <mat-header-cell id="step-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
           <mat-cell class="step-ended" *matCellDef="let step">
-            {{friendlyDate(step.timeEnded)}}
+            <span class="capitalize">
+              {{friendlyDate(step.timeEnded)}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -125,7 +133,9 @@
         <ng-container matColumnDef="duration">
           <mat-header-cell id="step-duration-sort-btn" *matHeaderCellDef mat-sort-header>Duration</mat-header-cell>
           <mat-cell class="step-duration" *matCellDef="let step">
-            {{friendlyDuration(step.timeStarted, step.timeEnded)}}
+            <span class="capitalize">
+              {{friendlyDuration(step.timeStarted, step.timeEnded)}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -133,7 +143,7 @@
         <ng-container matColumnDef="committed">
           <mat-header-cell id="step-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="step-committed" *matCellDef="let step">
-            <a *ngIf="step.committed !== 0" [routerLink]="">
+            <a *ngIf="step.committed !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.jobId}">
               {{step.committed | number}}
             </a>
             <span *ngIf="step.committed === 0">
@@ -144,7 +154,7 @@
 
         <!-- Errors Column -->
         <ng-container matColumnDef="errors">
-          <mat-header-cell id="step-errors-sort-btn" *matHeaderCellDef mat-sort-header>Errors</mat-header-cell>
+          <mat-header-cell id="step-errors-sort-btn" *matHeaderCellDef mat-sort-header>Failed</mat-header-cell>
           <mat-cell class="step-errors" *matCellDef="let step">
             <a *ngIf="step.errors !== 0" [routerLink]="">
               {{step.errors | number}}

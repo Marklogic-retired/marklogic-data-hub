@@ -5,6 +5,7 @@ import {OutputDialogComponent} from "./output-dialog.component";
 import {StatusDialogComponent} from "./status-dialog.component";
 //import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
+import * as _ from "lodash";
 import { differenceInSeconds,
          differenceInMinutes,
          differenceInHours,
@@ -31,6 +32,8 @@ export class JobDetailsUiComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     console.log('this.job', this.job);
+    // TODO handle capitalization with CSS
+    this.job.jobStatus = _.capitalize(this.job.jobStatus);
     this.dataSource = new MatTableDataSource<any>(this.job['steps']);
   }
 
@@ -63,13 +66,17 @@ export class JobDetailsUiComponent implements OnInit, AfterViewInit {
   }
 
   friendlyDate(dt): string {
-    return (dt) ? moment(dt).fromNow() : '';
+    let result = (dt) ? moment(dt).fromNow() : '';
+    // TODO handle capitalization with CSS
+    return _.capitalize(result);
   }
 
   friendlyDuration(dt1, dt2): any {
-    return (dt1 && dt2) ?
+    let result = (dt1 && dt2) ?
       moment.duration(moment(dt1).diff(moment(dt2))).humanize() :
       '';
+    // TODO handle capitalization with CSS
+    return _.capitalize(result);
   }
 
 }
