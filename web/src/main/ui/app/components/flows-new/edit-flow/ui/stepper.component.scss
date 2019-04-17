@@ -112,7 +112,7 @@ header {
     .bar.mastering {
       background: $color-mastering;
     }
-    .bar.ingest {
+    .bar.ingestion {
       background: $color-ingest;
     }
     .bar.custom {
@@ -134,8 +134,12 @@ header {
     .step-title.mastering {
       color: $color-mastering;
     }
+    /* Keeping the following two CSS declarations as part of conflict resolution */
     .step-title.ingest {
       color: $color-ingest;
+    }
+    .step-title.ingestion {
+      color: #AD1457;
     }
     .step-title.custom {
       color: $color-custom;

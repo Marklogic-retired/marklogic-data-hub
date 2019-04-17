@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output, ViewChild, OnChanges} from '@angular/core';
 import {MatDialog} from '@angular/material';
+import { StepType } from '../../models/step.model';
 import {NewStepDialogComponent} from './new-step-dialog.component';
 import {IngestComponent} from "../ingest/ingest.component";
 import {MappingComponent} from "../mapping/mapping.component";
@@ -24,6 +25,7 @@ export class StepComponent implements OnChanges {
 
   public masteringTabIndex: number = 0;
 
+  public stepType: typeof StepType = StepType;
   showBody = true;
   constructor(
     public dialog: MatDialog
