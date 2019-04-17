@@ -52,7 +52,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
     }
 
     private void installEntities() {
-        Path orderDir = project.getEntityDir("Order");
+        Path orderDir = project.getHubEntitiesDir().resolve("Order");
         orderDir.toFile().mkdirs();
         assertTrue(orderDir.toFile().exists());
         FileUtil.copy(getResourceStream("es-alignment-test/Order.entity.json"),
