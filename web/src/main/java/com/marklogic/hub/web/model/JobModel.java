@@ -23,7 +23,7 @@ public class JobModel {
         public int stepNumber;
         public String id;
         public String name;
-        public String type;
+        public String stepDefinitionType;
         public String targetEntity;
         public String status;
         public long totalEvents;
