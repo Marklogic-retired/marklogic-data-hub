@@ -50,7 +50,7 @@ public class NewJobService extends ResourceManager {
         "      \"stepNumber\": 1,\n" +
         "      \"id\": \"default-ingest\",\n" +
         "      \"name\": \"default-ingest\",\n" +
-        "      \"type\": \"ingest\",\n" +
+        "      \"stepDefinitionType\": \"INGESTION\",\n" +
         "      \"targetEntity\": null,\n" +
         "      \"status\": \"completed step 1\",\n" +
         "      \"totalEvents\": 500,\n" +
@@ -68,7 +68,7 @@ public class NewJobService extends ResourceManager {
         "      \"stepNumber\": 2,\n" +
         "      \"id\": \"default-mapping\",\n" +
         "      \"name\": \"default-mapping\",\n" +
-        "      \"type\": \"mapping\",\n" +
+        "      \"stepDefinitionType\": \"MAPPING\",\n" +
         "      \"targetEntity\": \"order\",\n" +
         "      \"status\": \"completed step 2\",\n" +
         "      \"totalEvents\": 500,\n" +
@@ -213,11 +213,11 @@ public class NewJobService extends ResourceManager {
             JobStep js = new JobStep();
             js.stepNumber = Integer.valueOf(key);
             js.name = step.getName();
-            js.type = step.getStepDefinitionType().toString();
+            js.stepDefinitionType = step.getStepDefinitionType().toString();
             if (js.name.startsWith("default-")) {
                 js.id = js.name;
             } else {
-                js.id = step.getName() + "-" + js.type;
+                js.id = step.getName() + "-" + js.stepDefinitionType;
             }
             Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetEntity = ((TextNode) o.getOrDefault("targetEntity", new TextNode(""))).asText());
 

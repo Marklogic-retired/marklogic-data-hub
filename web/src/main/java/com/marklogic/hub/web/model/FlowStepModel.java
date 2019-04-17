@@ -33,7 +33,7 @@ public class FlowStepModel {
         public String stepKey;
         public String id;
         public String name;
-        public String type;
+        public String stepDefinitionType;
         public String targetEntity;
     }
 
@@ -134,7 +134,7 @@ public class FlowStepModel {
             JSONObject stepJson = new JSONObject((JsonNode) s);
             //String id = stepJson.getString("id");
             String stepName = stepJson.getString("name");
-            String stepType = stepJson.getString("type");
+            String stepType = stepJson.getString("stepDefinitionType");
             String stepKey = stepName + "-" + stepType;
             Step step;
             if (keyById.containsKey(stepKey)) {
@@ -170,7 +170,7 @@ public class FlowStepModel {
             } else {
                 sm.id = step.getName() + "-" + stepType;
             }
-            sm.type = stepType;
+            sm.stepDefinitionType = stepType;
             if (step.getOptions() != null && step.getOptions().get("targetEntity") != null) {
                 sm.targetEntity = ((TextNode) step.getOptions().get("targetEntity")).asText();
             }
