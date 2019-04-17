@@ -39,7 +39,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     private JsonNode customHook;
     private String modulePath;
     @JsonIgnore
-    private String identifier;
+    private String sourceQuery;
     private int retryLimit;
     private int batchSize;
     private int threadCount;
@@ -121,11 +121,11 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     }
 
     public String getSourceQuery() {
-        return identifier;
+        return sourceQuery;
     }
 
-    public void setSourceQuery(String identifier) {
-        this.identifier = identifier;
+    public void setSourceQuery(String sourceQuery) {
+        this.sourceQuery = sourceQuery;
     }
 
     public int getRetryLimit() {
@@ -190,9 +190,9 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         }
 
         if (this.options != null) {
-            Object identifier = this.options.get("identifier");
-            if (identifier != null) {
-                setSourceQuery(identifier.toString());
+            Object sourceQuery = this.options.get("sourceQuery");
+            if (sourceQuery != null) {
+                setSourceQuery(sourceQuery.toString());
             }
         }
 
