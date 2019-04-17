@@ -18,7 +18,7 @@ import { differenceInSeconds,
 })
 export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'targetEntity', 'jobStatus', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
-  filterValues = {};
+  filterValues: Object;
   @Input() jobs: Array<any> = [];
 
   dataSource: MatTableDataSource<any>;
@@ -34,6 +34,7 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   ){}
 
   ngOnInit() {
+    this.filterValues = {};
     this.dataSource = new MatTableDataSource<any>(this.jobs);
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
