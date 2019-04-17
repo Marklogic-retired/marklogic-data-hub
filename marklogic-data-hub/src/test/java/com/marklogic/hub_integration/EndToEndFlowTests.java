@@ -143,7 +143,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
 
         installUserModules(getFlowDeveloperConfig(), true);
     }
@@ -719,10 +719,11 @@ public class EndToEndFlowTests extends HubTestBase {
 
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
-        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
-        Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
+        Path legacyEntityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        Path flowDir = legacyEntityDir.resolve(flowType.toString()).resolve(flowName);
 
         if (useEs) {
+            Path entityDir = projectDir.resolve("entities");
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getFlowDeveloperConfig(), true);
         }

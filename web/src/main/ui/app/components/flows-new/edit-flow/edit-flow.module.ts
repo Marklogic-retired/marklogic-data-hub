@@ -10,6 +10,7 @@ import {MaterialModule} from '../../theme/material.module';
 import {EditFlowComponent} from './edit-flow.component';
 import {EditFlowUiComponent} from './ui/edit-flow-ui.component';
 import {NewStepDialogComponent} from './ui/new-step-dialog.component';
+import {NewStepDialogUiComponent} from './ui/new-step-dialog-ui.component';
 import {RunFlowDialogComponent} from './ui/run-flow-dialog.component';
 import {StepComponent} from './ui/step.component';
 import {StepperComponent} from './ui/stepper.component';
@@ -47,6 +48,7 @@ import {AppCommonModule} from "../../common";
     EditFlowComponent,
     EditFlowUiComponent,
     NewStepDialogComponent,
+    NewStepDialogUiComponent,
     RunFlowDialogComponent,
     StepComponent,
     StepperComponent,

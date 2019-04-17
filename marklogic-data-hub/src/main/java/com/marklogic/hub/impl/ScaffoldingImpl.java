@@ -15,18 +15,21 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +58,9 @@ public class ScaffoldingImpl implements Scaffolding {
     @Autowired
     private ScaffoldingValidator validator;
 
+    @Autowired
+    private FlowManager flowManager;
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static String getAbsolutePath(String first, String... more) {
@@ -71,15 +77,6 @@ public class ScaffoldingImpl implements Scaffolding {
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
         return flowDir;
-    }
-
-    @Override public void createLegacyEntity(String entityName) {
-        Path entityDir = project.getEntityDir(entityName);
-        entityDir.toFile().mkdirs();
-        if(entityDir.toFile().exists()){
-            String fileContents = getFileContent("scaffolding/Entity.json", entityName);
-            writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
-        }
     }
 
     @Override public void createEntity(String entityName) {
@@ -128,9 +125,11 @@ public class ScaffoldingImpl implements Scaffolding {
         if (flowsDir.toFile().exists()) {
             String flowSrcFile = "scaffolding/defaultFlow.flow.json";
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
-            File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
             try {
-                FileUtils.copyInputStreamToFile(inputStream, flowFile);
+                JsonNode flowNode = JSONObject.readInput(inputStream);
+                Flow flow = flowManager.createFlowFromJSON(flowNode);
+                flow.setName(flowName);
+                flowManager.saveFlow(flow);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);

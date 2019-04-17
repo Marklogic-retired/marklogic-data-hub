@@ -1,21 +1,24 @@
 {
   "name": "myNewFlow",
   "description": "flow description",
-  "identifier": "",
   "batchSize": 300,
   "steps": {
     "1": {
-      "name": "ingest",
-      "type": "INGEST"
+      "stepDefinitionName": "ingestion",
+      "stepDefinitionType": "INGESTION"
     },
     "2": {
-      "name": "mapping",
-      "type": "MAPPING"
+      "stepDefinitionName": "mapping",
+      "stepDefinitionType": "MAPPING"
     },
     "3": {
-      "name": "master",
-      "type": "MASTER",
-      "batchSize": 300
+      "stepDefinitionName": "mastering",
+      "stepDefinitionType": "MASTERING",
+      "batchSize": 300,
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-STAGING"
+      }
     }
   }
 }

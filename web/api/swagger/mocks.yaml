@@ -1,896 +1,890 @@
----
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "This is a sample of a QuickStart DataHub Swagger doucment defining\
-    \ endpoints to be mocked"
-  version: "1.0.0"
-  title: "QuickStart DataHub API"
+  description: This is a sample of a QuickStart DataHub Swagger doucment defining endpoints to be mocked
+  version: 1.0.0
+  title: QuickStart DataHub API
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost:4200"
-basePath: "/api"
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:4200'
+basePath: /api
 tags: []
 schemes:
-- "http"
+  - http
 paths:
   /flows:
     get:
       tags:
-      - "flows"
-      summary: "Returns all flows"
-      description: "Returns all flows"
-      operationId: "getFlows"
+        - flows
+      summary: Returns all flows
+      description: Returns all flows
+      operationId: getFlows
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "page"
-        in: "query"
-        description: "Page # of the paginated data"
-        required: false
-        type: "string"
-      - name: "length"
-        in: "query"
-        description: "Length paginated data"
-        required: false
-        type: "string"
+        - name: page
+          in: query
+          description: 'Page # of the paginated data'
+          required: false
+          type: string
+        - name: length
+          in: query
+          description: Length paginated data
+          required: false
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            type: "array"
+            type: array
             items:
-              $ref: "#/definitions/flow"
-        400:
-          description: "Bad Request"
+              $ref: '#/definitions/flow'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
     post:
       tags:
-      - "flows"
-      summary: "Create flow"
-      description: ""
-      operationId: "createFlow"
+        - flows
+      summary: Create flow
+      description: ''
+      operationId: createFlow
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Flow to create"
-        required: true
-        schema:
-          $ref: "#/definitions/flow"
+        - in: body
+          name: body
+          description: Flow to create
+          required: true
+          schema:
+            $ref: '#/definitions/flow'
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            $ref: "#/definitions/flow"
-        400:
-          description: "Bad Request"
+            $ref: '#/definitions/flow'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
-  /flows/{flowId}:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
+  '/flows/{flowId}':
     get:
       tags:
-      - "flows"
-      summary: "Find flow by Id"
-      description: "...."
-      operationId: "getFlow"
+        - flows
+      summary: Find flow by Id
+      description: ....
+      operationId: getFlow
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to be fetched"
-        required: true
-        type: "string"
+        - name: flowId
+          in: path
+          description: Id of flow to be fetched
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            $ref: "#/definitions/flow"
-        400:
-          description: "Bad Request"
+            $ref: '#/definitions/flow'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
     put:
       tags:
-      - "flows"
-      summary: "Update flow by Id"
-      description: ""
-      operationId: "updateFlow"
+        - flows
+      summary: Update flow by Id
+      description: ''
+      operationId: updateFlow
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated flow"
-        required: true
-        schema:
-          $ref: "#/definitions/flow"
+        - name: flowId
+          in: path
+          description: Id of flow to be updated
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated flow
+          required: true
+          schema:
+            $ref: '#/definitions/flow'
       responses:
-        200:
-          description: "Successful Operation"
-        400:
-          description: "Bad Request"
+        '200':
+          description: Successful Operation
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
     delete:
       tags:
-      - "flows"
-      summary: "Delete flow by Id"
-      description: ""
-      operationId: "deleteFlow"
+        - flows
+      summary: Delete flow by Id
+      description: ''
+      operationId: deleteFlow
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to be fetched"
-        required: true
-        type: "string"
+        - name: flowId
+          in: path
+          description: Id of flow to be fetched
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
-        400:
-          description: "Bad Request"
+        '200':
+          description: Successful Operation
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
-  /flows/{flowId}/run:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
+  '/flows/{flowId}/run':
     post:
       tags:
-      - "flows"
-      summary: "Run a Flow"
-      description: ""
-      operationId: "runFlow"
+        - flows
+      summary: Run a Flow
+      description: ''
+      operationId: runFlow
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to run"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Array of Step ids to run, no body if all are being executed"
-        required: false
-        schema:
-          type: "array"
-          items:
-            type: "string"
+        - name: flowId
+          in: path
+          description: Id of flow to run
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: 'Array of Step ids to run, no body if all are being executed'
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            $ref: "#/definitions/flow"
-        400:
-          description: "Bad Request"
+            $ref: '#/definitions/flow'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
-  /flows/{flowId}/stop:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
+  '/flows/{flowId}/stop':
     post:
       tags:
-      - "flows"
-      summary: "Stop a Flow"
-      description: ""
-      operationId: "stopFlow"
+        - flows
+      summary: Stop a Flow
+      description: ''
+      operationId: stopFlow
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to stop"
-        required: true
-        type: "string"
+        - name: flowId
+          in: path
+          description: Id of flow to stop
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            $ref: "#/definitions/flow"
-        400:
-          description: "Bad Request"
+            $ref: '#/definitions/flow'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Flows"
-  /flows/{flowId}/steps:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Flows
+  '/flows/{flowId}/steps':
     get:
       tags:
-      - "steps"
-      summary: "Get all Steps for a Flow"
-      description: "...."
-      operationId: "getFlowSteps"
+        - steps
+      summary: Get all Steps for a Flow
+      description: ....
+      operationId: getFlowSteps
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to be fetched"
-        required: true
-        type: "string"
+        - name: flowId
+          in: path
+          description: Id of flow to be fetched
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            type: "array"
+            type: array
             items:
-              $ref: "#/definitions/step"
-        400:
-          description: "Bad Request"
+              $ref: '#/definitions/step'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Steps"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Steps
     post:
       tags:
-      - "steps"
-      summary: "Create a step within a Flow"
-      description: ""
-      operationId: "createFlowStep"
+        - steps
+      summary: Create a step within a Flow
+      description: ''
+      operationId: createFlowStep
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow"
-        required: true
-        type: "string"
-      - name: "stepOrder"
-        in: "query"
-        description: "The location in the Array of Steps this new Step will be inserted.\
-          \  Defaults to end of the Array, if not set."
-        required: false
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Step to create"
-        required: true
-        schema:
-          $ref: "#/definitions/step"
+        - name: flowId
+          in: path
+          description: Id of flow
+          required: true
+          type: string
+        - name: stepOrder
+          in: query
+          description: 'The location in the Array of Steps this new Step will be inserted.  Defaults to end of the Array, if not set.'
+          required: false
+          type: string
+        - in: body
+          name: body
+          description: Step to create
+          required: true
+          schema:
+            $ref: '#/definitions/step'
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            $ref: "#/definitions/step"
-        400:
-          description: "Bad Request"
+            $ref: '#/definitions/step'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Steps"
-  /flows/{flowId}/steps/{stepId}:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Steps
+  '/flows/{flowId}/steps/{stepId}':
     put:
       tags:
-      - "steps"
-      summary: "Update step by Id"
-      description: ""
-      operationId: "updateFlowStep"
+        - steps
+      summary: Update step by Id
+      description: ''
+      operationId: updateFlowStep
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to be updated"
-        required: true
-        type: "string"
-      - name: "stepId"
-        in: "path"
-        description: "Id of step to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated step"
-        required: true
-        schema:
-          $ref: "#/definitions/step"
+        - name: flowId
+          in: path
+          description: Id of flow to be updated
+          required: true
+          type: string
+        - name: stepId
+          in: path
+          description: Id of step to be updated
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated step
+          required: true
+          schema:
+            $ref: '#/definitions/step'
       responses:
-        200:
-          description: "Successful Operation"
-        400:
-          description: "Bad Request"
+        '200':
+          description: Successful Operation
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Steps"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Steps
     delete:
       tags:
-      - "steps"
-      summary: "Delete step by Id"
-      description: ""
-      operationId: "deleteFlowStep"
+        - steps
+      summary: Delete step by Id
+      description: ''
+      operationId: deleteFlowStep
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "flowId"
-        in: "path"
-        description: "Id of flow to be fetched"
-        required: true
-        type: "string"
-      - name: "stepId"
-        in: "path"
-        description: "Id of step to be fetched"
-        required: true
-        type: "string"
+        - name: flowId
+          in: path
+          description: Id of flow to be fetched
+          required: true
+          type: string
+        - name: stepId
+          in: path
+          description: Id of step to be fetched
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
-        400:
-          description: "Bad Request"
+        '200':
+          description: Successful Operation
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Steps"
-  /collections/{databaseId}:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Steps
+  '/collections/{databaseId}':
     get:
       tags:
-      - "collections"
-      summary: "Get all Collections for a Database"
-      description: "...."
-      operationId: "getDatabaseCollections"
+        - collections
+      summary: Get all Collections for a Database
+      description: ....
+      operationId: getDatabaseCollections
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "databaseId"
-        in: "path"
-        description: "Id of database to get collections from"
-        required: true
-        type: "string"
+        - name: databaseId
+          in: path
+          description: Id of database to get collections from
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            type: "array"
+            type: array
             items:
-              type: "string"
-        400:
-          description: "Bad Request"
+              type: string
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Collections"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Collections
   /jobs:
     get:
       tags:
-      - "jobs"
-      summary: "Returns all jobs"
-      description: "Returns all jobs"
-      operationId: "getJobs"
+        - jobs
+      summary: Returns all jobs
+      description: Returns all jobs
+      operationId: getJobs
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "page"
-        in: "query"
-        description: "Page # of the paginated data"
-        required: false
-        type: "string"
-      - name: "length"
-        in: "query"
-        description: "Length paginated data"
-        required: false
-        type: "string"
+        - name: page
+          in: query
+          description: 'Page # of the paginated data'
+          required: false
+          type: string
+        - name: length
+          in: query
+          description: Length paginated data
+          required: false
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            type: "array"
+            type: array
             items:
-              $ref: "#/definitions/job"
-        400:
-          description: "Bad Request"
+              $ref: '#/definitions/job'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Jobs"
-  /jobs/{jobId}:
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Jobs
+  '/jobs/{jobId}':
     get:
       tags:
-      - "jobs"
-      summary: "Get a Job by Id"
-      description: "...."
-      operationId: "getJob"
+        - jobs
+      summary: Get a Job by Id
+      description: ....
+      operationId: getJob
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "jobId"
-        in: "path"
-        description: "Id of Job to get"
-        required: true
-        type: "string"
+        - name: jobId
+          in: path
+          description: Id of Job to get
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
+        '200':
+          description: Successful Operation
           schema:
-            $ref: "#/definitions/job"
-        400:
-          description: "Bad Request"
+            $ref: '#/definitions/job'
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Jobs"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Jobs
     delete:
       tags:
-      - "jobs"
-      summary: "Delete job by Id"
-      description: ""
-      operationId: "deleteJob"
+        - jobs
+      summary: Delete job by Id
+      description: ''
+      operationId: deleteJob
       produces:
-      - "application/json"
+        - application/json
       parameters:
-      - name: "jobId"
-        in: "path"
-        description: "Id of job to be fetched"
-        required: true
-        type: "string"
+        - name: jobId
+          in: path
+          description: Id of job to be fetched
+          required: true
+          type: string
       responses:
-        200:
-          description: "Successful Operation"
-        400:
-          description: "Bad Request"
+        '200':
+          description: Successful Operation
+        '400':
+          description: Bad Request
           schema:
-            $ref: "#/definitions/error"
-        401:
-          description: "Unauthorized"
+            $ref: '#/definitions/error'
+        '401':
+          description: Unauthorized
           schema:
-            $ref: "#/definitions/error"
-        403:
-          description: "Forbidden"
+            $ref: '#/definitions/error'
+        '403':
+          description: Forbidden
           schema:
-            $ref: "#/definitions/error"
-        404:
-          description: "Not Found"
+            $ref: '#/definitions/error'
+        '404':
+          description: Not Found
           schema:
-            $ref: "#/definitions/error"
-        500:
-          description: "Internal Server Error"
+            $ref: '#/definitions/error'
+        '500':
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/error"
-      x-swagger-router-controller: "Jobs"
+            $ref: '#/definitions/error'
+      x-swagger-router-controller: Jobs
 definitions:
   flow:
-    type: "object"
+    type: object
     properties:
       id:
-        type: "string"
-        description: "Id of a flow"
+        type: string
+        description: Id of a flow
       name:
-        type: "string"
-        description: "Name of a flow"
+        type: string
+        description: Name of a flow
       description:
-        type: "string"
-        description: "Description of flow"
+        type: string
+        description: Description of flow
       batchSize:
-        type: "integer"
-        format: "int64"
-        description: "The # of documents to process in a single batch"
+        type: integer
+        format: int64
+        description: 'The # of documents to process in a single batch'
         minimum: 0
       threadCount:
-        type: "integer"
-        format: "int64"
-        description: ""
+        type: integer
+        format: int64
+        description: ''
         minimum: 0
       options:
-        type: "object"
-        description: "TBD: Likely metadata "
+        type: object
+        description: 'TBD: Likely metadata '
         properties: {}
       steps:
-        type: "array"
-        description: "Array of summary Step objects associated with this Flow"
+        type: array
+        description: Array of summary Step objects associated with this Flow
         items:
-          type: "object"
+          type: object
           properties: {}
       jobs:
-        type: "array"
-        description: "Array of Job IDs generated by this flow"
+        type: array
+        description: Array of Job IDs generated by this flow
         items:
-          type: "string"
+          type: string
       latestJob:
-        type: "object"
-        description: "Data related to the last job run for this Flow"
+        type: object
+        description: Data related to the last job run for this Flow
         properties: {}
       isValid:
-        type: "boolean"
-        description: "Boolean flag used for UI to tell whether all Steps associated\
-          \ with this Flow are valid, making the Flow valid"
+        type: boolean
+        description: 'Boolean flag used for UI to tell whether all Steps associated with this Flow are valid, making the Flow valid'
       version:
-        type: "integer"
-        format: "int64"
-        description: "version of the flow, incremented with each update"
+        type: integer
+        format: int64
+        description: 'version of the flow, incremented with each update'
         minimum: 0
     example:
-      latestJob: "{}"
+      latestJob: '{}'
       jobs:
-      - "jobs"
-      - "jobs"
+        - jobs
+        - jobs
       isValid: true
-      name: "name"
-      options: "{}"
-      description: "description"
+      name: name
+      options: '{}'
+      description: description
       threadCount: 0
-      id: "id"
+      id: id
       batchSize: 0
       steps:
-      - "{}"
-      - "{}"
+        - '{}'
+        - '{}'
       version: 0
   step:
-    type: "object"
+    type: object
     required:
-    - "name"
-    - "type"
+      - name
+      - stepDefinitionType
     properties:
       id:
-        type: "string"
-        description: "Id of a step"
+        type: string
+        description: Id of a step
       name:
-        type: "string"
-        description: "Name of a step"
+        type: string
+        description: Name of a step
       description:
-        type: "string"
-        description: "Description of a step"
-      type:
-        type: "string"
-        description: "Type of a step"
+        type: string
+        description: Description of a step
+      stepDefinitionName:
+        type: string
+        description: The step definition name
+      stepDefinitionType:
+        type: string
+        description: Type of a step
         enum:
-        - "ingest"
-        - "mapping"
-        - "mastering"
-        - "custom"
-      sourceDatabase:
-        type: "string"
-      targetDatabase:
-        type: "string"
+          - INGESTION
+          - MAPPING
+          - MASTERING
+          - CUSTOM
       isValid:
-        type: "boolean"
-        description: "Boolean flag to tell whether a Step is valid"
+        type: boolean
+        description: Boolean flag to tell whether a Step is valid
+      fileLocations:
+        type: object
+        description: 'INGESTION ONLY - [add description]'
+        properties:
+          inputFilePath:
+            type: string
+            description: ''
+          outputURIReplacement:
+            type: string
+            description: ''
+          inputFileType:
+            type: string
+            description: ''
       options:
-        type: "object"
+        type: object
         properties: {}
-      version:
-        type: "string"
-      customHook:
-        $ref: "#/definitions/customHook"
+      modulePath:
+        type: string
+        description: CUSTOM ONLY - module to execute as custom step
     example:
-      sourceDatabase: "sourceDatabase"
+      id: step-1-flow-1
+      name: Flow01IngestStep
+      description: My Step 1 description
+      stepDefinitionName: default-ingestion
+      stepDefinitionType: INGESTION
       isValid: true
-      customHook:
-        runBefore: true
-        module: "module"
-        parameters: "{}"
-        user: "user"
-      name: "name"
-      description: "description"
-      id: "id"
-      type: "ingest"
-      config: "{}"
-      version: "version"
-      targetDatabase: "targetDatabase"
+      fileLocations:
+        inputFilePath: ''
+        outputURIReplacement: ''
+        inputFileType: ''
+      options:
+        sourceQuery: null
+        collections:
+          - default-ingest
+          - Flow04IngestStep
+        outputFormat: json
+        permissions: 'rest-reader,read,rest-writer,update'
+        targetDatabase: data-hub-STAGING
   job:
-    type: "object"
+    type: object
     required:
-    - "jobId"
+      - jobId
     properties:
       jobId:
-        type: "string"
-        description: "Id of the job"
+        type: string
+        description: Id of the job
       flowId:
-        type: "string"
-        description: "Id of the flow for this job"
+        type: string
+        description: Id of the flow for this job
       startTime:
-        type: "string"
-        format: "date-time"
-        description: "Timestamp job started"
+        type: string
+        format: date-time
+        description: Timestamp job started
       endTime:
-        type: "string"
-        format: "date-time"
-        description: "Timestamp job started"
+        type: string
+        format: date-time
+        description: Timestamp job started
       steps:
-        type: "array"
-        description: "Array of Step output info"
+        type: array
+        description: Array of Step output info
         items:
-          type: "object"
+          type: object
       user:
-        type: "string"
-        description: "User that started the job"
+        type: string
+        description: User that started the job
       flow:
-        type: "string"
-        description: "Name of the flow being processed"
+        type: string
+        description: Name of the flow being processed
       lastAttemptedStep:
-        type: "integer"
-        format: "int64"
-        description: "last step that was attempted to run"
+        type: integer
+        format: int64
+        description: last step that was attempted to run
       lastCompletedStep:
-        type: "integer"
-        format: "int64"
-        description: "last step that was completed"
+        type: integer
+        format: int64
+        description: last step that was completed
       status:
-        type: "string"
-        description: "Status of the job"
+        type: string
+        description: Status of the job
         enum:
-        - "canceled"
-        - "failed"
-        - "running"
-        - "finished-with-errors"
-        - "completed"
+          - canceled
+          - failed
+          - running
+          - finished-with-errors
+          - completed
       successfulEvents:
-        type: "integer"
-        format: "int64"
-        description: "# of documents successfully processed"
+        type: integer
+        format: int64
+        description: '# of documents successfully processed'
         minimum: 0
       failedEvents:
-        type: "integer"
-        format: "int64"
-        description: "# of documents that failed to process"
+        type: integer
+        format: int64
+        description: '# of documents that failed to process'
         minimum: 0
     example:
-      user: "admin"
+      user: admin
       failedEvents: 0
       successfulEvents: 0
-      flow: "Flow 01"
+      flow: Flow 01
       steps: []
       lastAttemptedStep: 0
       lastCompletedStep: 0
-      startTime: "2000-01-23T04:56:07.000+00:00"
-      jobId: "job-id"
-      flowId: "flow-id"
-      endTime: "2000-01-23T04:56:07.000+00:00"
-      status: "canceled"
+      startTime: '2000-01-23T04:56:07.000+00:00'
+      jobId: job-id
+      flowId: flow-id
+      endTime: '2000-01-23T04:56:07.000+00:00'
+      status: canceled
   error:
-    type: "object"
+    type: object
     properties:
       code:
-        type: "integer"
-        format: "int64"
+        type: integer
+        format: int64
       message:
-        type: "string"
+        type: string
       timestamp:
-        type: "string"
-        format: "date-time"
-  customHook:
-    type: "object"
-    properties:
-      module:
-        type: "string"
-      parameters:
-        type: "object"
-        properties: {}
-      user:
-        type: "string"
-      runBefore:
-        type: "boolean"
-    example:
-      runBefore: true
-      module: "module"
-      parameters: "{}"
-      user: "user"
+        type: string
+        format: date-time
 externalDocs:
-  description: "Find out more about MarkLogic Data Hub"
-  url: "https://github.com/marklogic/marklogic-data-hub"
+  description: Find out more about MarkLogic Data Hub
+  url: 'https://github.com/marklogic/marklogic-data-hub'

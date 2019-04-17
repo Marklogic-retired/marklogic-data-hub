@@ -54,20 +54,25 @@ function transform(content, context = {}) {
 
     let jobId = params["job-id"] || `mlcp-${xdmp.transaction()}`;
     let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
-    let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingest";
-    if (flowName === 'default-ingest') {
-      context.collections.push('default-ingest');
+    let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
+    if (flowName === 'default-ingestion') {
+      context.collections.push('default-ingestion');
     }
     let flow = datahub.flow.getFlow(flowName);
 
     if (!flow) {
       datahub.debug.log({message: params, type: 'error'});
-      fn.error(null, "RESTAPI-SRVEXERR", "The specified flow " + flowName + " is missing.");
+      fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-FLOWMISSING", "The specified flow " + flowName + " is missing.", content.uri]));
     }
     let options = {};
     if (optionsString) {
       let splits = optionsString.split("=");
-      options = JSON.parse(splits[1]);
+      try {
+        options = JSON.parse(splits[1]);
+      } catch (e) {
+        datahub.debug.log({message: params, type: 'error'});
+        fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-INVALIDOPTIONS", "Invalid json, could not parse options.", optionsString, content.uri]));
+      }
     }
     options.noWrite = true;
     options.fullOutput = true;
@@ -80,10 +85,12 @@ function transform(content, context = {}) {
           contentObjs.push(content);
         } else {
           datahub.debug.log({message: params, type: 'error'});
-          fn.error(null, "RESTAPI-SRVEXERR", "The content was null provided to the flow " + flowName + " for " + uri + ".");
+          fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-NOCONTENT", "The content was null provided to the flow " + flowName + " for " + uri + ".", content.uri]));
         }
       }
     }
+
+
     //don't catch any exception here, let it slip through to mlcp
     let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObjs, options, step);
 
@@ -92,6 +99,7 @@ function transform(content, context = {}) {
       datahub.debug.log(flowResponse.errors[0]);
       fn.error(null, flowResponse.errors[0].message, flowResponse.errors[0].stack);
     }
+
     let documents = flowResponse.documents;
     if (documents && documents.length) {
       Object.assign(context, documents[0].context);
@@ -100,10 +108,10 @@ function transform(content, context = {}) {
       delete doc.context;
       if (doc.type && doc.type === 'error' && doc.message) {
         datahub.debug.log(doc);
-        fn.error(null, "RESTAPI-SRVEXERR", doc.message);
+        fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-FLOWERROR", doc.message, content.uri]));
       } else if (!doc.value) {
         datahub.debug.log({message: params, type: 'error'});
-        fn.error(null, "RESTAPI-SRVEXERR", "The content was null in the flow " + flowName + " for " + doc.uri + ".");
+        fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-NOCONTENT","The content was null in the flow " + flowName + " for " + doc.uri + ".", content.uri]));
       }
     }
     return Sequence.from(documents);

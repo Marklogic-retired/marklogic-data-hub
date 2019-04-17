@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.rest.util.JsonNodeUtil;
 import org.apache.commons.io.FileUtils;
@@ -57,7 +57,7 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
-    private Path stepsDir;
+    private Path stepDefinitionsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -73,7 +73,7 @@ public class HubProjectImpl implements HubProject {
         this.projectDirString = projectDirString;
         this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
-        this.stepsDir = this.projectDir.resolve("steps");
+        this.stepDefinitionsDir = this.projectDir.resolve("step-definitions");
     }
 
     @Override public Path getHubPluginsDir() {
@@ -81,12 +81,12 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getStepsDir() {
-        return this.stepsDir;
+    public Path getStepDefinitionsDir() {
+        return this.stepDefinitionsDir;
     }
 
     @Override
-    public Path getStepsDirByType(Step.StepType type) {
+    public Path getStepsDirByType(StepDefinition.StepDefinitionType type) {
         Path path;
 
         if (type == null) {
@@ -95,16 +95,16 @@ public class HubProjectImpl implements HubProject {
         else {
             switch (type) {
                 case CUSTOM:
-                    path = this.stepsDir.resolve("custom");
+                    path = this.stepDefinitionsDir.resolve("custom");
                     break;
-                case INGEST:
-                    path = this.stepsDir.resolve("ingest");
+                case INGESTION:
+                    path = this.stepDefinitionsDir.resolve("ingestion");
                     break;
                 case MAPPING:
-                    path = this.stepsDir.resolve("mapping");
+                    path = this.stepDefinitionsDir.resolve("mapping");
                     break;
-                case MASTER:
-                    path = this.stepsDir.resolve("master");
+                case MASTERING:
+                    path = this.stepDefinitionsDir.resolve("mastering");
                     break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
@@ -228,7 +228,7 @@ public class HubProjectImpl implements HubProject {
 
     @Override public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
-        this.stepsDir.toFile().mkdirs();
+        this.stepDefinitionsDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();

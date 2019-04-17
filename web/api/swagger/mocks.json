@@ -9,12 +9,12 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
+  "host": "localhost:4200",
+  "basePath": "/api",
   "tags": [],
   "schemes": [
     "http"
   ],
-  "host": "localhost:4200",
-  "basePath": "/api",
   "paths": {
     "/flows": {
       "get": {
@@ -32,12 +32,14 @@
             "name": "page",
             "in": "query",
             "description": "Page # of the paginated data",
+            "required": false,
             "type": "string"
           },
           {
             "name": "length",
             "in": "query",
             "description": "Length paginated data",
+            "required": false,
             "type": "string"
           }
         ],
@@ -81,7 +83,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       },
       "post": {
         "tags": [
@@ -95,8 +98,8 @@
         ],
         "parameters": [
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "description": "Flow to create",
             "required": true,
             "schema": {
@@ -141,7 +144,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       }
     },
     "/flows/{flowId}": {
@@ -201,7 +205,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       },
       "put": {
         "tags": [
@@ -222,8 +227,8 @@
             "type": "string"
           },
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "description": "Updated flow",
             "required": true,
             "schema": {
@@ -265,7 +270,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       },
       "delete": {
         "tags": [
@@ -320,7 +326,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       }
     },
     "/flows/{flowId}/run": {
@@ -343,9 +350,10 @@
             "type": "string"
           },
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "description": "Array of Step ids to run, no body if all are being executed",
+            "required": false,
             "schema": {
               "type": "array",
               "items": {
@@ -391,7 +399,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       }
     },
     "/flows/{flowId}/stop": {
@@ -451,7 +460,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Flows"
       }
     },
     "/flows/{flowId}/steps": {
@@ -514,7 +524,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Steps"
       },
       "post": {
         "tags": [
@@ -538,11 +549,12 @@
             "name": "stepOrder",
             "in": "query",
             "description": "The location in the Array of Steps this new Step will be inserted.  Defaults to end of the Array, if not set.",
+            "required": false,
             "type": "string"
           },
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "description": "Step to create",
             "required": true,
             "schema": {
@@ -587,7 +599,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Steps"
       }
     },
     "/flows/{flowId}/steps/{stepId}": {
@@ -617,8 +630,8 @@
             "type": "string"
           },
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "description": "Updated step",
             "required": true,
             "schema": {
@@ -660,7 +673,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Steps"
       },
       "delete": {
         "tags": [
@@ -722,7 +736,8 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Steps"
       }
     },
     "/collections/{databaseId}": {
@@ -785,7 +800,79 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Collections"
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Returns all jobs",
+        "description": "Returns all jobs",
+        "operationId": "getJobs",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page # of the paginated data",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "length",
+            "in": "query",
+            "description": "Length paginated data",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/job"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        },
+        "x-swagger-router-controller": "Jobs"
       }
     },
     "/jobs/{jobId}": {
@@ -845,7 +932,64 @@
               "$ref": "#/definitions/error"
             }
           }
-        }
+        },
+        "x-swagger-router-controller": "Jobs"
+      },
+      "delete": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Delete job by Id",
+        "description": "",
+        "operationId": "deleteJob",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Id of job to be fetched",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        },
+        "x-swagger-router-controller": "Jobs"
       }
     }
   },
@@ -867,25 +1011,27 @@
         },
         "batchSize": {
           "type": "integer",
+          "format": "int64",
           "description": "The # of documents to process in a single batch",
-          "minimum": 0,
-          "format": "int64"
+          "minimum": 0
         },
         "threadCount": {
           "type": "integer",
+          "format": "int64",
           "description": "",
-          "minimum": 0,
-          "format": "int64"
+          "minimum": 0
         },
         "options": {
+          "type": "object",
           "description": "TBD: Likely metadata ",
-          "type": "object"
+          "properties": {}
         },
         "steps": {
           "type": "array",
           "description": "Array of summary Step objects associated with this Flow",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {}
           }
         },
         "jobs": {
@@ -896,8 +1042,9 @@
           }
         },
         "latestJob": {
+          "type": "object",
           "description": "Data related to the last job run for this Flow",
-          "type": "object"
+          "properties": {}
         },
         "isValid": {
           "type": "boolean",
@@ -905,17 +1052,36 @@
         },
         "version": {
           "type": "integer",
+          "format": "int64",
           "description": "version of the flow, incremented with each update",
-          "minimum": 0,
-          "format": "int64"
+          "minimum": 0
         }
+      },
+      "example": {
+        "latestJob": "{}",
+        "jobs": [
+          "jobs",
+          "jobs"
+        ],
+        "isValid": true,
+        "name": "name",
+        "options": "{}",
+        "description": "description",
+        "threadCount": 0,
+        "id": "id",
+        "batchSize": 0,
+        "steps": [
+          "{}",
+          "{}"
+        ],
+        "version": 0
       }
     },
     "step": {
       "type": "object",
       "required": [
         "name",
-        "type"
+        "stepDefinitionType"
       ],
       "properties": {
         "id": {
@@ -930,46 +1096,88 @@
           "type": "string",
           "description": "Description of a step"
         },
-        "type": {
+        "stepDefinitionName": {
+          "type": "string",
+          "description": "The step definition name"
+        },
+        "stepDefinitionType": {
           "type": "string",
           "description": "Type of a step",
           "enum": [
-            "ingest",
-            "mapping",
-            "mastering",
-            "custom"
+            "INGESTION",
+            "MAPPING",
+            "MASTERING",
+            "CUSTOM"
           ]
-        },
-        "sourceDatabase": {
-          "type": "string"
-        },
-        "targetDatabase": {
-          "type": "string"
         },
         "isValid": {
           "type": "boolean",
           "description": "Boolean flag to tell whether a Step is valid"
         },
+        "fileLocations": {
+          "type": "object",
+          "description": "INGESTION ONLY - [add description]",
+          "properties": { 
+            "inputFilePath": {
+              "type": "string",
+              "description": ""
+            },
+            "outputURIReplacement": {
+              "type": "string",
+              "description": ""
+            },
+            "inputFileType": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        },
         "options": {
-          "type": "object"
+          "type": "object",
+          "properties": {}
         },
-        "version": {
-          "type": "string"
+        "modulePath": {
+          "type": "string",
+          "description": "CUSTOM ONLY - module to execute as custom step"
+        }
+      },
+      "example": {
+        "id": "step-1-flow-1",
+        "name": "Flow01IngestStep",
+        "description": "My Step 1 description",
+        "stepDefinitionName":"default-ingestion",
+        "stepDefinitionType": "INGESTION",
+        "isValid": true,
+        "fileLocations": { 
+          "inputFilePath":"",
+          "outputURIReplacement":"",
+          "inputFileType":""
         },
-        "customHook": {
-          "$ref": "#/definitions/customHook"
+        "options": {
+          "sourceQuery":null,
+          "collections":[ 
+            "default-ingest",
+            "Flow04IngestStep"
+          ],
+          "outputFormat": "json",
+          "permissions": "rest-reader,read,rest-writer,update",
+          "targetDatabase":"data-hub-STAGING"
         }
       }
     },
     "job": {
       "type": "object",
       "required": [
-        "id"
+        "jobId"
       ],
       "properties": {
-        "id": {
+        "jobId": {
           "type": "string",
           "description": "Id of the job"
+        },
+        "flowId": {
+          "type": "string",
+          "description": "Id of the flow for this job"
         },
         "startTime": {
           "type": "string",
@@ -981,27 +1189,30 @@
           "format": "date-time",
           "description": "Timestamp job started"
         },
-        "output": {
+        "steps": {
           "type": "array",
-          "description": "Array with Job output info (not required for UI atm - skip implementation)",
+          "description": "Array of Step output info",
           "items": {
-            "type": "string"
+            "type": "object"
           }
         },
-        "stepId": {
+        "user": {
           "type": "string",
-          "description": "ID of the step being processed"
+          "description": "User that started the job"
         },
-        "stepName": {
+        "flow": {
           "type": "string",
-          "description": "Name of the step being processed"
+          "description": "Name of the flow being processed"
         },
-        "stepRunningPercent": {
+        "lastAttemptedStep": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 100,
           "format": "int64",
-          "description": "integer representing percent complete, null if not running"
+          "description": "last step that was attempted to run"
+        },
+        "lastCompletedStep": {
+          "type": "integer",
+          "format": "int64",
+          "description": "last step that was completed"
         },
         "status": {
           "type": "string",
@@ -1016,16 +1227,30 @@
         },
         "successfulEvents": {
           "type": "integer",
+          "format": "int64",
           "description": "# of documents successfully processed",
-          "minimum": 0,
-          "format": "int64"
+          "minimum": 0
         },
         "failedEvents": {
           "type": "integer",
+          "format": "int64",
           "description": "# of documents that failed to process",
-          "minimum": 0,
-          "format": "int64"
+          "minimum": 0
         }
+      },
+      "example": {
+        "user": "admin",
+        "failedEvents": 0,
+        "successfulEvents": 0,
+        "flow": "Flow 01",
+        "steps": [],
+        "lastAttemptedStep": 0,
+        "lastCompletedStep": 0,
+        "startTime": "2000-01-23T04:56:07.000+00:00",
+        "jobId": "job-id",
+        "flowId": "flow-id",
+        "endTime": "2000-01-23T04:56:07.000+00:00",
+        "status": "canceled"
       }
     },
     "error": {
@@ -1041,23 +1266,6 @@
         "timestamp": {
           "type": "string",
           "format": "date-time"
-        }
-      }
-    },
-    "customHook": {
-      "type": "object",
-      "properties": {
-        "module": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "object"
-        },
-        "user": {
-          "type": "string"
-        },
-        "runBefore": {
-          "type": "boolean"
         }
       }
     }

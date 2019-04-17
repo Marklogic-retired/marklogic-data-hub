@@ -2,14 +2,14 @@
   "name": "test-flow",
   "description": "this is an example",
   "options": {
-    "identifier": "(some identifier or search)"
+    "sourceQuery": "(some sourceQuery or search)"
   },
   "steps": {
     "1": {
-      "type": "MAPPING",
+      "stepDefinitionType": "MAPPING",
       "name": "person-mapping1.json",
       "options": {
-        "identifier": "null"
+        "sourceQuery": "null"
       },
       "retryLimit": 0
     }

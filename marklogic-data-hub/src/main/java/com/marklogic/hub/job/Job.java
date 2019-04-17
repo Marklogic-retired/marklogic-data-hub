@@ -25,7 +25,7 @@ public class Job {
     private String jobId;
     private String flowName;
 
-    private List<String> stepOutput;
+    public List<String> stepOutput;
     private Map<String, Object> fullOutput;
     private String status;
 

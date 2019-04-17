@@ -75,7 +75,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void setup() {
         createProjectDir();
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
