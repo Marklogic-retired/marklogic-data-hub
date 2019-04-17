@@ -12,16 +12,27 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-1", "name": "Flow 01 Ingest Step", "type": "ingest"
+        "id": "step-1-flow-1", 
+        "name": "Flow01IngestStep", 
+        "stepDefinitionType": "INGESTION"
       },
       { 
-        "id": "step-2-flow-1", "name": "Flow 01 Mapping Step", "type": "mapping", "targetEntity": "Order"
+        "id": "step-2-flow-1", 
+        "name": "Flow01MappingStep",  
+        "stepDefinitionType": "MAPPING",
+        "targetEntity": "Order"
       },
       { 
-        "id": "step-3-flow-1", "name": "Flow 01 Mastering Step", "type": "mastering", "targetEntity": "Order"
+        "id": "step-3-flow-1", 
+        "name": "Flow01MasteringStep", 
+        "stepDefinitionType": "MASTERING",
+        "targetEntity": "Order"
       },
       { 
-        "id": "step-4-flow-1", "name": "Flow 01 Custom Step", "type": "custom", "targetEntity": "Order"
+        "id": "step-4-flow-1", 
+        "name": "Flow01CustomStep", 
+        "stepDefinitionType": "CUSTOM",
+        "targetEntity": "Order"
       }
     ],
     "jobs": [
@@ -58,16 +69,27 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-2", "name": "Flow 02 Ingest Step", "type": "ingest"
+        "id": "step-1-flow-2", 
+        "name": "Flow02IngestStep", 
+        "stepDefinitionType": "INGESTION"
       },
       { 
-        "id": "step-2-flow-2", "name": "Flow 02 Mapping Step", "type": "mapping", "targetEntity": "Order"
+        "id": "step-2-flow-2", 
+        "name": "Flow02MappingStep",  
+        "stepDefinitionType": "MAPPING",
+        "targetEntity": "Order"
       },
       { 
-        "id": "step-3-flow-2", "name": "Flow 02 Mastering Step", "type": "mastering", "targetEntity": "Order"
+        "id": "step-3-flow-2", 
+        "name": "Flow02MasteringStep", 
+        "stepDefinitionType": "MASTERING",
+        "targetEntity": "Order"
       },
       { 
-        "id": "step-4-flow-2", "name": "Flow 02 Custom Step", "type": "custom", "targetEntity": "Order"
+        "id": "step-4-flow-2", 
+        "name": "Flow02CustomStep", 
+        "stepDefinitionType": "CUSTOM",
+        "targetEntity": "Order"
       }
     ],
     "jobs": [
@@ -104,16 +126,27 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-3", "name": "Flow 03 Ingest Step", "type": "ingest"
+        "id": "step-1-flow-3", 
+        "name": "Flow03IngestStep", 
+        "stepDefinitionType": "INGESTION"
       },
       { 
-        "id": "step-2-flow-3", "name": "Flow 03 Mapping Step", "type": "mapping", "targetEntity": "Order"
+        "id": "step-2-flow-3", 
+        "name": "Flow03MappingStep",  
+        "stepDefinitionType": "MAPPING",
+        "targetEntity": "Order"
       },
       { 
-        "id": "step-3-flow-3", "name": "Flow 03 Mastering Step", "type": "mastering", "targetEntity": "Order"
+        "id": "step-3-flow-3", 
+        "name": "Flow03MasteringStep", 
+        "stepDefinitionType": "MASTERING",
+        "targetEntity": "Order"
       },
       { 
-        "id": "step-4-flow-3", "name": "Flow 03 Custom Step", "type": "custom", "targetEntity": "Order"
+        "id": "step-4-flow-3", 
+        "name": "Flow03CustomStep", 
+        "stepDefinitionType": "CUSTOM",
+        "targetEntity": "Order"
       }
     ],
     "jobs": [
@@ -147,7 +180,10 @@
     },
     "steps": [
       { 
-        "id": "step-1-flow-4", "name": "Flow 04 Custom Step", "type": "custom", "targetEntity": "Order"
+        "id": "step-4-flow-4", 
+        "name": "Flow04CustomStep", 
+        "stepDefinitionType": "CUSTOM",
+        "targetEntity": "Order"
       }
     ],
     "jobs": [],
