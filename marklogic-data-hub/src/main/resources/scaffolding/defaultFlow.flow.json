@@ -8,11 +8,13 @@
   },
   "steps": {
     "1": {
-      "language": "zxx",
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "INGESTION",
-      "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs",
-      "customHook": {
+      "customHook": {},
+      "fileLocations": {
+        "inputFilePath": "path/to/folder",
+        "outputURIReplacement": "output/URI,'substitute/URI'",
+        "inputFileType": "json"
       },
       "options": {
         "sourceQuery": null,
@@ -23,10 +25,8 @@
       }
     },
     "2": {
-      "language": "zxx",
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
-      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
       "options": {
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
         "collections": [
@@ -39,10 +39,8 @@
       }
     },
     "3": {
-      "language": "zxx",
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
-      "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.sjs",
       "options": {
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
         "collections": [
