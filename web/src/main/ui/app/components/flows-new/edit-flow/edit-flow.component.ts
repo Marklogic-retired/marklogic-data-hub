@@ -16,12 +16,14 @@ import { Entity } from '../../../models/entity.model';
     [stepsArray]="stepsArray"
     [databases]="databases"
     [entities]="entities"
+    [selectedStepId]="selectedStepId"
     [projectDirectory]="projectDirectory"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
     (deleteFlow)="deleteFlow($event)"
     (stepCreate)="createStep($event)"
+    (stepSelected)="stepSelected($event)"
     (stepUpdate)="updateStep($event)"
     (stepDelete)="deleteStep($event)"
   ></app-edit-flow-ui>
@@ -31,6 +33,7 @@ export class EditFlowComponent implements OnInit {
   flowId: string;
   flow: Flow;
   stepsArray: any;
+  selectedStepId: string;
   databases: any = {
     final: '',
     staging: '',
@@ -74,6 +77,7 @@ export class EditFlowComponent implements OnInit {
         newArray.push(resp.find(item => item.id === step.id));
       });
       this.stepsArray = newArray;
+      this.selectedStepId = (this.stepsArray.length > 0) ? this.stepsArray[0].id : null;
     });
   }
   getDbInfo() {
@@ -138,6 +142,9 @@ export class EditFlowComponent implements OnInit {
         this.flow = Flow.fromJSON(resp);
       });
     });
+  }
+  stepSelected(index) {
+    this.selectedStepId = this.stepsArray[index].id;
   }
   updateStep(step) {
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {

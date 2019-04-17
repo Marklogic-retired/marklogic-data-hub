@@ -2,6 +2,7 @@ import {Component, ViewChild, OnInit} from "@angular/core";
 import {Flow} from "../models/flow.model";
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
+import {DeployService} from '../../../services/deploy/deploy.service';
 import * as _ from "lodash";
 
 @Component({
@@ -12,7 +13,7 @@ import * as _ from "lodash";
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
       (saveFlow)="this.saveFlow($event)"
-      (redeployAll)="this.redeployAll()"
+      (redeployModules)="this.redeployModules()"
     >
     </flows-page-ui>
   `
@@ -25,7 +26,8 @@ export class ManageFlowsComponent implements OnInit {
   flows = [];
 
   constructor(
-    private manageFlowsService: ManageFlowsService
+    private manageFlowsService: ManageFlowsService,
+    private deployService: DeployService
   ) {
   }
 
@@ -67,7 +69,10 @@ export class ManageFlowsComponent implements OnInit {
     });
   }
 
-  redeployAll() {
-    console.log(`Redeploy All Flows`)
+  redeployModules() {
+    this.deployService.redeployUserModules().subscribe(() => {
+      console.log('Modules redeployed');
+    });
   }
+
 }

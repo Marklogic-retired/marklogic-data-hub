@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterContentChecked } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import * as moment from 'moment';
 import { StepType } from '../../models/step.model';
 
 @Component({
@@ -16,6 +17,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   @Output() newStep = new EventEmitter();
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
+  @Output() stepSelected = new EventEmitter();
   @Output() deleteStep = new EventEmitter();
   @Output() editFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
@@ -49,6 +51,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   stepClicked(index: number): void {
     this.selectedIndex = index;
+    this.stepSelected.emit(index);
   }
   newStepClicked(): void {
     let index = this.selectedIndex + 2;
@@ -72,5 +75,8 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   deleteFlowClicked(): void {
     this.deleteFlow.emit();
+  }
+  friendlyDate(dt): string {
+    return (dt) ? moment(dt).fromNow() : '';
   }
 }
