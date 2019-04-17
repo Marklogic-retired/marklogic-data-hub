@@ -215,7 +215,7 @@ class Flow {
         status: (stepDetails.type === 'INGESTION') ? 'created' : 'updated',
         metadata: {}
       };
-      this.datahub.prov.createStepRecord(jobId, flowName, stepDetails.name, stepRef.stepDefinitionName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);
+      this.datahub.prov.createStepRecord(jobId, flowName, stepRef.name, stepRef.stepDefinitionName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);
     }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";

@@ -366,7 +366,7 @@ class Provenance {
     let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURI, info);
     if (!(isValid instanceof Error)) {
       let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
-      resp = this['_create' + capitalizedStepType + 'StepRecord'](jobId, flowId, docURI, info);
+      resp = this['_create' + capitalizedStepType + 'StepRecord'](jobId, flowId, stepName, stepDefinitionName, docURI, info);
     } else {
       resp = isValid
     }
