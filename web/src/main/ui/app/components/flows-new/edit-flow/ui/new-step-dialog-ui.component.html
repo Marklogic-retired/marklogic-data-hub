@@ -10,6 +10,7 @@
   <div *ngIf="newStepForm.value.stepDefinitionType">
   <mat-form-field class="">
     <input id="step-name" matInput formControlName="name" placeholder="Name" required>
+    <mat-error id="step-name-error" *ngIf="newStepForm.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
   </mat-form-field>
   <mat-form-field class="">
     <input id="step-description" matInput formControlName="description" placeholder="Description">
@@ -31,7 +32,7 @@
     <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION">
     <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity">
       <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
