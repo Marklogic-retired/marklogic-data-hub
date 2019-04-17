@@ -17,7 +17,6 @@ package com.marklogic.hub.step;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.flow.*;
-import com.marklogic.hub.job.Job;
 
 
 import java.util.Collection;
@@ -148,18 +147,18 @@ public interface StepRunner {
 
     /**
      * Runs the flow and creates the job
-     * @return Job object for the flow that is run
+     * @return RunStepResponse object for the flow that is run
      */
-    Job run();
+    RunStepResponse run();
 
     /**
      * Runs the flow and creates the job. This bypasses the collector
      *
      * @param uris the ids to pass to the harmonization flow
      *
-     * @return Job object for the flow that is run
+     * @return RunStepResponse object for the flow that is run
      */
-    Job run(Collection<String> uris);
+    RunStepResponse run(Collection<String> uris);
 
     /**
      * Stops the step run

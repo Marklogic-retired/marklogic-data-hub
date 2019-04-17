@@ -34,7 +34,7 @@ import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.Job;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
@@ -260,9 +260,9 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
-    public Job run() {
+    public RunStepResponse run() {
         runningThread = null;
-        Job job = createJob();
+        RunStepResponse runStepResponse = createStepResponse();
         jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
 
         JsonNode comboOptions = null;
@@ -320,28 +320,28 @@ public class WriteStepRunner implements StepRunner {
         try {
             uris = runFileCollector();
         } catch (Exception e) {
-            job.setCounts(0,0, 0, 0, 0)
+            runStepResponse.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED.toString());
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            job.withStepOutput(errors.toString());
+            runStepResponse.withStepOutput(errors.toString());
             try {
                 jobUpdate.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step);
             }
             catch (Exception ex) {
                 throw ex;
             }
-            return job;
+            return runStepResponse;
         }
-        this.runIngester(job,uris);
-        return job;
+        this.runIngester(runStepResponse,uris);
+        return runStepResponse;
     }
 
     @Override
-    public Job run(Collection<String> uris) {
+    public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
-        Job job = createJob();
-        return this.runIngester(job,uris);
+        RunStepResponse runStepResponse = createStepResponse();
+        return this.runIngester(runStepResponse,uris);
     }
 
     @Override
@@ -374,29 +374,29 @@ public class WriteStepRunner implements StepRunner {
         return uris;
     }
 
-    private Job runIngester(Job job, Collection<String> uris) {
+    private RunStepResponse runIngester(RunStepResponse runStepResponse, Collection<String> uris) {
         AtomicLong successfulEvents = new AtomicLong(0);
         AtomicLong failedEvents = new AtomicLong(0);
         AtomicLong successfulBatches = new AtomicLong(0);
         AtomicLong failedBatches = new AtomicLong(0);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(job.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
+            listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
         if ( !isStopped.get() && (uris == null || uris.size() == 0 )) {
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, JobStatus.COMPLETED_PREFIX + step, 0, 0, "provided file path returned 0 items");
+                listener.onStatusChange(runStepResponse.getJobId(), 100, JobStatus.COMPLETED_PREFIX + step, 0, 0, "provided file path returned 0 items");
             });
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
-            job.setCounts(0,0,0,0,0);
-            job.withStatus(JobStatus.COMPLETED_PREFIX + step);
+            runStepResponse.setCounts(0,0,0,0,0);
+            runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
             try {
                 jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
             }
             catch (Exception e) {
             }
 
-            return job;
+            return runStepResponse;
         }
 
         Vector<String> errorMessages = new Vector<>();
@@ -418,7 +418,7 @@ public class WriteStepRunner implements StepRunner {
         writeBatcher = dataMovementManager.newWriteBatcher()
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
-            .withJobId(job.getJobId())
+            .withJobId(runStepResponse.getJobId())
             .withTransform(serverTransform)
             .onBatchSuccess(batch ->{
                 successfulEvents.addAndGet(batch.getItems().length );
@@ -427,7 +427,7 @@ public class WriteStepRunner implements StepRunner {
                 if (stepItemCompleteListeners.size() > 0) {
                     Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
                         stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
-                            listener.processCompletion(job.getJobId(), e.getTargetUri());
+                            listener.processCompletion(runStepResponse.getJobId(), e.getTargetUri());
                         });
                     });
                 }
@@ -442,7 +442,7 @@ public class WriteStepRunner implements StepRunner {
                 if(stepItemFailureListeners.size() > 0) {
                     Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
                         stepItemFailureListeners.forEach((StepItemFailureListener listener) -> {
-                            listener.processFailure(job.getJobId(), e.getTargetUri());
+                            listener.processFailure(runStepResponse.getJobId(), e.getTargetUri());
                         });
                     });
                 }
@@ -529,15 +529,15 @@ public class WriteStepRunner implements StepRunner {
             }
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, stepStatus, successfulEvents.get(), failedEvents.get(), "Ingestion completed");
+                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, successfulEvents.get(), failedEvents.get(), "Ingestion completed");
             });
 
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
 
             dataMovementManager.stopJob(writeBatcher);
 
-            job.setCounts(successfulEvents.get() + failedEvents.get(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
-            job.withStatus(stepStatus);
+            runStepResponse.setCounts(successfulEvents.get() + failedEvents.get(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
+            runStepResponse.withStatus(stepStatus);
             try {
                 jobUpdate.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null);
             }
@@ -545,15 +545,15 @@ public class WriteStepRunner implements StepRunner {
                 throw e;
             }
             if (errorMessages.size() > 0) {
-                job.withStepOutput(errorMessages);
+                runStepResponse.withStepOutput(errorMessages);
             }
             if(isFullOutput) {
-                job.withFullOutput(fullResponse);
+                runStepResponse.withFullOutput(fullResponse);
             }
         });
 
         runningThread.start();
-        return job;
+        return runStepResponse;
     }
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
@@ -664,13 +664,13 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private Job createJob() {
-        Job job = Job.withFlow(flow);
+    private RunStepResponse createStepResponse() {
+        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow);
         if (this.jobId == null) {
             jobId = UUID.randomUUID().toString();
         }
-        job.withJobId(jobId);
-        return job;
+        runStepResponse.withJobId(jobId);
+        return runStepResponse;
     }
 
     private String jsonToString(Map map) {

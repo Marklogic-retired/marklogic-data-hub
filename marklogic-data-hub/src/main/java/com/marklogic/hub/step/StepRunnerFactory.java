@@ -26,7 +26,7 @@ public class StepRunnerFactory {
     private String sourceDatabase;
     private String targetDatabase;
 
-    public StepRunner getStepRunner(Flow flow, String stepNum) {
+    public StepRunner getStepRunner(Flow flow, String stepNum)  {
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get(stepNum);
         StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());

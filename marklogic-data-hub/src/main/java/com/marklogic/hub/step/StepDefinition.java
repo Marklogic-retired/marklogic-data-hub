@@ -161,18 +161,18 @@ public interface StepDefinition {
     void setCustomHook(JsonNode hookObj);
 
     /**
-     * Returns the step identifier
+     * Returns the step sourceQuery
      *
-     * @return - a string identifier
+     * @return - a string sourceQuery
      */
     String getSourceQuery();
 
     /**
-     * Sets the identifier for the step
+     * Sets the sourceQuery for the step
      *
-     * @param identifier - a string identifier
+     * @param sourceQuery - a string sourceQuery
      */
-    void setSourceQuery(String identifier);
+    void setSourceQuery(String sourceQuery);
 
     /**
      * Returns the retry limit for the step
