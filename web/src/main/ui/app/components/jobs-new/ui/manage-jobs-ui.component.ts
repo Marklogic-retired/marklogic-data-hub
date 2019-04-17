@@ -22,7 +22,6 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   @Input() jobs: Array<any> = [];
 
   dataSource: MatTableDataSource<any>;
-  enteredFlowName: string = '';
 
   @ViewChild(MatTable) table: MatTable<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -46,7 +45,6 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
       }
     };
     if (this.activatedRoute.snapshot.queryParams['flowName']) {
-      this.enteredFlowName = this.activatedRoute.snapshot.queryParams['flowName'];
       this.applyFilter('flow', this.activatedRoute.snapshot.queryParams['flowName']);
     }
   }
@@ -93,6 +91,11 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
       }
       return result;
     }
+    this.dataSource.filter = JSON.stringify(this.filterValues)
+  }
+
+  clearFilters(): void {
+    this.filterValues = {};
     this.dataSource.filter = JSON.stringify(this.filterValues)
   }
 

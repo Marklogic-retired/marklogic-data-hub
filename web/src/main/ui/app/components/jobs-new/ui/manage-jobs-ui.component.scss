@@ -56,9 +56,16 @@ button {
   margin-bottom: -30px;
   .filter-label {
     display: inline-block;
-    margin: 8px 10px 0 0;
+    margin: 8px 4px 0 0;
     font-size: 16px;
     font-weight: 500;
+  }
+  .reset-filters-btn {
+    display: inline-block;
+    margin: 14px 0 0 0;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
   }
   .mat-form-field {
     font-size: 14px;
