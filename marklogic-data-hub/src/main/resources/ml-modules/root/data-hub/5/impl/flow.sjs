@@ -212,10 +212,10 @@ class Flow {
       let info = {
         derivedFrom: content.previousUri || content.uri,
         influencedBy: stepRef.stepDefinitionName,
-        status: (stepDetails.stepDefinitionType === 'INGESTION') ? 'created' : 'updated',
+        status: (stepDetails.type === 'INGESTION') ? 'created' : 'updated',
         metadata: {}
       };
-      this.datahub.prov.createStepRecord(jobId, flowName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);
+      this.datahub.prov.createStepRecord(jobId, flowName, stepDetails.name, stepRef.stepDefinitionName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);
     }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";
