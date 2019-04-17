@@ -80,7 +80,7 @@ public class FlowRunnerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getDataHubAdminConfig().getFlowDeveloperRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-runner-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-runner-test/input/employee2.xml");
     }
