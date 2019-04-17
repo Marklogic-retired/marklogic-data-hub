@@ -45,8 +45,8 @@ public class JobServiceTest extends HubTestBase {
         DatabaseClient jobClient = getFlowDeveloperConfig().newJobDbClient();
         JobService jobService = new JobService(jobClient);
         JobQuery jobQuery = new JobQuery();
-        jobQuery.start = new Long(1);
-        jobQuery.count = new Long(10);
+        jobQuery.start = Long.valueOf(1);
+        jobQuery.count = Long.valueOf(10);
         jobService.getJobs(jobQuery);
     }
 }
