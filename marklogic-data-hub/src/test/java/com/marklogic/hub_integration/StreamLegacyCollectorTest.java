@@ -24,15 +24,15 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,15 +40,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static org.junit.Assert.*;
 
 
 
@@ -89,7 +87,7 @@ public class StreamLegacyCollectorTest extends HubTestBase {
         disableDebugging();
         disableTracing();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 

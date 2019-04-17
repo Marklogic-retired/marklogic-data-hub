@@ -53,7 +53,7 @@ public class EmptyLegacyCollectorTest extends HubTestBase {
         resetProperties();
         adminHubConfig.refreshProject();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 

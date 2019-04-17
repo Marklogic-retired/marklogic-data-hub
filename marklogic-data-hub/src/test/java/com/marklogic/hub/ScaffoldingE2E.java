@@ -84,8 +84,8 @@ public class ScaffoldingE2E extends HubTestBase {
         Path employeeDir = project.getEntityDir("employee");
         assertFalse(employeeDir.toFile().exists());
 
-        scaffolding.createLegacyEntity(entityName);
-        scaffolding.createLegacyEntity("employee");
+        scaffolding.createEntity(entityName);
+        scaffolding.createEntity("employee");
         assertTrue(projectDir.exists());
         assertTrue(entityDir.toFile().exists());
         assertTrue(employeeDir.toFile().exists());
