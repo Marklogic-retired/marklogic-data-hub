@@ -16,25 +16,25 @@
           <span class="filter-label">Filters</span>
           <mat-icon class="reset-filters-btn" (click)="clearFilters()" title="reset filters">replay</mat-icon>
           <mat-form-field>
-            <mat-select [(ngModel)]="filterValues.flow" id="filter-flow-name" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)">
+            <mat-select [(ngModel)]="filterValues['flow']" id="filter-flow-name" placeholder="Flow Name" (selectionChange)="applyFilter('flow', $event.value)">
               <mat-option class="name-option" [id]="'filter-name-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('flow')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select [(ngModel)]="filterValues.targetEntity" id="filter-target-entity" placeholder="Target Entity" (selectionChange)="applyFilter('targetEntity', $event.value)">
+            <mat-select [(ngModel)]="filterValues['targetEntity']" id="filter-target-entity" placeholder="Target Entity" (selectionChange)="applyFilter('targetEntity', $event.value)">
               <mat-option class="target-entity-option" [id]="'filter-entity-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('targetEntity')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select [(ngModel)]="filterValues.jobStatus" id="filter-status" placeholder="Status" (selectionChange)="applyFilter('jobStatus', $event.value)">
+            <mat-select [(ngModel)]="filterValues['jobStatus']" id="filter-status" placeholder="Status" (selectionChange)="applyFilter('jobStatus', $event.value)">
               <mat-option class="status-option" [id]="'filter-status-option-' + (val ? val : 'All').toLowerCase().split(' ').join('-')" *ngFor="let val of getMenuVals('jobStatus')" [value]="val">{{val ? val : 'All'}}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field>
-            <input [(ngModel)]="filterValues.text" id="filter-by-text" matInput (keyup)="applyFilter('text', $event.target.value)" placeholder="Text">
+            <input [(ngModel)]="filterValues['text']" id="filter-by-text" matInput (keyup)="applyFilter('text', $event.target.value)" placeholder="Text">
           </mat-form-field>
 
         </div>
