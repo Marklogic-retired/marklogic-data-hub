@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Step } from '../../models/step.model';
+import { Step, StepType } from '../../models/step.model';
 import {NewStepDialogValidator} from '../../validators/new-step-dialog.validator';
 import {
   ExistingStepNameValidator
@@ -25,7 +25,8 @@ export class NewStepDialogUiComponent implements OnInit {
   @Output() saveClicked = new EventEmitter();
 
   public newStep: Step;
-  readonly stepOptions = ['INGESTION', 'MAPPING', 'MASTERING', 'CUSTOM'];
+  public stepType: typeof StepType = StepType;
+  readonly stepOptions = Object.keys(this.stepType);
 
   selectedSource = '';
   newStepForm: FormGroup;
@@ -35,7 +36,6 @@ export class NewStepDialogUiComponent implements OnInit {
 
   ngOnInit() {
     this.databases = Object.values(this.databaseObject).slice(0, -1);
-
     if (this.step) {
       this.newStep = this.step;
     }
@@ -77,28 +77,28 @@ export class NewStepDialogUiComponent implements OnInit {
   }
   stepTypeChange() {
     const type = this.newStepForm.value.stepDefinitionType;
-    if (type === 'MAPPING') {
+    if (type === this.stepType.MAPPING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createMappingStep();
     }
-    if (type === 'MASTERING') {
+    if (type === this.stepType.MASTERING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createMasteringStep();
     }
-    if (type === 'CUSTOM') {
+    if (type === this.stepType.CUSTOM) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createCustomStep();
     }
-    if (type === 'INGESTION') {
+    if (type === this.stepType.INGESTION) {
       this.newStepForm.patchValue({
         sourceDatabase: '',
         targetDatabase: this.databaseObject.staging
@@ -112,12 +112,17 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
     this.newStep.description = this.newStepForm.value.description;
-    this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+    if (this.selectedSource === 'query') {
+      this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+    } else {
+      const ctsUri = `cts.uris(null, null, cts.collectionQuery(${this.newStepForm.value.sourceQuery}))`;
+      this.newStep.options.sourceQuery = ctsUri;
+    }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.options.targetDatabase = this.newStepForm.value.targetDatabase;
 
-    if (this.newStep.name !== '' && this.newStep.stepDefinitionType !== '') {
+    if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);
     }
   }

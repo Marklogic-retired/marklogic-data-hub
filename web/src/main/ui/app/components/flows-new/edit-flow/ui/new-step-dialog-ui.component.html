@@ -15,19 +15,19 @@
     <input id="step-description" matInput formControlName="description" placeholder="Description">
     <mat-hint>Optional</mat-hint>
   </mat-form-field>
-  <div *ngIf="newStepForm.value.stepDefinitionType !== 'INGESTION'">
+  <div *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION">
     <label>Source Type: </label>
     <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource" [ngModelOptions]="{standalone: true}">
       <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
       <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
     </mat-radio-group>
   </div>
-  <mat-form-field *ngIf="selectedSource === 'collection' && newStepForm.value.stepDefinitionType !== 'INGESTION'">
+  <mat-form-field *ngIf="selectedSource === 'collection' && newStepForm.value.stepDefinitionType !== stepType.INGESTION">
     <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection" formControlName="sourceQuery">
       <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'  && newStepForm.value.stepDefinitionType !== 'INGESTION'" >
+  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'  && newStepForm.value.stepDefinitionType !== stepType.INGESTION" >
     <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 

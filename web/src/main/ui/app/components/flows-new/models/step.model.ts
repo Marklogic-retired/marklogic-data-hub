@@ -3,13 +3,19 @@ import { MappingOptions } from './mapping-options.model';
 import { MasteringOptions } from './mastering-options.model';
 import { CustomOptions } from './custom-options.model';
 
+export enum StepType {
+  INGESTION = 'INGESTION',
+  MAPPING = 'MAPPING',
+  MASTERING = 'MASTERING',
+  CUSTOM = 'CUSTOM'
+}
 
 export class Step {
   public id: string;
   public name: string = '';
   public description: string = '';
   public stepDefinitionName: string;
-  public stepDefinitionType: string;
+  public stepDefinitionType: StepType;
   public isValid: boolean = false;
   public options: any;
   // Ingestion only
@@ -20,6 +26,7 @@ export class Step {
   };
   // Custom only
   public modulePath: string;
+  private constructor() {}
 
   static createIngestionStep(filePath: string): Step {
     const step = new Step();
