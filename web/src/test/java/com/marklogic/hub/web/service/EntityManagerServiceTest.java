@@ -73,9 +73,9 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         hubConfig.initHubProject();
         hubConfig.refreshProject();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
 
-        Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
+        Path entityDir = projectDir.resolve("entities/" + ENTITY);
         Path inputDir = entityDir.resolve("input");
 
         String entityFilename = ENTITY + EntityManagerService.ENTITY_FILE_EXTENSION;

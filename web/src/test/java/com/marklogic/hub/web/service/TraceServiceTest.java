@@ -71,7 +71,7 @@ class TraceServiceTest extends AbstractServiceTest {
         createProjectDir();
         enableTracing();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
