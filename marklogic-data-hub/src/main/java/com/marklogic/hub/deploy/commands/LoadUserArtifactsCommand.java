@@ -194,7 +194,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             stepDefModulesFinder,
                             propertiesModuleManager,
                             stepResourceToURI,
-                            "http://marklogic.com/data-hub/step",
+                            "http://marklogic.com/data-hub/step-definition",
                             stagingEntityDocumentWriteSet,
                             finalEntityDocumentWriteSet
                         );
