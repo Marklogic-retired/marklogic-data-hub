@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterContentChecked } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-
+import { StepType } from '../../models/step.model';
 
 @Component({
   selector: 'app-stepper',
@@ -21,6 +21,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   @Output() deleteFlow = new EventEmitter();
   @Output() updateFlow = new EventEmitter();
 
+  public stepType: typeof StepType = StepType;
   showBody = true;
   stepAdded = false;
 
