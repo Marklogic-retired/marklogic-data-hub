@@ -1,4 +1,4 @@
-# Release Notes for DHF 4.3.x
+# Release Notes for DHF 4.3
 
 
 <details open><summary class="relnote-summary">Added Support for XQuery Namespaces</summary>
@@ -11,7 +11,7 @@
 <details open><summary class="relnote-summary">Replaced Security Roles</summary>
   <div markdown="1">
 
-  For easier integration with other MarkLogic services, DHF 4.3.0 uses new security roles.
+  For easier integration with other MarkLogic services, DHF 4.3 uses new security roles.
 
   The old security roles `hub-admin-role` and `data-hub-role` are now replaced with the following new roles:
 

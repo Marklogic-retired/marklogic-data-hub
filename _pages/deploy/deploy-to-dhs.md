@@ -24,15 +24,6 @@ After you create and test your project locally (your development environment) us
 
 DHF projects and DHS projects have different default configurations:
 
-<!--
-- mlFinalAppserverName
-
-  |                      | DHF            | DHS            |
-  |:--------------------:|:--------------:|:--------------:|
-  | mlFinalAppserverName | data-hub-FINAL | data-hub-ADMIN |
-  {:.table-b1gray}
--->
-
 - Ports and load balancers for app servers
 
   | app server | DHF  | DHS* | DHS load balancers |
@@ -57,13 +48,13 @@ Analytics REST: 8011
 
 - Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 
-  | DHF                 | DHS                 |
-  |:-------------------:|:-------------------:|
-  | `data-hub-admin`    |                     |
-  |                     | `endpointDeveloper` |
-  |                     | `endpointUser`      |
-  | `flow-developer`    | `flowDeveloper`     |
-  | `flow-operator`     | `flowOperator`      |
+  | DHF                   | DHS                 |
+  |:---------------------:|:-------------------:|
+  | `data-hub-admin`      |                     |
+  |                       | `endpointDeveloper` |
+  |                       | `endpointUser`      |
+  | `flow-developer-role` | `flowDeveloper`     |
+  | `flow-operator-role`  | `flowOperator`      |
   {:.table-b1gray}
 
 - Database names, if customized in the DHF environment
@@ -125,7 +116,7 @@ If your endpoints are publicly available, you can use any machine that is set up
         mlStagingDbName=data-hub-STAGING
         mlStagingForestsPerHost=1
 
-        mlFinalAppserverName=data-hub-FINAL
+        mlFinalAppserverName=data-hub-ADMIN
         mlFinalPort=8004
         mlFinalDbName=data-hub-FINAL
         mlFinalForestsPerHost=1
