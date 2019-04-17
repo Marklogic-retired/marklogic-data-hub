@@ -44,22 +44,6 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
         default: return item[property];
       }
     };
-    if (this.activatedRoute.snapshot.queryParams['flowName']) {
-      this.applyFilter('flow', this.activatedRoute.snapshot.queryParams['flowName']);
-    }
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  updateDataSource() {
-    this.dataSource.data = this.jobs;
-  }
-
-  applyFilter(menu: string, value: string) {
-    this.filterValues[menu] = value;
     // Check all filters across data source
     this.dataSource.filterPredicate = (data: any, filterValues: string) => {
       filterValues = JSON.parse(filterValues);
@@ -90,7 +74,23 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
         result = false;
       }
       return result;
+    }    
+    if (this.activatedRoute.snapshot.queryParams['flowName']) {
+      this.applyFilter('flow', this.activatedRoute.snapshot.queryParams['flowName']);
     }
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  updateDataSource() {
+    this.dataSource.data = this.jobs;
+  }
+
+  applyFilter(menu: string, value: string) {
+    this.filterValues[menu] = value;
     this.dataSource.filter = JSON.stringify(this.filterValues)
   }
 
