@@ -4,12 +4,13 @@
   "version" : 1,
   "options" : {
     "collections" : [ "mapping","mdm-content" ],
-    "sourceDb": "data-hub-STAGING",
-    "targetDb": "data-hub-FINAL",
+    "sourceDatabase": "data-hub-STAGING",
+    "targetDatabase": "data-hub-FINAL",
     "mapping": {
-      "name": "person"
+      "name": "person",
+      "version": 1
     },
-    "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))"
+    "sourceQuery" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))"
   },
   "customHook" : { },
   "language" : "zxx",

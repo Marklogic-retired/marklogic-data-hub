@@ -14,7 +14,11 @@
     "3": {
       "stepDefinitionName": "mastering",
       "stepDefinitionType": "MASTERING",
-      "batchSize": 300
+      "batchSize": 300,
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-STAGING"
+      }
     }
   }
 }
