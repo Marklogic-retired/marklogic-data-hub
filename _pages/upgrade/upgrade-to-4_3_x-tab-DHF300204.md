@@ -24,7 +24,7 @@ The notes and steps in this tab are for the following upgrade paths:
 
     - Copies some settings from the old configuration files to the new ones.
 
-    - Updates all flows to use updated imports. See the [notes to upgrade to 4.0.0] ](https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x).
+    - Updates all flows to use updated imports. See the [notes to upgrade to 4.0.x](https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x).
 
 - {% include conrefs/conref-remark-hubupdate-verbose.md %}
 
@@ -49,23 +49,9 @@ The notes and steps in this tab are for the following upgrade paths:
 
 1. Update your `gradle.properties` file based on the `gradle-GENERATED.properties` file.
 
-    {% include note-in-list.html type="IMPORTANT" content="Do NOT update `mlUsername` or `mlPassword` yet. You need the old user account to access MarkLogic Server." %}
+    {% include note-in-list.html type="IMPORTANT" content="Do NOT update `mlUsername` or `mlPassword` yet, and do NOT delete the old `mlHubUser*` and `mlHubAdmin*` properties yet. You need the old user accounts to access MarkLogic Server in the `mlDeploy` task." %}
 
-    a. Remove the following properties. <!-- What are the actual names of the databases? -->
-
-      - mlHubUserRole
-      - mlHubUserName
-      - mlHubUserPassword
-      - mlHubAdminRole
-      - mlHubAdminUserName
-      - mlHubAdminUserPassword
-
-      - data-hub-TRACING server
-      - data-hub-TRACING database
-      - data-hub-TRIGGERS database
-      - data-hub-SCHEMAS database
-
-    b. Add the following properties and replace the values accordingly.
+    a. Add the following properties and replace the values accordingly.
 
       ```
       mlDHFVersion=4.3.0
@@ -89,30 +75,47 @@ The notes and steps in this tab are for the following upgrade paths:
       mlFinalTriggersForestsPerHost=1
       mlFinalSchemasDbName=data-hub-final-SCHEMAS
       mlFinalSchemasForestsPerHost=1
-
       ```
 
-    c. Add default modules permissions.
+    b. Assign default module permissions to the new roles.
 
       ```
-      mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,data-hub-role,read,data-hub-role,execute
+      mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-developer-role,read,flow-developer-role,execute,flow-developer-role,insert,flow-operator-role,read,flow-operator-role,execute
       ```
+
+    c. Remove the following properties. <!-- What are the actual names of the databases? -->
+
+      - data-hub-TRACING server
+      - data-hub-TRACING database
+      - data-hub-TRIGGERS database
+      - data-hub-SCHEMAS database
 
 1. If your custom code refers to the old roles/users, change them to refer to the new roles/users.
+
+1. {% include ostabs-run-gradle-step.html grtask="mlDeploy" %}
+
+1. Edit your `gradle.properties` file again.
+
+    a. Update `mlUsername` or `mlPassword` with a new user assigned to `flow-developer-role` (to create and deploy flows) or to `flow-operator-role` (to run flows).
+
+      ```
+      mlUsername=flow-operator
+      mlPassword=your-flow-operator-password
+      ```
+
+    b. Remove the following properties.
+
+      - mlHubUserRole
+      - mlHubUserName
+      - mlHubUserPassword
+      - mlHubAdminRole
+      - mlHubAdminUserName
+      - mlHubAdminUserPassword
 
 1. (Optional) Delete the old roles from MarkLogic Server.
 
       - hub-admin-role
       - data-hub-role
-
-1. {% include ostabs-run-gradle-step.html grtask="mlDeploy" %}
-
-1. Edit your `gradle.properties` file again to update `mlUsername` or `mlPassword` with a new user assigned to `data-hub-admin-role`.
-
-      ```
-      mlUsername=your-data-hub-admin-user-name
-      mlPassword=your-data-hub-admin-user-password
-      ```
 
 1. Run your [ingest]({{site.baseurl}}/ingest/) and [harmonize]({{site.baseurl}}/harmonize/) flows.
 
