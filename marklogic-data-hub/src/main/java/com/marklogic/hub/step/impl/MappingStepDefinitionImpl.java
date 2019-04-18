@@ -18,6 +18,8 @@ package com.marklogic.hub.step.impl;
 
 import com.marklogic.hub.step.AbstractStepDefinition;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class MappingStepDefinitionImpl extends AbstractStepDefinition {
@@ -29,6 +31,10 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
         Map<String, Object> options = getOptions();
         setSourceQuery("cts.uris(null, null, cts.collectionQuery('default-ingestion'))");
         options.put("sourceQuery", getSourceQuery());
+
+        List<String> collectionName = new ArrayList<>();
+        collectionName.add(name);
+        options.put("collections", collectionName);
 
         setModulePath("/data-hub/5/builtins/steps/mapping/default/main.sjs");
     }

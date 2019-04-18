@@ -18,11 +18,20 @@ package com.marklogic.hub.step.impl;
 
 import com.marklogic.hub.step.AbstractStepDefinition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class CustomStepDefinitionImpl extends AbstractStepDefinition {
 
     public CustomStepDefinitionImpl(String name) {
         setName(name);
         setType(StepDefinitionType.CUSTOM);
+
+        List<String> collectionName = new ArrayList<>();
+        collectionName.add(name);
+        Map<String, Object> options = getOptions();
+        options.put("collections", collectionName);
 
         setModulePath("/path/to/your/step/module/main.sjs");
     }
