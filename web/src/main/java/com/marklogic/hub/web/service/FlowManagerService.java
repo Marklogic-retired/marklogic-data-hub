@@ -158,6 +158,10 @@ public class FlowManagerService {
             throw new BadRequestException("Invalid Step Type");
         }
 
+        if (step.getStepDefinitionName() == null) {
+            throw new BadRequestException("Invalid Step Name");
+        }
+
         // Only save step if step is of Custom type, for rest use the default steps.
         switch (step.getStepDefinitionType()) {
             case INGESTION:
