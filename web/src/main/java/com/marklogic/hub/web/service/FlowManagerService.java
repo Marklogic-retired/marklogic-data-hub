@@ -174,7 +174,11 @@ public class FlowManagerService {
         Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
 
         if (step.getStepDefinitionType() == null) {
-            throw new BadRequestException("Invalid Step Type");
+            throw new BadRequestException("Invalid Step Definition Type");
+        }
+
+        if (step.getStepDefinitionName() == null) {
+            throw new BadRequestException("Invalid Step Definition Name");
         }
 
         // Only save step if step is of Custom type, for rest use the default steps.
