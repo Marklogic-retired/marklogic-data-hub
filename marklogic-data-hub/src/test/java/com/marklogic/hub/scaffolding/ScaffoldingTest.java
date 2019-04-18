@@ -69,14 +69,11 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createEntity() throws FileNotFoundException {
-        scaffolding.createLegacyEntity("my-fun-test");
+        scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
-        Path entityDir = project.getEntityDir("my-fun-test");
-        assertTrue(entityDir.toFile().exists());
-        assertEquals(
-                Paths.get(pluginDir.toString(), "entities", "my-fun-test"),
-                entityDir);
+        Path entityPath = projectDir.toPath().resolve("entities").resolve("my-fun-test.entity.json");
+        assertTrue(entityPath.toFile().exists());
 
         Path flowDir = scaffolding.getLegacyFlowDir("my-fun-test", "blah", FlowType.INPUT);
         assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "blah"),
@@ -86,13 +83,13 @@ public class ScaffoldingTest extends HubTestBase {
 
     @Test
     public void createMappingDir() {
-        scaffolding.createLegacyMappingDir("my-fun-test");
+        scaffolding.createMappingDir("my-fun-test");
         assertTrue(projectDir.exists());
 
-        Path mappingDir = project.getLegacyMappingDir("my-fun-test");
+        Path mappingDir = project.getMappingDir("my-fun-test");
         assertTrue(mappingDir.toFile().exists());
         assertEquals(
-            Paths.get(pluginDir.toString(), "mappings", "my-fun-test"),
+            Paths.get(projectDir.toPath().toString(), "mappings", "my-fun-test"),
             mappingDir);
     }
 

@@ -136,7 +136,7 @@ public class HubTestBase {
     protected MappingManager mappingManager;
 
     @Autowired
-    protected StepManager stepManager;
+    protected StepDefinitionManager stepDefinitionManager;
 
     @Autowired
     protected LegacyFlowManagerImpl fm;
@@ -185,7 +185,7 @@ public class HubTestBase {
     private  static boolean sslRun = false;
     private  static boolean certAuth = false;
     public static SSLContext certContext;
-    static SSLContext flowdevelopercertContext;
+    static SSLContext flowDevelopercertContext;
     static SSLContext flowOperatorcertContext;
     private  Properties properties = new Properties();
     public  GenericDocumentManager stagingDocMgr;
@@ -200,7 +200,7 @@ public class HubTestBase {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-            flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
+            flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
             flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
@@ -263,7 +263,7 @@ public class HubTestBase {
         secUser = properties.getProperty("mlSecurityUsername");
         secPassword = properties.getProperty("mlSecurityPassword");
         flowRunnerUser = properties.getProperty("mlFlowOperatorUserName");
-        flowRunnerPassword = properties.getProperty("mlFlowOperatorUserPassword");
+        flowRunnerPassword = properties.getProperty("mlFlowOperatorPassword");
         String isHostLB = properties.getProperty("mlIsHostLoadBalancer");
         if (isHostLB != null) {
             isHostLoadBalancer = Boolean.parseBoolean(isHostLB);
@@ -331,7 +331,7 @@ public class HubTestBase {
             if (isCertAuth()) {
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowdevelopercertContext, SSLHostnameVerifier.ANY),
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY),
                     DatabaseClient.ConnectionType.GATEWAY);
             } else if (isSslRun()) {
                 switch (authMethod) {
@@ -351,11 +351,11 @@ public class HubTestBase {
         } else {
             if (isCertAuth()) {
                 /*certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-                flowdevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
+                flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
                 flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowdevelopercertContext, SSLHostnameVerifier.ANY));
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY));
             } else if (isSslRun()) {
                 switch (authMethod) {
                     case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
@@ -407,7 +407,7 @@ public class HubTestBase {
         LegacyTracing.create(stagingClient).disable();
     }
 
-    protected HubConfig getFlowDeveloperConfig(String projectDir) {
+    protected HubConfig getDataHubAdminConfig(String projectDir) {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -417,7 +417,7 @@ public class HubTestBase {
         return adminHubConfig;
     }
 
-    protected HubConfigImpl getFlowDeveloperConfig() {
+    protected HubConfigImpl getDataHubAdminConfig() {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -526,9 +526,9 @@ public class HubTestBase {
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
-            adminHubConfig.setSslContext(DatabaseKind.JOB,flowdevelopercertContext);
-            manageConfig.setSslContext(flowdevelopercertContext);
-            adminConfig.setSslContext(flowdevelopercertContext);
+            adminHubConfig.setSslContext(DatabaseKind.JOB, flowDevelopercertContext);
+            manageConfig.setSslContext(flowDevelopercertContext);
+            adminConfig.setSslContext(flowDevelopercertContext);
             
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
@@ -744,7 +744,7 @@ public class HubTestBase {
                     handle.setFormat(Format.TEXT);
             }
             DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-                .withPermission(getFlowDeveloperConfig().getflowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+                .withPermission(getDataHubAdminConfig().getFlowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
             writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
@@ -755,7 +755,7 @@ public class HubTestBase {
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
         DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-            .withPermission(getFlowDeveloperConfig().getflowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            .withPermission(getDataHubAdminConfig().getFlowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);

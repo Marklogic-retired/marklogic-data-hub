@@ -4,8 +4,8 @@
   "identifier" : "",
   "steps" : {
     "1": {
-      "name": "IngestOrders",
-      "type": "CUSTOM"
+      "stepDefinitionName": "IngestOrders",
+      "stepDefinitionType": "CUSTOM"
     }
   }
 }

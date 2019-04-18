@@ -35,7 +35,6 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.EntityServicesGenerationException;
-import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -300,10 +299,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     public List<HubEntity> getEntities() {
         List<HubEntity> entities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
-        List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
         ObjectMapper objectMapper = new ObjectMapper();
-        for (String entityName : entityNames) {
-            File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+        File[] entityDefs = entitiesPath.toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+        if (entityDefs != null) {
             for (File entityDef : entityDefs) {
                 try {
                     FileInputStream fileInputStream = new FileInputStream(entityDef);
@@ -329,7 +327,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         if (rename) {
             String filename = new File(fullpath).getName();
             String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
-            if (!entityFromFilename.equals(entity.getInfo().getTitle())) {
+            if (!entityFromFilename.equals(title)) {
                 // The entity name was changed since the files were created. Update
                 // the path.
 
@@ -340,22 +338,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                     throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
                         newFile.getAbsolutePath());
                 }
-                ;
-
-                // Update the directory name
-                File origDirectory = new File(origFile.getParent());
-                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
-                if (!origDirectory.renameTo(newDirectory)) {
-                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
-                        newDirectory.getAbsolutePath());
-                }
-
-                fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
+                fullpath = newFile.getAbsolutePath();
                 entity.setFilename(fullpath);
+                // if legacy plugins dir exists, rename it as well
+                Path origLegacyEntityDir = hubProject.getLegacyHubEntitiesDir().resolve(entityFromFilename);
+                if (origLegacyEntityDir.toFile().exists()) {
+                    Path newLegacyEntityDir = hubProject.getLegacyHubEntitiesDir().resolve(title);
+                    FileUtils.moveDirectory(origLegacyEntityDir.toFile(), newLegacyEntityDir.toFile());
+                }
             }
         }
         else {
-            Path dir = hubConfig.getHubEntitiesDir().resolve(title);
+            Path dir = hubConfig.getHubEntitiesDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -370,9 +364,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
-        if (dir.toFile().exists()) {
-            FileUtils.deleteDirectory(dir.toFile());
+        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION);
+        if (entityPath.toFile().exists()) {
+            entityPath.toFile().delete();
         }
     }
 

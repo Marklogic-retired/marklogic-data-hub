@@ -24,9 +24,8 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
@@ -46,8 +45,6 @@ public class FlowManagerImpl implements FlowManager {
 
     @Autowired
     private HubConfig hubConfig;
-
-    private FlowRunner flowRunner;
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -170,6 +167,7 @@ public class FlowManagerImpl implements FlowManager {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             JSONStreamWriter writer = new JSONStreamWriter(fileOutputStream);
             writer.write(flow);
+
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize flow.");
         } catch (IOException e) {

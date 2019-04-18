@@ -1,6 +1,6 @@
 {
   "name": "myTestIngestStep",
-  "type": "INGEST",
+  "type": "INGESTION",
   "version": 1,
   "options": {
     "collections": ["myTestIngestStep"],

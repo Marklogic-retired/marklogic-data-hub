@@ -32,12 +32,14 @@ import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import com.marklogic.hub.web.model.TraceQuery;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -49,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @ExtendWith(SpringExtension.class)
+@WebAppConfiguration
 @SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, TraceServiceTest.class})
 class TraceServiceTest extends AbstractServiceTest {
 
@@ -69,19 +72,19 @@ class TraceServiceTest extends AbstractServiceTest {
         //envConfig.checkIfInstalled();
         setEnvConfig();
         createProjectDir();
-        enableTracing();
+        //enableTracing();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         scaffolding.createLegacyFlow(ENTITY, "xqy-xml-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        traceClient = getFlowDeveloperConfig().newJobDbClient();
+        traceClient = getDataHubAdminConfig().newJobDbClient();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
         LegacyFlow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
@@ -102,6 +105,7 @@ class TraceServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    @Disabled
     public void getTrace() throws IOException {
         TraceService tm = new TraceService(traceClient);
         TraceQuery traceQuery = new TraceQuery();

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
-import { Router } from "@angular/router";
+import {Router, ActivatedRoute, Params} from '@angular/router';
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../common";
 import {OutputDialogComponent} from "./output-dialog.component";
@@ -29,7 +29,8 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
 
   constructor(
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ){}
 
   ngOnInit() {
@@ -43,19 +44,6 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
         default: return item[property];
       }
     };
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  updateDataSource() {
-    this.dataSource.data = this.jobs;
-  }
-
-  applyFilter(menu: string, value: string) {
-    this.filterValues[menu] = value;
     // Check all filters across data source
     this.dataSource.filterPredicate = (data: any, filterValues: string) => {
       filterValues = JSON.parse(filterValues);
@@ -86,7 +74,28 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
         result = false;
       }
       return result;
+    }    
+    if (this.activatedRoute.snapshot.queryParams['flowName']) {
+      this.applyFilter('flow', this.activatedRoute.snapshot.queryParams['flowName']);
     }
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  updateDataSource() {
+    this.dataSource.data = this.jobs;
+  }
+
+  applyFilter(menu: string, value: string) {
+    this.filterValues[menu] = value;
+    this.dataSource.filter = JSON.stringify(this.filterValues)
+  }
+
+  clearFilters(): void {
+    this.filterValues = {};
     this.dataSource.filter = JSON.stringify(this.filterValues)
   }
 

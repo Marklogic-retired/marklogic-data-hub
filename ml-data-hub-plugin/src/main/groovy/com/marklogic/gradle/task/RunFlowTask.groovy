@@ -47,6 +47,15 @@ class RunFlowTask extends HubTask {
     public String destDB
 
     @Input
+    public String inputFilePath
+    
+    @Input
+    public String inputFileType
+    
+    @Input
+    public String outputURIReplacement
+
+    @Input
     public Boolean showOptions
 
     @Input
@@ -94,6 +103,21 @@ class RunFlowTask extends HubTask {
                 project.property("destDB") : null
         }
 
+        if (inputFilePath == null || inputFilePath.isAllWhitespace()) {
+            inputFilePath ==  project.hasProperty("inputFilePath") ?
+                project.property("inputFilePath") : null
+        }
+
+        if (inputFileType == null || inputFileType.isAllWhitespace()) {
+            inputFileType ==  project.hasProperty("inputFileType") ?
+                project.property("inputFileType") : null
+        }
+
+        if (outputURIReplacement == null || outputURIReplacement.isAllWhitespace()) {
+            outputURIReplacement ==  project.hasProperty("outputURIReplacement") ?
+                project.property("outputURIReplacement") : null
+        }
+
         if (showOptions == null) {
             showOptions = project.hasProperty("showOptions") ?
                 Boolean.parseBoolean(project.property("showOptions")) : false
@@ -139,17 +163,40 @@ class RunFlowTask extends HubTask {
                 });
         }
 
+        Map<String, Object> stepConfig = new HashMap<>()
+
         if(batchSize != null){
             runFlowString.append("\n\twith batch size: " + batchSize)
+            stepConfig.put("batchSize", batchsize)
         }
         if(threadCount != null){
             runFlowString.append("\n\twith thread count: " + threadCount)
+            stepConfig.put("threadCount", batchSize)
         }
         if(sourceDB != null){
             runFlowString.append("\n\twith Source DB: " + sourceDB)
+            stepConfig.put("sourceDB", sourceDB)
         }
         if(destDB != null){
             runFlowString.append("\n\twith Destination DB: " + destDB.toString())
+            stepConfig.put("destDB", destDB.toString())
+        }
+        if(inputFileType != null || inputFilePath != null || outputURIReplacement != null){
+            runFlowString.append("\n\tWith File Locations Settings:")
+            Map<String, String> fileLocations = new HashMap<>()
+            if(inputFileType != null) {
+                runFlowString.append("\n\t\tInput File Type:" + inputFileType.toString())
+                fileLocations.put("inputFileType", inputFilePath)
+            }
+            if(inputFilePath != null) {
+                runFlowString.append("\n\t\tInput File Path:" + inputFilePath.toString())
+                fileLocations.put("inputFilePath", inputFilePath)
+            }
+            if(outputURIReplacement != null) {
+                runFlowString.append("\n\t\tOutput URI Replacement:" + outputURIReplacement.toString())
+                fileLocations.put("outputURIReplacement", outputURIReplacement)
+            }
+            stepConfig.put("fileLocations", fileLocations)
         }
         if (showOptions) {
             runFlowString.append("\n\tand options:")
@@ -161,7 +208,7 @@ class RunFlowTask extends HubTask {
         // now we print out the string buffer
         println(runFlowString.toString())
 
-        RunFlowResponse runFlowResponse = dataHub.getFlowRunner().runFlow(flow.getName(), steps, jobId, options, batchSize, threadCount, sourceDB, destDB)
+        RunFlowResponse runFlowResponse = dataHub.getFlowRunner().runFlow(flow.getName(), steps, jobId, options, stepConfig)
         dataHub.getFlowRunner().awaitCompletion()
 
         JsonBuilder jobResp = new JsonBuilder(runFlowResponse)

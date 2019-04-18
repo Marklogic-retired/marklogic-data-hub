@@ -45,13 +45,13 @@ class FlowManagerTest extends HubTestBase {
     private String flowString = "{\n" +
         "  \"name\": \"test-flow\",\n" +
         "  \"description\": \"this is an example\",\n" +
-        "  \"options\": {\"identifier\": \"(some identifier or search)\"},\n" +
+        "  \"options\": {\"sourceQuery\": \"(some sourceQuery or search)\"},\n" +
         "  \"steps\": {\n" +
         "    \"1\": {\n" +
-        "      \"type\": \"MAPPING\",\n" +
+        "      \"stepDefinitionType\": \"MAPPING\",\n" +
         "      \"name\": \"person-mapping1.json\",\n" +
         "      \"retryLimit\": 0,\n" +
-        "      \"options\": {\"identifier\": \"null\"}\n" +
+        "      \"options\": {\"sourceQuery\": \"null\"}\n" +
         "    }\n" +
         "  }\n" +
         "}\n";
@@ -59,7 +59,7 @@ class FlowManagerTest extends HubTestBase {
     @BeforeEach
     void setUp() throws IOException {
         basicSetup();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         FileUtils.copyFileToDirectory(getResourceFile("flow-manager-test/test-flow.flow.json"), adminHubConfig.getFlowsDir().toFile());
     }
 

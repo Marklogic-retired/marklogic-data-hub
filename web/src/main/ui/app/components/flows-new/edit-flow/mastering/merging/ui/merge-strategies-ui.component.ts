@@ -29,6 +29,7 @@ export class MergeStrategiesUiComponent {
   public valueFocus: object = {};
 
   public timestampOrig: string;
+  public mergeStrategyMod: MergeStrategy;
 
   constructor(
     public dialog: MatDialog
@@ -55,10 +56,39 @@ export class MergeStrategiesUiComponent {
         if (strategyToEdit) {
           console.log('updateStrategy');
           this.updateStrategy.emit({str: result.str, index: result.index});
-        }else{
-          console.log('createStrategy');
-          this.createStrategy.emit(result);
+        } else {
+          if (result.str.default === 'true' &&  (this.mergeStrategies.strategies && this.findStrategyIndex('default') > -1)) {
+            console.log('update existing default Strategy ??');
+            this.openDefaultMergeStartegyPopup(result.str, this.findStrategyIndex('default'));
+          } else {
+            console.log('createStrategy');
+            this.createStrategy.emit(result);
+          }
         }
+      }
+    });
+  }
+
+  findStrategyIndex(strategyName) {
+    return this.mergeStrategies.strategies.findIndex(s => {
+      return s.name === strategyName;
+    });
+  }
+
+  openDefaultMergeStartegyPopup(strategy, index): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '390px',
+      data: {
+        title: 'Update Default Merge Strategy',
+        confirmationMessage: `A default merge strategy already exists. Do you want to replace it?`
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('result', result);
+      if (result) {
+        this.updateStrategy.emit({str: strategy, index: index});
+      } else {
+        return false;
       }
     });
   }

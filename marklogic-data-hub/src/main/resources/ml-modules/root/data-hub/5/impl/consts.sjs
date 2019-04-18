@@ -20,6 +20,7 @@ module.exports = {
   XML: "xml",
   JSON: "json",
   BINARY: "binary",
+  TEXT: 'text',
   DEFAULT_FORMAT: "json",
 
   //predefined functions, may want to break this out soon

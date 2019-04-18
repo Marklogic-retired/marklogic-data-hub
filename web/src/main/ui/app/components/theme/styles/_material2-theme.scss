@@ -1,4 +1,5 @@
 @import '~@angular/material/theming';
+@import './colors';
 
 @include mat-core();
 
@@ -73,4 +74,74 @@ $dhf-app-theme: mat-light-theme($dhf-app-primary, $dhf-app-accent, $dhf-app-warn
 
 .mat-progress-bar-buffer {
   background-color: #f8f8f8;
+}
+
+// Drag step preview
+.step.cdk-drag-preview{
+  outline: 1px solid #e6e6e6;
+  border-radius: 4px;
+  width: 200px;
+  height: 160px;
+  background: white;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+  .bar {
+    height: 22px;
+  }
+  .bar.mapping {
+    background: $color-mapping;
+  }
+  .bar.mastering {
+    background: $color-mastering;
+  }
+  .bar.ingestion {
+    background: $color-ingest;
+  }
+  .bar.custom {
+    background: $color-custom;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+  }
+  .step-title {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 3px 0 5px 5px;
+  }
+  .step-title.mapping {
+    color: $color-mapping;
+  }
+  .step-title.mastering {
+    color: $color-mastering;
+  }
+  .step-title.ingestion {
+    color: $color-ingest;
+  }
+  .step-title.custom {
+    color: $color-custom;
+  }
+  .step-icons, .move-icon {
+    display: none;
+  }
+  h3.step-name {
+    margin: 0 6px;
+    font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 30px;
+  }
+  .summary {
+    margin: 6px;
+    line-height: 18px;
+  }
+  .summary-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: #777;
+  }
+  .summary-content {
+    font-size: 14px;
+    font-weight: 400;
+  }
 }

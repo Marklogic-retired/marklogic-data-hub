@@ -65,7 +65,7 @@ public class MasterTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
     private void installProject() throws IOException, URISyntaxException {
-            String[] directoriesToCopy = new String[]{"flows", "steps", "plugins"};
+            String[] directoriesToCopy = new String[]{"flows", "step-definitions", "entities", "mappings"};
             for (final String subDirectory: directoriesToCopy) {
                 final Path subProjectPath = projectPath.resolve(subDirectory);
                 subProjectPath.toFile().mkdir();
@@ -103,7 +103,7 @@ public class MasterTest extends HubTestBase {
         getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
 
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
         // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
         Thread.sleep(1000);
@@ -117,7 +117,7 @@ public class MasterTest extends HubTestBase {
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
                     "\"input_file_type\":\"\\\"documents\\\"\"," +
                     "\"document_type\":\"\\\"json\\\"\"," +
-                    "\"output_collections\":\"\\\"mdm-content,default-ingest\\\"\"," +
+                    "\"output_collections\":\"\\\"mdm-content,default-ingestion\\\"\"," +
                     "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"" +
                     "}";
@@ -128,13 +128,13 @@ public class MasterTest extends HubTestBase {
         // TODO Is there a way to do this with updated flows?
         LegacyFlow legacyFlow = LegacyFlowBuilder.newFlow()
             .withEntityName("mdm-content")
-            .withName("default-ingest")
+            .withName("default-ingestion")
             .withType(FlowType.INPUT)
             .withCodeFormat(CodeFormat.JAVASCRIPT)
             .withDataFormat(DataFormat.JSON)
             .build();
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getFlowDeveloperConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getDataHubAdminConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
         mlcpRunner.start();
         try {
             mlcpRunner.join();

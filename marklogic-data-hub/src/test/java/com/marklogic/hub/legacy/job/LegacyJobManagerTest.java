@@ -64,18 +64,18 @@ public class LegacyJobManagerTest extends HubTestBase {
         deleteProjectDir();
 
         createProjectDir();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         enableDebugging();
         enableTracing();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         // Traces can be XML or JSON, depending on the DataFormat of the flow that created them. Get some of each
         // to make sure export and import work correctly.
         scaffolding.createLegacyFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE, CodeFormat.XQUERY, DataFormat.XML, false);
         scaffolding.createLegacyFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         clearUserModules();
-        installUserModules(getFlowDeveloperConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
         installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_XML + "/collector.xqy", "flow-runner-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_XML + "/content.xqy", "flow-runner-test/content-for-options.xqy");
@@ -125,7 +125,7 @@ public class LegacyJobManagerTest extends HubTestBase {
 			e.printStackTrace();
 		}
     	disableTracing();
-    	getFlowDeveloperConfig();
+    	getDataHubAdminConfig();
     }
     private static void recordJobId(String jobId) {
         jobIds.add(jobId);
