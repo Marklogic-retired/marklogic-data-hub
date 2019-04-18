@@ -67,7 +67,7 @@ public class QueryStepRunner implements StepRunner {
     private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
     private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
     private List<StepFinishedListener> stepFinishedListeners = new ArrayList<>();
-
+    private Map<String, Object> stepConfig = new HashMap<>();
     private HubConfig hubConfig;
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
@@ -134,20 +134,7 @@ public class QueryStepRunner implements StepRunner {
 
     @Override
     public StepRunner withStepConfig(Map<String, Object> stepConfig) {
-        if(stepConfig.get("batchSize") != null){
-            this.batchSize = (int) stepConfig.get("batchSize");
-        }
-        if(stepConfig.get("threadCount") != null) {
-            this.threadCount = (int) stepConfig.get("threadCount");
-        }
-        if(stepConfig.get("sourceDB") != null) {
-            hubConfig.newStagingClient(stepConfig.get("sourceDB").toString());
-        }
-        if(stepConfig.get("destDB") != null) {
-            this.destinationDatabase = stepConfig.get("destDB").toString();
-            //will work only for final db in addition to staging db as it has flow/step artifacts
-            this.stagingClient = hubConfig.newStagingClient(destinationDatabase);
-        }
+        this.stepConfig = stepConfig;
         return this;
     }
 
@@ -200,6 +187,12 @@ public class QueryStepRunner implements StepRunner {
     @Override
     public RunStepResponse run() {
         runningThread = null;
+        if(stepConfig.get("batchSize") != null){
+            this.batchSize = (int) stepConfig.get("batchSize");
+        }
+        if(stepConfig.get("threadCount") != null) {
+            this.threadCount = (int) stepConfig.get("threadCount");
+        }
         RunStepResponse runStepResponse = createStepResponse();
         jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
         if (options == null) {
@@ -208,6 +201,12 @@ public class QueryStepRunner implements StepRunner {
             if (options.get("fullOutput") != null) {
                 isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
             }
+        }
+        if(options.get("sourceDatabase") != null) {
+            this.stagingClient = hubConfig.newStagingClient((String) options.get("sourceDatabase"));
+        }
+        if(options.get("targetDatabase") != null) {
+            this.destinationDatabase = (String) options.get("targetDatabase");
         }
         options.put("flow", this.flow.getName());
         Collection<String> uris = null;

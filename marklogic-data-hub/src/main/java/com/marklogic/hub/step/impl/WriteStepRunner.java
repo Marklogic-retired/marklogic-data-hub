@@ -18,7 +18,6 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.datamovement.*;
@@ -34,7 +33,6 @@ import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
@@ -87,6 +85,7 @@ public class WriteStepRunner implements StepRunner {
     private String outputURIReplacement;
     private AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
+    private Map<String, Object> stepConfig = new HashMap<>();
 
     public WriteStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -161,7 +160,7 @@ public class WriteStepRunner implements StepRunner {
         Map<String, Object> combinedOptions = new HashMap<>();
 
         if(stepDefMap != null){
-            combinedOptions.putAll(stepMap);
+            combinedOptions.putAll(stepDefMap);
         }
         if(stepMap != null){
             combinedOptions.putAll(stepMap);
@@ -178,33 +177,7 @@ public class WriteStepRunner implements StepRunner {
 
     @Override
     public StepRunner withStepConfig(Map<String, Object> stepConfig) {
-        if(stepConfig.get("batchSize") != null){
-            this.batchSize = (int) stepConfig.get("batchSize");
-        }
-        if(stepConfig.get("threadCount") != null) {
-            this.threadCount = (int) stepConfig.get("threadCount");
-        }
-        if(stepConfig.get("sourceDB") != null) {
-            hubConfig.newStagingClient(stepConfig.get("sourceDB").toString());
-        }
-        if(stepConfig.get("destDB") != null) {
-            this.destinationDatabase = stepConfig.get("destDB").toString();
-            //will work only for final db in addition to staging db as it has flow/step artifacts
-            this.stagingClient = hubConfig.newStagingClient(destinationDatabase);
-        }
-        if(stepConfig.get("fileLocations") != null) {
-            HashMap<String, String> fileLocations = (HashMap) stepConfig.get("fileLocations");
-            if(fileLocations.get("fileInputPath") != null) {
-                this.inputFilePath = fileLocations.get("fileInputPath");
-            }
-            if(fileLocations.get("fileInputType") != null){
-                this.inputFileType = fileLocations.get("fileInputType");
-            }
-            if(fileLocations.get("outputURIReplacement") != null) {
-                this.outputURIReplacement = fileLocations.get("outputURIReplacement");
-            }
-        }
-
+        this.stepConfig = stepConfig;
         return this;
     }
 
@@ -277,8 +250,11 @@ public class WriteStepRunner implements StepRunner {
         if (obj.getArrayString("collections") != null) {
             outputCollections = StringUtils.join(obj.getArrayString("collections"), ",");
         }
-        if (options.get("permissions") != null) {
-            outputPermissions = ((TextNode) options.get("permissions")).asText();
+        if (obj.getString("permissions") != null) {
+            outputPermissions = obj.getString("permissions");
+        }
+        if (obj.getString("targetDatabase") != null) {
+            this.withDestinationDatabase(obj.getString("targetDatabase"));
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -297,6 +273,25 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
+
+        if(stepConfig.get("batchSize") != null){
+            this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
+        }
+        if(stepConfig.get("threadCount") != null) {
+            this.threadCount = Integer.parseInt(stepConfig.get("threadCount").toString());
+        }
+        if(stepConfig.get("fileLocations") != null) {
+            HashMap<String, String> fileLocations = (HashMap) stepConfig.get("fileLocations");
+            if(fileLocations.get("inputFilePath") != null) {
+                this.inputFilePath = fileLocations.get("inputFilePath");
+            }
+            if(fileLocations.get("inputFileType") != null){
+                this.inputFileType = fileLocations.get("inputFileType");
+            }
+            if(fileLocations.get("outputURIReplacement") != null) {
+                this.outputURIReplacement = fileLocations.get("outputURIReplacement");
+            }
+        }
 
         if (inputFilePath == null || inputFileType == null) {
             throw new RuntimeException("File path and type cannot be empty");
@@ -421,7 +416,8 @@ public class WriteStepRunner implements StepRunner {
             .withJobId(runStepResponse.getJobId())
             .withTransform(serverTransform)
             .onBatchSuccess(batch ->{
-                successfulEvents.addAndGet(batch.getItems().length );
+                //TODO: There is one additional item returned, it has to be investigated
+                successfulEvents.addAndGet(batch.getItems().length-1);
                 successfulBatches.addAndGet(1);
                 runStatusListener(successfulBatches.get()+failedBatches.get(), batchCount, successfulEvents, failedEvents);
                 if (stepItemCompleteListeners.size() > 0) {
@@ -433,7 +429,7 @@ public class WriteStepRunner implements StepRunner {
                 }
             })
             .onBatchFailure((batch, ex) -> {
-                failedEvents.addAndGet(batch.getItems().length);
+                failedEvents.addAndGet(batch.getItems().length-1);
                 failedBatches.addAndGet(1);
                 runStatusListener(successfulBatches.get()+failedBatches.get(), batchCount, successfulEvents, failedEvents);
                 if (errorMessages.size() < MAX_ERROR_MESSAGES) {
