@@ -173,7 +173,7 @@ class Flow {
     let stepDetails = this.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, stepDetails.options, stepRef.options, options);
+    let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
 
     this.globalContext.targetDb = combinedOptions.targetDatabase;
     this.globalContext.sourceDb = combinedOptions.sourceDatabase;

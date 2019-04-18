@@ -36,7 +36,7 @@ function post(context, params, input) {
     let stepRefOptions = stepRef.options || {};
     let stepDetailsOptions = stepDetails.options || {};
     // build combined options
-    let combinedOptions = Object.assign({}, flowOptions, stepDetailsOptions, stepRefOptions, options);
+    let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, options);
     // combine all collections
     let collections = [
       options.collections,
