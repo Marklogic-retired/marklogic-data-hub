@@ -175,8 +175,8 @@ class Flow {
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
 
-    this.globalContext.targetDatabase = combinedOptions.targetDatabase;
-    this.globalContext.sourceDatabase = combinedOptions.sourceDatabase;
+    this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
+    this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
     if (!combinedOptions.noBatchWrite) {
       let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
