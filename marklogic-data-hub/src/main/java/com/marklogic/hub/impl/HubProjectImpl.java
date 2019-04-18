@@ -236,6 +236,12 @@ public class HubProjectImpl implements HubProject {
         Path customModulesDir = getCustomModulesDir();
         customModulesDir.toFile().mkdirs();
 
+        Path entitiesDir = getHubEntitiesDir();
+        entitiesDir.toFile().mkdirs();
+
+        Path mappingsDir = getHubMappingsDir();
+        mappingsDir.toFile().mkdirs();
+
         Path hubServersDir = getHubServersDir();
         hubServersDir.toFile().mkdirs();
         writeResourceFile("hub-internal-config/servers/staging-server.json", hubServersDir.resolve("staging-server.json"), true);

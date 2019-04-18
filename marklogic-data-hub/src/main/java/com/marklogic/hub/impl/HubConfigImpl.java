@@ -1624,7 +1624,14 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override
-    public Path getFlowsDir() { return hubProject.getFlowsDir();   }
+    public Path getFlowsDir() {
+        return hubProject.getFlowsDir();
+    }
+
+    @Override
+    public Path getStepDefinitionsDir() {
+        return hubProject.getStepDefinitionsDir();
+    }
 
     @JsonIgnore
     @Override public Path getUserServersDir() {

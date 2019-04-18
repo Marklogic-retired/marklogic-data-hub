@@ -231,8 +231,14 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
     private void startProjectWatcher() throws IOException {
         String pluginDir = hubConfig.getHubPluginsDir().toString();
+        String flowsDir = hubConfig.getFlowsDir().toString();
+        String stepDefinitionsDir = hubConfig.getStepDefinitionsDir().toString();
+        String entitiesDir = hubConfig.getHubEntitiesDir().toString();
         if (!watcherService.hasListener(this)) {
             watcherService.watch(pluginDir);
+            watcherService.watch(flowsDir);
+            watcherService.watch(stepDefinitionsDir);
+            watcherService.watch(entitiesDir);
             watcherService.addListener(this);
         }
     }

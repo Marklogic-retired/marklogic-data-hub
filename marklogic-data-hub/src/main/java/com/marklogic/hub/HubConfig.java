@@ -505,6 +505,13 @@ public interface HubConfig {
     Path getFlowsDir();
 
     /**
+     * Gets the path for the step definitions directory
+     *
+     * @return the path for the step definitions directory
+     */
+    Path getStepDefinitionsDir();
+
+    /**
      * Returns the current AppConfig object attached to the HubConfig
      * @return Returns current AppConfig object set for HubConfig
      */
