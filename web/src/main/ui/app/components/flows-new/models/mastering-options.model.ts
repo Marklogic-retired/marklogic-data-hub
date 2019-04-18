@@ -3,6 +3,7 @@ import { Merging } from '../edit-flow/mastering/merging/merging.model';
 
 export class MasteringOptions {
   public sourceQuery: string = '';
+  public sourceCollection: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
   public matchOptions: Matching;

@@ -48,6 +48,7 @@ export class NewStepDialogUiComponent implements OnInit {
       stepDefinitionType: [this.step ? this.step.stepDefinitionType : '', Validators.required],
       description: [this.step ? this.step.description : ''],
       sourceQuery: [this.step ? this.step.options.sourceQuery : ''],
+      sourceCollection: [this.step ? this.step.options.sourceCollection : ''],
       targetEntity: [this.step ? this.step.options.targetEntity : ''],
       sourceDatabase: [this.step ? this.step.sourceDatabase : ''],
       targetDatabase: [this.step ? this.step.targetDatabase : '']
@@ -111,12 +112,17 @@ export class NewStepDialogUiComponent implements OnInit {
   onSave() {
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
+    if (this.newStepForm.value.stepDefinitionType === this.stepType.CUSTOM) {
+      this.newStep.stepDefinitionName = this.newStepForm.value.name;
+    }
     this.newStep.description = this.newStepForm.value.description;
     if (this.selectedSource === 'query') {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+      this.newStep.options.sourceCollection = '';
     } else {
-      const ctsUri = `cts.uris(null, null, cts.collectionQuery(${this.newStepForm.value.sourceQuery}))`;
+      const ctsUri = `cts.uris(null, null, cts.collectionQuery(${this.newStepForm.value.sourceCollection}))`;
       this.newStep.options.sourceQuery = ctsUri;
+      this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
     }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
