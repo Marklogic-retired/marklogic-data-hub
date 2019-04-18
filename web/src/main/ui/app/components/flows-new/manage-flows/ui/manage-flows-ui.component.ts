@@ -4,6 +4,7 @@ import {ConfirmationDialogComponent} from "../../../common";
 import {FlowSettingsDialogComponent} from "./flow-settings-dialog.component";
 import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
+import * as _ from "lodash";
 import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.component";
 
 @Component({
@@ -105,7 +106,9 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   }
 
   friendlyDate(dt): string {
-    return (dt) ? moment(dt).fromNow() : '';
+    return (dt) ? _.capitalize(moment(dt).fromNow()) : '';
   }
-
+  formatStatus(status):string {
+    return _.capitalize(status.replace(/_/g,' '));
+  }
 }

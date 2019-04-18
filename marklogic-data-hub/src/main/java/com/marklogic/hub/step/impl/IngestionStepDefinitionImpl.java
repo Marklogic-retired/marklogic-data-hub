@@ -21,6 +21,8 @@ import com.marklogic.hub.step.AbstractStepDefinition;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
@@ -30,16 +32,26 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
     public IngestionStepDefinitionImpl(String name) {
         setName(name);
         setType(StepDefinitionType.INGESTION);
-        setFileLocations(fileLocations);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("inputFilePath", "");
+        jsonObject.put("outputURIReplacement", "");
+        jsonObject.put("inputFileType", "");
+        this.fileLocations = jsonObject.jsonNode();
+        setFileLocations(this.fileLocations);
 
         Map<String, Object> options = getOptions();
         options.put("outputFormat", "json");
+
+        List<String> collectionName = new ArrayList<>();
+        collectionName.add(name);
+        options.put("collections", collectionName);
 
         setModulePath("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
     }
 
     public JsonNode getFileLocations() {
-        return fileLocations;
+        return this.fileLocations;
     }
 
     public void setFileLocations(JsonNode fileLocations) {
@@ -59,7 +71,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
 
     @Override
     public Step transformToStep(String stepName, StepDefinition stepDefinition, Step step) {
-        step.setFileLocations(fileLocations);
+        step.setFileLocations(this.fileLocations);
         return super.transformToStep(stepName, stepDefinition, step);
     }
 

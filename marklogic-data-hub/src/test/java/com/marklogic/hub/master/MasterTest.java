@@ -103,7 +103,7 @@ public class MasterTest extends HubTestBase {
         getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
 
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
         // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
         Thread.sleep(1000);
@@ -134,7 +134,7 @@ public class MasterTest extends HubTestBase {
             .withDataFormat(DataFormat.JSON)
             .build();
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getFlowDeveloperConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getDataHubAdminConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
         mlcpRunner.start();
         try {
             mlcpRunner.join();

@@ -83,7 +83,7 @@ public class HubConfigJsonTest {
             "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
             "  \"flowOperatorUserName\": \"flow-operator\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
-            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-operator-role,read,flow-operator-role,execute\",\n" +
+            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-developer-role,read,flow-developer-role,execute,flow-developer-role,insert,flow-operator-role,read,flow-operator-role,execute\",\n" +
             "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
             "}";
         assertThat(json.write(hubConfig)).isEqualToJson(expected);

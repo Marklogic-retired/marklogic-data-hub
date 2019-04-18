@@ -37,7 +37,7 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
 
     @BeforeEach
     public void setup() {
-        loadUserArtifactsCommand.setHubConfig(getFlowDeveloperConfig());
+        loadUserArtifactsCommand.setHubConfig(getDataHubAdminConfig());
     }
 
     @Test

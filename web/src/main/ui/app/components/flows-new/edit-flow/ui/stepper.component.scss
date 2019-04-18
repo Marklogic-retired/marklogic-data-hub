@@ -230,16 +230,16 @@ mat-icon {
 }
 
 #latest-job-info {
-  width: 313px;
+  width: 335px;
   #latest-job-status,
   #job-started-timestamp {
     display: inline-block;
   }
   #latest-job-status {
-    padding: 0 15px;
+    padding: 0 10px;
   }
 }
 
-.capitalize:first-letter {
-   text-transform: capitalize;
+.view-jobs-disabled {
+  color: #ccc;
 }

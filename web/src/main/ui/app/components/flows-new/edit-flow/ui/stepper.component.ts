@@ -3,6 +3,7 @@ import { CdkStepper } from '@angular/cdk/stepper';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import * as moment from 'moment';
 import { StepType } from '../../models/step.model';
+import * as _ from "lodash";
 
 @Component({
   selector: 'app-stepper',
@@ -85,5 +86,8 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   }
   friendlyDate(dt): string {
     return (dt) ? moment(dt).fromNow() : '';
+  }
+  formatStatus(status):string {
+    return _.capitalize(status.replace(/_/g,' '));
   }
 }
