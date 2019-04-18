@@ -19,10 +19,14 @@ export class EditFlowUiComponent {
   @Input() stepsArray: any;
   @Input() databases: any;
   @Input() entities: any;
+  @Input() collections: any;
+  @Input() selectedStepId: any;
+  @Input() projectDirectory: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
+  @Output() stepSelected = new EventEmitter();
   @Output() stepCreate = new EventEmitter();
   @Output() stepUpdate = new EventEmitter();
   @Output() stepDelete = new EventEmitter();
@@ -39,9 +43,9 @@ export class EditFlowUiComponent {
         title: 'New Step',
         databases: this.databases,
         entities: this.entities,
-        // collections: this.collections,
         step: null,
-        flow: this.flow
+        flow: this.flow,
+        projectDirectory: this.projectDirectory
       }
     });
 

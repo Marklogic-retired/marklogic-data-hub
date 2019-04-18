@@ -42,11 +42,11 @@ public class JobServiceTest extends HubTestBase {
 
     @Test
     public void getJobs() {
-        DatabaseClient jobClient = getFlowDeveloperConfig().newJobDbClient();
+        DatabaseClient jobClient = getDataHubAdminConfig().newJobDbClient();
         JobService jobService = new JobService(jobClient);
         JobQuery jobQuery = new JobQuery();
-        jobQuery.start = new Long(1);
-        jobQuery.count = new Long(10);
+        jobQuery.start = Long.valueOf(1);
+        jobQuery.count = Long.valueOf(10);
         jobService.getJobs(jobQuery);
     }
 }

@@ -4,6 +4,7 @@ import {ConfirmationDialogComponent} from "../../../common";
 import {FlowSettingsDialogComponent} from "./flow-settings-dialog.component";
 import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
+import * as _ from "lodash";
 import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.component";
 
 @Component({
@@ -18,7 +19,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
-  @Output() redeployAll = new EventEmitter();
+  @Output() redeployModules = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
 
@@ -78,7 +79,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if(!!result){
-        this.redeployAll.emit();
+        this.redeployModules.emit();
       }
     });
   }
@@ -105,7 +106,9 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   }
 
   friendlyDate(dt): string {
-    return (dt) ? moment(dt).fromNow() : '';
+    return (dt) ? _.capitalize(moment(dt).fromNow()) : '';
   }
-
+  formatStatus(status):string {
+    return _.capitalize(status.replace(/_/g,' '));
+  }
 }

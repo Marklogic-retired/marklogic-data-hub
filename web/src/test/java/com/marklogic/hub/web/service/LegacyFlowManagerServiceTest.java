@@ -75,7 +75,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void setup() {
         createProjectDir();
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
@@ -114,7 +114,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
         FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     protected void setEnvConfig() {

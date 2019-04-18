@@ -2,7 +2,7 @@
   "info" : {
     "title" : "Product",
     "version" : "0.0.1",
-    "baseUri" : ""
+    "baseUri" : "http://example.org"
   },
   "definitions" : {
     "Product" : {

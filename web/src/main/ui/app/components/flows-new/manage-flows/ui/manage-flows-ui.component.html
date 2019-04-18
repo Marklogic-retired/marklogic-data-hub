@@ -16,7 +16,7 @@
           <span>NEW FLOW</span>
         </button>
         <span class="fill-space"></span>
-        <button id="flows-redeploy-btn" 
+        <button id="flows-redeploy-btn"
                 mat-raised-button
                 color="primary"
                 class="redeploy-button"
@@ -62,9 +62,8 @@
         <ng-container matColumnDef="status">
           <mat-header-cell id="flow-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="flow-status" *matCellDef="let flow">
-            <span class="capitalize">
-              {{flow.status}}
-            </span>
+            <span *ngIf="flow.latestJob">{{formatStatus(flow.status)}}</span>
+            <span *ngIf="!flow.latestJob">Never run</span>
           </mat-cell>
         </ng-container>
 
@@ -72,37 +71,42 @@
         <ng-container matColumnDef="jobsNumber">
           <mat-header-cell id="flow-jobs-sort-btn" *matHeaderCellDef mat-sort-header>Jobs</mat-header-cell>
           <mat-cell class="flow-jobs" *matCellDef="let flow">
-            <a [routerLink]="['/jobs']">
+            <a *ngIf="flow.jobsNumber > 0" [routerLink]="['/jobs']" [queryParams]="{flowName:flow.name}">
               {{flow.jobsNumber | number}}
             </a>
+            <span *ngIf="flow.jobsNumber <= 0">
+              {{flow.jobsNumber | number}}
+            </span>
           </mat-cell>
         </ng-container>
 
         <!-- Last Job Finished -->
         <ng-container matColumnDef="lastJobFinished">
           <mat-header-cell id="flow-last-job-finished-sort-btn" *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
-          <mat-cell class="flow-last-job-finished" *matCellDef="let flow" >
-            <span *ngIf="flow.latestJob">{{friendlyDate(flow.lastJobFinished)}}</span>
+          <mat-cell class="flow-last-job-finished" *matCellDef="let flow">
+            <a *ngIf="flow.latestJob && flow.latestJob.id" [routerLink]="['/jobs', flow.latestJob.id]">{{friendlyDate(flow.lastJobFinished)}}</a>
           </mat-cell>
         </ng-container>
 
         <!-- Docs Committed Column -->
         <ng-container matColumnDef="docsCommitted">
-          <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Records Committed</mat-header-cell>
+          <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
-            <a [routerLink]="['/traces']">
-              <span *ngIf="flow.latestJob">{{flow.docsCommitted | number}}</span>
-            </a>
+            <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.successfulEvents > 0" [routerLink]="['/browse']" [queryParams]="{Collection:flow.latestJob.id}">{{flow.latestJob.successfulEvents | number}}</a>
+            <span *ngIf="flow.latestJob && flow.latestJob.successfulEvents <= 0">{{flow.latestJob.successfulEvents | number}}</span>
           </mat-cell>
         </ng-container>
 
         <!-- Docs Failed Column -->
         <ng-container matColumnDef="docsFailed">
-          <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Records Failed</mat-header-cell>
+          <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Failed</mat-header-cell>
           <mat-cell class="flow-docs-failed" *matCellDef="let flow">
-            <a [routerLink]="['/traces']">
-              <span *ngIf="flow.latestJob">{{flow.docsFailed | number}}</span>
+            <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.failedEvents > 0" [routerLink]="">
+              {{flow.latestJob.failedEvents | number}}
             </a>
+            <span *ngIf="flow.latestJob && flow.latestJob.failedEvents <= 0">
+              {{flow.latestJob.failedEvents | number}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -118,14 +122,13 @@
             >
               <span>RUN</span>
             </button>
-            <!-- <mat-icon class="active-icon" (click)="openConfirmDialog(flow)">delete</mat-icon> -->
             <mat-icon class="flow-menu" [matMenuTriggerFor]="flowMenu" [matMenuTriggerData]="{flow: flow}"
                       disableRipple>more_vert</mat-icon>
           </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row 
+        <mat-row
           *matRowDef="let flow; columns: displayedColumns;"
           class="{{ 'flow-' + flow.name.toLowerCase().split(' ').join('-') }}"
         >

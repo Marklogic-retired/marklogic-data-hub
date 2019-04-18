@@ -56,12 +56,6 @@ public interface Scaffolding {
      * Creates an entity given a string name
      * @param entityName - the name of the entity as string
      */
-    void createLegacyEntity(String entityName);
-
-    /**
-     * Creates an entity given a string name
-     * @param entityName - the name of the entity as string
-     */
     void createEntity(String entityName);
 
     /**

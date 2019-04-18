@@ -1,9 +1,0 @@
-{
-  "name" : "ingest",
-  "type" : "INGEST",
-  "version" : 1,
-  "options" : { },
-  "customHook" : { },
-  "language" : "zxx",
-  "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs"
-}

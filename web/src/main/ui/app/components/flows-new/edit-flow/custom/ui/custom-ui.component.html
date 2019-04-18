@@ -1,9 +1,10 @@
 <div layout-padding layout="column" class="custom-page">
-  <info-label
+  <!-- <info-label
     labelText="Modules Database"
     tooltipPlacement="right"
     tooltipText="Tooltip here about Module Database"
-  ></info-label>
+  ></info-label> -->
+  <div class="label">Modules Database</div>
   <mat-form-field class="read-only" appearance="outline" layout-fill>
     <input
       id="custom-module"
@@ -12,16 +13,12 @@
       [readonly]="true"
     />
   </mat-form-field>
-  <info-label
-    labelText="Custom Module URI"
-    tooltipPlacement="right"
-    tooltipText="Tooltip here about Custom Module URI"
-  ></info-label>
+  <div class="label">Custom Module URI</div>
   <mat-form-field appearance="outline" >
     <input
       id="custom-module-uri"
       matInput
-      [(ngModel)]="step.options.customModuleUri"
+      [(ngModel)]="step.modulePath"
       (blur)="onChange()"
       (keypress)="onKeyChange($event)"
     />

@@ -8,20 +8,6 @@ import java.util.concurrent.TimeoutException;
 
 public interface FlowRunner {
 
-    /**
-     * Runs the flow, with a specific set of steps, with all custom settings
-     *
-     * @param flow the flow to run
-     * @param steps the steps in the flow to run
-     * @param jobId the jobid to be used for the flow
-     * @param options the key/value options to be passed
-     * @param batchSize the number of documents to handle at once
-     * @param threadCount the number of threads to use for the flow running
-     * @param sourceDB the db to draw documents from, also where the flow will be first executed from
-     * @param destDB the DB where any write activity will take place
-     *
-     */
-    RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options, Integer batchSize, Integer threadCount, String sourceDB, String destDB);
 
     /**
      * Runs the flow, with a specific set of steps, with all custom settings
@@ -62,6 +48,18 @@ public interface FlowRunner {
      *
      */
     RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options);
+
+    /**
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     * @param stepConfig the key/value config to override the running of the step
+     *
+     */
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options, Map<String, Object> stepConfig);
 
     /**
      * Runs the flow, with a specific set of steps, with all defaults from step

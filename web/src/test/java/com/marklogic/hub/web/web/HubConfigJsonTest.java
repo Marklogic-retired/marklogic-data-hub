@@ -25,26 +25,25 @@ import com.marklogic.hub.web.WebApplication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, HubConfigJsonTest.class})
-@JsonTest
+@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, HubConfigJsonTest.class, JsonTest.class})
+@AutoConfigureJsonTesters
 public class HubConfigJsonTest {
 
     protected static final String PROJECT_PATH = "ye-olde-project";
 
-    private JacksonTester<HubConfig> jsonSerializer;
+    @Autowired
+    private JacksonTester<HubConfig> json;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -58,17 +57,17 @@ public class HubConfigJsonTest {
         String expected = "{\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
             "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
-            "  \"stagingForestsPerHost\": 3,\n" +
+            "  \"stagingForestsPerHost\": 1,\n" +
             "  \"stagingPort\": 8010,\n" +
             "  \"stagingAuthMethod\": \"digest\",\n" +
             "  \"finalDbName\": \"data-hub-FINAL\",\n" +
             "  \"finalHttpName\": \"data-hub-FINAL\",\n" +
-            "  \"finalForestsPerHost\": 3,\n" +
+            "  \"finalForestsPerHost\": 1,\n" +
             "  \"finalPort\": 8011,\n" +
             "  \"finalAuthMethod\": \"digest\",\n" +
             "  \"jobDbName\": \"data-hub-JOBS\",\n" +
             "  \"jobHttpName\": \"data-hub-JOBS\",\n" +
-            "  \"jobForestsPerHost\": 4,\n" +
+            "  \"jobForestsPerHost\": 1,\n" +
             "  \"jobPort\": 8013,\n" +
             "  \"jobAuthMethod\": \"digest\",\n" +
             "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
@@ -82,11 +81,11 @@ public class HubConfigJsonTest {
             "  \"finalTriggersForestsPerHost\": 1,\n" +
             "  \"finalSchemasForestsPerHost\": 1,\n" +
             "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
-            "  \"flowOperatorName\": \"flow-operator\",\n" +
+            "  \"flowOperatorUserName\": \"flow-operator\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
-            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-operator-role,read,flow-operator-role,execute\",\n" +
+            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-developer-role,read,flow-developer-role,execute,flow-developer-role,insert,flow-operator-role,read,flow-operator-role,execute\",\n" +
             "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
             "}";
-        assertThat(jsonSerializer.write(hubConfig)).isEqualToJson(expected);
+        assertThat(json.write(hubConfig)).isEqualToJson(expected);
     }
 }

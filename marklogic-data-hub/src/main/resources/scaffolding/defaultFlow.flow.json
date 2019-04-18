@@ -8,27 +8,27 @@
   },
   "steps": {
     "1": {
-      "language": "zxx",
-      "name": "default-ingest",
-      "type": "INGESTION",
-      "modulePath": "/data-hub/5/builtins/steps/ingest/default/main.sjs",
-      "customHook": {
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "customHook": {},
+      "fileLocations": {
+        "inputFilePath": "path/to/folder",
+        "outputURIReplacement": "output/URI,'substitute/URI'",
+        "inputFileType": "json"
       },
       "options": {
         "sourceQuery": null,
         "outputFormat": "json",
         "collections": [
-          "default-ingest"
+          "default-ingestion"
         ]
       }
     },
     "2": {
-      "language": "zxx",
-      "name": "default-mapping",
-      "type": "MAPPING",
-      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
       "options": {
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
         "collections": [
           "default-mapping"
         ],
@@ -39,10 +39,8 @@
       }
     },
     "3": {
-      "language": "zxx",
-      "name": "default-mastering",
-      "type": "MASTERING",
-      "modulePath": "/data-hub/5/builtins/steps/master/default/main.sjs",
+      "stepDefinitionName": "default-mastering",
+      "stepDefinitionType": "MASTERING",
       "options": {
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
         "collections": [

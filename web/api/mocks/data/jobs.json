@@ -9,8 +9,8 @@
     "successfulEvents": 1000,
     "failedEvents": 0,
     "status": "finished",
-    "timeStarted": "2019-04-10T14:02:38.229156-07:00",
-    "timeEnded": "2019-04-10T14:02:43.71327-07:00",
+    "startTime": "2019-04-10T14:02:38.229156-07:00",
+    "endTime": "2019-04-10T14:02:43.71327-07:00",
     "steps": [
       {
         "stepNumber": 1,
@@ -60,8 +60,8 @@
     "successfulEvents": 1600,
     "failedEvents": 0,
     "status": "finished",
-    "timeStarted": "2019-04-15T14:02:38.229156-07:00",
-    "timeEnded": "2019-04-15T14:02:43.71327-07:00",
+    "startTime": "2019-04-15T14:02:38.229156-07:00",
+    "endTime": "2019-04-15T14:02:43.71327-07:00",
     "steps": [
       {
         "stepNumber": 1,
@@ -111,8 +111,8 @@
     "successfulEvents": 1300,
     "failedEvents": 0,
     "status": "finished",
-    "timeStarted": "2019-04-15T14:02:38.229156-07:00",
-    "timeEnded": "2019-04-15T14:02:43.71327-07:00",
+    "startTime": "2019-04-15T14:02:38.229156-07:00",
+    "endTime": "2019-04-15T14:02:43.71327-07:00",
     "steps": [
       {
         "stepNumber": 1,
@@ -162,8 +162,8 @@
     "successfulEvents": 1600,
     "failedEvents": 0,
     "status": "finished-with-errors",
-    "timeStarted": "2019-04-15T14:02:38.229156-07:00",
-    "timeEnded": "2019-04-15T14:02:43.71327-07:00",
+    "startTime": "2019-04-15T14:02:38.229156-07:00",
+    "endTime": "2019-04-15T14:02:43.71327-07:00",
     "steps": [
       {
         "stepNumber": 1,

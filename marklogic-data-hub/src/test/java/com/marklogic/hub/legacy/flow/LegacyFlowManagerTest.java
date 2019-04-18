@@ -64,7 +64,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
     @BeforeEach
     public void setup() throws IOException {
         basicSetup();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         enableDebugging();
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
@@ -129,7 +129,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getFlowDeveloperConfig().getflowOperatorRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -138,7 +138,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getFlowDeveloperConfig().getflowOperatorRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
         installFinalDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installFinalDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -172,7 +172,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
     @Test
     public void testGetLocalFlows() throws IOException {
         createProjectDir(PROJECT_PATH);
-        scaffolding.createLegacyEntity("my-entity");
+        scaffolding.createEntity("my-entity");
 
         assertEquals(0, fm.getLocalFlows().size());
 
@@ -200,7 +200,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlowFromProperties() throws IOException {
-        scaffolding.createLegacyEntity("my-entity");
+        scaffolding.createEntity("my-entity");
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
@@ -301,7 +301,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -328,7 +328,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -362,7 +362,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -394,7 +394,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -426,7 +426,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
@@ -458,7 +458,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertEquals(2, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );

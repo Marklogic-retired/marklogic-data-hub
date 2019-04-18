@@ -17,17 +17,15 @@ package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.web.exception.DataHubException;
-import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -38,8 +36,13 @@ public class FlowController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getFlows() {
-        List<FlowStepModel> flowSteps = flowManagerService.getFlows();
-        return new ResponseEntity<List<FlowStepModel>>(flowSteps, HttpStatus.OK);
+        List<FlowStepModel> flowSteps;
+        try {
+            flowSteps = flowManagerService.getFlows();
+        } catch (Exception ex) {
+            throw new DataHubException(ex.getMessage());
+        }
+        return new ResponseEntity<>(flowSteps, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -54,7 +57,7 @@ public class FlowController {
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
-        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
@@ -66,7 +69,7 @@ public class FlowController {
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
-        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
@@ -75,13 +78,10 @@ public class FlowController {
         FlowStepModel flow = null;
         try {
             flow = flowManagerService.getFlow(flowName);
-            if (flow == null) {
-                throw new NotFoundException();
-            }
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }
-        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/names/", method = RequestMethod.GET)
@@ -133,13 +133,13 @@ public class FlowController {
     @ResponseBody
     public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
         FlowStepModel flow = flowManagerService.runFlow(flowName, steps);
-        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
         FlowStepModel flow = flowManagerService.stop(flowName);
-        return new ResponseEntity<FlowStepModel>(flow, HttpStatus.OK);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 }

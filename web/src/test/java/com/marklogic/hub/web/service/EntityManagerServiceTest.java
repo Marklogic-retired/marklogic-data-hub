@@ -38,6 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -51,6 +52,7 @@ import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
+@WebAppConfiguration
 @ContextConfiguration(classes = {WebApplication.class, ApplicationConfig.class, EntityManagerServiceTest.class})
 public class EntityManagerServiceTest extends AbstractServiceTest {
 
@@ -73,14 +75,15 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         hubConfig.initHubProject();
         hubConfig.refreshProject();
 
-        scaffolding.createLegacyEntity(ENTITY);
+        scaffolding.createEntity(ENTITY);
 
-        Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
-        Path inputDir = entityDir.resolve("input");
+        Path legacyEntityDir = projectDir.resolve("plugins/entities/" + ENTITY);
+        Path entityDir = projectDir.resolve("entities");
+        Path inputDir = legacyEntityDir.resolve("input");
 
         String entityFilename = ENTITY + EntityManagerService.ENTITY_FILE_EXTENSION;
         FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -110,7 +113,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
         FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     @AfterEach
@@ -130,7 +133,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
     @Test
     public void saveEntity() throws IOException {
-        Path entityDir = projectDir.resolve("plugins/entities/" + ENTITY);
+        Path entityDir = projectDir.resolve("entities");
         String entityFilename = ENTITY2 + EntityManagerService.ENTITY_FILE_EXTENSION;
 
         JsonNode node = getJsonFromResource(entityFilename);

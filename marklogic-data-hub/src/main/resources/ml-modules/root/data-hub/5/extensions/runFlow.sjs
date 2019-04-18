@@ -39,8 +39,8 @@ function post(context, params, input) {
       uris = datahub.hubUtils.normalizeToArray(params.uri || options.uris);
       query = cts.documentQuery(uris);
     } else {
-      let identifier = options.identifier || flow.identifier;
-      query = identifier ? cts.query(identifier) : null;
+      let sourceQuery = options.sourceQuery || flow.sourceQuery;
+      query = sourceQuery ? cts.query(sourceQuery) : null;
     }
     let content = [];
     if (!query && input && fn.count(input) === uris.length) {
