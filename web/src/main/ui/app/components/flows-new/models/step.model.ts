@@ -32,7 +32,7 @@ export class Step {
     const step = new Step();
     const fileLocations = {
       inputFilePath: filePath,
-      inputFileType: '',
+      inputFileType: 'json',
       outputURIReplacement: ''
     };
     step.fileLocations = fileLocations;
