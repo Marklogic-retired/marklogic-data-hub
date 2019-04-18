@@ -54,7 +54,7 @@ public class FlowController {
             if (flow == null) {
                 throw new DataHubException("Flow request payload is invalid.");
             }
-        } catch (DataHubProjectException dpe) {
+        } catch (Exception dpe) {
             throw new DataHubException(dpe.getMessage());
         }
         return new ResponseEntity<>(flow, HttpStatus.OK);
@@ -66,7 +66,7 @@ public class FlowController {
         FlowStepModel flow = null;
         try {
             flow = flowManagerService.createFlow(flowJson, false);
-        } catch (DataHubProjectException dpe) {
+        } catch (Exception dpe) {
             throw new DataHubException(dpe.getMessage());
         }
         return new ResponseEntity<>(flow, HttpStatus.OK);
