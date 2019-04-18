@@ -117,18 +117,22 @@ export class EditFlowComponent implements OnInit {
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
       // TODO add response check
-      // this.running = timer(0, 750)
-      //   .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
-      //     this.flow = Flow.fromJSON(poll);
-      //     if (this.flow.latestJob.status !== 'running') {
-      //       this.running.unsubscribe();
-      //     }
-      //   })
-      // );
+      console.log('run flow resp', resp);
+      this.running = timer(0, 500)
+        .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
+          console.log('flow poll', poll);
+          this.flow = Flow.fromJSON(poll);
+          if (this.flow.latestJob.status !== 'running') {
+            console.log('flow run stopped');
+            this.running.unsubscribe();
+          }
+        })
+      );
     });
   }
   stopFlow(flowid): void {
     this.manageFlowsService.stopFlow(flowid).subscribe(resp => {
+      console.log('stop flow response', resp);
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
       this.running.unsubscribe();
