@@ -56,7 +56,7 @@
                 </svg>
               </div>
               <div class="header">
-                <div class="step-type step-title {{stepsArray[i].stepDefinitionType.toLowerCase()}}">{{stepsArray[i].stepDefinitionType}}</div>
+                <div class="step-type step-title {{stepsArray[i].stepDefinitionType.toLowerCase()}}" title={{stepsArray[i].description}}>{{stepsArray[i].stepDefinitionType}}</div>
                 <div class="step-icons header-icons">
                   <mat-icon *ngIf="stepsArray[i].isValid" class="step-valid check-icon">check_circle</mat-icon>
                   <mat-icon *ngIf="!stepsArray[i].isValid"  class="step-invalid grey-icon">lens</mat-icon>
