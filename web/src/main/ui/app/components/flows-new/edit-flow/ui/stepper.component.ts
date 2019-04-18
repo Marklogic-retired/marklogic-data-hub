@@ -27,10 +27,17 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   public stepType: typeof StepType = StepType;
   showBody = true;
   stepAdded = false;
+  status = '';
 
   ngOnChanges(changes: SimpleChanges) {
-    if ( changes.hasOwnProperty('flow') && !changes.flow.firstChange && changes.flow.currentValue.steps.length > changes.flow.previousValue.steps.length ) {
-      this.stepAdded = true;
+    if ( changes.hasOwnProperty('flow')) {
+      if (!changes.flow.firstChange && changes.flow.currentValue.steps.length > changes.flow.previousValue.steps.length ) {
+        this.stepAdded = true;
+      }
+      // console.log('changes', changes);
+      if (!changes.flow.firstChange && changes.flow.currentValue.latestJob.status !== changes.flow.previousValue.latestJob.status) {
+        this.status = changes.flow.currentValue.latestJob.status.split(' ');
+      }
     }
   }
   ngAfterContentChecked() {

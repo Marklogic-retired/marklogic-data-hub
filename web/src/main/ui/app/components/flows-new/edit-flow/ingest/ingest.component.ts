@@ -53,8 +53,8 @@ export class IngestComponent implements OnInit {
 
     const {
       collections,
-      outputPermissions,
-      outputFileType
+      permissions,
+      outputFormat
     } = this.step.options;
 
     const fileLocations = {
@@ -65,8 +65,8 @@ export class IngestComponent implements OnInit {
 
     const options = {
       collections: collections || [`${this.step.name}`],
-      outputPermissions: outputPermissions || "rest-reader,read,rest-writer,update",
-      outputFileType: outputFileType || 'json'
+      permissions: permissions || "rest-reader,read,rest-writer,update",
+      outputFormat: outputFormat || 'json'
     };
 
     this.step.fileLocations = fileLocations;

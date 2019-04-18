@@ -32,11 +32,13 @@ export class Step {
     const step = new Step();
     const fileLocations = {
       inputFilePath: filePath,
-      inputFileType: '',
+      inputFileType: 'json',
       outputURIReplacement: ''
     };
     step.fileLocations = fileLocations;
     step.options = new IngestionOptions();
+    step.options.permissions = 'rest-reader,read,rest-writer,update';
+    step.options.outputFormat = 'json';
     return step;
   }
   static createMappingStep(): Step {

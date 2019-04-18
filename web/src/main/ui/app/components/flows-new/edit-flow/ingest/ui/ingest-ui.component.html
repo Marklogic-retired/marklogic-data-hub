@@ -34,7 +34,7 @@
     <mat-form-field layout-fill appearance="outline">
       <mat-select
         id="doc_type_select"
-        [(ngModel)]="this.step.options.outputFileType"
+        [(ngModel)]="this.step.options.outputFormat"
         name="doctype"
         (selectionChange)="onChange()"
       >
@@ -52,7 +52,7 @@
       <input
         id="output_permissions"
         matInput
-        [(ngModel)]="this.step.options.outputPermissions"
+        [(ngModel)]="this.step.options.permissions"
         name="permissions"
         (blur)="onChange()"
         (keypress)="onKeyChange($event)"
