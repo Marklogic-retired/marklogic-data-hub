@@ -61,9 +61,9 @@
         <!-- Status Column -->
         <ng-container matColumnDef="status">
           <mat-header-cell id="flow-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-          <mat-cell class="flow-status capitalize" *matCellDef="let flow">
-            <span class="capitalize" *ngIf="flow.latestJob">{{flow.status}}</span>
-            <span class="capitalize" *ngIf="!flow.latestJob">Never run</span>
+          <mat-cell class="flow-status" *matCellDef="let flow">
+            <span *ngIf="flow.latestJob">{{formatStatus(flow.status)}}</span>
+            <span *ngIf="!flow.latestJob">Never run</span>
           </mat-cell>
         </ng-container>
 
@@ -92,7 +92,7 @@
         <ng-container matColumnDef="docsCommitted">
           <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
-            <a *ngIf="flow.latestJob && flow.latestJob.successfulEvents > 0" [routerLink]="['/browse']" [queryParams]="{Collection:flow.latestJob.id}">{{flow.latestJob.successfulEvents | number}}</a>
+            <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.successfulEvents > 0" [routerLink]="['/browse']" [queryParams]="{Collection:flow.latestJob.id}">{{flow.latestJob.successfulEvents | number}}</a>
             <span *ngIf="flow.latestJob && flow.latestJob.successfulEvents <= 0">{{flow.latestJob.successfulEvents | number}}</span>
           </mat-cell>
         </ng-container>
@@ -101,7 +101,7 @@
         <ng-container matColumnDef="docsFailed">
           <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Failed</mat-header-cell>
           <mat-cell class="flow-docs-failed" *matCellDef="let flow">
-            <a *ngIf="flow.latestJob && flow.latestJob.failedEvents > 0" [routerLink]="">
+            <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.failedEvents > 0" [routerLink]="">
               {{flow.latestJob.failedEvents | number}}
             </a>
             <span *ngIf="flow.latestJob && flow.latestJob.failedEvents <= 0">
