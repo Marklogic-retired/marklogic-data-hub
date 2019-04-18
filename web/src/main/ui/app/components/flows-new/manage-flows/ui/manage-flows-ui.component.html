@@ -84,7 +84,7 @@
         <ng-container matColumnDef="lastJobFinished">
           <mat-header-cell id="flow-last-job-finished-sort-btn" *matHeaderCellDef mat-sort-header="lastJobFinished">Last Job Finished</mat-header-cell>
           <mat-cell class="flow-last-job-finished" *matCellDef="let flow">
-            <a *ngIf="flow.latestJob" [routerLink]="['/jobs', flow.latestJob.id]">{{friendlyDate(flow.lastJobFinished)}}</a>
+            <a *ngIf="flow.latestJob && flow.latestJob.id" [routerLink]="['/jobs', flow.latestJob.id]">{{friendlyDate(flow.lastJobFinished)}}</a>
           </mat-cell>
         </ng-container>
 
