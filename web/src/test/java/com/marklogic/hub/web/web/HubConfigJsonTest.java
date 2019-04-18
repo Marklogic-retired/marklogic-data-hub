@@ -82,9 +82,9 @@ public class HubConfigJsonTest {
             "  \"finalTriggersForestsPerHost\": 1,\n" +
             "  \"finalSchemasForestsPerHost\": 1,\n" +
             "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
-            "  \"flowOperatorName\": \"flow-operator\",\n" +
+            "  \"flowOperatorUserName\": \"flow-operator\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
-            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-operator-role,read,flow-operator-role,execute\",\n" +
+            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-developer-role,read,flow-developer-role,execute,flow-developer-role,insert,flow-operator-role,read,flow-operator-role,execute\",\n" +
             "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
             "}";
         assertThat(jsonSerializer.write(hubConfig)).isEqualToJson(expected);

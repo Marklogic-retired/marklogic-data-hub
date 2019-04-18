@@ -1,6 +1,6 @@
 {
   "user-name": "%%mlFlowOperatorUserName%%",
   "description": "A user that is used for reading and writing from MarkLogic Data Hub databases",
-  "password": "%%mlFlowOperatorUserPassword%%",
+  "password": "%%mlFlowOperatorPassword%%",
   "role": ["%%mlFlowOperatorRole%%"]
 }

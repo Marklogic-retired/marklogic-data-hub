@@ -58,7 +58,7 @@ public class StepManagerTest extends HubTestBase {
         stepManager.saveStep(step);
 
         String stepFileName = mappingStepName + StepManager.STEP_FILE_EXTENSION;
-        assertTrue(Paths.get((getFlowDeveloperConfig().getStepsDirByType(Step.StepType.MAPPING).toString()), step.getName(), stepFileName).toFile().exists());
+        assertTrue(Paths.get((getDataHubAdminConfig().getStepsDirByType(Step.StepType.MAPPING).toString()), step.getName(), stepFileName).toFile().exists());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class StepManagerTest extends HubTestBase {
         stepManager.deleteStep(step);
 
         String stepFileName = mappingStepName + StepManager.STEP_FILE_EXTENSION;
-        assertFalse(Paths.get((getFlowDeveloperConfig().getStepsDirByType(Step.StepType.MAPPING).toString()), step.getName(), stepFileName).toFile().exists());
+        assertFalse(Paths.get((getDataHubAdminConfig().getStepsDirByType(Step.StepType.MAPPING).toString()), step.getName(), stepFileName).toFile().exists());
     }
 
     @Test
@@ -115,18 +115,18 @@ public class StepManagerTest extends HubTestBase {
     }
 
     private void copyTestMappingStep() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingStepName + StepManager.STEP_FILE_EXTENSION), getFlowDeveloperConfig().getStepsDirByType(Step.StepType.MAPPING).resolve(mappingStepName + "/" + mappingStepName + StepManager.STEP_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingStepName + StepManager.STEP_FILE_EXTENSION), getDataHubAdminConfig().getStepsDirByType(Step.StepType.MAPPING).resolve(mappingStepName + "/" + mappingStepName + StepManager.STEP_FILE_EXTENSION).toFile());
     }
 
     private void copyTestIngestStep() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + ingestStepName + StepManager.STEP_FILE_EXTENSION), getFlowDeveloperConfig().getStepsDirByType(Step.StepType.INGEST).resolve(ingestStepName + "/" + ingestStepName + StepManager.STEP_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + ingestStepName + StepManager.STEP_FILE_EXTENSION), getDataHubAdminConfig().getStepsDirByType(Step.StepType.INGEST).resolve(ingestStepName + "/" + ingestStepName + StepManager.STEP_FILE_EXTENSION).toFile());
     }
 
     private void copyTestCustomStep() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + customStepName + StepManager.STEP_FILE_EXTENSION), getFlowDeveloperConfig().getStepsDirByType(Step.StepType.CUSTOM).resolve(customStepName + "/" + customStepName + StepManager.STEP_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + customStepName + StepManager.STEP_FILE_EXTENSION), getDataHubAdminConfig().getStepsDirByType(Step.StepType.CUSTOM).resolve(customStepName + "/" + customStepName + StepManager.STEP_FILE_EXTENSION).toFile());
     }
 
     private void copyTestMappingStep2() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingStepName + "2" + StepManager.STEP_FILE_EXTENSION), getFlowDeveloperConfig().getStepsDirByType(Step.StepType.MAPPING).resolve(mappingStepName + "2/" + mappingStepName + "2" + StepManager.STEP_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingStepName + "2" + StepManager.STEP_FILE_EXTENSION), getDataHubAdminConfig().getStepsDirByType(Step.StepType.MAPPING).resolve(mappingStepName + "2/" + mappingStepName + "2" + StepManager.STEP_FILE_EXTENSION).toFile());
     }
 }
