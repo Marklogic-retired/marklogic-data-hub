@@ -1,7 +1,6 @@
 {
   "name": "myNewFlow",
   "description": "flow description",
-  "batchSize": 300,
   "steps": {
     "1": {
       "stepDefinitionName": "ingestion",
@@ -14,10 +13,9 @@
     "3": {
       "stepDefinitionName": "mastering",
       "stepDefinitionType": "MASTERING",
-      "batchSize": 300,
       "options": {
-        "sourceDatabase": "data-hub-STAGING",
-        "targetDatabase": "data-hub-STAGING"
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL"
       }
     }
   }

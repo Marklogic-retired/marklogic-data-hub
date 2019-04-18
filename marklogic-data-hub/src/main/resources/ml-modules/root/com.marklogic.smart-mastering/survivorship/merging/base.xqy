@@ -202,7 +202,7 @@ declare function merge-impl:save-merge-models-by-uri(
       return
         if ($is-merged) then
           auditing:auditing-receipts-for-doc-uri($uri)
-            /prov:collection/@prov:id[. ne $uri] ! fn:string(.)
+            /auditing:previous-uri[. ne $uri] ! fn:string(.)
         else
           $uri
     let $parsed-properties :=
@@ -254,7 +254,7 @@ declare function merge-impl:save-merge-models-by-uri(
           ),
           coll-impl:on-merge(map:new((
             for $uri in $distinct-uris
-            return map:entry($uri, xdmp:document-get-collections($uri))
+            return map:entry($uri, xdmp:document-get-collections($uri)[fn:not(. = $const:ARCHIVED-COLL)])
           )),$on-merge-options)
         )
 
@@ -379,7 +379,7 @@ declare function merge-impl:rollback-merge(
     auditing:auditing-receipts-for-doc-uri($merged-doc-uri)
   where fn:exists($auditing-receipts-for-doc)
   return (
-    let $uris := $auditing-receipts-for-doc/auditing:previous-uri ! fn:string(.)
+    let $uris := $auditing-receipts-for-doc//*:previous-uri ! fn:string(.)
     let $prevent-auto-match :=
       if ($block-future-merges) then
         matcher:block-matches($uris)
@@ -389,6 +389,7 @@ declare function merge-impl:rollback-merge(
       xdmp:document-get-collections($previous-doc-uri)[fn:not(. = $const:ARCHIVED-COLL)],
       $const:CONTENT-COLL
     )
+    where fn:not(merge-impl:source-of-other-merged-doc($previous-doc-uri, $merged-doc-uri))
     return (
       xdmp:document-set-collections($previous-doc-uri, $new-collections)
     ),
@@ -406,6 +407,22 @@ declare function merge-impl:rollback-merge(
     )
   )
 };
+
+declare function merge-impl:source-of-other-merged-doc($uri, $merge-uri)
+{
+  xdmp:exists(cts:search(fn:collection(),
+    cts:and-query((
+      cts:collection-query($const:ARCHIVED-COLL),
+      cts:collection-query($const:MERGED-COLL),
+      cts:or-query((
+        cts:json-property-value-query("document-uri", $uri, "exact"),
+        cts:element-value-query(xs:QName("sm:document-uri"), $uri, "exact")
+      )),
+      cts:not-query(cts:document-query($merge-uri))
+    ))
+  ))
+};
+
 
 (:~
  : Construct a merged document from the given URIs, but do not update the
@@ -450,16 +467,35 @@ declare function merge-impl:build-merge-models-by-uri(
   let $headers-ns-map := map:get($parsed-properties, $PROPKEY-HEADERS-NS-MAP)
   let $docs := map:get($parsed-properties, "documents")
   let $wrapper-qnames := map:get($parsed-properties, "wrapper-qnames")
+  let $format := if ($docs instance of document-node(element())+) then
+                  $const:FORMAT-XML
+                else
+                  $const:FORMAT-JSON
+  let $merge-uri := merge-impl:build-merge-uri($id, $format)
   return
-    merge-impl:build-merge-models-by-final-properties(
-      $id,
-      $docs,
-      $wrapper-qnames,
-      $final-properties,
-      $final-headers,
-      $final-triples,
-      $headers-ns-map
-    )
+    map:map()
+      => map:with("audit-trace",
+          auditing:build-audit-trace(
+            $const:MERGE-ACTION,
+            $uris,
+            $merge-uri,
+            merge-impl:generate-audit-attachments(
+              $merge-uri,
+              $final-properties
+            )
+          )
+        )
+      => map:with("value",
+          merge-impl:build-merge-models-by-final-properties(
+            $id,
+            $docs,
+            $wrapper-qnames,
+            $final-properties,
+            $final-headers,
+            $final-triples,
+            $headers-ns-map
+          )
+        )
 };
 
 (:

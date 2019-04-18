@@ -6,12 +6,12 @@
     "targetEntity": "person",
     "acceptsBatch": true,
     "stepUpdate": true,
-    "sourceDatabase": "data-hub-STAGING",
-    "targetDatabase": "data-hub-STAGING",
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
     "collections": [
       "master"
     ],
-    "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
+    "sourceQuery": "cts.uris(null, null, cts.collectionQuery('mapping'))",
     "mergeOptions": {
       "propertyDefs": {
         "properties": [

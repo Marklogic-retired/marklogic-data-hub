@@ -152,6 +152,17 @@ class HubUtils {
      return newInstance;
   }
 
+  parsePermissions(permissionsTest = "") {
+    let permissionParts = permissionsTest.split(",").filter((val) => val);
+    let permissions = [];
+    let permissionRoles = permissionParts.filter((val, index) => !(index % 2));
+    let permissionCapabilities = permissionParts.filter((val, index) => index % 2);
+    for (let i = 0; i < permissionRoles.length; i++) {
+      permissions.push(xdmp.permission(permissionRoles[i], permissionCapabilities[i]));
+    }
+    return permissions;
+  }
+
 }
 
 module.exports = HubUtils;
