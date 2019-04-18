@@ -406,11 +406,15 @@ public class HubProjectImpl implements HubProject {
         Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
         Path oldMappingsDir = this.getLegacyHubMappingsDir();
         Path newEntitiesDirPath = this.getHubEntitiesDir();
+        Path newMappingsDirPath = this.getHubMappingsDir();
         File newEntitiesDirFile = newEntitiesDirPath.toFile();
+        File newMappingsDirFile = newMappingsDirPath.toFile();
         if (!newEntitiesDirFile.exists()) {
             newEntitiesDirFile.mkdir();
         }
-        Path newMappingsDirPath = this.getHubMappingsDir();
+        if (!newMappingsDirFile.exists()) {
+            newMappingsDirFile.mkdir();
+        }
         File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles();
         if (oldEntityDirectories != null) {
             for (File legacyEntityDir : oldEntityDirectories) {
@@ -424,8 +428,18 @@ public class HubProjectImpl implements HubProject {
                 }
             }
         }
-        if (oldMappingsDir.toFile().exists()) {
-            Files.move(oldMappingsDir, newMappingsDirPath);
+        File[] oldMappingsDirectories = oldMappingsDir.toFile().listFiles();
+        if (oldMappingsDirectories != null) {
+            for (File legacyMappingsDir : oldMappingsDirectories) {
+                if (legacyMappingsDir.isDirectory()) {
+                    File[] mappingsFiles = legacyMappingsDir.listFiles((File file, String name) -> name.endsWith(".mapping.json"));
+                    if (mappingsFiles != null) {
+                        for (File mappingsFile : mappingsFiles) {
+                            Files.move(mappingsFile.toPath(), newMappingsDirPath.resolve(mappingsFile.getName()));
+                        }
+                    }
+                }
+            }
         }
     }
 
