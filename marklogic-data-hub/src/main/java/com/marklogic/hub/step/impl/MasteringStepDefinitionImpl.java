@@ -20,6 +20,8 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.step.AbstractStepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
@@ -39,6 +41,10 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
         options.put("stepUpdate", true);
         // Accepts batch needed for Smart Mastering to receive all batch documents at once
         options.put("acceptsBatch", true);
+
+        List<String> collectionName = new ArrayList<>();
+        collectionName.add(name);
+        options.put("collections", collectionName);
 
         setModulePath("/data-hub/5/builtins/steps/mastering/default/main.sjs");
     }

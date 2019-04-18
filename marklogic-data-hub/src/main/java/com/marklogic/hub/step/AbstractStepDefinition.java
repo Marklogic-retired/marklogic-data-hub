@@ -21,9 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractStepDefinition implements StepDefinition {
@@ -49,9 +47,6 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         version = 1;
 
         options = new HashMap<>();
-        List<String> collectionName = new ArrayList<>();
-        collectionName.add(name);
-        options.put("collections", collectionName);
 
         customHook = new JSONObject().jsonNode();
         retryLimit = 0;
