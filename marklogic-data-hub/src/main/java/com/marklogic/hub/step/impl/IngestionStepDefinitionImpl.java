@@ -37,8 +37,8 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
         jsonObject.put("inputFilePath", "");
         jsonObject.put("outputURIReplacement", "");
         jsonObject.put("inputFileType", "");
-        fileLocations = jsonObject.jsonNode();
-        setFileLocations(fileLocations);
+        this.fileLocations = jsonObject.jsonNode();
+        setFileLocations(this.fileLocations);
 
         Map<String, Object> options = getOptions();
         options.put("outputFormat", "json");
@@ -51,7 +51,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
     }
 
     public JsonNode getFileLocations() {
-        return fileLocations;
+        return this.fileLocations;
     }
 
     public void setFileLocations(JsonNode fileLocations) {
@@ -71,7 +71,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
 
     @Override
     public Step transformToStep(String stepName, StepDefinition stepDefinition, Step step) {
-        step.setFileLocations(fileLocations);
+        step.setFileLocations(this.fileLocations);
         return super.transformToStep(stepName, stepDefinition, step);
     }
 
