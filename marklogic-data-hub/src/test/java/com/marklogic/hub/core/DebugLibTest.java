@@ -44,7 +44,7 @@ public class DebugLibTest extends HubTestBase {
 
         scaffolding.createLegacyFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML, false);
 
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     // testing https://github.com/marklogic/marklogic-data-hub/issues/516

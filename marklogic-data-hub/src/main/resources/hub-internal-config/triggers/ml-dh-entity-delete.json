@@ -20,6 +20,10 @@
   "task-priority": "normal",
   "permission": [
     {
+      "role-name": "%%mlDataHubAdminRole%%",
+      "capability": "update"
+    },
+    {
       "role-name": "%%mlFlowDeveloperRole%%",
       "capability": "update"
     },

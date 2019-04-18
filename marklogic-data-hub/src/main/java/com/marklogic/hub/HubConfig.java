@@ -63,8 +63,9 @@ public interface HubConfig {
 
     String DEFAULT_ROLE_NAME = "flow-operator-role";
     String DEFAULT_USER_NAME = "flow-operator";
-    String DEFAULT_ADMIN_ROLE_NAME = "flow-developer-role";
-    String DEFAULT_ADMIN_USER_NAME = "flow-developer";
+    String DEFAULT_DEVELOPER_ROLE_NAME = "flow-developer-role";
+    String DEFAULT_DEVELOPER_USER_NAME = "flow-developer";
+    String DEFAULT_ADMIN_ROLE_NAME = "data-hub-admin-role";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
@@ -275,13 +276,13 @@ public interface HubConfig {
      * Get the roleName the hub uses
      * @return the name of the role the DHF uses
      */
-    String getflowOperatorRoleName();
+    String getFlowOperatorRoleName();
 
     /**
      * Set the role name that the hub uses
      * @param flowOperatorRoleName the name to use
      */
-    void setflowOperatorRoleName(String flowOperatorRoleName);
+    void setFlowOperatorRoleName(String flowOperatorRoleName);
 
     /**
      * Get the current marklogic user name the hub uses
@@ -291,9 +292,33 @@ public interface HubConfig {
 
     /**
      * Sets the username for the hub to use in MarkLogic
-     * @param flowOperatorName - username to use
+     * @param flowOperatorUserName - username to use
      */
-    void setFlowOperatorUserName(String flowOperatorName);
+    void setFlowOperatorUserName(String flowOperatorUserName);
+
+    /**
+     * Get the roleName the hub uses for developing flows
+     * @return the name of the role the DHF uses for developing flows
+     */
+    String getFlowDeveloperRoleName();
+
+    /**
+     * Set the role name that the hub uses for developing flows
+     * @param flowDeveloperRoleName the name to use for developing flows
+     */
+    void setFlowDeveloperRoleName(String flowDeveloperRoleName);
+
+    /**
+     * Get the current marklogic user name the hub uses to develop flows
+     * @return the username
+     */
+    String getFlowDeveloperUserName();
+
+    /**
+     * Sets the username for the hub to use in MarkLogic for developing flows
+     * @param flowDeveloperUserName - username to use
+     */
+    void setFlowDeveloperUserName(String flowDeveloperUserName);
 
     /**
      * Gets a string of load balancer host
