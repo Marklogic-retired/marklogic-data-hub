@@ -127,7 +127,7 @@ public class WriteStepRunner implements StepRunner {
 
     @Override
     public StepRunner withSourceClient(DatabaseClient stagingClient) {
-        this.stagingClient = stagingClient;
+        //no op for WriteStepRunner
         return this;
     }
 
@@ -661,7 +661,7 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private RunStepResponse createStepResponse() {
-        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow);
+        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow).withStep(step);
         if (this.jobId == null) {
             jobId = UUID.randomUUID().toString();
         }
@@ -676,10 +676,5 @@ public class WriteStepRunner implements StepRunner {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public String getRunningStepKey() {
-        return this.step;
     }
 }

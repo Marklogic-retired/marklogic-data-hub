@@ -439,7 +439,7 @@ public class QueryStepRunner implements StepRunner {
     }
 
     private RunStepResponse createStepResponse() {
-        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow);
+        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow).withStep(step);
         if (this.jobId == null) {
             jobId = UUID.randomUUID().toString();
         }
@@ -454,11 +454,6 @@ public class QueryStepRunner implements StepRunner {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public String getRunningStepKey() {
-        return this.step;
     }
 
     class FlowResource extends ResourceManager {

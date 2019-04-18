@@ -18,6 +18,7 @@ package com.marklogic.hub.step;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.step.impl.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,10 @@ import java.util.Map;
 public class RunStepResponse {
     private String jobId;
     private String flowName;
+
+    private String stepName;
+    private String stepDefinitionName;
+    private String stepDefinitionType;
 
     public List<String> stepOutput;
     private Map<String, Object> fullOutput;
@@ -37,6 +42,9 @@ public class RunStepResponse {
     private long successfulBatches = 0;
     private long failedBatches = 0;
     private boolean success = false;
+
+    private Flow flow;
+
 
     /**
      * @return true if the job ran without errors, false otherwise.
@@ -53,7 +61,16 @@ public class RunStepResponse {
     public static RunStepResponse withFlow(Flow flow) {
         RunStepResponse runStepResponse = new RunStepResponse();
         runStepResponse.flowName = flow.getName();
+        runStepResponse.flow = flow;
         return runStepResponse;
+    }
+
+    public RunStepResponse withStep(String stepNum) {
+        Step step = this.flow.getStep(stepNum);
+        this.stepName = step.getName();
+        this.stepDefinitionName = step.getStepDefinitionName();
+        this.stepDefinitionType = step.getStepDefinitionType().toString();
+        return this;
     }
 
     public RunStepResponse withStepOutput(List<String> stepOutput) {
@@ -130,6 +147,31 @@ public class RunStepResponse {
     public long getFailedBatches() {
         return failedBatches;
     }
+    public String getStepName() {
+        return stepName;
+    }
+
+    public void setStepName(String stepName) {
+        this.stepName = stepName;
+    }
+
+    public String getStepDefinitionType() {
+        return stepDefinitionType;
+    }
+
+    public void setStepDefinitionType(String stepDefinitionType) {
+        this.stepDefinitionType = stepDefinitionType;
+    }
+
+
+    public String getStepDefinitionName() {
+        return stepDefinitionName;
+    }
+
+    public void setStepDefinitionName(String stepDefinitionName) {
+        this.stepDefinitionName = stepDefinitionName;
+    }
+
 
     @Override
     public String toString() {

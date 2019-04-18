@@ -252,7 +252,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     stepRunner.awaitCompletion();
                 }
                 catch (Exception e) {
-                    stepResp = RunStepResponse.withFlow(flow);
+                    stepResp = RunStepResponse.withFlow(flow).withStep(stepNum);
                     stepResp.withJobId(runningJobId);
                     if(stepRunner != null){
                         stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepRunner.getBatchSize()), (long) Math.ceil((double) errorCount.get() / stepRunner.getBatchSize()));
@@ -278,6 +278,7 @@ public class FlowRunnerImpl implements FlowRunner{
                                 runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
                         });
                     } catch (Exception ex) {
+                        logger.error(ex.getMessage());
                     }
                 }
                 finally {
@@ -339,6 +340,7 @@ public class FlowRunnerImpl implements FlowRunner{
                             listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
                         });
                     } catch (Exception ex) {
+                        logger.error(ex.getMessage());
                     }
                 } else {
                     try {
@@ -346,6 +348,7 @@ public class FlowRunnerImpl implements FlowRunner{
                             listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
                         });
                     } catch (Exception ex) {
+                        logger.error(ex.getMessage());
                     }
                 }
                 jobQueue.remove();
@@ -435,6 +438,11 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public String getRunningStepKey() {
-        return this.stepRunner.getRunningStepKey();
+        return runningFlow.getSteps().entrySet()
+            .stream()
+            .filter(entry -> Objects.equals(entry.getValue(), runningStep))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.joining());
+
     }
 }
