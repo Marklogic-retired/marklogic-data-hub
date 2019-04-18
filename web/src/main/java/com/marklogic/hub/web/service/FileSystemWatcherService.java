@@ -104,7 +104,7 @@ public class FileSystemWatcherService implements DisposableBean {
                 }
             }
         }
-        keys.put(key, dir);
+        keys.putIfAbsent(key, dir);
     }
 
     private void unregister(Path dir) throws IOException {

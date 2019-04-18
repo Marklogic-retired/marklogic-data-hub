@@ -22,6 +22,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -31,16 +32,16 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FlowManagerService {
@@ -57,6 +58,15 @@ public class FlowManagerService {
     @Autowired
     private FlowJobService flowJobService;
 
+    @Autowired
+    HubConfigImpl hubConfig;
+
+    @Autowired
+    private FileSystemWatcherService watcherService;
+
+    @Autowired
+    private DataHubService dataHubService;
+
     public List<FlowStepModel> getFlows() {
         FlowRunnerChecker.getInstance(flowRunner);
         List<Flow> flows = flowManager.getFlows();
@@ -68,8 +78,8 @@ public class FlowManagerService {
         return flowSteps;
     }
 
-    public FlowStepModel createFlow(String flowJson, boolean checkExists) {
-        JSONObject jsonObject = null;
+    public FlowStepModel createFlow(String flowJson, boolean checkExists) throws IOException {
+        JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(flowJson);
         } catch (IOException e) {
@@ -91,7 +101,16 @@ public class FlowManagerService {
         }
         FlowStepModel.createFlowSteps(flow, jsonObject);
         flowManager.saveFlow(flow);
+
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+
+        Path dir = hubConfig.getFlowsDir();
+        if (dir.toFile().exists()) {
+            watcherService.watch(dir.toString());
+        }
+        if (checkExists) { //a new flow
+            dataHubService.reinstallUserModules(hubConfig, null, null);
+        }
 
         return fsm;
     }
