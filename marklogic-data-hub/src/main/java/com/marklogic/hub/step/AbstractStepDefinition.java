@@ -39,8 +39,8 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     @JsonIgnore
     private String sourceQuery;
     private int retryLimit;
-    private int batchSize;
-    private int threadCount;
+    private Integer batchSize;
+    private Integer threadCount;
 
     protected AbstractStepDefinition() {
         language = "zxx";
@@ -131,19 +131,19 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         this.retryLimit = retryLimit;
     }
 
-    public int getBatchSize() {
+    public Integer getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(int batchSize) {
+    public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
     }
 
-    public int getThreadCount() {
+    public Integer getThreadCount() {
         return threadCount;
     }
 
-    public void setThreadCount(int threadCount) {
+    public void setThreadCount(Integer threadCount) {
         this.threadCount = threadCount;
     }
 

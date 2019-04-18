@@ -41,6 +41,9 @@ public class StepModel {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private JsonNode fileLocations;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String modulePath;
+
     public String getId() {
         return id;
     }
@@ -121,6 +124,13 @@ public class StepModel {
         this.fileLocations = fileLocations;
     }
 
+    public String getModulePath() {
+        return modulePath;
+    }
+
+    public void setModulePath(String modulePath) {
+        this.modulePath = modulePath;
+    }
     public static StepModel fromJson(JsonNode node) {
         StepModel step = new StepModel();
 
@@ -129,6 +139,7 @@ public class StepModel {
         step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
         step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
+        step.setModulePath(jsonObject.getString("modulePath"));
         step.setName(jsonObject.getString("name"));
 
         if (jsonObject.getString("id") != null) {
@@ -169,6 +180,10 @@ public class StepModel {
             node.set("fileLocations", fileLocations);
         }
 
+        if (getModulePath() != null) {
+            node.put("modulePath", modulePath);
+        }
+
         node.put("name", getName());
         node.put("description", getDescription());
         node.set("options", getOptions());
@@ -188,6 +203,7 @@ public class StepModel {
         step.setDescription(stepModel.getDescription());
         step.setCustomHook(stepModel.getCustomHook());
         step.setFileLocations(stepModel.getFileLocations());
+        step.setModulePath(stepModel.getModulePath());
         JSONObject jsonObject = new JSONObject(stepJson);
         step.setOptions(jsonObject.getMap("options"));
 
@@ -205,6 +221,7 @@ public class StepModel {
         stepModel.setStepDefinitionName(step.getStepDefinitionName());
         stepModel.setStepDefinitionType(step.getStepDefinitionType());
         stepModel.setFileLocations(step.getFileLocations());
+        stepModel.setModulePath(step.getModulePath());
         stepModel.setDescription(step.getDescription());
         stepModel.setCustomHook(step.getCustomHook());
 

@@ -221,28 +221,28 @@ public interface StepDefinition {
      *
      * @return - an integer batch size
      */
-    int getBatchSize();
+    Integer getBatchSize();
 
     /**
      * Sets the batch size for running this step
      *
      * @param batchSize - an integer
      */
-    void setBatchSize(int batchSize);
+    void setBatchSize(Integer batchSize);
 
     /**
      * Returns the thread count
      *
      * @return - thread count as integer
      */
-    int getThreadCount();
+    Integer getThreadCount();
 
     /**
      * Sets the thread count for running this step
      *
      * @param threadCount - an integer
      */
-    void setThreadCount(int threadCount);
+    void setThreadCount(Integer threadCount);
 
     /**
      * Automatically increments the version of the mapping by 1
