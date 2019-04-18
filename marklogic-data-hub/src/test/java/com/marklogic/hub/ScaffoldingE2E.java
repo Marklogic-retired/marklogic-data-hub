@@ -78,20 +78,14 @@ public class ScaffoldingE2E extends HubTestBase {
     private void installEntity() {
         String entityName = "my-fun-test";
 
-        Path entityDir = project.getEntityDir(entityName);
-        assertFalse(entityDir.toFile().exists(), entityDir.toString() + " should not exist but does");
-
-        Path employeeDir = project.getEntityDir("employee");
-        assertFalse(employeeDir.toFile().exists());
+        Path entityDir = project.getHubEntitiesDir();
 
         scaffolding.createEntity(entityName);
         scaffolding.createEntity("employee");
         assertTrue(projectDir.exists());
         assertTrue(entityDir.toFile().exists());
-        assertTrue(employeeDir.toFile().exists());
-        assertEquals(Paths.get(pluginDir.toString(), "entities", entityName), entityDir);
 
-        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), employeeDir.resolve("employee.entity.json").toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), entityDir.resolve("employee.entity.json").toFile());
         FileUtil.copy(getResourceStream("scaffolding-test/" + entityName + ".json"), entityDir.resolve(entityName + ".entity.json").toFile());
 
         installUserModules(getFlowDeveloperConfig(), true);

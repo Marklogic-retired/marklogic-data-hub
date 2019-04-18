@@ -305,10 +305,10 @@ public class PiiE2E extends HubTestBase
 
     private void installEntities()
     {
-        Path employeeDir = project.getEntityDir("EmployeePii");
-        employeeDir.toFile().mkdirs();
-        Assertions.assertTrue(employeeDir.toFile().exists());
-        FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), employeeDir.resolve("EmployeePii.entity.json").toFile());
+        Path hubEntitiesDir = project.getHubEntitiesDir();
+        hubEntitiesDir.toFile().mkdirs();
+        Assertions.assertTrue(hubEntitiesDir.toFile().exists());
+        FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), hubEntitiesDir.resolve("EmployeePii.entity.json").toFile());
     }
 
     private void runInputFLow() throws URISyntaxException
