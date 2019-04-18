@@ -432,10 +432,13 @@ public class HubProjectImpl implements HubProject {
         if (oldMappingsDirectories != null) {
             for (File legacyMappingsDir : oldMappingsDirectories) {
                 if (legacyMappingsDir.isDirectory()) {
+                    if(!newMappingsDirPath.resolve(legacyMappingsDir.getName()).toFile().exists()){
+                        newMappingsDirPath.resolve(legacyMappingsDir.getName()).toFile().mkdir();
+                    }
                     File[] mappingsFiles = legacyMappingsDir.listFiles((File file, String name) -> name.endsWith(".mapping.json"));
                     if (mappingsFiles != null) {
                         for (File mappingsFile : mappingsFiles) {
-                            Files.move(mappingsFile.toPath(), newMappingsDirPath.resolve(mappingsFile.getName()));
+                            Files.move(mappingsFile.toPath(), newMappingsDirPath.resolve(legacyMappingsDir.getName()).resolve(mappingsFile.getName()));
                         }
                     }
                 }
