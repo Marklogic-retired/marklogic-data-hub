@@ -59,12 +59,14 @@
       />
     </mat-form-field>
 
-    <info-label
+    <!-- <info-label
       [labelText]="config.outputURIReplacement.label"
       tooltipPlacement="right"
       [tooltipText]="config.outputURIReplacement.description"
-    ></info-label>
+    ></info-label> -->
+    <div class="label">{{config.outputURIReplacement.label}}</div>
     <mat-form-field layout-fill appearance="outline">
+      <mat-hint>Optional</mat-hint>
       <input
         matInput
         [(ngModel)]="this.step.fileLocations.outputURIReplacement"
