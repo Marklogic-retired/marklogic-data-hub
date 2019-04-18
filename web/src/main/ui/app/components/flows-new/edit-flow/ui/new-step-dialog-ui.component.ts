@@ -112,9 +112,7 @@ export class NewStepDialogUiComponent implements OnInit {
   onSave() {
     this.newStep.name = this.newStepForm.value.name;
     this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
-    if (this.newStepForm.value.stepDefinitionType === this.stepType.CUSTOM) {
-      this.newStep.stepDefinitionName = this.newStepForm.value.name;
-    }
+    this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
     this.newStep.description = this.newStepForm.value.description;
     if (this.selectedSource === 'query') {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
