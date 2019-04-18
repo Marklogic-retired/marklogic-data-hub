@@ -131,7 +131,6 @@ public class StepModel {
     public void setModulePath(String modulePath) {
         this.modulePath = modulePath;
     }
-
     public static StepModel fromJson(JsonNode node) {
         StepModel step = new StepModel();
 
