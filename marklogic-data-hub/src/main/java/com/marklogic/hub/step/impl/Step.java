@@ -29,8 +29,8 @@ public class Step {
     private Map<String, Object> options;
     private JsonNode customHook;
     private int retryLimit;
-    private int batchSize;
-    private int threadCount;
+    private Integer batchSize;
+    private Integer threadCount;
     private String stepDefinitionName;
     private StepDefinition.StepDefinitionType stepDefinitionType;
 
@@ -80,19 +80,19 @@ public class Step {
         this.retryLimit = retryLimit;
     }
 
-    public int getBatchSize() {
+    public Integer getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(int batchSize) {
+    public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
     }
 
-    public int getThreadCount() {
+    public Integer getThreadCount() {
         return threadCount;
     }
 
-    public void setThreadCount(int threadCount) {
+    public void setThreadCount(Integer threadCount) {
         this.threadCount = threadCount;
     }
 
