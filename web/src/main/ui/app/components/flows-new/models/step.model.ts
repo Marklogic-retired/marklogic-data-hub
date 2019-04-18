@@ -37,6 +37,8 @@ export class Step {
     };
     step.fileLocations = fileLocations;
     step.options = new IngestionOptions();
+    step.options.permissions = 'rest-reader,read,rest-writer,update';
+    step.options.outputFormat = 'json';
     return step;
   }
   static createMappingStep(): Step {

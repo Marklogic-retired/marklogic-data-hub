@@ -1,7 +1,7 @@
 export class IngestionOptions {
-  public sourceQuery: string = '';
-  public outputFormat: string = 'json';
+  public sourceQuery: string;
+  public outputFormat: string;
   public collections: string[] = [];
-  public permissions: string = 'rest-reader,read,rest-writer,update';
+  public permissions: string;
   public targetDatabase: string;
 }
