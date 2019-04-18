@@ -1,0 +1,16 @@
+{
+  "name": "json-mapping",
+  "type": "MAPPING",
+  "version": 1,
+  "options": {
+    "outputFormat": "json",
+    "collections": ["json-map"],
+    "mapping": {
+      "name": "e2e-mapping",
+      "version": 1
+    },
+    "sourceQuery": "cts.uris(null, null, cts.collectionQuery('json-coll'))"
+  },
+  "language": "zxx",
+  "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+}
