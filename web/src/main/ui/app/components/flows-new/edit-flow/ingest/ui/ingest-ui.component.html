@@ -11,6 +11,7 @@
       [startPath]="this.step.fileLocations.inputFilePath"
       (folderChosen)="changeFolder($event)"
       showFiles="true"
+      [absoluteOnly]="true"
     ></app-folder-browser>
 
     <div class="label">{{config.fileTypes.label}}</div>
