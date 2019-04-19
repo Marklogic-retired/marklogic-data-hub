@@ -560,7 +560,7 @@ public class WriteStepRunner implements StepRunner {
                 Stream<JacksonHandle> contentStream = splitter.split(docStream);
                 String uri = generateAndEncodeURI(file.getParent());
                 Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
-                    contentStream, DocumentWriteOperation.uriMaker(outputURIReplace(uri)+"/%s.json"));
+                    contentStream, DocumentWriteOperation.uriMaker(outputURIReplace(uri).replace("%", "%%")+"/%s.json"));
                 if(! writeBatcher.isStopped()) {
                     try {
                         writeBatcher.addAll(documentStream);
