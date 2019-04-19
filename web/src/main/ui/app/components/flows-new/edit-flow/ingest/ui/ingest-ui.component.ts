@@ -37,12 +37,20 @@ const settings = {
     description: 'The type of document to create. Accepted values: xml, json. Default: json.',
     options: [
       {
+        label: 'Text',
+        value: 'txt',
+      },
+      {
         label: 'JSON',
         value: 'json',
       },
       {
         label: 'XML',
         value: 'xml',
+      },
+      {
+        label: 'Binary',
+        value: 'binary',
       }
     ]
   },
