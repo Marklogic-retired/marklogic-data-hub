@@ -3,6 +3,7 @@ import { Entity } from '../../../../models';
 import { EntitiesService } from '../../../../models/entities.service';
 import { SearchService } from '../../../search/search.service';
 import { MapService } from '../../../mappings/map.service';
+import { ManageFlowsService } from '../../services/manage-flows.service';
 import { EnvironmentService } from '../../../../services/environment';
 import { MappingUiComponent } from './ui/mapping-ui.component';
 
@@ -10,6 +11,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../mappings/mapping.model";
 import { Step } from "../../models/step.model";
+import { Flow } from "../../models/flow.model";
 
 @Component({
   selector: 'app-mapping',
@@ -28,6 +30,7 @@ import { Step } from "../../models/step.model";
 export class MappingComponent implements OnInit {
   @ViewChild(MappingUiComponent) private mappingUI: MappingUiComponent;
 
+  @Input() flow: Flow;
   @Input() step: Step;
   @Output() saveStep = new EventEmitter();
 
@@ -74,32 +77,57 @@ export class MappingComponent implements OnInit {
   constructor(
     private searchService: SearchService,
     private mapService: MapService,
+    private manageFlowsService: ManageFlowsService,
     private entitiesService: EntitiesService,
     private envService: EnvironmentService
   ) {}
 
+  getMapName(): string {
+    return this.flow.name + '-' + this.step.name;
+  }
+
   ngOnInit() {
     if (this.step) {
       this.entityName = this.step.options['targetEntity'];
-      this.mapping = this.step.options;
+      this.mapName = this.getMapName() || null;
       if (this.step.options.sourceDatabase === this.envService.settings.stagingDbName) {
         this.sourceDbType = 'STAGING';
       } else if (this.step.options.sourceDatabase === this.envService.settings.finalDbName) {
         this.sourceDbType = 'FINAL';
       }
       this.loadEntity();
+      this.loadMap();
     }
   }
 
   loadEntity(): void {
-    let self = this;
     this.entitiesService.entitiesChange.subscribe(entities => {
       this.targetEntity = _.find(entities, (e: Entity) => {
         return e.name === this.entityName;
       });
-      this.loadSampleDoc();
     });
     this.entitiesService.getEntities();
+  }
+
+  loadMap() {
+    let self = this;
+    this.manageFlowsService.getMap(this.mapName).subscribe((map: any) => {
+      if(map) {
+        this.mapping = map;
+        this.sampleDocURI = map.sourceURI;
+        this.editURIVal = this.sampleDocURI;
+      }
+      this.loadSampleDoc()
+      if (map && map.properties) {
+        self.conns = {};
+        _.forEach(map.properties, function(srcObj, entityPropName) {
+          self.conns[entityPropName] = srcObj.sourcedFrom;
+        });
+        self.connsOrig = _.clone(self.conns);
+      }
+    },
+    () => {},
+    () => {});
   }
 
   loadSampleDoc() {
@@ -108,17 +136,16 @@ export class MappingComponent implements OnInit {
         query = null,
         searchResult;
 
-    if (this.mapping.sourceCollection) {
-      activeFacets.Collection.values = [this.mapping.sourceCollection];
+    if (this.step.options.sourceCollection) {
+      activeFacets.Collection.values = [this.step.options.sourceCollection];
       searchResult = this.searchService.getResults(this.sourceDbType, false, query, activeFacets, 1, 1);
-    } else if (this.mapping.sourceQuery) {
-      query = this.mapping.sourceQuery;
+    } else if (this.step.options.sourceQuery) {
+      query = this.step.options.sourceQuery;
       searchResult = this.searchService.getResultsByQuery(this.sourceDbType, query, 1, 1)
     }
 
     searchResult.subscribe(response => {
         self.targetEntity.hasDocs = (response.results.length > 0);
-        // Can only load sample doc if docs exist
         if (self.targetEntity.hasDocs) {
           if (!this.mapping.sourceURI) {
             this.sampleDocURI = response.results[0].uri;
@@ -128,11 +155,6 @@ export class MappingComponent implements OnInit {
           this.editURIVal = this.sampleDocURI;
           this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
 
-          self.conns = {};
-          _.forEach(this.mapping.properties, function(srcObj, entityPropName) {
-            self.conns[entityPropName] = srcObj.sourcedFrom;
-          });
-          self.connsOrig = _.clone(self.conns);
         }
       },
       () => {},
@@ -181,8 +203,35 @@ export class MappingComponent implements OnInit {
       if (srcPropName)
         formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
     });
-    this.step.options['properties'] = formattedConns;
-    this.saveStep.emit(this.step);
+    let targetEntityType = this.targetEntity.info.baseUri + this.targetEntity.name +
+      '-' + this.targetEntity.info.version + '/' + this.targetEntity.name;
+    let mapObj = {
+      language:         this.mapping.language || 'zxx',
+      name:             this.mapName,
+      description:      this.mapping.description || '',
+      version:          this.mapping.version || '0',
+      targetEntityType: targetEntityType,
+      sourceContext:    this.mapping.sourceContext || '//',
+      sourceURI:        this.sampleDocURI || '',
+      properties:       formattedConns
+    }
+    console.log('save mapping', mapObj);
+    this.manageFlowsService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe(resp => {
+      this.manageFlowsService.getMap(this.mapName).subscribe(resp => {
+        this.step.options['mapping'] = {
+          name: resp['name'],
+          version: resp['version']
+        };
+        this.saveStep.emit(this.step);
+      });
+    });
+  }
+
+  // TODO delete map when corresponding step is deleted
+  deleteMap(): void {
+    this.manageFlowsService.deleteMap(this.mapName).subscribe(resp => {
+      console.log('mapping deleted', this.mapName);
+    });
   }
 
   // Parent component can trigger reload after external step update

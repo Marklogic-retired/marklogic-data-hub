@@ -77,4 +77,15 @@ export class ManageFlowsService {
     console.log(`POST api/flows/${flowId}/stop`);
     return this.http.post(`api/flows/${flowId}/stop`, {});
   }
+
+  saveMap(mapName, map) {
+    let parsedMap = JSON.parse(map);
+    return this.http.post('api/current-project/mappings/' + mapName, parsedMap);
+  }
+  getMap(mapName) {
+    return this.http.get('api/current-project/mappings/' + mapName);
+  }
+  deleteMap(mapName) {
+    return this.http.delete('api/current-project/mappings/' + mapName);
+  }
 }

@@ -53,12 +53,11 @@ export class NewStepDialogUiComponent implements OnInit {
       sourceDatabase: [this.step ? this.step.sourceDatabase : ''],
       targetDatabase: [this.step ? this.step.targetDatabase : '']
     }, { validators: NewStepDialogValidator });
-    // This no longer works since there is no source collection parameter
-    // if (this.step && this.step.options.sourceCollection) {
-    //   this.selectedSource = 'collection';
-    // } else if (this.step && this.step.options.sourceQuery) {
-    //   this.selectedSource = 'query';
-    // }
+    if (this.step && this.step.options.sourceCollection) {
+      this.selectedSource = 'collection';
+    } else if (this.step && this.step.options.sourceQuery) {
+      this.selectedSource = 'query';
+    }
   }
   getNameErrorMessage() {
     const errorCodes = [
@@ -118,7 +117,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
       this.newStep.options.sourceCollection = '';
     } else {
-      const ctsUri = `cts.uris(null, null, cts.collectionQuery(${this.newStepForm.value.sourceCollection}))`;
+      const ctsUri = `cts.uris(null, null, cts.collectionQuery([\'${this.newStepForm.value.sourceCollection}\']))`;
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
     }

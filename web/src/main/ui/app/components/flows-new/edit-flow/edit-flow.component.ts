@@ -7,6 +7,8 @@ import { ProjectService } from '../../../services/projects';
 import { ManageFlowsService } from "../services/manage-flows.service";
 import { EntitiesService } from '../../../models/entities.service';
 import { Entity } from '../../../models/entity.model';
+import { StepType } from '../models/step.model';
+import * as _ from "lodash";
 
 @Component({
   selector: 'app-edit-flow',
@@ -44,6 +46,7 @@ export class EditFlowComponent implements OnInit {
   entities: Array<Entity> = new Array<Entity>();
   running: any;
   projectDirectory: string;
+  stepType: typeof StepType = StepType;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -149,6 +152,9 @@ export class EditFlowComponent implements OnInit {
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         this.flow = Flow.fromJSON(resp);
       });
+      if (stepObject.step.stepDefinitionType === this.stepType.MAPPING) {
+        this.createMapping(resp);
+      }
     });
   }
   stepSelected(index) {
@@ -168,6 +174,34 @@ export class EditFlowComponent implements OnInit {
       console.log('delete response', resp);
       // TODO update based off of response
       this.getFlow();
+    });
+  }
+  createMapping(step) {
+    let entity = _.find(this.entities, (e: Entity) => {
+      return e.name === step.options.targetEntity;
+    });
+    let mapName = this.flow.name + '-' + step.name;
+    let targetEntityType = entity.info.baseUri + entity.name +
+      '-' + entity.info.version + '/' + entity.name
+    let mapObj = {
+      language:         'zxx',
+      name:             mapName,
+      description:      '',
+      version:          '0',
+      targetEntityType: targetEntityType,
+      sourceContext:    '//',
+      sourceURI:        '',
+      properties:       {}
+    }
+    console.log('create mapping', mapObj);
+    this.manageFlowsService.saveMap(mapName, JSON.stringify(mapObj)).subscribe(resp => {
+      this.manageFlowsService.getMap(mapName).subscribe(resp => {
+        step.options['mapping'] = {
+          name: resp['name'],
+          version: resp['version']
+        };
+        this.updateStep(step);
+      });
     });
   }
 }
