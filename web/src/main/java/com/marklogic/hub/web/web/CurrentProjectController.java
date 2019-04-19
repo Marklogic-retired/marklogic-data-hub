@@ -300,5 +300,12 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         request.getSession().invalidate();
+        if (watcherService.hasListener(this)) {
+            watcherService.unwatch(hubConfig.getStepDefinitionsDir().toString());
+            watcherService.unwatch(hubConfig.getHubEntitiesDir().toString());
+            watcherService.unwatch(hubConfig.getHubMappingsDir().toString());
+            watcherService.unwatch(hubConfig.getFlowsDir().toString());
+            watcherService.removeListener(this);
+        }
     }
 }
