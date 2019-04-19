@@ -66,7 +66,7 @@ public class Versions extends ResourceManager {
     }
 
     public String getDHFVersion() {
-        return hubConfig.getDHFVersion();
+        return (hubConfig != null) ? hubConfig.getDHFVersion() : null;
     }
 
     public String getHubVersion() {
