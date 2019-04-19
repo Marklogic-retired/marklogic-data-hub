@@ -1,9 +1,10 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild, OnChanges, SimpleChanges} from "@angular/core";
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../common";
 import {OutputDialogComponent} from "./output-dialog.component";
 import {StatusDialogComponent} from "./status-dialog.component";
 //import {Flow} from "../../models/flow.model";
+import { Job } from '../models/job.model';
 import * as moment from 'moment';
 import * as _ from "lodash";
 import { differenceInSeconds,
@@ -16,10 +17,10 @@ import { differenceInSeconds,
   templateUrl: './job-details-ui.component.html',
   styleUrls: ['./job-details-ui.component.scss']
 })
-export class JobDetailsUiComponent implements OnInit, AfterViewInit {
-  displayedColumns = ['name', 'targetEntity', 'stepStatus', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
+export class JobDetailsUiComponent implements OnChanges {
+  displayedColumns = ['name', 'status', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
   filterValues = {};
-  @Input() job: any;
+  @Input() job: Job;
 
   dataSource: MatTableDataSource<any>;
 
@@ -30,25 +31,36 @@ export class JobDetailsUiComponent implements OnInit, AfterViewInit {
   constructor(public dialog: MatDialog){
   }
 
-  ngOnInit() {
-    console.log('this.job', this.job);
+  // ngOnInit() {
+    // console.log('this.job', this.job);
     // TODO handle capitalization with CSS
-    this.job.jobStatus = _.capitalize(this.job.jobStatus);
-    this.dataSource = new MatTableDataSource<any>(this.job['steps']);
-  }
+    // this.job.status = _.capitalize(this.job.status);
+    // this.dataSource = new MatTableDataSource<any>(this.job['steps']);
+  // }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  // ngAfterViewInit() {
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
+  // }
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('job changes', changes);
+    if ( changes.hasOwnProperty('job')) {
+      if (!changes.job.firstChange && changes.job.currentValue ) {
+        this.renderRows();
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+    }
   }
 
   updateDataSource() {
-    this.dataSource.data = this.job;
+    console.log('this.job data source', this.job);
+    this.dataSource = new MatTableDataSource<any>(this.job.steps);
   }
 
   renderRows(): void {
     this.updateDataSource();
-    this.table.renderRows();
+    // this.table.renderRows();
   }
 
   openOutputDialog(job): void {

@@ -17,7 +17,7 @@ import { differenceInSeconds,
   styleUrls: ['./manage-jobs-ui.component.scss']
 })
 export class ManageJobsUiComponent implements OnInit, AfterViewInit {
-  displayedColumns = ['name', 'targetEntity', 'jobStatus', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
+  displayedColumns = ['name', 'status', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
   filterValues = {};
   @Input() jobs: Array<any> = [];
 
@@ -53,24 +53,24 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
         result = false;
         if (data['flow'].indexOf(filterValues['text']) != -1 ||
             data['jobId'].indexOf(filterValues['text']) != -1 ||
-            data['targetEntity'].indexOf(filterValues['text']) != -1 ||
-            data['jobStatus'].indexOf(filterValues['text']) != -1 ||
-            data['committed'].toString().indexOf(filterValues['text']) != -1 ||
-            data['errors'].toString().indexOf(filterValues['text']) != -1) {
+            // data['targetEntity'].indexOf(filterValues['text']) != -1 ||
+            data['status'].indexOf(filterValues['text']) != -1 ||
+            data['successfulEvents'].toString().indexOf(filterValues['text']) != -1 ||
+            data['failedEvents'].toString().indexOf(filterValues['text']) != -1) {
           result = true;
         }
       }
       // If menu selected, set to false if no match
-      if (filterValues['flow'] &&
-          data['flow'].indexOf(filterValues['flow']) == -1) {
+      if (filterValues['flowName'] &&
+          data['flowName'].indexOf(filterValues['flowName']) == -1) {
         result = false;
       }
-      if (filterValues['targetEntity'] &&
-          data['targetEntity'].indexOf(filterValues['targetEntity']) == -1) {
-        result = false;
-      }
-      if (filterValues['jobStatus'] &&
-          data['jobStatus'].indexOf(filterValues['jobStatus']) == -1) {
+      // if (filterValues['targetEntity'] &&
+      //     data['targetEntity'].indexOf(filterValues['targetEntity']) == -1) {
+      //   result = false;
+      // }
+      if (filterValues['status'] &&
+          data['status'].indexOf(filterValues['status']) == -1) {
         result = false;
       }
       return result;
