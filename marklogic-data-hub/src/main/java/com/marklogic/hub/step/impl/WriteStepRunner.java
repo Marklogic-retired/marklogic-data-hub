@@ -162,11 +162,11 @@ public class WriteStepRunner implements StepRunner {
         if(stepDefMap != null){
             combinedOptions.putAll(stepDefMap);
         }
-        if(stepMap != null){
-            combinedOptions.putAll(stepMap);
-        }
         if(flowMap != null) {
             combinedOptions.putAll(flowMap);
+        }
+        if(stepMap != null){
+            combinedOptions.putAll(stepMap);
         }
         if(options != null) {
             combinedOptions.putAll(options);
