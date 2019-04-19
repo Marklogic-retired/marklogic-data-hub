@@ -4,7 +4,7 @@
     <p>Before configuring this mapping you must ingest source documents</p>
   </div>
 
-  <div *ngIf="targetEntity && targetEntity.hasDocs" class="map-container">
+  <div [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}" class="map-container">
 
     <div id="source">
       <div id="source-heading">
