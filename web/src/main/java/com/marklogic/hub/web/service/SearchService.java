@@ -16,19 +16,23 @@
  */
 package com.marklogic.hub.web.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawCtsQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.web.exception.BadRequestException;
-import com.marklogic.hub.web.model.CTSSearchQuery;
+import com.marklogic.hub.web.model.SJSSearchQuery;
 import com.marklogic.hub.web.model.SearchQuery;
 
 import javax.xml.namespace.QName;
@@ -111,28 +115,13 @@ public class SearchService extends SearchableService {
         return queryMgr.search(sqd, sh, searchQuery.start);
     }
 
-    public StringHandle ctsSearch(CTSSearchQuery ctsSearchQuery) {
-        QueryManager queryMgr;
-        if (ctsSearchQuery.database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
-            queryMgr = stagingQueryMgr;
-        }
-        else {
-            queryMgr = finalQueryMgr;
+    public JsonNode sjsSearch(SJSSearchQuery SJSSearchQuery) {
+        if (SJSSearchQuery.sourceQuery == null && SJSSearchQuery.database == null) {
+            throw new BadRequestException();
         }
 
-        queryMgr.setPageLength(ctsSearchQuery.count);
-
-        if (ctsSearchQuery.ctsQuery != null && !ctsSearchQuery.ctsQuery.isNull()) {
-            RawCtsQueryDefinition queryDefinition = queryMgr.newRawCtsQueryDefinitionAs(Format.JSON, ctsSearchQuery.ctsQuery.toString());
-
-            StringHandle sh = new StringHandle();
-            sh.setFormat(Format.JSON);
-
-            return queryMgr.search(queryDefinition, sh, ctsSearchQuery.start);
-        }
-        else {
-            throw new BadRequestException("CTS Search Query is null");
-        }
+        Collections collections = new Collections(hubConfig.newStagingClient());
+        return collections.getCollections(SJSSearchQuery.sourceQuery, String.valueOf(SJSSearchQuery.count), SJSSearchQuery.database);
     }
 
     public String getDoc(String database, String docUri) {
@@ -144,5 +133,30 @@ public class SearchService extends SearchableService {
             docMgr = finalDocMgr;
         }
         return docMgr.readAs(docUri, String.class, new ServerTransform("ml:prettifyXML"));
+    }
+
+    public class Collections extends ResourceManager {
+        private static final String NAME = "ml:collections";
+
+        private RequestParameters params;
+
+        public Collections(DatabaseClient client) {
+            super();
+            client.init(NAME, this);
+            params = new RequestParameters();
+        }
+
+        public JsonNode getCollections(String sourceQuery, String count, String databaseName) {
+            params.add("sourceQuery", sourceQuery);
+            params.add("count", count);
+            params.add("database", databaseName);
+
+            ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
+            if (resultItr == null || !resultItr.hasNext()) {
+                throw new RuntimeException("Unable to get documents");
+            }
+            ResourceServices.ServiceResult res = resultItr.next();
+            return res.getContent(new JacksonHandle()).get();
+        }
     }
 }
