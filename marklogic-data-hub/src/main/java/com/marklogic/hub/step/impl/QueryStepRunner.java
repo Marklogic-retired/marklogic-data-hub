@@ -214,7 +214,7 @@ public class QueryStepRunner implements StepRunner {
             uris = runCollector();
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
-                .withStatus(JobStatus.FAILED.toString());
+                .withStatus(JobStatus.FAILED_PREFIX + step);
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
@@ -421,7 +421,7 @@ public class QueryStepRunner implements StepRunner {
             runStepResponse.withStatus(stepStatus);
 
             try {
-                jobUpdate.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null);
+                jobUpdate.postJobs(jobId, stepStatus, step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null);
             }
             catch (Exception e) {
                 throw e;

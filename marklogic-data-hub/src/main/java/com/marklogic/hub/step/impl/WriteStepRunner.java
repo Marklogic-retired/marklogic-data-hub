@@ -316,7 +316,7 @@ public class WriteStepRunner implements StepRunner {
             uris = runFileCollector();
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
-                .withStatus(JobStatus.FAILED.toString());
+                .withStatus(JobStatus.FAILED_PREFIX + step);
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
@@ -480,7 +480,7 @@ public class WriteStepRunner implements StepRunner {
             case "csv":
                 format = Format.JSON;
                 break;
-            case "txt":
+            case "text":
                 format = Format.TEXT;
                 break;
             default:

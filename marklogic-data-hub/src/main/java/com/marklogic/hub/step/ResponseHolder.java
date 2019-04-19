@@ -27,7 +27,7 @@ public class ResponseHolder {
     public List<String> completedItems;
     public List<String> failedItems;
     public List<JsonNode> errors;
-    public Map<String, JsonNode> documents ;
+    public Map<String, JsonNode> documents;
 
     public String toString() {
         return String.format("{jobId: %d, totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}", jobId, totalCount, errorCount, completedItems.size(), failedItems.size(), errors.size(), documents.get("documents").size());
