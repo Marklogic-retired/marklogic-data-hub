@@ -37,11 +37,13 @@ export class NewStepDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   addStepsToCollections() {
+    let result;
     if (this.data.flow.steps.length) {
-      return this.data.flow.steps.map(step => {
+      result = this.data.flow.steps.map(step => {
         return step.name;
       });
     }
+    return (result) ? result : [];
   }
   getCollections(db) {
     this.manageFlowsService.getCollections(db).subscribe( resp => {
