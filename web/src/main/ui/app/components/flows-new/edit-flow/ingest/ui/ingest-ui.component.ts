@@ -12,7 +12,7 @@ const settings = {
     options: [
       {
         label: 'Text',
-        value: 'txt',
+        value: 'text',
       },
       {
         label: 'JSON',
@@ -38,7 +38,7 @@ const settings = {
     options: [
       {
         label: 'Text',
-        value: 'txt',
+        value: 'text',
       },
       {
         label: 'JSON',
