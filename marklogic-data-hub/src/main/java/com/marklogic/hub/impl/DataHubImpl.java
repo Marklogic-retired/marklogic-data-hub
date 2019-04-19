@@ -65,6 +65,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -159,7 +160,7 @@ public class DataHubImpl implements DataHub {
     }
 
     @Override
-    public InstallInfo isInstalled() {
+    public InstallInfo isInstalled() throws ResourceAccessException {
 
         InstallInfo installInfo = InstallInfo.create();
 
@@ -844,20 +845,31 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
-        boolean isHubInstalled = this.isInstalled().isInstalled();
-        String currentVersion = versions.getHubVersion();
-
+        boolean isHubInstalled;
+        try {
+            isHubInstalled = this.isInstalled().isInstalled();
+        } catch (ResourceAccessException e) {
+            isHubInstalled = false;
+        }
+        String currentVersion;
+        if (isHubInstalled) {
+            currentVersion = versions.getHubVersion();
+        } else {
+            currentVersion = versions.getDHFVersion();
+        }
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }
+        // make a second check against local version, if we checked the server
+        if (isHubInstalled) {
+            compare = Versions.compare(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
+            if (compare == -1) {
+                throw new CantUpgradeException(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
+            }
+        }
         boolean result = false;
         boolean alreadyInitialized = project.isInitialized();
-        String gradleVersion = versions.getDHFVersion();
-        compare = Versions.compare(gradleVersion, MIN_UPGRADE_VERSION);
-        if (compare == -1) {
-            throw new CantUpgradeException(gradleVersion, MIN_UPGRADE_VERSION);
-        }
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
              * But since it requires 'hubConfig' and 'versions', for now 
