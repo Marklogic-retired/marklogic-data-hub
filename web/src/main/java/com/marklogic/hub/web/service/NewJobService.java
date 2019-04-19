@@ -185,7 +185,7 @@ public class NewJobService extends ResourceManager {
     private void createJobs(List<JobModel> jobModels, JSONObject jobJson) {
         JobModel jm = new JobModel();
         jobModels.add(jm);
-        jm.id = jobJson.getString("id");
+        jm.id = jobJson.getString("jobId");
         jm.flowId = jobJson.getString("flow");
         jm.flowName = jobJson.getString("flow");
         jm.user = jobJson.getString("user", "");

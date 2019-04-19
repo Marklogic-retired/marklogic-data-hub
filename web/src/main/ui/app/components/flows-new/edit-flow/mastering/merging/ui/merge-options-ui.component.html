@@ -21,7 +21,7 @@
       Configuring merge options requires a target entity. The target entity "{{targetEntityName}}" is not defined. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
     </div>
 
-    <div *ngIf="targetEntity" class="content-card">
+    <div [ngClass]="{ hidden: !targetEntity}" class="content-card">
 
       <mat-table id="merge-options-table"
                  class="merging-table"

@@ -64,7 +64,7 @@ describe('DataHub', function () {
   });
 
   auth(tmpobj.name);
-  flows(tmpobj.name);
+  //flows(tmpobj.name);
   //create(tmpobj.name);
   //runFlows(tmpobj.name);
   //jobs();

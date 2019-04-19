@@ -52,6 +52,7 @@ class HubUpdateTaskTest extends BaseTest {
 
         then:
         result.output.contains('Can\'t upgrade hub version')
+        result.output.contains('4.2.2')
         result.task(":hubUpdate").outcome == FAILED
     }
 }

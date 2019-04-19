@@ -538,8 +538,8 @@ public interface HubConfig {
     String getJarVersion();
 
     /**
-     * Gets the current version of the project properties file is targetting
-     * @return Version of DHF that the project properties file is targetting
+     * Gets the current version of the project properties file is targeting
+     * @return Version of DHF that the project properties file is targeting
      */
     String getDHFVersion();
 

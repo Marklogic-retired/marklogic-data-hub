@@ -62,7 +62,8 @@ export class StepComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.mappingStep.stepEdited(response);
+        if (this.mappingStep)
+          this.mappingStep.stepEdited(response);
         this.updateStep.emit(response);
       }
     });

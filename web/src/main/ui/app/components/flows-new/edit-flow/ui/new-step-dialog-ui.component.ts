@@ -43,19 +43,23 @@ export class NewStepDialogUiComponent implements OnInit {
       name: [this.step ? this.step.name : '', [
         Validators.required,
         Validators.pattern('[a-zA-Z][a-zA-Z0-9\_\-]*'),
-        ExistingStepNameValidator.forbiddenName(this.flow)
+        ExistingStepNameValidator.forbiddenName(this.flow, this.step && this.step.name)
       ]],
       stepDefinitionType: [this.step ? this.step.stepDefinitionType : '', Validators.required],
       description: [this.step ? this.step.description : ''],
       sourceQuery: [this.step ? this.step.options.sourceQuery : ''],
       sourceCollection: [this.step ? this.step.options.sourceCollection : ''],
       targetEntity: [this.step ? this.step.options.targetEntity : ''],
-      sourceDatabase: [this.step ? this.step.sourceDatabase : ''],
-      targetDatabase: [this.step ? this.step.targetDatabase : '']
+      sourceDatabase: [this.step ? this.step.options.sourceDatabase : ''],
+      targetDatabase: [this.step ? this.step.options.targetDatabase : '']
     }, { validators: NewStepDialogValidator });
-    if (this.step && this.step.options.sourceCollection) {
+
+    if (this.step && this.step.options && this.step.options.sourceDatabase)
+      this.getCollections.emit(this.step.options.sourceDatabase);
+
+    if (this.step && this.step.options && this.step.options.sourceCollection) {
       this.selectedSource = 'collection';
-    } else if (this.step && this.step.options.sourceQuery) {
+    } else if (this.step && this.step.options && this.step.options.sourceQuery) {
       this.selectedSource = 'query';
     }
   }
@@ -117,7 +121,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
       this.newStep.options.sourceCollection = '';
     } else {
-      const ctsUri = `cts.uris(null, null, cts.collectionQuery([\'${this.newStepForm.value.sourceCollection}\']))`;
+      const ctsUri = `cts.uris(null, null, cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"]))`;
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
     }

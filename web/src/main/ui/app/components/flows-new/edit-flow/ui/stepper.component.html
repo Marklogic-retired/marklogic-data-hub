@@ -1,7 +1,7 @@
 <div class="steps-container">
   <header>
     <div class="flow-container">
-        <h2 id="flow-name">{{flow.name}}</h2>
+        <h2 id="flow-name" title={{flow?.description}}>{{flow.name}}</h2>
         <button id="new-step-btn"
                 mat-raised-button color="primary"
                 (click)="this.newStepClicked()">NEW STEP</button>
@@ -26,8 +26,8 @@
           <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.id">
           Never run</span>
           <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">
-            <span *ngIf="status[0] === 'running'">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
-            <span *ngIf="status[0] !== 'running'">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
+            <span *ngIf="flow.latestJob.status === 'running'">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
+            <span *ngIf="flow.latestJob.status !== null">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
           </div>
         </div>
         <a id="view-jobs-btn" *ngIf="flow.latestJob && flow.latestJob.id" class="text item view-jobs" [routerLink]="['/jobs']" [queryParams]="{flowName:flow.name}">View Jobs</a>
@@ -56,14 +56,14 @@
                 </svg>
               </div>
               <div class="header">
-                <div class="step-type step-title {{stepsArray[i].stepDefinitionType.toLowerCase()}}" title={{stepsArray[i].description}}>{{stepsArray[i].stepDefinitionType}}</div>
+                <div class="step-type step-title {{stepsArray[i].stepDefinitionType.toLowerCase()}}">{{stepsArray[i].stepDefinitionType}}</div>
                 <div class="step-icons header-icons">
                   <mat-icon *ngIf="stepsArray[i].isValid" class="step-valid check-icon">check_circle</mat-icon>
                   <mat-icon *ngIf="!stepsArray[i].isValid"  class="step-invalid grey-icon">lens</mat-icon>
                   <mat-icon *ngIf="!flow.latestJob || status[0] !== 'running'" (click)="deleteStepClicked(stepsArray[i])" class="step-delete delete-icon">delete</mat-icon>
                 </div>            
               </div>
-              <h3 class="step-name">{{step.label}}</h3>
+              <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label}}</h3>
               <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
                 <div class="summary-label">Source</div>
                 <div class="summary-content" *ngIf="stepsArray[i].fileLocations.inputFilePath">
