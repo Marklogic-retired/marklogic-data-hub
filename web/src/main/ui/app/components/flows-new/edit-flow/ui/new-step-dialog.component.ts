@@ -46,7 +46,11 @@ export class NewStepDialogComponent {
   getCollections(db) {
     this.manageFlowsService.getCollections(db).subscribe( resp => {
       this.collections = this.addStepsToCollections();
-      this.collections.push(...resp);
+      resp.map( collection => {
+        if ( !this.collections.find(item => item === collection)) {
+          this.collections.push(collection);
+        }
+      });
     });
   }
   saveClicked(newStep) {
