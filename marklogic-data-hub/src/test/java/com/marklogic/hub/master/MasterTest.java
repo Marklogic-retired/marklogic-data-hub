@@ -117,7 +117,7 @@ public class MasterTest extends HubTestBase {
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
                     "\"input_file_type\":\"\\\"documents\\\"\"," +
                     "\"document_type\":\"\\\"json\\\"\"," +
-                    "\"output_collections\":\"\\\"mdm-content,default-ingestion\\\"\"," +
+                    "\"output_collections\":\"\\\"default-ingestion\\\"\"," +
                     "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"" +
                     "}";
@@ -145,11 +145,11 @@ public class MasterTest extends HubTestBase {
         if (flow == null) {
             throw new Exception("myNewFlow Not Found");
         }
-        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("3"));
+        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("2","3"));
         flowRunner.awaitCompletion();
         Job masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess());
-        assertEquals(40, getStagingDocCount("mdm-notification"));
-        assertEquals(10,getStagingDocCount("mdm-merged"));
+        assertEquals(40, getFinalDocCount("mdm-notification"));
+        assertEquals(10,getFinalDocCount("mdm-merged"));
     }
 }

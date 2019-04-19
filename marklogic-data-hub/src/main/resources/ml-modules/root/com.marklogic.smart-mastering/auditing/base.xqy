@@ -33,6 +33,7 @@ declare variable $RDFS-LABEL-IRI := sem:iri($rdfs-prefix || "label");
 
 declare private variable $ps-collection as xs:string :=
  "http://marklogic.com/provenance-services/record";
+
 (:
  : Generate and record PROV-XML regarding a merge or unmerge action.
  :
@@ -44,6 +45,33 @@ declare function auditing:audit-trace(
   $new-uri as xs:string,
   $attachments as item()*
 ) as empty-sequence()
+{
+  let $audit-trace-def := auditing:build-audit-trace(
+        $action,
+        $previous-uris,
+        $new-uri,
+        $attachments
+      )
+  return
+    xdmp:document-insert(
+      $audit-trace-def => map:get("uri"),
+      $audit-trace-def => map:get("value"),
+      xdmp:default-permissions(),
+      $audit-trace-def => map:get("context") => map:get("collections")
+    )
+};
+
+(:
+ : Generate and record PROV-XML regarding a merge or unmerge action.
+ :
+ : @param $action  $const:MERGE-ACTION or $auditing:ROLLBACK-ACTION
+ :)
+declare function auditing:build-audit-trace(
+  $action as xs:string,
+  $previous-uris as xs:string*,
+  $new-uri as xs:string,
+  $attachments as item()*
+) as map:map
 {
   let $dateTime := fn:current-dateTime()
   let $username := xdmp:get-current-user()
@@ -158,15 +186,10 @@ declare function auditing:audit-trace(
       $attachments
     }
   return
-    xdmp:document-insert(
-      "/com.marklogic.smart-mastering/auditing/"|| $action ||"/"||sem:uuid-string()||".xml",
-      element {fn:QName($prov-prefix, "document")} {
-        $prov-xml/node(),
-        auditing:build-semantic-info($prov-xml)
-      },
-      xdmp:default-permissions(),
-      $const:AUDITING-COLL
-    )
+    map:map()
+      => map:with("uri", "/com.marklogic.smart-mastering/auditing/"|| $action ||"/"||sem:uuid-string()||".xml")
+      => map:with("value", $prov-xml)
+      => map:with("context", map:entry("collections",$const:AUDITING-COLL))
 };
 
 (:

@@ -78,7 +78,10 @@ declare function notify-impl:build-match-notification(
   let $existing-notification :=
     notify-impl:get-existing-match-notification($threshold-label, $uris)
   let $old-doc-uris as xs:string* := $existing-notification/sm:document-uris/sm:document-uri
-  let $doc-uris := notify-impl:find-notify-uris($uris, $existing-notification)
+  let $doc-uris :=
+      for $uri in notify-impl:find-notify-uris($uris, $existing-notification)
+      order by $uri
+      return $uri
   let $new-notification :=
     element sm:notification {
       element sm:meta {
@@ -95,8 +98,7 @@ declare function notify-impl:build-match-notification(
     if (fn:exists($existing-notification)) then
       xdmp:node-uri(fn:head($existing-notification))
     else
-      "/com.marklogic.smart-mastering/matcher/notifications/" ||
-          sem:uuid-string() || ".xml"
+      "/com.marklogic.smart-mastering/matcher/notifications/" || xdmp:md5(fn:string-join($doc-uris ! fn:string(.), "|")) || ".xml"
   where fn:not(fn:exists($existing-notification) and (every $uri in $doc-uris satisfies $uri = $old-doc-uris) and fn:count($doc-uris) eq fn:count($old-doc-uris))
   return map:new((
     map:entry("uri", $notification-uri),

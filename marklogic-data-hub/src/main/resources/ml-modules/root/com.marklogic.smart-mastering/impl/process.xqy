@@ -81,6 +81,7 @@ declare function proc-impl:consolidate-merges($matches as map:map) as map:map
         return
           fn:string-join(
             for $uri in ($key, $merge-uris)
+            let $_lock-on-uri := xdmp:lock-for-update($uri)
             order by $uri
             return $uri,
             $STRING-TOKEN
@@ -89,7 +90,7 @@ declare function proc-impl:consolidate-merges($matches as map:map) as map:map
     for $merge in $merges
     let $uris := fn:tokenize($merge, $STRING-TOKEN)
     return
-      map:entry(sem:uuid-string(), $uris)
+      map:entry(xdmp:md5($merge), $uris)
   ))
 };
 
@@ -98,6 +99,7 @@ declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged
 {
   fn:distinct-values(
     for $key in map:keys($all-matches)
+    let $_lock-on-uri := xdmp:lock-for-update($key)
     for $updated-key in
       (if (map:contains($merged-into, $key)) then
         map:get($merged-into, $key)
@@ -109,6 +111,7 @@ declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged
     let $updated-notification-uris :=
       for $key-notification in $key-notifications[@threshold = $key-threshold]
       let $key-uri as xs:string := $key-notification/@uri
+      let $_lock-on-uri := xdmp:lock-for-update($key-uri)
       let $updated-uri :=
         if (map:contains($merged-into, $key-uri)) then
           map:get($merged-into, $key-uri)
@@ -149,6 +152,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     else if ($input instance of map:map*) then
       $input ! (. => map:get("uri"))
     else ()
+  let $_lock-for-update-on-uris := $uris ! xdmp:lock-for-update(.)
   let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "processing: " || fn:string-join($uris, ", "))
       else ()
@@ -208,7 +212,8 @@ declare function proc-impl:process-match-and-merge-with-options(
     return (
       map:put($merges-in-transaction, $new-uri, fn:true()),
       let $distinct-uris := fn:distinct-values(map:get($consolidated-merges, $new-uri))
-      let $merged-doc := merge-impl:build-merge-models-by-uri($distinct-uris, $merge-options, $new-uri)
+      let $merged-doc-def := merge-impl:build-merge-models-by-uri($distinct-uris, $merge-options, $new-uri)
+      let $merged-doc := $merged-doc-def => map:get("value")
       let $merge-uri := merge-impl:build-merge-uri(
         $new-uri,
         if ($merged-doc instance of element() or
@@ -219,6 +224,9 @@ declare function proc-impl:process-match-and-merge-with-options(
       )
       return (
         $distinct-uris ! map:put($merged-into, ., $merge-uri),
+        $merged-doc-def
+          => map:get("audit-trace")
+          => map:with("hidden", fn:true()),
         map:new((
           map:entry("uri", $merge-uri),
           map:entry("value",
@@ -250,11 +258,37 @@ declare function proc-impl:process-match-and-merge-with-options(
         ))
       )
     )
+  let $uris-that-were-merged := map:keys($merged-into)
+  let $archived-updates :=
+    (: Process collections on no matches :)
+    let $on-archive := $merge-options/merging:algorithms/merging:collections/merging:on-archive
+    for $uri in $uris-that-were-merged
+    let $current-collections := xdmp:document-get-collections($uri)
+    let $new-collections := coll-impl:on-archive(
+      map:entry($uri, $current-collections),
+      $on-archive
+    )
+    where
+      fn:not(
+        fn:count($new-collections) eq fn:count($current-collections)
+          and
+          (every $col in $new-collections satisfies $col = $current-collections)
+      )
+    return map:new((
+      map:entry("uri", $uri),
+      map:entry("value", fn:doc($uri)),
+      map:entry("context",
+        map:new((
+          map:entry("collections",$new-collections),
+          map:entry("permissions",xdmp:document-get-permissions($uri))
+        ))
+      )
+    ))
   let $consolidated-notifies := proc-impl:consolidate-notifies($all-matches, $merged-into)
   let $no-matches-updates :=
     (: Process collections on no matches :)
     let $on-no-match := $merge-options/merging:algorithms/merging:collections/merging:on-no-match
-    for $uri in $uris[fn:not(. = $merged-uris)]
+    for $uri in $uris[fn:not(. = $uris-that-were-merged)]
     let $current-collections := xdmp:document-get-collections($uri)
     let $new-collections := coll-impl:on-no-match(
       map:entry($uri, $current-collections),
@@ -293,6 +327,7 @@ declare function proc-impl:process-match-and-merge-with-options(
       xdmp:trace($const:TRACE-MATCH-RESULTS, "Consolidated notifications: " || xdmp:quote($consolidated-notifies))
     )
     else (),
+    $archived-updates,
     $processed-merges,
     $no-matches-updates,
     $processed-notifications,
@@ -352,7 +387,9 @@ declare function proc-impl:process-match-and-merge-with-options-save(
     if ($action instance of map:map) then
       let $context as map:map? := $action => map:get("context")
       return (
-        $action => map:get("value"),
+        if (fn:not(($action => map:get("hidden")))) then
+          ($action => map:get("value"))[fn:empty(xdmp:node-uri(.))]
+        else (),
         xdmp:document-insert(
           $action => map:get("uri"),
           $action => map:get("value"),

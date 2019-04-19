@@ -173,7 +173,7 @@ class Flow {
     let stepDetails = this.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, stepDetails.options, stepRef.options, options);
+    let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
 
     this.globalContext.targetDb = combinedOptions.targetDatabase;
     this.globalContext.sourceDb = combinedOptions.sourceDatabase;
@@ -259,8 +259,6 @@ class Flow {
       throw Error(errorMsq);
     }
 
-    let combinedOptions = Object.assign({}, processor.options, step.options, options);
-
       let hookOperation = function() {};
       let hook = processor.customHook;
       if (hook && hook.module) {
@@ -278,10 +276,10 @@ class Flow {
         hookOperation();
       }
       let normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
-      if (combinedOptions.acceptsBatch) {
+      if (options.acceptsBatch) {
         try {
-          let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), combinedOptions, processor.run));
-          flowInstance.processResults(results, combinedOptions, flowName, step);
+          let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), options, processor.run));
+          flowInstance.processResults(results, options, flowName, step);
           flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
         } catch (e) {
           flowInstance.globalContext.batchErrors.push({
@@ -300,8 +298,8 @@ class Flow {
         for (let contentItem of content) {
           flowInstance.globalContext.uri = contentItem.uri;
           try {
-            let results = normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
-            flowInstance.processResults(results, combinedOptions, flowName, step);
+            let results = normalizeToSequence(flowInstance.runMain(contentItem, options, processor.run));
+            flowInstance.processResults(results, options, flowName, step);
             flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
           } catch (e) {
             flowInstance.globalContext.batchErrors.push({

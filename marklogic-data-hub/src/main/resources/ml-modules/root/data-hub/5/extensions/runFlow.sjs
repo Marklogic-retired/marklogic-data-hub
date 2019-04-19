@@ -16,14 +16,13 @@
 'use strict';
 const DataHub = require("/data-hub/5/datahub.sjs");
 
-//todo flush this out
 function get(context, params) {
   return post(context, params, null);
 }
 
 function post(context, params, input) {
   let flowName = params["flow-name"];
-
+  let stepNumber = params.step;
   if (!fn.exists(flowName)) {
     fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   } else {
@@ -31,15 +30,27 @@ function post(context, params, input) {
     const datahub = new DataHub({ performanceMetrics: !!options.performanceMetrics });
     let jobId = params["job-id"];
     let flow = datahub.flow.getFlow(flowName);
-    let targetDatabase = params["target-database"] ? xdmp.database(params["target-database"]) : xdmp.database(datahub.config.FINALDATABASE);
-
+    let stepRef = flow.steps[stepNumber];
+    let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+    let flowOptions = flow.options || {};
+    let stepRefOptions = stepRef.options || {};
+    let stepDetailsOptions = stepDetails.options || {};
+    // build combined options
+    let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, options);
+    // combine all collections
+    let collections = [
+      options.collections,
+      stepRefOptions.collections,
+      flowOptions.collections,
+      stepDetailsOptions.collections
+    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])));
     let query = null;
     let uris = null;
     if (params.uri || options.uris) {
       uris = datahub.hubUtils.normalizeToArray(params.uri || options.uris);
       query = cts.documentQuery(uris);
     } else {
-      let sourceQuery = options.sourceQuery || flow.sourceQuery;
+      let sourceQuery = combinedOptions.sourceQuery || flow.sourceQuery;
       query = sourceQuery ? cts.query(sourceQuery) : null;
     }
     let content = [];
@@ -53,15 +64,15 @@ function post(context, params, input) {
             uri: xdmp.nodeUri(doc),
             value: doc,
             context: {
-              collections: options.collections || xdmp.nodeCollections(doc),
-              permissions: xdmp.nodePermissions(doc),
+              collections: collections.length ? collections : xdmp.nodeCollections(doc),
+              permissions: combinedOptions.permissions ? datahub.hubUtils.parsePermissions(combinedOptions.permissions) : xdmp.nodePermissions(doc),
               metadata: xdmp.nodeMetadata(doc)
             }
           });
         }
-      }, flow.sourceDatabase || datahub.flow.globalContext.sourceDb);
+      }, combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDb);
     }
-    return datahub.flow.runFlow(flowName, jobId, content, options, params.step);
+    return datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
   }
 }
 
