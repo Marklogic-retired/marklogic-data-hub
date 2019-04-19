@@ -54,11 +54,12 @@ export class NewStepDialogUiComponent implements OnInit {
       targetDatabase: [this.step ? this.step.options.targetDatabase : '']
     }, { validators: NewStepDialogValidator });
 
-    this.getCollections.emit(this.step && this.step.options && this.step.options.sourceDatabase);
+    if (this.step && this.step.options && this.step.options.sourceDatabase)
+      this.getCollections.emit(this.step.options.sourceDatabase);
 
-    if (this.step && this.step.options.sourceCollection) {
+    if (this.step && this.step.options && this.step.options.sourceCollection) {
       this.selectedSource = 'collection';
-    } else if (this.step && this.step.options.sourceQuery) {
+    } else if (this.step && this.step.options && this.step.options.sourceQuery) {
       this.selectedSource = 'query';
     }
   }
