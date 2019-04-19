@@ -80,7 +80,7 @@ export class IngestUiComponent implements OnInit {
   }
 
   changeFolder(folder) {
-    this.folder = folder.relativePath;
+    this.folder = folder.absolutePath;
     this.onChange();
   }
 
