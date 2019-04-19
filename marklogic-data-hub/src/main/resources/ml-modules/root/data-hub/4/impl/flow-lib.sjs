@@ -73,9 +73,9 @@ function runFlow(jobId, flow, identifier, content, options, mainFunc) {
   rfc.withFlow(flow);
 
   if (options) {
-    let targetDb = options['target-database'];
-    if (targetDb) {
-      rfc.withTargetDatabase(targetDb);
+    let targetDatabase = options['target-database'];
+    if (targetDatabase) {
+      rfc.withTargetDatabase(targetDatabase);
     }
   }
 
