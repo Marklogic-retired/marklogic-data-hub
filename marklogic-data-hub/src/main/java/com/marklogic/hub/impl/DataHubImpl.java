@@ -894,12 +894,6 @@ public class DataHubImpl implements DataHub {
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
 
-            if (isHubInstalled) {
-                runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
-                this.hubInstallModules();
-                this.loadUserModules();
-            }
-
             //if none of this has thrown an exception, we're clear and can set the result to true
             result = true;
         } catch (IOException e) {
