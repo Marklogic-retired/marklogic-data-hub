@@ -56,8 +56,8 @@ class Flow {
 
   resetGlobalContext() {
     this.globalContext = Object.assign({
-      targetDb: this.config.FINALDATABASE,
-      sourceDb: this.config.STAGINGDATABASE
+      targetDatabase: this.config.FINALDATABASE,
+      sourceDatabase: this.config.STAGINGDATABASE
     }, defaultGlobalContext);
     for (let key of Object.getOwnPropertyNames(this.globalContext)) {
       if (Array.isArray(this.globalContext[key])) {
@@ -175,8 +175,8 @@ class Flow {
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
 
-    this.globalContext.targetDb = combinedOptions.targetDatabase;
-    this.globalContext.sourceDb = combinedOptions.sourceDatabase;
+    this.globalContext.targetDatabase = combinedOptions.targetDatabase;
+    this.globalContext.sourceDatabase = combinedOptions.sourceDatabase;
 
     if (!combinedOptions.noBatchWrite) {
       let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
@@ -190,14 +190,14 @@ class Flow {
     }
     let flowInstance = this;
 
-    if (this.isContextDB(this.globalContext.sourceDb) && !combinedOptions.stepUpdate) {
+    if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
       this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
     } else {
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
         {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
         {
-          database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
+          database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
           update: combinedOptions.stepUpdate ? 'true': 'false',
           commit: 'auto',
           ignoreAmps: true
@@ -207,7 +207,7 @@ class Flow {
 
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
-      this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', null, this.globalContext.targetDb);
+      this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', null, this.globalContext.targetDatabase);
     }
     for (let content of this.writeQueue) {
       let info = {
@@ -268,7 +268,7 @@ class Flow {
             hook.module,
             parameters,
             hook.user || xdmp.getCurrentUser(),
-            hook.runBefore ? flowInstance.globalContext.sourceDb : this.globalContext.targetDb
+            hook.runBefore ? flowInstance.globalContext.sourceDatabase : this.globalContext.targetDatabase
           );
         }
       }

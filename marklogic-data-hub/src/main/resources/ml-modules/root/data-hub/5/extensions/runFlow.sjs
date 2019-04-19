@@ -37,6 +37,7 @@ function post(context, params, input) {
     let stepDetailsOptions = stepDetails.options || {};
     // build combined options
     let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, options);
+    let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
     // combine all collections
     let collections = [
       options.collections,
@@ -70,7 +71,7 @@ function post(context, params, input) {
             }
           });
         }
-      }, combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDb);
+      }, sourceDatabase);
     }
     return datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
   }
