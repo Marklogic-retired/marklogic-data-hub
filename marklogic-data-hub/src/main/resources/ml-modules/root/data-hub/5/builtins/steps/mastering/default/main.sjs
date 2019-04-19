@@ -12,7 +12,6 @@ function main(content, options) {
       mdmCollections = contentCollections.filter((col) => options.sourceQuery.includes(col));
     }
     options.matchOptions.collections = { "content": mdmCollections };
-    xdmp.log(xdmp.describe(options.matchOptions.collections,Sequence.from([]),Sequence.from([])));
   }
   options.mergeOptions.targetEntity = options.targetEntity;
   options.matchOptions.targetEntity = options.targetEntity;

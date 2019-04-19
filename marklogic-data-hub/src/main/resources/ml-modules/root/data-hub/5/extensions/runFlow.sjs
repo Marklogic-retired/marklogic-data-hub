@@ -38,13 +38,6 @@ function post(context, params, input) {
     // build combined options
     let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, options);
     let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
-    // combine all collections
-    let collections = [
-      options.collections,
-      stepRefOptions.collections,
-      flowOptions.collections,
-      stepDetailsOptions.collections
-    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])));
     let query = null;
     let uris = null;
     if (params.uri || options.uris) {
@@ -65,7 +58,6 @@ function post(context, params, input) {
             uri: xdmp.nodeUri(doc),
             value: doc,
             context: {
-              collections: collections.length ? collections : xdmp.nodeCollections(doc),
               permissions: combinedOptions.permissions ? datahub.hubUtils.parsePermissions(combinedOptions.permissions) : xdmp.nodePermissions(doc),
               metadata: xdmp.nodeMetadata(doc)
             }
