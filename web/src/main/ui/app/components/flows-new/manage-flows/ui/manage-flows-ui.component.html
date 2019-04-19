@@ -40,7 +40,7 @@
           <mat-header-cell id="flow-name-sort-btn" *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
           <mat-cell class="flow-name" *matCellDef="let flow">
             <div class="name-container">
-              <a [routerLink]="['/edit-flow', flow.id]" title={{flow.description}}>
+              <a [routerLink]="['/edit-flow', flow.id]" title={{flow?.description}}>
                 {{flow.name}}
                 <step-icons-ui
                   [steps]="flow.steps"
