@@ -17,23 +17,23 @@
     <mat-hint>Optional</mat-hint>
   </mat-form-field>
   <div *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION">
-    <label>Source Type: </label>
+    <label>Source Type: <span *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION" class="source-req">*</span></label>
     <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource" [ngModelOptions]="{standalone: true}">
       <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
       <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
     </mat-radio-group>
   </div>
   <mat-form-field *ngIf="selectedSource === 'collection' && newStepForm.value.stepDefinitionType !== stepType.INGESTION">
-    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection" formControlName="sourceCollection">
+    <mat-select id="step-source-collection" class="type-select" placeholder="Source Collection *" formControlName="sourceCollection">
       <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query'  && newStepForm.value.stepDefinitionType !== stepType.INGESTION" >
-    <textarea matInput placeholder="Source Query" formControlName="sourceQuery"></textarea>
+    <textarea matInput placeholder="Source Query *" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 
   <mat-form-field *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION">
-    <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity">
+    <mat-select id="step-target-entity" placeholder="Target Entity" required formControlName="targetEntity">
       <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
   </mat-form-field>
