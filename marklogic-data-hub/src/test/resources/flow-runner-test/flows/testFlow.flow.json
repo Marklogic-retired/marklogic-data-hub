@@ -1,7 +1,6 @@
 {
   "name": "testFlow",
   "description": "flow description",
-  "identifier": "",
   "stopOnError": "false",
   "steps": {
     "1": {

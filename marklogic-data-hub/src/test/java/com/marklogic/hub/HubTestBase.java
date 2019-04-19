@@ -925,6 +925,15 @@ public class HubTestBase {
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
 
+        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
+    }
+
+    protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
+        logger.debug("Installing hub artifacts into MarkLogic");
+        List<Command> commands = new ArrayList<>();
+
         loadHubArtifactsCommand.setForceLoad(force);
         commands.add(loadHubArtifactsCommand);
 

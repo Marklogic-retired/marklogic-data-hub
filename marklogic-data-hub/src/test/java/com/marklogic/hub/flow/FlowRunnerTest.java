@@ -58,11 +58,12 @@ public class FlowRunnerTest extends HubTestBase {
 
     @AfterAll
     public static void cleanUp(){
-        //new Installer().deleteProjectDir();
+        new Installer().deleteProjectDir();
     }
 
     @BeforeEach
     public void setupEach() throws IOException {
+        basicSetup();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
             hubConfig.getHubEntitiesDir().toFile());
@@ -77,6 +78,7 @@ public class FlowRunnerTest extends HubTestBase {
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
             hubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
         installUserModules(getDataHubAdminConfig(), true);
+        installHubArtifacts(getDataHubAdminConfig(), true);
     }
 
     @Test
@@ -86,8 +88,8 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-coll") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-coll") == 1);
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map") == 1);
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 1);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
 
