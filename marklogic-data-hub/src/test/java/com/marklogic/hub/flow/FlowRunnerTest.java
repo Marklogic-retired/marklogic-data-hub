@@ -162,5 +162,38 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(JobStatus.CANCELED.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
 
+    @Test
+    public void testRunMultipleJobs() {
+        Map<String,Object> stepConfig = new HashMap<>();
+        Map<String,Object> opts = new HashMap<>();
+        List<String> steps = new ArrayList<>();
+        steps.add("2");
+        List<String> coll = new ArrayList<>();
+        coll.add("test-collection");
+        Map<String,String> stepDetails = new HashMap<>();
+        stepDetails.put("inputFileType","json");
+
+        stepConfig.put("fileLocations", stepDetails);
+        opts.put("collections", coll);
+
+        Map<String,Object> stepConfig1 = new HashMap<>();
+        Map<String,Object> opts1 = new HashMap<>();
+        List<String> coll1 = new ArrayList<>();
+        coll1.add("test-collection1");
+        Map<String,String> stepDetails1 = new HashMap<>();
+        stepDetails1.put("inputFileType","xml");
+
+        stepConfig1.put("fileLocations", stepDetails1);
+        opts1.put("collections", coll1);
+
+
+        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
+        RunFlowResponse resp1 = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts1, stepConfig1);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection") == 1);
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1") == 1);
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
+    }
 
 }
