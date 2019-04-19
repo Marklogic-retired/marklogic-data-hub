@@ -19,6 +19,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
+  @Output() runFlow = new EventEmitter();
   @Output() redeployModules = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
@@ -54,8 +55,15 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
       data: {steps: flow.steps}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(response => {
       console.log('The run dialog was closed');
+      if ( response ) {
+        const runObject = {
+          id: flow.id,
+          runArray: response
+        };
+        this.runFlow.emit(runObject);
+      }
     });
   }
 
