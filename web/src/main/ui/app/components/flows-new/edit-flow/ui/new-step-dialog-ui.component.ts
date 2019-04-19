@@ -120,7 +120,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
       this.newStep.options.sourceCollection = '';
     } else {
-      const ctsUri = `cts.uris(null, null, cts.collectionQuery('${this.newStepForm.value.sourceCollection}'))`;
+      const ctsUri = `cts.uris(null, null, cts.collectionQuery(\'${this.newStepForm.value.sourceCollection}\'))`;
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
     }
