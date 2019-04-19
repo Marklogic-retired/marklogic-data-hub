@@ -147,6 +147,7 @@ public class RunStepResponse {
     public long getFailedBatches() {
         return failedBatches;
     }
+
     public String getStepName() {
         return stepName;
     }
@@ -175,8 +176,9 @@ public class RunStepResponse {
 
     @Override
     public String toString() {
-        return String.format("[flowName: %s, success: %s, status: %s, totalEvents: %d, successfulEvents: %d, " +
-            "failedEvents: %d, successfulBatches: %d, failedBatches: %d]", flowName, String.valueOf(success),
+        return String.format("[flowName: %s, stepName: %s, stepDefinitionName %s, stepDefinitionType %s, success: %s, " +
+                "status: %s, totalEvents: %d, successfulEvents: %d, " + "failedEvents: %d, successfulBatches: %d, " +
+                "failedBatches: %d]", flowName, stepName, stepDefinitionName, stepDefinitionType, String.valueOf(success),
             status, totalEvents, successfulEvents, failedEvents, successfulBatches, failedBatches);
     }
 }
