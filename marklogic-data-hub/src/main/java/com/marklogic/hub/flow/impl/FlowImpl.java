@@ -155,14 +155,17 @@ public class FlowImpl implements Flow {
         setOptions(jsonObject.getNode("options"));
         setStopOnError(jsonObject.getBoolean("stopOnError", DEFAULT_STOP_ONERROR));
 
-        JSONObject stepsNode = new JSONObject(jsonObject.getNode("steps"));
-        Iterator<String> iterator = jsonObject.getNode("steps").fieldNames();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            Step step = Step.deserialize(stepsNode.getNode(key));
-            steps.put(key, step);
+        JsonNode stepNode =jsonObject.getNode("steps");
+        if (stepNode != null) {
+            Iterator<String> iterator = stepNode.fieldNames();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                Step step = Step.deserialize(stepNode.get(key));
+                steps.put(key, step);
+            }
+
+            setSteps(steps);
         }
-        setSteps(steps);
 
         return this;
     }

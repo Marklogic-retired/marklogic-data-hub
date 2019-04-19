@@ -35,11 +35,9 @@ import com.marklogic.hub.web.model.StepModel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -213,58 +211,36 @@ public class FlowManagerService {
                 throw new BadRequestException("Invalid Step Type");
         }
 
-        if (stepOrder != null) {
-            // Create
-            try {
-                Map<String, Step> stepMap = flowManager.getSteps(flow);
-                if (!stepMap.containsKey(String.valueOf(stepOrder))) {
-                    stepMap.put(String.valueOf(stepOrder), step);
-                    flowManager.setSteps(flow, stepMap);
-                    flowManager.saveFlow(flow);
-                } else {
-                    throw new BadRequestException("Invalid Step Order. A Step is already present at Step Order: " + stepOrder);
-                }
-            } catch (DataHubProjectException e) {
-                throw new NotFoundException(e.getMessage());
+        Map<String, Step> currSteps = flowManager.getSteps(flow);
+        if (stepId != null) {
+            String key = getStepKeyInStepMap(flow, stepId);
+            if (StringUtils.isNotEmpty(key)) {
+                currSteps.put(key, step);
             }
-        } else if (stepId != null) {
-            // Save
-            try {
-                String key = getStepKeyInStepMap(flow, stepId);
-
-                if (key != null && !key.isEmpty()) {
-                    Map<String, Step> stepMap = flowManager.getSteps(flow);
-                    stepMap.put(key, step);
-                    flowManager.setSteps(flow, stepMap);
-                    flowManager.saveFlow(flow);
-                } else {
-                    throw new BadRequestException("Invalid Step Id");
-                }
-            } catch (DataHubProjectException e) {
-                throw new NotFoundException(e.getMessage());
-            }
+            flowManager.setSteps(flow, currSteps);
         } else {
-            //  Create at last
-            try {
-                Map<String, Step> stepMap = flowManager.getSteps(flow);
-
-                String key = "1";
-                if (stepMap.size() != 0) {
-                    key = (String) stepMap.keySet().toArray()[stepMap.size() - 1];
-                    key = String.valueOf(Integer.parseInt(key) + 1);
+            if (stepOrder > currSteps.size()) {
+                int key = currSteps.size();
+                if (key == 0) {
+                    key = 1;
                 }
-
-                if (!stepMap.containsKey(key)) {
-                    stepMap.put(key, step);
-                    flowManager.setSteps(flow, stepMap);
-                    flowManager.saveFlow(flow);
-                } else {
-                    throw new BadRequestException("Invalid Step Order");
-                }
-            } catch (DataHubProjectException e) {
-                throw new NotFoundException(e.getMessage());
+                currSteps.put(String.valueOf(key), step);
+            } else {
+                Map<String, Step> newSteps = new LinkedHashMap<>();
+                final Integer[] count = {1};
+                Step finalStep = step;
+                currSteps.values().forEach(s -> {
+                    if (count[0].equals(stepOrder)) {
+                        newSteps.put(String.valueOf(count[0]++), finalStep);
+                    }
+                    newSteps.put(String.valueOf(count[0]), s);
+                    ++count[0];
+                });
+                flowManager.setSteps(flow, newSteps);
             }
         }
+
+        flowManager.saveFlow(flow);
 
         return StepModel.transformToWebStepModel(step);
     }
