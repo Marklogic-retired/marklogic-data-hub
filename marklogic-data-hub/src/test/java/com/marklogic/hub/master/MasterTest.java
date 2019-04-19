@@ -7,7 +7,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.job.Job;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.util.HubModuleManager;
 import com.marklogic.hub.util.MlcpRunner;
@@ -147,7 +147,7 @@ public class MasterTest extends HubTestBase {
         }
         RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("2","3"));
         flowRunner.awaitCompletion();
-        Job masterJob = flowResponse.getStepResponses().get("3");
+        RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess());
         assertEquals(40, getFinalDocCount("mdm-notification"));
         assertEquals(10,getFinalDocCount("mdm-merged"));

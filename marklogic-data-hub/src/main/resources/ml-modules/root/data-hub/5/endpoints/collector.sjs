@@ -38,6 +38,7 @@ if(method === 'GET') {
     step = 1;
   }
   const jobId = requestParams["job-id"];
+  const database = requestParams.database;
   let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
   let jobDoc = datahub.jobs.getJobDocWithId(jobId);
@@ -60,7 +61,7 @@ if(method === 'GET') {
     if (!baseStep) {
       resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]));
     }
-    let combinedOptions = Object.assign({}, stepDoc.options, flowDoc.options, baseStep.options, options);
+    let combinedOptions = Object.assign({}, baseStep.options, flowDoc.options, stepDoc.options, options);
     const database = combinedOptions.sourceDatabase || requestParams.database;
     if (stepDoc) {
       if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {

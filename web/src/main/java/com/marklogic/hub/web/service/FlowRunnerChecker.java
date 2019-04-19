@@ -2,13 +2,14 @@ package com.marklogic.hub.web.service;
 
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.job.Job;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class FlowRunnerChecker {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -40,9 +41,9 @@ public class FlowRunnerChecker {
             latestJob.failedEvents = failedEvents;
             latestJob.status = StringUtils.isNotEmpty(jobStatus) ? jobStatus : rfr.getJobStatus();
 
-            Map<String, Job> stepResponseByKey = rfr.getStepResponses();
+            Map<String, RunStepResponse> stepResponseByKey = rfr.getStepResponses();
             if (stepResponseByKey != null) {
-                Job stepJob = stepResponseByKey.get(flowRunner.getRunningStepKey());
+                RunStepResponse stepJob = stepResponseByKey.get(flowRunner.getRunningStepKey());
                 if (stepJob != null) {
                     latestJob.status = StringUtils.isEmpty(latestJob.status) ? stepJob.getStatus() : latestJob.status;
                     if (stepJob.getStepOutput() != null) {

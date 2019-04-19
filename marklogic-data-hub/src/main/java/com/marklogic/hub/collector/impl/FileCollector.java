@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileCollector {
     private String filePath;
@@ -29,6 +31,15 @@ public class FileCollector {
 
     public DiskQueue<String> run() {
         DiskQueue<String> results;
+        //Currently the map has inputFormat => file-extension. We can in future use something like Tika to detect format, then
+        // it would map to application/xml etc
+        Map<String, String> fileFormat = new HashMap<>();
+        fileFormat.put("text", "txt");
+        fileFormat.put("json", "json");
+        fileFormat.put("csv", "csv");
+        fileFormat.put("xml", "xml");
+
+
         try {
             results = new DiskQueue<>(10000);
             Path dirPath = Paths.get(filePath);
@@ -45,8 +56,11 @@ public class FileCollector {
                 (filePath, fileAttr) -> fileAttr.isRegularFile())
                 .forEach(path -> {
                     File file = path.toFile();
-                    if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(inputFormat)) {
-                            results.add(path.toFile().getAbsolutePath());
+                    if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(fileFormat.get(inputFormat.toLowerCase()))) {
+                        results.add(path.toFile().getAbsolutePath());
+                    }
+                    else if("binary".equalsIgnoreCase(inputFormat) && !fileFormat.values().contains(FilenameUtils.getExtension(file.getName().toLowerCase()))){
+                        results.add(path.toFile().getAbsolutePath());
                     }
                 });
         } catch (IOException e) {

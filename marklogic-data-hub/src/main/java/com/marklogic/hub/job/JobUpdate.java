@@ -9,6 +9,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.Map;
@@ -36,7 +37,7 @@ public class JobUpdate extends ResourceManager {
         }
     }
 
-    public void postJobs(String jobId, String status, String step, Map<String,Job> stepResponses) {
+    public void postJobs(String jobId, String status, String step, Map<String, RunStepResponse> stepResponses) {
         params = new RequestParameters();
         params.put("jobid", jobId);
         params.put("status", status);

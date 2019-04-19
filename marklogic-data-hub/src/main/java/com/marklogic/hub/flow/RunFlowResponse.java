@@ -1,6 +1,7 @@
 package com.marklogic.hub.flow;
 
-import com.marklogic.hub.job.Job;
+import com.marklogic.hub.step.RunStepResponse;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ public class RunFlowResponse {
     String flowName;
     String jobStatus;
     String startTime;
-    Map<String, Job> stepResponses;
+    Map<String, RunStepResponse> stepResponses;
 
     public RunFlowResponse(String jobId) {
         this.jobId = jobId;
@@ -51,11 +52,11 @@ public class RunFlowResponse {
         this.endTime = endTime;
     }
 
-    public Map<String, Job> getStepResponses() {
+    public Map<String, RunStepResponse> getStepResponses() {
         return stepResponses;
     }
 
-    public void setStepResponses(Map<String, Job> stepResponses) {
+    public void setStepResponses(Map<String, RunStepResponse> stepResponses) {
         this.stepResponses = stepResponses;
     }
 
@@ -69,7 +70,7 @@ public class RunFlowResponse {
 
     @Override
     public String toString() {
-        String stepRes = ofNullable(stepResponses).orElse(new HashMap<String, Job>()).keySet()
+        String stepRes = ofNullable(stepResponses).orElse(new HashMap<String, RunStepResponse>()).keySet()
             .stream()
             .map(key -> key + "=" + stepResponses.get(key))
             .collect(Collectors.joining(", ", "{", "}"));

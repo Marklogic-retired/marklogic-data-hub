@@ -41,12 +41,6 @@ class RunFlowTask extends HubTask {
     public Integer threadCount
 
     @Input
-    public String sourceDB
-
-    @Input
-    public String destDB
-
-    @Input
     public String inputFilePath
     
     @Input
@@ -91,16 +85,6 @@ class RunFlowTask extends HubTask {
         if (threadCount == null) {
             threadCount = project.hasProperty("threadCount") ?
                 Integer.parseInt(project.property("threadCount")) : null
-        }
-
-        if (sourceDB == null || sourceDB.isAllWhitespace()) {
-            sourceDB ==  project.hasProperty("sourceDB") ?
-                project.property("sourceDB") : null
-        }
-
-        if (destDB == null) {
-            destDB = project.hasProperty("destDB") ?
-                project.property("destDB") : null
         }
 
         if (inputFilePath == null || inputFilePath.isAllWhitespace()) {
@@ -173,14 +157,7 @@ class RunFlowTask extends HubTask {
             runFlowString.append("\n\twith thread count: " + threadCount)
             stepConfig.put("threadCount", batchSize)
         }
-        if(sourceDB != null){
-            runFlowString.append("\n\twith Source DB: " + sourceDB)
-            stepConfig.put("sourceDB", sourceDB)
-        }
-        if(destDB != null){
-            runFlowString.append("\n\twith Destination DB: " + destDB.toString())
-            stepConfig.put("destDB", destDB.toString())
-        }
+
         if(inputFileType != null || inputFilePath != null || outputURIReplacement != null){
             runFlowString.append("\n\tWith File Locations Settings:")
             Map<String, String> fileLocations = new HashMap<>()
