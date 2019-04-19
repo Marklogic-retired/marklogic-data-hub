@@ -1,0 +1,78 @@
+1
+input/orders
+Relative
+/Users/ssambasu/5.0/input/orders
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+2
+json
+Relative
+/Users/ssambasu/5.0/json
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+Error writing batch: com.marklogic.client.FailedRequestException: Local message: failed to apply resource at documents: Internal Server Error. Server Message: XDMP-CAST: (err:FORG0001) xs:int(fn:subsequence($error-data, 1, 1)) -- Invalid cast: "The specified flow cusMapping is missing." cast as xs:int
+3
+
+> Task :hubRunFlow
+Running Flow: [cusMapping]
+	and options:
+
+
+Output:
+{
+    "jobId": "8a40f3db-1153-4c3d-bd01-439d5aea84ae",
+    "stepResponses": {
+        "1": {
+            "jobOutput": null,
+            "failedBatches": 4,
+            "failedEvents": 314,
+            "jobId": "8a40f3db-1153-4c3d-bd01-439d5aea84ae",
+            "status": "failed",
+            "successfulEvents": 0,
+            "flowName": "cusMapping",
+            "fullOutput": null,
+            "successfulBatches": 0,
+            "totalEvents": 314,
+            "success": false
+        },
+        "2": {
+            "jobOutput": null,
+            "failedBatches": 3,
+            "failedEvents": 213,
+            "jobId": "8a40f3db-1153-4c3d-bd01-439d5aea84ae",
+            "status": "failed",
+            "successfulEvents": 0,
+            "flowName": "cusMapping",
+            "fullOutput": null,
+            "successfulBatches": 0,
+            "totalEvents": 213,
+            "success": false
+        },
+        "3": {
+            "jobOutput": [
+                "java.lang.RuntimeException: org.springframework.web.client.HttpClientErrorException$NotFound: 404 Not Found\n\tat com.marklogic.hub.collector.impl.CollectorImpl.run(CollectorImpl.java:156)\n\tat com.marklogic.hub.step.impl.QueryStepRunner.runCollector(QueryStepRunner.java:242)\n\tat com.marklogic.hub.step.impl.QueryStepRunner.run(QueryStepRunner.java:196)\n\tat com.marklogic.hub.flow.impl.FlowRunnerImpl$FlowRunnerTask.run(FlowRunnerImpl.java:254)\n\tat java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\n\tat java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat java.lang.Thread.run(Thread.java:748)\nCaused by: org.springframework.web.client.HttpClientErrorException$NotFound: 404 Not Found\n\tat org.springframework.web.client.HttpClientErrorException.create(HttpClientErrorException.java:85)\n\tat org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:122)\n\tat org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:102)\n\tat com.marklogic.rest.util.MgmtResponseErrorHandler.handleError(MgmtResponseErrorHandler.java:26)\n\tat org.springframework.web.client.ResponseErrorHandler.handleError(ResponseErrorHandler.java:63)\n\tat org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:778)\n\tat org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:736)\n\tat org.springframework.web.client.RestTemplate.execute(RestTemplate.java:710)\n\tat com.marklogic.hub.collector.impl.CollectorImpl.run(CollectorImpl.java:150)\n\t... 8 more\n"
+            ],
+            "failedBatches": 0,
+            "failedEvents": 0,
+            "jobId": "8a40f3db-1153-4c3d-bd01-439d5aea84ae",
+            "status": "failed",
+            "successfulEvents": 0,
+            "flowName": "cusMapping",
+            "fullOutput": null,
+            "successfulBatches": 0,
+            "totalEvents": 0,
+            "success": false
+        }
+    },
+    "endTime": "2019-24-10 01:24:25",
+    "startTime": "2019-24-10 01:24:25"
+}
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/5.2.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 1s
+1 actionable task: 1 executed
