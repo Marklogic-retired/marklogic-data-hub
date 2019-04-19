@@ -20,9 +20,28 @@ const datahub = new DataHub();
 function get(context, params) {
   let resp;
   let database = params.database;
+  let sourceQuery = params.sourceQuery;
+  let limit = params.count || 1;
 
   try {
-    resp = xdmp.eval("cts.collections(null, ['map'])", null, {database: xdmp.database(database)});
+    if (sourceQuery != null) {
+      let uris = xdmp.eval("cts.uris(null, ['limit=" + limit + "'], " + sourceQuery + ")", null, {database: xdmp.database(database)});
+      uris = datahub.hubUtils.normalizeToArray(uris);
+
+      let i;
+      resp = [];
+      for (i in uris) {
+        let uri = uris[i];
+        let doc = xdmp.eval("cts.doc('" + uri + "')", null, {database: xdmp.database(database)});
+        let obj = {
+          "uri": uri,
+          "doc": doc
+        };
+        resp.push(obj);
+      }
+    } else {
+      resp = xdmp.eval("cts.collections(null, ['map'])", null, {database: xdmp.database(database)});
+    }
   } catch (err) {
     datahub.debug.log(err);
   }

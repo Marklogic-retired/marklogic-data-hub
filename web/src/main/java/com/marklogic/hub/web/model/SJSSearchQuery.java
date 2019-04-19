@@ -16,11 +16,8 @@
  */
 package com.marklogic.hub.web.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-public class CTSSearchQuery {
-    public JsonNode ctsQuery;
-    public long start;
+public class SJSSearchQuery {
+    public String sourceQuery;
     public long count;
     public String database;
 }
