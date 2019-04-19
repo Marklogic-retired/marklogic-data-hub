@@ -70,7 +70,7 @@ if(method === 'GET') {
       let query = combinedOptions.sourceQuery;
       if (query) {
         try {
-          resp = xdmp.eval(query, {options: options}, {database: xdmp.database(database)});
+          resp = xdmp.eval("cts.uris(null, null, " + query + ")", {options: options}, {database: xdmp.database(database)});
         } catch (err) {
           //TODO log error message from 'err'
 
