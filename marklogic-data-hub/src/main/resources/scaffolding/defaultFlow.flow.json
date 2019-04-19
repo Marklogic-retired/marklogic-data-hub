@@ -17,6 +17,7 @@
         "inputFileType": "json"
       },
       "options": {
+        "targetDatabase": "data-hub-STAGING",
         "sourceQuery": null,
         "outputFormat": "json",
         "collections": [
@@ -28,6 +29,8 @@
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
         "collections": [
           "default-mapping"
@@ -42,6 +45,7 @@
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
       "options": {
+        "targetEntity": "entity-name",
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
         "collections": [
           "default-mastering, mastered"
