@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.StepDefNameRequiredException
+import com.marklogic.gradle.exception.StepDefTypeInvalidException
 import com.marklogic.gradle.exception.StepDefinitionAlreadyPresentException
 import com.marklogic.hub.StepDefinitionManager
 import com.marklogic.hub.scaffold.Scaffolding
@@ -36,6 +37,10 @@ class CreateStepDefinitionTask extends HubTask {
             throw new StepDefNameRequiredException()
         }
         String stepDefType = project.hasProperty(propType) ? project.property(propType) : StepDefinition.StepDefinitionType.CUSTOM
+
+        if(!StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType)) {
+            throw new StepDefTypeInvalidException()
+        }
 
         def projectDir = getHubConfig().getHubProject().getProjectDirString()
         println "stepDefName: " + stepDefName
