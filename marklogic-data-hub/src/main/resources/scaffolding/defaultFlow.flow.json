@@ -1,5 +1,5 @@
 {
-  "name": "defaultFlow",
+  "name": "%%mlFlowName%%",
   "description": "This is the default flow containing all of the default steps",
   "batchSize": 100,
   "threadCount": 4,
@@ -17,7 +17,7 @@
         "inputFileType": "json"
       },
       "options": {
-        "targetDatabase": "data-hub-STAGING",
+        "targetDatabase": "%%mlStagingDbName%%",
         "sourceQuery": null,
         "outputFormat": "json",
         "collections": [
@@ -29,8 +29,8 @@
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
-        "sourceDatabase": "data-hub-STAGING",
-        "targetDatabase": "data-hub-FINAL",
+        "sourceDatabase": "%%mlStagingDbName%%",
+        "targetDatabase": "%%mlFinalDbName%%",
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
         "collections": [
           "default-mapping"
