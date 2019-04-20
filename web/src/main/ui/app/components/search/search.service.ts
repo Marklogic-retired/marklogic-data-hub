@@ -31,16 +31,13 @@ export class SearchService {
     return this.post(`/api/search`, data);
   }
 
-  getResultsByQuery(database: string, ctsQuery: string, page: number, pageLength: number) {
-    let start: number = (page - 1) * pageLength + 1;
+  getResultsByQuery(database: string, ctsQuery: string, count: number) {
     let data = {
       database: database,
-      ctsQuery: ctsQuery,
-      start: start,
-      count: pageLength,
-    };
-
-    return this.post(`/api/search/ctsSearch`, data);
+      sourceQuery: ctsQuery,
+      count: 1
+    }
+    return this.post(`/api/search/sjsSearch`, data);
   }
 
   getDoc(database: string, docUri: string) {
