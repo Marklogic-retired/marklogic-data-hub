@@ -28,7 +28,7 @@
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
+        "sourceQuery": "cts.collectionQuery('default-ingestion')",
         "collections": [
           "default-mapping"
         ],
@@ -42,7 +42,7 @@
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
       "options": {
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
+        "sourceQuery": "cts.collectionQuery('default-mapping')",
         "collections": [
           "default-mastering, mastered"
         ]

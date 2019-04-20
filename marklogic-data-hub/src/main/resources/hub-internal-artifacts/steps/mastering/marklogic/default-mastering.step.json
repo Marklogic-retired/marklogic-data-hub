@@ -5,7 +5,7 @@
   "version" : 1,
   "modulePath" : "/data-hub/5/builtins/steps/mastering/default/main.sjs",
   "options" : {
-    "sourceQuery" : "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
+    "sourceQuery" : "cts.collectionQuery('default-mapping')",
     "collections": ["default-mastering, mastered"]
   }
 }

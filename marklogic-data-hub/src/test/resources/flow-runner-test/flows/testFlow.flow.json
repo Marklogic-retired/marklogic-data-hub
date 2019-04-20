@@ -58,7 +58,7 @@
           "name": "e2e-mapping",
           "version": 1
         },
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('xml-coll'))"
+        "sourceQuery": "cts.collectionQuery('xml-coll')"
       },
       "customHook": {},
       "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
