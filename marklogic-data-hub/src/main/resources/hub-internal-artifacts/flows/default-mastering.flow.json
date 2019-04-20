@@ -2,7 +2,7 @@
   "name": "default-mastering",
   "description": "This is the default flow for mastering previously mapped data into data hub",
   "options": {
-    "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))"
+    "sourceQuery": "cts.collectionQuery('default-mapping')"
   },
   "steps": {
     "1": {
