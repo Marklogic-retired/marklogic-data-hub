@@ -17,6 +17,7 @@
 package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.step.AbstractStepDefinition;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
@@ -46,6 +47,8 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
         List<String> collectionName = new ArrayList<>();
         collectionName.add(name);
         options.put("collections", collectionName);
+
+        options.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
 
         setModulePath("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
     }
