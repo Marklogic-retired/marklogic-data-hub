@@ -19,12 +19,12 @@ const datahub = new DataHub();
 
 function get(context, params) {
   let resp;
-  let database = params.database;
-  let sourceQuery = params.sourceQuery;
+  let database = params.database ? params.database.trim() : null;
+  let sourceQuery = params.sourceQuery ? params.sourceQuery.trim() : null;
   let limit = params.count || 1;
 
   try {
-    if (sourceQuery != null) {
+    if (sourceQuery) {
       resp = [];
 
       let docs = xdmp.eval("cts.search(cts.documentQuery(cts.uris(null, ['limit=" + limit + "'], " + sourceQuery + ")))", null, {database: xdmp.database(database)});
