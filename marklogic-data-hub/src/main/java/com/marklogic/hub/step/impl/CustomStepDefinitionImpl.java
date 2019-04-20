@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.step.impl;
 
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.step.AbstractStepDefinition;
 
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class CustomStepDefinitionImpl extends AbstractStepDefinition {
         collectionName.add(name);
         Map<String, Object> options = getOptions();
         options.put("collections", collectionName);
+
+        options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
 
         setModulePath("/path/to/your/step/module/main.sjs");
     }

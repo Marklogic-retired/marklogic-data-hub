@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.step.impl;
 
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.step.AbstractStepDefinition;
 
 import java.util.ArrayList;
@@ -35,6 +36,9 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
         List<String> collectionName = new ArrayList<>();
         collectionName.add(name);
         options.put("collections", collectionName);
+
+        options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
 
         setModulePath("/data-hub/5/builtins/steps/mapping/default/main.sjs");
     }
