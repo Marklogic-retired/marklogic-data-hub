@@ -66,7 +66,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       if(property.indexOf(':') === -1 ) {
         connector += '*:';
       }
-      valueSource = content.xpath(sourceContext + property);
+      valueSource = content.xpath(sourceContext + connector + property);
     }
     if (dataType !== 'array') {
         valueSource = fn.head(valueSource);
