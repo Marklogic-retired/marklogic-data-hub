@@ -25,17 +25,15 @@ function get(context, params) {
 
   try {
     if (sourceQuery != null) {
-      let uris = xdmp.eval("cts.uris(null, ['limit=" + limit + "'], " + sourceQuery + ")", null, {database: xdmp.database(database)});
-      uris = datahub.hubUtils.normalizeToArray(uris);
-
-      let i;
       resp = [];
-      for (i in uris) {
-        let uri = uris[i];
-        let doc = xdmp.eval("cts.doc('" + uri + "')", null, {database: xdmp.database(database)});
+
+      let docs = xdmp.eval("cts.search(cts.documentQuery(cts.uris(null, ['limit=" + limit + "'], " + sourceQuery + ")))", null, {database: xdmp.database(database)});
+      docs = docs.toArray();
+      let i;
+      for (i in docs) {
         let obj = {
-          "uri": uri,
-          "doc": doc
+          "uri": xdmp.nodeUri(docs[i]),
+          "docs": docs[i]
         };
         resp.push(obj);
       }
