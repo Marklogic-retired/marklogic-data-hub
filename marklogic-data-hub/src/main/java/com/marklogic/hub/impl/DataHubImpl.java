@@ -877,8 +877,19 @@ public class DataHubImpl implements DataHub {
              */
             if(alreadyInitialized) {
                 // The version provided in "mlDHFVersion" property in gradle.properties.
-
+                String gradleVersion = versions.getDHFVersion();
                 File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
+
+                // Back up the hub-internal-config and user-config directories in versions > 4.0
+                FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
+                FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
+
+                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin.
+                System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
+                System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
+                System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
+                    + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
+                    + HubProject.USER_CONFIG_DIR);
 
                 // replace the hub version in build.gradle
                 String text = FileUtils.readFileToString(buildGradle);
