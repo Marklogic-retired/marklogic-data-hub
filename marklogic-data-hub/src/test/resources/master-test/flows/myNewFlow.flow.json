@@ -1,5 +1,8 @@
 {
   "name": "myNewFlow",
+  "options": {
+    "collections": ["myNewFlow"]
+  },
   "description": "flow description",
   "steps": {
     "1": {

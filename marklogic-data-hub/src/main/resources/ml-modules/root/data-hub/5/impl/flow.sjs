@@ -174,7 +174,12 @@ class Flow {
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
-
+    // combine all collections
+    let collections = [
+      options.collections,
+      ((stepRef.options || {}).collections || (stepDetails.options || {}).collections),
+      (flow.options || {}).collections
+    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])));
     this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
     this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
@@ -207,7 +212,7 @@ class Flow {
 
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
-      this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', null, this.globalContext.targetDatabase);
+      this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
     }
     for (let content of this.writeQueue) {
       let info = {
