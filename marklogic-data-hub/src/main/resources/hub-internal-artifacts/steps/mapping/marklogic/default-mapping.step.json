@@ -5,6 +5,8 @@
   "version" : 1,
   "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs",
   "options" : {
+    "sourceDatabase": "data-hub-STAGING",
+    "targetDatabase": "data-hub-FINAL",
     "sourceQuery" : "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
     "collections": ["default-mapping"]
   }
