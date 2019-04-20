@@ -422,6 +422,7 @@ public class HubProjectImpl implements HubProject {
                     File[] entityFiles = legacyEntityDir.listFiles((File file, String name) -> name.endsWith(".entity.json"));
                     if (entityFiles != null) {
                         for (File entityFile : entityFiles) {
+                            logger.info("Moving plugins/entities/" + legacyEntityDir.getName()+"/"+entityFile.getName() + " to entities/" + entityFile.getName());
                             Files.move(entityFile.toPath(), newEntitiesDirPath.resolve(entityFile.getName()));
                         }
                     }
@@ -438,6 +439,7 @@ public class HubProjectImpl implements HubProject {
                     File[] mappingsFiles = legacyMappingsDir.listFiles((File file, String name) -> name.endsWith(".mapping.json"));
                     if (mappingsFiles != null) {
                         for (File mappingsFile : mappingsFiles) {
+                            logger.info("Moving plugins/mappings/" + legacyMappingsDir.getName()+"/"+mappingsFile.getName() + " to mappings/" + legacyMappingsDir.getName()+"/"+mappingsFile.getName());
                             Files.move(mappingsFile.toPath(), newMappingsDirPath.resolve(legacyMappingsDir.getName()).resolve(mappingsFile.getName()));
                         }
                     }
