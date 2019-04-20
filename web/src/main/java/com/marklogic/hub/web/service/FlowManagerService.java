@@ -219,12 +219,8 @@ public class FlowManagerService {
             }
             flowManager.setSteps(flow, currSteps);
         } else {
-            if (stepOrder > currSteps.size()) {
-                int key = currSteps.size();
-                if (key == 0) {
-                    key = 1;
-                }
-                currSteps.put(String.valueOf(key), step);
+            if (stepOrder == null || stepOrder > currSteps.size()) {
+                currSteps.put(String.valueOf(currSteps.size() + 1), step);
             } else {
                 Map<String, Step> newSteps = new LinkedHashMap<>();
                 final Integer[] count = {1};
