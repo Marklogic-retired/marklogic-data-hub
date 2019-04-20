@@ -15,22 +15,20 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +43,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class ScaffoldingImpl implements Scaffolding {
@@ -57,9 +57,6 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Autowired
     private ScaffoldingValidator validator;
-
-    @Autowired
-    private FlowManager flowManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -121,15 +118,28 @@ public class ScaffoldingImpl implements Scaffolding {
     public void createDefaultFlow(String flowName) {
         Path flowsDir = project.getFlowsDir();
         flowsDir.toFile().mkdirs();
+        File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
+
+        Map<String, String> customTokens = new HashMap<>();
+        customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
+        customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
+        customTokens.put("%%mlFlowName%%", flowName);
 
         if (flowsDir.toFile().exists()) {
             String flowSrcFile = "scaffolding/defaultFlow.flow.json";
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
             try {
-                JsonNode flowNode = JSONObject.readInput(inputStream);
-                Flow flow = flowManager.createFlowFromJSON(flowNode);
-                flow.setName(flowName);
-                flowManager.saveFlow(flow);
+                String fileContents = IOUtils.toString(inputStream);
+                for (String key : customTokens.keySet()) {
+
+                    String value = customTokens.get(key);
+                    if (value != null) {
+                        fileContents = fileContents.replace(key, value);
+                    }
+                }
+                FileWriter writer = new FileWriter(flowFile);
+                writer.write(fileContents);
+                writer.close();
             }
             catch (IOException e) {
                 throw new RuntimeException(e);

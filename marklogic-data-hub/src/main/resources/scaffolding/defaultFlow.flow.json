@@ -1,5 +1,5 @@
 {
-  "name": "defaultFlow",
+  "name": "%%mlFlowName%%",
   "description": "This is the default flow containing all of the default steps",
   "batchSize": 100,
   "threadCount": 4,
@@ -17,6 +17,7 @@
         "inputFileType": "json"
       },
       "options": {
+        "targetDatabase": "%%mlStagingDbName%%",
         "sourceQuery": null,
         "outputFormat": "json",
         "collections": [
@@ -28,6 +29,8 @@
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
+        "sourceDatabase": "%%mlStagingDbName%%",
+        "targetDatabase": "%%mlFinalDbName%%",
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
         "collections": [
           "default-mapping"
@@ -42,6 +45,7 @@
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
       "options": {
+        "targetEntity": "entity-name",
         "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
         "collections": [
           "default-mastering, mastered"
