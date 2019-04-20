@@ -9,7 +9,7 @@
       "name": "e2e-mapping",
       "version": 1
     },
-    "sourceQuery": "cts.uris(null, null, cts.collectionQuery('json-coll'))"
+    "sourceQuery": "cts.collectionQuery('json-coll')"
   },
   "language": "zxx",
   "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"

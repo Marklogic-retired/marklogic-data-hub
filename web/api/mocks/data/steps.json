@@ -30,7 +30,7 @@
     "stepDefinitionType": "MAPPING",
     "isValid": true,
     "options": { 
-      "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+      "sourceQuery": "cts.collectionQuery('default-ingest')",
       "sourceDatabase": "staging",
       "targetDatabase": "final",
       "mapping": { 
@@ -428,7 +428,7 @@
     "stepDefinitionType": "MAPPING",
     "isValid": true,
     "options": { 
-      "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+      "sourceQuery": "cts.collectionQuery('default-ingest')",
       "sourceDatabase": "staging",
       "targetDatabase": "final",
       "mapping": { 
@@ -826,7 +826,7 @@
     "stepDefinitionType": "MAPPING",
     "isValid": true,
     "options": { 
-      "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingest'))",
+      "sourceQuery": "cts.collectionQuery('default-ingest')",
       "sourceDatabase": "staging",
       "targetDatabase": "final",
       "mapping": { 

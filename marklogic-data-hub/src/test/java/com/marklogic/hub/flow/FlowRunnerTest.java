@@ -104,7 +104,7 @@ public class FlowRunnerTest extends HubTestBase {
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
         opts.put("permissions", "rest-reader,read");
-        opts.put("sourceQuery", "cts.uris(null, null, cts.collectionQuery('test-collection'))");
+        opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
         RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts);
         fr.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 2);
