@@ -20,6 +20,7 @@
       <div id="step-type-mapping-container" *ngIf="step.stepDefinitionType === stepType.MAPPING">
         <app-mapping
           [step]="step"
+          [flow]="flow"
           (saveStep)="saveStep($event)"
         ></app-mapping>
       </div>
