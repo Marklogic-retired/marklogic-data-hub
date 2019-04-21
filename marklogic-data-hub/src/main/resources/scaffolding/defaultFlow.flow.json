@@ -45,6 +45,8 @@
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
       "options": {
+        "sourceDatabase": "%%mlFinalDbName%%",
+        "targetDatabase": "%%mlFinalDbName%%",
         "targetEntity": "entity-name",
         "sourceQuery": "cts.collectionQuery('default-mapping')",
         "collections": [

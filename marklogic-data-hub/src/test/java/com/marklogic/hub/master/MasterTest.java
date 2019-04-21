@@ -148,8 +148,9 @@ public class MasterTest extends HubTestBase {
         RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("2","3"));
         flowRunner.awaitCompletion();
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
-        assertTrue(masterJob.isSuccess());
-        assertEquals(40, getFinalDocCount("mdm-notification"));
-        assertEquals(10,getFinalDocCount("mdm-merged"));
+        assertTrue(masterJob.isSuccess(), "Mastering job failed");
+        assertEquals(40, getFinalDocCount("mdm-notification"), "Notifications have incorrect count");
+        assertEquals(10,getFinalDocCount("mdm-merged"),"Merges have incorrect count");
+        assertTrue(getFinalDocCount("master") > 0, "Documents didn't receive master collection");
     }
 }

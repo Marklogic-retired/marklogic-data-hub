@@ -66,7 +66,7 @@ public class Versions extends ResourceManager {
     }
 
     public String getDHFVersion() {
-        return hubConfig.getDHFVersion();
+        return (hubConfig != null) ? hubConfig.getDHFVersion() : null;
     }
 
     public String getHubVersion() {
@@ -80,9 +80,15 @@ public class Versions extends ResourceManager {
         }
         catch(Exception e) {}
 
-        // 2.0.0 is the version at which we started using this method. It's the
-        // default fallback and should not be changed.
-        return "2.0.0";
+        /* 2.0.0 is the version at which we started using this method. First we'll check the version gradle properties.
+         * If the version isn't there, we'll assume 2.0.0
+         */
+        String dhfVersion = this.getDHFVersion();
+        if (dhfVersion == null || "".equals(dhfVersion)) {
+            return "2.0.0";
+        } else {
+            return dhfVersion;
+        }
     }
 
     public String getMarkLogicVersion() {

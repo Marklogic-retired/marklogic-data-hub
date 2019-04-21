@@ -51,7 +51,7 @@ class HubUtils {
     for (let content of writeQueue) {
       let context = (content.context||{});
       let permissions = (basePermissions || []).concat((context.permissions||[]));
-      let collections = baseCollections.concat((context.collections||[]));
+      let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[]))));
       let metadata = context.metadata;
       xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
     }`,
