@@ -21,13 +21,13 @@
           color="primary"
           (click)="this.stopClicked()">STOP</button>
         <div id="latest-job-info">
-          <a id="latest-job-status" *ngIf="flow.latestJob && flow.latestJob.id" [routerLink]="['/jobs', flow.latestJob.id]">
+          <a id="latest-job-status" *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.status" [routerLink]="['/jobs', flow.latestJob.id]">
           {{formatStatus(flow.latestJob.status)}}</a>
-          <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.id">
+          <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.status">
           Never run</span>
           <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">
-            <span *ngIf="flow.latestJob.status === 'running'">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
-            <span *ngIf="flow.latestJob.status !== null">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
+            <span *ngIf="flow.latestJob.status === 'running' && flow.latestJob.startTime !== null">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
+            <span *ngIf="flow.latestJob.status !== null && flow.latestJob.endTime !== null">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
           </div>
         </div>
         <a id="view-jobs-btn" *ngIf="flow.latestJob && flow.latestJob.id" class="text item view-jobs" [routerLink]="['/jobs']" [queryParams]="{flowName:flow.name}">View Jobs</a>
@@ -36,7 +36,7 @@
           <mat-icon id="flow-menu" class="flow-menu-icon item" [matMenuTriggerFor]="flowMenu">more_vert</mat-icon>
           <mat-icon id="flow-expand-collapse-btn" class="flow-menu-icon item" (click)="this.toggleBody()">{{ this.showBody ? 'expand_less' : 'expand_more' }}</mat-icon>
         </div>
-    </div> 
+    </div>
   </header>
 
     <div *ngIf="stepsArray.length > 0 && showBody" class="steps-body">
@@ -61,7 +61,7 @@
                   <mat-icon *ngIf="stepsArray[i].isValid" class="step-valid check-icon">check_circle</mat-icon>
                   <mat-icon *ngIf="!stepsArray[i].isValid"  class="step-invalid grey-icon">lens</mat-icon>
                   <mat-icon *ngIf="!flow.latestJob || status[0] !== 'running'" (click)="deleteStepClicked(stepsArray[i])" class="step-delete delete-icon">delete</mat-icon>
-                </div>            
+                </div>
               </div>
               <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label}}</h3>
               <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
