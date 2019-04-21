@@ -45,7 +45,7 @@
           </div> -->
         </section>
         <section>
-          <div class="ended">
+          <div class="endTime">
             <span class="label">Ended</span>
               <span class="capitalize">{{friendlyDate(job.endTime)}}</span>
           </div>
@@ -65,11 +65,11 @@
             </span>
           </div>
           <div class="errors">
-            <span class="label">Errors</span>
+            <span class="label">Failed</span>
             <a *ngIf="job.failedEvents !== 0" [routerLink]="">
               {{job.failedEvents | number}}
             </a>
-            <span *ngIf="job.errors === 0">
+            <span *ngIf="job.failedEvents === 0">
               {{job.failedEvents  }}
             </span>
           </div>
@@ -120,7 +120,7 @@
         </ng-container>
 
         <!-- Ended Column -->
-        <ng-container matColumnDef="timeEnded">
+        <ng-container matColumnDef="endTime">
           <mat-header-cell id="step-ended-sort-btn" *matHeaderCellDef mat-sort-header>Ended</mat-header-cell>
           <mat-cell class="step-ended" *matCellDef="let step">
             <span class="capitalize">
@@ -134,7 +134,7 @@
           <mat-header-cell id="step-duration-sort-btn" *matHeaderCellDef mat-sort-header>Duration</mat-header-cell>
           <mat-cell class="step-duration" *matCellDef="let step">
             <span class="capitalize">
-              {{friendlyDuration(step.startTime, step.EndTIme)}}
+              {{friendlyDuration(step.startTime, step.EndTime)}}
             </span>
           </mat-cell>
         </ng-container>
@@ -146,7 +146,7 @@
             <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
               {{step.successfulEvents | number}}
             </a>
-            <span *ngIf="step.committed === 0">
+            <span *ngIf="step.successfulEvents === 0">
               {{step.successfulEvents}}
             </span>
           </mat-cell>
@@ -159,10 +159,9 @@
             <a *ngIf="step.failedEvents !== 0" [routerLink]="">
               {{step.failedEvents | number}}
             </a>
-            <span *ngIf="step.errors === 0">
+            <span *ngIf="step.failedEvents === 0">
               {{step.failedEvents}}
             </span>
-            <span></span>
           </mat-cell>
         </ng-container>
 

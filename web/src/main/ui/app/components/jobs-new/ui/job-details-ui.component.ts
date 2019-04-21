@@ -18,7 +18,7 @@ import { differenceInSeconds,
   styleUrls: ['./job-details-ui.component.scss']
 })
 export class JobDetailsUiComponent implements OnChanges {
-  displayedColumns = ['name', 'status', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
+  displayedColumns = ['name', 'status', 'endTime', 'duration', 'committed', 'errors', 'actions'];
   filterValues = {};
   @Input() job: Job;
 
@@ -84,6 +84,8 @@ export class JobDetailsUiComponent implements OnChanges {
   }
 
   friendlyDuration(dt1, dt2): any {
+    moment.relativeTimeThreshold('s', 60);
+    moment.relativeTimeThreshold('ss', 3);
     let result = (dt1 && dt2) ?
       moment.duration(moment(dt1).diff(moment(dt2))).humanize() :
       '';
