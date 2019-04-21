@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 // export enum StepType {
 //   INGESTION = 'INGESTION',
 //   MAPPING = 'MAPPING',
@@ -46,10 +47,10 @@ export class Job {
     if (json.endTime) {
       result.endTime = json.endTime;
     }
-    if (json.successfulEvents) {
+    if (!_.isUndefined(json.successfulEvents)) {
       result.successfulEvents = json.successfulEvents;
     }
-    if (json.failedEvents) {
+    if (!_.isUndefined(json.failedEvents)) {
       result.failedEvents = json.failedEvents;
     }
     if (json.lastAttemptedStep) {

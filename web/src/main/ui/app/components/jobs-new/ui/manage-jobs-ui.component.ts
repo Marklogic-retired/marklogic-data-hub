@@ -17,8 +17,10 @@ import { differenceInSeconds,
   styleUrls: ['./manage-jobs-ui.component.scss']
 })
 export class ManageJobsUiComponent implements OnInit, AfterViewInit {
-  displayedColumns = ['name', 'status', 'timeEnded', 'duration', 'committed', 'errors', 'actions'];
+  displayedColumns = ['name', 'status', 'endTime', 'duration', 'committed', 'errors', 'actions'];
   filterValues = {};
+  flowValues = [];
+  statusValues = [];
   @Input() jobs: Array<any> = [];
 
   dataSource: MatTableDataSource<any>;
@@ -38,9 +40,13 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'name':
-          return item['flow'];
+          return item['flowName'];
         case 'duration':
-          return differenceInSeconds(item['timeStarted'], item['timeEnded']);
+          return differenceInSeconds(item['startTime'], item['endTime']);
+        case 'committed':
+          return item['successfulEvents'];
+        case 'errors':
+          return item['failedEvents'];
         default: return item[property];
       }
     };
@@ -51,30 +57,32 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
       // If text entered, default to false and then check for matches
       if (filterValues['text']) {
         result = false;
-        if (data['flow'].indexOf(filterValues['text']) != -1 ||
-            data['jobId'].indexOf(filterValues['text']) != -1 ||
+        if (data['flowName'].indexOf(filterValues['text']) != -1 ||
+            data['id'].indexOf(filterValues['text']) != -1 ||
             // data['targetEntity'].indexOf(filterValues['text']) != -1 ||
-            data['status'].indexOf(filterValues['text']) != -1 ||
-            data['successfulEvents'].toString().indexOf(filterValues['text']) != -1 ||
-            data['failedEvents'].toString().indexOf(filterValues['text']) != -1) {
+            data['status'].indexOf(filterValues['text']) != -1 //||
+            // TODO handle search of numbers
+            // data['successfulEvents'].toString().indexOf(filterValues['text']) != -1 ||
+            // data['failedEvents'].toString().indexOf(filterValues['text']) != -1) {
+        ) {
           result = true;
         }
       }
       // If menu selected, set to false if no match
-      if (filterValues['flowName'] &&
-          data['flowName'].indexOf(filterValues['flowName']) == -1) {
+      if (filterValues['flow'] &&
+          data['flowName'].indexOf(filterValues['flow']) == -1) {
         result = false;
       }
       // if (filterValues['targetEntity'] &&
       //     data['targetEntity'].indexOf(filterValues['targetEntity']) == -1) {
       //   result = false;
       // }
-      if (filterValues['status'] &&
-          data['status'].indexOf(filterValues['status']) == -1) {
+      if (filterValues['jobStatus'] &&
+          data['status'].indexOf(filterValues['jobStatus']) == -1) {
         result = false;
       }
       return result;
-    }    
+    }
     if (this.activatedRoute.snapshot.queryParams['flowName']) {
       this.applyFilter('flow', this.activatedRoute.snapshot.queryParams['flowName']);
     }
@@ -120,6 +128,8 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   renderRows(): void {
     this.updateDataSource();
     this.table.renderRows();
+    this.flowValues = this.getMenuVals('flowName');
+    this.statusValues = this.getMenuVals('status');
   }
 
   friendlyDate(dt): string {
@@ -127,6 +137,8 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   }
 
   friendlyDuration(dt1, dt2): any {
+    moment.relativeTimeThreshold('s', 60);
+    moment.relativeTimeThreshold('ss', 3);
     return (dt1 && dt2) ?
       moment.duration(moment(dt1).diff(moment(dt2))).humanize() :
       '';
