@@ -3,7 +3,7 @@
   "name" : "my-new-mapping",
   "description" : "This is a test.",
   "version" : 1,
-  "targetEntityType" : "http://marklogic.com/example/Schema-0.0.2/Person",
+  "targetEntityType" : "http://marklogic.com/example/Employee-0.0.1/Employee",
   "sourceContext" : "//",
   "properties" : {
     "price" : {
