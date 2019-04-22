@@ -30,7 +30,7 @@
         </section>
         <section>
           <div class="status">
-            <span class="label medium">Status</span>
+            <span class="label">Status</span>
             <span class="capitalize" *ngIf="job.status !== 'failed'">
               <span class="capitalize">{{job.status}}</span>
             </span>
@@ -43,8 +43,12 @@
           <!-- <div class="target-entity">
             <span class="label medium">Target Entity</span>{{job.targetEntity}}
           </div> -->
+          <div class="endTime">
+            <span class="label">Ended</span>
+              <span class="capitalize">{{friendlyDate(job.endTime)}}</span>
+          </div>
         </section>
-        <section>
+        <!-- <section>
           <div class="endTime">
             <span class="label">Ended</span>
               <span class="capitalize">{{friendlyDate(job.endTime)}}</span>
@@ -53,7 +57,7 @@
             <span class="label">Duration</span>
               <span class="capitalize">{{friendlyDuration(job.startTime, job.endTime)}}</span>
           </div>
-        </section>
+        </section> -->
         <section>
           <div class="committed">
             <span class="label">Committed</span>
