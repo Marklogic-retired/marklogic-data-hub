@@ -65,9 +65,9 @@ export class NewStepDialogUiComponent implements OnInit {
   }
   getNameErrorMessage() {
     const errorCodes = [
-      {code: 'required', message: 'You must enter a value'},
-      {code: 'pattern', message: 'Not a valid name. It must start with a symbol, have zero or more alphanumeric characters. Only \'_\' or \'-\' are allowed.'},
-      {code: 'forbiddenName', message: 'This name already exist in the flow'}
+      {code: 'required', message: 'You must enter a value.'},
+      {code: 'pattern', message: 'Only letters, numbers, \"_\" and \"-\" allowed and must start with a letter.'},
+      {code: 'forbiddenName', message: 'This step name already exists in the flow.'}
     ];
     const nameCtrl = this.newStepForm.get('name');
     if (!nameCtrl) {
@@ -132,5 +132,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);
     }
+  }
+  capitalFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 }
