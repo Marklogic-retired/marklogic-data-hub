@@ -31,7 +31,7 @@
       "options": {
         "sourceDatabase": "%%mlStagingDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-ingestion'))",
+        "sourceQuery": "cts.collectionQuery('default-ingestion')",
         "collections": [
           "default-mapping"
         ],
@@ -48,7 +48,7 @@
         "sourceDatabase": "%%mlFinalDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",
         "targetEntity": "entity-name",
-        "sourceQuery": "cts.uris(null, null, cts.collectionQuery('default-mapping'))",
+        "sourceQuery": "cts.collectionQuery('default-mapping')",
         "collections": [
           "default-mastering, mastered"
         ]

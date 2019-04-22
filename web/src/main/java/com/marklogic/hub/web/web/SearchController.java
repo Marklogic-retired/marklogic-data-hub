@@ -17,8 +17,9 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.web.model.CTSSearchQuery;
+import com.marklogic.hub.web.model.SJSSearchQuery;
 import com.marklogic.hub.web.model.SearchQuery;
 import com.marklogic.hub.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +55,10 @@ public class SearchController {
         return searchService.search(searchQuery).get();
     }
 
-    @RequestMapping(value = "/ctsSearch", method = RequestMethod.POST)
+    @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
     @ResponseBody
-    public String ctsSearch(@RequestBody CTSSearchQuery ctsSearchQuery) {
-        return searchService.ctsSearch(ctsSearchQuery).get();
+    public JsonNode sjsSearch(@RequestBody SJSSearchQuery SJSSearchQuery) {
+        return searchService.sjsSearch(SJSSearchQuery);
     }
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)

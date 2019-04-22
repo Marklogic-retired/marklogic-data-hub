@@ -30,7 +30,7 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
         setType(StepDefinitionType.MAPPING);
 
         Map<String, Object> options = getOptions();
-        setSourceQuery("cts.uris(null, null, cts.collectionQuery('default-ingestion'))");
+        setSourceQuery("cts.collectionQuery('default-ingestion')");
         options.put("sourceQuery", getSourceQuery());
 
         List<String> collectionName = new ArrayList<>();

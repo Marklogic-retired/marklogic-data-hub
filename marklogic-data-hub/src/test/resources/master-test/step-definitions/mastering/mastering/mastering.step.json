@@ -11,7 +11,7 @@
     "collections": [
       "master"
     ],
-    "sourceQuery": "cts.uris(null, null, cts.collectionQuery('mapping'))",
+    "sourceQuery": "cts.collectionQuery('mapping')",
     "mergeOptions": {
       "propertyDefs": {
         "properties": [
