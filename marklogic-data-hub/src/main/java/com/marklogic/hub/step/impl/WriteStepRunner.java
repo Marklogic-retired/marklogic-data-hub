@@ -37,7 +37,9 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +137,7 @@ public class WriteStepRunner implements StepRunner {
     public StepRunner withDestinationDatabase(String destinationDatabase) {
         this.destinationDatabase = destinationDatabase;
         //will work only for final db in addition to staging db as it has flow/step artifacts
-        this.stagingClient = hubConfig.newStagingClient(destinationDatabase);
+        this.stagingClient = hubConfig.newStagingClient(this.destinationDatabase);
         return this;
     }
 
@@ -557,11 +559,15 @@ public class WriteStepRunner implements StepRunner {
         if(inputFileType.equalsIgnoreCase("csv")) {
             JacksonCSVSplitter splitter = new JacksonCSVSplitter();
             try {
-                Stream<JacksonHandle> contentStream = splitter.split(docStream);
-                String uri = generateAndEncodeURI(file.getParent());
-                Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
-                    contentStream, DocumentWriteOperation.uriMaker(outputURIReplace(uri).replace("%", "%%")+"/%s.json"));
                 if(! writeBatcher.isStopped()) {
+                    Stream<JacksonHandle> contentStream = splitter.split(docStream);
+                    String uri = file.getParent();
+                    if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+                        uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+                    }
+                    uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
+                    Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
+                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s.json"));
                     try {
                         writeBatcher.addAll(documentStream);
                     }
@@ -579,7 +585,12 @@ public class WriteStepRunner implements StepRunner {
             try {
                 if(! writeBatcher.isStopped()) {
                     try {
-                        writeBatcher.add(outputURIReplace(generateAndEncodeURI(file.getAbsolutePath())), handle);
+                        String uri = file.getAbsolutePath();
+                        //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
+                        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+                            uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+                        }
+                        writeBatcher.add(generateAndEncodeURI(outputURIReplace(uri)), handle);
                     }
                     catch (IllegalStateException e) {
                         logger.error("WriteBatcher has been stopped");
