@@ -20,11 +20,13 @@
   <mat-form-field layout-fill>
     <mat-label>Max Values</mat-label>
     <input id="merge-strategy-max-values" matInput formControlName="maxValues"/>
+    <mat-error id="merge-strategy-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field layout-fill>
     <mat-label>Max Sources</mat-label>
     <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
+    <mat-error id="merge-strategy-max-sources-error" *ngIf="form.get('maxSources').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <div id="merge-strategy-source-weights-container">
@@ -43,6 +45,7 @@
         </mat-form-field>
         <mat-icon></mat-icon>
         <mat-form-field>
+          <!-- TODO validate weights in SourceWeight options -->
           <mat-label>Weight</mat-label>
           <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
         </mat-form-field>
@@ -56,6 +59,7 @@
   <mat-form-field layout-fill>
     <mat-label>Length Weight</mat-label>
     <input id="merge-strategy-length" matInput formControlName="length"/>
+    <mat-error id="merge-strategy-length-error" *ngIf="form.get('length').invalid">Enter a number</mat-error>
   </mat-form-field>
 
 </div>
