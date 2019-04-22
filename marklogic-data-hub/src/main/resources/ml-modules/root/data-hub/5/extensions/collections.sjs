@@ -27,7 +27,7 @@ function get(context, params) {
     if (sourceQuery) {
       resp = [];
 
-      let docs = xdmp.eval("cts.search(cts.documentQuery(cts.uris(null, ['limit=" + limit + "'], " + sourceQuery + ")))", null, {database: xdmp.database(database)});
+      let docs = xdmp.eval("fn.subsequence(cts.search(" + sourceQuery + ", ['unfiltered', 'unchecked', 'unfaceted']), 1, " + limit + ")", null, {database: xdmp.database(database)});
       docs = docs.toArray();
       let i;
       for (i in docs) {
