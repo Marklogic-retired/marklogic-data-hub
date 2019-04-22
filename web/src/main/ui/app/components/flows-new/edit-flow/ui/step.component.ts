@@ -35,7 +35,7 @@ export class StepComponent implements OnChanges {
   ngOnChanges(changes: any) {
     if (changes && 
       changes.selectedStepId && 
-      this.step.type === 'mastering' && 
+      this.step.stepDefinitionType === this.stepType.MASTERING && 
       this.step.id === changes.selectedStepId.currentValue) {
       setTimeout(() => {
         this.masteringTabGroup.realignInkBar();  
