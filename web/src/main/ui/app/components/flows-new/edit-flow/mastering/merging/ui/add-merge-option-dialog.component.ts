@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeOption } from "../merge-options.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import { WeightValidator } from '../../../../validators/weight.validator';
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -36,7 +37,8 @@ export class AddMergeOptionDialogComponent {
         [Validators.required]],
       mergeType: [this.data.option ? this.data.option.mergeType : 'standard'],
       algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
-      maxValues: [this.data.option ? this.data.option.maxValues : ''],
+      maxValues: [this.data.option ? this.data.option.maxValues : '',
+        [WeightValidator]],
       maxSources: [this.data.option ? this.data.option.maxSources : ''],
       length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : ''],
       strategy: [this.data.option ? this.data.option.strategy : ''],

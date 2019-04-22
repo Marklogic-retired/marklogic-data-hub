@@ -18,6 +18,7 @@
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Values</mat-label>
     <input id="merge-option-max-values" matInput formControlName="maxValues"/>
+    <mat-error id="merge-option-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
