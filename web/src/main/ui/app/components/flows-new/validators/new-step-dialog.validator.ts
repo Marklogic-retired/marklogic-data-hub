@@ -1,10 +1,12 @@
 import { FormGroup } from '@angular/forms';
+import { StepType } from '../models/step.model';
 import * as _ from "lodash";
 
 export function NewStepDialogValidator(group: FormGroup) {
+  let stepType: typeof StepType = StepType;
   let errors = {};
-  if (group.value.type === 'mapping' ||
-      group.value.type === 'mastering') {
+  if (group.value.stepDefinitionType === stepType.MAPPING ||
+      group.value.stepDefinitionType === stepType.MASTERING) {
     if (!group.value.targetEntity) {
       errors['noTargetEntity'] = true;
     }
