@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeStrategy } from "../merge-strategies.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import { AddMergeStrategyValidator } from '../../../../validators/add-merge-strategy.validator';
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -40,7 +41,7 @@ export class AddMergeStrategyDialogComponent {
       customUri: [this.data.strategy ? this.data.strategy.customUri : ''],
       customFunction: [this.data.strategy ? this.data.strategy.customFunction : ''],
       index: this.data.index
-    })
+    }, { validators: AddMergeStrategyValidator })
     this.selectedDefault = (this.data.strategy && this.data.strategy.default) ?
       'true' : 'false';
     this.form.setControl('sourceWeights', this.createSourceWeights());

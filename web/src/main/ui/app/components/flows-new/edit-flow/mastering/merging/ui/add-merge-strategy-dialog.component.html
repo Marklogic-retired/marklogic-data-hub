@@ -10,7 +10,10 @@
   </div>
 
   <mat-form-field *ngIf="selectedDefault === 'false'" layout-fill>
-    <mat-label>Name</mat-label>
+    <mat-label>
+      Name
+      <span class="name-req">*</span>
+    </mat-label>
     <input id="merge-strategy-name" matInput formControlName="name"/>
   </mat-form-field>
 
@@ -58,6 +61,6 @@
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="merge-strategy-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="merge-strategy-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="merge-strategy-cancel-btn" (click)="onCancel()">CANCEL</button>
+  <button mat-raised-button color="primary" id="merge-strategy-save-btn" [disabled]="!form.valid" (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>
