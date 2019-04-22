@@ -20,6 +20,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
@@ -59,6 +60,9 @@ public class DataHubService {
 
     @Autowired
     private LoadUserArtifactsCommand loadUserArtifactsCommand;
+
+    @Autowired
+    private LoadHubArtifactsCommand loadHubArtifactsCommand;
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
@@ -185,8 +189,12 @@ public class DataHubService {
         loadUserArtifactsCommand.setHubConfig(hubConfig);
         loadUserArtifactsCommand.setForceLoad(forceLoad);
 
+        loadHubArtifactsCommand.setHubConfig(hubConfig);
+        loadHubArtifactsCommand.setForceLoad(forceLoad);
+
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);
+        commands.add(loadHubArtifactsCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
