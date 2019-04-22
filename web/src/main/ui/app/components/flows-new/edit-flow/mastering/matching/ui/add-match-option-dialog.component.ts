@@ -2,7 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchOption } from "../match-options.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
-import {forOwn} from 'lodash';
+import { WeightValidator } from '../../../../validators/weight.validator';
+import { forOwn } from 'lodash';
 
 export interface DialogData {
   stepName: string;
@@ -29,9 +30,11 @@ export class AddMatchOptionDialogComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
+      propertyName: [this.data.option ? this.data.option.propertyName[0] : '',
+        [Validators.required]],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
-      weight: [this.data.option ? this.data.option.weight : ''],
+      weight: [this.data.option ? this.data.option.weight : '',
+        [Validators.required, WeightValidator]],
       thesaurus: [this.data.option ? this.data.option.thesaurus : ''],
       filter: [this.data.option ? this.data.option.filter : ''],
       dictionary: [this.data.option ? this.data.option.dictionary : ''],

@@ -13,7 +13,7 @@
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedType !== 'reduce'" layout-fill>
-    <mat-select id="match-option-property" placeholder="Property to Match" formControlName="propertyName" [(value)]="propertyName">
+    <mat-select id="match-option-property" placeholder="Property to Match" formControlName="propertyName" [(value)]="propertyName" required>
       <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -44,7 +44,8 @@
 
   <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
-    <input id="match-option-weight" matInput formControlName="weight"/>
+    <input id="match-option-weight" matInput formControlName="weight" required />
+    <mat-error id="step-name-error" *ngIf="form.get('weight').invalid">A number is required</mat-error>
   </mat-form-field>
 
   <div *ngIf="selectedType === 'synonym'">
@@ -101,6 +102,6 @@
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="match-option-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="match-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="match-option-cancel-btn" (click)="onCancel()">CANCEL</button>
+  <button mat-raised-button color="primary" id="match-option-save-btn" [disabled]="!form.valid" (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>
