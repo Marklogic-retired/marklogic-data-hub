@@ -3,7 +3,8 @@ const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 function main(content, options) {
   // Data Hub will persist the results for us.
   let persistResults = false;
-  if (!options.matchOptions.collections) {
+  let matchCollections = options.matchOptions.collections;
+  if (!(matchCollections && matchCollections.content && matchCollections.content.length)) {
     let mdmCollections = ['mdm-content'];
     let contentCollections = xdmp.nodeCollections(fn.head(content).value);
     if (options.sourceCollection) {

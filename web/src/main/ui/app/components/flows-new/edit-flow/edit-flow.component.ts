@@ -147,6 +147,7 @@ export class EditFlowComponent implements OnInit {
     });
   }
   createStep(stepObject) {
+    this.setStepDefaults(stepObject.step);
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
       this.stepsArray.splice(stepObject.index, 0, resp);
       console.log('stepsArray', this.stepsArray);
@@ -205,5 +206,8 @@ export class EditFlowComponent implements OnInit {
         this.updateStep(step);
       });
     });
+  }
+  setStepDefaults(step): void {
+    step.options = Object.assign({ 'collections': [`${step.name}`] }, step.options);
   }
 }
