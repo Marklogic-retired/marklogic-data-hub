@@ -131,7 +131,7 @@ export class EditFlowComponent implements OnInit {
             runStatus = this.flow.latestJob.status.replace('-', ' ');
             runStatus = this.flow.latestJob.status.split(' ');
             // console.log('run status', runStatus);
-            if (runStatus[0] === 'finished' || runStatus[0] === 'cancled' || runStatus[0] === 'failed') {
+            if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();
             }
           }
