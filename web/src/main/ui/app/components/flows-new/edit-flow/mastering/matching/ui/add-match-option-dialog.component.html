@@ -45,7 +45,7 @@
   <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
     <input id="match-option-weight" matInput formControlName="weight" required />
-    <mat-error id="step-name-error" *ngIf="form.get('weight').invalid">A number is required</mat-error>
+    <mat-error id="match-option-weight-error" *ngIf="form.get('weight').invalid">A number is required</mat-error>
   </mat-form-field>
 
   <div *ngIf="selectedType === 'synonym'">

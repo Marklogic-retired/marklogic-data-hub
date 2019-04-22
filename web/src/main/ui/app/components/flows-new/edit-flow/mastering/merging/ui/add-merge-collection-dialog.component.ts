@@ -31,7 +31,7 @@ export class AddMergeCollectionDialogComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      event: [this.data.collection ? this.data.collection.event : ''],
+      event: [this.data.collection ? this.data.collection.event : 'onMerge'],
       add: [this.data.collection ? this.data.collection.add : ''],
       remove: [this.data.collection ? this.data.collection.remove : ''],
       set: [this.data.collection ? this.data.collection.set : ''],
