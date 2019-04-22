@@ -129,8 +129,7 @@ export class EditFlowComponent implements OnInit {
           if (this.flow.latestJob.status) {
             const runStatus = this.flow.latestJob.status.split(' ');
             // console.log('run status', runStatus);
-            if (runStatus[0] !== 'running') {
-              // console.log('flow run stopped');
+            if (runStatus[0] === 'finished') {
               this.running.unsubscribe();
             }
           }
