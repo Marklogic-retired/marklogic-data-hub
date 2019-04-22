@@ -33,7 +33,7 @@
   </mat-form-field>
 
   <mat-form-field *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION">
-    <mat-select id="step-target-entity" placeholder="Target Entity" required formControlName="targetEntity">
+    <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="newStepForm.value.stepDefinitionType === stepType.MAPPING || newStepForm.value.stepDefinitionType === stepType.MASTERING">
       <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
     </mat-select>
   </mat-form-field>
