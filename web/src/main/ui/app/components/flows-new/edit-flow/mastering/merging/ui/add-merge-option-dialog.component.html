@@ -10,7 +10,7 @@
   </mat-form-field>
 
   <mat-form-field layout-fill>
-    <mat-select id="merge-option-property" placeholder="Property to Merge" formControlName="propertyName" [(value)]="propertyName">
+    <mat-select id="merge-option-property" placeholder="Property to Merge" formControlName="propertyName" [(value)]="propertyName" required>
       <mat-option [id]="'merge-option-property-' + prop.name" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -82,6 +82,6 @@
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="merge-option-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="merge-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="merge-option-cancel-btn" (click)="onCancel()">CANCEL</button>
+  <button mat-raised-button color="primary" id="merge-option-save-btn" [disabled]="!form.valid" (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

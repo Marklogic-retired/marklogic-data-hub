@@ -32,8 +32,9 @@ export class AddMergeOptionDialogComponent {
   ngOnInit() {
     console.log('this.data.option', this.data.option);
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName : ''],
-      mergeType: [this.data.option ? this.data.option.mergeType : 'exact'],
+      propertyName: [this.data.option ? this.data.option.propertyName : '',
+        [Validators.required]],
+      mergeType: [this.data.option ? this.data.option.mergeType : 'standard'],
       algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
       maxValues: [this.data.option ? this.data.option.maxValues : ''],
       maxSources: [this.data.option ? this.data.option.maxSources : ''],
