@@ -70,7 +70,7 @@ public class FlowManagerService {
         List<Flow> flows = flowManager.getFlows();
         List<FlowStepModel> flowSteps = new ArrayList<>();
         for (Flow flow : flows) {
-            FlowStepModel fsm = getFlowStepModel(flow);
+            FlowStepModel fsm = getFlowStepModel(flow, false);
             flowSteps.add(fsm);
         }
         return flowSteps;
@@ -113,22 +113,22 @@ public class FlowManagerService {
         return fsm;
     }
 
-    public FlowStepModel getFlow(String flowName) {
+    public FlowStepModel getFlow(String flowName, boolean fromRunFlow) {
         Flow flow = flowManager.getFlow(flowName);
         if (flow == null) {
             throw new NotFoundException(flowName + " not found!");
         }
-        FlowStepModel fsm = getFlowStepModel(flow);
+        FlowStepModel fsm = getFlowStepModel(flow, fromRunFlow);
         return fsm;
     }
 
-    private FlowStepModel getFlowStepModel(Flow flow) {
+    private FlowStepModel getFlowStepModel(Flow flow, boolean fromRunFlow) {
         flowJobService.setupClient();
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
         fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob());
         FlowJobs flowJobs = flowJobService.getJobs(flow.getName());
         flowJobService.release();
-        fsm.setJobs(flowJobs);
+        fsm.setJobs(flowJobs, fromRunFlow);
         return fsm;
     }
 
@@ -275,7 +275,7 @@ public class FlowManagerService {
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
             resp = flowRunner.runFlow(flowName, restrictedSteps);
         }
-        return getFlow(flowName);
+        return getFlow(flowName, true);
     }
 
     public FlowStepModel stop(String flowName) {
@@ -287,7 +287,7 @@ public class FlowManagerService {
         while (itr.hasNext()) {
             flowRunner.stopJob(itr.next());
         }
-        return getFlow(flowName);
+        return getFlow(flowName, true);
     }
 
 

@@ -77,7 +77,7 @@ public class FlowController {
     public ResponseEntity<?> getFlow(@PathVariable String flowName) {
         FlowStepModel flow = null;
         try {
-            flow = flowManagerService.getFlow(flowName);
+            flow = flowManagerService.getFlow(flowName, false);
         } catch (DataHubProjectException dpe) {
             throw new DataHubException(dpe.getMessage());
         }

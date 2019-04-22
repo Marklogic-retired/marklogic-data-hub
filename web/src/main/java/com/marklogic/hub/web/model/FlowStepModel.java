@@ -183,13 +183,17 @@ public class FlowStepModel {
         this.latestJob = latestJob;
     }
 
-    public void setJobs(FlowJobs flowJobs) {
+    public void setJobs(FlowJobs flowJobs, boolean fromRunFlow) {
         this.jobIds = flowJobs.jobIds;
         if (latestJob != null && latestJob.id != null && !this.jobIds.contains(latestJob.id)) {
             this.jobIds.add(latestJob.id);
             flowJobs.jobIds = this.jobIds;
             flowJobs.latestJob = latestJob;
             return;
+        }
+        if (fromRunFlow) {
+            //reset the latestJob info for until the running flow starts with a new jobId
+            flowJobs.latestJob = null;
         }
         this.latestJob = flowJobs.latestJob;
     }
@@ -211,7 +215,7 @@ public class FlowStepModel {
         JSONObject json = new JSONObject();
         Random rnd = new Random();
         ObjectMapper mapper = new ObjectMapper();
-        for (int i = 3001; i <= 4000; i++) {
+        for (int i = 1001; i <= 2000; i++) {
             String fileName = outputPath + i + ".json";
             pw = new PrintWriter(new FileWriter(fileName));
             json.put("id", String.valueOf(i));
