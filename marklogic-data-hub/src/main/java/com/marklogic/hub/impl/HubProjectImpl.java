@@ -32,7 +32,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -227,7 +230,6 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public void init(Map<String, String> customTokens) {
-        this.pluginsDir.toFile().mkdirs();
         this.stepDefinitionsDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
