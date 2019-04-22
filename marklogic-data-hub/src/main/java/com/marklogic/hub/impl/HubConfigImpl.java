@@ -1696,20 +1696,20 @@ public class HubConfigImpl implements HubConfig
     private Map<String, String> getCustomTokens(AppConfig appConfig, Map<String, String> customTokens) {
         customTokens.put("%%mlHost%%", appConfig == null ? environment.getProperty("mlHost") : appConfig.getHost());
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName == null ? environment.getProperty("mlStagingAppserverName") : stagingHttpName);
-        customTokens.put("\"%%mlStagingPort%%\"", stagingPort == null ? environment.getProperty("mlStagingPort") : stagingPort.toString());
+        customTokens.put("%%mlStagingPort%%", stagingPort == null ? environment.getProperty("mlStagingPort") : stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", stagingDbName == null ? environment.getProperty("mlStagingDbName") : stagingDbName);
         customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost == null ? environment.getProperty("mlStagingForestsPerHost") : stagingForestsPerHost.toString());
         customTokens.put("%%mlStagingAuth%%", stagingAuthMethod == null ? environment.getProperty("mlStagingAuth") : stagingAuthMethod);
 
         customTokens.put("%%mlFinalAppserverName%%", finalHttpName == null ? environment.getProperty("mlFinalAppserverName") : finalHttpName);
-        customTokens.put("\"%%mlFinalPort%%\"", finalPort == null ? environment.getProperty("mlFinalPort") : finalPort.toString());
+        customTokens.put("%%mlFinalPort%%", finalPort == null ? environment.getProperty("mlFinalPort") : finalPort.toString());
         customTokens.put("%%mlFinalDbName%%", finalDbName == null ? environment.getProperty("mlFinalDbName") : finalDbName);
         customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost == null ? environment.getProperty("mlFinalForestsPerHost") : finalForestsPerHost.toString());
         customTokens.put("%%mlFinalAuth%%", finalAuthMethod == null ? environment.getProperty("mlFinalAuth") : finalAuthMethod);
 
 
         customTokens.put("%%mlJobAppserverName%%", jobHttpName == null ? environment.getProperty("mlJobAppserverName") : jobHttpName);
-        customTokens.put("\"%%mlJobPort%%\"", jobPort == null ? environment.getProperty("mlJobPort") : jobPort.toString());
+        customTokens.put("%%mlJobPort%%", jobPort == null ? environment.getProperty("mlJobPort") : jobPort.toString());
         customTokens.put("%%mlJobDbName%%", jobDbName == null ? environment.getProperty("mlJobDbName") : jobDbName);
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost == null ? environment.getProperty("mlJobForestsPerHost") : jobForestsPerHost.toString());
         customTokens.put("%%mlJobAuth%%", jobAuthMethod == null ? environment.getProperty("mlJobAuth") : jobAuthMethod);
