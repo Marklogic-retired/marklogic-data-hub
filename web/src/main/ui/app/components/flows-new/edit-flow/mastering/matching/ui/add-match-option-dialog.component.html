@@ -13,7 +13,7 @@
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedType !== 'reduce'" layout-fill>
-    <mat-select id="match-option-property" placeholder="Property to Match" formControlName="propertyName" [(value)]="propertyName" required>
+    <mat-select id="match-option-property" placeholder="Property to Match *" formControlName="propertyName" [(value)]="propertyName">
       <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -31,7 +31,7 @@
       *ngFor="let prop of this.propertiesReduce.controls; let i = index;">
       <div [formGroupName]="i" class="prop-group">
         <mat-form-field layout-fill>
-          <mat-select class="match-option-property-reduce" placeholder="Property Name" formControlName="name">
+          <mat-select class="match-option-property-reduce" placeholder="Property Name{{(i === 0) ? ' *' : ''}}" formControlName="name">
             <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
           </mat-select>
         </mat-form-field>

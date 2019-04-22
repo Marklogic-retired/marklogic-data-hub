@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchOption } from "../match-options.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
 import { WeightValidator } from '../../../../validators/weight.validator';
+import { AddMatchOptionValidator } from '../../../../validators/add-match-option.validator';
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -30,8 +31,7 @@ export class AddMatchOptionDialogComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName[0] : '',
-        [Validators.required]],
+      propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
       weight: [this.data.option ? this.data.option.weight : '',
         [Validators.required, WeightValidator]],
@@ -47,7 +47,7 @@ export class AddMatchOptionDialogComponent {
       customNs: [this.data.option ? this.data.option.customNs : ''],
       index: this.data.index,
       entityProps:  [this.data.entityProps ? this.data.entityProps : []]
-    })
+    }, { validators: AddMatchOptionValidator })
     this.selectedType = (this.data.option && this.data.option.matchType) ?
       this.data.option.matchType : 'exact';
     this.form.setControl('propertiesReduce', this.createProps());
