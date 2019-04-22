@@ -1,5 +1,6 @@
 package com.marklogic.hub.step;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -67,10 +68,10 @@ public class StepRunnerFactory {
 
         stepRunner.withThreadCount(threadCount);
 
-        if(step.getOptions().get("sourceDatabase") != null) {
+        if(nodeIsNotNull(step.getOptions().get("sourceDatabase"))) {
             sourceDatabase = ((TextNode)step.getOptions().get("sourceDatabase")).asText();
         }
-        else if(stepDef.getOptions().get("sourceDatabase") != null) {
+        else if(nodeIsNotNull(stepDef.getOptions().get("sourceDatabase"))) {
             sourceDatabase = ((TextNode)stepDef.getOptions().get("sourceDatabase")).asText();
         }
         else {
@@ -78,10 +79,10 @@ public class StepRunnerFactory {
         }
         stepRunner.withSourceClient(hubConfig.newStagingClient(sourceDatabase));
 
-        if(step.getOptions().get("targetDatabase") != null) {
+        if(nodeIsNotNull(step.getOptions().get("targetDatabase"))) {
             targetDatabase = ((TextNode)step.getOptions().get("targetDatabase")).asText();
         }
-        else if(stepDef.getOptions().get("targetDatabase") != null) {
+        else if(nodeIsNotNull(stepDef.getOptions().get("targetDatabase"))) {
             targetDatabase = ((TextNode)stepDef.getOptions().get("targetDatabase")).asText();
         }
         else {
@@ -102,4 +103,7 @@ public class StepRunnerFactory {
         return stepRunner;
     }
 
+    private boolean nodeIsNotNull(Object jsonNode) {
+        return !(jsonNode == null || ((JsonNode) jsonNode).isNull());
+    }
 }

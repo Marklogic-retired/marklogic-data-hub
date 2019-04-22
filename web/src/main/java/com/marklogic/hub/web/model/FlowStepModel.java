@@ -11,13 +11,14 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.*;
-import org.apache.commons.io.FileUtils;
 
 public class FlowStepModel {
     private String id;
@@ -171,7 +172,7 @@ public class FlowStepModel {
                 sm.id = step.getName() + "-" + stepType;
             }
             sm.stepDefinitionType = stepType;
-            if (step.getOptions() != null && step.getOptions().get("targetEntity") != null) {
+            if (step.getOptions() != null && nodeIsNotNull(step.getOptions().get("targetEntity"))) {
                 sm.targetEntity = ((TextNode) step.getOptions().get("targetEntity")).asText();
             }
             stepModels.add(sm);
@@ -230,5 +231,9 @@ public class FlowStepModel {
         }
 
         pw.close();
+    }
+    // TODO create shared function as this is in StepRunnerFactory as well
+    private static boolean nodeIsNotNull(Object jsonNode) {
+        return !(jsonNode == null || ((JsonNode) jsonNode).isNull());
     }
 }
