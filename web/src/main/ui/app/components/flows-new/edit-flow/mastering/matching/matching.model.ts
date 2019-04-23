@@ -38,7 +38,7 @@ export class Matching {
         result.algorithms['algorithm'].push(new Algorithm(a));
       })
     }
-    if(config.collections.content) {
+    if(config.collections && config.collections.content) {
       result.collections['content'] = config.collections.content;
     }
     if (config.scoring && config.scoring.add) {
