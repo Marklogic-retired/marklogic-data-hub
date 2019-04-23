@@ -18,7 +18,7 @@
     <!-- / HEADER -->
 
     <div *ngIf="!targetEntity">
-      Configuring merge options requires a target entity. The target entity "{{targetEntityName}}" is not defined. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
+      Configuring merge options requires a target entity. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
     </div>
 
     <div [ngClass]="{ hidden: !targetEntity}" class="content-card">
