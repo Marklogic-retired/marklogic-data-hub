@@ -8,6 +8,8 @@
   },
   "steps": {
     "1": {
+      "name": "default-ingestion-step",
+      "description": "This is the default ingestion step",
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "INGESTION",
       "customHook": {},
@@ -26,6 +28,8 @@
       }
     },
     "2": {
+      "name": "default-mapping-step",
+      "description": "This is the default mapping step",
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
@@ -42,6 +46,8 @@
       }
     },
     "3": {
+      "name": "default-mastering-step",
+      "description": "This is the default mastering step",
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
       "options": {
