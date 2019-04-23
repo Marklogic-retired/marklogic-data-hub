@@ -48,9 +48,9 @@ public interface HubProject {
     Path getHubPluginsDir();
 
     /**
-     * Gets the path for the hub step directory
+     * Gets the path for the hub step-definitions directory
      *
-     * @return the path for the hub steps directory
+     * @return the path for the hub step-definitions directory
      */
     Path getStepDefinitionsDir();
 

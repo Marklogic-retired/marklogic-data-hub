@@ -183,8 +183,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 });
             }
 
-            // TODO: Rename collection URI after changing server code
-            // let's do steps
+            // let's do step-definitions
             if (stepPath.toFile().exists()) {
                 Files.walkFileTree(stepPath, new SimpleFileVisitor<Path>() {
                     @Override

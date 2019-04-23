@@ -57,7 +57,7 @@ class Step {
   }
 
   getSteps() {
-    let query = [cts.directoryQuery('/steps/', 'infinity'),  cts.collectionQuery('http://marklogic.com/data-hub/step-definition')];
+    let query = [cts.directoryQuery('/step-definitions/', 'infinity'),  cts.collectionQuery('http://marklogic.com/data-hub/step-definition')];
     return cts.search(cts.andQuery(query)).toArray();
   }
 
@@ -100,7 +100,7 @@ class Step {
   }
 
   deleteSteps(name, type) {
-    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/steps/"),cts.collectionQuery('http://marklogic.com/data-hub/step-definition'),
+    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/step-definitions/"),cts.collectionQuery('http://marklogic.com/data-hub/step-definition'),
       cts.jsonPropertyValueQuery("name", name), cts.jsonPropertyValueQuery("type", type)]));
     for (let doc of uris) {
       if (fn.docAvailable(doc)){

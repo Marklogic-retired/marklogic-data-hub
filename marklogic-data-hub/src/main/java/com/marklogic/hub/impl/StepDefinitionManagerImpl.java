@@ -57,7 +57,7 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
-            String stepFileName = stepDefinition.getName() + STEP_FILE_EXTENSION;
+            String stepFileName = stepDefinition.getName() + STEP_DEFINITION_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), stepFileName).toFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             JSONStreamWriter jw = new JSONStreamWriter(fileOutputStream);
@@ -97,8 +97,8 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
         Path stepPath = resolvePath(hubConfig.getStepsDirByType(type), name);
 
         try {
-            String targetFileName = name + STEP_FILE_EXTENSION;
-            InputStream inputStream = StepDefinitionManagerImpl.class.getResourceAsStream("/hub-internal-artifacts/steps/" + type.toString().toLowerCase() + "/marklogic/" + targetFileName);
+            String targetFileName = name + STEP_DEFINITION_FILE_EXTENSION;
+            InputStream inputStream = StepDefinitionManagerImpl.class.getResourceAsStream("/hub-internal-artifacts/step-definitions/" + type.toString().toLowerCase() + "/marklogic/" + targetFileName);
             if (inputStream == null) {
                 inputStream = new FileInputStream(stepPath.resolve(targetFileName).toFile());
             }
