@@ -1,16 +1,10 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild, OnChanges, SimpleChanges} from "@angular/core";
-import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import {ConfirmationDialogComponent} from "../../common";
-import {OutputDialogComponent} from "./output-dialog.component";
-import {StatusDialogComponent} from "./status-dialog.component";
-//import {Flow} from "../../models/flow.model";
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild, OnChanges, SimpleChanges} from "@angular/core";
+import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
+import { ConfirmationDialogComponent } from "../../common";
+import { StatusDialogComponent } from "./status-dialog.component";
 import { Job } from '../models/job.model';
 import * as moment from 'moment';
 import * as _ from "lodash";
-import { differenceInSeconds,
-         differenceInMinutes,
-         differenceInHours,
-         differenceInDays } from 'date-fns';
 
 @Component({
   selector: 'job-details-page-ui',
@@ -18,7 +12,7 @@ import { differenceInSeconds,
   styleUrls: ['./job-details-ui.component.scss']
 })
 export class JobDetailsUiComponent implements OnChanges {
-  displayedColumns = ['name', 'status', 'endTime', 'duration', 'committed', 'errors', 'actions'];
+  displayedColumns = ['name', 'stepType', 'status', 'endTime', 'duration', 'committed', 'errors'];
   filterValues = {};
   @Input() job: Job;
 
@@ -63,17 +57,10 @@ export class JobDetailsUiComponent implements OnChanges {
     // this.table.renderRows();
   }
 
-  openOutputDialog(job): void {
-    const dialogRef = this.dialog.open(OutputDialogComponent, {
-      width: '500px',
-      data: { output: 'The output content'}
-    });
-  }
-
-  openStatusDialog(job): void {
+  openStatusDialog(details): void {
     const dialogRef = this.dialog.open(StatusDialogComponent, {
-      width: '500px',
-      data: { statusDetails: 'The status details content'}
+      width: '700px',
+      data: { statusDetails: details}
     });
   }
 
@@ -91,6 +78,18 @@ export class JobDetailsUiComponent implements OnChanges {
       '';
     // TODO handle capitalization with CSS
     return _.capitalize(result);
+  }
+
+  formatStatus(status):string {
+    return _.capitalize(status.replace(/_/g,' ').replace(/-/g,' '));
+  }
+
+  hasOutput(step) {
+    return step.stepOutput;
+  }
+
+  getOutput(step) {
+    return (step.stepOutput) ? step.stepOutput[0] : 'No output found';
   }
 
 }

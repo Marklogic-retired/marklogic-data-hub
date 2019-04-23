@@ -31,36 +31,16 @@
         <section>
           <div class="status">
             <span class="label">Status</span>
-            <span class="capitalize" *ngIf="job.status !== 'failed'">
-              <span class="capitalize">{{job.status}}</span>
-            </span>
-            <span *ngIf="job.status === 'failed'">
-              <a class="capitalize" (click)="openStatusDialog(job)">
-                <span class="capitalize">{{job.status}}</span>
-              </a>
-            </span>
+            <span class="capitalize">{{formatStatus(job.status)}}</span>
           </div>
-          <!-- <div class="target-entity">
-            <span class="label medium">Target Entity</span>{{job.targetEntity}}
-          </div> -->
           <div class="endTime">
             <span class="label">Ended</span>
               <span class="capitalize">{{friendlyDate(job.endTime)}}</span>
           </div>
         </section>
-        <!-- <section>
-          <div class="endTime">
-            <span class="label">Ended</span>
-              <span class="capitalize">{{friendlyDate(job.endTime)}}</span>
-          </div>
-          <div class="duration capitalize">
-            <span class="label">Duration</span>
-              <span class="capitalize">{{friendlyDuration(job.startTime, job.endTime)}}</span>
-          </div>
-        </section> -->
         <section>
           <div class="committed">
-            <span class="label">Committed</span>
+            <span class="label medium">Committed</span>
             <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
               {{job.successfulEvents | number}}
             </a>
@@ -69,7 +49,7 @@
             </span>
           </div>
           <div class="errors">
-            <span class="label">Failed</span>
+            <span class="label medium">Failed</span>
             <a *ngIf="job.failedEvents !== 0" [routerLink]="">
               {{job.failedEvents | number}}
             </a>
@@ -95,11 +75,13 @@
           </mat-cell>
         </ng-container>
 
-        <!-- Target Entity -->
-        <ng-container matColumnDef="targetEntity">
-          <mat-header-cell id="step-entity-sort-btn" *matHeaderCellDef mat-sort-header>Target Entity</mat-header-cell>
-          <mat-cell class="step-entity" *matCellDef="let step">
-            {{step.targetEntity}}
+        <!-- Type Column -->
+        <ng-container matColumnDef="stepType">
+          <mat-header-cell id="step-type-sort-btn" *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
+          <mat-cell class="step-type" *matCellDef="let step">
+            <span class="capitalize">
+              {{step.stepDefinitionType}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -108,12 +90,12 @@
           <mat-header-cell id="step-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="step-status" *matCellDef="let step">
             <span class="capitalize" *ngIf="step.status">
-              <span *ngIf="step.status !== 'failed'">
-                {{step.status}}
+              <span *ngIf="!hasOutput(step)">
+                {{formatStatus(step.status)}}
               </span>
-              <span *ngIf="step.status === 'failed'">
-                <a (click)="openStatusDialog(step)">
-                  {{step.status}}
+              <span *ngIf="hasOutput(step)">
+                <a (click)="openStatusDialog(getOutput(step))">
+                  {{formatStatus(step.status)}} <mat-icon class="view-output">error</mat-icon>
                 </a>
               </span>
             </span>
@@ -169,15 +151,6 @@
           </mat-cell>
         </ng-container>
 
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-          <mat-cell class="step-actions" *matCellDef="let step">
-            <mat-icon class="step-menu" [matMenuTriggerFor]="jobMenu" [matMenuTriggerData]="{step: step}"
-                      disableRipple>more_vert</mat-icon>
-          </mat-cell>
-        </ng-container>
-
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
         <mat-row
           *matRowDef="let step; columns: displayedColumns;"
@@ -200,8 +173,8 @@
   </div>
 </div>
 
-<mat-menu class="step-menu-dialog" #jobMenu="matMenu">
+<!-- <mat-menu class="step-menu-dialog" #jobMenu="matMenu">
   <ng-template matMenuContent let-step="step">
-    <div class="step-menu-output-btn" mat-menu-item (click)="openOutputDialog(step)">Output</div>
+    <div class="step-menu-output-btn" mat-menu-item (click)="openOutputDialog(getOutput(step))">Output</div>
   </ng-template>
-</mat-menu>
+</mat-menu> -->

@@ -2,9 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import {ConfirmationDialogComponent} from "../../common";
-import {OutputDialogComponent} from "./output-dialog.component";
 import {StatusDialogComponent} from "./status-dialog.component";
-//import {Flow} from "../../models/flow.model";
 import * as moment from 'moment';
 import { differenceInSeconds,
          differenceInMinutes,
@@ -57,10 +55,9 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
       // If text entered, default to false and then check for matches
       if (filterValues['text']) {
         result = false;
-        if (data['flowName'].indexOf(filterValues['text']) != -1 ||
-            data['id'].indexOf(filterValues['text']) != -1 ||
-            // data['targetEntity'].indexOf(filterValues['text']) != -1 ||
-            data['status'].indexOf(filterValues['text']) != -1 //||
+        if (data['flowName'].toLowerCase().indexOf(filterValues['text'].toLowerCase()) != -1 ||
+            data['id'].toLowerCase().indexOf(filterValues['text'].toLowerCase()) != -1 ||
+            data['status'].toLowerCase().indexOf(filterValues['text'].toLowerCase()) != -1 //||
             // TODO handle search of numbers
             // data['successfulEvents'].toString().indexOf(filterValues['text']) != -1 ||
             // data['failedEvents'].toString().indexOf(filterValues['text']) != -1) {
@@ -73,10 +70,6 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
           data['flowName'].indexOf(filterValues['flow']) == -1) {
         result = false;
       }
-      // if (filterValues['targetEntity'] &&
-      //     data['targetEntity'].indexOf(filterValues['targetEntity']) == -1) {
-      //   result = false;
-      // }
       if (filterValues['jobStatus'] &&
           data['status'].indexOf(filterValues['jobStatus']) == -1) {
         result = false;
@@ -107,17 +100,10 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = JSON.stringify(this.filterValues)
   }
 
-  openOutputDialog(job): void {
-    const dialogRef = this.dialog.open(OutputDialogComponent, {
-      width: '500px',
-      data: { output: 'The output content'}
-    });
-  }
-
-  openStatusDialog(job): void {
+  openStatusDialog(details): void {
     const dialogRef = this.dialog.open(StatusDialogComponent, {
-      width: '500px',
-      data: { statusDetails: 'The status details content'}
+      width: '700px',
+      data: { statusDetails: details}
     });
   }
 
@@ -144,12 +130,33 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
       '';
   }
 
+  formatStatus(status):string {
+    return _.capitalize(status.replace(/_/g,' ').replace(/-/g,' '));
+  }
+
   getMenuVals(prop) {
     let set = new Set();
     this.jobs.forEach(j => set.add(j[prop]));
     let arr = Array.from(set);
     arr.unshift('');
     return arr;
+  }
+
+  hasOutput(job) {
+    let found = job.steps.find( step => {
+      return step.stepOutput && step.stepOutput.length > 0;
+    });
+    return found !== undefined;
+  }
+
+  getOutput(job) {
+    let output = '';
+    job.steps.forEach( step => {
+      console.log('step.stepOutput', step.stepOutput);
+      output = output + ((step.stepOutput) ? step.stepOutput[0] + '\n' : ' ');
+    })
+    console.log('output', output);
+    return output;
   }
 
 }

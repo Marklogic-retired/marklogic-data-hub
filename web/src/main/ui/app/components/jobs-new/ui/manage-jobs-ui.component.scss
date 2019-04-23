@@ -42,7 +42,7 @@ button {
   line-height: 16px;
   .job-id {
     font-size: 12px;
-    color: #666;
+    /* color: #666; */
   }
 }
 
@@ -69,7 +69,7 @@ button {
   }
   .mat-form-field {
     font-size: 14px;
-    width: 200px;
+    width: 240px;
     margin-left: 20px;
   }
 }
@@ -152,12 +152,6 @@ button {
     min-height: 64px;
   }
 
-  /* .flow {
-    position: relative;
-    cursor: pointer;
-    height: 84px;
-  } */
-
   .mat-cell {
     min-width: 0;
     display: flex;
@@ -165,14 +159,10 @@ button {
   }
 
   .mat-column-name {
-    flex: 0 1 300px;
+    flex: 0 1 340px;
   }
 
-  /* .mat-column-targetEntity {
-    flex: 0 1 120px;
-  }
-
-  .mat-column-status {
+  /* .mat-column-status {
     flex: 0 1 120px;
   }
 
@@ -273,4 +263,13 @@ button {
   display:flex !important;
   justify-content: center !important;
   padding-right: 24px;
+}
+
+mat-icon.view-output {
+  font-size: 20px;
+  position: relative;
+  top: 4px;
+  color: #c00;
+  padding-left: 2px;
+  cursor: pointer;
 }
