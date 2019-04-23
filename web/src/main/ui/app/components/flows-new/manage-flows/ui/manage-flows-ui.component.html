@@ -92,8 +92,9 @@
         <ng-container matColumnDef="docsCommitted">
           <mat-header-cell id="flow-docs-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
-            <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.successfulEvents > 0" [routerLink]="['/browse']" [queryParams]="{Collection:flow.latestJob.id}">{{flow.latestJob.successfulEvents | number}}</a>
-            <span *ngIf="flow.latestJob && flow.latestJob.successfulEvents <= 0">{{flow.latestJob.successfulEvents | number}}</span>
+            <!-- TODO link to committed docs from a job -->
+            <!-- <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.successfulEvents > 0" [routerLink]="['/browse']" [queryParams]="{Collection:flow.latestJob.id}">{{flow.latestJob.successfulEvents | number}}</a> -->
+            <span>{{flow.latestJob.successfulEvents | number}}</span>
           </mat-cell>
         </ng-container>
 
@@ -101,10 +102,11 @@
         <ng-container matColumnDef="docsFailed">
           <mat-header-cell id="flow-docs-failed-sort-btn" *matHeaderCellDef mat-sort-header>Failed</mat-header-cell>
           <mat-cell class="flow-docs-failed" *matCellDef="let flow">
-            <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.failedEvents > 0" [routerLink]="">
+            <!-- TODO link to failed docs from a job -->
+            <!-- <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.failedEvents > 0" [routerLink]="">
               {{flow.latestJob.failedEvents | number}}
-            </a>
-            <span *ngIf="flow.latestJob && flow.latestJob.failedEvents <= 0">
+            </a> -->
+            <span>
               {{flow.latestJob.failedEvents | number}}
             </span>
           </mat-cell>
