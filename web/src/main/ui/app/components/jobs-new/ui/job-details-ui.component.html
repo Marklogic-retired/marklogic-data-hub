@@ -41,19 +41,21 @@
         <section>
           <div class="committed">
             <span class="label medium">Committed</span>
-            <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
+            <!-- TODO link to committed docs from a job -->
+            <!-- <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
               {{job.successfulEvents | number}}
-            </a>
-            <span *ngIf="job.successfulEvents === 0">
+            </a> -->
+            <span>
               {{job.successfulEvents}}
             </span>
           </div>
           <div class="errors">
             <span class="label medium">Failed</span>
-            <a *ngIf="job.failedEvents !== 0" [routerLink]="">
+            <!-- TODO link to committed docs from a job -->
+            <!-- <a *ngIf="job.failedEvents !== 0" [routerLink]="">
               {{job.failedEvents | number}}
-            </a>
-            <span *ngIf="job.failedEvents === 0">
+            </a> -->
+            <span>
               {{job.failedEvents  }}
             </span>
           </div>
@@ -129,10 +131,11 @@
         <ng-container matColumnDef="committed">
           <mat-header-cell id="step-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="step-committed" *matCellDef="let step">
-            <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
+            <!-- TODO link to committed docs from a job -->
+            <!-- <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
               {{step.successfulEvents | number}}
-            </a>
-            <span *ngIf="step.successfulEvents === 0">
+            </a> -->
+            <span>
               {{step.successfulEvents}}
             </span>
           </mat-cell>
@@ -142,10 +145,11 @@
         <ng-container matColumnDef="errors">
           <mat-header-cell id="step-errors-sort-btn" *matHeaderCellDef mat-sort-header>Failed</mat-header-cell>
           <mat-cell class="step-errors" *matCellDef="let step">
-            <a *ngIf="step.failedEvents !== 0" [routerLink]="">
+            <!-- TODO link to failed docs from a job -->
+            <!-- <a *ngIf="step.failedEvents !== 0" [routerLink]="">
               {{step.failedEvents | number}}
-            </a>
-            <span *ngIf="step.failedEvents === 0">
+            </a> -->
+            <span>
               {{step.failedEvents}}
             </span>
           </mat-cell>
