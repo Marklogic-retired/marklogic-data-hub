@@ -20,7 +20,9 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +45,11 @@ public class RunStepResponse {
     private long failedBatches = 0;
     private boolean success = false;
 
-    private Flow flow;
+    private String stepStartTime;
+    private String stepEndTime;
 
+    private Flow flow;
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     /**
      * @return true if the job ran without errors, false otherwise.
@@ -62,6 +67,7 @@ public class RunStepResponse {
         RunStepResponse runStepResponse = new RunStepResponse();
         runStepResponse.flowName = flow.getName();
         runStepResponse.flow = flow;
+        runStepResponse.stepStartTime = DATE_TIME_FORMAT.format(new Date());
         return runStepResponse;
     }
 
@@ -164,7 +170,6 @@ public class RunStepResponse {
         this.stepDefinitionType = stepDefinitionType;
     }
 
-
     public String getStepDefinitionName() {
         return stepDefinitionName;
     }
@@ -173,12 +178,28 @@ public class RunStepResponse {
         this.stepDefinitionName = stepDefinitionName;
     }
 
+    public String getStepStartTime() {
+        return stepStartTime;
+    }
+
+    public String getStepEndTime() {
+        return stepEndTime;
+    }
+
+    public void setStepStartTime(String stepStartTime) {
+        this.stepStartTime = stepStartTime;
+    }
+
+    public void setStepEndTime(String stepEndTime) {
+        this.stepEndTime = stepEndTime;
+    }
 
     @Override
     public String toString() {
         return String.format("[flowName: %s, stepName: %s, stepDefinitionName %s, stepDefinitionType %s, success: %s, " +
                 "status: %s, totalEvents: %d, successfulEvents: %d, " + "failedEvents: %d, successfulBatches: %d, " +
-                "failedBatches: %d]", flowName, stepName, stepDefinitionName, stepDefinitionType, String.valueOf(success),
-            status, totalEvents, successfulEvents, failedEvents, successfulBatches, failedBatches);
+                "failedBatches: %d, stepStartTime: %d , stepEndTime: %d]", flowName, stepName, stepDefinitionName,
+            stepDefinitionType, String.valueOf(success), status, totalEvents, successfulEvents, failedEvents,
+            successfulBatches, failedBatches, stepStartTime, stepStartTime);
     }
 }

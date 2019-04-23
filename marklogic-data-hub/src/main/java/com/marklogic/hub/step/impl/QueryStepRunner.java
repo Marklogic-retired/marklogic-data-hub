@@ -31,13 +31,13 @@ import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +59,7 @@ public class QueryStepRunner implements StepRunner {
     private boolean stopOnFailure = false;
     private String jobId;
     private boolean isFullOutput = false;
-
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     private String step = "1";
 
@@ -215,6 +215,7 @@ public class QueryStepRunner implements StepRunner {
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED_PREFIX + step);
+            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
@@ -291,6 +292,7 @@ public class QueryStepRunner implements StepRunner {
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
+            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
             try {
                 jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
             }
@@ -419,6 +421,7 @@ public class QueryStepRunner implements StepRunner {
 
             runStepResponse.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             runStepResponse.withStatus(stepStatus);
+            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
 
             try {
                 jobUpdate.postJobs(jobId, stepStatus, step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null);

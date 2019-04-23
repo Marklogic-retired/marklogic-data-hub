@@ -1,5 +1,6 @@
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
@@ -271,6 +272,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
                     }
+                    stepResp.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
                     RunStepResponse finalStepResp = stepResp;
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
@@ -320,12 +322,41 @@ public class FlowRunnerImpl implements FlowRunner{
                 jobStatus = JobStatus.FINISHED.toString();
             }
             resp.setJobStatus(jobStatus);
+
+            Map.Entry<String, RunStepResponse> firstStepResponse = stepOutputs.entrySet().iterator().next();
+            String firstKey = null;
+            RunStepResponse firstValue = null;
+            if(firstStepResponse != null) {
+                firstKey = firstStepResponse.getKey();
+                firstValue = firstStepResponse.getValue();
+            }
+
             //If only one step is run and it failed before creating a job doc, a job doc is created
             try{
-                jobUpdate.getJobs(jobId);
+                JsonNode jsonResp = jobUpdate.getJobs(runningJobId);
+                //Temporarily set first step start time == job start time (job doc created in server, step resp in client)
+                String startTime = null;
+                if(jsonResp != null ){
+                    startTime = jsonResp.get("job").get("timeStarted").textValue();    
+                }
+                if(firstValue != null) {
+                    firstValue.setStepStartTime(startTime);
+                }
             }
             catch(ResourceNotFoundException e) {
+                if(firstValue != null) {
+                    firstValue.setStepStartTime(DATE_TIME_FORMAT.format(new Date()));
+                }
                 jobUpdate.postJobs(jobId,flow.getName());
+                //Set end time as well else start time > end time
+                if(firstValue != null) {
+                    firstValue.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
+                }
+            }
+
+            //Set the first step output
+            if(firstStepResponse != null) {
+                stepOutputs.put(firstKey, firstValue);
             }
             try {
                 jobUpdate.postJobs(jobId, jobStatus, stepNum, stepOutputs);
