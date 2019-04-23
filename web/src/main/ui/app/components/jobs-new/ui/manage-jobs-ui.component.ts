@@ -4,6 +4,7 @@ import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@a
 import {ConfirmationDialogComponent} from "../../common";
 import {StatusDialogComponent} from "./status-dialog.component";
 import * as moment from 'moment';
+import * as _ from "lodash";
 import { differenceInSeconds,
          differenceInMinutes,
          differenceInHours,
