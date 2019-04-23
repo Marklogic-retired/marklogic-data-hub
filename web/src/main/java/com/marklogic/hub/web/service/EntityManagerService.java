@@ -145,9 +145,8 @@ public class EntityManagerService {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
-        if (dir.toFile().exists()) {
-            watcherService.unwatch(dir.getParent().toString());
+        File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION).toFile();
+        if (entitiesFile.exists()) {
             em.deleteEntity(entity);
         }
     }
