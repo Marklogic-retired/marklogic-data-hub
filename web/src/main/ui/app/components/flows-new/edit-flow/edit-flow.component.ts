@@ -126,8 +126,8 @@ export class EditFlowComponent implements OnInit {
           this.flow = Flow.fromJSON(poll);
           if (this.flow.latestJob && this.flow.latestJob.status) {
             let runStatus = this.flow.latestJob.status.replace('_', ' ');
-            runStatus = this.flow.latestJob.status.replace('-', ' ');
-            runStatus = this.flow.latestJob.status.split(' ');
+            runStatus = runStatus.replace('-', ' ');
+            runStatus = runStatus.split(' ');
             // console.log('run status', runStatus);
             if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();

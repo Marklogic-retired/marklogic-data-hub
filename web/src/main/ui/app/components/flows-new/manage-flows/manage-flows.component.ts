@@ -80,8 +80,8 @@ export class ManageFlowsComponent implements OnInit {
           this.flows[flowIndex] = Flow.fromJSON(poll);
           if (this.flows[flowIndex].latestJob && this.flows[flowIndex].latestJob.status) {
             let runStatus = this.flows[flowIndex].latestJob.status.replace('_', ' ');
-            runStatus = this.flows[flowIndex].latestJob.status.replace('-', ' ');
-            runStatus = this.flows[flowIndex].latestJob.status.split(' ');
+            runStatus = runStatus.replace('-', ' ');
+            runStatus = runStatus.split(' ');
             if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();
             }
