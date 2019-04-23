@@ -62,6 +62,7 @@ declare function notify-impl:save-match-notification(
   )
 };
 
+declare variable $_notifications-inserted := map:map();
 (:
  : Create a new notification document. If there is already a notification for
  : this combination of label and URIs, that notification will be replaced.
@@ -98,21 +99,25 @@ declare function notify-impl:build-match-notification(
     if (fn:exists($existing-notification)) then
       xdmp:node-uri(fn:head($existing-notification))
     else
-      "/com.marklogic.smart-mastering/matcher/notifications/" || xdmp:md5(fn:string-join($doc-uris ! fn:string(.), "|")) || ".xml"
-  where fn:not(fn:exists($existing-notification) and (every $uri in $doc-uris satisfies $uri = $old-doc-uris) and fn:count($doc-uris) eq fn:count($old-doc-uris))
-  return map:new((
-    map:entry("uri", $notification-uri),
-    map:entry("value", $new-notification),
-    map:entry("context",
-      map:new((
-        map:entry("permissions", xdmp:default-permissions()),
-        map:entry("collections", coll-impl:on-notification(
-          map:map(),
-          $options/merging:algorithms/merging:collections/merging:on-notification
+      "/com.marklogic.smart-mastering/matcher/notifications/" || xdmp:md5(fn:string-join(($threshold-label, $doc-uris ! fn:string(.)), "|")) || ".xml"
+  let $notification-operated-on := $_notifications-inserted => map:contains($notification-uri)
+  where fn:not($notification-operated-on or fn:exists($existing-notification) and (every $uri in $doc-uris satisfies $uri = $old-doc-uris) and fn:count($doc-uris) eq fn:count($old-doc-uris))
+  return (
+    $_notifications-inserted => map:put($notification-uri, fn:true()),
+    map:new((
+      map:entry("uri", $notification-uri),
+      map:entry("value", $new-notification),
+      map:entry("context",
+        map:new((
+          map:entry("permissions", xdmp:default-permissions()),
+          map:entry("collections", coll-impl:on-notification(
+            map:map(),
+            $options/merging:algorithms/merging:collections/merging:on-notification
+          ))
         ))
-      ))
-    )
-  ))
+      )
+    ))
+  )
 };
 
 (:
