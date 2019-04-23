@@ -80,7 +80,7 @@ declare function proc-impl:consolidate-merges($matches as map:map) as map:map
         where fn:exists($merge-uris)
         return
           fn:string-join(
-            for $uri in ($key, $merge-uris)
+            for $uri in fn:distinct-values(($key, $merge-uris))
             let $_lock-on-uri := xdmp:lock-for-update($uri)
             order by $uri
             return $uri,
@@ -152,7 +152,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     else if ($input instance of map:map*) then
       $input ! (. => map:get("uri"))
     else ()
-  let $_lock-for-update-on-uris := $uris ! xdmp:lock-for-update(.)
+  let $_lock-for-update-on-uris := xdmp:eager($uris ! xdmp:lock-for-update(.))
   let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "processing: " || fn:string-join($uris, ", "))
       else ()
