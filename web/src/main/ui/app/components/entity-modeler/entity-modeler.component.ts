@@ -96,6 +96,12 @@ export class EntityModelerComponent implements AfterViewChecked {
       this.draggingEntity.lastX = event.clientX;
       this.draggingEntity.lastY = event.clientY;
 
+      // this code forces a redraw of the foreign object
+      const fo = this.draggingBox.closest('.foreign') as HTMLElement;
+      const disp = fo.style.display;
+      fo.style.display = 'none';
+      const oh = fo.offsetHeight;
+      fo.style.display = disp;
     } else if (this.draggingVertex) {
       let p = this.pointToSvg(event.clientX, event.clientY);
       this.draggingVertex.x = p.x;
