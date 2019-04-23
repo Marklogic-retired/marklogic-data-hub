@@ -129,24 +129,24 @@ button {
   }
 
   .mat-column-name {
-    flex: 0 1 240px;
+    flex: 0 1 280px;
   }
 
-  .mat-column-targetEntity {
+  /* .mat-column-targetEntity {
     flex: 0 1 120px;
   }
 
   .mat-column-status {
     flex: 0 1 150px;
-  }
+  } */
 
   .mat-column-jobs {
-    flex: 0 1 80px;
+    flex: 0 1 100px;
   }
 
-  .mat-column-lastJobFinished {
+  /* .mat-column-lastJobFinished {
     flex: 0 1 220px;
-  }
+  } */
 
   .mat-column-docsCommitted {
     flex: 0 1 110px;
@@ -157,7 +157,7 @@ button {
   }
 
   .mat-column-actions {
-    flex: 0 1 150px;
+    flex: 0 1 180px;
   }
 
   .mat-header-cell .mat-icon {

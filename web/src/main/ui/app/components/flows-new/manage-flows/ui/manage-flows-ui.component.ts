@@ -117,6 +117,6 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     return (dt) ? _.capitalize(moment(dt).fromNow()) : '';
   }
   formatStatus(status):string {
-    return _.capitalize(status.replace(/_/g,' '));
+    return _.capitalize(status.replace(/_/g,' ').replace(/-/g,' '));
   }
 }
