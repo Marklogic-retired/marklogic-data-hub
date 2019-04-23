@@ -83,7 +83,6 @@ export class ManageFlowsComponent implements OnInit {
             let runStatus = this.flows[flowIndex].flow.latestJob.status.replace('_', ' ');
             runStatus = this.flows[flowIndex].flow.latestJob.status.replace('-', ' ');
             runStatus = this.flows[flowIndex].flow.latestJob.status.split(' ');
-            console.log('run status', runStatus);
             if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();
             }
