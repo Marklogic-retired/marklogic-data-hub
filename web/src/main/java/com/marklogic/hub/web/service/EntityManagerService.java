@@ -69,9 +69,6 @@ public class EntityManagerService {
     private LegacyFlowManagerService legacyFlowManagerService;
 
     @Autowired
-    private FileSystemWatcherService watcherService;
-
-    @Autowired
     private DataHubService dataHubService;
 
     @Autowired
