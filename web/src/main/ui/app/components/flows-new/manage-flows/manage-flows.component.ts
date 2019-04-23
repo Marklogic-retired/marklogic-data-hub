@@ -78,15 +78,15 @@ export class ManageFlowsComponent implements OnInit {
         .subscribe(() =>  this.manageFlowsService.getFlowById(runObject.id).subscribe( poll => {
           const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
           this.flows[flowIndex] = Flow.fromJSON(poll);
-          this.flowsPageUi.renderRows();
-          if (this.flows[flowIndex].flow.latestJob && this.flows[flowIndex].flow.latestJob.status) {
-            let runStatus = this.flows[flowIndex].flow.latestJob.status.replace('_', ' ');
-            runStatus = this.flows[flowIndex].flow.latestJob.status.replace('-', ' ');
-            runStatus = this.flows[flowIndex].flow.latestJob.status.split(' ');
+          if (this.flows[flowIndex].latestJob && this.flows[flowIndex].latestJob.status) {
+            let runStatus = this.flows[flowIndex].latestJob.status.replace('_', ' ');
+            runStatus = this.flows[flowIndex].latestJob.status.replace('-', ' ');
+            runStatus = this.flows[flowIndex].latestJob.status.split(' ');
             if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();
             }
           }
+          this.flowsPageUi.renderRows();
         })
       );
     });
