@@ -292,7 +292,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   }
 
   deleteEntity(entity: Entity) {
-    let result = this.dialogService.confirm(`Delete the ${entity.name} entity?\n\nAny flows associated with the entity will also be deleted.`, 'No', 'Yes');
+    let result = this.dialogService.confirm(`Delete the ${entity.name} entity?`, 'No', 'Yes');
     result.subscribe(() => {
       this.entitiesService.deleteEntity(entity);
     }, () => {});
