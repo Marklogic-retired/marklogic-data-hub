@@ -26,67 +26,67 @@ public interface StepDefinitionManager {
     /**
      * String value for the mapping file extension
      */
-    String STEP_FILE_EXTENSION = ".step.json";
+    String STEP_DEFINITION_FILE_EXTENSION = ".step.json";
 
     /**
-     * Saves a Step to disk
+     * Saves a Step Definition to disk
      *
-     * @param stepDefinition - the Step object to be saved
+     * @param stepDefinition - the Step Definition object to be saved
      */
     void saveStepDefinition(StepDefinition stepDefinition);
 
     /**
-     * Saves a Step to disk
+     * Saves a Step Definition to disk
      *
-     * @param stepDefinition - the Step object to be saved
+     * @param stepDefinition - the Step Definition object to be saved
      * @param autoIncrement  - true to increment version, false if not to
      */
     void saveStepDefinition(StepDefinition stepDefinition, boolean autoIncrement);
 
     /**
-     * Deletes a Step from disk
+     * Deletes a Step Definition from disk
      *
-     * @param stepDefinition - the Step object to be deleted
+     * @param stepDefinition - the Step Definition object to be deleted
      */
     void deleteStepDefinition(StepDefinition stepDefinition);
 
     /**
-     * Returns a list of all Steps currently defined
+     * Returns a list of all Step Definition currently defined
      *
-     * @return - an ArrayList of all Step objects from disk
+     * @return - an ArrayList of all Step Definition objects from disk
      */
     ArrayList<StepDefinition> getStepDefinitions();
 
     /**
-     * Returns a single Step given a name and a type
+     * Returns a single Step Definition given a name and a type
      *
-     * @param name - name of the Step
-     * @param type - type of the Step
-     * @return the Step object
+     * @param name - name of the Step Definition
+     * @param type - type of the Step Definition
+     * @return the Step Definition object
      */
     StepDefinition getStepDefinition(String name, StepDefinition.StepDefinitionType type);
 
     /**
-     * Returns a list of Steps that have the given type
+     * Returns a list of Step Definitions that have the given type
      *
-     * @param type - type of the Step
-     * @return an ArrayList of Step objects of a given type
+     * @param type - type of the Step Definition
+     * @return an ArrayList of Step Definition objects of a given type
      */
     ArrayList<StepDefinition> getStepDefinitionsByType(StepDefinition.StepDefinitionType type);
 
     /**
-     * Returns a list of Step names that have the given type
+     * Returns a list of Step Definition names that have the given type
      *
-     * @param type - type of the Step
-     * @return an ArrayList of Step names of a given type
+     * @param type - type of the Step Definition
+     * @return an ArrayList of Step Definition names of a given type
      */
     ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepDefinitionType type);
 
     /**
-     * Creates a Step from a given JsonNode
+     * Creates a Step Definition from a given JsonNode
      *
      * @param json - a JsonNode
-     * @return a Step object
+     * @return a Step Definition object
      */
     StepDefinition createStepDefinitionFromJSON(JsonNode json);
 }
