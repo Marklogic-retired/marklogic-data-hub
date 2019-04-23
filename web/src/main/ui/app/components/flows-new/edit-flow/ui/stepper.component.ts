@@ -35,7 +35,15 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
         this.stepAdded = true;
       }
       // console.log('changes', changes);
-      if (!changes.flow.firstChange && changes.flow.currentValue.latestJob.status !== changes.flow.previousValue.latestJob.status) {
+      // TODO have backend return latestJob object with empty paramters
+      // Check for when flow.previousValue.latestJob is null
+      if (!changes.flow.firstChange && changes.flow.currentValue.latestJob && !changes.flow.previousValue.latestJob) {
+        this.status = changes.flow.currentValue.latestJob.status.replace('_', ' ');
+        this.status = changes.flow.currentValue.latestJob.status.replace('-', ' ');
+        this.status = changes.flow.currentValue.latestJob.status.split(' ');
+      }
+      // Normal check
+      if (!changes.flow.firstChange && changes.flow.currentValue.latestJob && changes.flow.previousValue.latestJob && changes.flow.currentValue.latestJob.status !== changes.flow.previousValue.latestJob.status) {
         this.status = changes.flow.currentValue.latestJob.status.replace('_', ' ');
         this.status = changes.flow.currentValue.latestJob.status.replace('-', ' ');
         this.status = changes.flow.currentValue.latestJob.status.split(' ');

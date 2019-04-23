@@ -27,7 +27,11 @@ export class Flow {
   }
 
   get status(): string {
-    return (this.latestJob && this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
+    if (this.latestJob === null) {
+      return '';
+    } else {
+      return (this.latestJob && this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
+    }
   }
 
   get jobsNumber(): number {

@@ -24,7 +24,7 @@
           <a id="latest-job-status" *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.status" [routerLink]="['/jobs', flow.latestJob.id]">
           {{formatStatus(flow.latestJob.status)}}</a>
           <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.status">
-          Never run</span>
+          {{flow.latestJob === null ? '': 'Never run'}}</span>
           <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">
             <span *ngIf="flow.latestJob.status === 'running' && flow.latestJob.startTime !== null">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
             <span *ngIf="flow.latestJob.status !== null && flow.latestJob.endTime !== null">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
