@@ -87,7 +87,7 @@
                 <div *ngIf="stepsArray[i].modulePath"  class="summary-content">{{stepsArray[i].modulePath | truncate : -23}}</div>
               </div>
               <mat-progress-bar
-                *ngIf="flow.latestJob && flow.latestJob.stepId === stepsArray[i].id"
+                *ngIf="flow.latestJob && flow.latestJob.stepId === stepsArray[i].id && status[0] === 'running'"
                 id="job-progress-bar"
                 class="item"
                 mode="determinate"

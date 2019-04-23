@@ -127,10 +127,11 @@ export class EditFlowComponent implements OnInit {
           console.log('flow poll', poll);
           this.flow = Flow.fromJSON(poll);
           if (this.flow.latestJob.status) {
-            const runStatus = this.flow.latestJob.status.split(' ');
+            let runStatus = this.flow.latestJob.status.replace('_', ' ');
+            runStatus = this.flow.latestJob.status.replace('-', ' ');
+            runStatus = this.flow.latestJob.status.split(' ');
             // console.log('run status', runStatus);
-            if (runStatus[0] !== 'running') {
-              // console.log('flow run stopped');
+            if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();
             }
           }

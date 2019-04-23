@@ -36,6 +36,8 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
       }
       // console.log('changes', changes);
       if (!changes.flow.firstChange && changes.flow.currentValue.latestJob.status !== changes.flow.previousValue.latestJob.status) {
+        this.status = changes.flow.currentValue.latestJob.status.replace('_', ' ');
+        this.status = changes.flow.currentValue.latestJob.status.replace('-', ' ');
         this.status = changes.flow.currentValue.latestJob.status.split(' ');
       }
     }
