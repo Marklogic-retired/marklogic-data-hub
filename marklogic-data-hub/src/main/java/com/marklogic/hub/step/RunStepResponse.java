@@ -200,6 +200,6 @@ public class RunStepResponse {
                 "status: %s, totalEvents: %d, successfulEvents: %d, " + "failedEvents: %d, successfulBatches: %d, " +
                 "failedBatches: %d, stepStartTime: %s , stepEndTime: %s]", flowName, stepName, stepDefinitionName,
             stepDefinitionType, String.valueOf(success), status, totalEvents, successfulEvents, failedEvents,
-            successfulBatches, failedBatches, stepStartTime, stepStartTime);
+            successfulBatches, failedBatches, stepStartTime, stepEndTime);
     }
 }
