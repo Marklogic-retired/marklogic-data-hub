@@ -126,7 +126,7 @@ export class EditFlowComponent implements OnInit {
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           console.log('flow poll', poll);
           this.flow = Flow.fromJSON(poll);
-          if (this.flow.latestJob.status) {
+          if (this.flow.latestJob && this.flow.latestJob.status) {
             let runStatus = this.flow.latestJob.status.replace('_', ' ');
             runStatus = this.flow.latestJob.status.replace('-', ' ');
             runStatus = this.flow.latestJob.status.split(' ');
