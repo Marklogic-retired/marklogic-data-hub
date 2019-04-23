@@ -74,18 +74,17 @@ export class ManageFlowsComponent implements OnInit {
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
       // TODO optimize run polling DHFPROD-2241
-      // console.log('run flow resp', resp);
       this.running = timer(0, 500)
         .subscribe(() =>  this.manageFlowsService.getFlowById(runObject.id).subscribe( poll => {
-          // console.log('flow poll', poll);
           const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
           this.flows[flowIndex] = Flow.fromJSON(poll);
           this.flowsPageUi.renderRows();
-          if (this.flows[flowIndex].latestJob.status) {
-            const runStatus = this.flows[flowIndex].latestJob.status.split(' ');
-            // console.log('run status', runStatus);
-            if (runStatus[0] !== 'running') {
-              // console.log('flow run stopped');
+          if (this.flows[flowIndex].flow.latestJob && this.flows[flowIndex].flow.latestJob.status) {
+            let runStatus = this.flows[flowIndex].flow.latestJob.status.replace('_', ' ');
+            runStatus = this.flows[flowIndex].flow.latestJob.status.replace('-', ' ');
+            runStatus = this.flows[flowIndex].flow.latestJob.status.split(' ');
+            console.log('run status', runStatus);
+            if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
               this.running.unsubscribe();
             }
           }
