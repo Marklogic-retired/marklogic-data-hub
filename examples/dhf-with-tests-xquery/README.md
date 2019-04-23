@@ -2,18 +2,7 @@
 
 This project shows a basic setup for writing marklogic unit tests for the DHF using __*only xquery*__.
 
-This includes the insertion of the data into the database as well as running harmonization jobs (and testing the output). E.g.
-```javascript
-  CHANGEME
-    const dtu = require('/test/lib/dhfTestUtils.sjs');
-
-    const results = dtu.mlHubRunFlow("Employee","sampleHarmonize",{"entity":"Employee"})
-
-    let testResults =  [
-        test.assertEqual(2, results.totalCount),
-        test.assertEqual(0, results.errorCount)
-    ]
-```
+Test data is loading into the staging db and then harmonized into final. The harmonization flow is executed via REST.  
 
 Note that this exmaple __*does not*__ use a dedicated test database. Rather the tests runs using the staging and final databases that you have configured in your gradle-*.properties file
 
@@ -35,7 +24,7 @@ Then you can go to the following url to view the test web gui -
 
 e.g.
 
-    http://localhost:8010/test/default.xqy
+    http://localhost:9010/test/default.xqy
 
 ### Running the tests via Junit test - 
 
@@ -51,42 +40,35 @@ The main configuration / files to be aware of is as follows -
 
 | File / configuration | Details |
 | -------------        | --------|
-| src/test/ml-modules/root/test/lib/dhfTestUtils.sjs | Test utility library that contains useful helper functions for running dhf tests - e.g. `mlHubRunFlow` |
-| src/test/ml-modules/root/test/suites/EmployeeTest/setup.sjs | Setup script for the tests. It will insert the sample data in the staging database|
-| src/test/ml-modules/root/test/suites/EmployeeTest/teardown.sjs | Teardown script for the tests. It will delete the data in the staging and final databases|
-| src/test/ml-modules/root/test/suites/EmployeeTest/testSampleMapping.sjs | Example of how to test the content.sjs createContent mapping functionality for the Employee entity|
-| src/test/ml-modules/root/test/suites/EmployeeTest/testSampleHarmonization.sjs | Example of how to test an harmonization flow for the Employee entity|
-| src/test/java/org/example/RunUnitTestsTest.java | Simple Junit test class that will execute all of the javascript tests and output the results in JUNIT xml format and an html report. __Note__ if you want to run the tests against the __test__ env, you will need to set ```@ContextConfiguration(classes = {TestEnvDataHubTestConfig.class})``` in this java class.|
-| src/test/java/org/example/TestEnvDataHubTestConfig.java | Configuration to use when running tests against the __test__ env |
-| plugins/entities/Employee/* | The Employee entity and harmonization job (sampleHarmonize) configuration and code  |
-| lib/moment.js | A useful date parsing library |
+| src/main/ml-modules/root/lib/config.xqy | global configuration file |
+| src/main/ml-modules/root/lib/test-config.xqy |  configuration file for tests |
+| src/main/ml-modules/root/lib/test-flows-lib.xqy | Test utility library that contains useful helper functions for running dhf flows via REST  |
+| src/test/ml-modules/root/test/suites/HarmonizeEmployeeTests/employee-harmonization-tests.xqy | Example tests for Employee entity including a sample search |
+| src/test/ml-modules/root/test/suites/HarmonizeEmployeeTests/suite-setup.xqy | Setup script for the tests. It will insert the sample data in the staging database |
+| src/test/ml-modules/root/test/suites/HarmonizeEmployeeTests/suite-teardown.xqy | Teardown script for the tests. It will delete the data in the staging and final databases|
+| src/test/ml-modules/root/test/suites/HarmonizeEmployeeTests/test-data/32920.xml | Example of how to test an harmonization flow for the Employee entity|
+| src/test/ml-modules/root/test/suites/HarmonizeEmployeeTests/test-data/34324.xml | Example of how to test an harmonization flow for the Employee entity|
+| plugins/entities/Employee/* | The Employee entity and harmonization job (harmonizeEmployees) configuration and code  |
 | build.gradle | The basic gradle build file to make these examples work. Note how the __isDeployUnitTestFramework__ property is used in this build file |
 | gradle.properties | The gradle config properties. The most important ones for this example are <br>mlTestDbName=data-hub-STAGING <br>mlTestPort=8010 <br>mlModulePaths=src/main/ml-modules,src/test/ml-modules <br>isDeployUnitTestFramework=true|
 
 
 ## Other useful commands / configuration
 
-### Ensuring tests do not get deployed to production
-
-The file gradle-prod.properties contains the configuration required to ensure that the tests do not test deployed to production
-
-When running the gradle deployment commands, make sure you include the `-PenvironmentName=prod` argment. E.g. -
-
-    ./gradlew mlDeploy -PenvironmentName=prod
 
 ### Deploying a dedicated test instance for running your unit tests
 
 The file gradle-test.properties contains the configuration required to setup a dedicated dhf test instance (even on your local host)
 
-When running the gradle deployment commands, make sure you include the `-PenvironmentName=test` argment. E.g. -
+When running the gradle deployment commands, make sure you include the `-PenvironmentName=test-local` argment. E.g. -
 
-    ./gradlew mlDeploy -PenvironmentName=test
+    ./gradlew mlDeploy -PenvironmentName=test-local
 
 And then add ```@ContextConfiguration(classes = {TestEnvDataHubTestConfig.class})``` to the ```src/test/java/org/example/RunUnitTestsTest.java``` file
 
 And then run your tests
 
-    ./gradlew clean test -PenvironmentName=test
+    ./gradlew clean test -PenvironmentName=test-local
 
 ## Points to be aware of 
 

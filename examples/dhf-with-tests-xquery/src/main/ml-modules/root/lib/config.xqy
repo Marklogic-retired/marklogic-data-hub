@@ -93,44 +93,4 @@ declare function get-harmonization-insert-doc-options(
 };
 
 
-declare private function get-options(
-        $options-name as xs:string,
-        $db as xs:string
-) as document-node()?
-{
-    let $db :=  fn:upper-case($db)
-    return
-    xdmp:invoke-function(
-            function() {
-                let $uri := "/Default/data-hub-"|| $db || "/rest-api/options/" || $options-name
-                return fn:doc($uri)
-            },
-            <options xmlns="xdmp:eval">
-                <database>{xdmp:database("%%mlModulesDbName%%")}</database>
-            </options>
-    )
-};
-
-declare function get-options-final(
-    $options-name as xs:string
-) as document-node()?
-{
-    get-options($options-name, "%%mlFinalDbName%%")
-};
-
-declare function get-options-final-test(
-        $options-name as xs:string
-) as document-node()?
-{
-    get-options($options-name, "%%mlFinalDbName%%")
-};
-
-declare function get-options-staging(
-        $options-name as xs:string
-) as document-node()?
-{
-    get-options($options-name, "%%mlStagingDbName%%")
-};
-
-
 

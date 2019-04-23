@@ -18,12 +18,6 @@ declare variable $HTTP-OK as xs:integer := 200;
 
 declare variable $HARMONIZE-FLOW-TYPE as xs:string := "harmonize";
 declare variable $INPUT-FLOW-TYPE as xs:string := "input";
-declare variable $PMC-INPUT-FLOW as xs:string := "PubMedCentralFromFolder";
-declare variable $MEDLINE-INPUT-FLOW as xs:string := "MedlineFromFolder";
-
-declare variable $ROOT-PATH-BY-FLOW as map:map := map:map() =>
-                                                  map:with($PMC-INPUT-FLOW, "pmc")  =>
-                                                  map:with($MEDLINE-INPUT-FLOW, "medline");
 
 
 (:make sure Accept header is set to control how exceptions are returned to caller:)
@@ -69,29 +63,32 @@ declare function remove-test-content-docs()
 
 };
 
-
-declare function run-input-flow-pmc(
+(:~
+: example: run an input flow
+:)
+declare function run-input-flow-XXX(
         $host as xs:string,
         $port as xs:string
 )
 {
-    let $flow-name := "PubMedCentralFromFolder"
-    let $get-pmc-docs := function() as map:map {
+    let $flow-name := "XXX"
+    let $get-foo-docs := function() as map:map {
         let $results := map:map()
         let $_ := for $source-uri in xdmp:invoke-function(
-                        function() {cts:uri-match( "/test/content/pubmed-central/*")},
+                        (:load content from a test folder:)
+                        function() {cts:uri-match( "/test/content/FOO/*")},
                         <options xmlns="xdmp:eval">
                             <database>{xdmp:modules-database()}</database>
                         </options>
                 )
                 let $doc := th:get-modules-file($source-uri, "xml" )
-                let $uri := fn:concat("/content/raw/pmc/", tf:get-root-filename($source-uri), ".xml")
+                let $uri := fn:concat("/content/raw/FOO/", tf:get-root-filename($source-uri), ".xml")
                 return  map:put($results, $uri, $doc)
         return $results
 
     }
-    let $entity-name := "Asset"
-    return run-input-flow($host,$port,$entity-name,$flow-name, $get-pmc-docs)
+    let $entity-name := "FOOEntity"
+    return run-input-flow($host,$port,$entity-name,$flow-name, $get-foo-docs)
 };
 
 declare function run-input-flow(
@@ -104,7 +101,7 @@ declare function run-input-flow(
 {
     let $doc-map as map:map := $get-docs()
     for $uri in map:keys($doc-map)
-    let $job-id := "joe-manual-process-test-1"
+    let $job-id := "foo-manual-process-test-1"
     let $input-collections := ( $entity-name, $flow-name,  $INPUT-FLOW-TYPE, $tcfg:UNIT-TEST-COLLECTION) => fn:string-join(",")
     let $options := let $map := map:map()
     let $_ := $map  => map:with($cfg:INPUT-COLLECTIONS-KEY, $input-collections)
@@ -447,18 +444,6 @@ declare function tf:run-harmonisation-flow-with-options(
     else xdmp:log("found no uris to process")
 };
 
-declare function run-harmonisation-medline(
-    $host as xs:string,
-    $port as xs:string
-)
-{
-    let $flow-name := "Medline"
-    let $db := $cfg:STAGING-DB
-    let $target-db := $cfg:STAGING-DB
-    let $entity-name := "Asset"
-    let $options := make-options($entity-name, $flow-name) => xdmp:to-json-string()
-    return  tf:run-harmonisation-flow-with-options($entity-name, $flow-name, $db, $target-db, $host, $port, $options)
-};
 
 declare private function make-options(
     $entity as xs:string,
