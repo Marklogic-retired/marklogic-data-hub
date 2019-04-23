@@ -122,7 +122,7 @@
           <mat-header-cell id="step-duration-sort-btn" *matHeaderCellDef mat-sort-header>Duration</mat-header-cell>
           <mat-cell class="step-duration" *matCellDef="let step">
             <span class="capitalize">
-              {{friendlyDuration(step.startTime, step.EndTime)}}
+              {{friendlyDuration(step.startTime, step.endTime)}}
             </span>
           </mat-cell>
         </ng-container>
