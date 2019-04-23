@@ -233,6 +233,13 @@ public class NewJobService extends ResourceManager {
             js.failedBatches = res.get("failedBatches").asLong();
             js.success = res.get("success").asBoolean();
 
+            if (res.get("stepStartTime") != null) {
+                js.startTime = res.get("stepStartTime").asText();
+            }
+            if (res.get("stepEndTime") != null) {
+                js.endTime = res.get("stepEndTime").asText();
+            }
+
             js.status = res.get("status").asText();
             js.stepOutput = res.get("stepOutput");
             js.fullOutput = res.get("fullOutput").asText();
