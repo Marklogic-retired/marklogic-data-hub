@@ -10,7 +10,7 @@
   </mat-form-field>
 
   <mat-form-field layout-fill>
-    <mat-select id="merge-option-property" placeholder="Property to Merge" formControlName="propertyName" [(value)]="propertyName">
+    <mat-select id="merge-option-property" placeholder="Property to Merge" formControlName="propertyName" [(value)]="propertyName" required>
       <mat-option [id]="'merge-option-property-' + prop.name" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -18,11 +18,13 @@
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Values</mat-label>
     <input id="merge-option-max-values" matInput formControlName="maxValues"/>
+    <mat-error id="merge-option-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Sources</mat-label>
     <input id="merge-option-max-sources" matInput formControlName="maxSources"/>
+    <mat-error id="merge-option-max-sources-error" *ngIf="form.get('maxSources').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <div *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" id="source-weights">
@@ -43,6 +45,8 @@
         <mat-form-field>
           <mat-label>Weight</mat-label>
           <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
+          <!-- TODO validate weights in SourceWeight options -->
+          <mat-error id="'source-weights-weight-' + i + '-error" *ngIf="sourceWeights.controls[i].get('weight').invalid">Enter a number</mat-error>
         </mat-form-field>
         <button [id]="'remove-merge-option-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
           <mat-icon>remove_circle</mat-icon>
@@ -54,6 +58,7 @@
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Length Weight</mat-label>
     <input id="merge-option-length" matInput formControlName="length"/>
+    <mat-error id="merge-option-length-error" *ngIf="form.get('length').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedType === 'strategy'"  layout-fill>
@@ -82,6 +87,6 @@
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="merge-option-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="merge-option-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="merge-option-cancel-btn" (click)="onCancel()">CANCEL</button>
+  <button mat-raised-button color="primary" id="merge-option-save-btn" [disabled]="!form.valid" (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

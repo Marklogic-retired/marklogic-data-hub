@@ -2,16 +2,16 @@
 <div id="flow-dialog" mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field layout-fill>
     <mat-label>Flow name</mat-label>
-    <input id="flow-name" matInput formControlName="name"/>
+    <input id="flow-name" matInput formControlName="name" required />
   </mat-form-field>
   <mat-form-field layout-fill>
-    <mat-label>Description (optional)</mat-label>
+    <mat-label>Description</mat-label>
     <input id="flow-desc" matInput formControlName="description"/>
   </mat-form-field>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Advanced Settings (optional)
+        Advanced Settings
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-form-field layout-fill>

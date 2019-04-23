@@ -4,7 +4,7 @@
   <mat-form-field class="ng-invalid">
     <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()"
                 formControlName="stepDefinitionType" required>
-      <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{option}}</mat-option>
+      <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
     </mat-select>
   </mat-form-field>
   <div *ngIf="newStepForm.value.stepDefinitionType">
@@ -14,7 +14,6 @@
   </mat-form-field>
   <mat-form-field class="">
     <input id="step-description" matInput formControlName="description" placeholder="Description">
-    <mat-hint>Optional</mat-hint>
   </mat-form-field>
   <div *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION">
     <label>Source Type: <span *ngIf="newStepForm.value.stepDefinitionType !== stepType.INGESTION" class="source-req">*</span></label>

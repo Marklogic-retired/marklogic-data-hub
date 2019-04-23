@@ -2,14 +2,15 @@
 <div id="match-threshold-dialog" mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field layout-fill>
     <mat-label>Name</mat-label>
-    <input id="match-threshold-name" matInput formControlName="label"/>
+    <input id="match-threshold-name" matInput formControlName="label" required />
   </mat-form-field>
   <mat-form-field layout-fill>
     <mat-label>Weight</mat-label>
-    <input id="match-threshold-weight" matInput formControlName="above"/>
+    <input id="match-threshold-weight" matInput formControlName="above" required />
+    <mat-error id="match-threshold-weight-error" *ngIf="form.get('above').invalid">A number is required</mat-error>
   </mat-form-field>
   <mat-form-field layout-fill>
-    <mat-select id="match-threshold-action" placeholder="Action" formControlName="action" [(value)]="selectedAction">
+    <mat-select id="match-threshold-action" placeholder="Action" formControlName="action" [(value)]="selectedAction" required>
       <mat-option value="merge">Merge</mat-option>
       <mat-option value="notify">Notify</mat-option>
       <mat-option value="custom">Custom</mat-option>
@@ -32,6 +33,6 @@
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="match-threshold-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="match-threshold-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="match-threshold-cancel-btn" (click)="onCancel()">CANCEL</button>
+  <button mat-raised-button color="primary" id="match-threshold-save-btn" [disabled]="!form.valid" (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

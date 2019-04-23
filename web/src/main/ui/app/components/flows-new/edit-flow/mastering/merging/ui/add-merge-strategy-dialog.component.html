@@ -10,18 +10,23 @@
   </div>
 
   <mat-form-field *ngIf="selectedDefault === 'false'" layout-fill>
-    <mat-label>Name</mat-label>
+    <mat-label>
+      Name
+      <span class="name-req">*</span>
+    </mat-label>
     <input id="merge-strategy-name" matInput formControlName="name"/>
   </mat-form-field>
 
   <mat-form-field layout-fill>
     <mat-label>Max Values</mat-label>
     <input id="merge-strategy-max-values" matInput formControlName="maxValues"/>
+    <mat-error id="merge-strategy-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field layout-fill>
     <mat-label>Max Sources</mat-label>
     <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
+    <mat-error id="merge-strategy-max-sources-error" *ngIf="form.get('maxSources').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <div id="merge-strategy-source-weights-container">
@@ -40,6 +45,7 @@
         </mat-form-field>
         <mat-icon></mat-icon>
         <mat-form-field>
+          <!-- TODO validate weights in SourceWeight options -->
           <mat-label>Weight</mat-label>
           <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
         </mat-form-field>
@@ -53,11 +59,12 @@
   <mat-form-field layout-fill>
     <mat-label>Length Weight</mat-label>
     <input id="merge-strategy-length" matInput formControlName="length"/>
+    <mat-error id="merge-strategy-length-error" *ngIf="form.get('length').invalid">Enter a number</mat-error>
   </mat-form-field>
 
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
-  <button mat-raised-button color="primary" id="merge-strategy-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="merge-strategy-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="merge-strategy-cancel-btn" (click)="onCancel()">CANCEL</button>
+  <button mat-raised-button color="primary" id="merge-strategy-save-btn" [disabled]="!form.valid" (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

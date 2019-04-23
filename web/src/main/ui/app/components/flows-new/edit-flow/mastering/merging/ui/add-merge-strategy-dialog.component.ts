@@ -2,6 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeStrategy } from "../merge-strategies.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import { AddMergeStrategyValidator } from '../../../../validators/add-merge-strategy.validator';
+import { WeightValidator } from '../../../../validators/weight.validator';
+import { SourceWeightValidator } from '../../../../validators/source-weight.validator';
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -34,13 +37,16 @@ export class AddMergeStrategyDialogComponent {
       name: [this.data.strategy && !this.data.strategy.default ? this.data.strategy.name : ''],
       default: [this.data.strategy && this.data.strategy.default ? 'true' : 'false'],
       algorithmRef: [this.data.strategy ? this.data.strategy.algorithmRef : ''],
-      maxValues: [this.data.strategy ? this.data.strategy.maxValues : ''],
-      maxSources: [this.data.strategy ? this.data.strategy.maxSources : ''],
-      length: [(this.data.strategy && this.data.strategy.length) ? this.data.strategy.length.weight : ''],
+      maxValues: [this.data.strategy ? this.data.strategy.maxValues : '',
+        [WeightValidator]],
+      maxSources: [this.data.strategy ? this.data.strategy.maxSources : '',
+        [WeightValidator]],
+      length: [(this.data.strategy && this.data.strategy.length) ? this.data.strategy.length.weight : '',
+        [WeightValidator]],
       customUri: [this.data.strategy ? this.data.strategy.customUri : ''],
       customFunction: [this.data.strategy ? this.data.strategy.customFunction : ''],
       index: this.data.index
-    })
+    }, { validators: AddMergeStrategyValidator })
     this.selectedDefault = (this.data.strategy && this.data.strategy.default) ?
       'true' : 'false';
     this.form.setControl('sourceWeights', this.createSourceWeights());
@@ -63,7 +69,7 @@ export class AddMergeStrategyDialogComponent {
     return this.fb.group({
       source: source,
       weight: weight
-    });
+    }, { validators: SourceWeightValidator });
   }
 
   onAddSourceWeight() {

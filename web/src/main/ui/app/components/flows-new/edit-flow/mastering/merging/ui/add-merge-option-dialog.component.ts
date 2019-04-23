@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeOption } from "../merge-options.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import { WeightValidator } from '../../../../validators/weight.validator';
+import { SourceWeightValidator } from '../../../../validators/source-weight.validator';
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -32,12 +34,16 @@ export class AddMergeOptionDialogComponent {
   ngOnInit() {
     console.log('this.data.option', this.data.option);
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName : ''],
-      mergeType: [this.data.option ? this.data.option.mergeType : 'exact'],
+      propertyName: [this.data.option ? this.data.option.propertyName : '',
+        [Validators.required]],
+      mergeType: [this.data.option ? this.data.option.mergeType : 'standard'],
       algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
-      maxValues: [this.data.option ? this.data.option.maxValues : ''],
-      maxSources: [this.data.option ? this.data.option.maxSources : ''],
-      length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : ''],
+      maxValues: [this.data.option ? this.data.option.maxValues : '',
+        [WeightValidator]],
+      maxSources: [this.data.option ? this.data.option.maxSources : '',
+        [WeightValidator]],
+      length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : '',
+        [WeightValidator]],
       strategy: [this.data.option ? this.data.option.strategy : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
@@ -70,7 +76,7 @@ export class AddMergeOptionDialogComponent {
     return this.fb.group({
       source: source,
       weight: weight
-    });
+    }, { validators: SourceWeightValidator });
   }
 
   onAddSourceWeight() {
