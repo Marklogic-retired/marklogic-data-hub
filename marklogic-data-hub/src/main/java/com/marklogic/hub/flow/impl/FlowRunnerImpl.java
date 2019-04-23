@@ -476,4 +476,8 @@ public class FlowRunnerImpl implements FlowRunner{
             .collect(Collectors.joining());
 
     }
+
+    public Flow getRunningFlow() {
+        return this.runningFlow;
+    }
 }
