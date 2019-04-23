@@ -337,7 +337,9 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Temporarily set first step start time == job start time (job doc created in server, step resp in client)
                 String startTime = null;
                 if(jsonResp != null ){
-                    startTime = jsonResp.get("job").get("timeStarted").textValue();    
+                    startTime = jsonResp.get("job").get("timeStarted").textValue();
+                    Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(startTime);
+                    startTime = DATE_TIME_FORMAT.format(calendar.getTime());
                 }
                 if(firstValue != null) {
                     firstValue.setStepStartTime(startTime);
