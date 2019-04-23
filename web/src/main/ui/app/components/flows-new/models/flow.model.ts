@@ -30,7 +30,7 @@ export class Flow {
     if (this.latestJob === null) {
       return '';
     } else {
-      return (this.latestJob && this.latestJob['status']) ? this.latestJob['status'] : 'Never Run';
+      return (this.latestJob && this.latestJob['status']) ? this.latestJob['status'] : 'Never run';
     }
   }
 
