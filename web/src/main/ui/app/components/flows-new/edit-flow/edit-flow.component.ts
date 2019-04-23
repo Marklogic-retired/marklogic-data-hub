@@ -39,7 +39,6 @@ export class EditFlowComponent implements OnInit {
   databases: any = {
     final: '',
     staging: '',
-    job: '',
     modules: ''
   };
   collections: string[] = [];
@@ -86,7 +85,6 @@ export class EditFlowComponent implements OnInit {
   getDbInfo() {
     this.projectService.getProjectEnvironment().subscribe( resp => {
       this.databases.final = resp.mlSettings.finalDbName;
-      this.databases.job = resp.mlSettings.jobDbName;
       this.databases.staging = resp.mlSettings.stagingDbName;
       this.databases.modules = resp.mlSettings.modulesDbName;
       this.projectDirectory = resp.mlSettings.ProjectDir;
