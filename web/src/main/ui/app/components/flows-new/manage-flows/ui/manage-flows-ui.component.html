@@ -94,7 +94,7 @@
           <mat-cell class="flow-docs-committed" *matCellDef="let flow" fxHide fxShow.gt-md>
             <!-- TODO link to committed docs from a job -->
             <!-- <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.successfulEvents > 0" [routerLink]="['/browse']" [queryParams]="{Collection:flow.latestJob.id}">{{flow.latestJob.successfulEvents | number}}</a> -->
-            <span>{{flow.latestJob.successfulEvents | number}}</span>
+            <span *ngIf="flow.latestJob">{{flow.latestJob.successfulEvents | number}}</span>
           </mat-cell>
         </ng-container>
 
@@ -106,7 +106,7 @@
             <!-- <a *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.failedEvents > 0" [routerLink]="">
               {{flow.latestJob.failedEvents | number}}
             </a> -->
-            <span>
+            <span *ngIf="flow.latestJob">
               {{flow.latestJob.failedEvents | number}}
             </span>
           </mat-cell>

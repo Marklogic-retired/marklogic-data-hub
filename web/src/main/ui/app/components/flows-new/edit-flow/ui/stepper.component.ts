@@ -27,7 +27,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   public stepType: typeof StepType = StepType;
   showBody = true;
   stepAdded = false;
-  status = '';
+  status: any = '';
 
   ngOnChanges(changes: SimpleChanges) {
     if ( changes.hasOwnProperty('flow')) {
@@ -38,15 +38,15 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
       // TODO have backend return latestJob object with empty paramters
       // Check for when flow.previousValue.latestJob is null
       if (!changes.flow.firstChange && changes.flow.currentValue.latestJob && !changes.flow.previousValue.latestJob) {
-        this.status = changes.flow.currentValue.latestJob.status.replace('_', ' ');
-        this.status = changes.flow.currentValue.latestJob.status.replace('-', ' ');
-        this.status = changes.flow.currentValue.latestJob.status.split(' ');
+        let runStatus = changes.flow.currentValue.latestJob.status.replace('_', ' ');
+        runStatus = runStatus.replace('-', ' ');
+        this.status = runStatus.split(' ');
       }
       // Normal check
       if (!changes.flow.firstChange && changes.flow.currentValue.latestJob && changes.flow.previousValue.latestJob && changes.flow.currentValue.latestJob.status !== changes.flow.previousValue.latestJob.status) {
-        this.status = changes.flow.currentValue.latestJob.status.replace('_', ' ');
-        this.status = changes.flow.currentValue.latestJob.status.replace('-', ' ');
-        this.status = changes.flow.currentValue.latestJob.status.split(' ');
+        let runStatus = changes.flow.currentValue.latestJob.status.replace('_', ' ');
+        runStatus = runStatus.replace('-', ' ');
+        this.status = runStatus.split(' ');
       }
     }
   }
