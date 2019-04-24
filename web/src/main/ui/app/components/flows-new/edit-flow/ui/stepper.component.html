@@ -13,6 +13,7 @@
                 class="item"
                 mat-raised-button
                 color="primary"
+                [disabled]="flow.steps.length ? false : true"
                 (click)="this.runClicked()">RUN</button>
         <button *ngIf="flow.latestJob && status[0] === 'running'"
           id="stop-flow-btn"
