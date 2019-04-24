@@ -53,5 +53,5 @@
 </div>
 <mat-dialog-actions class="bottom">
   <button id="flow-cancel-btn" color="primary" mat-raised-button (click)="onCancel()">CANCEL</button>
-  <button id="flow-save-btn" color="primary" mat-raised-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button id="flow-save-btn" [disabled]="!form.valid" color="primary" mat-raised-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>
