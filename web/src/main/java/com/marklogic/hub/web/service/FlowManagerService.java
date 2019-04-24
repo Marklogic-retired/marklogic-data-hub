@@ -84,11 +84,16 @@ public class FlowManagerService {
         } catch (IOException e) {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
         }
+
+        if (!jsonObject.isExist("name") || StringUtils.isEmpty(jsonObject.getString("name"))) {
+            throw new BadRequestException("Flow Name not provided. Flow Name is required.");
+        }
+
         String flowName = jsonObject.getString("name");
         Flow flow = null;
         if (checkExists) {
             if (flowManager.isFlowExisted(flowName)) {
-                throw new DataHubException(flowName + " is existed.");
+                throw new DataHubException("A Flow with " + flowName + " already exists.");
             }
             flow = new FlowImpl();
             flow.setName(flowName);
