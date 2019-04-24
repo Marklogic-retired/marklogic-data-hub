@@ -85,7 +85,7 @@ public class FlowManagerService {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
         }
 
-        if (!jsonObject.isExist("name") || !StringUtils.isNotEmpty(jsonObject.getString("name"))) {
+        if (!jsonObject.isExist("name") || StringUtils.isEmpty(jsonObject.getString("name"))) {
             throw new BadRequestException("Flow Name not provided. Flow Name is required.");
         }
 
