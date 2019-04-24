@@ -76,14 +76,14 @@ public class MasterTest extends HubTestBase {
     }
 
     private void copyFileStructure(Path resourcePath, Path projectPath) throws IOException {
-        for (File childFile: getResourceFile(resourcePath.toString()).listFiles()) {
+        for (File childFile: getResourceFile(resourcePath.toString().replaceAll("\\\\","/")).listFiles()) {
             if (childFile.isDirectory()) {
                 Path subProjectPath = projectPath.resolve(childFile.getName());
                 subProjectPath.toFile().mkdir();
                 Path subResourcePath = resourcePath.resolve(childFile.getName());
                 copyFileStructure(subResourcePath, subProjectPath);
             } else {
-                Files.copy(getResourceStream(resourcePath.resolve(childFile.getName()).toString()), projectPath.resolve(childFile.getName()));
+                Files.copy(getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/")), projectPath.resolve(childFile.getName()));
             }
         }
     }
