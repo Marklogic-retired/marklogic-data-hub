@@ -46,12 +46,12 @@ export class NewStepDialogUiComponent implements OnInit {
         ExistingStepNameValidator.forbiddenName(this.flow, this.step && this.step.name)
       ]],
       stepDefinitionType: [this.step ? this.step.stepDefinitionType : '', Validators.required],
-      description: [this.step ? this.step.description : ''],
-      sourceQuery: [this.step ? this.step.options.sourceQuery : ''],
-      sourceCollection: [this.step ? this.step.options.sourceCollection : ''],
-      targetEntity: [this.step ? this.step.options.targetEntity : ''],
-      sourceDatabase: [this.step ? this.step.options.sourceDatabase : ''],
-      targetDatabase: [this.step ? this.step.options.targetDatabase : '']
+      description: [(this.step && this.step.options.description) ? this.step.description : ''],
+      sourceQuery: [(this.step && this.step.options.sourceQuery) ? this.step.options.sourceQuery : ''],
+      sourceCollection: [(this.step && this.step.options.sourceCollection) ? this.step.options.sourceCollection : ''],
+      targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
+      sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
+      targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : '']
     }, { validators: NewStepDialogValidator });
 
     if (this.step && this.step.options && this.step.options.sourceDatabase)
