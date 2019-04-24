@@ -120,6 +120,7 @@
                     mat-raised-button
                     color="primary"
                     class="run-flow-button"
+                    [disabled]="flow.steps.length ? false : true"
                     (click)="openRunDialog(flow)"
             >
               <span>RUN</span>
