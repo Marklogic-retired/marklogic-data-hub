@@ -48,7 +48,6 @@ import java.util.stream.Collectors;
 @Component
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
-
     @Autowired
     private HubConfig hubConfig;
 
@@ -189,7 +188,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public Mapping getMapping(String mappingName) {
-
         Mapping foundMap = getMappingVersion(mappingName);
         if(foundMap != null){
             return foundMap;
@@ -198,11 +196,12 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         }
     }
 
-    @Override public Mapping getMapping(String mappingName, int version) {
-
+    @Override public Mapping getMapping(String mappingName, int version, boolean createIfNotExisted) {
         Mapping foundMap = getMappingVersion(mappingName, version);
         if(foundMap != null){
             return foundMap;
+        } else if (createIfNotExisted) {
+            return Mapping.create(mappingName);
         } else {
             throw new DataHubProjectException("Mapping not found in project: " + mappingName);
         }
@@ -213,13 +212,13 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Mapping mapping = getMapping(mappingName);
         String jsonMap = null;
         if(mapping != null){
-                jsonMap = mapping.serialize();
+            jsonMap = mapping.serialize();
         }
         return jsonMap;
     }
 
-    @Override public String getMappingAsJSON(String mappingName, int version) {
-        Mapping mapping = getMapping(mappingName, version);
+    @Override public String getMappingAsJSON(String mappingName, int version, boolean createIfNotExisted) {
+        Mapping mapping = getMapping(mappingName, version, createIfNotExisted);
         String jsonMap = null;
         if(mapping != null){
             jsonMap = mapping.serialize();

@@ -108,7 +108,7 @@ public interface MappingManager {
      * @param version - the version of the mapping
      * @return Mapping object for the defined map
      */
-    Mapping getMapping(String mappingName, int version);
+    Mapping getMapping(String mappingName, int version, boolean createIfNotExisted);
 
     /**
      * Returns a mapping based on the provided name as JSON string
@@ -123,6 +123,6 @@ public interface MappingManager {
      * @param version - the version number of the mapping
      * @return string json respresentation of the mapping object
      */
-    String getMappingAsJSON(String mappingName, int version);
+    String getMappingAsJSON(String mappingName, int version, boolean createIfNotExisted);
 
 }
