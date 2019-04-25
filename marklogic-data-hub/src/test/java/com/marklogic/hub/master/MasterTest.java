@@ -117,7 +117,7 @@ public class MasterTest extends HubTestBase {
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
                     "\"input_file_type\":\"\\\"documents\\\"\"," +
                     "\"document_type\":\"\\\"json\\\"\"," +
-                    "\"output_collections\":\"\\\"default-ingestion\\\"\"," +
+                    "\"output_collections\":\"\\\"default-ingestion,mdm-content\\\"\"," +
                     "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
                     "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"" +
                     "}";
