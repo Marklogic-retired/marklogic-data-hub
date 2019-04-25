@@ -120,7 +120,7 @@ export class EditFlowComponent implements OnInit {
       // TODO add response check
       // TODO optimize run polling DHFPROD-2241
       console.log('run flow resp', resp);
-      this.running = timer(0, 500)
+      this.running = timer(0, 1000)
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           console.log('flow poll', poll);
           this.flow = Flow.fromJSON(poll);

@@ -120,10 +120,20 @@
                     mat-raised-button
                     color="primary"
                     class="run-flow-button"
+                    *ngIf="checkRunStatus(flow)"
                     [disabled]="flow.steps.length ? false : true"
                     (click)="openRunDialog(flow)"
             >
               <span>RUN</span>
+            </button>
+            <button class="flow-run"
+                    mat-raised-button
+                    color="primary"
+                    *ngIf="!checkRunStatus(flow)"
+                    class="stop-flow-button"
+                    (click)="openStopDialog(flow)"
+            >
+              <span>STOP</span>
             </button>
             <mat-icon class="flow-menu" [matMenuTriggerFor]="flowMenu" [matMenuTriggerData]="{flow: flow}"
                       disableRipple>more_vert</mat-icon>
