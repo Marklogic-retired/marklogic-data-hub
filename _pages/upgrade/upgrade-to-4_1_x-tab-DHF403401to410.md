@@ -25,23 +25,7 @@ The notes and steps in this tab are for the following upgrade paths:
 
 ### Procedure
 
-1. In your `build.gradle` file, replace all occurrences of your old DHF version number with `4.1.0`.
-
-    **Example:** In the `plugins` section and the `dependencies` section,
-
-      ```
-      plugins {
-          id 'net.saliman.properties' versi Dn '1.4.6'
-          id 'com.marklogic.ml-data-hub' version '4.1.0'
-      }
-      ...
-      dependencies {
-        compile 'com.marklogic:marklogic-data-hub:4.1.0'
-        compile 'com.marklogic:marklogic-xcc:9.0.6'
-      }
-      ```
-
-      <!-- See build script. -->
+1. {% include_relative conref-build-gradle-ver.md ver=site.data.global.hub_version_41x %}
 
 1. {% include ostabs-run-gradle-step.html grtask="hubUpdate -i" %}
 

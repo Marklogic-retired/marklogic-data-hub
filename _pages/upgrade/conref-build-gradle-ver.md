@@ -4,7 +4,7 @@ In your `build.gradle` file, replace all occurrences of your old DHF version num
 
       ```
       plugins {
-          id 'net.saliman.properties' versi Dn '1.4.6'
+          id 'net.saliman.properties' version '1.4.6'
           id 'com.marklogic.ml-data-hub' version '{{ include.ver }}'
       }
       ...
