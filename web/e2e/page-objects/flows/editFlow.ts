@@ -43,7 +43,7 @@ export class EditFlow extends AppPage {
   }
 
   get runFlowStatus() {
-    return element(by.css("a.ng-star-inserted"));
+    return element(by.id("latest-job-status"));
   }
 
   get jobStartedTimestamp() {
