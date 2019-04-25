@@ -14,7 +14,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 export class IngestComponent implements OnInit {
   @Input() step: any;
   @Input() flow: any;
-  @Input() projectDirectory: any;
+  @Input() projectDirectory: string;
   @Output() saveStep = new EventEmitter();
   constructor(
   ) {
