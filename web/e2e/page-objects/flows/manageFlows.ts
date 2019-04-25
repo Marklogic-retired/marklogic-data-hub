@@ -216,14 +216,14 @@ export class ManageFlows extends AppPage {
    */
 
   async clickPaginationDropDown() {
-    return await element(by.id("mat-select-0")).click();
+    return await element(by.id("mat-select-arrow")).click();
   }
 
-  itemsPerPage(value: number) {
-    return element(by.css(`mat-option[ng-reflect-value="${value}"]`));
+  itemsPerPage(value: string) {
+    return element(by.cssContainingText("mat-option .mat-option-text", value));
   }
 
-  async selectItemsPerPage(value: number) {
+  async selectItemsPerPage(value: string) {
     let pageNum = this.itemsPerPage(value);
     return await pageNum.click();
   }
@@ -233,7 +233,7 @@ export class ManageFlows extends AppPage {
    * @param option = ["Previous page"/"Next page"]
    */
   async clickPageNavigation(option: string) {
-    return await element(by.css(`button[ng-reflect-message="${option}"]`)).click();
+    return await element(by.css(`button[aria-label="${option}"]`)).click();
   }
 
   get pageRangeText() {
