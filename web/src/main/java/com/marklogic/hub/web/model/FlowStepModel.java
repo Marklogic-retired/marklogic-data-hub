@@ -171,8 +171,10 @@ public class FlowStepModel {
                 sm.id = step.getName() + "-" + stepType;
             }
             sm.stepDefinitionType = stepType;
-            if (step.getOptions() != null && step.getOptions().get("targetEntity") != null) {
-                sm.targetEntity = ((TextNode) step.getOptions().get("targetEntity")).asText();
+            if (step.getOptions() != null && step.getOptions().get("targetEntity") != null &&
+                                                step.getOptions().get("targetEntity") instanceof TextNode) {
+                TextNode node = (TextNode) step.getOptions().get("targetEntity");
+                sm.targetEntity = node.asText();
             }
             stepModels.add(sm);
         });
