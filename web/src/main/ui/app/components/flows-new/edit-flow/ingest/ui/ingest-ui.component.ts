@@ -84,7 +84,6 @@ export class IngestUiComponent implements OnInit {
 
   ngOnInit(): void {
     this.folder = this.step.fileLocations.inputFilePath;
-    console.log('init done')
   }
 
   changeFolder(folder) {
