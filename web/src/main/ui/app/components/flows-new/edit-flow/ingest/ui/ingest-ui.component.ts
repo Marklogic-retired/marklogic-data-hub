@@ -88,8 +88,10 @@ export class IngestUiComponent implements OnInit {
   }
 
   changeFolder(folder) {
-    this.folder = folder.absolutePath;
-    this.onChange();
+    if (this.folder !== folder.absolutePath) {
+      this.folder = folder.absolutePath;
+      this.onChange();
+    }
   }
 
   onKeyChange(event) {
