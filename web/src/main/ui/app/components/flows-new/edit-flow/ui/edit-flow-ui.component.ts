@@ -59,6 +59,7 @@ export class EditFlowUiComponent {
       }
     });
   }
+
   openRunDialog(): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
@@ -77,6 +78,19 @@ export class EditFlowUiComponent {
       }
     });
   }
+  openStopDialog(flow: Flow): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: `${flow.name} is running a job`, confirmationMessage: `Stop the job for "${flow.name}"?`}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        this.stopFlow.emit(flow.id);
+      }
+    });
+  }
+
   deleteStepDialog(step: Step): void {
     console.log('delete step', step);
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {

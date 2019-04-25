@@ -83,7 +83,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
     this.runFlow.emit();
   }
   stopClicked(): void {
-    this.stopFlow.emit(this.flow.id);
+    this.stopFlow.emit(this.flow);
   }
   deleteStepClicked(step): void {
     this.deleteStep.emit(step);
