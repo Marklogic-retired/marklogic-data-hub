@@ -16,6 +16,7 @@ export class StepComponent implements OnChanges {
   @Input() databases: any;
   @Input() collections: any;
   @Input() entities: any;
+  @Input() projectDirectory: any;
   @Input() selectedStepId: string;
   @Output() updateStep = new EventEmitter();
 
