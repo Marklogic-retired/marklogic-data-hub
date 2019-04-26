@@ -106,9 +106,10 @@ public interface MappingManager {
      * Returns a mapping based on the provided name
      * @param mappingName - name of the map
      * @param version - the version of the mapping
+     * @param createIfNotExisted - create mapping object if true, otherwise throws exception
      * @return Mapping object for the defined map
      */
-    Mapping getMapping(String mappingName, int version);
+    Mapping getMapping(String mappingName, int version, boolean createIfNotExisted);
 
     /**
      * Returns a mapping based on the provided name as JSON string
@@ -121,8 +122,9 @@ public interface MappingManager {
      * Returns a mapping based on the provided name as JSON string
      * @param mappingName - name of the mapping
      * @param version - the version number of the mapping
+     * @param createIfNotExisted - create mapping object if true, otherwise throws exception
      * @return string json respresentation of the mapping object
      */
-    String getMappingAsJSON(String mappingName, int version);
+    String getMappingAsJSON(String mappingName, int version, boolean createIfNotExisted);
 
 }

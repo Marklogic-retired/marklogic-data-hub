@@ -70,7 +70,7 @@ public class MappingManagerService {
         return mappings;
     }
 
-    public MappingModel createMapping(MappingModel newMapping) throws IOException {
+    private MappingModel createMapping(MappingModel newMapping) throws IOException {
         scaffolding.createMappingDir(newMapping.getName());
         Path dir = hubConfig.getHubMappingsDir().resolve(newMapping.getName());
         Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
@@ -78,14 +78,14 @@ public class MappingManagerService {
         if (dir.toFile().exists()) {
             watcherService.watch(dir.toString());
         }
-        return getMapping(mapping.getName());
+        return getMapping(mapping.getName(), false);
     }
 
     public MappingModel saveMapping(String mapName, JsonNode jsonMapping) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping = null;
-        existingMapping = getMapping(mapName);
+        existingMapping = getMapping(mapName, false);
         if (existingMapping != null) {
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
         }
@@ -105,10 +105,10 @@ public class MappingManagerService {
         }
     }
 
-    public MappingModel getMapping(String mappingName) throws IOException {
+    public MappingModel getMapping(String mappingName, boolean createIfNotExisted) throws IOException {
         try{
-           ObjectMapper objectMapper = new ObjectMapper();
-            return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1)));
+            ObjectMapper objectMapper = new ObjectMapper();
+            return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1, createIfNotExisted)));
         }catch(DataHubProjectException e) {
             logger.error("Mapping not found in project: " + mappingName);
             return null;
