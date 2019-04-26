@@ -95,7 +95,10 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   openFlowSettingsDialog(flowToEdit: Flow): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
-      data: {flow: flowToEdit}
+      data: {
+        flow: flowToEdit,
+        flowNames: _.map(this.flows, flow => flow.name)
+      }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
