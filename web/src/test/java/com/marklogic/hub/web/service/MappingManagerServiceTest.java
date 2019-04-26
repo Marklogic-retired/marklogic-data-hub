@@ -19,6 +19,7 @@ package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
@@ -105,6 +106,11 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         assertEquals(0, mappingModel.getVersion());
 
         // Second save
+        mappingManagerService.saveMapping(mappingName, jsonNode);
+        mappingModel = mappingManagerService.getMapping(mappingName, false);
+        assertEquals(0, mappingModel.getVersion());
+
+        ((ObjectNode) jsonNode).put("description", "someinfo");
         mappingManagerService.saveMapping(mappingName, jsonNode);
         mappingModel = mappingManagerService.getMapping(mappingName, false);
         assertEquals(1, mappingModel.getVersion());

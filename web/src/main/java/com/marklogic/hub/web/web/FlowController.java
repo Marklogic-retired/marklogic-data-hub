@@ -108,6 +108,13 @@ public class FlowController {
         return flowManagerService.getSteps(flowName);
     }
 
+    @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getStep(@PathVariable String flowName, @PathVariable String stepId) {
+        StepModel stepModel = flowManagerService.getStep(flowName, stepId);
+        return new ResponseEntity<>(stepModel, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {

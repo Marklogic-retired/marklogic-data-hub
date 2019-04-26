@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
-
 import java.util.Iterator;
 
 public class StepModel {
@@ -146,7 +145,11 @@ public class StepModel {
             step.setId(jsonObject.getString("id"));
         }
         else {
-            step.setId(step.getName() + "-" + step.getStepDefinitionType());
+            if (step.getName().startsWith("default-")) {
+                step.setId(step.getName());
+            } else {
+                step.setId(step.getName() + "-" + step.getStepDefinitionType());
+            }
         }
 
         step.setDescription(jsonObject.getString("description"));

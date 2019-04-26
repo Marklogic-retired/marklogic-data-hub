@@ -22,6 +22,7 @@ import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class Step {
     private String name;
@@ -148,5 +149,40 @@ public class Step {
         }
 
         return step;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+        Step that = (Step) o;
+        if (!name.equalsIgnoreCase(that.name)) return false;
+        if (StringUtils.isNotEmpty(description) ? !description.equals(that.description) : StringUtils.isNotEmpty(that.description)) {
+            return false;
+        }
+        if (batchSize != that.batchSize || retryLimit != that.retryLimit || !stepDefinitionType.equals(that.stepDefinitionType)) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(stepDefinitionName) ? !stepDefinitionName.equals(that.stepDefinitionName) : StringUtils.isNotEmpty(that.stepDefinitionName)) {
+            return false;
+        }
+        if (options == null && that.options != null || options != null && that.options == null || options.size() != that.options.size()) {
+            return false;
+        }
+        if (options != null && that.options != null) {
+            if (!options.entrySet().stream().allMatch(e -> e.getValue() instanceof JsonNode && ((JsonNode) e.getValue()).equals(that.options.get(e.getKey())))) {
+                return false;
+            }
+        }
+        if (customHook == null && that.customHook != null || customHook != null && that.customHook == null ||
+            !customHook.equals(that.customHook)) {
+            return false;
+        }
+
+        return true;
     }
 }
