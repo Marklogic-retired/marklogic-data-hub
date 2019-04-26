@@ -84,12 +84,13 @@ export class IngestUiComponent implements OnInit {
 
   ngOnInit(): void {
     this.folder = this.step.fileLocations.inputFilePath;
-    console.log('init done')
   }
 
   changeFolder(folder) {
-    this.folder = folder.absolutePath;
-    this.onChange();
+    if (this.folder !== folder.absolutePath) {
+      this.folder = folder.absolutePath;
+      this.onChange();
+    }
   }
 
   onKeyChange(event) {

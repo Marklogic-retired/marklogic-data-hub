@@ -182,7 +182,7 @@ public class MappingManagerTest extends HubTestBase {
         //add a new version of the map
         copySecondTestMap();
         //get an older version of the mapping
-        Mapping testMap = mappingManager.getMapping(mappingName, 1);
+        Mapping testMap = mappingManager.getMapping(mappingName, 1, false);
         assertTrue(testMap.getVersion() == 1);
     }
 

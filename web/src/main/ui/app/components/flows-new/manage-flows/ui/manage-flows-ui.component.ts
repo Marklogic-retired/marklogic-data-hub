@@ -20,9 +20,11 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
   @Output() runFlow = new EventEmitter();
+  @Output() stopFlow = new EventEmitter();
   @Output() redeployModules = new EventEmitter();
 
   dataSource: MatTableDataSource<Flow>;
+  runningStatus = false;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -111,6 +113,19 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openStopDialog(flow: Flow): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: `${flow.name} is running a job`, confirmationMessage: `Stop the job for "${flow.name}"?`}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!!result){
+        this.stopFlow.emit(flow.id);
+      }
+    });
+  }
+
   renderRows(): void {
     this.updateDataSource();
     this.table.renderRows();
@@ -122,4 +137,20 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   formatStatus(status):string {
     return _.capitalize(status.replace(/_/g,' ').replace(/-/g,' '));
   }
+
+  checkRunStatus(flow: Flow): boolean {
+    if ( flow.latestJob && flow.latestJob.status ) {
+      let runStatus = flow.latestJob.status.replace('_', ' ');
+      runStatus = runStatus.replace('-', ' ');
+      runStatus = runStatus.split(' ');
+      if ( runStatus[0] === 'running' ) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  }
+
 }

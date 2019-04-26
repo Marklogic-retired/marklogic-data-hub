@@ -9,7 +9,8 @@
     "targetDatabase": "data-hub-FINAL",
     "sourceQuery": "cts.collectionQuery('default-ingestion')",
     "collections": [
-      "default-mapping"
+      "default-mapping",
+      "mdm-content"
     ]
   }
 }

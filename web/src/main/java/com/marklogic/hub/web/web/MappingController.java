@@ -20,16 +20,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.web.model.MappingModel;
 import com.marklogic.hub.web.service.MappingManagerService;
-import com.marklogic.hub.web.model.MappingModel;
-import com.marklogic.hub.web.service.MappingManagerService;
+import java.io.IOException;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/api/current-project")
@@ -61,8 +58,9 @@ public class MappingController {
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getMapping(
-        @PathVariable String mapName) throws ClassNotFoundException, IOException {
-        MappingModel mappingModel = mappingManagerService.getMapping(mapName);
+        @PathVariable String mapName,
+        @RequestParam(value = "createIfNotExisted", required = false) Boolean createIfNotExisted) throws IOException {
+        MappingModel mappingModel = mappingManagerService.getMapping(mapName, createIfNotExisted);
         return (mappingModel == null) ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(mappingModel.toJson(), HttpStatus.OK);
     }
 
@@ -70,7 +68,7 @@ public class MappingController {
     @ResponseBody
     public ResponseEntity<?> addMapping(
         @PathVariable String mapName,
-        @RequestBody JsonNode mapping) throws ClassNotFoundException, IOException {
+        @RequestBody JsonNode mapping) throws IOException {
         mappingManagerService.saveMapping(mapName, mapping);
         return new ResponseEntity<>(HttpStatus.OK);
     }

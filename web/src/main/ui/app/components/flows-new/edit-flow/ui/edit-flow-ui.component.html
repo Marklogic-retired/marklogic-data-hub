@@ -10,7 +10,7 @@
     [stepsArray]="stepsArray"
     (newStep)="openStepDialog($event)"
     (runFlow)="openRunDialog(flow)"
-    (stopFlow)="stopFlow.emit($event)"
+    (stopFlow)="openStopDialog($event)"
     (deleteStep)="deleteStepDialog($event)"
     (editFlow)="openFlowSettingsDialog()"
     (stepSelected)="stepSelected.emit($event)"
@@ -24,6 +24,7 @@
         [databases]="databases" 
         [collections]="collections" 
         [entities]="entities"
+        [projectDirectory]="projectDirectory"
         (updateStep)="updateStep($event)"
       ></app-step>
     </cdk-step>

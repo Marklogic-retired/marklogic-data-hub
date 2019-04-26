@@ -1,13 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { timer } from 'rxjs';
-import { Flow } from "../models/flow.model";
-import { Step } from '../models/step.model';
-import { ProjectService } from '../../../services/projects';
-import { ManageFlowsService } from "../services/manage-flows.service";
-import { EntitiesService } from '../../../models/entities.service';
-import { Entity } from '../../../models';
-import { StepType } from '../models/step.model';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {timer} from 'rxjs';
+import {Flow} from "../models/flow.model";
+import {StepType} from '../models/step.model';
+import {ProjectService} from '../../../services/projects';
+import {ManageFlowsService} from "../services/manage-flows.service";
+import {EntitiesService} from '../../../models/entities.service';
+import {Entity} from '../../../models';
 import * as _ from "lodash";
 
 @Component({
@@ -128,7 +127,7 @@ export class EditFlowComponent implements OnInit {
       // TODO add response check
       // TODO optimize run polling DHFPROD-2241
       console.log('run flow resp', resp);
-      this.running = timer(0, 500)
+      this.running = timer(0, 1000)
         .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
           console.log('flow poll', poll);
           this.flow = Flow.fromJSON(poll);
@@ -215,6 +214,13 @@ export class EditFlowComponent implements OnInit {
     });
   }
   setStepDefaults(step): void {
-    step.options = Object.assign({ 'collections': [`${step.name}`] }, step.options);
+    const defaultCollections = [`${step.name}`];
+    if (step.stepDefinitionType === StepType.MAPPING) {
+      defaultCollections.push('mdm-content');
+    }
+    if (step.options && step.options.targetEntity) {
+      defaultCollections.push(step.options.targetEntity);
+    }
+    step.options = Object.assign({ 'collections': defaultCollections }, step.options);
   }
 }

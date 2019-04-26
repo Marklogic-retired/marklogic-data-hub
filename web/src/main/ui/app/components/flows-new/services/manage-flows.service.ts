@@ -82,8 +82,9 @@ export class ManageFlowsService {
     let parsedMap = JSON.parse(map);
     return this.http.post('api/current-project/mappings/' + mapName, parsedMap);
   }
+
   getMap(mapName) {
-    return this.http.get('api/current-project/mappings/' + mapName);
+    return this.http.get('api/current-project/mappings/' + mapName + "?createIfNotExisted=true");
   }
   deleteMap(mapName) {
     return this.http.delete('api/current-project/mappings/' + mapName);

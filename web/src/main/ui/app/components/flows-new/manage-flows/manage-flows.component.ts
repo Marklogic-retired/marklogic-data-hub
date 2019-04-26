@@ -15,6 +15,7 @@ import * as _ from "lodash";
       (deleteFlow)="this.deleteFlow($event)"
       (saveFlow)="this.saveFlow($event)"
       (runFlow)="this.runFlow($event)"
+      (stopFlow)="this.stopFlow($event)"
       (redeployModules)="this.redeployModules()"
     >
     </flows-page-ui>
@@ -74,7 +75,7 @@ export class ManageFlowsComponent implements OnInit {
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
       // TODO optimize run polling DHFPROD-2241
-      this.running = timer(0, 500)
+      this.running = timer(0, 1000)
         .subscribe(() =>  this.manageFlowsService.getFlowById(runObject.id).subscribe( poll => {
           const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
           this.flows[flowIndex] = Flow.fromJSON(poll);
@@ -89,6 +90,14 @@ export class ManageFlowsComponent implements OnInit {
           this.flowsPageUi.renderRows();
         })
       );
+    });
+  }
+
+  stopFlow(flowId) {
+    this.manageFlowsService.stopFlow(flowId).subscribe(resp => {
+      console.log('stop flow response', resp);
+      this.getFlows();
+      this.running.unsubscribe();
     });
   }
 

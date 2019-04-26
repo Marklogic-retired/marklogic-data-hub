@@ -1,6 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {ProjectService} from "../../../../services/projects";
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-ingest',
@@ -16,28 +14,14 @@ import * as _ from 'lodash';
 export class IngestComponent implements OnInit {
   @Input() step: any;
   @Input() flow: any;
+  @Input() projectDirectory: string;
   @Output() saveStep = new EventEmitter();
-
-  projectPath: string;
-
   constructor(
-    private projects: ProjectService
   ) {
   }
 
   ngOnInit(): void {
-    this.projects.getProjects().subscribe(
-      ({projects, lastProject}) => {
-        console.log('Projects end point: ', projects, lastProject);
-        const project = _.find(projects, pr => pr.id === lastProject);
-        if (project) {
-          this.projectPath = project.path;
-        }
-        this.checkDefaults();
-      },
-      () => {
-        this.checkDefaults();
-      });
+    this.checkDefaults();
   }
 
   /*
@@ -58,7 +42,7 @@ export class IngestComponent implements OnInit {
     } = this.step.options;
 
     const fileLocations = {
-      inputFilePath: inputFilePath || this.projectPath || '.',
+      inputFilePath: inputFilePath || this.projectDirectory || '.',
       inputFileType: inputFileType || 'json',
       outputURIReplacement: outputURIReplacement || ''
     };

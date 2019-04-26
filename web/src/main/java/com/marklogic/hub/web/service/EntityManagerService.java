@@ -251,7 +251,7 @@ public class EntityManagerService {
         newFlow.entityName = entityName;
         if(newFlow.mappingName != null) {
             try {
-                String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
+                String mappingName = mappingManagerService.getMapping(newFlow.mappingName, false).getVersionedName();
                 newFlow.mappingName = mappingName;
             } catch (DataHubProjectException e) {
                 throw new DataHubProjectException("Mapping not found in project: " + newFlow.mappingName);
