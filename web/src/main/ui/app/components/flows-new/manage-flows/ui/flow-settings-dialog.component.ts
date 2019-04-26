@@ -25,7 +25,7 @@ export class FlowSettingsDialogComponent implements OnInit {
     this.form = this.fb.group({
       name: [this.data.flow ? this.data.flow.name : '', [
         Validators.required,
-        Validators.pattern('[a-zA-Z][a-zA-Z0-9\_\-]*'),
+        Validators.pattern('[a-zA-Z].*'),
         (control: FormControl): { [key: string]: any } | null => {
           const forbiddenName = this.data.flowNames.find((name => (name === control.value && (this.data.flow ? this.data.flow.name !== name : true)) ));
           return forbiddenName ? {'forbiddenName': {value: control.value}} : null;
