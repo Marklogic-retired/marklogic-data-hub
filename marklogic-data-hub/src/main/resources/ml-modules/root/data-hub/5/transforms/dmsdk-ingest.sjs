@@ -15,11 +15,11 @@ function transform(context, params, content) {
   let stepObj = flow.steps[step];
   if(!stepObj) {
     datahub.debug.log({message: params, type: 'error'});
-    fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is missing in  " + flowName);
+    fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + " is missing in  " + flowName);
   }
   if(! stepObj.stepDefinitionType.toLowerCase() === "ingestion"){
     datahub.debug.log({message: params, type: 'error'});
-    fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + "is not an ingestion step");
+    fn.error(null, "RESTAPI-SRVEXERR", "The specified step "+ step + " is not an ingestion step");
   }
 
   let jobId = params["job-id"];
