@@ -166,4 +166,12 @@ public interface Flow {
      * @return this mapping
      */
     Flow deserialize(JsonNode json);
+
+    /**
+     * Get step Info by step id
+     *
+     * @param stepId
+     * @return
+     */
+    Step getStepById(String stepId);
 }

@@ -18,12 +18,13 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class FlowImpl implements Flow {
     public final static int DEFAULT_BATCH_SIZE = 100;
@@ -168,5 +169,37 @@ public class FlowImpl implements Flow {
         }
 
         return this;
+    }
+
+    @Override
+    public Step getStepById(String stepId) {
+        if (StringUtils.isEmpty(stepId)) {
+            return null;
+        }
+        String stepType = null;
+        String stepName = null;
+        //get stepDefintionType from stepId
+        if (stepId.endsWith(StepDefinitionType.INGESTION.toString())) {
+            stepType = StepDefinitionType.INGESTION.toString();
+        } else if (stepId.endsWith(StepDefinitionType.MAPPING.toString())) {
+            stepType = StepDefinitionType.MAPPING.toString();
+        } else if (stepId.endsWith(StepDefinitionType.MASTERING.toString())) {
+            stepType = StepDefinitionType.MASTERING.toString();
+        }
+        if (stepType != null) {
+            if (stepId.startsWith("default-")) {
+                stepName = stepId;
+            } else if (stepId.length() > stepType.length() + 1) {
+                stepName = stepId.substring(0, stepId.length() - stepType.length() - 1);
+            }
+        }
+        if (!StringUtils.isEmpty(stepName) && !StringUtils.isEmpty(stepType)) {
+            String finalStepName = stepName;
+            String finalStepType = stepType;
+            return this.steps.values().stream()
+                .filter(s -> s.getName().equalsIgnoreCase(finalStepName) && s.getStepDefinitionType().toString().equalsIgnoreCase(finalStepType))
+                .findFirst().get();
+        }
+        return null;
     }
 }

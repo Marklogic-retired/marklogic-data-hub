@@ -168,9 +168,28 @@ public class FlowManagerService {
         return stepModelList;
     }
 
+    public StepModel getStep(String flowName, String stepId) {
+        Flow flow = flowManager.getFlow(flowName);
+        if (flow == null) {
+            throw new NotFoundException(flowName + " not found!");
+        }
+        Step step = flow.getStepById(stepId);
+        if (step == null) {
+            throw new NotFoundException(stepId + " not found!");
+        }
+        StepModel stepModel = StepModel.transformToWebStepModel(step);
+        return stepModel;
+    }
+
     public StepModel createStep(String flowName, Integer stepOrder, String stepId, String stringStep) {
         StepModel stepModel;
         JsonNode stepJson;
+        Flow flow = flowManager.getFlow(flowName);
+        Step existingStep = flow.getStepById(stepId);
+        if (existingStep == null && !StringUtils.isEmpty(stepId)) {
+            throw new NotFoundException("Step " + stepId + " Not Found");
+        }
+
         try {
             stepJson = JSONObject.readInput(stringStep);
             stepModel = StepModel.fromJson(stepJson);
@@ -182,7 +201,6 @@ public class FlowManagerService {
             throw new BadRequestException();
         }
 
-        Flow flow = flowManager.getFlow(flowName);
         Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
 
         if (step.getStepDefinitionType() == null) {
@@ -266,8 +284,11 @@ public class FlowManagerService {
             }
         }
 
-        flowManager.saveFlow(flow);
+        if (existingStep != null && existingStep.equals(step)) {
+            return StepModel.transformToWebStepModel(existingStep);
+        }
 
+        flowManager.saveFlow(flow);
         return StepModel.transformToWebStepModel(step);
     }
 
