@@ -19,7 +19,7 @@
 
     <div class="content-card">
 
-      <div id="job-summary" *ngIf="job">
+      <div id="job-summary" [ngClass]="{hidden: !job}">
         <section class="name">
           <div class="flow-name">
             {{job.flowName}}
@@ -40,14 +40,10 @@
         </section>
         <section>
           <div class="committed">
-            <span class="label medium">Committed</span>
-            <!-- TODO link to committed docs from a job -->
-            <!-- <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
+            <span class="label">Committed</span>
+            <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{  createdByJob:job.id, d: targetDatabase }">
               {{job.successfulEvents | number}}
-            </a> -->
-            <span>
-              {{job.successfulEvents}}
-            </span>
+            </a>
           </div>
           <div class="errors">
             <span class="label medium">Failed</span>
@@ -131,13 +127,9 @@
         <ng-container matColumnDef="committed">
           <mat-header-cell id="step-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="step-committed" *matCellDef="let step">
-            <!-- TODO link to committed docs from a job -->
-            <!-- <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
+            <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{ job:job.id, d:step.targetDatabase }">
               {{step.successfulEvents | number}}
-            </a> -->
-            <span>
-              {{step.successfulEvents}}
-            </span>
+            </a>
           </mat-cell>
         </ng-container>
 
