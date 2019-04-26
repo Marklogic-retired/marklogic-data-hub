@@ -2,4 +2,9 @@
   <constraint name="Collection">
     <collection/>
   </constraint>
+  <constraint name="createdByJob">
+    <value>
+      <field name="createdByJob"/>
+    </value>
+  </constraint>
 </options>

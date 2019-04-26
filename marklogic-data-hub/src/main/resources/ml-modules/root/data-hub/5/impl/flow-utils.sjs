@@ -505,7 +505,7 @@ class FlowUtils {
     return headers;
   }
 
-  createMetadata(metaData = {}, flowName, stepName) {
+  createMetadata(metaData = {}, flowName, stepName, jobId) {
     if (!metaData) {
       metaData = {};
     }
@@ -513,6 +513,7 @@ class FlowUtils {
     metaData[this.consts.CREATED_BY] = fn.string(this.evalSubstituteVal(this.consts.CREATED_BY));
     metaData[this.consts.CREATED_IN_FLOW] = flowName;
     metaData[this.consts.CREATED_BY_STEP] = stepName;
+    metaData[this.consts.CREATED_BY_JOB] = jobId;
 
     return metaData;
   }
