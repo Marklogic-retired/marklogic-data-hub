@@ -25,7 +25,7 @@ export class FlowSettingsDialogComponent implements OnInit {
     this.form = this.fb.group({
       name: [this.data.flow ? this.data.flow.name : '', [
         Validators.required,
-        Validators.pattern('[a-zA-Z].*'),
+        Validators.pattern('[a-zA-Z][a-zA-Z0-9\_\-]*'),
         (control: FormControl): { [key: string]: any } | null => {
           const forbiddenName = this.data.flowNames.find((name => (name === control.value && (this.data.flow ? this.data.flow.name !== name : true)) ));
           return forbiddenName ? {'forbiddenName': {value: control.value}} : null;
@@ -103,7 +103,7 @@ export class FlowSettingsDialogComponent implements OnInit {
   getNameErrorMessage() {
     const errorCodes = [
       {code: 'required', message: 'You must enter a value.'},
-      {code: 'pattern', message: 'Flow name must start with a letter.'},
+      {code: 'pattern', message: 'Only letters, numbers, \"_\" and \"-\" allowed and must start with a letter.'},
       {code: 'forbiddenName', message: 'This flow name already exists.'}
     ];
     const nameCtrl = this.form.get('name');
