@@ -47,6 +47,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   }
   let properties = definition.properties;
   for (let property in properties) {
+    if (properties.hasOwnProperty(property)) {
     let prop = properties[property];
     let dataType = prop["datatype"];
     let valueSource = null;
@@ -55,30 +56,30 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')){
         connector += '/';
       }
-      if(mappingProperties[property].sourcedFrom.indexOf(':') === -1 ) {
+      if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
         connector += '*:';
       }
       valueSource = content.xpath(sourceContext + connector + mappingProperties[property].sourcedFrom);
-    } else{
-      if(sourceContext[sourceContext.length-1] !== '/' &&  !property.startsWith('/') && !property.startsWith('[')){
+    } else {
+      if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
         connector += '/';
       }
-      if(property.indexOf(':') === -1 ) {
+      if (property.indexOf(':') === -1) {
         connector += '*:';
       }
       valueSource = content.xpath(sourceContext + connector + property);
     }
     if (dataType !== 'array') {
-        valueSource = fn.head(valueSource);
+      valueSource = fn.head(valueSource);
     }
     let value = null;
     if (!dataType && prop['$ref']) {
       let refArr = prop['$ref'].split('/');
       let refModelName = refArr[refArr.length - 1];
-      if(valueSource) {
+      if (valueSource) {
         let itemSource = new NodeBuilder();
         itemSource.addNode(valueSource);
-        value = { refModelName : extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
+        value = {refModelName: extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
       } else {
         value = null;
       }
@@ -86,7 +87,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       let items = prop['items'];
       let itemsDatatype = items['datatype'];
       let valueArray = [];
-      if(!itemsDatatype && items['$ref']) {
+      if (!itemsDatatype && items['$ref']) {
         let refArr = items['$ref'].split('/');
         let refModelName = refArr[refArr.length - 1];
         for (const item of Sequence.from(valueSource)) {
@@ -96,14 +97,14 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
           valueArray.push(extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode()));
         }
       } else {
-        for(const val of Sequence.from(valueSource)){
+        for (const val of Sequence.from(valueSource)) {
           valueArray.push(castDataType(dataType, val.valueOf()));
         }
       }
       value = valueArray;
 
     } else {
-      if(valueSource) {
+      if (valueSource) {
         try {
           value = castDataType(dataType, valueSource);
         } catch (e) {
@@ -111,10 +112,11 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
         }
       }
     }
-    if(required.indexOf(property) > -1 && !value) {
-      throw Error('The property: '+property+' is required property on the model: '+modelName+' and must have a valid value. Value was: '+valueSource+'.');
+    if (required.indexOf(property) > -1 && !value) {
+      throw Error('The property: ' + property + ' is required property on the model: ' + modelName + ' and must have a valid value. Value was: ' + valueSource + '.');
     }
     instance[property] = value;
+  }
   }
 
   return instance;

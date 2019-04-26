@@ -37,7 +37,8 @@
         "targetDatabase": "%%mlFinalDbName%%",
         "sourceQuery": "cts.collectionQuery('default-ingestion')",
         "collections": [
-          "default-mapping"
+          "default-mapping",
+          "mdm-content"
         ],
         "mapping": {
           "name": "mapping-name",
@@ -54,7 +55,7 @@
         "sourceDatabase": "%%mlFinalDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",
         "targetEntity": "entity-name",
-        "sourceQuery": "cts.collectionQuery('default-mapping')",
+        "sourceQuery": "cts.andQuery([cts.collectionQuery('default-mapping'),cts.collectionQuery('mdm-content')])",
         "collections": [
           "default-mastering, mastered"
         ]

@@ -12,7 +12,8 @@
       "options": {
         "outputFormat": "json",
         "collections": [
-          "default-mapping"
+          "default-mapping",
+          "mdm-content"
         ]
       }
     }
