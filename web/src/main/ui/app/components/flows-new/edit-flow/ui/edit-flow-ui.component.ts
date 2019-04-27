@@ -16,6 +16,7 @@ import { Step } from '../../models/step.model';
 export class EditFlowUiComponent {
 
   @Input() flow: Flow;
+  @Input() flowNames: string[];
   @Input() stepsArray: any;
   @Input() databases: any;
   @Input() entities: any;
@@ -107,7 +108,7 @@ export class EditFlowUiComponent {
   openFlowSettingsDialog(): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
-      data: {flow: this.flow}
+      data: {flow: this.flow, flowNames: this.flowNames}
     });
     dialogRef.afterClosed().subscribe(response => {
       if (response) {

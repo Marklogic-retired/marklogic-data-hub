@@ -3,6 +3,7 @@
   <mat-form-field layout-fill>
     <mat-label>Flow name</mat-label>
     <input id="flow-name" matInput formControlName="name" required />
+    <mat-error id="step-name-error" *ngIf="form.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
   </mat-form-field>
   <mat-form-field layout-fill>
     <mat-label>Description</mat-label>

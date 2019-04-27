@@ -1,9 +1,9 @@
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {Component, Inject, OnInit} from "@angular/core";
 import {Flow} from "../../models/flow.model";
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CustomFieldValidator} from "../../../common/form-validators/custom-field-validator";
-import {forOwn, forEach} from 'lodash';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {CustomFieldValidator} from "../../../common";
+import {forEach, forOwn} from 'lodash';
 
 @Component({
   selector: 'new-flow-dialog',
@@ -18,12 +18,19 @@ export class FlowSettingsDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<FlowSettingsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { flow: Flow }) {
+    @Inject(MAT_DIALOG_DATA) public data: { flow: Flow, flowNames: string[] }) {
   }
 
   ngOnInit() {
     this.form = this.fb.group({
-      name: [this.data.flow ? this.data.flow.name : '', Validators.required],
+      name: [this.data.flow ? this.data.flow.name : '', [
+        Validators.required,
+        Validators.pattern('[a-zA-Z][a-zA-Z0-9\_\-]*'),
+        (control: FormControl): { [key: string]: any } | null => {
+          const forbiddenName = this.data.flowNames.find((name => (name === control.value && (this.data.flow ? this.data.flow.name !== name : true)) ));
+          return forbiddenName ? {'forbiddenName': {value: control.value}} : null;
+        }
+      ]],
       description: [this.data.flow ? this.data.flow.description : ''],
       batchSize: [this.data.flow ? this.data.flow.batchSize : 100, CustomFieldValidator.number({min: 1})],
       threadCount: [this.data.flow ? this.data.flow.threadCount : 4, CustomFieldValidator.number({min: 1})]
@@ -91,5 +98,19 @@ export class FlowSettingsDialogComponent implements OnInit {
       }
     });
     return result;
+  }
+
+  getNameErrorMessage() {
+    const errorCodes = [
+      {code: 'required', message: 'You must enter a value.'},
+      {code: 'pattern', message: 'Only letters, numbers, \"_\" and \"-\" allowed and must start with a letter.'},
+      {code: 'forbiddenName', message: 'This flow name already exists.'}
+    ];
+    const nameCtrl = this.form.get('name');
+    if (!nameCtrl) {
+      return ''
+    }
+    const err = errorCodes.find( err => nameCtrl.hasError(err.code));
+    return err ? err.message : '';
   }
 }

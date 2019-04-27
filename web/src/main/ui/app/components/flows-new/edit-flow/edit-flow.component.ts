@@ -6,7 +6,7 @@ import {StepType} from '../models/step.model';
 import {ProjectService} from '../../../services/projects';
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {EntitiesService} from '../../../models/entities.service';
-import {Entity} from '../../../models/entity.model';
+import {Entity} from '../../../models';
 import * as _ from "lodash";
 
 @Component({
@@ -14,6 +14,7 @@ import * as _ from "lodash";
   template: `
   <app-edit-flow-ui
     [flow]="flow"
+    [flowNames]="flowNames"
     [stepsArray]="stepsArray"
     [databases]="databases"
     [entities]="entities"
@@ -33,6 +34,7 @@ import * as _ from "lodash";
 export class EditFlowComponent implements OnInit {
   flowId: string;
   flow: Flow;
+  flowNames: string[];
   stepsArray: any;
   selectedStepId: string;
   databases: any = {
@@ -55,6 +57,7 @@ export class EditFlowComponent implements OnInit {
 
   ngOnInit() {
     this.getFlow();
+    this.getAllFlowNames();
     this.getDbInfo();
     this.getEntities();
   }
@@ -69,6 +72,11 @@ export class EditFlowComponent implements OnInit {
         this.getSteps();
       });
     }
+  }
+  getAllFlowNames() {
+    this.manageFlowsService.getFlows().subscribe((flows: Flow[]) => {
+      this.flowNames = _.map(flows, flow => flow.name);
+    })
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
