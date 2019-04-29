@@ -28,9 +28,17 @@ export class NewStepDialogUiComponent implements OnInit {
   public stepType: typeof StepType = StepType;
   readonly stepOptions = Object.keys(this.stepType);
 
-  selectedSource = '';
+  selectedSource: string = '';
   newStepForm: FormGroup;
   databases: any = [];
+  type: string = null;
+  isIngestion: boolean = false;
+  isMapping: boolean = false;
+  isMastering: boolean = false;
+  isCustom: boolean = false;
+  sourceRequired: boolean = false;
+  entityRequired: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder) {}
 
@@ -111,6 +119,14 @@ export class NewStepDialogUiComponent implements OnInit {
     } else {
       this.getCollections.emit(this.newStepForm.value.sourceDatabase);
     }
+
+    this.type = type;
+    this.isIngestion = type === this.stepType.INGESTION;
+    this.isCustom = type === this.stepType.CUSTOM;
+    this.isMapping = type === this.stepType.MAPPING;
+    this.isMastering = type === this.stepType.MASTERING;
+    this.sourceRequired = this.isMapping || this.isMastering;
+    this.entityRequired = this.isMapping || this.isMastering;
   }
   onSave() {
     this.newStep.name = this.newStepForm.value.name;
