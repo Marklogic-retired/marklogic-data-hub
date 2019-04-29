@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {timer} from 'rxjs';
 import {Flow} from "../models/flow.model";
@@ -6,6 +6,7 @@ import {StepType} from '../models/step.model';
 import {ProjectService} from '../../../services/projects';
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {EntitiesService} from '../../../models/entities.service';
+import { RunningJobService } from '../../jobs-new/services/running-job-service';
 import {Entity} from '../../../models';
 import * as _ from "lodash";
 
@@ -31,7 +32,7 @@ import * as _ from "lodash";
   ></app-edit-flow-ui>
 `
 })
-export class EditFlowComponent implements OnInit {
+export class EditFlowComponent implements OnInit, OnDestroy {
   flowId: string;
   flow: Flow;
   flowNames: string[];
@@ -44,13 +45,13 @@ export class EditFlowComponent implements OnInit {
   };
   collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
-  running: any;
   projectDirectory: string;
   stepType: typeof StepType = StepType;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
    private entitiesService: EntitiesService,
+   private runningJobService: RunningJobService,
    private activatedRoute: ActivatedRoute,
    private router: Router
   ) { }
@@ -61,6 +62,11 @@ export class EditFlowComponent implements OnInit {
     this.getDbInfo();
     this.getEntities();
   }
+
+  ngOnDestroy(): void {
+    this.runningJobService.stopPolling();
+  }
+
   getFlow() {
     this.flowId = this.activatedRoute.snapshot.paramMap.get('flowId');
 
@@ -70,6 +76,7 @@ export class EditFlowComponent implements OnInit {
         console.log('flow by id response', resp);
         this.flow = Flow.fromJSON(resp);
         this.getSteps();
+        this.checkLatestJobStatus();
       });
     }
   }
@@ -125,23 +132,10 @@ export class EditFlowComponent implements OnInit {
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
       // TODO add response check
-      // TODO optimize run polling DHFPROD-2241
       console.log('run flow resp', resp);
-      this.running = timer(0, 1000)
-        .subscribe(() =>  this.manageFlowsService.getFlowById(this.flowId).subscribe( poll => {
-          console.log('flow poll', poll);
-          this.flow = Flow.fromJSON(poll);
-          if (this.flow.latestJob && this.flow.latestJob.status) {
-            let runStatus = this.flow.latestJob.status.replace('_', ' ');
-            runStatus = runStatus.replace('-', ' ');
-            runStatus = runStatus.split(' ');
-            // console.log('run status', runStatus);
-            if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
-              this.running.unsubscribe();
-            }
-          }
-        })
-      );
+      this.runningJobService.pollFlowById(runObject.id).subscribe( poll => {
+        this.flow = Flow.fromJSON(poll);
+      });
     });
   }
   stopFlow(flowid): void {
@@ -149,7 +143,7 @@ export class EditFlowComponent implements OnInit {
       console.log('stop flow response', resp);
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
-      this.running.unsubscribe();
+      this.runningJobService.stopPolling();
     });
   }
   createStep(stepObject) {
@@ -222,5 +216,14 @@ export class EditFlowComponent implements OnInit {
       defaultCollections.push(step.options.targetEntity);
     }
     step.options = Object.assign({ 'collections': defaultCollections }, step.options);
+  }
+
+  checkLatestJobStatus() {
+    const jobStatus = this.runningJobService.checkJobStatus(this.flow);
+    if ( jobStatus ) {
+      this.runningJobService.pollFlowById(this.flow.id).subscribe( poll => {
+        this.flow = Flow.fromJSON(poll);
+      });
+    }
   }
 }

@@ -27,7 +27,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   public stepType: typeof StepType = StepType;
   showBody = true;
   stepAdded = false;
-  status: any = '';
+  status: any = [];
 
   ngOnChanges(changes: SimpleChanges) {
     if ( changes.hasOwnProperty('flow')) {
@@ -38,15 +38,15 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
       // TODO have backend return latestJob object with empty paramters
       // Check for when flow.previousValue.latestJob is null
       if (!changes.flow.firstChange && changes.flow.currentValue.latestJob && !changes.flow.previousValue.latestJob) {
-        let runStatus = changes.flow.currentValue.latestJob.status.replace('_', ' ');
-        runStatus = runStatus.replace('-', ' ');
-        this.status = runStatus.split(' ');
+        this.setStatus(changes.flow.currentValue.latestJob.status);
       }
       // Normal check
       if (!changes.flow.firstChange && changes.flow.currentValue.latestJob && changes.flow.previousValue.latestJob && changes.flow.currentValue.latestJob.status !== changes.flow.previousValue.latestJob.status) {
-        let runStatus = changes.flow.currentValue.latestJob.status.replace('_', ' ');
-        runStatus = runStatus.replace('-', ' ');
-        this.status = runStatus.split(' ');
+        this.setStatus(changes.flow.currentValue.latestJob.status);
+      }
+      // Flow is already running when navigated to this view
+      if ( !changes.flow.firstChange && !this.status.length && changes.flow.currentValue.latestJob && changes.flow.currentValue.latestJob.status) {
+        this.setStatus(changes.flow.currentValue.latestJob.status);
       }
     }
   }
@@ -57,6 +57,11 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
       }
       this.stepAdded = false;
     }
+  }
+  setStatus(status: string) {
+    let runStatus = status.replace('_', ' ');
+    runStatus = runStatus.replace('-', ' ');
+    this.status = runStatus.split(' ');
   }
   toggleBody() {
     this.showBody = !this.showBody;
