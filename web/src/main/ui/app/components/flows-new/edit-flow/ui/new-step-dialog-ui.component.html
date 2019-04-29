@@ -17,17 +17,17 @@
   </mat-form-field>
   <div *ngIf="!isIngestion">
     <label>Source Type: <span *ngIf="sourceRequired" class="source-req">*</span></label>
-    <mat-radio-group id="step-source-type" [(ngModel)]="selectedSource" [ngModelOptions]="{standalone: true}">
+    <mat-radio-group id="step-source-type" formControlName="selectedSource" (change)="stepSourceChange($event)">
       <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
       <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
     </mat-radio-group>
   </div>
-  <mat-form-field *ngIf="selectedSource === 'collection' && !isIngestion">
+  <mat-form-field *ngIf="hasSelectedCollection && !isIngestion">
     <mat-select id="step-source-collection" class="type-select" [placeholder]="'Source Collection' + (sourceRequired ? '*' : '')" formControlName="sourceCollection">
       <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field id="step-source-query" *ngIf="selectedSource === 'query' && !isIngestion" >
+  <mat-form-field id="step-source-query" *ngIf="hasSelectedQuery && !isIngestion" >
     <textarea matInput [placeholder]="'Source Query' + (sourceRequired ? '*' : '')" formControlName="sourceQuery"></textarea>
   </mat-form-field>
 

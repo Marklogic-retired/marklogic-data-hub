@@ -14,6 +14,7 @@ export class Step {
   public id: string;
   public name: string = '';
   public description: string = '';
+  public selectedSource: string;
   public stepDefinitionName: string;
   public stepDefinitionType: StepType;
   public isValid: boolean = false;
