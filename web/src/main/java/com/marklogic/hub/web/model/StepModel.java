@@ -262,6 +262,12 @@ public class StepModel {
             defaultStep.setFileLocations(step.getFileLocations());
         }
 
+        // Overwrite fields
+        defaultStep.setRetryLimit(step.getRetryLimit());
+        defaultStep.setThreadCount(step.getThreadCount());
+        defaultStep.setBatchSize(step.getBatchSize());
+        defaultStep.setModulePath(step.getModulePath());
+
         return defaultStep;
     }
 }
