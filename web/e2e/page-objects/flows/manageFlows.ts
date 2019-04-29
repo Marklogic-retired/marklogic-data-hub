@@ -186,8 +186,7 @@ export class ManageFlows extends AppPage {
     return await element(by.cssContainingText("confirmation-dialog button", option)).click();
   }
 
-
-
+  
   // Run flow dialog box
 
   get runFlowHeader() {
@@ -216,7 +215,7 @@ export class ManageFlows extends AppPage {
    */
 
   async clickPaginationDropDown() {
-    return await element(by.id("mat-select-arrow")).click();
+    return await element(by.css(".mat-select .mat-select-arrow")).click();
   }
 
   itemsPerPage(value: string) {

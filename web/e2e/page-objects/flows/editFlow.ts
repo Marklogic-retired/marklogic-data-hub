@@ -43,7 +43,7 @@ export class EditFlow extends AppPage {
   }
 
   get runFlowStatus() {
-    return element(by.id("latest-job-status"));
+    return element(by.css("#latest-job-info #latest-job-status"));
   }
 
   get jobStartedTimestamp() {
