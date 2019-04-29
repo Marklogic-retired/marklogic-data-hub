@@ -4,6 +4,9 @@
   "type": "MASTERING",
   "version": 1,
   "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
   "options": {
     "acceptsBatch": true,
     "stepUpdate": true,

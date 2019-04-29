@@ -28,7 +28,7 @@ public class Step {
     private String description;
     private Map<String, Object> options;
     private JsonNode customHook;
-    private int retryLimit;
+    private Integer retryLimit;
     private Integer batchSize;
     private Integer threadCount;
     private String stepDefinitionName;
@@ -72,11 +72,11 @@ public class Step {
         this.customHook = customHook;
     }
 
-    public int getRetryLimit() {
+    public Integer getRetryLimit() {
         return retryLimit;
     }
 
-    public void setRetryLimit(int retryLimit) {
+    public void setRetryLimit(Integer retryLimit) {
         this.retryLimit = retryLimit;
     }
 
