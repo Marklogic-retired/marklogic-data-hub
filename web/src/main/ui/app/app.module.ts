@@ -67,6 +67,7 @@ import {MapService} from './components/mappings/map.service';
 import {ManageFlowsService} from './components/flows-new/services/manage-flows.service';
 import {ManageJobsService} from './components/jobs-new/manage-jobs.service';
 import {ProjectService} from './services/projects';
+import { RunningJobService } from './components/jobs-new/services/running-job-service';
 import {STOMPService} from './services/stomp';
 import {ClipboardDirective} from './directives/clipboard/clipboard.directive';
 import {TraceService} from './components/traces/trace.service';
@@ -190,6 +191,7 @@ import {FolderBrowserModule} from "./components/folder-browser/folder-browser.mo
     ManageFlowsService,
     ManageJobsService,
     ProjectService,
+    RunningJobService,
     SettingsService,
     STOMPService,
     TraceService,
