@@ -10,8 +10,10 @@ export function NewStepDialogValidator(group: FormGroup) {
     if (!group.value.targetEntity) {
       errors['noTargetEntity'] = true;
     }
-    if (!group.value.sourceCollection &&
-        !group.value.sourceQuery) {
+    if ( 
+          (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
+          (group.value.selectedSource === 'query' && !group.value.sourceQuery)
+        ) {
       errors['noSource'] = true;
     }
   }

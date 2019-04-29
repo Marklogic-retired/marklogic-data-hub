@@ -28,7 +28,6 @@ export class NewStepDialogUiComponent implements OnInit {
   public stepType: typeof StepType = StepType;
   readonly stepOptions = Object.keys(this.stepType);
 
-  selectedSource: string = '';
   newStepForm: FormGroup;
   databases: any = [];
   type: string = null;
@@ -38,15 +37,28 @@ export class NewStepDialogUiComponent implements OnInit {
   isCustom: boolean = false;
   sourceRequired: boolean = false;
   entityRequired: boolean = false;
+  hasSelectedCollection: boolean = false;
+  hasSelectedQuery: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder) {}
 
   ngOnInit() {
+    let selectedSource;
     this.databases = Object.values(this.databaseObject).slice(0, -1);
     if (this.step) {
       this.newStep = this.step;
     }
+    if (this.step && this.step.selectedSource)
+      selectedSource = this.step.selectedSource;
+    else {
+      if (this.step && this.step.options && this.step.options.sourceQuery && !this.step.options.sourceCollection)
+        selectedSource = 'query';
+      else if (this.step && this.step.options && this.step.options.sourceCollection)
+        selectedSource = 'collection';
+    }
+    this.hasSelectedCollection = selectedSource === 'collection';
+    this.hasSelectedQuery = selectedSource === 'query';
     this.newStepForm = this.formBuilder.group({
       name: [this.step ? this.step.name : '', [
         Validators.required,
@@ -54,7 +66,8 @@ export class NewStepDialogUiComponent implements OnInit {
         ExistingStepNameValidator.forbiddenName(this.flow, this.step && this.step.name)
       ]],
       stepDefinitionType: [this.step ? this.step.stepDefinitionType : '', Validators.required],
-      description: [(this.step && this.step.options.description) ? this.step.description : ''],
+      description: [(this.step && this.step.options.description) ? this.step.options.description : ''],
+      selectedSource: [(selectedSource) ? selectedSource : ''],
       sourceQuery: [(this.step && this.step.options.sourceQuery) ? this.step.options.sourceQuery : ''],
       sourceCollection: [(this.step && this.step.options.sourceCollection) ? this.step.options.sourceCollection : ''],
       targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
@@ -65,11 +78,6 @@ export class NewStepDialogUiComponent implements OnInit {
     if (this.step && this.step.options && this.step.options.sourceDatabase)
       this.getCollections.emit(this.step.options.sourceDatabase);
 
-    if (this.step && this.step.options && this.step.options.sourceCollection) {
-      this.selectedSource = 'collection';
-    } else if (this.step && this.step.options && this.step.options.sourceQuery) {
-      this.selectedSource = 'query';
-    }
   }
   getNameErrorMessage() {
     const errorCodes = [
@@ -86,6 +94,10 @@ export class NewStepDialogUiComponent implements OnInit {
   }
   onNoClick(): void {
     this.cancelClicked.emit();
+  }
+  stepSourceChange(event: any) { 
+    this.hasSelectedCollection = event.value === 'collection';
+    this.hasSelectedQuery = event.value === 'query';
   }
   stepTypeChange() {
     const type = this.newStepForm.value.stepDefinitionType;
@@ -137,7 +149,8 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
     }
     this.newStep.description = this.newStepForm.value.description;
-    if (this.selectedSource === 'query') {
+    this.newStep.selectedSource = this.newStepForm.value.selectedSource;
+    if (this.newStep.selectedSource === 'query') {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
       this.newStep.options.sourceCollection = '';
     } else {
