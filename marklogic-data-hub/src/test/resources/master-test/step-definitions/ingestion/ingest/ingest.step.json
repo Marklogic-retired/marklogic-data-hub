@@ -1,0 +1,20 @@
+{
+  "name" : "ingest",
+  "type" : "INGESTION",
+  "version" : 1,
+  "fileLocations": {
+    "inputFilePath": "input",
+    "inputFileType": "json",
+    "outputURIReplacement": ".*/input,''"
+  },
+  "options": {
+    "sourceDatabase": "data-hub-STAGING",
+    "targetDatabase": "data-hub-STAGING",
+    "sourceQuery": null,
+    "outputFormat": "json",
+    "collections": ["default-ingestion"]
+  },
+  "customHook" : { },
+  "language" : "zxx",
+  "modulePath": "/no-op.sjs"
+}
