@@ -97,10 +97,12 @@ public class FlowManagerService {
             }
             flow = new FlowImpl();
             flow.setName(flowName);
-        } else if (!checkExists) { //for PUT updating
+        }
+        else {
+            //for PUT updating
             flow = flowManager.getFlow(flowName);
             if (flow == null) {
-                throw new DataHubException("Flow request payload is invalid.");
+                throw new DataHubException("Changing flow name not supported.");
             }
         }
         FlowStepModel.createFlowSteps(flow, jsonObject);
@@ -185,6 +187,12 @@ public class FlowManagerService {
 
         if (step.getStepDefinitionName() == null) {
             throw new BadRequestException("Invalid Step Definition Name");
+        }
+
+        if (stepId != null) {
+            if (!stepId.equals(step.getName() + "-" + step.getStepDefinitionType())) {
+                throw new BadRequestException("Changing step name or step type not supported.");
+            }
         }
 
         // Only save step if step is of Custom type, for rest use the default steps.
