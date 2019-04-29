@@ -27,11 +27,6 @@ function main(content, options) {
   // let doc = cts.doc(id);
   let doc = content.value;
 
-  // for json we need to return the instance
-  if (doc && doc instanceof Document) {
-    doc = fn.head(doc.root);
-  }
-
   //then we grab our mapping
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     let version = parseInt(options.mapping.version);
@@ -75,32 +70,17 @@ function main(content, options) {
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
   }
 
-  let source;
-  // for xml we need to use xpath
-  if(doc && doc instanceof XMLDocument) {
-    source = doc.root;
-  }
-  // for json we need to return the instance
-  else if(doc && (doc instanceof Document)) {
-    source = fn.head(doc.root);
-  }
-  // for everything else
-  else {
-    source = doc;
-  }
-
   let instance;
-
   //Then we obtain the instance and process it from the source context
   try {
-    instance = lib.processInstance(entityModel, mapping, source);
+    instance = lib.processInstance(entityModel, mapping, doc);
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
   }
 
   //now let's make our attachments, if it's xml, it'll be passed as string
-  instance['$attachments'] = source;
+  instance['$attachments'] = doc;
 
   let triples = [];
   let headers = datahub.flow.flowUtils.createHeaders(options);

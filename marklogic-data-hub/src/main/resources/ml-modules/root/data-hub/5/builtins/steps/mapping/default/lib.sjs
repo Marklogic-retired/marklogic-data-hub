@@ -15,12 +15,33 @@ function getMappingWithVersion(mappingName, version) {
   return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
 }
 
+function getSourceContext(sourceContext) {
+  let connector = "/*:";
+  let srcCtxArr;
+
+  sourceContext = sourceContext.startsWith("/") ? sourceContext.substring(1,sourceContext.length) : sourceContext;
+  srcCtxArr = sourceContext.split("/");
+  sourceContext = "";
+
+  srcCtxArr.forEach(function(element) {
+    if(element.indexOf(':') === -1) {
+      sourceContext += connector + element;
+    } else {
+      sourceContext += "/" + element;
+    }
+  });
+  return sourceContext;
+}
+
 function processInstance(model, mapping, content) {
- return  extractInstanceFromModel(model, model.info.title, mapping, content);
+ return extractInstanceFromModel(model, model.info.title, mapping, content);
 }
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
+  if (content.nodeKind === 'element' && sourceContext !== '/')  {
+    sourceContext = getSourceContext(sourceContext);
+  }
   let mappingProperties = mapping.properties;
   let instance = {};
   if (model.info && model.info.title === modelName) {
@@ -31,10 +52,11 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     instance['$version'] = '0.0.1';
   }
 
-  if (content.nodeName === 'envelope' || (content.nodeKind === 'document' && content.root && content.root.envelope)) {
+  if (content.nodeName === 'envelope' || (content.nodeKind === 'document')) {
     sourceContext = '/*:envelope/*:instance' + sourceContext;
   }
   else{
+    sourceContext = '/*:envelope/*:instance' + sourceContext;
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
 
