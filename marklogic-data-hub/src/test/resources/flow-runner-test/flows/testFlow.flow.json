@@ -13,6 +13,9 @@
         "outputURIReplacement": ".*/input,''"
       },
       "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
       "options": {
         "outputFormat": "xml",
         "collections": ["xml-coll"]
@@ -30,6 +33,9 @@
       "stepDefinitionType": "INGESTION",
       "name": "csv",
       "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
       "fileLocations": {
         "inputFilePath": "input",
         "inputFileType": "csv",
@@ -45,6 +51,9 @@
       "stepDefinitionType": "MAPPING",
       "name": "json-map",
       "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
       "options": {}
     },
     "5": {
@@ -61,6 +70,9 @@
         "sourceQuery": "cts.collectionQuery('xml-coll')"
       },
       "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
       "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
     }
   }
