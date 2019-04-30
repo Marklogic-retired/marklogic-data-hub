@@ -9,21 +9,15 @@ import { Flow } from '../../flows-new/models/flow.model';
 export class RunningJobService {
   private running: Subscription;
   private flowRunning = new Subject<Flow>();
-  private flowId: string;
-  private runningStatus: any;
 
   constructor(
     private manageFlowsService: ManageFlowsService
   ) {}
 
   stopPolling() {
-    console.log('stop polling');
-    this.running.unsubscribe();
-  }
-
-  checkFlowById() {
-    // if job is running
-
+    if (this.running) {
+      this.running.unsubscribe();
+    }
   }
 
   pollFlowById(id: string) {

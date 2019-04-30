@@ -1,7 +1,8 @@
-import {Component, ViewChild, OnInit} from "@angular/core";
+import {Component, ViewChild, OnInit, OnDestroy} from "@angular/core";
 import {Flow} from "../models/flow.model";
 import { timer } from 'rxjs';
 import {ManageFlowsService} from "../services/manage-flows.service";
+import { RunningJobService } from '../../jobs-new/services/running-job-service';
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
 import {DeployService} from '../../../services/deploy/deploy.service';
 import * as _ from "lodash";
@@ -21,21 +22,24 @@ import * as _ from "lodash";
     </flows-page-ui>
   `
 })
-export class ManageFlowsComponent implements OnInit {
+export class ManageFlowsComponent implements OnInit, OnDestroy {
 
   @ViewChild(ManageFlowsUiComponent)
   flowsPageUi: ManageFlowsUiComponent;
-  running: any;
   flows = [];
 
   constructor(
     private manageFlowsService: ManageFlowsService,
+    private runningJobService: RunningJobService,
     private deployService: DeployService
   ) {
   }
 
   ngOnInit() {
     this.getFlows();
+  }
+  ngOnDestroy(): void {
+    this.runningJobService.stopPolling();
   }
 
   createFlow(newFlow) {
@@ -66,7 +70,13 @@ export class ManageFlowsComponent implements OnInit {
         return true;
       });
       _.forEach(resp, flow => {
-        this.flows.push(Flow.fromJSON(flow));
+        const flowObject = Flow.fromJSON(flow);
+        this.flows.push(flowObject);
+        const isFlowRunning = this.runningJobService.checkJobStatus(flowObject);
+        if (isFlowRunning) {
+          const flowIndex = this.flows.findIndex(obj => obj.id === flowObject.id);
+          this.pollFlow(flowIndex, flowObject.id);
+        }
       });
       this.flowsPageUi.renderRows();
     });
@@ -74,22 +84,16 @@ export class ManageFlowsComponent implements OnInit {
 
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      // TODO optimize run polling DHFPROD-2241
-      this.running = timer(0, 1000)
-        .subscribe(() =>  this.manageFlowsService.getFlowById(runObject.id).subscribe( poll => {
-          const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
-          this.flows[flowIndex] = Flow.fromJSON(poll);
-          if (this.flows[flowIndex].latestJob && this.flows[flowIndex].latestJob.status) {
-            let runStatus = this.flows[flowIndex].latestJob.status.replace('_', ' ');
-            runStatus = runStatus.replace('-', ' ');
-            runStatus = runStatus.split(' ');
-            if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
-              this.running.unsubscribe();
-            }
-          }
-          this.flowsPageUi.renderRows();
-        })
-      );
+      // TODO add response check
+      const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
+      this.pollFlow(flowIndex, runObject.id);
+    });
+  }
+
+  pollFlow(index: number, flowId: string) {
+    this.runningJobService.pollFlowById(flowId).subscribe( poll => {
+      this.flows[index] = Flow.fromJSON(poll);
+      this.flowsPageUi.renderRows();
     });
   }
 
@@ -97,7 +101,7 @@ export class ManageFlowsComponent implements OnInit {
     this.manageFlowsService.stopFlow(flowId).subscribe(resp => {
       console.log('stop flow response', resp);
       this.getFlows();
-      this.running.unsubscribe();
+      this.runningJobService.stopPolling();
     });
   }
 
