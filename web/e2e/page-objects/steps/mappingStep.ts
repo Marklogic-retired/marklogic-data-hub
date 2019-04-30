@@ -8,92 +8,102 @@ export class MappingStep extends AppPage {
     return by.css('.maps-page');
   }
   
-  dialogComponentContent() {
+  get dialogComponentContent() {
     return element(by.css('mdl-dialog-component .mdl-dialog__content'));
   }
 
-  dialogComponentActions() {
+  get dialogComponentActions() {
     return 'mdl-dialog-component .mdl-dialog__actions button';
   }
 
-  deleteConfirmationMessage() {
-    return this.dialogComponentContent();
+  get deleteConfirmationMessage() {
+    return this.dialogComponentContent;
   }
 
-  deleteConfirmationCancel() {
-    return element(by.cssContainingText(this.dialogComponentActions(), 'Cancel'));
+  get deleteConfirmationCancel() {
+    return element(by.cssContainingText(this.dialogComponentActions, 'Cancel'));
   }
 
-  deleteConfirmationDelete() {
-    return element(by.cssContainingText(this.dialogComponentActions(), 'Delete'));
+  get deleteConfirmationDelete() {
+    return element(by.cssContainingText(this.dialogComponentActions, 'Delete'));
   }
   
-  editSourceURI() {
-    return element(by.css('#src-heading .fa-pencil'));
+  get editSourceURI() {
+    return element(by.css('#source-heading .fa-pencil'));
   }
 
-  inputSourceURI() {
-    return element(by.css('#src-heading input'));
+  get inputSourceURI() {
+    return element(by.css('#source-heading input'));
   }
 
-  editSourceURITick() {
-    return element(by.css('#src-heading .fa-check'));
+  get editSourceURITick() {
+    return element(by.css('#source-heading .fa-check'));
   }
 
-  editSourceURICancel() {
-    return element(by.css('#src-heading .fa-remove'));
+  get editSourceURICancel() {
+    return element(by.css('#source-heading .fa-remove'));
   }
 
-  getSourceURITitle() {
-    return element(by.css('#src-heading .sample-doc-uri')).getAttribute('title');
+  get sourceURITitle() {
+    return element(by.css('#source-heading .sample-doc-uri')).getAttribute('title');
   }
 
-  editSourceURIConfirmationMessage() {
-    return this.dialogComponentContent();
+  get editSourceURIConfirmationMessage() {
+    return this.dialogComponentContent;
   }
 
-  editSourceURIConfirmationCancel() {
-    return element(by.cssContainingText(this.dialogComponentActions(), 'Cancel'));
+  get editSourceURIConfirmationCancel() {
+    return element(by.cssContainingText(this.dialogComponentActions, 'Cancel'));
   }
 
-  editSourceURIConfirmationOK() {
-    return element(by.cssContainingText(this.dialogComponentActions(), 'OK'));
+  get editSourceURIConfirmationOK() {
+    return element(by.cssContainingText(this.dialogComponentActions, 'OK'));
   }
 
-  docNotFoundMessage() {
-    return this.dialogComponentContent();
+  get docNotFoundMessage() {
+    return this.dialogComponentContent;
   }
 
-  docNotFoundConfirmationOK() {
-    return element(by.cssContainingText(this.dialogComponentActions(), 'OK'));
+  get docNotFoundConfirmationOK() {
+    return element(by.cssContainingText(this.dialogComponentActions, 'OK'));
   }
 
-  srcPropertyContainer(entityProperty: string) {
-    return element(by.css(`#source .src-prop-container .prop-entity-${entityProperty}`));
+  sourcePropertyContainer(entityProperty: string) {
+    return element(by.css(`#source .source-prop-container .prop-entity-${entityProperty}`));
+  }
+
+  async clickSourcePropertyContainer(entityProperty: string) {
+    let sourceProperty = this.sourcePropertyContainer(entityProperty);
+    return await sourceProperty.click();
   }
 
   propertySelectMenu(entityProperty: string) {
-    return element(by.css(`#source .src-prop-container .prop-select-menu-${entityProperty}`));
+    return element(by.css(`#source .source-prop-container .prop-select-menu-${entityProperty}`));
   }
 
   undoPropertyMapping(entityProperty: string) {
-    return this.srcPropertyContainer(entityProperty).element(by.css('.fa-remove'));
+    return this.sourcePropertyContainer(entityProperty).element(by.css('.fa-remove'));
   }
 
   sourcePropertyDropDown(entityProperty: string) {
-    return this.srcPropertyContainer(entityProperty).element(by.css('.fa-caret-down'));
+    return this.sourcePropertyContainer(entityProperty).element(by.css('.fa-caret-down'));
   }
 
   sourceTypeAheadInput(entityProperty: string) {
-    return element(by.css(`#source .src-prop-container .dropdown-filter-${entityProperty} input`));
+    return element(by.css(`#source .source-prop-container .dropdown-filter-${entityProperty} input`));
   }
 
   mapSourceProperty(sourceProperty: string, entityProperty: string) {
     return this.propertySelectMenu(entityProperty).element(by.css(`.dropdown-item-${sourceProperty}`));
   }
 
+  async clickMapSourceProperty(sourceProperty: string, entityProperty: string) {
+    let mapSourceProperty = this.mapSourceProperty(sourceProperty, entityProperty);
+    return await mapSourceProperty.click();
+  }
+
   entityPropertyContainer(entityProperty: string) {
-    return element(by.css(`#harmonized .entity-prop-container-${entityProperty}`));
+    return element(by.css(`#target .entity-prop-container-${entityProperty}`));
   }
 
   entityPropertyName(entityProperty: string) {

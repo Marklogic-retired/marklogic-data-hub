@@ -1,39 +1,44 @@
+import {protractor} from "protractor";
 import {AppPage} from "../appPage";
-import { pages } from '../page';
+import {pages} from '../page';
 import {by, element} from "protractor";
 
 export class IngestStep extends AppPage {
   
   get inputFilePath() {
-    return element(by.css("current-folder input"));
+    return element(by.css(".folder-path input"));
   }
 
   async setInputFilePath(filePath: string) {
     let inputField = this.inputFilePath;
     await inputField.clear();
-    return await inputField.sendKeys(filePath);  
+    await inputField.sendKeys(filePath);  
+    await inputField.sendKeys(protractor.Key.ENTER);
   }
 
-  get fileTypeDropDown() {
+  get inputFileTypeDropDown() {
     return element(by.id("file_type_select"));
   }
 
-  async clickFileTypeDropDown() {
-    let dropDown = this.fileTypeDropDown;
+  async clickInputFileTypeDropDown() {
+    let dropDown = this.inputFileTypeDropDown;
     return await dropDown.click();
   }
-
-  fileTypeOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+  
+  /**
+   * @param option = [JSON|XML|Binary|CSV|Text]
+   */
+  inputFileTypeOptions(option: string) {
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
-  async clickFileTypeOption(option: string) {
-    let fileTypeOption = this.fileTypeOptions(option);
-    return await fileTypeOption.click();
+  async clickInputFileTypeOption(option: string) {
+    let inputFileTypeOption = this.inputFileTypeOptions(option);
+    return await inputFileTypeOption.click();
   }
 
   get outputFileTypeDropDown() {
-    return element(by.css(`mat-select[ng-reflect-name="doctype" div.mat-select-arrow`));
+    return element(by.id("doc_type_select"));
   }
 
   async clickOutputFileTypeDropDown() {
@@ -41,8 +46,11 @@ export class IngestStep extends AppPage {
     return await dropDown.click();
   }
 
+  /**
+   * @param option = [JSON|XML|Binary|Text]
+   */
   outputFileTypeOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
   async clickoutputFileTypeOption(option: string) {

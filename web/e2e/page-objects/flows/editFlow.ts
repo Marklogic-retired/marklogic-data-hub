@@ -12,7 +12,7 @@ export class EditFlow extends AppPage {
   // Edit Flow page header 
 
   get manageFlowsBackLink() {
-    return element(by.css(".back-link"));
+    return element(by.css(".back-link a"));
   }
 
   async clickManageFlowsBackLink() {
@@ -42,8 +42,43 @@ export class EditFlow extends AppPage {
     return await button.click();
   }
 
-  get runFlowStatus() {
-    return element(by.css("a.ng-star-inserted"));
+  // Run flow dialog box
+
+  get runFlowDialog() {
+    return element(by.css("app-run-flow-dialog"));
+  }
+
+  get runFlowHeader() {
+    return element(by.css("app-run-flow-dialog h1"));
+  }
+
+  async selectRunAll() {
+    return await element(by.id("run-flow-all")).click();
+  }
+
+  async selectStepToRun(step: string) {
+    return await element(by.cssContainingText("span.mat-checkbox-label", step)).click();
+  }
+
+  /**
+   * clickButtonRunCancel
+   * @param option = [cancel/flow]
+   */
+  async clickButtonRunCancel(option: string) {
+    let button = element(by.css(`app-run-flow-dialog #run-${option}-btn`));
+    return await button.click();
+  }
+
+  get latestJobStatus() {
+    return element(by.css("a.latest-job-status"));
+  }
+
+  get completedLatestJobStatus() {
+    return element(by.cssContainingText("a#latest-job-status", "Completed"));
+  }
+
+  get finishedLatestJobStatus() {
+    return element(by.cssContainingText("a#latest-job-status", "Finished"));
   }
 
   get jobStartedTimestamp() {
