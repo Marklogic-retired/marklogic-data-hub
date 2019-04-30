@@ -14,11 +14,12 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.JobModel;
 import com.marklogic.hub.web.model.JobModel.JobStep;
-import java.io.IOException;
-import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.*;
 
 @Service
 public class NewJobService extends ResourceManager {
@@ -220,6 +221,7 @@ public class NewJobService extends ResourceManager {
             JobStep js = new JobStep();
             js.stepNumber = Integer.valueOf(key);
             js.name = step.getName();
+            js.stepDefinitionName = step.getStepDefinitionName();
             js.stepDefinitionType = step.getStepDefinitionType().toString();
             if (js.name.startsWith("default-")) {
                 js.id = js.name;
@@ -227,6 +229,7 @@ public class NewJobService extends ResourceManager {
                 js.id = step.getName() + "-" + js.stepDefinitionType;
             }
             Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetEntity = ((TextNode) o.getOrDefault("targetEntity", new TextNode(""))).asText());
+            Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetDatabase = ((TextNode) o.getOrDefault("targetDatabase", new TextNode(""))).asText());
 
             JsonNode res = stepRes.get(key);
             js.totalEvents = res.get("totalEvents").asLong();

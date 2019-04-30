@@ -51,8 +51,8 @@ export class JobDetailsUiComponent implements OnChanges {
   updateDataSource() {
     console.log('this.job data source', this.job);
     this.job.steps.forEach((step) => {
-      if (step.options && step.options.targetDatabase) {
-        step.targetDatabase = /FINAL/.test(step.options.targetDatabase) ? 'FINAL' : 'STAGING';
+      if (step.targetDatabase) {
+        step.targetDatabase = /FINAL/.test(step.targetDatabase) ? 'FINAL' : 'STAGING';
       } else if (step.stepDefinitionType.toLowerCase() === StepType.INGESTION.toLowerCase()) {
         step.targetDatabase = 'STAGING';
       } else {
