@@ -1,0 +1,10 @@
+<Product>
+  <ProductID>2</ProductID>
+  <CategoryID>1</CategoryID>
+  <sku>12467453</sku>
+  <QuantityPerUnit>24 - 12 oz bottles</QuantityPerUnit>
+  <UnitsInStock>17</UnitsInStock>
+  <UnitsOnOrder>40</UnitsOnOrder>
+  <ReorderLevel>25</ReorderLevel>
+  <Discontinued>false</Discontinued>
+</Product>
