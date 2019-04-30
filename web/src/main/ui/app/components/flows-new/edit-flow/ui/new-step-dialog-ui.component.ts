@@ -66,7 +66,7 @@ export class NewStepDialogUiComponent implements OnInit {
         ExistingStepNameValidator.forbiddenName(this.flow, this.step && this.step.name)
       ]],
       stepDefinitionType: [this.step ? this.step.stepDefinitionType : '', Validators.required],
-      description: [(this.step && this.step.options.description) ? this.step.options.description : ''],
+      description: [(this.step && this.step.description) ? this.step.description : ''],
       selectedSource: [(selectedSource) ? selectedSource : ''],
       sourceQuery: [(this.step && this.step.options.sourceQuery) ? this.step.options.sourceQuery : ''],
       sourceCollection: [(this.step && this.step.options.sourceCollection) ? this.step.options.sourceCollection : ''],
