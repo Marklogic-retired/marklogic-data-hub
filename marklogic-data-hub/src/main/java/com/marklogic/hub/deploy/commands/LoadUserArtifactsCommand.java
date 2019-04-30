@@ -99,10 +99,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         Path mappingsPath = hubConfig.getHubMappingsDir();
-
-        Path projectPath = Paths.get(hubConfig.getProjectDir());
-        Path stepPath = projectPath.resolve("step-definitions");
-        Path flowPath = projectPath.resolve("flows");
+        Path stepDefPath = hubConfig.getStepDefinitionsDir();
+        Path flowPath = hubConfig.getFlowsDir();
 
         JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
         JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
@@ -111,8 +109,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DocumentWriteSet stagingEntityDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingStepDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalStepDocumentWriteSet = finalDocMgr.newWriteSet();
+        DocumentWriteSet stagingStepDefDocumentWriteSet = stagingDocMgr.newWriteSet();
+        DocumentWriteSet finalStepDefDocumentWriteSet = finalDocMgr.newWriteSet();
         DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
         DocumentWriteSet finalFlowDocumentWriteSet = finalDocMgr.newWriteSet();
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
@@ -171,8 +169,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 propertiesModuleManager,
                                 mappingResourceToURI,
                                 "http://marklogic.com/data-hub/mappings",
-                                stagingEntityDocumentWriteSet,
-                                finalEntityDocumentWriteSet
+                                stagingMappingDocumentWriteSet,
+                                finalMappingDocumentWriteSet
                             );
                             return FileVisitResult.CONTINUE;
                         }
@@ -184,8 +182,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
 
             // let's do step-definitions
-            if (stepPath.toFile().exists()) {
-                Files.walkFileTree(stepPath, new SimpleFileVisitor<Path>() {
+            if (stepDefPath.toFile().exists()) {
+                Files.walkFileTree(stepDefPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                         executeWalk(
@@ -194,8 +192,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             propertiesModuleManager,
                             stepResourceToURI,
                             "http://marklogic.com/data-hub/step-definition",
-                            stagingEntityDocumentWriteSet,
-                            finalEntityDocumentWriteSet
+                            stagingStepDefDocumentWriteSet,
+                            finalStepDefDocumentWriteSet
                         );
                         return FileVisitResult.CONTINUE;
                     }
@@ -214,8 +212,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             propertiesModuleManager,
                             flowResourceToURI,
                             "http://marklogic.com/data-hub/flow",
-                            stagingEntityDocumentWriteSet,
-                            finalEntityDocumentWriteSet
+                            stagingFlowDocumentWriteSet,
+                            finalFlowDocumentWriteSet
                         );
                         return FileVisitResult.CONTINUE;
                     }
@@ -230,9 +228,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 stagingDocMgr.write(stagingMappingDocumentWriteSet);
                 finalDocMgr.write(finalMappingDocumentWriteSet);
             }
-            if (stagingStepDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingStepDocumentWriteSet);
-                finalDocMgr.write(finalStepDocumentWriteSet);
+            if (stagingStepDefDocumentWriteSet.size() > 0) {
+                stagingDocMgr.write(stagingStepDefDocumentWriteSet);
+                finalDocMgr.write(finalStepDefDocumentWriteSet);
             }
             if (stagingFlowDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingFlowDocumentWriteSet);
