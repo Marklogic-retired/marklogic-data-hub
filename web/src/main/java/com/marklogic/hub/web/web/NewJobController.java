@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value="/api/jobs")
@@ -22,9 +19,9 @@ public class NewJobController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getJobs() throws IOException {
+    public ResponseEntity<?> getJobs(@RequestParam(value = "flowName", required = false) String flowName) throws IOException {
         jobService.setupClient();
-        List<JobModel> jobModels = jobService.getJobs();
+        List<JobModel> jobModels = jobService.getJobs(flowName);
         jobService.release();
         return new ResponseEntity<>(jobModels, HttpStatus.OK);
     }
@@ -33,8 +30,9 @@ public class NewJobController {
     @ResponseBody
     public ResponseEntity<?> getJob(@PathVariable String jobId) {
         jobService.setupClient();
-        List<JobModel> jobModels = jobService.getJobs(jobId);
+        List<JobModel> jobModels = jobService.getJobs(null, jobId);
         jobService.release();
         return new ResponseEntity<>(jobModels, HttpStatus.OK);
     }
+
 }
