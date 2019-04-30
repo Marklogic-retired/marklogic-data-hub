@@ -400,9 +400,9 @@ public class QueryStepRunner implements StepRunner {
 
             String stepStatus;
             if (failedEvents.get() > 0 && stopOnFailure) {
-                stepStatus = JobStatus.STOP_ON_ERROR.toString();
+                stepStatus = JobStatus.STOP_ON_ERROR_PREFIX + step;
             } else if( isStopped.get()){
-                stepStatus = JobStatus.CANCELED.toString();
+                stepStatus = JobStatus.CANCELED_PREFIX + step;
             } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
                 stepStatus = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
             } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {

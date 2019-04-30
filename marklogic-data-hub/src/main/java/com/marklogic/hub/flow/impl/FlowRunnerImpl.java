@@ -284,15 +284,15 @@ public class FlowRunnerImpl implements FlowRunner{
                     } catch (Exception ex) {
                         logger.error(ex.getMessage());
                     }
+                    if(runningFlow.isStopOnError()) {
+                        jobStoppedOnError.set(true);
+                        stopJob(runningJobId);
+                    }
                 }
                 finally {
                     stepOutputs.put(stepNum, stepResp);
                     if(! stepResp.isSuccess()) {
                         isJobSuccess.set(false);
-                    }
-                    if(runningFlow.isStopOnError()) {
-                        jobStoppedOnError.set(true);
-                        stopJob(runningJobId);
                     }
                 }
             }
