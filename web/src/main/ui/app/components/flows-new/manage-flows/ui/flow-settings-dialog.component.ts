@@ -3,7 +3,7 @@ import {Component, Inject, OnInit} from "@angular/core";
 import {Flow} from "../../models/flow.model";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {CustomFieldValidator} from "../../../common";
-import {forEach, forOwn} from 'lodash';
+import {forEach, forOwn, find} from 'lodash';
 
 @Component({
   selector: 'new-flow-dialog',
@@ -27,13 +27,13 @@ export class FlowSettingsDialogComponent implements OnInit {
         Validators.required,
         Validators.pattern('[a-zA-Z][a-zA-Z0-9\_\-]*'),
         (control: FormControl): { [key: string]: any } | null => {
-          const forbiddenName = this.data.flowNames.find((name => (name === control.value && (this.data.flow ? this.data.flow.name !== name : true)) ));
+          const forbiddenName = find(this.data.flowNames, name => (name === control.value && (this.data.flow ? this.data.flow.name !== name : true)));
           return forbiddenName ? {'forbiddenName': {value: control.value}} : null;
         }
       ]],
-      description: [this.data.flow ? this.data.flow.description : ''],
-      batchSize: [this.data.flow ? this.data.flow.batchSize : 100, CustomFieldValidator.number({min: 1})],
-      threadCount: [this.data.flow ? this.data.flow.threadCount : 4, CustomFieldValidator.number({min: 1})]
+      description: [this.data.flow ? this.data.flow.description || '' : ''],
+      batchSize: [this.data.flow ? this.data.flow.batchSize || 100 : 100, CustomFieldValidator.number({min: 1})],
+      threadCount: [this.data.flow ? this.data.flow.threadCount || 4 : 4, CustomFieldValidator.number({min: 1})]
     });
     this.form.setControl('options', this.createOptions());
     this.options = this.form.get('options') as FormArray;
