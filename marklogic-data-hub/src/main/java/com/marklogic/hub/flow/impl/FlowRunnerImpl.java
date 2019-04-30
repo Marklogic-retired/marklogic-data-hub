@@ -44,6 +44,7 @@ public class FlowRunnerImpl implements FlowRunner{
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
     private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
+    private AtomicBoolean jobStoppedOnError = new AtomicBoolean(false);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String runningJobId;
@@ -155,7 +156,7 @@ public class FlowRunnerImpl implements FlowRunner{
         }
         threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId));
     }
-    //TODO : fix cancel/stop on error status
+
     public void stopJob(String jobId) {
         if(stepsMap.get(jobId) != null){
             stepsMap.get(jobId).clear();
@@ -229,6 +230,7 @@ public class FlowRunnerImpl implements FlowRunner{
                         .onItemFailed((jobId, itemId)-> {
                             errorCount.incrementAndGet();
                             if(flow.isStopOnError()){
+                                jobStoppedOnError.set(true);
                                 stopJob(jobId);
                             }
                         })
@@ -289,6 +291,7 @@ public class FlowRunnerImpl implements FlowRunner{
                         isJobSuccess.set(false);
                     }
                     if(runningFlow.isStopOnError()) {
+                        jobStoppedOnError.set(true);
                         stopJob(runningJobId);
                     }
                 }
@@ -300,13 +303,14 @@ public class FlowRunnerImpl implements FlowRunner{
             final String jobStatus;
             //Update status of job
             if (isJobCancelled.get()) {
-                jobStatus = JobStatus.CANCELED.toString();
-            }
-            else if (!isJobSuccess.get()) {
-                if(runningFlow.isStopOnError()){
+                if(runningFlow.isStopOnError() && jobStoppedOnError.get()){
                     jobStatus = JobStatus.STOP_ON_ERROR.toString();
                 }
-                else{
+                else {
+                    jobStatus = JobStatus.CANCELED.toString();
+                }
+            }
+            else if (!isJobSuccess.get()) {
                     Collection<RunStepResponse> stepResps = stepOutputs.values();
                     long failedStepCount = stepResps.stream().filter((stepResp)-> stepResp.getStatus()
                         .contains(JobStatus.FAILED_PREFIX)).collect(Collectors.counting());
@@ -316,7 +320,6 @@ public class FlowRunnerImpl implements FlowRunner{
                     else {
                         jobStatus = JobStatus.FINISHED_WITH_ERRORS.toString();
                     }
-                }
             }
             else {
                 jobStatus = JobStatus.FINISHED.toString();
