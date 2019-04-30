@@ -155,7 +155,7 @@ export class MasteringStep extends AppPage {
   }
 
   matchOptionPaginationMenuOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
   
   async clickMatchOptionPaginationMenuOption(option: string) {
@@ -205,7 +205,7 @@ export class MasteringStep extends AppPage {
   }
 
   matchOptionDialogTypeOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMatchOptionDialogTypeOption(option: string) {
@@ -223,7 +223,7 @@ export class MasteringStep extends AppPage {
   }
 
   matchOptionDialogPropertyOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMatchOptionDialogPropertyOption(option: string) {
@@ -235,7 +235,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("match-option-weight"));    
   }
 
-  async setMatchOptionDialogWeight(value: string) {
+  async setMatchOptionDialogWeight(value: number) {
     let inputField = this.matchOptionDialogWeight;
     await inputField.clear();
     return await inputField.sendKeys(value);
@@ -440,7 +440,7 @@ export class MasteringStep extends AppPage {
   }
 
   matchThresholdPaginationMenuOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
   
   async clickMatchThresholdPaginationMenuOption(option: string) {
@@ -494,7 +494,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("match-threshold-weight"));    
   }
 
-  async setMatchThresholdDialogWeight(value: string) {
+  async setMatchThresholdDialogWeight(value: number) {
     let inputField = this.matchThresholdDialogWeight;
     await inputField.clear();
     return await inputField.sendKeys(value);
@@ -510,7 +510,7 @@ export class MasteringStep extends AppPage {
   }
 
   matchThresholdDialogActionOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMatchThresholdDialogActionOptions(option: string) {
@@ -652,7 +652,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeOptionPaginationMenuOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
   
   async clickMergeOptionPaginationMenuOption(option: string) {
@@ -702,7 +702,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeOptionDialogTypeOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMergeOptionDialogTypeOption(option: string) {
@@ -720,7 +720,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeOptionDialogPropertyOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMergeOptionDialogPropertyOption(option: string) {
@@ -770,7 +770,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeOptionDialogStrategyOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMergeOptionDialogStrategyOptions(option: string) {
@@ -906,7 +906,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeStrategyPaginationMenuOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
   
   async clickMergeStrategyPaginationMenuOptions(option: string) {
@@ -1088,7 +1088,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeCollectionPaginationMenuOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
   
   async clickMergeCollectionPaginationMenuOptions(option: string) {
@@ -1157,7 +1157,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeCollectionDialogEventOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`)); 
+    return element(by.cssContainingText('mat-option .mat-option-text', option)); 
   }
 
   async clickMergeCollectionDialogEventOptions(option: string) {
