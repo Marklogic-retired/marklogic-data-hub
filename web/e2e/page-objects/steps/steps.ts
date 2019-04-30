@@ -28,10 +28,10 @@ export class Steps extends AppPage {
   }
 
   /**
-   * @param option = [ingest/mapping/mastering/custom]
+   * @param option = [Ingestion/Mapping/Mastering/Custom]
    */
   stepTypeOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
    
   /**
@@ -88,7 +88,7 @@ export class Steps extends AppPage {
   }
 
   stepSourceCollectionOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
   async clickStepSourceCollectionOption(option: string) {
@@ -116,7 +116,7 @@ export class Steps extends AppPage {
   }
 
   stepTargetEntityOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
   async clickStepTargetEntityOption(option: string) {
@@ -124,8 +124,13 @@ export class Steps extends AppPage {
     return await stepTargetEntityOption.click();
   }
 
+  get advSettingsExpandCollapse() {
+    return element(by.cssContainingText("mat-accordion mat-expansion-panel mat-panel-title", "Advanced Settings"));
+  }
+
   async clickAdvSettingsExpandCollapse() {
-    return await element(by.css(".mat-expansion-indicator")).click();
+    let panel = this.advSettingsExpandCollapse;
+    return await this.advSettingsExpandCollapse.click();
   }
 
   get stepSourceDatabaseDropDown() {
@@ -138,7 +143,7 @@ export class Steps extends AppPage {
   }
 
   stepSourceDatabaseOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
   async clickStepSourceDatabaseOption(option: string) {
@@ -156,7 +161,7 @@ export class Steps extends AppPage {
   }
 
   stepTargetDatabaseOptions(option: string) {
-    return element(by.css(`mat-option[ng-reflect-value="${option}"]`));
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
   async clickStepTargetDatabaseOption(option: string) {
@@ -195,7 +200,7 @@ export class Steps extends AppPage {
   }
 
   stepSelectContainer(stepName: string) {
-    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../../../div[@class="step"]`));  
+    return element(by.cssContainingText("h3.step-name", stepName));
   }
 
   async clickStepSelectContainer(stepName: string) {
@@ -252,12 +257,12 @@ export class Steps extends AppPage {
     return await button.click();
   }
   
-  get stepMenuEditButton() {
+  get stepMenuEditOption() {
     return element(by.id(`step-menu-edit-btn`));
   }
   
   async clickStepMenuEditOption() {
-    let menuEditOption = this.stepMenuEditButton;
+    let menuEditOption = this.stepMenuEditOption;
     return await menuEditOption.click();
   }
 
