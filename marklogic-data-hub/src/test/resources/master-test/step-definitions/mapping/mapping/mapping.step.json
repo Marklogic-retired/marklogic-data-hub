@@ -3,7 +3,7 @@
   "type" : "MAPPING",
   "version" : 1,
   "options" : {
-    "collections" : [ "mapping" ],
+    "collections" : [ "mapping", "mdm-content" ],
     "sourceDatabase": "data-hub-STAGING",
     "targetDatabase": "data-hub-FINAL",
     "mapping": {

@@ -1,16 +1,12 @@
 package com.marklogic.hub.master;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.*;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
-import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.util.HubModuleManager;
-import com.marklogic.hub.util.MlcpRunner;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -65,7 +61,7 @@ public class MasterTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
     private void installProject() throws IOException, URISyntaxException {
-            String[] directoriesToCopy = new String[]{"flows", "step-definitions", "entities", "mappings"};
+            String[] directoriesToCopy = new String[]{"input", "flows", "src", "step-definitions", "entities", "mappings"};
             for (final String subDirectory: directoriesToCopy) {
                 final Path subProjectPath = projectPath.resolve(subDirectory);
                 subProjectPath.toFile().mkdir();
@@ -107,45 +103,11 @@ public class MasterTest extends HubTestBase {
 
         // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
         Thread.sleep(1000);
-
-        String inputPath = getResourceFile("master-test/input/").getAbsolutePath();
-        String basePath = getResourceFile("master-test").getAbsolutePath();
-        JsonNode mlcpOptions;
-        try {
-            String optionsJson =
-                "{" +
-                    "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
-                    "\"input_file_type\":\"\\\"documents\\\"\"," +
-                    "\"document_type\":\"\\\"json\\\"\"," +
-                    "\"output_collections\":\"\\\"default-ingestion,mdm-content\\\"\"," +
-                    "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                    "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"" +
-                    "}";
-            mlcpOptions = new ObjectMapper().readTree(optionsJson);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        // TODO Is there a way to do this with updated flows?
-        LegacyFlow legacyFlow = LegacyFlowBuilder.newFlow()
-            .withEntityName("mdm-content")
-            .withName("default-ingestion")
-            .withType(FlowType.INPUT)
-            .withCodeFormat(CodeFormat.JAVASCRIPT)
-            .withDataFormat(DataFormat.JSON)
-            .build();
-
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getDataHubAdminConfig(), legacyFlow, flowRunnerClient, mlcpOptions, null);
-        mlcpRunner.start();
-        try {
-            mlcpRunner.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         Flow flow = flowManager.getFlow("myNewFlow");
         if (flow == null) {
             throw new Exception("myNewFlow Not Found");
         }
-        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("2","3"));
+        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("1","2","3"));
         flowRunner.awaitCompletion();
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess(), "Mastering job failed");

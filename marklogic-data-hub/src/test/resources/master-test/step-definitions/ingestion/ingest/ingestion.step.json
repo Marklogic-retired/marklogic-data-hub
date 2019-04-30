@@ -1,9 +1,0 @@
-{
-  "name" : "ingestion",
-  "type" : "INGESTION",
-  "version" : 1,
-  "options" : { },
-  "customHook" : { },
-  "language" : "zxx",
-  "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs"
-}

@@ -220,13 +220,37 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     }
 
     public StepDefinition transformFromStep(StepDefinition stepDefinition, Step step) {
-        stepDefinition.setName(step.getName());
-        stepDefinition.setBatchSize(step.getBatchSize());
-        stepDefinition.setDescription(step.getDescription());
-        stepDefinition.setThreadCount(step.getThreadCount());
-        stepDefinition.setOptions(step.getOptions());
-        stepDefinition.setModulePath(step.getModulePath());
-        stepDefinition.setCustomHook(step.getCustomHook());
+        if (step.getName() != null) {
+            stepDefinition.setName(step.getName());
+        }
+
+        if (step.getBatchSize() != null) {
+            stepDefinition.setBatchSize(step.getBatchSize());
+        }
+
+        if (step.getDescription() != null) {
+            stepDefinition.setDescription(step.getDescription());
+        }
+
+        if (step.getThreadCount() != null) {
+            stepDefinition.setThreadCount(step.getThreadCount());
+        }
+
+        if (step.getOptions() != null) {
+            stepDefinition.setOptions(step.getOptions());
+        }
+
+        if (step.getModulePath() != null) {
+            stepDefinition.setModulePath(step.getModulePath());
+        }
+
+        if (step.getCustomHook() != null) {
+            stepDefinition.setCustomHook(step.getCustomHook());
+        }
+
+        if (step.getRetryLimit() != null) {
+            stepDefinition.setRetryLimit(step.getRetryLimit());
+        }
 
         return stepDefinition;
     }

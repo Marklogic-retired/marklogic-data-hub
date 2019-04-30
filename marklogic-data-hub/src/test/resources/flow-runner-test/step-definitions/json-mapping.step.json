@@ -1,7 +1,11 @@
 {
+  "language": "zxx",
   "name": "json-mapping",
   "type": "MAPPING",
   "version": 1,
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
   "options": {
     "outputFormat": "json",
     "collections": ["json-map"],
@@ -11,6 +15,5 @@
     },
     "sourceQuery": "cts.collectionQuery('json-coll')"
   },
-  "language": "zxx",
   "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
 }

@@ -4,6 +4,9 @@
   "type": "MAPPING",
   "version": 1,
   "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
   "options": {
     "sourceDatabase": "data-hub-STAGING",
     "targetDatabase": "data-hub-FINAL",
