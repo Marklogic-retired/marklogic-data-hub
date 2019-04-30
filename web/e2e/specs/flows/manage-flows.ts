@@ -114,14 +114,14 @@ export default function(tmpDir) {
     it('Should be able to paginate', async function() {
       await expect(manageFlowPage.pageRangeText.getText()).toEqual("1 - 4 of 4");
       await manageFlowPage.clickPaginationDropDown();
-      browser.wait(EC.visibilityOf(manageFlowPage.itemsPerPage(3)));
-      await manageFlowPage.selectItemsPerPage(3);
+      browser.wait(EC.visibilityOf(manageFlowPage.itemsPerPage('5')));
+      await manageFlowPage.selectItemsPerPage('5');
       await manageFlowPage.clickPageNavigation("Next page");
       await manageFlowPage.clickPageNavigation("Previous page");
-      await expect(manageFlowPage.pageRangeText.getText()).toEqual("1 - 3 of 4");
+      await expect(manageFlowPage.pageRangeText.getText()).toEqual("1 - 4 of 4");
       await manageFlowPage.clickPaginationDropDown();
-      browser.wait(EC.visibilityOf(manageFlowPage.itemsPerPage(5)));
-      await manageFlowPage.selectItemsPerPage(5);
+      browser.wait(EC.visibilityOf(manageFlowPage.itemsPerPage('10')));
+      await manageFlowPage.selectItemsPerPage('10');
     });
 
     xit('Should be able to redeploy', async function() {
