@@ -97,7 +97,9 @@ public class SearchService extends SearchableService {
                 if (entry.getKey().equals("Collection")) {
                     def = sb.collectionConstraint(entry.getKey(), value);
                 } else if ("createdByJob".equals(entry.getKey())) {
-                    def = sb.valueConstraint(entry.getKey(), value);
+                    def = sb.wordConstraint(entry.getKey(), value);
+                } else if ("createdByStep".equals(entry.getKey())) {
+                    def = sb.wordConstraint(entry.getKey(), value);
                 } else {
                     def = addRangeConstraint(sb, entry.getKey(), value);
                 }

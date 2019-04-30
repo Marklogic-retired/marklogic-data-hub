@@ -127,7 +127,7 @@
         <ng-container matColumnDef="committed">
           <mat-header-cell id="step-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="step-committed" *matCellDef="let step">
-            <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{ job:job.id, d:step.targetDatabase }">
+            <a *ngIf="step.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{ createdByJob:job.id, createdByStep:step.stepDefinitionName, d:step.targetDatabase }">
               {{step.successfulEvents | number}}
             </a>
           </mat-cell>

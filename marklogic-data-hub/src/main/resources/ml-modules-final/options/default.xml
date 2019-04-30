@@ -3,8 +3,13 @@
     <collection/>
   </constraint>
   <constraint name="createdByJob">
-    <value>
+    <word>
       <field name="createdByJob"/>
-    </value>
+    </word>
+  </constraint>
+  <constraint name="createdByStep">
+    <word>
+      <field name="createdByStep"/>
+    </word>
   </constraint>
 </options>
