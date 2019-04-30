@@ -141,7 +141,7 @@ export class MappingComponent implements OnInit {
             this.sampleDocURI = this.mapping.sourceURI;
           }
           this.editURIVal = this.sampleDocURI;
-          this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
+          this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
 
         }
       },
