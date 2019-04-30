@@ -188,7 +188,7 @@ public class NewJobService extends ResourceManager {
         if (StringUtils.isEmpty(flowName)) {
             return;
         }
-        Flow flow = flowManager.getFlow(jm.flowName);
+        Flow flow = flowManager.getFlow(flowName);
         if (flow == null) {
             return;
         }
