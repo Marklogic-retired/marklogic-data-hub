@@ -101,9 +101,20 @@ export class ManageFlows extends AppPage {
     return await element(by.id("flows-redeploy-btn")).click();
   }
 
-  async clickRedeployConfirmation(option: string) {
-    let choice = element(by.buttonText(option));
-    return await choice.click();
+  get redeployDialog() {
+    return element(by.cssContainingText("confirmation-dialog h1", "Redeploy"));
+  }
+
+  redeployConfirmationButton(option: string) {
+    return element(by.cssContainingText("button span", option));
+  }
+
+  /**
+   * @param option = [CANCEL/YES]
+   */
+  async clickRedeployConfirmationButton(option: string) {
+    let button = this.redeployConfirmationButton(option);
+    return await button.click();
   }
 
   /**
@@ -118,40 +129,45 @@ export class ManageFlows extends AppPage {
 
 
   flowName(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-name`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-name a`));
+  }
+
+  async clickFlowname(flowname: string) {
+    let link = this.flowName(flowname);
+    return await link.click();
   }
 
   targetEntity(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-entity`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-entity`));
   }
 
   status(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-status`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-status`));
   }
 
   jobs(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-jobs`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-jobs`));
   }
 
   lastJobFinished(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-last-job-finished`))
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-last-job-finished`))
   }
 
   docsCommitted(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-docs-committed`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-docs-committed`));
   }
 
   docsFailed(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-docs-failed`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-docs-failed`));
   }
 
   async clickRunFlowButton(flowName: string) {
-    let run = element(by.css(`.flow-${flowName} .run-flow-button`))
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`))
     return await run.click();
   }
 
   async clickFlowMenu(flowName: string) {
-    let menu = element(by.css(`.flow-${flowName} .flow-menu`));
+    let menu = element(by.css(`.flow-${flowName.toLowerCase()} .flow-menu`));
     return await menu.click();
   }
 
@@ -178,17 +194,24 @@ export class ManageFlows extends AppPage {
     return element(by.css("confirmation-dialog .content p"));
   }
 
-  /**
-   * clickDeleteConfirmationButton
-   * @param option = [Cancel/Yes]
-   */
-  async clickDeleteConfirmationButton(option: string) {
-    return await element(by.cssContainingText("confirmation-dialog button", option)).click();
+  deleteConfirmationButton(option: string) {
+    return element(by.cssContainingText("confirmation-dialog button span", option));
   }
 
-
+  /**
+   * clickDeleteConfirmationButton
+   * @param option = [CANCEL/YES]
+   */
+  async clickDeleteConfirmationButton(option: string) {
+    let button = this.deleteConfirmationButton(option);
+    return await button.click();
+  }
 
   // Run flow dialog box
+
+  get runFlowDialog() {
+    return element(by.css("app-run-flow-dialog"));
+  }
 
   get runFlowHeader() {
     return element(by.css("app-run-flow-dialog h1"));
