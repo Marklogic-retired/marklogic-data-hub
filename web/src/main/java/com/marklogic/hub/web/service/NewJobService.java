@@ -184,14 +184,22 @@ public class NewJobService extends ResourceManager {
 
     private void createJobs(List<JobModel> jobModels, JSONObject jobJson) {
         JobModel jm = new JobModel();
+        String flowName = jobJson.getString("flow");
+        if (StringUtils.isEmpty(flowName)) {
+            return;
+        }
+        Flow flow = flowManager.getFlow(jm.flowName);
+        if (flow == null) {
+            return;
+        }
+
         jobModels.add(jm);
         jm.id = jobJson.getString("jobId");
         jm.flowId = jobJson.getString("flow");
-        jm.flowName = jobJson.getString("flow");
+        jm.flowName = flowName;
         jm.user = jobJson.getString("user", "");
         jm.status = jobJson.getString("jobStatus", "");
 
-        Flow flow = flowManager.getFlow(jm.flowName);
         Map<String, Step> steps = flow.getSteps();
         jm.startTime = jobJson.getString("timeStarted", "");
         jm.endTime = jobJson.getString("timeEnded", "");
