@@ -23,6 +23,7 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -65,6 +66,9 @@ public class FlowManagerService {
 
     @Autowired
     private DataHubService dataHubService;
+
+    @Autowired
+    private Scaffolding scaffolding;
 
     public List<FlowStepModel> getFlows() {
         FlowRunnerChecker.getInstance(flowRunner);
@@ -217,9 +221,19 @@ public class FlowManagerService {
                     StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
                     StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
                     stepDefinitionManagerService.saveStepDefinition(stepDefinition);
-                } else {
-                    StepDefinition stepDefinition = StepDefinition.create(step.getStepDefinitionName(), StepDefinition.StepDefinitionType.CUSTOM);
+                }
+                else {
+                    String stepDefName = step.getStepDefinitionName();
+                    StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.CUSTOM;
+                    String modulePath = "/custom-modules/" + stepDefType.toString().toLowerCase() + "/" + stepDefName + "/main.sjs";
+
+                    StepDefinition stepDefinition = StepDefinition.create(stepDefName, stepDefType);
                     stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
+
+                    scaffolding.createCustomModule(stepDefName, stepDefType.toString());
+                    stepDefinition.setModulePath(modulePath);
+                    step.setModulePath(modulePath);
+
                     stepDefinitionManagerService.createStepDefinition(stepDefinition);
                 }
                 break;
