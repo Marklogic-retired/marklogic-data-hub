@@ -143,8 +143,11 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     private void initializeFlow(String jobId) {
+        //Reset the states to initial values before starting a flow run
         isRunning.set(true);
         isJobSuccess.set(true);
+        isJobCancelled.set(false);
+        jobStoppedOnError.set(false);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
         if(jobUpdate == null) {
@@ -436,6 +439,7 @@ public class FlowRunnerImpl implements FlowRunner{
             }
             if (t != null) {
                 logger.error(t.getMessage());
+                //Run the next queued flow if stop-on-error is set or if the step queue is empty
                 if(((FlowRunnerTask)r).getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
                     jobQueue.remove();
                     if (!jobQueue.isEmpty()) {
@@ -445,6 +449,7 @@ public class FlowRunnerImpl implements FlowRunner{
                         threadPool.shutdownNow();
                     }
                 }
+                //Run the next step
                 else {
                     if(!(threadPool != null && threadPool.isTerminating())) {
                         threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
