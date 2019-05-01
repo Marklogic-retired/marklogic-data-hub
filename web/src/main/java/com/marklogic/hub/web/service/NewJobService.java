@@ -130,19 +130,18 @@ public class NewJobService extends ResourceManager {
         this.client = hubConfig.newJobDbClient();
     }
 
-    public List<JobModel> getJobs() throws IOException {
+    public List<JobModel> getJobs(String flowId) throws IOException {
         // temporarily send static job payload to client
         /*ObjectMapper mapper = new ObjectMapper();
         List<JobModel> jobModels = mapper.readValue(JOB_RESPONSE, List.class);*/
 
+        if (StringUtils.isNotEmpty(flowId)) {
+            return getJobs(flowId, null);
+        }
         List<String> flowNames = flowManager.getFlowNames();
         List<JobModel> jobModels = new ArrayList<>();
         flowNames.forEach(f -> jobModels.addAll(getJobs(f, null)));
         return jobModels;
-    }
-
-    public List<JobModel> getJobs(String jobId) {
-        return getJobs(null, jobId);
     }
 
     public List<JobModel> getJobs(String flowName, String jobId) {
