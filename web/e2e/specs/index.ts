@@ -53,5 +53,5 @@ describe('DataHub', function () {
   //jobs();
   //runTraces();
   //mappings();
-  //uninstall(qaProjectDirectory);
+  uninstall(qaProjectDirectory);
 });
