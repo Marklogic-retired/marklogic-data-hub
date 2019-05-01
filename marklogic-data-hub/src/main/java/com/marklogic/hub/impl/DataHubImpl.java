@@ -121,7 +121,21 @@ public class DataHubImpl implements DataHub {
         this._manageClient = hubConfig.getManageClient();
         this._adminManager = hubConfig.getAdminManager();
         this._databaseManager = new DatabaseManager(_manageClient);
-        this._serverManager = new ServerManager(_manageClient);
+        this._serverManager = constructServerManager(_manageClient, hubConfig);
+    }
+
+    /**
+     * Need to account for the group name in case the user has overridden the name of the "Default" group.
+     *
+     * @param manageClient
+     * @param hubConfig
+     * @return
+     */
+    protected ServerManager constructServerManager(ManageClient manageClient, HubConfig hubConfig) {
+        AppConfig appConfig = hubConfig.getAppConfig();
+        return appConfig != null ?
+            new ServerManager(manageClient, appConfig.getGroupName()) :
+            new ServerManager(manageClient);
     }
 
     @Override
