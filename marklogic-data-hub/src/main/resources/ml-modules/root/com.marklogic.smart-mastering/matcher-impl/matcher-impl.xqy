@@ -259,18 +259,40 @@ declare function match-impl:find-document-matches-by-options(
   $filter-query as cts:query
 ) as element(results)
 {
+  (: increment usage count :)
+  tel:increment(),
+  match-impl:find-document-matches-by-options(
+    $document,
+    $options,
+    $start,
+    $page-length,
+    $minimum-threshold,
+    $lock-on-search,
+    $include-matches,
+    $filter-query,
+    fn:true()
+  )
+};
+
+declare function match-impl:find-document-matches-by-options(
+  $document as node()?,
+  $options as item(),
+  $start as xs:integer,
+  $page-length as xs:integer,
+  $minimum-threshold as xs:double,
+  $lock-on-search as xs:boolean,
+  $include-matches as xs:boolean,
+  $filter-query as cts:query,
+  $include-results as xs:boolean
+) as element(results)
+{
   if (fn:exists($document)) then (
-    (: increment usage count :)
-    tel:increment(),
     let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
     let $compiled-options := match-impl:compile-match-options($options, $is-json, $minimum-threshold)
     let $scoring := $compiled-options => map:get("scoring")
-    let $algorithms := $compiled-options => map:get("algorithms")
-    let $options := $compiled-options => map:get("options")
     let $values-by-qname := match-impl:values-by-qname($document, $compiled-options)
     let $cached-queries := map:map()
     let $boost-query := match-impl:build-boost-query($document, $values-by-qname, $compiled-options, $cached-queries)
-    let $serialized-boost-query := element boost-query {$boost-query}
     let $minimum-threshold-combinations-query :=
       cts:or-query(
         for $query-set in $compiled-options => map:get("minimumThresholdCombinations")
@@ -314,19 +336,6 @@ declare function match-impl:find-document-matches-by-options(
       if ($lock-on-search) then
         match-impl:lock-on-search($serialized-match-query/cts:or-query)
       else ()
-    let $matches :=
-        match-impl:search(
-          $match-query,
-          $boost-query,
-          $filter-query,
-          $minimum-threshold,
-          $start,
-          $page-length,
-          $scoring,
-          $compiled-options,
-          $include-matches,
-          $is-json
-        )
     return (
       $_lock-on-search,
       element results {
@@ -335,7 +344,20 @@ declare function match-impl:find-document-matches-by-options(
         attribute start { $start },
         element boost-query {$boost-query},
         $serialized-match-query,
-        $matches
+        if ($include-results) then
+          match-impl:search(
+            $match-query,
+            $boost-query,
+            $filter-query,
+            $minimum-threshold,
+            $start,
+            $page-length,
+            $scoring,
+            $compiled-options,
+            $include-matches,
+            $is-json
+          )
+        else ()
       }
     )
   ) else
