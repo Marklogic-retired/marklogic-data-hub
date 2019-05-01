@@ -17,6 +17,8 @@ import module namespace fun-ext = "http://marklogic.com/smart-mastering/function
   at "../function-extension/base.xqy";
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
+import module namespace match-impl = "http://marklogic.com/smart-mastering/matcher-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/matcher-impl.xqy";
 import module namespace match-opt-impl = "http://marklogic.com/smart-mastering/options-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 import module namespace merging = "http://marklogic.com/smart-mastering/merging"
@@ -89,8 +91,12 @@ declare function proc-impl:consolidate-merges($matches as map:map) as map:map
       )
     for $merge in $merges
     let $uris := fn:tokenize($merge, $STRING-TOKEN)
+    let $merge-id := fn:head((
+      $uris[fn:starts-with(., $merge-impl:MERGED-DIR)] ! fn:replace(fn:substring-after(., $merge-impl:MERGED-DIR), "\.(json|xml)", ""),
+      xdmp:md5($merge)
+    ))
     return
-      map:entry(xdmp:md5($merge), $uris)
+      map:entry($merge-id, $uris)
   ))
 };
 
@@ -146,12 +152,20 @@ declare function proc-impl:process-match-and-merge-with-options(
 {
   (: increment usage count :)
   tel:increment(),
-  let $uris :=
+  let $normalized-input :=
     if ($input instance of xs:string*) then
-      $input
+      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($const:ARCHIVED-COLL)), "unfiltered")
+      return
+        proc-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then
-      $input ! (. => map:get("uri"))
+      $input
     else ()
+  let $write-objects-by-uri := fn:fold-left(
+    function($map, $map-addition) { $map => map:with($map-addition => map:get("uri"), $map-addition) },
+    map:map(),
+    $normalized-input
+  )
+  let $uris := map:keys($write-objects-by-uri)
   let $_lock-for-update-on-uris := xdmp:eager($uris ! xdmp:lock-for-update(.))
   let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "processing: " || fn:string-join($uris, ", "))
@@ -168,26 +182,28 @@ declare function proc-impl:process-match-and-merge-with-options(
         $merge-options
   let $actions := fn:distinct-values(($matching-options/matcher:actions/matcher:action/@name ! fn:string(.), $const:MERGE-ACTION, $const:NOTIFY-ACTION))
   let $thresholds := $matching-options/matcher:thresholds/matcher:threshold[(@action|matcher:action) = $actions]
-  let $threshold-labels := $thresholds/@label
+  let $threshold-labels := $thresholds/(@label|matcher:label)
   let $minimum-threshold :=
     fn:min(
-      $matching-options/matcher:thresholds/matcher:threshold[@label = $threshold-labels]/@above ! fn:number(.)
+      $thresholds[(@label|matcher:label) = $threshold-labels]/(@above|matcher:above) ! fn:number(.)
     )
+  let $merge-threshold :=
+    fn:min((
+      $thresholds[(@action|matcher:action) = $const:MERGE-ACTION]/(@above|matcher:above) ! fn:number(.),
+      999
+    ))
+  let $_min-threshold-err :=
+            if (fn:empty($minimum-threshold)) then
+              fn:error($const:NO-THRESHOLD-ACTION-FOUND, "No threshold actions to act on.", ($matching-options/matcher:thresholds))
+            else ()
   let $lock-on-query := fn:true()
-  let $documents :=
-    if ($input instance of xs:string*) then
-      cts:search(fn:doc(), cts:document-query($input), "unfiltered")
-    else if ($input instance of map:map*) then
-      $input ! (. => map:get("value"))
-    else
-      ()
   let $all-matches :=
     map:new((
-      $documents !
+      $normalized-input !
         map:entry(
-          xdmp:node-uri(.),
+          (. => map:get("uri")),
           matcher:find-document-matches-by-options(
-            .,
+            (. => map:get("value")),
             $matching-options,
             1,
             fn:head((
@@ -238,10 +254,13 @@ declare function proc-impl:process-match-and-merge-with-options(
                 coll-impl:on-merge(
                   map:new((
                     for $uri in $distinct-uris
+                    let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
                     return
                       map:entry(
                         $uri,
-                        xdmp:document-get-collections($uri)
+                        $write-object
+                          => map:get("context")
+                          => map:get("collections")
                       )
                   )),
                   $on-merge-options
@@ -249,8 +268,13 @@ declare function proc-impl:process-match-and-merge-with-options(
               ),
               map:entry("permissions",
                 (
-                  xdmp:default-permissions(),
-                  fn:map(xdmp:document-get-permissions#1, $distinct-uris)
+                  xdmp:default-permissions($merge-uri, "objects"),
+                  for $uri in $distinct-uris
+                  let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
+                  return
+                    $write-object
+                      => map:get("context")
+                      => map:get("permissions")
                 )
               )
             ))
@@ -259,65 +283,83 @@ declare function proc-impl:process-match-and-merge-with-options(
       )
     )
   let $uris-that-were-merged := map:keys($merged-into)
-  let $archived-updates :=
+  let $_archived-updates :=
     (: Process collections on no matches :)
     let $on-archive := $merge-options/merging:algorithms/merging:collections/merging:on-archive
     for $uri in $uris-that-were-merged
-    let $current-collections := xdmp:document-get-collections($uri)
+    let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
+    let $write-context := $write-object
+        => map:get("context")
+    let $current-collections := $write-context
+        => map:get("collections")
     let $new-collections := coll-impl:on-archive(
       map:entry($uri, $current-collections),
       $on-archive
     )
-    where
-      fn:not(
-        fn:count($new-collections) eq fn:count($current-collections)
-          and
-          (every $col in $new-collections satisfies $col = $current-collections)
-      )
-    return map:new((
-      map:entry("uri", $uri),
-      map:entry("value", fn:doc($uri)),
-      map:entry("context",
-        map:new((
-          map:entry("collections",$new-collections),
-          map:entry("permissions",xdmp:document-get-permissions($uri))
-        ))
-      )
-    ))
+    let $_update := $write-context
+      => map:put("collections", $new-collections)
+    return
+      xdmp:lock-for-update($uri)
   let $consolidated-notifies := proc-impl:consolidate-notifies($all-matches, $merged-into)
-  let $no-matches-updates :=
+  let $_no-matches-updates :=
     (: Process collections on no matches :)
     let $on-no-match := $merge-options/merging:algorithms/merging:collections/merging:on-no-match
     for $uri in $uris[fn:not(. = $uris-that-were-merged)]
-    let $current-collections := xdmp:document-get-collections($uri)
-    let $new-collections := coll-impl:on-no-match(
-      map:entry($uri, $current-collections),
-      $on-no-match
-    )
-    where
-      fn:not(
-        fn:count($new-collections) eq fn:count($current-collections)
-          and
-          (every $col in $new-collections satisfies $col = $current-collections)
-      )
-    return map:new((
-      map:entry("uri", $uri),
-      map:entry("value", fn:doc($uri)),
-      map:entry("context",
-        map:new((
-          map:entry("collections",$new-collections),
-          map:entry("permissions",xdmp:document-get-permissions($uri))
-        ))
-      )
-    ))
+    let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
+    let $doc := $write-object
+      => map:get("value")
+    let $has-merges :=
+      fn:number(
+        match-impl:find-document-matches-by-options(
+          $doc,
+          $matching-options,
+          1,
+          1,
+          $merge-threshold,
+          (: don't lock for update :)
+          fn:false(),
+          (: don't include detailed match information :)
+          fn:false(),
+          $filter-query,
+          (: don't return results. we just want the estimate. :)
+          fn:false()
+        )/@total
+      ) gt 0
+    return
+      (: If there are merges with a doc outside of this batch then leave it alone. :)
+      if ($has-merges) then
+        map:delete($write-objects-by-uri, $uri)
+      (: otherwise, we want to pick up new collections :)
+      else
+        let $write-context := $write-object
+          => map:get("context")
+        let $current-collections := $write-context
+          => map:get("collections")
+        let $new-collections := coll-impl:on-no-match(
+          map:entry($uri, $current-collections),
+          $on-no-match
+        )
+        let $_update := $write-context
+          => map:put("collections", $new-collections)
+        return xdmp:lock-for-update($uri)
   let $processed-notifications :=
     (: Process notifications :)
     for $notification in $consolidated-notifies
     let $parts := fn:tokenize($notification, $STRING-TOKEN)
     let $threshold := fn:head($parts)
     let $uris := fn:tail($parts)
+    let $match-write-object := matcher:build-match-notification($threshold, $uris, $merge-options)
     return
-      matcher:build-match-notification($threshold, $uris, $merge-options)
+      $match-write-object ! (., xdmp:lock-for-update(map:get(., "uri")))
+  (: Ensure that we are only writing once to a URI and merges take precedence over archives :)
+  let $_processed-merges :=
+    for $processed-merge in $processed-merges
+    return
+      $write-objects-by-uri => map:put(($processed-merge => map:get("uri")), $processed-merge)
+  let $_processed-notifications :=
+    for $processed-notification in $processed-notifications
+    return
+      $write-objects-by-uri => map:put(($processed-notification => map:get("uri")), $processed-notification)
   return json:to-array((
     if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then (
       xdmp:trace($const:TRACE-MATCH-RESULTS, "All matches: " || xdmp:describe($all-matches, (),())),
@@ -327,10 +369,10 @@ declare function proc-impl:process-match-and-merge-with-options(
       xdmp:trace($const:TRACE-MATCH-RESULTS, "Consolidated notifications: " || xdmp:quote($consolidated-notifies))
     )
     else (),
-    $archived-updates,
-    $processed-merges,
-    $no-matches-updates,
-    $processed-notifications,
+    for $uri in map:keys($write-objects-by-uri)
+    let $lock-for-update := xdmp:lock-for-update($uri)
+    return
+      $write-objects-by-uri => map:get($uri),
     (: Process custom actions :)
     let $action-map :=
       map:new((
@@ -420,3 +462,34 @@ declare function proc-impl:matches-to-json($filtered-matches as element(result)*
     }
   }
 };
+
+declare function proc-impl:build-write-object-for-doc($doc as document-node())
+  as map:map
+{
+  map:new((
+    map:entry("uri", xdmp:node-uri($doc)),
+    map:entry("value", $doc),
+    map:entry("context", map:new((
+      map:entry("collections", xdmp:node-collections($doc)),
+      map:entry("metadata", xdmp:node-metadata($doc)),
+      map:entry("permissions", xdmp:node-permissions($doc, "objects"))
+    )))
+  ))
+};
+
+declare function proc-impl:retrieve-write-object(
+  $write-objects-by-uri as map:map,
+  $uri as xs:string
+) as map:map?
+{
+  if (map:contains($write-objects-by-uri, $uri)) then
+    $write-objects-by-uri
+    => map:get($uri)
+  else
+    let $write-obj := proc-impl:build-write-object-for-doc(fn:doc($uri))
+    return (
+      map:put($write-objects-by-uri, $uri, $write-obj),
+      $write-obj
+    )
+};
+
