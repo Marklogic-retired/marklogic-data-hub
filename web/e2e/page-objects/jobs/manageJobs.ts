@@ -87,6 +87,10 @@ export class ManageJobs extends AppPage {
     return element(by.id("jobs-table"));
   }
 
+  getJobsCount(flowName: string) {
+    return element.all(by.css(`.jobs-table mat-row.job-${flowName.toLowerCase()}`)).count();
+  }
+
   flowNameRowClass(flowName: string) {
     return flowName.toLowerCase().replace(" ", "-");    
   }
