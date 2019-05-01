@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -42,10 +41,12 @@ public class CollectionsService {
         Collections collections = new Collections(hubConfig.newStagingClient());
         JsonNode collectionsNode = collections.getCollections(databaseName);
 
-        Iterator<String> iterator = collectionsNode.fieldNames();
-        while (iterator.hasNext()) {
-            collectionList.add(iterator.next());
-        }
+        collectionsNode.fieldNames().forEachRemaining(collection -> {
+            // Exclude internal collections
+            if (!collection.startsWith("http://marklogic.com/")) {
+                collectionList.add(collection);
+            }
+        });
 
         return collectionList;
     }
