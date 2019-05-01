@@ -29,13 +29,19 @@ export class JobDetailsUiComponent implements OnChanges {
 
   ngOnInit() {
     // TODO handle capitalization with CSS
-    this.job.status = _.capitalize(this.job.status);
-    this.updateDataSource();
+    if (this.job) {
+      this.job.status = _.capitalize(this.job.status);
+      this.updateDataSource();
+    } else {
+      this.job = Job.fromJSON({ status: 'Loading...' });
+    }
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
   ngOnChanges(changes: SimpleChanges) {
     console.log('job changes', changes);
