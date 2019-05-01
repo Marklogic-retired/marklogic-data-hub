@@ -65,9 +65,17 @@ function main(content, options) {
   if (entityModel && (entityModel.constructor.name === "Document" || entityModel.constructor.name === "ObjectNode")) {
     entityModel = entityModel.toObject();
   }
-  if(!entityModel){
+  if(!entityModel) {
     datahub.debug.log({message: 'Could not find a target entity: ' + mapping.targetEntityType, type: 'error'});
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
+  }
+  if(!entityModel.info) {
+    datahub.debug.log({message: 'Could not find the model info on the target entity: ' + mapping.targetEntityType, type: 'error'});
+    throw Error('Could not find the model info on the target entity: ' + mapping.targetEntityType);
+  }
+  if(!entityModel.info.title) {
+    datahub.debug.log({message: 'Could not find the model title on the target entity: ' + mapping.targetEntityType, type: 'error'});
+    throw Error('Could not find the model title on the target entity: ' + mapping.targetEntityType);
   }
 
   let instance;

@@ -44,23 +44,18 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   }
   let mappingProperties = mapping.properties;
   let instance = {};
-  if (model.info && model.info.title === modelName) {
-    instance['$type'] = model.info.title;
+  instance['$type'] = model.info.title;
+  if (model.info.version) {
     instance['$version'] = model.info.version;
   } else {
-    instance['$type'] = modelName;
     instance['$version'] = '0.0.1';
   }
 
-  if (content.nodeName === 'envelope' || (content.nodeKind === 'document')) {
-    sourceContext = '/*:envelope/*:instance' + sourceContext;
-  }
-  else{
-    sourceContext = '/*:envelope/*:instance' + sourceContext;
+  if (!(content.nodeName === 'envelope' || (content.nodeKind === 'document'))) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
+  sourceContext = '/*:envelope/*:instance' + sourceContext;
 
-  //grab the model definition
   let definition = model.definitions[modelName];
   //first let's get our required props and PK
   let required = definition.required;
@@ -74,7 +69,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let dataType = prop["datatype"];
     let valueSource = null;
     let connector = "";
-    if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
+    if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
       if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')){
         connector += '/';
       }
