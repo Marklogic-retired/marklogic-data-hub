@@ -64,6 +64,7 @@ public class FlowRunnerTest extends HubTestBase {
     @BeforeEach
     public void setupEach() throws IOException {
         basicSetup();
+        getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
             hubConfig.getHubEntitiesDir().toFile());
@@ -79,6 +80,7 @@ public class FlowRunnerTest extends HubTestBase {
             hubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
         installUserModules(getDataHubAdminConfig(), true);
         installHubArtifacts(getDataHubAdminConfig(), true);
+        getHubFlowRunnerConfig();
     }
 
     @Test
@@ -110,16 +112,14 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 2);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
 
-        //TODO: Uncomment after DHFPROD-2212 is fixed
-       /* opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
         opts.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         steps = new ArrayList<>();
         steps.add("4");
-       // steps.add("5");
         resp = fr.runFlow("testFlow", steps, UUID.randomUUID().toString(), opts);
         fr.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection") == 2);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));*/
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
 
     @Test
@@ -147,7 +147,24 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @Test
-    public void testIngestBinaryandTxt(){
+    public void testRunFlowStopOnError(){
+        Map<String,Object> opts = new HashMap<>();
+
+        opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        opts.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        Map<String,String> mapping = new HashMap<>();
+        mapping.put("name", "non-existent-mapping");
+        mapping.put("version", "1");
+        opts.put("mapping", mapping);
+
+        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("1","5"), UUID.randomUUID().toString(), opts);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
+        Assertions.assertTrue(JobStatus.STOP_ON_ERROR.toString().equalsIgnoreCase(resp.getJobStatus()));
+    }
+
+    @Test
+    public void testIngestBinaryAndTxt(){
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
         List<String> steps = new ArrayList<>();
@@ -255,6 +272,8 @@ public class FlowRunnerTest extends HubTestBase {
         fr.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection") == 1);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1") == 1);
+        System.out.println(resp.getJobStatus());
+        System.out.println(resp1.getJobStatus());
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
     }

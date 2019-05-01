@@ -1,7 +1,7 @@
 {
   "name": "testFlow",
   "description": "flow description",
-  "stopOnError": "false",
+  "stopOnError": "true",
   "steps": {
     "1": {
       "stepDefinitionName": "default-ingestion",
