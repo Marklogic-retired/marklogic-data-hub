@@ -15,30 +15,47 @@ function getMappingWithVersion(mappingName, version) {
   return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
 }
 
+function getSourceContext(sourceContext) {
+  let connector = "/*:";
+  let srcCtxArr;
+
+  sourceContext = sourceContext.startsWith("/") ? sourceContext.substring(1,sourceContext.length) : sourceContext;
+  srcCtxArr = sourceContext.split("/");
+  sourceContext = "";
+
+  srcCtxArr.forEach(function(element) {
+    if(element.indexOf(':') === -1) {
+      sourceContext += connector + element;
+    } else {
+      sourceContext += "/" + element;
+    }
+  });
+  return sourceContext;
+}
+
 function processInstance(model, mapping, content) {
- return  extractInstanceFromModel(model, model.info.title, mapping, content);
+ return extractInstanceFromModel(model, model.info.title, mapping, content);
 }
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
+  if (content.nodeKind === 'element' && sourceContext !== '/')  {
+    sourceContext = getSourceContext(sourceContext);
+  }
   let mappingProperties = mapping.properties;
   let instance = {};
-  if (model.info && model.info.title === modelName) {
-    instance['$type'] = model.info.title;
+  instance['$type'] = model.info.title;
+  if (model.info.version) {
     instance['$version'] = model.info.version;
   } else {
-    instance['$type'] = modelName;
     instance['$version'] = '0.0.1';
   }
 
-  if (content.nodeName === 'envelope' || (content.nodeKind === 'document' && content.root && content.root.envelope)) {
-    sourceContext = '/*:envelope/*:instance' + sourceContext;
-  }
-  else{
+  if (!(content.nodeName === 'envelope' || (content.nodeKind === 'document'))) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
+  sourceContext = '/*:envelope/*:instance' + sourceContext;
 
-  //grab the model definition
   let definition = model.definitions[modelName];
   //first let's get our required props and PK
   let required = definition.required;
@@ -52,7 +69,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let dataType = prop["datatype"];
     let valueSource = null;
     let connector = "";
-    if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
+    if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
       if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')){
         connector += '/';
       }

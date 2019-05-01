@@ -27,11 +27,6 @@ function main(content, options) {
   // let doc = cts.doc(id);
   let doc = content.value;
 
-  // for json we need to return the instance
-  if (doc && doc instanceof Document) {
-    doc = fn.head(doc.root);
-  }
-
   //then we grab our mapping
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     let version = parseInt(options.mapping.version);
@@ -70,37 +65,30 @@ function main(content, options) {
   if (entityModel && (entityModel.constructor.name === "Document" || entityModel.constructor.name === "ObjectNode")) {
     entityModel = entityModel.toObject();
   }
-  if(!entityModel){
+  if(!entityModel) {
     datahub.debug.log({message: 'Could not find a target entity: ' + mapping.targetEntityType, type: 'error'});
     throw Error('Could not find a target entity: ' + mapping.targetEntityType);
   }
-
-  let source;
-  // for xml we need to use xpath
-  if(doc && doc instanceof XMLDocument) {
-    source = doc.root;
+  if(!entityModel.info) {
+    datahub.debug.log({message: 'Could not find the model info on the target entity: ' + mapping.targetEntityType, type: 'error'});
+    throw Error('Could not find the model info on the target entity: ' + mapping.targetEntityType);
   }
-  // for json we need to return the instance
-  else if(doc && (doc instanceof Document)) {
-    source = fn.head(doc.root);
-  }
-  // for everything else
-  else {
-    source = doc;
+  if(!entityModel.info.title) {
+    datahub.debug.log({message: 'Could not find the model title on the target entity: ' + mapping.targetEntityType, type: 'error'});
+    throw Error('Could not find the model title on the target entity: ' + mapping.targetEntityType);
   }
 
   let instance;
-
   //Then we obtain the instance and process it from the source context
   try {
-    instance = lib.processInstance(entityModel, mapping, source);
+    instance = lib.processInstance(entityModel, mapping, doc);
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
   }
 
   //now let's make our attachments, if it's xml, it'll be passed as string
-  instance['$attachments'] = source;
+  instance['$attachments'] = doc;
 
   let triples = [];
   let headers = datahub.flow.flowUtils.createHeaders(options);
