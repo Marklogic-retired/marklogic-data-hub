@@ -31,6 +31,7 @@ export class NewStepDialogUiComponent implements OnInit {
   newStepForm: FormGroup;
   databases: any = [];
   type: string = null;
+  editingStep: boolean = false;
   isIngestion: boolean = false;
   isMapping: boolean = false;
   isMastering: boolean = false;
@@ -78,6 +79,12 @@ export class NewStepDialogUiComponent implements OnInit {
     if (this.step && this.step.options && this.step.options.sourceDatabase)
       this.getCollections.emit(this.step.options.sourceDatabase);
 
+    // Disable Type select and Name when editing a step
+    if (this.step && this.step.name) {
+      this.editingStep = true;
+      this.newStepForm.controls['stepDefinitionType'].disable();
+      this.newStepForm.controls['name'].disable();
+    }
   }
   getNameErrorMessage() {
     const errorCodes = [

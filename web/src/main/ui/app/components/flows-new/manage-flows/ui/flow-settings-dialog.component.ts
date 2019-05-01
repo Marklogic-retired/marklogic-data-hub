@@ -35,6 +35,9 @@ export class FlowSettingsDialogComponent implements OnInit {
       batchSize: [this.data.flow ? this.data.flow.batchSize || 100 : 100, CustomFieldValidator.number({min: 1})],
       threadCount: [this.data.flow ? this.data.flow.threadCount || 4 : 4, CustomFieldValidator.number({min: 1})]
     });
+    if (this.data.flow && this.data.flow.name ) {
+      this.form.controls['name'].disable();
+    }
     this.form.setControl('options', this.createOptions());
     this.options = this.form.get('options') as FormArray;
   }

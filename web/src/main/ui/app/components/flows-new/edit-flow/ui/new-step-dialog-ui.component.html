@@ -7,7 +7,7 @@
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <div *ngIf="newStepForm.value.stepDefinitionType">
+  <div *ngIf="newStepForm.value.stepDefinitionType || editingStep">
   <mat-form-field class="">
     <input id="step-name" matInput formControlName="name" placeholder="Name" required>
     <mat-error id="step-name-error" *ngIf="newStepForm.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
