@@ -9,7 +9,6 @@ import stepsPage from '../../page-objects/steps/steps';
 import ingestStepPage from '../../page-objects/steps/ingestStep';
 import mappingStepPage from '../../page-objects/steps/mappingStep';
 import masteringStepPage from '../../page-objects/steps/masteringStep';
-import { exists } from 'fs';
 import manageJobsPage from '../../page-objects/jobs/manageJobs';
 
 export default function(qaProjectDir) {
@@ -252,6 +251,7 @@ export default function(qaProjectDir) {
             await manageJobsPage.clickFlowNameFilter();
             browser.wait(EC.elementToBeClickable(manageJobsPage.flowNameFilterOptions("SimpleJSONFlow")));
             await manageJobsPage.clickFlowNameFilterOptions("SimpleJSONFlow");
+            await manageJobsPage.getJobsCount("SimpleJSONFlow").then(function(jobs){expect(jobs >= 3)});
         });
 
         // Cleanup
@@ -266,7 +266,7 @@ export default function(qaProjectDir) {
             await manageFlowPage.clickDeleteConfirmationButton("YES");
             browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
             browser.wait(EC.invisibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
-            await expect(manageFlowPage.flowName("SimpleJSONFlow")).not.toBe(exists);
+            await expect(manageFlowPage.flowName("SimpleJSONFlow").isDisplayed).toBe(false);
         });
 
         it ('should delete SimpleJSON entity', async function() {
