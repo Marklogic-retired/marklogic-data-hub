@@ -21,6 +21,8 @@ export default function(tmpDir) {
 
     it ('should click the uninstall button', async function() {
       browser.refresh();
+      await appPage.settingsTab.click();
+      settingsPage.isLoaded();
       await settingsPage.uninstallButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.uninstallConfirmation));
       await settingsPage.uninstallConfirmation.click();
