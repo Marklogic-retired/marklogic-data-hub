@@ -148,8 +148,14 @@ export class NewStepDialogUiComponent implements OnInit {
     this.entityRequired = this.isMapping || this.isMastering;
   }
   onSave() {
-    this.newStep.name = this.newStepForm.value.name;
-    this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
+    if (this.editingStep) {
+      this.newStep.name = this.newStepForm.getRawValue().name;
+      this.newStep.stepDefinitionType = this.newStepForm.getRawValue().stepDefinitionType;
+    } else {
+      this.newStep.name = this.newStepForm.value.name;
+      this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
+    }
+
     if (this.newStep.stepDefinitionType == this.stepType.CUSTOM) {
       this.newStep.stepDefinitionName = this.newStep.name;
     } else {

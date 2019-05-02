@@ -84,7 +84,11 @@ export class FlowSettingsDialogComponent implements OnInit {
 
   onSave() {
     const resultFlow = this.data.flow ? this.data.flow.toJson() : new Flow().toJson();
-    resultFlow.name = this.form.value.name;
+    if ( this.data.flow && this.data.flow.name ) {
+      resultFlow.name = this.form.getRawValue().name;
+    } else {
+      resultFlow.name = this.form.value.name;
+    }
     resultFlow.description = this.form.value.description;
     resultFlow.batchSize = parseInt(this.form.value.batchSize);
     resultFlow.threadCount = parseInt(this.form.value.threadCount);
