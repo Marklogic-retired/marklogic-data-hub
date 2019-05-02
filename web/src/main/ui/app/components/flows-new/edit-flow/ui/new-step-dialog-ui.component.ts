@@ -86,15 +86,6 @@ export class NewStepDialogUiComponent implements OnInit {
       this.setType(type);
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
-
-      // if (!this.step.options.sourceCollection) {
-      //   const parseQuery = this.step.options.sourceQuery.split('"');
-      //   console.log('parseQuery', parseQuery);
-      //   // this.newStepForm.patchValue({
-      //   //   sourceQuery: parseQuery[1]
-      //   // });
-      // }
-      console.log('editing step', this.step);
     }
   }
   getNameErrorMessage() {
