@@ -147,9 +147,7 @@ public class MappingModel extends JsonPojo {
         return node;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
+    public boolean isEqual(Object o) {
         if (this == o) {
             return true;
         }

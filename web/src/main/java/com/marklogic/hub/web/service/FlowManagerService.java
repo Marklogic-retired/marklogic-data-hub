@@ -284,7 +284,7 @@ public class FlowManagerService {
             }
         }
 
-        if (existingStep != null && existingStep.equals(step)) {
+        if (existingStep != null && existingStep.isEqual(step)) {
             return StepModel.transformToWebStepModel(existingStep);
         }
 

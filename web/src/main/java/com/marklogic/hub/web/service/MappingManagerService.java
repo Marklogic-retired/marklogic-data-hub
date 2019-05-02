@@ -74,7 +74,7 @@ public class MappingManagerService {
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping= getMapping(mapName, false);
-        if (existingMapping == null || existingMapping != null && !existingMapping.equals(mapping)) {
+        if (existingMapping == null || existingMapping != null && !existingMapping.isEqual(mapping)) {
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()),  existingMapping == null ? false : true);
             dataHubService.reinstallUserModules(hubConfig, null, null);
         }
