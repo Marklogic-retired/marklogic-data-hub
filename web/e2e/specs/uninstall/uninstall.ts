@@ -7,11 +7,7 @@ const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('Uninstall', () => {
-    beforeAll(() => {
-      loginPage.isLoaded();
-    });
-
-    it('Should login to the settings page', async function() {
+    xit('Should login to the settings page', async function() {
       await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(tmpDir);
       await loginPage.clickNext('ProjectDirTab');
