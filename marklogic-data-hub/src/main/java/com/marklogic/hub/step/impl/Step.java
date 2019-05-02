@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
-
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
@@ -181,6 +180,17 @@ public class Step {
         }
         if (customHook == null && that.customHook != null || customHook != null && that.customHook == null ||
             !customHook.equals(that.customHook)) {
+            return false;
+        }
+
+        //fileLocations should not be null
+        if (fileLocations != null && that.fileLocations != null) {
+            if (!fileLocations.equals(that.fileLocations)) {
+                return false;
+            }
+        }
+
+        if (StringUtils.isNotEmpty(modulePath) ? !modulePath.equals(that.modulePath) : StringUtils.isNotEmpty(that.modulePath)) {
             return false;
         }
 
