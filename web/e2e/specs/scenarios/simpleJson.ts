@@ -271,7 +271,6 @@ export default function(qaProjectDir) {
             await manageFlowPage.clickDeleteConfirmationButton("YES");
             browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
             browser.wait(EC.invisibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
-            await expect(manageFlowPage.flowName("SimpleJSONFlow").isDisplayed()).toBe(false);
         });
 
         it ('should delete SimpleJSON entity', async function() {
