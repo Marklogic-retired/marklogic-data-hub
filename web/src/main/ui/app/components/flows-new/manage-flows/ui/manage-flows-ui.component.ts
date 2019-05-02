@@ -99,7 +99,8 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
       width: '500px',
       data: {
         flow: flowToEdit,
-        flowNames: _.map(this.flows, flow => flow.name)
+        flowNames: _.map(this.flows, flow => flow.name),
+        isUpdate: !!flowToEdit
       }
     });
     dialogRef.afterClosed().subscribe(result => {

@@ -23,6 +23,7 @@ export interface DialogData {
     [step]="data.step"
     [flow]="data.flow"
     [projectDirectory]="data.projectDirectory"
+    [isUpdate]="data.isUpdate"
     (getCollections)="getCollections($event)"
     (cancelClicked)="cancelClicked()"
     (saveClicked)="saveClicked($event)"
