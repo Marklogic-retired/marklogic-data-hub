@@ -139,7 +139,11 @@ public class StepModel {
         step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
         step.setModulePath(jsonObject.getString("modulePath"));
-        step.setName(jsonObject.getString("name"));
+        String stepName = jsonObject.getString("name");
+        if (stepName == null) {
+            stepName = step.getStepDefinitionName();
+        }
+        step.setName(stepName);
 
         if (jsonObject.getString("id") != null) {
             step.setId(jsonObject.getString("id"));

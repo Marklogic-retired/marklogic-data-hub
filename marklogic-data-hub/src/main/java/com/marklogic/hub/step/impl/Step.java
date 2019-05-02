@@ -20,8 +20,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
 
 public class Step {
     private String name;
@@ -132,15 +133,19 @@ public class Step {
         Step step = new Step();
 
         JSONObject jsonObject = new JSONObject(json);
-        step.setName(jsonObject.getString("name"));
+        step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
+        step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
+        String stepName = jsonObject.getString("name");
+        if (stepName == null) {
+            stepName = step.getStepDefinitionName();
+        }
+        step.setName(stepName);
         step.setDescription(jsonObject.getString("description"));
         step.setOptions(jsonObject.getMap("options"));
         step.setCustomHook(jsonObject.getNode("customHook"));
         step.setRetryLimit(jsonObject.getInt("retryLimit"));
         step.setBatchSize(jsonObject.getInt("batchSize"));
         step.setThreadCount(jsonObject.getInt("threadCount"));
-        step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
-        step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
 
         if (jsonObject.isExist("modulePath")) {

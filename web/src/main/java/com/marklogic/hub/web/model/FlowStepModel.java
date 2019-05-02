@@ -11,13 +11,14 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.*;
-import org.apache.commons.io.FileUtils;
 
 public class FlowStepModel {
     private String id;
@@ -161,14 +162,15 @@ public class FlowStepModel {
 
         steps.forEach((name, step) -> {
             StepSummary sm = new StepSummary();
+            String stepName = step.getName() == null ? step.getStepDefinitionName() : step.getName();
             String stepType = step.getStepDefinitionType() == null ? "" : step.getStepDefinitionType().toString();
             sm.id = step.getName() + "-" + stepType;
             sm.stepKey = name;
-            sm.name = step.getName();
+            sm.name = stepName;
             if (sm.name.startsWith("default-")) {
                 sm.id = sm.name;
             } else {
-                sm.id = step.getName() + "-" + stepType;
+                sm.id = sm.name + "-" + stepType;
             }
             sm.stepDefinitionType = stepType;
             if (step.getOptions() != null && step.getOptions().get("targetEntity") != null &&
