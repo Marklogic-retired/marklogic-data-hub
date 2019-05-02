@@ -17,7 +17,7 @@
     <div class="label">{{config.fileTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
-        id="file_type_select"
+        id="source-type-select"
         [(ngModel)]="this.step.fileLocations.inputFileType"
         name="filetype"
         (selectionChange)="onChange()"
@@ -25,7 +25,7 @@
         <mat-option
           *ngFor="let option of config.fileTypes.options"
           [value]="option.value"
-          [id]="'file-type-option-' + option.value"
+          [id]="'source-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -34,7 +34,7 @@
     <div class="label">{{config.outputDocTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
-        id="doc_type_select"
+        id="target-type-select"
         [(ngModel)]="this.step.options.outputFormat"
         name="doctype"
         (selectionChange)="onChange()"
@@ -42,7 +42,7 @@
         <mat-option
           *ngFor="let option of config.outputDocTypes.options"
           [value]="option.value"
-          [id]="'doc-type-option-' + option.value"
+          [id]="'target-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -51,7 +51,7 @@
     <div class="label">{{config.outputPermissions.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <input
-        id="output_permissions"
+        id="target-permissions"
         matInput
         [(ngModel)]="this.step.options.permissions"
         name="permissions"
@@ -69,6 +69,7 @@
     <mat-form-field layout-fill appearance="outline">
       <mat-hint>Optional</mat-hint>
       <input
+        id="target-uri-replace"
         matInput
         [(ngModel)]="this.step.fileLocations.outputURIReplacement"
         name="permissions"
