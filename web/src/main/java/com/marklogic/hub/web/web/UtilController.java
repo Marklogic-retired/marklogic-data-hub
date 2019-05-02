@@ -16,16 +16,9 @@
  */
 package com.marklogic.hub.web.web;
 
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.model.SearchPathModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +26,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/api/utils")
@@ -40,21 +42,29 @@ public class UtilController {
 
     private static Logger logger = LoggerFactory.getLogger(UtilController.class);
 
+    @Autowired
+    private HubConfigImpl hubConfig;
+
 	@RequestMapping(value = "/searchPath", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> searchPath(@RequestParam String path) {
-		logger.debug("Search Path:" + path);
-		List<SearchPathModel> folders = new ArrayList<>();
-		List<SearchPathModel> files = new ArrayList<SearchPathModel>();
-		Path currentPath = Paths.get(".").toAbsolutePath().normalize();
-		Path relativePath;
-
-		if (path == null || path.length() == 0) {
-            relativePath = Paths.get("/");
-		}
-		else {
-            relativePath = Paths.get(path).toAbsolutePath().normalize();
+        String basePath = ".";
+        String projectDir = hubConfig.getHubProject().getProjectDirString();
+        if (StringUtils.isNotEmpty(projectDir)) {
+            basePath = projectDir;
         }
+
+        Path currentPath = Paths.get(basePath).toAbsolutePath().normalize();
+        Path relativePath;
+        if (!StringUtils.isEmpty(path)) {
+            logger.debug("Search Path:" + path);
+            relativePath = currentPath.resolve(path).toAbsolutePath().normalize();
+        } else {
+            relativePath = Paths.get("/");
+        }
+
+		List<SearchPathModel> folders = new ArrayList<>();
+		List<SearchPathModel> files = new ArrayList<>();
 
         Path parent = relativePath.getParent();
         if (parent != null) {
