@@ -151,8 +151,7 @@ public class Step {
         return step;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    public boolean isEqual(Object o) {
         if (this == o) {
             return true;
         }
@@ -164,9 +163,11 @@ public class Step {
         if (StringUtils.isNotEmpty(description) ? !description.equals(that.description) : StringUtils.isNotEmpty(that.description)) {
             return false;
         }
-        if (batchSize != that.batchSize || retryLimit != that.retryLimit || !stepDefinitionType.equals(that.stepDefinitionType)) {
+        if (that.batchSize != null && that.batchSize.equals(batchSize) || that.retryLimit != null && that.retryLimit.equals(retryLimit) ||
+            that.threadCount != null && that.threadCount.equals(threadCount) || !stepDefinitionType.equals(that.stepDefinitionType)) {
             return false;
         }
+
         if (StringUtils.isNotEmpty(stepDefinitionName) ? !stepDefinitionName.equals(that.stepDefinitionName) : StringUtils.isNotEmpty(that.stepDefinitionName)) {
             return false;
         }
