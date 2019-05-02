@@ -20,6 +20,7 @@ export default function(tmpDir) {
     });
 
     it ('should click the uninstall button', async function() {
+      browser.refresh();
       await settingsPage.uninstallButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.uninstallConfirmation));
       await settingsPage.uninstallConfirmation.click();
@@ -31,7 +32,6 @@ export default function(tmpDir) {
     });
 
     it ('should uninstall the hub', function() {
-      //loginPage.isLoadedWithtimeout(240000);
       browser.wait(EC.elementToBeClickable(loginPage.browseButton));
     });
 
