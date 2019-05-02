@@ -27,6 +27,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.util.json.JSONTrimText;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
@@ -85,7 +86,10 @@ public class FlowManagerService {
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(flowJson);
-        } catch (IOException e) {
+
+            JSONTrimText.trimText(jsonObject);
+        }
+        catch (IOException e) {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
         }
 
@@ -186,14 +190,19 @@ public class FlowManagerService {
         JsonNode stepJson;
         Flow flow = flowManager.getFlow(flowName);
         Step existingStep = flow.getStepById(stepId);
+
         if (existingStep == null && !StringUtils.isEmpty(stepId)) {
             throw new NotFoundException("Step " + stepId + " Not Found");
         }
 
         try {
             stepJson = JSONObject.readInput(stringStep);
+
+            JSONTrimText.trimText(stepJson);
+
             stepModel = StepModel.fromJson(stepJson);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new BadRequestException("Error parsing JSON");
         }
 
@@ -266,10 +275,12 @@ public class FlowManagerService {
                 currSteps.put(key, step);
             }
             flowManager.setSteps(flow, currSteps);
-        } else {
+        }
+        else {
             if (stepOrder == null || stepOrder > currSteps.size()) {
                 currSteps.put(String.valueOf(currSteps.size() + 1), step);
-            } else {
+            }
+            else {
                 Map<String, Step> newSteps = new LinkedHashMap<>();
                 final Integer[] count = {1};
                 Step finalStep = step;
@@ -307,10 +318,12 @@ public class FlowManagerService {
 //                if (step.getType().equals(Step.StepDefinitionType.CUSTOM)) {
 //                    stepManagerService.deleteStepDefinition(step);
 //                }
-            } catch (DataHubProjectException e) {
+            }
+            catch (DataHubProjectException e) {
                 throw new NotFoundException(e.getMessage());
             }
-        } else {
+        }
+        else {
             throw new BadRequestException("Invalid Step Id");
         }
 
@@ -320,7 +333,8 @@ public class FlowManagerService {
         RunFlowResponse resp = null;
         if (steps == null || steps.size() == 0) {
             resp = flowRunner.runFlow(flowName);
-        } else {
+        }
+        else {
             Flow flow = flowManager.getFlow(flowName);
             List<String> restrictedSteps = new ArrayList<>();
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
@@ -371,7 +385,8 @@ public class FlowManagerService {
             defaultStep.deserialize(jsonObject.jsonNode());
 
             return defaultStep;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
