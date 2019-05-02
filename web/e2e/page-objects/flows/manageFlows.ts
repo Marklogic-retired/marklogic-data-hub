@@ -171,8 +171,12 @@ export class ManageFlows extends AppPage {
     return await menu.click();
   }
 
+  get flowMenuPanel() {
+    return element(by.css(".mat-menu-panel .mat-menu-content"));
+  }
+  
   flowMenuOptions(option: string) {
-    return element(by.css(`.flow-menu-${option}-btn`));
+    return element(by.css(`.mat-menu-panel .mat-menu-content .flow-menu-${option}-btn`));
   }
 
   /**
