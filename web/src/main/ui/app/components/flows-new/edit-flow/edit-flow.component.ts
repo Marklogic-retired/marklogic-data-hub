@@ -122,9 +122,10 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   deleteFlow(flowId): void {
     this.manageFlowsService.deleteFlow(flowId).subscribe(resp => {
-      console.log('delete response', resp);
-      // TODO update delete response check
       if (resp) {
+        // TODO error handling for delete response check
+        console.log('delete error response', resp);
+      } else {
         this.router.navigate(['flows']);
       }
     });
@@ -149,7 +150,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   createStep(stepObject) {
     this.setStepDefaults(stepObject.step);
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
-      this.stepsArray.splice(stepObject.index, 0, resp);
+      const index = stepObject.index - 1;
+      this.stepsArray.splice(index, 0, resp);
       console.log('stepsArray', this.stepsArray);
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         this.flow = Flow.fromJSON(resp);
