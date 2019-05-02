@@ -276,6 +276,5 @@ export default function(qaProjectDir) {
             browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
             await entityPage.confirmDialogYesButton.click();
         });
-
     });
 }
