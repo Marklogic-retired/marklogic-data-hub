@@ -13,6 +13,10 @@ import manageJobsPage from '../../page-objects/jobs/manageJobs';
 
 export default function(qaProjectDir) {
     describe('E2E Simple JSON', () => {
+        beforeAll(() => {
+          browser.refresh();
+        });
+
         xit('should login and go to entities page', async function() {
             //await loginPage.browseButton.click();
             await loginPage.setCurrentFolder(qaProjectDir);
@@ -260,6 +264,7 @@ export default function(qaProjectDir) {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowMenu("SimpleJSONFlow");
+            browser.wait(EC.visibilityOf(manageFlowPage.flowMenuPanel));
             browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("delete")));
             await manageFlowPage.clickFlowMenuOption("delete");
             browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
