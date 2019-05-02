@@ -9,6 +9,7 @@ import { differenceInSeconds,
          differenceInMinutes,
          differenceInHours,
          differenceInDays } from 'date-fns';
+import {StepType} from "../../flows-new/models/step.model";
 
 @Component({
   selector: 'jobs-page-ui',
@@ -35,6 +36,7 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   ){}
 
   ngOnInit() {
+    this.setJobsTargetDatabase();
     this.dataSource = new MatTableDataSource<any>(this.jobs);
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
@@ -88,7 +90,25 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   }
 
   updateDataSource() {
+    this.setJobsTargetDatabase();
     this.dataSource.data = this.jobs;
+  }
+
+  setJobsTargetDatabase() {
+    this.jobs.forEach((job) => {
+      job.steps.forEach((step) => {
+        if (step.targetDatabase) {
+          step.targetDatabase = /FINAL/.test(step.targetDatabase) ? 'FINAL' : 'STAGING';
+        } else if (step.stepDefinitionType.toLowerCase() === StepType.INGESTION.toLowerCase()) {
+          step.targetDatabase = 'STAGING';
+        } else {
+          step.targetDatabase = 'FINAL';
+        }
+        if (step.success) {
+          job.targetDatabase = step.targetDatabase;
+        }
+      });
+    });
   }
 
   applyFilter(menu: string, value: string) {
