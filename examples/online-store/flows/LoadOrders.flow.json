@@ -14,7 +14,7 @@
       "customHook" : null,
       "retryLimit" : 0,
       "batchSize" : null,
-      "threadCount" : 0,
+      "threadCount" : null,
       "stepDefinitionName" : "IngestOrders",
       "stepDefinitionType" : "CUSTOM"
     }
