@@ -27,7 +27,7 @@ import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
-import com.marklogic.hub.util.json.JSONTrimText;
+import com.marklogic.hub.util.json.JSONUtils;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
@@ -87,7 +87,7 @@ public class FlowManagerService {
         try {
             jsonObject = new JSONObject(flowJson);
 
-            JSONTrimText.trimText(jsonObject);
+            JSONUtils.trimText(jsonObject);
         }
         catch (IOException e) {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
@@ -198,7 +198,7 @@ public class FlowManagerService {
         try {
             stepJson = JSONObject.readInput(stringStep);
 
-            JSONTrimText.trimText(stepJson);
+            JSONUtils.trimText(stepJson);
 
             stepModel = StepModel.fromJson(stepJson);
         }

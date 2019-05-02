@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.lang3.StringUtils;
 
-public class JSONTrimText {
+public class JSONUtils {
     /**
      * A utility method to trim all text values in a json object
      *
