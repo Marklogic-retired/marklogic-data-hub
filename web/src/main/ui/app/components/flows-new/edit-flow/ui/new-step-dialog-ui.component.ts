@@ -81,9 +81,20 @@ export class NewStepDialogUiComponent implements OnInit {
 
     // Disable Type select and Name when editing a step
     if (this.step && this.step.name) {
+      const type = this.newStepForm.getRawValue().stepDefinitionType;
       this.editingStep = true;
+      this.setType(type);
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
+
+      // if (!this.step.options.sourceCollection) {
+      //   const parseQuery = this.step.options.sourceQuery.split('"');
+      //   console.log('parseQuery', parseQuery);
+      //   // this.newStepForm.patchValue({
+      //   //   sourceQuery: parseQuery[1]
+      //   // });
+      // }
+      console.log('editing step', this.step);
     }
   }
   getNameErrorMessage() {
@@ -138,7 +149,10 @@ export class NewStepDialogUiComponent implements OnInit {
     } else {
       this.getCollections.emit(this.newStepForm.value.sourceDatabase);
     }
+    this.setType(type);
+  }
 
+  setType(type: string) {
     this.type = type;
     this.isIngestion = type === this.stepType.INGESTION;
     this.isCustom = type === this.stepType.CUSTOM;
@@ -147,6 +161,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.sourceRequired = this.isMapping || this.isMastering;
     this.entityRequired = this.isMapping || this.isMastering;
   }
+
   onSave() {
     if (this.editingStep) {
       this.newStep.name = this.newStepForm.getRawValue().name;
@@ -156,7 +171,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
     }
 
-    if (this.newStep.stepDefinitionType == this.stepType.CUSTOM) {
+    if (this.newStep.stepDefinitionType === this.stepType.CUSTOM) {
       this.newStep.stepDefinitionName = this.newStep.name;
     } else {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
