@@ -271,13 +271,14 @@ export default function(qaProjectDir) {
             await manageFlowPage.clickDeleteConfirmationButton("YES");
             browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
             browser.wait(EC.invisibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
-            await expect(manageFlowPage.flowName("SimpleJSONFlow").isDisplayed).toBe(false);
+            await expect(manageFlowPage.flowName("SimpleJSONFlow").isDisplayed()).toBe(false);
         });
 
         it ('should delete SimpleJSON entity', async function() {
             await appPage.entitiesTab.click();
             browser.wait(EC.visibilityOf(entityPage.toolsButton));
             await entityPage.deleteEntityButton('SimpleJSON').click();
+            browser.sleep(3000);
             browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
             await entityPage.confirmDialogYesButton.click();
         });
