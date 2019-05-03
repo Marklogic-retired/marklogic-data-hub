@@ -16,56 +16,66 @@ export class IngestStep extends AppPage {
     await inputField.sendKeys(protractor.Key.ENTER);
   }
 
-  get inputFileTypeDropDown() {
-    return element(by.id("file_type_select"));
+  get sourceFileTypeDropDown() {
+    return element(by.id("source-file-type-select"));
   }
 
-  async clickInputFileTypeDropDown() {
-    let dropDown = this.inputFileTypeDropDown;
+  async clickSourceFileTypeDropDown() {
+    let dropDown = this.sourceFileTypeDropDown;
     return await dropDown.click();
   }
   
   /**
    * @param option = [JSON|XML|Binary|CSV|Text]
    */
-  inputFileTypeOptions(option: string) {
+  sourceFileTypeOptions(option: string) {
     return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
-  async clickInputFileTypeOption(option: string) {
-    let inputFileTypeOption = this.inputFileTypeOptions(option);
-    return await inputFileTypeOption.click();
+  async clickSourceFileTypeOption(option: string) {
+    let sourceFileTypeOption = this.sourceFileTypeOptions(option);
+    return await sourceFileTypeOption.click();
   }
 
-  get outputFileTypeDropDown() {
-    return element(by.id("doc_type_select"));
+  get targetFileTypeDropDown() {
+    return element(by.id("target-file-type-select"));
   }
 
-  async clickOutputFileTypeDropDown() {
-    let dropDown = this.outputFileTypeDropDown;
+  async clickTargetFileTypeDropDown() {
+    let dropDown = this.targetFileTypeDropDown;
     return await dropDown.click();
   }
 
   /**
    * @param option = [JSON|XML|Binary|Text]
    */
-  outputFileTypeOptions(option: string) {
+  targetFileTypeOptions(option: string) {
     return element(by.cssContainingText('mat-option .mat-option-text', option));
   }
 
-  async clickoutputFileTypeOption(option: string) {
-    let outputFileTypeOption = this.outputFileTypeOptions(option);
-    return await outputFileTypeOption.click();
+  async clickTargetFileTypeOption(option: string) {
+    let targetFileTypeOption = this.targetFileTypeOptions(option);
+    return await targetFileTypeOption.click();
   }
 
-  get inputPermissions() {
-    return element(by.css(`input[ng-reflect-name="permissions"]`));  
+  get targetPermissions() {
+    return element(by.id("target-permissions"));  
   }
 
-  async setInputPermissions(permissions: string) {
-    let inputField = this.inputPermissions;
+  async setTargetPermissions(permissions: string) {
+    let inputField = this.targetPermissions;
     await inputField.clear();
     return await inputField.sendKeys(permissions);  
+  }
+  
+  get targetUriReplace() {
+    return element(by.id("target-uri-replace"));  
+  }
+
+  async setTargetUriReplace(uriReplace: string) {
+    let inputField = this.targetUriReplace;
+    await inputField.clear();
+    return await inputField.sendKeys(uriReplace);  
   }
 }
 
