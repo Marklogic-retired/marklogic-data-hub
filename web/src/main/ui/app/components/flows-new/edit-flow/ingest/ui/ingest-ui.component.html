@@ -17,7 +17,7 @@
     <div class="label">{{config.fileTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
-        id="source-type-select"
+        id="source-file-type-select"
         [(ngModel)]="this.step.fileLocations.inputFileType"
         name="filetype"
         (selectionChange)="onChange()"
@@ -25,7 +25,7 @@
         <mat-option
           *ngFor="let option of config.fileTypes.options"
           [value]="option.value"
-          [id]="'source-type-option-' + option.value"
+          [id]="'source-file-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
@@ -34,7 +34,7 @@
     <div class="label">{{config.outputDocTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
-        id="target-type-select"
+        id="target-file-type-select"
         [(ngModel)]="this.step.options.outputFormat"
         name="doctype"
         (selectionChange)="onChange()"
@@ -42,7 +42,7 @@
         <mat-option
           *ngFor="let option of config.outputDocTypes.options"
           [value]="option.value"
-          [id]="'target-type-option-' + option.value"
+          [id]="'target-file-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
