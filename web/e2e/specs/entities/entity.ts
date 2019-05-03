@@ -14,6 +14,7 @@ const selectCardinalityOneToManyOption = 'select option:nth-child(2)';
 export default function (qaProjectDir) {
   describe('create entities', () => {
     beforeAll(() => {
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
       browser.refresh();
     });
 
