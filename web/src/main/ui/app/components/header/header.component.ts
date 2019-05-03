@@ -12,6 +12,7 @@ import { EnvironmentService } from '../../services/environment';
   <app-header-ui
     [runningJobs]="runningJobs"
     [percentageComplete]="percentageComplete"
+    [settings]="settings"
     (logout)="this.logout()"
   ></app-header-ui>
 `
@@ -25,6 +26,7 @@ export class HeaderComponent implements OnInit {
     private router: Router
   ) { }
 
+  public settings = {};
   public runningJobs = 0;
   public percentageComplete = 0;
 
@@ -35,6 +37,9 @@ export class HeaderComponent implements OnInit {
     this.jobListener.totalPercentComplete().subscribe(percentage => {
       this.percentageComplete = percentage;
     });
+    this.envService.getEnvironment().subscribe( settings => {
+      this.settings = this.envService.getSettings();
+    })
   }
   logout() {
     this.projectService.logout().subscribe(() => {

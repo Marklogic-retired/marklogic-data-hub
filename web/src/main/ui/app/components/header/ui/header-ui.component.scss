@@ -7,6 +7,15 @@ header.mdl-layout__header {
   background-color: $bg-color;
 }
 
+#header-menu {
+  color: white;
+}
+
+.version-link {
+  display: inline;
+  font-size: 16px;
+}
+
 .debug-status {
   position: relative;
 }

@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {Component, Input, Output, EventEmitter, HostListener} from '@angular/core';
 import { Router } from '@angular/router';
+import {HubSettings} from "../../../models/hub-settings.model";
 
 @Component({
   selector: 'app-header-ui',
@@ -11,6 +12,7 @@ export class HeaderUiComponent {
   @Input() activeCheck: Function;
   @Input() runningJobs: number;
   @Input() percentageComplete: number;
+  @Input() settings: HubSettings;
 
   @Output() logout = new EventEmitter();
 
