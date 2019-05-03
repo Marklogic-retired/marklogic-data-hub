@@ -20,6 +20,7 @@ export class NewStepDialogUiComponent implements OnInit {
   @Input() step: any;
   @Input() flow: Flow;
   @Input() projectDirectory: string;
+  @Input() isUpdate: boolean;
   @Output() getCollections = new EventEmitter();
   @Output() cancelClicked = new EventEmitter();
   @Output() saveClicked = new EventEmitter();
@@ -31,7 +32,6 @@ export class NewStepDialogUiComponent implements OnInit {
   newStepForm: FormGroup;
   databases: any = [];
   type: string = null;
-  editingStep: boolean = false;
   isIngestion: boolean = false;
   isMapping: boolean = false;
   isMastering: boolean = false;
@@ -80,8 +80,9 @@ export class NewStepDialogUiComponent implements OnInit {
       this.getCollections.emit(this.step.options.sourceDatabase);
 
     // Disable Type select and Name when editing a step
-    if (this.step && this.step.name) {
-      this.editingStep = true;
+    if (this.isUpdate) {
+      const type = this.newStepForm.getRawValue().stepDefinitionType;
+      this.setType(type);
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
     }
@@ -102,7 +103,7 @@ export class NewStepDialogUiComponent implements OnInit {
   onNoClick(): void {
     this.cancelClicked.emit();
   }
-  stepSourceChange(event: any) { 
+  stepSourceChange(event: any) {
     this.hasSelectedCollection = event.value === 'collection';
     this.hasSelectedQuery = event.value === 'query';
   }
@@ -138,7 +139,10 @@ export class NewStepDialogUiComponent implements OnInit {
     } else {
       this.getCollections.emit(this.newStepForm.value.sourceDatabase);
     }
+    this.setType(type);
+  }
 
+  setType(type: string) {
     this.type = type;
     this.isIngestion = type === this.stepType.INGESTION;
     this.isCustom = type === this.stepType.CUSTOM;
@@ -147,8 +151,9 @@ export class NewStepDialogUiComponent implements OnInit {
     this.sourceRequired = this.isMapping || this.isMastering;
     this.entityRequired = this.isMapping || this.isMastering;
   }
+
   onSave() {
-    if (this.editingStep) {
+    if (this.isUpdate) {
       this.newStep.name = this.newStepForm.getRawValue().name;
       this.newStep.stepDefinitionType = this.newStepForm.getRawValue().stepDefinitionType;
     } else {
@@ -156,7 +161,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
     }
 
-    if (this.newStep.stepDefinitionType == this.stepType.CUSTOM) {
+    if (this.newStep.stepDefinitionType === this.stepType.CUSTOM) {
       this.newStep.stepDefinitionName = this.newStep.name;
     } else {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();

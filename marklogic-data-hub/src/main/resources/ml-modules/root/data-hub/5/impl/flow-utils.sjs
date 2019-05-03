@@ -112,6 +112,10 @@ class FlowUtils {
       if(content instanceof Element &&  content.nodeName.toLowerCase() === 'root' && content.namespaceURI.toLowerCase() === ""){
         instance = Sequence.from(content.xpath('/root/node()'));
       } else {
+        if(content['$attachments']) {
+          attachments = content['$attachments'];
+          delete content['$attachments'];
+        }
         instance = content;
       }
     } else if (dataFormat === this.consts.XML && inputFormat === this.consts.JSON) {
@@ -223,26 +227,25 @@ class FlowUtils {
     if (resp instanceof BinaryNode) {
       return xs.hexBinary(resp);
     }
-    let kind = xdmp.nodeKind(resp);
-    let isXml = (kind === 'element');
-    if (!isXml && resp) {
-      // object with $type key is ES response type
-      if (resp instanceof Object && resp.hasOwnProperty('$type')) {
-        return resp;
-      }
-      else if (dataFormat === this.consts.XML) {
-        return json.transformFromJson(resp, json.config("custom"));
-      }
-      else {
-        return resp;
-      }
-    } else if(isXml && resp) {
-      if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === this.consts.XML) {
+      let kind = resp ? xdmp.nodeKind(resp) : null;
+      let isXml = (kind === 'element');
+      if (!isXml && resp) {
+        // object with $type key is ES response type
+        if (resp instanceof Object && resp.hasOwnProperty('$type')) {
+          return resp;
+        } else if (dataFormat === this.consts.XML) {
+          return json.transformFromJson(resp, json.config("custom"));
+        } else {
+          return resp;
+        }
+      } else if (isXml && resp) {
+        if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === this.consts.XML) {
           return json.arrayValues(resp);
         } else {
           return resp;
+        }
       }
-    } else if (!resp) {
+    else if (!resp) {
         if (destination === "headers" && dataFormat === this.consts.JSON) {
           return {};
         }
@@ -505,14 +508,15 @@ class FlowUtils {
     return headers;
   }
 
-  createMetadata(metaData = {}, flowName, stepName) {
+  createMetadata(metaData = {}, flowName, stepName, jobId) {
     if (!metaData) {
       metaData = {};
     }
     metaData[this.consts.CREATED_ON] = fn.string(this.evalSubstituteVal(this.consts.CREATED_ON));
     metaData[this.consts.CREATED_BY] = fn.string(this.evalSubstituteVal(this.consts.CREATED_BY));
     metaData[this.consts.CREATED_IN_FLOW] = flowName;
-    metaData[this.consts.CREATED_BY_STEP] = stepName;
+    metaData[this.consts.CREATED_BY_STEP] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[this.consts.CREATED_BY_STEP],"\\s+"),stepName])), " ");
+    metaData[this.consts.CREATED_BY_JOB] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[this.consts.CREATED_BY_JOB],"\\s+"),jobId])), " ");
 
     return metaData;
   }

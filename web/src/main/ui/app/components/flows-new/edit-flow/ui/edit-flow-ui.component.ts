@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
@@ -13,7 +13,7 @@ import { Step } from '../../models/step.model';
   templateUrl: './edit-flow-ui.component.html',
   styleUrls: ['./edit-flow-ui.component.scss'],
 })
-export class EditFlowUiComponent {
+export class EditFlowUiComponent implements OnChanges {
 
   @Input() flow: Flow;
   @Input() flowNames: string[];
@@ -23,6 +23,7 @@ export class EditFlowUiComponent {
   @Input() collections: any;
   @Input() selectedStepId: any;
   @Input() projectDirectory: any;
+  @Input() flowEnded: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -36,6 +37,12 @@ export class EditFlowUiComponent {
     public dialog: MatDialog,
     private router: Router
   ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes && changes.flowEnded) {
+      this.flowEnded = changes.flowEnded.currentValue;
+    }
+  }
 
   openStepDialog(index): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
@@ -108,7 +115,7 @@ export class EditFlowUiComponent {
   openFlowSettingsDialog(): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
-      data: {flow: this.flow, flowNames: this.flowNames}
+      data: {flow: this.flow, flowNames: this.flowNames, isUpdate: true}
     });
     dialogRef.afterClosed().subscribe(response => {
       if (response) {

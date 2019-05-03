@@ -337,7 +337,7 @@ class Flow {
         }
         //add our metadata to this
         result.context = result.context || {};
-        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.stepDefinitionName);
+        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.stepDefinitionName, this.globalContext.jobId);
         // normalize context values to arrays
         if (result.context.collections) {
           result.context.collections = normalizeToArray(result.context.collections);
@@ -359,9 +359,6 @@ class Flow {
   runMain(content, options, func) {
     let resp;
     resp = func(content, options);
-    if (resp instanceof Sequence) {
-      resp = fn.head(resp);
-    }
     return resp;
   };
 }

@@ -104,13 +104,9 @@
         <ng-container matColumnDef="committed">
           <mat-header-cell id="job-committed-sort-btn" *matHeaderCellDef mat-sort-header>Committed</mat-header-cell>
           <mat-cell class="job-committed" *matCellDef="let job">
-            <!-- TODO link to committed docs from a job -->
-            <!-- <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{Collection:job.id}">
+            <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{ createdByJob: job.id, d: job.targetDatabase }">
               {{job.successfulEvents | number}}
-            </a> -->
-            <span>
-              {{job.successfulEvents}}
-            </span>
+            </a>
           </mat-cell>
         </ng-container>
 

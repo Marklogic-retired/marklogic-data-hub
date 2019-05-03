@@ -48,13 +48,16 @@ function main(content, options) {
   }
 
   //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
-  let instance = datahub.flow.flowUtils.getInstance(doc);
+  let instance = datahub.flow.flowUtils.getInstance(doc) || {};
 
   // get triples, return null if empty or cannot be found
-  let triples = datahub.flow.flowUtils.getTriples(doc);
+  let triples = datahub.flow.flowUtils.getTriples(doc) || [];
 
   //gets headers, return null if cannot be found
-  let headers = datahub.flow.flowUtils.getHeaders(doc);
+  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
+
+  //If you want to set attachments, uncomment here
+  // instance['$attachments'] = doc;
 
 
   //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.

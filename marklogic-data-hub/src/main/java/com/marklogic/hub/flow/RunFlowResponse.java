@@ -1,5 +1,6 @@
 package com.marklogic.hub.flow;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marklogic.hub.step.RunStepResponse;
 
 import java.util.HashMap;
@@ -14,12 +15,18 @@ public class RunFlowResponse {
     String flowName;
     String jobStatus;
     String startTime;
+    String lastAttemptedStep;
+    String lastCompletedStep;
+    String user;
     Map<String, RunStepResponse> stepResponses;
 
     public RunFlowResponse(String jobId) {
         this.jobId = jobId;
     }
 
+    RunFlowResponse() {}
+
+    @JsonProperty("flow")
     public String getFlowName() {
         return flowName;
     }
@@ -36,20 +43,46 @@ public class RunFlowResponse {
         this.jobStatus = jobStatus;
     }
 
+    @JsonProperty("timeStarted")
     public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
+    @JsonProperty("timeEnded")
     public String getEndTime() {
         return endTime;
     }
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getLastAttemptedStep() {
+        return lastAttemptedStep;
+    }
+
+    public void setLastAttemptedStep(String lastAttemptedStep) {
+        this.lastAttemptedStep = lastAttemptedStep;
+    }
+
+    public String getLastCompletedStep() {
+        return lastCompletedStep;
+    }
+
+    public void setLastCompletedStep(String lastCompletedStep) {
+        this.lastCompletedStep = lastCompletedStep;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public Map<String, RunStepResponse> getStepResponses() {

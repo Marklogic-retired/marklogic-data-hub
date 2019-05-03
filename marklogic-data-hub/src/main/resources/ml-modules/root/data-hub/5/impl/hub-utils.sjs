@@ -125,7 +125,7 @@ class HubUtils {
   normalizeToSequence(value) {
    if (value instanceof Sequence) {
      return value;
-   } else if (Array.isArray(value)) {
+   } else if (value.constructor === Array) {
      return Sequence.from(value);
    } else {
      return Sequence.from([value]);
