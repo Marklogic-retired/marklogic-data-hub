@@ -8,7 +8,7 @@ import {Element} from "@angular/compiler";
 
 export class EntityPage extends AppPage {
 
-  //to get the login box locater
+  //to get the login box locator
   locator() {
     return by.css('.entities');
   }
@@ -38,7 +38,7 @@ export class EntityPage extends AppPage {
     await browser.executeScript("arguments[0].click();", e)
   }
 
-  async deleteEntityButton(entityName: string) {
+  async deleteEntity(entityName: string) {
     let e = element(by.css(`#aeb-${entityName} .fa-remove`));
     await browser.executeScript("arguments[0].click();", e)
     //return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));

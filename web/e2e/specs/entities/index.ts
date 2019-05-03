@@ -1,7 +1,7 @@
 import runEntities from './entity'
 
-export default function (tmpDir) {
+export default function (qaProjectDir) {
   describe('entity', function () {
-    runEntities(tmpDir)
+    runEntities(qaProjectDir)
   })
 }

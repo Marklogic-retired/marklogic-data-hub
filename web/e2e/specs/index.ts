@@ -1,4 +1,4 @@
-import { browser, $ } from 'protractor';
+import {browser, $} from 'protractor';
 import auth from './auth';
 import entity from './entities';
 import flows from './flows';
@@ -11,7 +11,8 @@ import uninstall from './uninstall';
 import scenarios from './scenarios';
 
 import CUSTOM_MATCHERS from '../matchers'
-const request = require('request').defaults({ strictSSL: false })
+
+const request = require('request').defaults({strictSSL: false})
 const tmp = require('tmp');
 const fs = require('fs-extra');
 const path = require('path');
@@ -32,17 +33,19 @@ describe('DataHub', function () {
       browser.driver.get(browser.baseUrl)
         .then(() => browser.driver.manage().deleteAllCookies())
         .then(() => $('body').isPresent())
-        .then(() => {}, () => {})
+        .then(() => {
+        }, () => {
+        })
         .then(() => browser.driver.getCapabilities())
         .then(caps => {
           console.log('browserName:' + caps.get('browserName'));
-          console.log('baseUrl:'+browser.baseUrl);
+          console.log('baseUrl:' + browser.baseUrl);
         })
         .then(() => done())
     });
   });
 
-  afterAll(function(done) {
+  afterAll(function (done) {
     done();
   });
 

@@ -2,45 +2,37 @@ import {browser, by, ExpectedConditions as EC, Key} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import entityPage from '../../page-objects/entities/entities';
 import appPage from '../../page-objects/appPage';
-import settingsPage from '../../page-objects/settings/settings';
+import settingsPage from '../../page-objects/settings/settings'
+import dashboardPage from '../../page-objects/dashboard/dashboard';
+
 
 const fs = require('fs-extra');
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
 const selectCardinalityOneToManyOption = 'select option:nth-child(2)';
 
-export default function (tmpDir) {
+export default function (qaProjectDir) {
   describe('create entities', () => {
     beforeAll(() => {
-      loginPage.isLoaded();
+      browser.refresh();
     });
 
-    it('should login', async function () {
-      loginPage.isLoaded();
+    xit('should login and go to entities page', async function () {
+      //await loginPage.browseButton.click();
+      await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
       await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.visibilityOf(loginPage.loginTab));
       await loginPage.login();
-      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
-    });
-
-    it('should go to the entity page by clicking link', async function () {
-      await appPage.entitiesTab.click();
-      entityPage.isLoaded();
-    });
-
-    it('should go to the entities page', async function () {
-      await browser.get('http://localhost:8080/#/entities');
-      //await appPage.entitiesTab.click();
-      entityPage.isLoaded();
+      dashboardPage.isLoaded();
     });
 
     /**
      * Create entity with title
      */
     it('should create a new Order entity', async function () {
-      await browser.get('http://localhost:8080/#/entities');
+      await appPage.entitiesTab.click();
       //create Order entity
       console.log('create Order entity');
       await entityPage.toolsButton.click();
@@ -57,14 +49,15 @@ export default function (tmpDir) {
       await entityPage.toolsButton.click();
       // move entity Order
       await entityPage.selectEntity('Order');
-      await browser.actions().dragAndDrop(entityPage.entityBox('Order'), {x: 10, y: 150}).perform();
+      await browser.actions().dragAndDrop(entityPage.entityBox('Order'), {x: 400, y: 150}).perform();
     });
 
     /**
      * Create entity with title, description and URI
      */
     it('should create a new Product entity with description and URI', async function () {
-      await browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //create Product entity
       console.log('create Product entity');
       await entityPage.toolsButton.click();
@@ -83,18 +76,18 @@ export default function (tmpDir) {
       await entityPage.toolsButton.click();
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('Product description');
       await expect(entityPage.getEntityBoxURI('Product')).toEqual('Product URI');
-
       // move entity Product
       console.log('shifting Product entity')
       await entityPage.selectEntity('Product');
-      await browser.actions().dragAndDrop(entityPage.entityBox('Product'), {x: 410, y: 150}).perform();
+      await browser.actions().dragAndDrop(entityPage.entityBox('Product'), {x: 800, y: 150}).perform();
     });
 
     /**
      * Create entity with title, version, description, URI and properties
      */
     it('should create a new Person entity with version, description, URI and properties', async function () {
-      await browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //create Person entity
       console.log('create Person entity');
       await entityPage.toolsButton.click();
@@ -130,7 +123,6 @@ export default function (tmpDir) {
       await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       await entityPage.getPropertyDescription(lastProperty).sendKeys('lname description');
       await entityPage.getPropertyPii(lastProperty).click();
-
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -138,14 +130,14 @@ export default function (tmpDir) {
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
       expect(entityPage.getEntityBox('Person').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
-
       await expect(entityPage.getEntityBoxVersion('Person')).toEqual('v1');
       await expect(entityPage.getEntityBoxDescription('Person')).toEqual('Person description');
       await expect(entityPage.getEntityBoxURI('Person')).toEqual('Person URI');
     });
 
     it('should verify properties to Person entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       console.log('verify properties to Person entity');
       await entityPage.clickEditEntity('Person');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -174,7 +166,8 @@ export default function (tmpDir) {
      * Modify entity, add description and URI
      */
     it('should add description and URI to Order entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //add properties
       console.log('add description and URI to Order entity');
       await entityPage.clickEditEntity('Order');
@@ -190,7 +183,8 @@ export default function (tmpDir) {
      * Modify entity, change description and URI
      */
     it('should modify the Product entity change description and URI', async function () {
-      await browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //modify Product entity
       console.log('modify Product entity');
       await entityPage.clickEditEntity('Product');
@@ -214,7 +208,8 @@ export default function (tmpDir) {
      * Modify entity, remove description and URI
      */
     it('should modify the Product entity remove description and URI', async function () {
-      await browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //modify Product entity
       console.log('modify Product entity');
       await entityPage.clickEditEntity('Product');
@@ -238,7 +233,8 @@ export default function (tmpDir) {
      * Modify entity, add properties.
      */
     it('should add properties to Product entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //add properties
       console.log('add properties to Product entity');
       console.log('edit Product entity');
@@ -276,7 +272,8 @@ export default function (tmpDir) {
     });
 
     it('should verify properties to Product entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       console.log('verify properties to Product entity');
       await entityPage.clickEditEntity('Product');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -301,7 +298,8 @@ export default function (tmpDir) {
     });
 
     it('should add properties to Order entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //add properties
       console.log('add properties to Order entity');
       console.log('edit Order entity');
@@ -341,7 +339,8 @@ export default function (tmpDir) {
     });
 
     it('should verify properties to Order entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       console.log('verify properties to Order entity');
       await entityPage.clickEditEntity('Order');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -376,7 +375,8 @@ export default function (tmpDir) {
      * Modify entity, change properties.
      */
     it('should modify properties to Product entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //add properties
       console.log('modify properties of Product entity');
       await entityPage.clickEditEntity('Product');
@@ -398,7 +398,8 @@ export default function (tmpDir) {
      * Modify entity, remove properties.
      */
     it('should remove properties from Product entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //add properties
       console.log('modify properties of Product entity');
       await entityPage.clickEditEntity('Product');
@@ -432,7 +433,8 @@ export default function (tmpDir) {
 
 
     it('should create a new entity for PII', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
       browser.sleep(5000);
@@ -451,7 +453,8 @@ export default function (tmpDir) {
     });
 
     it('should create a pii property', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -482,17 +485,15 @@ export default function (tmpDir) {
       await entityPage.getPropertyName(lastProperty).sendKeys("no_pii");
       await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       await entityPage.getPropertyDescription(lastProperty).sendKeys("not a pii property");
-
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      //browser.wait(EC.presenceOf(entityPage.toast));
-      //browser.wait(EC.stalenessOf(entityPage.toast));
     });
 
     it('should verify pii property to PII entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       console.log('verify pii property to PII entity');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -524,7 +525,8 @@ export default function (tmpDir) {
     });
 
     it('should verify naming conventions on properties', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -543,7 +545,8 @@ export default function (tmpDir) {
     });
 
     it('should not be able to create duplicate properties', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -562,7 +565,8 @@ export default function (tmpDir) {
     });
 
     it('should not be able to use invalid character and space as title', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
@@ -591,7 +595,8 @@ export default function (tmpDir) {
     });
 
     it('should verify pii property is retained after logout', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       console.log('verify pii property is retained after logout');
       await entityPage.clickEditEntity('PIIEntity');
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
@@ -610,7 +615,8 @@ export default function (tmpDir) {
     });
 
     it('should create a new entity for WorldBank', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
       browser.sleep(5000);
@@ -625,14 +631,14 @@ export default function (tmpDir) {
       await entityPage.toolsButton.click();
       // move entity WorldBank
       await entityPage.selectEntity('WorldBank');
-      browser.actions().dragAndDrop(entityPage.entityBox('WorldBank'), {x: 750, y: 750}).perform();
+      browser.actions().dragAndDrop(entityPage.entityBox('WorldBank'), {x: 550, y: 550}).perform();
     });
 
     it('should copy attachment-pii.json file to protect title on attachment', function () {
       //copy attachment-pii.json
       console.log('copy attachment-pii.json');
       let attachmentPiiFilePath = 'e2e/qa-data/protected-paths/attachment-pii.json';
-      fs.copy(attachmentPiiFilePath, tmpDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
+      fs.copy(attachmentPiiFilePath, qaProjectDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
     });
 
     it('should redeploy hub to make the pii takes effect', async function () {
@@ -651,11 +657,48 @@ export default function (tmpDir) {
      * remove entity
      */
     it('should remove Order entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
+      await appPage.entitiesTab.click();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
       console.log('remove Order entity');
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       //await entityPage.toolsButton.click();
-      await entityPage.deleteEntityButton('Order');
+      await entityPage.deleteEntity('Order');
+      browser.sleep(3000);
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
+      await entityPage.confirmDialogYesButton.click();
+      //count entities
+      console.log('verify entity is deleted by count');
+      entityPage.getEntitiesCount().then(function (entities) {
+        expect(entities === 4)
+      });
+    });
+
+    it('should remove Product entity', async function () {
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
+      console.log('remove Product entity');
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
+      await entityPage.toolsButton.click();
+      await entityPage.deleteEntity('Product');
+      browser.sleep(3000);
+      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
+      await entityPage.confirmDialogYesButton.click();
+      //count entities
+      console.log('verify entity is deleted by count');
+      entityPage.getEntitiesCount().then(function (entities) {
+        expect(entities === 3)
+      });
+    });
+
+    it('should remove Person entity', async function () {
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
+      console.log('remove Person entity');
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
+      await entityPage.toolsButton.click();
+      await entityPage.deleteEntity('Person');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -665,14 +708,15 @@ export default function (tmpDir) {
       entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 2)
       });
-    });
+    })
 
-    it('should remove Product entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
-      console.log('remove Product entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
+    it('should remove PIIEntity entity', async function () {
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
+      console.log('remove PIIEntity entity');
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
       await entityPage.toolsButton.click();
-      await entityPage.deleteEntityButton('Product');
+      await entityPage.deleteEntity('PIIEntity');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -684,12 +728,13 @@ export default function (tmpDir) {
       });
     });
 
-    it('should remove Person entity', async function () {
-      browser.get('http://localhost:8080/#/entities');
-      console.log('remove Person entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
+    it('should remove WorldBank entity', async function () {
+      await browser.refresh();
+      browser.wait(EC.visibilityOf(entityPage.toolsButton))
+      console.log('remove WorldBank entity');
+      browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
       await entityPage.toolsButton.click();
-      await entityPage.deleteEntityButton('Person');
+      await entityPage.deleteEntity('WorldBank');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -699,11 +744,6 @@ export default function (tmpDir) {
       entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 0)
       });
-    });
-
-    it('should logout', async function () {
-      await appPage.logout();
-      loginPage.isLoaded();
     });
   });
 }
