@@ -82,7 +82,6 @@ export class NewStepDialogUiComponent implements OnInit {
     // Disable Type select and Name when editing a step
     if (this.isUpdate) {
       const type = this.newStepForm.getRawValue().stepDefinitionType;
-      this.editingStep = true;
       this.setType(type);
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
