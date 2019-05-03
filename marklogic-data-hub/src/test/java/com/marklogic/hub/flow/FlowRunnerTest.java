@@ -105,6 +105,39 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @Test
+    public void testEmptyCollector(){
+        Map<String,Object> opts = new HashMap<>();
+        opts.put("sourceQuery", "cts.collectionQuery('non-existent-collection')");
+        RunFlowResponse resp = fr.runFlow("testFlow", Arrays.asList("1", "5"), UUID.randomUUID().toString(), opts);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+    }
+
+    @Test
+    public void testInvalidQueryCollector(){
+        Map<String,Object> opts = new HashMap<>();
+        opts.put("sourceQuery", "cts.collectionQuer('xml-coll')");
+        //Flow finishing with "finished_with_errors" status
+        RunFlowResponse resp = fr.runFlow("testFlow", Arrays.asList("1", "5"), UUID.randomUUID().toString(), opts);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
+        Assertions.assertTrue(JobStatus.FINISHED_WITH_ERRORS.toString().equalsIgnoreCase(resp.getJobStatus()));
+        RunStepResponse stepResp = resp.getStepResponses().get("5");
+        Assertions.assertTrue(stepResp.getStatus().equalsIgnoreCase("failed step 5"));
+
+        //Flow finishing with "failed" status
+        resp = fr.runFlow("testFlow", Arrays.asList("5"), UUID.randomUUID().toString(), opts);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
+        Assertions.assertTrue(JobStatus.FAILED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        stepResp = resp.getStepResponses().get("5");
+        Assertions.assertTrue(stepResp.getStatus().equalsIgnoreCase("failed step 5"));
+    }
+
+    @Test
     public void testRunFlowOptions(){
         Map<String,Object> opts = new HashMap<>();
         List<String> steps = new ArrayList<>();

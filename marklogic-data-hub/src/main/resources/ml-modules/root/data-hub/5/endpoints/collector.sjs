@@ -28,7 +28,6 @@ const requestParams = new Map();
 parameters.queryParameter(requestParams, "flow-name",fn.true(),fn.false())
 parameters.queryParameter(requestParams, "options",fn.false(),fn.false())
 parameters.queryParameter(requestParams, "step",fn.false(),fn.false())
-parameters.queryParameter(requestParams, "job-id",fn.true(),fn.false())
 parameters.queryParameter(requestParams, "database",fn.true(),fn.false())
 
 if(method === 'GET') {
@@ -37,8 +36,6 @@ if(method === 'GET') {
   if (!step) {
     step = 1;
   }
-  const jobId = requestParams["job-id"];
-  const database = requestParams.database;
   let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
   let flowDoc= datahub.flow.getFlow(flowName);

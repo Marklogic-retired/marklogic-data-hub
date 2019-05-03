@@ -273,7 +273,7 @@ public class QueryStepRunner implements StepRunner {
     }
 
     private Collection<String> runCollector() throws Exception {
-        Collector c = new CollectorImpl(this.flow, jobId);
+        Collector c = new CollectorImpl(this.flow);
         c.setHubConfig(hubConfig);
         c.setClient(stagingClient);
 
@@ -284,7 +284,7 @@ public class QueryStepRunner implements StepRunner {
         final DiskQueue<String> uris ;
         try {
             if(! isStopped.get()) {
-                uris = c.run(this.flow.getName(), step, this.jobId, options);
+                uris = c.run(this.flow.getName(), step, options);
             }
             else {
                 uris = null;
