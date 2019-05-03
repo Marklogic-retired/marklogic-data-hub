@@ -458,17 +458,18 @@ public class QueryStepRunner implements StepRunner {
                 jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null, runStepResponse);
             }
             catch (Exception e) {
-                throw e;
+                logger.error(e.getMessage());
             }
-
-            try {
-                RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
-                runStepResponse.setStepStartTime(tempResp.getStepStartTime());
-                runStepResponse.setStepEndTime(tempResp.getStepEndTime());
-            }
-            catch (Exception ex)
-            {
-                logger.error(ex.getMessage());
+            if(jobDoc != null) {
+                try {
+                    RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
+                    runStepResponse.setStepStartTime(tempResp.getStepStartTime());
+                    runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+                }
+                catch (Exception ex)
+                {
+                    logger.error(ex.getMessage());
+                }
             }
         });
 

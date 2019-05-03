@@ -8,8 +8,8 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.job.JobDocManager;
+import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
@@ -277,7 +277,7 @@ public class FlowRunnerImpl implements FlowRunner{
                         jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
                     }
                     catch (Exception ex) {
-                        throw ex;
+                        logger.error(ex.getMessage());
                     }
                     RunStepResponse finalStepResp = stepResp;
                     try {
@@ -332,7 +332,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 jobDocManager.postJobs(jobId, jobStatus);
             }
             catch (Exception e) {
-                throw e;
+                logger.error(e.getMessage());
             }
             finally {
                 if (!isJobSuccess.get()) {
@@ -353,25 +353,26 @@ public class FlowRunnerImpl implements FlowRunner{
                     }
                 }
 
-                JsonNode jobNode;
+                JsonNode jobNode = null;
                 try {
                     jobNode = jobDocManager.getJobs(jobId);
                 }
                 catch (Exception e) {
-                    throw e;
+                    logger.error(e.getMessage());
                 }
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                try {
-                    RunFlowResponse jobDoc = objectMapper.treeToValue(jobNode.get("job"), RunFlowResponse.class);
-                    resp.setStartTime(jobDoc.getStartTime());
-                    resp.setEndTime(jobDoc.getEndTime());
-                    resp.setUser(jobDoc.getUser());
-                    resp.setLastAttemptedStep(jobDoc.getLastAttemptedStep());
-                    resp.setLastCompletedStep(jobDoc.getLastCompletedStep());
-                }
-                catch (Exception e) {
-                    throw new RuntimeException(e);
+                if(jobNode != null) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        RunFlowResponse jobDoc = objectMapper.treeToValue(jobNode.get("job"), RunFlowResponse.class);
+                        resp.setStartTime(jobDoc.getStartTime());
+                        resp.setEndTime(jobDoc.getEndTime());
+                        resp.setUser(jobDoc.getUser());
+                        resp.setLastAttemptedStep(jobDoc.getLastAttemptedStep());
+                        resp.setLastCompletedStep(jobDoc.getLastCompletedStep());
+                    }
+                    catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
                 }
 
                 jobQueue.remove();
