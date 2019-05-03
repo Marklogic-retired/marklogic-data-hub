@@ -475,12 +475,12 @@ public class WriteStepRunner implements StepRunner {
         }
         // Set metadata values
         DocumentMetadataHandle.DocumentMetadataValues metadataValues = metadataHandle.getMetadataValues();
-        metadataValues.add("createdByJob", jobId);
-        metadataValues.add("createdInFlow", flow.getName());
-        metadataValues.add("createdByStep", flow.getStep(step).getStepDefinitionName());
+        metadataValues.add("datahubCreatedByJob", jobId);
+        metadataValues.add("datahubCreatedInFlow", flow.getName());
+        metadataValues.add("datahubCreatedByStep", flow.getStep(step).getStepDefinitionName());
         // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
-        metadataValues.add("createdOn", DATE_TIME_FORMAT.format(new Date()));
-        metadataValues.add("createdBy", this.hubConfig.getFlowOperatorUserName());
+        metadataValues.add("datahubCreatedOn", DATE_TIME_FORMAT.format(new Date()));
+        metadataValues.add("datahubCreatedBy", this.hubConfig.getFlowOperatorUserName());
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;
         switch (inputFileType.toLowerCase()) {
