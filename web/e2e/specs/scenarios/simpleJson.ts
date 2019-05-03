@@ -14,7 +14,6 @@ import manageJobsPage from '../../page-objects/jobs/manageJobs';
 export default function(qaProjectDir) {
     describe('E2E Simple JSON', () => {
         beforeAll(() => {
-          jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
           browser.refresh();
         });
 
