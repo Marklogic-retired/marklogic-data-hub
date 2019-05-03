@@ -1,5 +1,6 @@
 import { browser, $ } from 'protractor';
 import auth from './auth';
+import entity from './entities';
 import flows from './flows';
 import create from './create';
 import runFlows from './run';
@@ -46,6 +47,7 @@ describe('DataHub', function () {
   });
 
   auth(qaProjectDirectory);
+  entity(qaProjectDirectory);
   //flows(qaProjectDirectory);
   //create(qaProjectDirectory);
   //runFlows(qaProjectDirectory);
