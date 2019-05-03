@@ -662,7 +662,7 @@ export default function (qaProjectDir) {
       console.log('remove Order entity');
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       //await entityPage.toolsButton.click();
-      await entityPage.deleteEntity('Order');
+      await entityPage.clickDeleteEntity('Order');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -680,7 +680,7 @@ export default function (qaProjectDir) {
       console.log('remove Product entity');
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       await entityPage.toolsButton.click();
-      await entityPage.deleteEntity('Product');
+      await entityPage.clickDeleteEntity('Product');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -698,7 +698,7 @@ export default function (qaProjectDir) {
       console.log('remove Person entity');
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
       await entityPage.toolsButton.click();
-      await entityPage.deleteEntity('Person');
+      await entityPage.clickDeleteEntity('Person');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -716,7 +716,7 @@ export default function (qaProjectDir) {
       console.log('remove PIIEntity entity');
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
       await entityPage.toolsButton.click();
-      await entityPage.deleteEntity('PIIEntity');
+      await entityPage.clickDeleteEntity('PIIEntity');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -734,7 +734,7 @@ export default function (qaProjectDir) {
       console.log('remove WorldBank entity');
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
       await entityPage.toolsButton.click();
-      await entityPage.deleteEntity('WorldBank');
+      await entityPage.clickDeleteEntity('WorldBank');
       browser.sleep(3000);
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);

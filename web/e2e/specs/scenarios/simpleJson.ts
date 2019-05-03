@@ -276,7 +276,7 @@ export default function(qaProjectDir) {
         it ('should delete SimpleJSON entity', async function() {
             await appPage.entitiesTab.click();
             browser.wait(EC.visibilityOf(entityPage.toolsButton));
-            await entityPage.deleteEntity('SimpleJSON');
+            await entityPage.clickDeleteEntity('SimpleJSON');
             browser.sleep(3000);
             browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
             await entityPage.confirmDialogYesButton.click();

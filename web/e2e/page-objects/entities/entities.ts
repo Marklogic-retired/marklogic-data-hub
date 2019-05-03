@@ -34,13 +34,13 @@ export class EntityPage extends AppPage {
   }
 
   async clickEditEntity(entityName: string) {
-    let e = element(by.css(`#aeb-${entityName} .fa-pencil`));
-    await browser.executeScript("arguments[0].click();", e)
+    let button = element(by.css(`#aeb-${entityName} .fa-pencil`));
+    await browser.executeScript("arguments[0].click();", button)
   }
 
-  async deleteEntity(entityName: string) {
-    let e = element(by.css(`#aeb-${entityName} .fa-remove`));
-    await browser.executeScript("arguments[0].click();", e)
+  async clickDeleteEntity(entityName: string) {
+    let button = element(by.css(`#aeb-${entityName} .fa-remove`));
+    await browser.executeScript("arguments[0].click();", button)
     //return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
   }
 
