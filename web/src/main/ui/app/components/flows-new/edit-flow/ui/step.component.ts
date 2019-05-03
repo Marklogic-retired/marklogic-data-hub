@@ -18,6 +18,7 @@ export class StepComponent implements OnChanges {
   @Input() entities: any;
   @Input() projectDirectory: any;
   @Input() selectedStepId: string;
+  @Input() flowEnded: string;
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
@@ -41,7 +42,12 @@ export class StepComponent implements OnChanges {
       setTimeout(() => {
         this.masteringTabGroup.realignInkBar();  
       }, 100);
-    }    
+    }
+    if (changes.flowEnded) {
+      // reload mapping in case of new source docs
+      if (this.mappingStep)
+        this.mappingStep.loadMap();
+    }
   }
 
   toggleBody() {

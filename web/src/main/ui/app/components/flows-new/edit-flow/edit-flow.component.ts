@@ -21,6 +21,7 @@ import * as _ from "lodash";
     [entities]="entities"
     [selectedStepId]="selectedStepId"
     [projectDirectory]="projectDirectory"
+    [flowEnded]="flowEnded"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -46,6 +47,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   collections: string[] = [];
   entities: Array<Entity> = new Array<Entity>();
   projectDirectory: string;
+  flowEnded: string = '';
   stepType: typeof StepType = StepType;
   constructor(
    private manageFlowsService: ManageFlowsService,
@@ -136,6 +138,10 @@ export class EditFlowComponent implements OnInit, OnDestroy {
       console.log('run flow resp', resp);
       this.runningJobService.pollFlowById(runObject.id).subscribe( poll => {
         this.flow = Flow.fromJSON(poll);
+        // set flag on flow job end
+        if (!this.runningJobService.checkJobStatus(this.flow) && (this.flow.latestJob !== null)) {
+          this.flowEnded = this.flow.latestJob.id;
+        }
       });
     });
   }

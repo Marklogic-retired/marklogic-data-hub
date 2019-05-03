@@ -233,6 +233,7 @@ export class MappingComponent implements OnInit {
         this.sourceDbType = 'FINAL';
       }
       this.loadEntity();
+      this.loadMap();
     }
   }
 
