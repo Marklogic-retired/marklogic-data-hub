@@ -1,7 +1,7 @@
 package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.ResourceNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
@@ -9,12 +9,11 @@ import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
-import com.marklogic.hub.job.JobUpdate;
+import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
 import com.marklogic.hub.step.impl.Step;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class FlowRunnerImpl implements FlowRunner{
     static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     private ThreadPoolExecutor threadPool;
-    private JobUpdate jobUpdate;
+    private JobDocManager jobDocManager;
 
     @Override
     public FlowRunner onStatusChanged(FlowStatusListener listener) {
@@ -150,8 +149,8 @@ public class FlowRunnerImpl implements FlowRunner{
         jobStoppedOnError.set(false);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
-        if(jobUpdate == null) {
-            jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+        if(jobDocManager == null) {
+            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         }
         if(threadPool == null || threadPool.isTerminated()) {
             threadPool = new CustomPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS
@@ -200,9 +199,6 @@ public class FlowRunnerImpl implements FlowRunner{
         public void run() {
             RunFlowResponse resp = flowResp.get(runningJobId);
             resp.setFlowName(runningFlow.getName());
-            if(StringUtils.isEmpty(resp.getStartTime())) {
-                resp.setStartTime(DATE_TIME_FORMAT.format(new Date()));
-            }
             stepQueue = stepsMap.get(jobId);
 
             Map<String, RunStepResponse> stepOutputs = new HashMap<>();
@@ -277,7 +273,12 @@ public class FlowRunnerImpl implements FlowRunner{
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
                     }
-                    stepResp.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
+                    try {
+                        jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
+                    }
+                    catch (Exception ex) {
+                        throw ex;
+                    }
                     RunStepResponse finalStepResp = stepResp;
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
@@ -301,7 +302,6 @@ public class FlowRunnerImpl implements FlowRunner{
             }
 
             resp.setStepResponses(stepOutputs);
-            resp.setEndTime(DATE_TIME_FORMAT.format(new Date()));
 
             final String jobStatus;
             //Update status of job
@@ -328,46 +328,8 @@ public class FlowRunnerImpl implements FlowRunner{
                 jobStatus = JobStatus.FINISHED.toString();
             }
             resp.setJobStatus(jobStatus);
-
-            Map.Entry<String, RunStepResponse> firstStepResponse = stepOutputs.entrySet().iterator().next();
-            String firstKey = null;
-            RunStepResponse firstValue = null;
-            if(firstStepResponse != null) {
-                firstKey = firstStepResponse.getKey();
-                firstValue = firstStepResponse.getValue();
-            }
-
-            //If only one step is run and it failed before creating a job doc, a job doc is created
-            try{
-                JsonNode jsonResp = jobUpdate.getJobs(runningJobId);
-                //Temporarily set first step start time == job start time (job doc created in server, step resp in client)
-                String startTime = null;
-                if(jsonResp != null ){
-                    startTime = jsonResp.get("job").get("timeStarted").textValue();
-                    Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(startTime);
-                    startTime = DATE_TIME_FORMAT.format(calendar.getTime());
-                }
-                if(firstValue != null) {
-                    firstValue.setStepStartTime(startTime);
-                }
-            }
-            catch(ResourceNotFoundException e) {
-                if(firstValue != null) {
-                    firstValue.setStepStartTime(DATE_TIME_FORMAT.format(new Date()));
-                }
-                jobUpdate.postJobs(jobId,flow.getName());
-                //Set end time as well else start time > end time
-                if(firstValue != null) {
-                    firstValue.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
-                }
-            }
-
-            //Set the first step output
-            if(firstStepResponse != null) {
-                stepOutputs.put(firstKey, firstValue);
-            }
             try {
-                jobUpdate.postJobs(jobId, jobStatus, stepNum, stepOutputs);
+                jobDocManager.postJobs(jobId, jobStatus);
             }
             catch (Exception e) {
                 throw e;
@@ -390,6 +352,28 @@ public class FlowRunnerImpl implements FlowRunner{
                         logger.error(ex.getMessage());
                     }
                 }
+
+                JsonNode jobNode;
+                try {
+                    jobNode = jobDocManager.getJobs(jobId);
+                }
+                catch (Exception e) {
+                    throw e;
+                }
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    RunFlowResponse jobDoc = objectMapper.treeToValue(jobNode.get("job"), RunFlowResponse.class);
+                    resp.setStartTime(jobDoc.getStartTime());
+                    resp.setEndTime(jobDoc.getEndTime());
+                    resp.setUser(jobDoc.getUser());
+                    resp.setLastAttemptedStep(jobDoc.getLastAttemptedStep());
+                    resp.setLastCompletedStep(jobDoc.getLastCompletedStep());
+                }
+                catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
                 jobQueue.remove();
                 if (!jobQueue.isEmpty()) {
                     initializeFlow((String) jobQueue.peek());

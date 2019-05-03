@@ -31,13 +31,15 @@ import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
-import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +61,7 @@ public class QueryStepRunner implements StepRunner {
     private boolean stopOnFailure = false;
     private String jobId;
     private boolean isFullOutput = false;
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String step = "1";
 
@@ -72,7 +74,7 @@ public class QueryStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private QueryBatcher queryBatcher = null;
-    private JobUpdate jobUpdate ;
+    private JobDocManager jobDocManager;
     private AtomicBoolean isStopped = new AtomicBoolean(false) ;
 
     public QueryStepRunner(HubConfig hubConfig) {
@@ -193,8 +195,8 @@ public class QueryStepRunner implements StepRunner {
         if(stepConfig.get("threadCount") != null) {
             this.threadCount = (int) stepConfig.get("threadCount");
         }
-        RunStepResponse runStepResponse = createStepResponse();
-        jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+        RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
+        jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         if (options == null) {
             options = new HashMap<>();
         } else {
@@ -210,25 +212,38 @@ public class QueryStepRunner implements StepRunner {
         }
         options.put("flow", this.flow.getName());
         Collection<String> uris = null;
+        //If current step is the first run step, a job doc is created
+        try {
+            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
+        }
+        catch (Exception e){
+            throw e;
+        }
+
         try {
             uris = runCollector();
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED_PREFIX + step);
-            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
+            JsonNode jobDoc = null;
             try {
-                jobUpdate.postJobs(jobId, JobStatus.FAILED_PREFIX + step);
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
             }
             catch (Exception ex) {
                 throw ex;
             }
-            return runStepResponse;
+            try {
+                return StepRunnerUtil.getResponse(jobDoc, step);
+            }
+            catch (Exception ex)
+            {
+                return runStepResponse;
+            }
         }
-        this.runHarmonizer(runStepResponse,uris);
-        return runStepResponse;
+        return this.runHarmonizer(runStepResponse,uris);
     }
 
     @Override
@@ -242,7 +257,13 @@ public class QueryStepRunner implements StepRunner {
     @Override
     public RunStepResponse run(Collection uris) {
         runningThread = null;
-        RunStepResponse runStepResponse = createStepResponse();
+        RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
+        try {
+            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
+        }
+        catch (Exception e){
+            throw e;
+        }
         return this.runHarmonizer(runStepResponse,uris);
     }
 
@@ -292,15 +313,20 @@ public class QueryStepRunner implements StepRunner {
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
+            JsonNode jobDoc = null;
             try {
-                jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
             }
             catch (Exception e) {
                 throw e;
             }
-
-            return runStepResponse;
+            try {
+                return StepRunnerUtil.getResponse(jobDoc, step);
+            }
+            catch (Exception ex)
+            {
+                return runStepResponse;
+            }
         }
 
         Vector<String> errorMessages = new Vector<>();
@@ -335,7 +361,7 @@ public class QueryStepRunner implements StepRunner {
                     successfulEvents.addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
                         if (errorMessages.size() < MAX_ERROR_MESSAGES) {
-                            errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
+                            errorMessages.addAll(response.errors.stream().map(jsonNode -> StepRunnerUtil.jsonToString(jsonNode)).collect(Collectors.toList()));
                         }
                     }
                     if(isFullOutput) {
@@ -421,42 +447,33 @@ public class QueryStepRunner implements StepRunner {
 
             runStepResponse.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             runStepResponse.withStatus(stepStatus);
-            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
-
-            try {
-                jobUpdate.postJobs(jobId, stepStatus, step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null);
-            }
-            catch (Exception e) {
-                throw e;
-            }
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);
             }
             if(isFullOutput) {
                 runStepResponse.withFullOutput(fullResponse);
             }
+            JsonNode jobDoc = null;
+            try {
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null, runStepResponse);
+            }
+            catch (Exception e) {
+                throw e;
+            }
+
+            try {
+                RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
+                runStepResponse.setStepStartTime(tempResp.getStepStartTime());
+                runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+            }
+            catch (Exception ex)
+            {
+                logger.error(ex.getMessage());
+            }
         });
 
         runningThread.start();
         return runStepResponse;
-    }
-
-    private RunStepResponse createStepResponse() {
-        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow).withStep(step);
-        if (this.jobId == null) {
-            jobId = UUID.randomUUID().toString();
-        }
-        runStepResponse.withJobId(jobId);
-        return runStepResponse;
-    }
-
-    private String jsonToString(JsonNode node) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(node);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     class FlowResource extends ResourceManager {
