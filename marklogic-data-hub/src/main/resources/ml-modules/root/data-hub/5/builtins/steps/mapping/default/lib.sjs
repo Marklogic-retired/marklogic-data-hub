@@ -33,6 +33,19 @@ function getSourceContext(sourceContext) {
   return sourceContext;
 }
 
+function getPath(sourceContext, connector, propertyName) {
+  let path;
+  if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "NCName", propertyName)) {
+    path = `${sourceContext}${connector}${propertyName}`;
+  } else {
+    if (connector.includes("*:")) {
+      connector = "";
+    }
+    path = `${sourceContext}${connector}node('${propertyName}')[fn:not(. instance of array-node())]`;
+  }
+  return path;
+}
+
 function processInstance(model, mapping, content) {
  return extractInstanceFromModel(model, model.info.title, mapping, content);
 }
@@ -76,7 +89,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
         connector += '*:';
       }
-      valueSource = content.xpath(sourceContext + connector + mappingProperties[property].sourcedFrom);
+      valueSource = content.xpath(getPath(sourceContext, connector, mappingProperties[property].sourcedFrom));
     } else {
       if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
         connector += '/';
@@ -84,7 +97,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       if (property.indexOf(':') === -1) {
         connector += '*:';
       }
-      valueSource = content.xpath(sourceContext + connector + property);
+      valueSource = content.xpath(getPath(sourceContext, connector, property));
     }
     if (dataType !== 'array') {
       valueSource = fn.head(valueSource);
