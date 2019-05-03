@@ -41,13 +41,6 @@ if(method === 'GET') {
   const database = requestParams.database;
   let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
-  let jobDoc = datahub.jobs.getJobDocWithId(jobId);
-  try {
-    datahub.jobs.updateJob(jobId, jobDoc.job.lastAttemptedStep, jobDoc.job.lastCompletedStep, "running step " + step);
-  } catch (err) {
-    datahub.jobs.createJob(flowName, jobId);
-    datahub.jobs.updateJob(jobId, 0, 0, "running step " + step);
-  }
   let flowDoc= datahub.flow.getFlow(flowName);
   let resp;
   if (!fn.exists(flowDoc)) {
@@ -81,21 +74,16 @@ if(method === 'GET') {
           //TODO log error message from 'err'
 
           datahub.debug.log(err);
-          let jobDoc = datahub.jobs.getJobDocWithId(jobId);
-          datahub.jobs.updateJob(jobId, step, jobDoc.job.lastCompletedStep, "failed");
           resp = fn.error(null, 'RESTAPI-INVALIDREQ', err);
         }
       } else {
         resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
         datahub.debug.log("The collector query was empty");
-        let jobDoc = datahub.jobs.getJobDocWithId(jobId);
-        datahub.jobs.updateJob(jobId, step, jobDoc.job.lastCompletedStep, "failed");
       }
     } else {
       resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested step was not found"]));
       datahub.debug.log("The requested step was not found");
-      let jobDoc = datahub.jobs.getJobDocWithId(jobId);
-      datahub.jobs.updateJob(jobId, step, jobDoc.job.lastCompletedStep, "failed");
+
     }
   }
   resp
