@@ -85,6 +85,7 @@ export default function(qaProjectDir) {
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/mastering-data");
             // bug on advance settings with different db name
             await stepsPage.clickStepMenu();
+            browser.sleep(3000);
             browser.wait(EC.elementToBeClickable(stepsPage.stepMenuEditOption));
             await stepsPage.clickStepMenuEditOption();
             browser.wait(EC.elementToBeClickable(stepsPage.advSettingsExpandCollapse));
