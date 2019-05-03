@@ -39,7 +39,9 @@ module.exports = {
   PROPERTY_KEY_MAP: new Map([
     ["currentDateTime", "currentDateTime"],
     ["createdOn", "currentDateTime"],
+    ["datahubCreatedOn", "currentDateTime"],
     ["currentUser", "currentUser"],
-    ["createdBy", "currentUser"]
+    ["createdBy", "currentUser"],
+    ["datahubCreatedBy", "currentUser"]
   ])
 };
