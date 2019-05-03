@@ -28,13 +28,13 @@ module.exports = {
   CURRENT_USER: "currentUser",
 
   //predefined metadata may want to break this out soon
-  CREATED_ON: "createdOn",
-  CREATED_BY: "createdBy",
+  CREATED_ON: "datahubCreatedOn",
+  CREATED_BY: "datahubCreatedBy",
 
-  CREATED_IN_FLOW: "createdInFlow",
-  CREATED_BY_STEP: "createdByStep",
+  CREATED_IN_FLOW: "datahubCreatedInFlow",
+  CREATED_BY_STEP: "datahubCreatedByStep",
 
-  CREATED_BY_JOB: "createdByJob",
+  CREATED_BY_JOB: "datahubCreatedByJob",
 
   PROPERTY_KEY_MAP: new Map([
     ["currentDateTime", "currentDateTime"],
