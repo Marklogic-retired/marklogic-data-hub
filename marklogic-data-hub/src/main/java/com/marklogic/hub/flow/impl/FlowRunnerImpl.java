@@ -335,24 +335,6 @@ public class FlowRunnerImpl implements FlowRunner{
                 logger.error(e.getMessage());
             }
             finally {
-                if (!isJobSuccess.get()) {
-                    try {
-                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
-                        });
-                    } catch (Exception ex) {
-                        logger.error(ex.getMessage());
-                    }
-                } else {
-                    try {
-                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
-                        });
-                    } catch (Exception ex) {
-                        logger.error(ex.getMessage());
-                    }
-                }
-
                 JsonNode jobNode = null;
                 try {
                     jobNode = jobDocManager.getJobs(jobId);
@@ -372,6 +354,24 @@ public class FlowRunnerImpl implements FlowRunner{
                     }
                     catch (Exception e) {
                         logger.error(e.getMessage());
+                    }
+                }
+
+                if (!isJobSuccess.get()) {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                        });
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage());
+                    }
+                } else {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                        });
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage());
                     }
                 }
 
