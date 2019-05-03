@@ -26,11 +26,11 @@ DHF projects and DHS projects have the following default configurations:
 
 - Ports and load balancers for app servers
 
-  | app server | DHF  | DHS  | DHS load balancers |
-  |------------|:----:|:----:|:------------------:|
-  | staging    | 8010 | 8006 | curation           |
-  | final      | 8011 | 8011 | operations         |
-  | jobs       | 8013 | 8013 | analytics          |
+  | app servers | ports | DHS load balancers |
+  |-------------|:-----:|:------------------:|
+  | staging     | 8010  | curation           |
+  | final       | 8011  | operations         |
+  | jobs        | 8013  | analytics          |
   {:.table-b1gray}
 
   {% include note.html type="IMPORTANT" content="Use port 8004 to deploy the Data Hub Framework core **only**. To deploy custom plugins (REST extensions, search options, etc.) against the STAGING database, use port 8011." %}
@@ -101,7 +101,7 @@ If your endpoints are publicly available, you can use any machine that is set up
         mlManagePassword=YOUR_FLOW_DEVELOPER_PASSWORD
 
         mlStagingAppserverName=data-hub-STAGING
-        mlStagingPort=8006
+        mlStagingPort=8010
         mlStagingDbName=data-hub-STAGING
         mlStagingForestsPerHost=1
 
@@ -161,7 +161,7 @@ If your endpoints are publicly available, you can use any machine that is set up
     a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
 
       | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8011/v1/search` |
-      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8006/v1/search`   |
+      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8010/v1/search`   |
       {:.table-b1gray}
 
       **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8011/v1/search`
