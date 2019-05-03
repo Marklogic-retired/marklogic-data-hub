@@ -39,7 +39,7 @@ function getPath(sourceContext, connector, propertyName) {
     path = `${sourceContext}${connector}${propertyName}`;
   } else {
     if (connector.includes("*:")) {
-      connector = "";
+      connector = connector.replace("*:", "");
     }
     path = `${sourceContext}${connector}node('${propertyName}')[fn:not(. instance of array-node())]`;
   }
