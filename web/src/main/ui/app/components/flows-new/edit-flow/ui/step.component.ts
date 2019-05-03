@@ -33,14 +33,14 @@ export class StepComponent implements OnChanges {
     public dialog: MatDialog
   ) {}
 
-  // workaround for: https://github.com/angular/material2/issues/7006 
+  // workaround for: https://github.com/angular/material2/issues/7006
   ngOnChanges(changes: any) {
-    if (changes && 
-      changes.selectedStepId && 
-      this.step.stepDefinitionType === this.stepType.MASTERING && 
+    if (changes &&
+      changes.selectedStepId &&
+      this.step.stepDefinitionType === this.stepType.MASTERING &&
       this.step.id === changes.selectedStepId.currentValue) {
       setTimeout(() => {
-        this.masteringTabGroup.realignInkBar();  
+        this.masteringTabGroup.realignInkBar();
       }, 100);
     }
     if (changes.flowEnded) {
@@ -63,7 +63,8 @@ export class StepComponent implements OnChanges {
         collections: this.collections,
         entities: this.entities,
         step: this.step,
-        flow: this.flow
+        flow: this.flow,
+        isUpdate: true
       }
     });
 

@@ -30,13 +30,13 @@ class InitProjectTask extends HubTask {
         println("############################################\n")
         println(" - Set username and password")
         println("     There are several ways to do this. The easiest is to set mlUsername and mlPassword in gradle.properties.")
-        println("     For other approaches see: https://github.com/marklogic/marklogic-data-hub/wiki/Password-Management\n")
+        println("     For other approaches see: https://docs.marklogic.com/datahub/security/set-security-credentials-using-gradle.html\n")
         println(" - To deploy your application into MarkLogic...")
         println("     gradle mlDeploy\t# this will bootstrap your application")
         println("     gradle mlLoadModules\t# this will load your custom plugins into MarkLogic\n")
         println(" - Full list of gradle tasks:")
-        println("     https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks\n")
+        println("     http://docs.marklogic.com/datahub/tools/gradle/gradle-tasks.html\n")
         println(" - Curious about the project structure?")
-        println("     Look here: https://marklogic.github.io/marklogic-data-hub/understanding/project-structure")
+        println("     Look here: http://docs.marklogic.com/datahub/refs/project-structure.html")
     }
 }

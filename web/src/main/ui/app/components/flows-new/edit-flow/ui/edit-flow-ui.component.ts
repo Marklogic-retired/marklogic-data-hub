@@ -115,7 +115,7 @@ export class EditFlowUiComponent implements OnChanges {
   openFlowSettingsDialog(): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
-      data: {flow: this.flow, flowNames: this.flowNames}
+      data: {flow: this.flow, flowNames: this.flowNames, isUpdate: true}
     });
     dialogRef.afterClosed().subscribe(response => {
       if (response) {

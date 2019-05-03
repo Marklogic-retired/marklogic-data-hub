@@ -82,6 +82,12 @@ declare function merging:standard(
           $property-spec/*:length/@weight ! fn:number(.),
           0
         ))
+      let $max-length :=
+        if ($length-weight gt 0) then
+          fn:max(
+            $condensed-properties ! (. => map:get("values")) ! fn:string-length(fn:string-join(.//text()," "))
+          )
+        else 0
       for $property in $condensed-properties
       let $_trace :=
         if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
@@ -91,7 +97,12 @@ declare function merging:standard(
       let $prop-value := map:get($property, "values")
       let $sources := map:get($property,"sources")
       let $source-dateTime := fn:max($sources/dateTime[. castable as xs:dateTime] ! xs:dateTime(.))
-      let $length-score := fn:string-length(fn:string-join($prop-value//text()," ")) * $length-weight
+      let $length-score :=
+          if ($length-weight gt 0) then
+            if (fn:string-length(fn:string-join($prop-value//text()," ")) eq $max-length) then
+              $length-weight
+            else 0
+          else 0
       let $source-score := fn:sum((
           for $source in $sources
           return
@@ -101,7 +112,7 @@ declare function merging:standard(
               $property-spec/*:source-weights/*:source[*:name = $source/name]/*:weight
             ))
         ))
-      let $weight := $length-score + $source-score
+      let $weight := fn:max(($length-score, $source-score))
       where fn:exists($sources[fn:exists(. intersect $selected-sources)])
       stable order by $weight descending, $source-dateTime descending
       return

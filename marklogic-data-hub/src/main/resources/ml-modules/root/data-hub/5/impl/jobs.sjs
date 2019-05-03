@@ -47,7 +47,8 @@ class Jobs {
        lastCompletedStep: 0 ,
        jobStatus: "started" ,
        timeStarted:  fn.currentDateTime(),
-       timeEnded: "N/A"
+       timeEnded: "N/A",
+       stepResponses :{}
      }
     };
 

@@ -11,6 +11,7 @@ export interface DialogData {
   step: any;
   flow: Flow;
   projectDirectory: string;
+  isUpdate: boolean;
 }
 @Component({
   selector: 'app-new-step-dialog',
@@ -23,6 +24,7 @@ export interface DialogData {
     [step]="data.step"
     [flow]="data.flow"
     [projectDirectory]="data.projectDirectory"
+    [isUpdate]="data.isUpdate"
     (getCollections)="getCollections($event)"
     (cancelClicked)="cancelClicked()"
     (saveClicked)="saveClicked($event)"

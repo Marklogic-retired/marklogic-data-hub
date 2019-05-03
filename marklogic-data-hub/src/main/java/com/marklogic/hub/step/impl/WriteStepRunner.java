@@ -19,7 +19,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.ServerTransform;
@@ -33,8 +32,8 @@ import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
-import com.marklogic.hub.job.JobUpdate;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
@@ -81,7 +80,7 @@ public class WriteStepRunner implements StepRunner {
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
     private String inputFilePath = null;
-    private JobUpdate jobUpdate ;
+    private JobDocManager jobDocManager;
     private String outputCollections;
     private String outputPermissions;
     private String inputFileType;
@@ -238,8 +237,8 @@ public class WriteStepRunner implements StepRunner {
     @Override
     public RunStepResponse run() {
         runningThread = null;
-        RunStepResponse runStepResponse = createStepResponse();
-        jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
+        RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
+        jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
 
         JsonNode comboOptions = null;
         try {
@@ -303,43 +302,50 @@ public class WriteStepRunner implements StepRunner {
 
         Collection<String> uris = null;
         //If current step is the first run step, a job doc is created
-        try{
-            jobUpdate.getJobs(jobId);
-        }
-        catch(ResourceNotFoundException e) {
-            jobUpdate.postJobs(jobId,flow.getName());
-        }
         try {
-            jobUpdate.postJobs(jobId, JobStatus.RUNNING_PREFIX + step, step);
+            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
         }
-        catch (Exception ex) {
-            throw ex;
+        catch (Exception e){
+            throw e;
         }
+
         try {
             uris = runFileCollector();
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED_PREFIX + step);
-            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
+            JsonNode jobDoc = null;
             try {
-                jobUpdate.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step);
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
             }
             catch (Exception ex) {
                 throw ex;
             }
-            return runStepResponse;
+            //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
+            try {
+                return StepRunnerUtil.getResponse(jobDoc, step);
+            }
+            catch (Exception ex)
+            {
+                return runStepResponse;
+            }
         }
-        this.runIngester(runStepResponse,uris);
-        return runStepResponse;
+        return this.runIngester(runStepResponse,uris);
     }
 
     @Override
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
-        RunStepResponse runStepResponse = createStepResponse();
+        RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
+        try {
+            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
+        }
+        catch (Exception e){
+            throw e;
+        }
         return this.runIngester(runStepResponse,uris);
     }
 
@@ -389,14 +395,20 @@ public class WriteStepRunner implements StepRunner {
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
+            JsonNode jobDoc;
             try {
-                jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
             }
             catch (Exception e) {
+                throw e;
             }
-
-            return runStepResponse;
+            try {
+                return StepRunnerUtil.getResponse(jobDoc, step);
+            }
+            catch (Exception ex)
+            {
+                return runStepResponse;
+            }
         }
 
         Vector<String> errorMessages = new Vector<>();
@@ -473,6 +485,14 @@ public class WriteStepRunner implements StepRunner {
         if(flow.getName().equals("default-ingestion")) {
             metadataHandle.withCollections("default-ingestion");
         }
+        // Set metadata values
+        DocumentMetadataHandle.DocumentMetadataValues metadataValues = metadataHandle.getMetadataValues();
+        metadataValues.add("createdByJob", jobId);
+        metadataValues.add("createdInFlow", flow.getName());
+        metadataValues.add("createdByStep", flow.getStep(step).getStepDefinitionName());
+        // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
+        metadataValues.add("createdOn", DATE_TIME_FORMAT.format(new Date()));
+        metadataValues.add("createdBy", this.hubConfig.getFlowOperatorUserName());
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;
         switch (inputFileType.toLowerCase()) {
@@ -539,18 +559,29 @@ public class WriteStepRunner implements StepRunner {
 
             runStepResponse.setCounts(successfulEvents.get() + failedEvents.get(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
             runStepResponse.withStatus(stepStatus);
-            runStepResponse.setStepEndTime(DATE_TIME_FORMAT.format(new Date()));
-            try {
-                jobUpdate.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null);
-            }
-            catch (Exception e) {
-                throw e;
-            }
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);
             }
             if(isFullOutput) {
                 runStepResponse.withFullOutput(fullResponse);
+            }
+            JsonNode jobDoc = null;
+            try {
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
+            }
+            catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+            if(jobDoc != null) {
+                try {
+                    RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
+                    runStepResponse.setStepStartTime(tempResp.getStepStartTime());
+                    runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+                }
+                catch (Exception ex)
+                {
+                    logger.error(ex.getMessage());
+                }
             }
         });
 
@@ -673,15 +704,6 @@ public class WriteStepRunner implements StepRunner {
                 listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING_PREFIX + step, successfulEvents.get(), failedEvents.get(), "Ingesting");
             });
         }
-    }
-
-    private RunStepResponse createStepResponse() {
-        RunStepResponse runStepResponse = RunStepResponse.withFlow(flow).withStep(step);
-        if (this.jobId == null) {
-            jobId = UUID.randomUUID().toString();
-        }
-        runStepResponse.withJobId(jobId);
-        return runStepResponse;
     }
 
     private String jsonToString(Map map) {

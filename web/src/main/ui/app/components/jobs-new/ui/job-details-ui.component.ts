@@ -3,6 +3,7 @@ import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@
 import { ConfirmationDialogComponent } from "../../common";
 import { StatusDialogComponent } from "./status-dialog.component";
 import { Job } from '../models/job.model';
+import { StepType } from '../../flows-new/models/step.model';
 import * as moment from 'moment';
 import * as _ from "lodash";
 
@@ -14,6 +15,7 @@ import * as _ from "lodash";
 export class JobDetailsUiComponent implements OnChanges {
   displayedColumns = ['name', 'stepType', 'status', 'endTime', 'duration', 'committed', 'errors'];
   filterValues = {};
+  targetDatabase = 'STAGING';
   @Input() job: Job;
 
   dataSource: MatTableDataSource<any>;
@@ -25,17 +27,22 @@ export class JobDetailsUiComponent implements OnChanges {
   constructor(public dialog: MatDialog){
   }
 
-  // ngOnInit() {
-    // console.log('this.job', this.job);
+  ngOnInit() {
     // TODO handle capitalization with CSS
-    // this.job.status = _.capitalize(this.job.status);
-    // this.dataSource = new MatTableDataSource<any>(this.job['steps']);
-  // }
+    if (this.job) {
+      this.job.status = _.capitalize(this.job.status);
+      this.updateDataSource();
+    } else {
+      this.job = Job.fromJSON({ status: 'Loading...' });
+    }
+  }
 
-  // ngAfterViewInit() {
-    // this.dataSource.paginator = this.paginator;
-    // this.dataSource.sort = this.sort;
-  // }
+  ngAfterViewInit() {
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+  }
   ngOnChanges(changes: SimpleChanges) {
     console.log('job changes', changes);
     if ( changes.hasOwnProperty('job')) {
@@ -49,6 +56,18 @@ export class JobDetailsUiComponent implements OnChanges {
 
   updateDataSource() {
     console.log('this.job data source', this.job);
+    this.job.steps.forEach((step) => {
+      if (step.targetDatabase) {
+        step.targetDatabase = /FINAL/.test(step.targetDatabase) ? 'FINAL' : 'STAGING';
+      } else if (step.stepDefinitionType.toLowerCase() === StepType.INGESTION.toLowerCase()) {
+        step.targetDatabase = 'STAGING';
+      } else {
+        step.targetDatabase = 'FINAL';
+      }
+      if (step.success) {
+        this.targetDatabase = step.targetDatabase;
+      }
+    });
     this.dataSource = new MatTableDataSource<any>(this.job.steps);
   }
 
