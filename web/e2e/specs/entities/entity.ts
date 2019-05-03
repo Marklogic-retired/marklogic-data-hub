@@ -49,13 +49,14 @@ export default function (qaProjectDir) {
       await entityPage.toolsButton.click();
       // move entity Order
       await entityPage.selectEntity('Order');
-      await browser.actions().dragAndDrop(entityPage.entityBox('Order'), {x: 400, y: 150}).perform();
+      await browser.actions().dragAndDrop(entityPage.entityBox('Order'), {x: 200, y: 150}).perform();
     });
 
     /**
      * Create entity with title, description and URI
      */
     it('should create a new Product entity with description and URI', async function () {
+      await appPage.entitiesTab.click();
       await browser.refresh();
       browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //create Product entity
@@ -79,7 +80,7 @@ export default function (qaProjectDir) {
       // move entity Product
       console.log('shifting Product entity')
       await entityPage.selectEntity('Product');
-      await browser.actions().dragAndDrop(entityPage.entityBox('Product'), {x: 800, y: 150}).perform();
+      await browser.actions().dragAndDrop(entityPage.entityBox('Product'), {x: 400, y: 250}).perform();
     });
 
     /**
@@ -399,6 +400,7 @@ export default function (qaProjectDir) {
      */
     it('should remove properties from Product entity', async function () {
       await browser.refresh();
+      await appPage.entitiesTab.click();
       browser.wait(EC.visibilityOf(entityPage.toolsButton))
       //add properties
       console.log('modify properties of Product entity');
@@ -415,11 +417,11 @@ export default function (qaProjectDir) {
         expect(lastProperty.isDisplayed());
         await entityPage.getPropertyCheckBox(lastProperty).click();
         await entityPage.deleteProperty.click();
-        browser.sleep(3000);
+        browser.sleep(5000);
         browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
         expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
         await entityPage.confirmDialogYesButton.click();
-        browser.sleep(3000);
+        browser.sleep(5000);
       }
       browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
       entityPage.getPropertiesCount().then(function (props) {

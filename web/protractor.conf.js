@@ -27,7 +27,7 @@ exports.config = {
     showTiming: true,
     showColors: true,
     includeStackTrace: true,
-    defaultTimeoutInterval: 310000,
+    defaultTimeoutInterval: 210000,
     print: function() {}
   },
   plugins: [{
