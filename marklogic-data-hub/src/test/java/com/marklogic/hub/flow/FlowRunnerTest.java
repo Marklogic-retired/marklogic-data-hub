@@ -24,6 +24,7 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepDefinition;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -93,6 +94,14 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map") == 1);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 1);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        Assertions.assertNotNull(resp.getUser());
+        Assertions.assertNotNull(resp.getStartTime());
+        Assertions.assertNotNull(resp.getEndTime());
+        Assertions.assertNotNull(resp.getLastAttemptedStep());
+        Assertions.assertNotNull(resp.getLastCompletedStep());
+        RunStepResponse stepResp = resp.getStepResponses().get("1");
+        Assertions.assertNotNull(stepResp.getStepStartTime());
+        Assertions.assertNotNull(stepResp.getStepEndTime());
     }
 
     @Test
@@ -217,9 +226,6 @@ public class FlowRunnerTest extends HubTestBase {
         RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
         fr.awaitCompletion();
 
-
-        fr.awaitCompletion();
-
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection") == 0);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
@@ -277,5 +283,4 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
     }
-
 }
