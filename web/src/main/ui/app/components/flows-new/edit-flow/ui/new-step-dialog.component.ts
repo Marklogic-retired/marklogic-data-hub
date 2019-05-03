@@ -11,6 +11,7 @@ export interface DialogData {
   step: any;
   flow: Flow;
   projectDirectory: string;
+  isUpdate: boolean;
 }
 @Component({
   selector: 'app-new-step-dialog',
