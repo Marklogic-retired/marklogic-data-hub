@@ -52,25 +52,37 @@ function post(context, params, input) {
   let flow = params["flow-name"];
   let step = params["step"];
   let lastCompleted = params["lastCompleted"];
-  let stepResponses = params["stepResponses"];
+  let stepResponse = params["stepResponse"];
 
   let resp = null;
   let jobDoc = datahub.jobs.getJobDocWithId(jobId);
   if(jobDoc) {
-    jobDoc.job.lastAttemptedStep = step;
     jobDoc.job.jobStatus = status;
-    if(lastCompleted) {
-      jobDoc.job.lastCompletedStep = lastCompleted;
-    }
-    if(stepResponses) {
-      jobDoc.job.stepResponses = JSON.parse(stepResponses);
-    }
-    if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "cancelled"|| status === "stop-on-error") {
+    //update job status at the end of flow run
+    if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "canceled"|| status === "stop-on-error") {
       jobDoc.job.timeEnded = fn.currentDateTime();
+    }
+    //update job doc before and after step run
+    else {
+        jobDoc.job.lastAttemptedStep = step;
+        if(lastCompleted) {
+          jobDoc.job.lastCompletedStep = lastCompleted;
+        }
+        if(! jobDoc.job.stepResponses[step]){
+          jobDoc.job.stepResponses[step] = {};
+          jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
+        }
+        else {
+          let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
+          jobDoc.job.stepResponses[step]  = JSON.parse(stepResponse);
+          jobDoc.job.stepResponses[step].stepStartTime = tempTime;
+          jobDoc.job.stepResponses[step].stepEndTime = fn.currentDateTime();
+        }
     }
 
     //Update the job doc
     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, "xdmp.defaultPermissions()", ['Jobs','Job'], datahub.config.JOBDATABASE);
+    resp = jobDoc;
   }
   else {
     if(fn.exists(jobId) && fn.exists(flow)) {
@@ -79,8 +91,8 @@ function post(context, params, input) {
     else {
       fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
     }
-
   }
+  return resp;
 };
 
 function put(context, params, input) {};

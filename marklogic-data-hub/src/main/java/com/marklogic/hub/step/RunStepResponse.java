@@ -16,13 +16,12 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,11 +44,18 @@ public class RunStepResponse {
     private long failedBatches = 0;
     private boolean success = false;
 
+    public void setStepStartTime(String stepStartTime) {
+        this.stepStartTime = stepStartTime;
+    }
+
+    public void setStepEndTime(String stepEndTime) {
+        this.stepEndTime = stepEndTime;
+    }
+
     private String stepStartTime;
     private String stepEndTime;
 
     private Flow flow;
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     /**
      * @return true if the job ran without errors, false otherwise.
@@ -67,11 +73,13 @@ public class RunStepResponse {
         RunStepResponse runStepResponse = new RunStepResponse();
         runStepResponse.flowName = flow.getName();
         runStepResponse.flow = flow;
-        runStepResponse.stepStartTime = DATE_TIME_FORMAT.format(new Date());
         return runStepResponse;
     }
 
     public RunStepResponse withStep(String stepNum) {
+        if(flow == null){
+            throw new DataHubConfigurationException("Flow has to be set before setting step");
+        }
         Step step = this.flow.getStep(stepNum);
         this.stepName = step.getName();
         this.stepDefinitionName = step.getStepDefinitionName();
@@ -98,7 +106,7 @@ public class RunStepResponse {
     }
 
     public RunStepResponse withStatus(String status) {
-        if(status.contains(JobStatus.COMPLETED_PREFIX) || status.contains(JobStatus.FINISHED.toString())) {
+        if(status.contains(JobStatus.COMPLETED_PREFIX)) {
             this.success = true;
         }
         this.status = status;
@@ -158,24 +166,12 @@ public class RunStepResponse {
         return stepName;
     }
 
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
-    }
-
     public String getStepDefinitionType() {
         return stepDefinitionType;
     }
 
-    public void setStepDefinitionType(String stepDefinitionType) {
-        this.stepDefinitionType = stepDefinitionType;
-    }
-
     public String getStepDefinitionName() {
         return stepDefinitionName;
-    }
-
-    public void setStepDefinitionName(String stepDefinitionName) {
-        this.stepDefinitionName = stepDefinitionName;
     }
 
     public String getStepStartTime() {
@@ -186,13 +182,6 @@ public class RunStepResponse {
         return stepEndTime;
     }
 
-    public void setStepStartTime(String stepStartTime) {
-        this.stepStartTime = stepStartTime;
-    }
-
-    public void setStepEndTime(String stepEndTime) {
-        this.stepEndTime = stepEndTime;
-    }
 
     @Override
     public String toString() {
