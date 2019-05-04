@@ -85,6 +85,7 @@ export default function(qaProjectDir) {
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/mastering-data");
             // bug on advance settings with different db name
             await stepsPage.clickStepMenu();
+            browser.sleep(3000);
             browser.wait(EC.elementToBeClickable(stepsPage.stepMenuEditOption));
             await stepsPage.clickStepMenuEditOption();
             browser.wait(EC.elementToBeClickable(stepsPage.advSettingsExpandCollapse));
@@ -276,7 +277,7 @@ export default function(qaProjectDir) {
         it ('should delete SimpleJSON entity', async function() {
             await appPage.entitiesTab.click();
             browser.wait(EC.visibilityOf(entityPage.toolsButton));
-            await entityPage.deleteEntityButton('SimpleJSON').click();
+            await entityPage.clickDeleteEntity('SimpleJSON');
             browser.sleep(3000);
             browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
             await entityPage.confirmDialogYesButton.click();
