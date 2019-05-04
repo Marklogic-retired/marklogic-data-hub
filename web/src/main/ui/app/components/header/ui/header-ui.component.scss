@@ -7,6 +7,32 @@ header.mdl-layout__header {
   background-color: $bg-color;
 }
 
+.mdl-navigation .mdl-navigation__link {
+  padding: 0 18px;
+}
+
+#header-menu {
+  color: white;
+  text-transform: none;
+  font-family: Arial, Helvetica, sans-serif;
+  width: 150px;
+  padding: 0 8px !important;
+  .user-name {
+    font-size: 13px;
+    display: inline-block;
+    position: relative;
+    top: -4px;
+    padding-left: 5px;
+  }
+}
+
+.version-link {
+  display: inline;
+  font-size: 12px;
+  color: #f0f5f9;
+  padding-left: 10px;
+}
+
 .debug-status {
   position: relative;
 }

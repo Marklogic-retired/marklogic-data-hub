@@ -2,6 +2,10 @@ export class HubSettings {
   host: string = null;
   name: string = 'data-hub';
 
+  projectDir: string = null;
+  marklogicVersion: string = null;
+  installedVersion: string = null;
+
   stagingDbName: string = null;
   stagingTriggersDbName: string = null;
   stagingSchemasDbName: string = null;

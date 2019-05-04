@@ -1,11 +1,17 @@
-.mat-dialog-title {
-  margin: -6px 0 20px;
-  font-size: 24px;
+/deep/ h1.mat-dialog-title {
+  margin-top: -12px !important;
+  margin-left: -4px !important;
+  margin-bottom: 11px !important;
 }
 
-.mat-dialog-actions {
-  padding: 12px 0;
-  margin-bottom: -20px;
+/deep/ .mat-dialog-content {
+  background: #f3f3f3 !important;
+  padding: 20px !important;
+}
+
+/deep/ .mat-dialog-actions {
+  margin-right: -4px !important;
+  justify-content: flex-end !important;
 }
 
 div.add-group input,
@@ -35,4 +41,10 @@ div.set-group input {
 .add-set-btn .mat-icon {
   position: relative;
   top: -2px;
+}
+
+div.add-group input,
+div.remove-group input,
+div.set-group input {
+  background-color: #f3f3f3;
 }

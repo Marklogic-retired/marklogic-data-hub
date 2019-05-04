@@ -1,0 +1,43 @@
+button {
+  outline: none;
+}
+
+h1.mat-dialog-title {
+  margin-top: -12px;
+  margin-left: -4px;
+  margin-bottom: 11px;
+}
+
+.mat-dialog-content {
+  background: #f3f3f3;
+  padding: 20px;
+}
+
+.mat-dialog-actions {
+  margin-right: -4px;
+  justify-content: flex-end;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #6d8ba5;
+}
+a {
+  color: #2a4356;
+}
+
+section {
+  .about-item {
+    width: 400px;
+    span.label {
+      display: inline-block;
+      font-size: 12px;
+      color: #666;
+      margin-right: 5px;
+      width: 110px;
+    }
+  }
+  div.bug-link {
+    margin-top: 5px;
+  }
+}
