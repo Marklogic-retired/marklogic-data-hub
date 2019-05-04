@@ -359,9 +359,6 @@ class Flow {
   runMain(content, options, func) {
     let resp;
     resp = func(content, options);
-    if (resp instanceof Sequence) {
-      resp = fn.head(resp);
-    }
     return resp;
   };
 }

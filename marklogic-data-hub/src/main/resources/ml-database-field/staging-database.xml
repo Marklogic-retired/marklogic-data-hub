@@ -17,7 +17,7 @@
       <tokenizer-overrides/>
     </field>
     <field>
-      <field-name>createdByJob</field-name>
+      <field-name>datahubCreatedByJob</field-name>
       <metadata/>
       <stemmed-searches>off</stemmed-searches>
       <word-searches>true</word-searches>
@@ -37,7 +37,7 @@
       </tokenizer-overrides>
     </field>
     <field>
-      <field-name>createdByStep</field-name>
+      <field-name>datahubCreatedByStep</field-name>
       <metadata/>
       <stemmed-searches>off</stemmed-searches>
       <word-searches>true</word-searches>

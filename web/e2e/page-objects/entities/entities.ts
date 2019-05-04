@@ -1,14 +1,14 @@
 import {
   protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder,
-  ElementArrayFinder
+  ElementArrayFinder, Key
 } from 'protractor'
-import { AppPage } from '../appPage';
-import { pages } from '../page';
+import {AppPage} from '../appPage';
+import {pages} from '../page';
 import {Element} from "@angular/compiler";
 
 export class EntityPage extends AppPage {
 
-  //to get the login box locater
+  //to get the login box locator
   locator() {
     return by.css('.entities');
   }
@@ -34,11 +34,14 @@ export class EntityPage extends AppPage {
   }
 
   async clickEditEntity(entityName: string) {
-    await browser.executeScript(`window.document.getElementById("aeb-${entityName}").getElementsByClassName("edit-start")[0].click()`);
+    let button = element(by.css(`#aeb-${entityName} .fa-pencil`));
+    await browser.executeScript("arguments[0].click();", button)
   }
 
-  deleteEntityButton(entityName: string) {
-    return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
+  async clickDeleteEntity(entityName: string) {
+    let button = element(by.css(`#aeb-${entityName} .fa-remove`));
+    await browser.executeScript("arguments[0].click();", button)
+    //return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
   }
 
   editEntityButton(entityName: string) {
@@ -51,6 +54,14 @@ export class EntityPage extends AppPage {
 
   get entityVersion() {
     return element(by.css('mdl-textfield[label=Version] input'));
+  }
+
+  get entityDescription() {
+    return element(by.css('mdl-textfield[label=Description] input'));
+  }
+
+  get entityURI() {
+    return element(by.css('mdl-textfield[label="Base URI"] input'));
   }
 
   getEntityBox(entityName: string) {
@@ -69,11 +80,11 @@ export class EntityPage extends AppPage {
     return element(by.tagName('mdl-dialog-component'));
   }
 
-  get confirmDialogYesButton(){
+  get confirmDialogYesButton() {
     return element(by.buttonText('Yes'));
   }
 
-  get confirmDialogNoButton(){
+  get confirmDialogNoButton() {
     return element(by.buttonText('No'));
   }
 
@@ -93,58 +104,58 @@ export class EntityPage extends AppPage {
     return element.all(by.css('.entity-def')).count();
   }
 
-  getPropertyByPosition(position: number){
-    return element(by.css('.selected-entity .properties > tBody > tr:nth-child('+position+')'));
+  getPropertyByPosition(position: number) {
+    return element(by.css('.selected-entity .properties > tBody > tr:nth-child(' + position + ')'));
     //DHFPROD-1060
   }
 
-  getPropertyColumn(property: ElementFinder, column: number){
-    return property.element(by.css('td:nth-child('+column+') > :first-child'));
+  getPropertyColumn(property: ElementFinder, column: number) {
+    return property.element(by.css('td:nth-child(' + column + ') > :first-child'));
   }
 
-  getPropertyCheckBox(property: ElementFinder){
+  getPropertyCheckBox(property: ElementFinder) {
     return property.element(by.css('td > input[type="checkbox"]'));
   }
 
-  getPropertyPrimaryKey(property: ElementFinder){
+  getPropertyPrimaryKey(property: ElementFinder) {
     return property.element(by.css('app-entity-editor table.properties > tbody .fa-key'));
   }
 
-  getPropertyRangeIndex(property: ElementFinder){
+  getPropertyRangeIndex(property: ElementFinder) {
     return property.element(by.css('app-entity-editor table.properties > tbody .fa-bolt'));
   }
 
-  getPropertyPathRange(property: ElementFinder){
+  getPropertyPathRange(property: ElementFinder) {
     return property.element(by.css('app-entity-editor table.properties > tbody .fa-code'));
   }
 
-  getPropertyWordLexicon(property: ElementFinder){
+  getPropertyWordLexicon(property: ElementFinder) {
     return property.element(by.css('app-entity-editor table.properties > tbody .fa-krw'));
   }
 
-  getPropertyRequired(property: ElementFinder){
+  getPropertyRequired(property: ElementFinder) {
     return property.element(by.css('app-entity-editor table.properties > tbody .fa-exclamation'));
   }
 
-  getPropertyPii(property: ElementFinder){
+  getPropertyPii(property: ElementFinder) {
     return property.element(by.css('app-entity-editor table.properties > tbody .fa-lock'));
   }
 
-  getPropertyName(property: ElementFinder){
-      return property.element(by.css('td > input[name="name"]'));
+  getPropertyName(property: ElementFinder) {
+    return property.element(by.css('td > input[name="name"]'));
   }
 
-  getPropertyType(property: ElementFinder){
+  getPropertyType(property: ElementFinder) {
     return property.element(by.css('td:nth-child(9) > select'));
     //td > select[name="type"] DHFPROD-1060
   }
 
-  getPropertyCardinality(property: ElementFinder){
+  getPropertyCardinality(property: ElementFinder) {
     return property.element(by.css('td:nth-child(10) > select'));
     //td > select[name="cardinality"] DHFPROD-1060
   }
 
-  getPropertyDescription(property: ElementFinder){
+  getPropertyDescription(property: ElementFinder) {
     return property.element(by.css('td:nth-child(11) > input[type="text"]'));
     //td > input[name="description"] DHFPROD-1060
   }
@@ -167,6 +178,22 @@ export class EntityPage extends AppPage {
 
   get toast() {
     return element(by.css('mdl-snackbar-component'));
+  }
+
+  entity(entityName: string) {
+    return element(by.id(`aeb-${entityName}`));
+  }
+
+  getEntityBoxVersion(entityName: string) {
+    return this.entity(entityName).element(by.css('.version')).getText();
+  }
+
+  getEntityBoxDescription(entityName: string) {
+    return this.entity(entityName).element(by.css('.description > div')).getText();
+  }
+
+  getEntityBoxURI(entityName: string) {
+    return this.entity(entityName).element(by.css('.baseuri > div')).getText();
   }
 }
 

@@ -4,12 +4,12 @@
   </constraint>
   <constraint name="createdByJob">
     <word>
-      <field name="createdByJob"/>
+      <field name="datahubCreatedByJob"/>
     </word>
   </constraint>
   <constraint name="createdByStep">
     <word>
-      <field name="createdByStep"/>
+      <field name="datahubCreatedByStep"/>
     </word>
   </constraint>
 </options>

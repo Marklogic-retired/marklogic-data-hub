@@ -3,6 +3,11 @@
   <search:constraint name="Collection">
     <search:collection/>
   </search:constraint>
+  <search:constraint name="createdByJob">
+    <search:value>
+      <search:field name="createdByJob"/>
+    </search:value>
+  </search:constraint>
   <search:constraint name="entity-type">
     <search:value>
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
