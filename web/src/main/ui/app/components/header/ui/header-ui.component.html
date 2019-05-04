@@ -17,50 +17,13 @@
       <a id="browser-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>
       <a id="jobs-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="runningJobs !== 0" [mdl-badge]="runningJobs">Jobs</span><span *ngIf="runningJobs === 0">Jobs</span></a>
       <a id="settings-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
-      <mdl-button id="header-menu" #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-ripple>
-        <i class="mdi mdi-account mdl-color--white"></i> {{settings.mlUsername | truncate: 8 }}
+      <mdl-button id="header-menu" #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-ripple title="{{settings.mlUsername}}">
+        <i class="mdi mdi-account mdl-color--white"></i> <span class="user-name">{{settings.mlUsername | truncate: 11 }}</span>
       </mdl-button>
     </nav>
     <mdl-menu #headerMenu="mdlMenu" mdl-menu-position="bottom-left">
-      <mdl-menu-item mdl-ripple (click)="aboutDialog.show()">About</mdl-menu-item>
+      <mdl-menu-item id="login-button" mdl-ripple (click)="openAboutDialog()">About</mdl-menu-item>
       <mdl-menu-item id="login-button" mdl-ripple (click)="logoutClicked()">Logout</mdl-menu-item>
     </mdl-menu>
   </div>
 </header>
-
-<mdl-dialog #aboutDialog [mdl-modal]="true">
-  <div class="mdl-dialog__title">
-    <div>About Data Hub</div>
-    <div class="mdl-layout-spacer"></div>
-    <mdl-button mdl-button-type="icon" (click)="aboutDialog.close()">
-      <i class="fa fa-close"></i>
-    </mdl-button>
-  </div>
-  <div class="mdl-dialog__content">
-    <ul class="demo-list-item mdl-list">
-    <li class="mdl-list__item">
-    <span class="mdl-list__item-primary-content">
-      Installed Version: {{settings.installedVersion}}
-    </span>
-    </li>
-    <li class="mdl-list__item">
-    <span class="mdl-list__item-primary-content">
-      Project: {{settings.projectDir}}
-    </span>
-    </li>
-    <li class="mdl-list__item">
-    <span class="mdl-list__item-primary-content">
-      MarkLogic Server: {{settings.marklogicVersion}}
-    </span>
-    </li>
-      <li class="mdl-list__item">
-    <span class="mdl-list__item-primary-content">
-      <a href="https://github.com/marklogic/marklogic-data-hub/issues" target="_blank">File a bug</a>
-    </span>
-      </li>
-    </ul>
-  </div>
-  <div class="mdl-dialog__actions">
-    <button mdl-button (click)="aboutDialog.close()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple>Close</button>
-  </div>
-</mdl-dialog>

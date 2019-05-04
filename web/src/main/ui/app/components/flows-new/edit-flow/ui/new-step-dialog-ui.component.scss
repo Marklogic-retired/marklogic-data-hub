@@ -16,25 +16,20 @@ mat-radio-button {
   text-transform: capitalize;
 }
 
-.content {
-  background: #f3f3f3;
-  padding: 10px 15px 20px 15px;
+/deep/ .mat-dialog-content {
+  background: #f3f3f3 !important;
+  padding: 20px !important;
 }
 
-h1.mat-dialog-title {
-  margin-top: -12px;
-  margin-left: -4px;
-  margin-bottom: 11px;
+/deep/ h1.mat-dialog-title {
+  margin-top: -12px !important;
+  margin-left: -4px !important;
+  margin-bottom: 11px !important;
 }
 
-.mat-dialog-content {
-  background: #f3f3f3;
-  padding: 20px;
-}
-
-.mat-dialog-actions {
-  margin-right: -4px;
-  justify-content: flex-end;
+/deep/ .mat-dialog-actions {
+  margin-right: -4px !important;
+  justify-content: flex-end !important;
 }
 
 .source-type-label {

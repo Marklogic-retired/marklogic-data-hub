@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>About Data Hub</h1>
+<div id="about-dialog" mat-dialog-content class="content">
+	<section>
+	  <div class="about-item data-hub-version">
+	    <span class="label">Data Hub Version</span>
+	    <span class="value">{{data.settings.installedVersion}}</span>
+	  </div>
+	</section>
+	<section>
+	  <div class="about-item project-directory">
+	    <span class="label">Project Directory</span>
+	    <span class="value" title="{{data.settings.projectDir}}">{{data.settings.projectDir | truncate: -34 }}</span>
+	  </div>
+	</section>
+	<section>
+	  <div class="about-item marklogic-version">
+	    <span class="label">MarkLogic Version</span>
+	    <span class="value">{{data.settings.marklogicVersion}}</span>
+	  </div>
+	</section>
+	<section>
+	  <div class="about-item bug-link">
+	    <a href="https://github.com/marklogic/marklogic-data-hub/issues" target="_blank">File a bug</a>
+	  </div>
+	</section>
+</div>
+<mat-dialog-actions class="bottom">
+  <button id="about-cancel-btn" color="primary" mat-raised-button (click)="onCancel()">CLOSE</button>
+</mat-dialog-actions>
