@@ -107,6 +107,9 @@
             <a *ngIf="job.successfulEvents !== 0" [routerLink]="['/browse']" [queryParams]="{ createdByJob: job.id, d: job.targetDatabase }">
               {{job.successfulEvents | number}}
             </a>
+            <span *ngIf="job.successfulEvents === 0">
+              {{job.successfulEvents | number}}
+            </span>
           </mat-cell>
         </ng-container>
 
@@ -119,7 +122,7 @@
               {{job.failedEvents | number}}
             </a> -->
             <span>
-              {{job.failedEvents}}
+              {{job.failedEvents | number}}
             </span>
           </mat-cell>
         </ng-container>
