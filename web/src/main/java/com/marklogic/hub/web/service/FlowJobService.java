@@ -40,17 +40,18 @@ public class FlowJobService extends ResourceManager {
 
     //use a cache with ttl 30 minutes or longer to reduce frequency for fetching data from DB
     public final Cache<String, FlowJobs> cachedJobsByFlowName = CacheBuilder.newBuilder().expireAfterWrite(
-        30, TimeUnit.MINUTES).build();
+        5, TimeUnit.MINUTES).build();
 
     public FlowJobService() {
         super();
     }
 
-    public void setupClient() {
+    private void setupClient() {
         this.client = hubConfig.newJobDbClient();
     }
 
     public FlowJobs getJobs(String flowName) {
+        this.setupClient();
         try {
             return cachedJobsByFlowName.get(flowName, () -> {
                 client.init(ML_JOBS_NAME, this);
@@ -144,11 +145,14 @@ public class FlowJobService extends ResourceManager {
             if (cachedJobsByFlowName.getIfPresent(flowName) == null) {
                 cachedJobsByFlowName.invalidate(flowName);
             }
+            this.release();
         }
         return cachedJobsByFlowName.getIfPresent(flowName);
     }
 
-    public void release() {
-        this.client.release();
+    private void release() {
+        if(this.client != null) {
+            this.client.release();
+        }
     }
 }
