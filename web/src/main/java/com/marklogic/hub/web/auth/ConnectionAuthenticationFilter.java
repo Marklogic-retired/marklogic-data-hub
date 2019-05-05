@@ -18,9 +18,11 @@ package com.marklogic.hub.web.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.web.model.Project;
 import com.marklogic.hub.web.service.EnvironmentConfig;
 import com.marklogic.hub.web.service.ProjectManagerService;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -28,10 +30,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.Assert;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Processes an authentication form submission. Called
@@ -87,10 +85,10 @@ public class ConnectionAuthenticationFilter extends
     // ========================================================================================================
 
     public Authentication attemptAuthentication(HttpServletRequest request,
-            HttpServletResponse response) throws AuthenticationException, IOException {
+                                                HttpServletResponse response) throws AuthenticationException, IOException {
         if (postOnly && !request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException(
-                    "Authentication method not supported: " + request.getMethod());
+                "Authentication method not supported: " + request.getMethod());
         }
 
         final LoginInfo loginInfo = new ObjectMapper().readValue(request.getInputStream(), LoginInfo.class);
@@ -106,22 +104,24 @@ public class ConnectionAuthenticationFilter extends
         }
 
         username = username.trim();
-
-        Project project = pm.getProject(loginInfo.projectId);
-        pm.setLastProject(loginInfo.projectId);
-
+        
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
         hubConfig.resetAppConfigs();
         hubConfig.withPropertiesFromEnvironment(loginInfo.environment);
+        if (loginInfo.projectId != pm.getLastProject()) {
+            hubConfig.resetHubConfigs();
+        }
         hubConfig.refreshProject();
+
         hubConfig.getAppConfig().setAppServicesUsername(username);
         hubConfig.getAppConfig().setAppServicesPassword(password);
 
+        pm.setLastProject(loginInfo.projectId);
         environmentConfig.setEnvironment(loginInfo.environment);
 
         ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
-                username, password, hubConfig.getAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
+            username, password, hubConfig.getAppConfig().getHost(), loginInfo.projectId, loginInfo.environment);
 
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
@@ -174,7 +174,7 @@ public class ConnectionAuthenticationFilter extends
      * set
      */
     protected void setDetails(HttpServletRequest request,
-            ConnectionAuthenticationToken authRequest) {
+                              ConnectionAuthenticationToken authRequest) {
         authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
     }
 

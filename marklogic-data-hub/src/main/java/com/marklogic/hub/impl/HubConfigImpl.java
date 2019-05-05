@@ -2016,4 +2016,75 @@ public class HubConfigImpl implements HubConfig
         manageClient = null;
     }
 
+    public void resetHubConfigs() {
+        stagingDbName = null;
+        stagingHttpName = null;
+        stagingForestsPerHost = null;
+        stagingPort = null;
+        stagingAuthMethod = null;
+        stagingScheme = null;
+        stagingSimpleSsl = null;
+
+        stagingSslContext = null;
+        stagingSslHostnameVerifier = null;
+        stagingCertFile = null;
+        stagingCertPassword = null;
+        stagingExternalName = null;
+        stagingTrustManager = null;
+
+        finalDbName = null;
+        finalHttpName = null;
+        finalForestsPerHost = null;
+        finalPort = null;
+        finalAuthMethod = null;
+        finalScheme = null;
+
+        finalSimpleSsl = null;
+        finalSslContext = null;
+        finalSslHostnameVerifier = null;
+        finalCertFile = null;
+        finalCertPassword = null;
+        finalExternalName = null;
+        finalTrustManager = null;
+
+        jobDbName = null;
+        jobHttpName = null;
+        jobForestsPerHost = null;
+        jobPort = null;
+        jobAuthMethod = null;
+        jobScheme = null;
+
+        jobSimpleSsl = null;
+        jobSslContext = null;
+        jobSslHostnameVerifier = null;
+        jobCertFile = null;
+        jobCertPassword = null;
+        jobExternalName = null;
+        jobTrustManager = null;
+
+        modulesDbName = null;
+        modulesForestsPerHost = null;
+        stagingTriggersDbName = null;
+        stagingTriggersForestsPerHost = null;
+        finalTriggersDbName = null;
+        finalTriggersForestsPerHost = null;
+        stagingSchemasDbName = null;
+        stagingSchemasForestsPerHost = null;
+        finalSchemasDbName = null;
+        finalSchemasForestsPerHost = null;
+
+        flowOperatorRoleName = null;
+        flowOperatorUserName = null;
+
+        flowDeveloperRoleName = null;
+        flowDeveloperUserName = null;
+
+        dataHubAdminRoleName = null;
+        customForestPath = null;
+        modulePermissions = null;
+        hubLogLevel = null;
+        loadBalancerHost = null;
+        isHostLoadBalancer = null;
+    }
+
 }
