@@ -1,7 +1,7 @@
 <header class="mdl-layout__header">
   <div class="mdl-layout__header-row">
     <a class="isActive('/')" [routerLink]="['']"><img src="/img/odh.svg"></a>
-    <span class="mdl-layout-title">Data Hub QuickStart    <span class="version-link">v{{settings.dhfversion}}</span></span>
+    <span class="mdl-layout-title">Data Hub QuickStart    <span class="version-link">v{{settings.installedVersion}}</span></span>
     <!-- Add spacer, to align navigation to the right -->
     <div class="mdl-layout-spacer"></div>
     <div *ngIf="runningJobs !== 0" layout="row" layout-align="center center" class="job-progress" [routerLink]="['jobs']">
@@ -17,8 +17,8 @@
       <a id="browser-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/browse')}" [routerLink]="['browse']"><i class="mdi mdi-magnify"></i> Browse Data</a>
       <a id="jobs-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/jobs')}" [routerLink]="['jobs']"><i class="fa fa-tasks"></i> <span *ngIf="runningJobs !== 0" [mdl-badge]="runningJobs">Jobs</span><span *ngIf="runningJobs === 0">Jobs</span></a>
       <a id="settings-tab" class="mdl-navigation__link" [ngClass]="{'active': isActive('/settings')}" [routerLink]="['settings']"><i class="fa fa-gear"></i> Settings</a>
-      <mdl-button id="header-menu" #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-ripple title="{{settings.mlUsername}}">
-        <i class="mdi mdi-account mdl-color--white"></i> <span class="user-name">{{settings.mlUsername | truncate: 11 }}</span>
+      <mdl-button id="header-menu" #menuButton="mdlButton" (click)="headerMenu.toggle($event, menuButton)" mdl-ripple title="{{settings.username}}">
+        <i class="mdi mdi-account mdl-color--white"></i> <span class="user-name">{{settings.username | truncate: 11 }}</span>
       </mdl-button>
     </nav>
     <mdl-menu #headerMenu="mdlMenu" mdl-menu-position="bottom-left">
