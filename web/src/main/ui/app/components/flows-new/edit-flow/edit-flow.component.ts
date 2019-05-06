@@ -103,7 +103,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
       this.databases.final = resp.mlSettings.finalDbName;
       this.databases.staging = resp.mlSettings.stagingDbName;
       this.databases.modules = resp.mlSettings.modulesDbName;
-      this.projectDirectory = resp.mlSettings.ProjectDir;
+      this.projectDirectory = resp.mlSettings.projectDir;
     });
   }
   getCollections(db) {

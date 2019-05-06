@@ -38,7 +38,9 @@ export class IngestComponent implements OnInit {
     const {
       collections,
       permissions,
-      outputFormat
+      outputFormat,
+      sourceQuery,
+      targetDatabase
     } = this.step.options;
 
     const fileLocations = {
@@ -50,7 +52,9 @@ export class IngestComponent implements OnInit {
     const options = {
       collections: collections || [`${this.step.name}`],
       permissions: permissions || "rest-reader,read,rest-writer,update",
-      outputFormat: outputFormat || 'json'
+      outputFormat: outputFormat || 'json',
+      sourceQuery: sourceQuery || '',
+      targetDatabase: targetDatabase || ''
     };
 
     this.step.fileLocations = fileLocations;

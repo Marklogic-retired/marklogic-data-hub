@@ -166,6 +166,11 @@ export class NewStepDialogUiComponent implements OnInit {
     } else {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
     }
+
+    if (this.newStep.stepDefinitionType === this.stepType.INGESTION) {
+      this.newStep.options.collections.push(this.newStepForm.value.name);
+    }
+
     this.newStep.description = this.newStepForm.value.description;
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
