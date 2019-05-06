@@ -41,6 +41,7 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
         options.put("stepUpdate", true);
         // Accepts batch needed for Smart Mastering to receive all batch documents at once
         options.put("acceptsBatch", true);
+        options.put("outputFormat", "json");
 
         List<String> collectionName = new ArrayList<>();
         collectionName.add(name);

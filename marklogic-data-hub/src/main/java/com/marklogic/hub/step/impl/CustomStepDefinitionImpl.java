@@ -33,6 +33,7 @@ public class CustomStepDefinitionImpl extends AbstractStepDefinition {
         collectionName.add(name);
         Map<String, Object> options = getOptions();
         options.put("collections", collectionName);
+        options.put("outputFormat", "json");
 
         options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
