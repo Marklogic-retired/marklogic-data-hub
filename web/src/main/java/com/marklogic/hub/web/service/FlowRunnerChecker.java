@@ -47,7 +47,7 @@ public class FlowRunnerChecker {
             if (stepResponseByKey != null) {
                 RunStepResponse stepJob = stepResponseByKey.get(flowRunner.getRunningStepKey());
                 if (stepJob != null) {
-                    latestJob.status = StringUtils.isNotEmpty(stepJob.getStatus()) && !JobStatus.jobIsDone(latestJob.status) ? stepJob.getStatus() : latestJob.status;
+                    latestJob.status = StringUtils.isNotEmpty(stepJob.getStatus()) && !JobStatus.isJobDone(latestJob.status) ? stepJob.getStatus() : latestJob.status;
                     if (stepJob.getStepOutput() != null) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.putArray("output", stepJob.getStepOutput());
@@ -62,7 +62,7 @@ public class FlowRunnerChecker {
                     latestJob.successfulEvents = successfulEvents;
                     latestJob.failedEvents = failedEvents;
                 }
-                if (JobStatus.stepIsDone(latestJob.status) || JobStatus.jobIsDone(latestJob.status)) {
+                if (JobStatus.isStepDone(latestJob.status) || JobStatus.isJobDone(latestJob.status)) {
                     if (!completedSteps.contains(latestJob.stepId)) {
                         if (completedSteps.isEmpty()) {
                             latestJob.successfulEvents = successfulEvents;
