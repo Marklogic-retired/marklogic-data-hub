@@ -83,7 +83,7 @@ public class RunStepResponse {
         Step step = this.flow.getStep(stepNum);
         this.stepName = step.getName();
         this.stepDefinitionName = step.getStepDefinitionName();
-        this.stepDefinitionType = step.getStepDefinitionType().toString();
+        this.stepDefinitionType = step.getStepDefinitionType() != null ? step.getStepDefinitionType().toString() : null;
         return this;
     }
 
