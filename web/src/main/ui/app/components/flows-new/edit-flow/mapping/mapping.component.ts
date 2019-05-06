@@ -163,14 +163,25 @@ export class MappingComponent implements OnInit {
     this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
       this.sampleDocSrc = doc;
-      _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
-        let prop = {
-          key: key,
-          val: String(val),
-          type: self.getType(val)
-        };
-        self.sampleDocSrcProps.push(prop);
-      });
+      if(this.sampleDocSrc['envelope']) {
+        _.forEach(this.sampleDocSrc['envelope']['instance'], function (val, key) {
+          let prop = {
+            key: key,
+            val: String(val),
+            type: self.getType(val)
+          };
+          self.sampleDocSrcProps.push(prop);
+        });
+      } else {
+        _.forEach(this.sampleDocSrc, function (val, key) {
+          let prop = {
+            key: key,
+            val: String(val),
+            type: self.getType(val)
+          };
+          self.sampleDocSrcProps.push(prop);
+        });
+      }
       this.sampleDocURI = uri;
       this.mapping.sourceURI = uri;
       if (save) {
