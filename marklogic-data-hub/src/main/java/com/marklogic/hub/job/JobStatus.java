@@ -37,7 +37,7 @@ public enum JobStatus {
     public static final String FAILED_PREFIX = "failed step ";
     public static final String CANCELED_PREFIX = "canceled step ";
 
-    public static boolean jobIsDone(String jobStatus) {
+    public static boolean isJobDone(String jobStatus) {
         return JobStatus.FINISHED.toString().equals(jobStatus) ||
             JobStatus.FINISHED_WITH_ERRORS.toString().equals(jobStatus) ||
             JobStatus.FAILED.toString().equals(jobStatus) ||
@@ -45,7 +45,7 @@ public enum JobStatus {
             JobStatus.CANCELED.toString().equals(jobStatus);
     }
 
-    public static boolean stepIsDone(String status) {
+    public static boolean isStepDone(String status) {
         return StringUtils.isNotEmpty(status) && (status.startsWith(COMPLETED_PREFIX) ||
             status.startsWith(COMPLETED_WITH_ERRORS_PREFIX) ||
             status.startsWith(STOP_ON_ERROR_PREFIX) ||
