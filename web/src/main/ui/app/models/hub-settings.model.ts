@@ -37,7 +37,7 @@ export class HubSettings {
 
   modulesDbName: string = null;
 
-  username: string = null;
+  mlUsername: string = null;
 
   constructor() {};
 }
