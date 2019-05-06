@@ -125,7 +125,7 @@ export class Steps extends AppPage {
   }
 
   get advSettingsExpandCollapse() {
-    return element(by.cssContainingText("mat-accordion mat-expansion-panel mat-panel-title", "Advanced Settings"));
+    return element(by.css("app-new-step-dialog .mat-expansion-indicator"));
   }
 
   async clickAdvSettingsExpandCollapse() {
