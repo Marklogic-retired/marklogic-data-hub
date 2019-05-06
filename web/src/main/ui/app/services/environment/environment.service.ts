@@ -23,6 +23,7 @@ export class EnvironmentService {
     return this.http.get(uri).pipe(map((res: Response) => {
       const json = res.json();
       this.settings = json.mlSettings;
+      this.settings.dhfversion = json.dhfversion;
       this.settings.installedVersion = json.installedVersion;
       this.settings.marklogicVersion = json.marklogicVersion;
       this.marklogicVersion = json.marklogicVersion;
