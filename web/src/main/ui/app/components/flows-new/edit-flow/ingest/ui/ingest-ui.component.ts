@@ -70,7 +70,7 @@ const settings = {
   templateUrl: './ingest-ui.component.html',
   styleUrls: ['./ingest-ui.component.scss']
 })
-export class IngestUiComponent implements OnInit {
+export class IngestUiComponent {
 
   @Input() step: any;
   @Input() flow: any;
@@ -80,15 +80,9 @@ export class IngestUiComponent implements OnInit {
   }
 
   config = settings;
-  folder: string;
-
-  ngOnInit(): void {
-    this.folder = this.step.fileLocations.inputFilePath;
-  }
-
   changeFolder(folder) {
-    if (this.folder !== folder.absolutePath) {
-      this.folder = folder.absolutePath;
+    if (this.step.fileLocations.inputFilePath !== folder.absolutePath) {
+      this.step.fileLocations.inputFilePath = folder.absolutePath;
       this.onChange();
     }
   }
@@ -100,8 +94,6 @@ export class IngestUiComponent implements OnInit {
   }
 
   onChange() {
-    this.step.fileLocations.inputFilePath = this.folder;
-    this.step.options.collections = [`${this.step.name}`];
     this.saveStep.emit(this.step);
   }
 
