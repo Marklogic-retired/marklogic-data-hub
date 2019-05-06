@@ -1,9 +1,10 @@
 main:
     - {
         url: '/',
-        text: 'Data Hub Framework',
+        text: 'Data Hub Framework 4.x',
         childPages: [
-          { url: '/whats-new/', text: 'What''s New' },
+          { absurl: 'http://docs.marklogic.com/datahub/', text: 'NEW! Data Hub 5.0 docs' },
+          # { url: '/whats-new/', text: 'What''s New' },
           { url: '/release-notes/', text: 'Release Notes' },
           { absurl: 'https://github.com/marklogic/marklogic-data-hub/releases/', text: 'Download' },
           { url: '/upgrade/', text: 'Upgrade' },

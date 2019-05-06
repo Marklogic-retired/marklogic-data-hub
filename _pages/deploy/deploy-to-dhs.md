@@ -22,29 +22,18 @@ In a DHS environment, the databases, app servers, and security roles are automat
 
 After you create and test your project locally (your development environment) using Data Hub Framework, you can deploy your project to a DHS cluster (your production environment).
 
-DHF projects and DHS projects have different default configurations:
+DHF projects and DHS projects have the following default configurations:
 
 - Ports and load balancers for app servers
 
-  | app server | DHF  | DHS* | DHS load balancers |
-  |------------|:----:|:----:|:------------------:|
-  | staging    | 8010 | 8006 | curation           |
-  | final      | 8011 | 8004 | operations         |
-  | jobs       | 8013 | 8007 | analytics          |
+  | app servers | ports | DHS load balancers |
+  |-------------|:-----:|:------------------:|
+  | staging     | 8010  | curation           |
+  | final       | 8011  | operations         |
+  | jobs        | 8013  | analytics          |
   {:.table-b1gray}
 
-<!-- Port numbers provided by DHS. Which are for which load balancers?
-ODBC: 5432
-Manage: 8002
-REST: 8004
-Ingest: 8005
-Flows: 8006
-Jobs: 8007
-Analytics: 8008
-Operations: 8009
-Operations REST: 8010
-Analytics REST: 8011
--->
+  {% include note.html type="IMPORTANT" content="Use port 8004 to deploy the Data Hub Framework core **only**. To deploy custom plugins (REST extensions, search options, etc.) against the STAGING database, use port 8011." %}
 
 - Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 
@@ -112,17 +101,17 @@ If your endpoints are publicly available, you can use any machine that is set up
         mlManagePassword=YOUR_FLOW_DEVELOPER_PASSWORD
 
         mlStagingAppserverName=data-hub-STAGING
-        mlStagingPort=8006
+        mlStagingPort=8010
         mlStagingDbName=data-hub-STAGING
         mlStagingForestsPerHost=1
 
-        mlFinalAppserverName=data-hub-ADMIN
-        mlFinalPort=8004
+        mlFinalAppserverName=data-hub-FINAL
+        mlFinalPort=8011
         mlFinalDbName=data-hub-FINAL
         mlFinalForestsPerHost=1
 
         mlJobAppserverName=data-hub-JOBS
-        mlJobPort=8007
+        mlJobPort=8013
         mlJobDbName=data-hub-JOBS
         mlJobForestsPerHost=1
 
@@ -171,11 +160,11 @@ If your endpoints are publicly available, you can use any machine that is set up
 
     a. In the following URLs, replace `OPERATIONS-REST-ENDPOINT-URL` and `CURATION-REST-ENDPOINT-URL` with the appropriate endpoint URLs from your DHS administrator.
 
-      | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8010/v1/search` |
-      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8006/v1/search`   |
+      | Final database   | `http://OPERATIONS-REST-ENDPOINT-URL:8011/v1/search` |
+      | Staging database | `http://CURATION-REST-ENDPOINT-URL:8010/v1/search`   |
       {:.table-b1gray}
 
-      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8010/v1/search`
+      **Example:** `http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8011/v1/search`
 
       {% include note-in-list.html type="TIP" content="Narrow the search to return fewer items. See [MarkLogic REST API Search](https://docs.marklogic.com/REST/GET/v1/search)." %}
 
