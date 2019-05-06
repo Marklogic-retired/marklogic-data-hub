@@ -208,7 +208,14 @@ public class FlowRunnerImpl implements FlowRunner{
             while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
-                Map<String, Object> optsMap = new HashMap<>(flow.getOverrideOptions());
+                Map<String, Object> optsMap ;
+                if(flow.getOverrideOptions() != null) {
+                    optsMap = new HashMap<>(flow.getOverrideOptions());
+                }
+                else {
+                    optsMap = new HashMap<>();
+                }
+
                 AtomicLong errorCount = new AtomicLong();
                 AtomicLong successCount = new AtomicLong();
                 /*  If an exception occurs in step execution, we don't want the thread to die and affect other step execution.
