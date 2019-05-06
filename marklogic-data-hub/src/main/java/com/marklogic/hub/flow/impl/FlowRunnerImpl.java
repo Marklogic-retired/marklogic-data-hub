@@ -298,6 +298,8 @@ public class FlowRunnerImpl implements FlowRunner{
                     if(! stepResp.isSuccess()) {
                         isJobSuccess.set(false);
                     }
+                    stepsMap.remove(jobId);
+                    flowMap.remove(jobId);
                 }
             }
 
