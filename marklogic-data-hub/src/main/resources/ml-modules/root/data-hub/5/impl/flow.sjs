@@ -265,7 +265,10 @@ class Flow {
     }
 
       let hookOperation = function() {};
-      let hook = processor.customHook;
+      let hook = step.customHook;
+      if(!hook || !hook.module){
+        hook = processor.customHook;
+      }
       if (hook && hook.module) {
         let parameters = Object.assign({uris}, processor.customHook.parameters);
         hookOperation = function () {
@@ -273,7 +276,7 @@ class Flow {
             hook.module,
             parameters,
             hook.user || xdmp.getCurrentUser(),
-            hook.runBefore ? flowInstance.globalContext.sourceDatabase : this.globalContext.targetDatabase
+            hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase
           );
         }
       }
