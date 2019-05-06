@@ -606,7 +606,7 @@ public class WriteStepRunner implements StepRunner {
                     }
                     uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
                     Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
-                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s." + (outputFormat.equalsIgnoreCase("xml") ? "xml":"json")));
+                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json")));
                     try {
                         writeBatcher.addAll(documentStream);
                     }
