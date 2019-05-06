@@ -14,10 +14,6 @@ plugins {
     id 'net.saliman.properties' version '1.4.6'
 }
 
-// this is the data hub framework gradle plugin
-// it includes ml-gradle. This plugin is what lets you
-// run DHF (Data Hub Framework) tasks from the
-// command line
 apply plugin: 'com.marklogic.ml-data-hub'
 
 repositories {
@@ -30,6 +26,21 @@ configurations {
 }
 
 dependencies {
-    mlcp "com.marklogic:mlcp:9.0.8.2"
+    mlcp "com.marklogic:mlcp:9.0.9"
     mlcp files("lib")
+}
+
+task loadOrders(type: com.marklogic.gradle.task.MlcpTask) {
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = Integer.parseInt(mlStagingPort)
+    input_file_path = "input/orders/orders.csv"
+    input_file_type = "delimited_text"
+    document_type = "json"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
+    transform_param = "options={},flow-name=LoadOrders"
+    output_collections = "Order"
+    output_permissions = "rest-reader,read,rest-writer,update"
+    output_uri_suffix = ".json"
+    generate_uri = true
 }

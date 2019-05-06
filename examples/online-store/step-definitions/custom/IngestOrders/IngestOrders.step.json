@@ -1,9 +1,25 @@
 {
+  "language" : "zxx",
   "name" : "IngestOrders",
+  "description" : null,
   "type" : "CUSTOM",
   "version" : 1,
-  "options" : { },
-  "customHook" : { },
-  "language" : "zxx",
-  "modulePath" : "/steps/ingestOrders/main.sjs"
+  "options" : {
+    "sourceQuery" : "cts.orQuery([])",
+    "collections" : [ "IngestOrders" ],
+    "sourceDatabase" : "data-hub-STAGING",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "customHook" : {
+    "module" : "/custom-modules/custom/IngestOrders/custom-hook.sjs",
+    "parameters": {
+      "archiveCollection": "Archive"
+    },
+    "user": "flow-operator",
+    "runBefore": true
+  },
+  "modulePath" : "/custom-modules/custom/IngestOrders/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
 }
