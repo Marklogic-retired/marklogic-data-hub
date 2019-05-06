@@ -1,5 +1,7 @@
 package com.marklogic.hub.job;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum JobStatus {
     STARTED("started"),
     FINISHED("finished"),
@@ -34,5 +36,21 @@ public enum JobStatus {
     public static final String STOP_ON_ERROR_PREFIX = "stop on error in step ";
     public static final String FAILED_PREFIX = "failed step ";
     public static final String CANCELED_PREFIX = "canceled step ";
+
+    public static boolean isJobDone(String jobStatus) {
+        return JobStatus.FINISHED.toString().equals(jobStatus) ||
+            JobStatus.FINISHED_WITH_ERRORS.toString().equals(jobStatus) ||
+            JobStatus.FAILED.toString().equals(jobStatus) ||
+            JobStatus.STOP_ON_ERROR.toString().equals(jobStatus) ||
+            JobStatus.CANCELED.toString().equals(jobStatus);
+    }
+
+    public static boolean isStepDone(String status) {
+        return StringUtils.isNotEmpty(status) && (status.startsWith(COMPLETED_PREFIX) ||
+            status.startsWith(COMPLETED_WITH_ERRORS_PREFIX) ||
+            status.startsWith(STOP_ON_ERROR_PREFIX) ||
+            status.startsWith(FAILED_PREFIX) ||
+            status.startsWith(CANCELED_PREFIX));
+    }
 
 }

@@ -47,7 +47,7 @@ public class FlowRunnerChecker {
             if (stepResponseByKey != null) {
                 RunStepResponse stepJob = stepResponseByKey.get(flowRunner.getRunningStepKey());
                 if (stepJob != null) {
-                    latestJob.status = StringUtils.isEmpty(latestJob.status) ? stepJob.getStatus() : latestJob.status;
+                    latestJob.status = StringUtils.isNotEmpty(stepJob.getStatus()) && !JobStatus.isJobDone(latestJob.status) ? stepJob.getStatus() : latestJob.status;
                     if (stepJob.getStepOutput() != null) {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.putArray("output", stepJob.getStepOutput());
@@ -57,11 +57,23 @@ public class FlowRunnerChecker {
                 }
             }
 
-            if (StringUtils.isNotEmpty(latestJob.status) && latestJob.status.startsWith(JobStatus.COMPLETED_PREFIX)) {
-                if (!completedSteps.contains(latestJob.status)) {
-                    latestJob.successfulEvents += successfulEvents;
-                    latestJob.failedEvents += failedEvents;
-                    completedSteps.add(latestJob.status);
+            if (StringUtils.isNotEmpty(latestJob.status)) {
+                if (latestJob.status.startsWith(JobStatus.RUNNING_PREFIX)) {
+                    latestJob.successfulEvents = successfulEvents;
+                    latestJob.failedEvents = failedEvents;
+                }
+                if (JobStatus.isStepDone(latestJob.status) || JobStatus.isJobDone(latestJob.status)) {
+                    if (!completedSteps.contains(latestJob.stepId)) {
+                        if (completedSteps.isEmpty()) {
+                            latestJob.successfulEvents = successfulEvents;
+                            latestJob.failedEvents = failedEvents;
+                        } else {
+                            latestJob.successfulEvents += successfulEvents;
+                            latestJob.failedEvents += failedEvents;
+                        }
+                        completedSteps.add(latestJob.stepId);
+                    }
+
                 }
             }
             logger.debug(latestJob.toString());

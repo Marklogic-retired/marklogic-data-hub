@@ -376,6 +376,9 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
 
                 jobQueue.remove();
+                stepsMap.remove(jobId);
+                flowMap.remove(jobId);
+                flowResp.remove(runningJobId);
                 if (!jobQueue.isEmpty()) {
                     initializeFlow((String) jobQueue.peek());
                 } else {
