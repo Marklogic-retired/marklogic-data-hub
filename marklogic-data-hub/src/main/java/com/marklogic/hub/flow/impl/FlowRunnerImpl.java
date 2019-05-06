@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,7 +57,6 @@ public class FlowRunnerImpl implements FlowRunner{
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
-    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     private ThreadPoolExecutor threadPool;
     private JobDocManager jobDocManager;
