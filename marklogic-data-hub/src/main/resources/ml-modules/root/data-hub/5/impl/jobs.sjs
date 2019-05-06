@@ -154,10 +154,10 @@ class Jobs {
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
         hostName: xdmp.hostName(),
-        reqTimeStamp: xdmp.requestTimestamp(),
+        reqTimeStamp: xdmp.timestampToWallclock(xdmp.requestTimestamp()),
         reqTrnxID: xdmp.transaction(),
-        writeTimeStamp: fn.currentDateTime(),
-        writeTrnxID: xdmp.transaction(),
+        writeTimeStamp: null,
+        writeTrnxID: null,
         uris:[]
       }
     };
@@ -189,7 +189,7 @@ class Jobs {
      }, this.config.JOBDATABASE));
   }
 
-  updateBatch(jobId, batchId, batchStatus, uris, error) {
+  updateBatch(jobId, batchId, batchStatus, uris, writeTransactionInfo, error) {
     let docObj = this.getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
@@ -211,6 +211,8 @@ class Jobs {
       }
       docObj.batch.error = `${error.name || error.code}: ${error.message}`;
     }
+    docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
+    docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
     this.hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, this.jobsPermissions, ['Jobs','Batch'], this.config.JOBDATABASE);

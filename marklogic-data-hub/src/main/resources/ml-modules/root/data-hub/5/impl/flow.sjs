@@ -210,9 +210,10 @@ class Flow {
       );
     }
 
+    let writeTransactionInfo = {};
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
-      this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
+      writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
     }
     for (let content of this.writeQueue) {
       let info = {
@@ -232,7 +233,7 @@ class Flow {
           batchStatus = "failed";
         }
       }
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, this.globalContext.batchErrors[0]);
+      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
     }
 
     let resp = {
