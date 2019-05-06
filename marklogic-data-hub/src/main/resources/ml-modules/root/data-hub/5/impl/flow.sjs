@@ -270,7 +270,7 @@ class Flow {
         hook = processor.customHook;
       }
       if (hook && hook.module) {
-        let parameters = Object.assign({uris}, processor.customHook.parameters);
+        let parameters = Object.assign({uris}, hook.parameters);
         hookOperation = function () {
           flowInstance.datahub.hubUtils.invoke(
             hook.module,
