@@ -271,7 +271,8 @@ class Flow {
         hook = processor.customHook;
       }
       if (hook && hook.module) {
-        let parameters = Object.assign({uris}, hook.parameters);
+        // Include all of the step context in the parameters for the custom hook to make use of
+        let parameters = Object.assign({uris, content, options, flowName, stepNumber, step}, hook.parameters);
         hookOperation = function () {
           flowInstance.datahub.hubUtils.invoke(
             hook.module,
