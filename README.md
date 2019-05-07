@@ -2,7 +2,7 @@
 
 Go from nothing to an Operational Data Hub in a matter of minutes.  
 
-The MarkLogic Data Hub Framework is a data integration framework and toolset to quickly and efficiently integrate data from many sources into a single MarkLogic database and then expose that data.
+The MarkLogic Data Hub is a data integration framework and toolset to quickly and efficiently integrate data from many sources into a single MarkLogic database and then expose that data.
 
 # Version Support
 MarkLogic 9.0-5 or later is required with version 4.0.0+ of the DHF.
