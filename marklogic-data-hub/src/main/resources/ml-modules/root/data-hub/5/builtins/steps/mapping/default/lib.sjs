@@ -67,7 +67,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   if (!(content.nodeName === 'envelope' || (content.nodeKind === 'document'))) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
-  if(content.nodeName === 'envelope' || content.nodeName === 'es:envelope') {
+  if(fn.head(content.xpath('/*:envelope'))) {
     sourceContext = '/*:envelope/*:instance' + sourceContext;
   }
 
