@@ -143,8 +143,9 @@ class Jobs {
   }
 
   createBatch(jobId, step, stepNumber) {
-    let batch = null;
-    batch = {
+    let requestTimestamp = xdmp.requestTimestamp();
+    let reqTimeStamp = (requestTimestamp) ? xdmp.timestampToWallclock(requestTimestamp) : fn.currentDateTime();
+    let batch = {
       batch: {
         jobId: jobId,
         batchId: this.hubutils.uuid(),
@@ -154,7 +155,7 @@ class Jobs {
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
         hostName: xdmp.hostName(),
-        reqTimeStamp: xdmp.timestampToWallclock(xdmp.requestTimestamp()),
+        reqTimeStamp,
         reqTrnxID: xdmp.transaction(),
         writeTimeStamp: null,
         writeTrnxID: null,
