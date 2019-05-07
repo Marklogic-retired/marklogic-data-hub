@@ -70,9 +70,6 @@ export default function(qaProjectDir) {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
-            browser.sleep(5000);
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickNewStepButton();
             browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
@@ -84,10 +81,8 @@ export default function(qaProjectDir) {
             await stepsPage.setStepDescription("Ingest SimpleJSON docs");
             await stepsPage.clickStepCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
             await expect(stepsPage.stepDetailsName.getText()).toEqual("SimpleJSONIngest");
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/mastering-data");
-            browser.sleep(3000);
             // bug on advance settings with different db name
             await stepsPage.clickStepMenu();
             browser.sleep(3000);
@@ -119,9 +114,6 @@ export default function(qaProjectDir) {
             browser.sleep(10000);
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
-            browser.sleep(5000);
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickNewStepButton();
             browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
@@ -141,7 +133,6 @@ export default function(qaProjectDir) {
             await stepsPage.clickStepTargetEntityOption("SimpleJSON");
             await stepsPage.clickStepCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
             //await stepsPage.clickStepSelectContainer("SimpleJSONMapping");
             // Mapping the source to entity
             // Map prop1 to id
@@ -170,9 +161,6 @@ export default function(qaProjectDir) {
             browser.sleep(15000);
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
-            browser.sleep(5000);
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             //await stepsPage.clickStepSelectContainer("SimpleJSONMapping");
             // ***
@@ -193,10 +181,8 @@ export default function(qaProjectDir) {
         it('should create mastering step and run the flow', async function() {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
+            browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
-            browser.sleep(5000);
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await stepsPage.clickStepSelectContainer("SimpleJSONMapping");
             await editFlowPage.clickNewStepButton();
@@ -217,7 +203,7 @@ export default function(qaProjectDir) {
             await stepsPage.clickStepTargetEntityOption("SimpleJSON");
             await stepsPage.clickStepCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            //await stepsPage.clickStepSelectContainer("SimpleJSONMastering");
             await expect(stepsPage.stepDetailsName.getText()).toEqual("SimpleJSONMastering");
             // Configure matching and merging
             // Add matching option for id
@@ -228,18 +214,16 @@ export default function(qaProjectDir) {
             await masteringStepPage.clickMatchOptionDialogPropertyOption("id");
             await masteringStepPage.setMatchOptionDialogWeight(10);
             await masteringStepPage.clickMatchOptionCancelSave("save");
-            browser.sleep(3000);
             // Add matching threshold
             await masteringStepPage.clickMatchThresholdsAddButton();
             browser.wait(EC.visibilityOf(masteringStepPage.matchThresholdDialog));
-            await masteringStepPage.setMatchThresholdDialogName("DefiniteMatch");
+            await masteringStepPage.setMatchThresholdDialogName("Definite Match");
             await masteringStepPage.setMatchThresholdDialogWeight(5);
             await masteringStepPage.clickMatchThresholdDialogActionMenu();
             browser.wait(EC.elementToBeClickable(masteringStepPage.matchThresholdDialogActionOptions("Merge")));
             await masteringStepPage.clickMatchThresholdDialogActionOptions("Merge");
             await masteringStepPage.clickMatchThresholdCancelSaveButton("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
             // Redeploy
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
@@ -249,10 +233,8 @@ export default function(qaProjectDir) {
             browser.sleep(15000);
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
-            browser.sleep(5000);
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+            //await stepsPage.clickStepSelectContainer("SimpleJSONMastering");
             // ***
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
