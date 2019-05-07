@@ -19,7 +19,7 @@ export default function(qaProjectDir) {
           browser.refresh();
         });
 
-        it('should login and go to entities page', async function() {
+        xit('should login and go to entities page', async function() {
             //await loginPage.browseButton.click();
             await loginPage.setCurrentFolder(qaProjectDir);
             await loginPage.clickNext('ProjectDirTab');
@@ -72,10 +72,7 @@ export default function(qaProjectDir) {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
             browser.sleep(5000);
-            // ***
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickNewStepButton();
             browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
@@ -110,7 +107,6 @@ export default function(qaProjectDir) {
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.databaseName).toEqual("STAGING");
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
             await expect(browsePage.facetName("SimpleJSONIngest").getText()).toEqual("SimpleJSONIngest");
             // Verify on Manage Flows page
@@ -123,13 +119,8 @@ export default function(qaProjectDir) {
         it('should create mapping step and run the flow', async function() {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
-            browser.sleep(10000);
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
             browser.sleep(5000);
-            // ***
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickNewStepButton();
             browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
@@ -166,7 +157,6 @@ export default function(qaProjectDir) {
             await mappingStepPage.clickSourcePropertyContainer("lastname");
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lastname")));
             await mappingStepPage.clickMapSourceProperty("prop3", "lastname");
-            // ***
             browser.sleep(10000);
             // Redeploy
             await appPage.flowsTab.click();
@@ -177,10 +167,7 @@ export default function(qaProjectDir) {
             browser.sleep(15000);
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
             browser.sleep(5000);
-            // ***
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -190,6 +177,23 @@ export default function(qaProjectDir) {
             await editFlowPage.clickButtonRunCancel("flow");
             browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             browser.sleep(5000);
+            // Verify on Job Detail page
+            await editFlowPage.clickFinishedLatestJobStatus();
+            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("SimpleJSONFlow");
+            await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
+            await expect(jobDetailsPage.stepName("SimpleJSONMapping").getText()).toEqual("SimpleJSONMapping");
+            await expect(jobDetailsPage.stepStatus("SimpleJSONMapping").getText()).toEqual("Completed step 2");
+            await expect(jobDetailsPage.stepCommitted("SimpleJSONMapping").getText()).toEqual("6");   
+            await jobDetailsPage.clickStepCommitted("SimpleJSONMapping");
+            // Verify on Browse Data page
+            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            browser.sleep(5000);
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 8 of 8');
+            await expect(browsePage.facetName("SimpleJSONMapping").getText()).toEqual("SimpleJSONMapping");
+            // Verify on Manage Flows page
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await expect(manageFlowPage.status("SimpleJSONFlow").getText()).toEqual("Finished");
@@ -200,10 +204,7 @@ export default function(qaProjectDir) {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
             browser.sleep(5000);
-            // ***
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await stepsPage.clickStepSelectContainer("SimpleJSONMapping");
             await editFlowPage.clickNewStepButton();
@@ -256,10 +257,7 @@ export default function(qaProjectDir) {
             browser.sleep(15000);
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await manageFlowPage.clickFlowname("SimpleJSONFlow");
-            // Workaround for DHFPROD-2421
-            browser.get(browser.baseUrl + "#/edit-flow/SimpleJSONFlow");
             browser.sleep(5000);
-            // ***
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -269,6 +267,28 @@ export default function(qaProjectDir) {
             await editFlowPage.clickButtonRunCancel("flow");
             browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             browser.sleep(5000);
+            // Verify on Job Detail page
+            await editFlowPage.clickFinishedLatestJobStatus();
+            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("SimpleJSONFlow");
+            await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
+            await expect(jobDetailsPage.stepName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
+            await expect(jobDetailsPage.stepStatus("SimpleJSONMastering").getText()).toEqual("Completed step 3");
+            await expect(jobDetailsPage.stepCommitted("SimpleJSONMastering").getText()).toEqual("6");   
+            await jobDetailsPage.clickStepCommitted("SimpleJSONMastering");
+            // Verify on Browse Data page
+            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            browser.sleep(5000);
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
+            await expect(browsePage.facetName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
+            await expect(browsePage.facetName("mdm-merge").getText()).toEqual("mdm-merged");
+            await expect(browsePage.facetCount("mdm-merged")).toEqual("1");
+            await expect(browsePage.facetCount("mdm-content")).toEqual("4");
+            await expect(browsePage.facetCount("mdm-auditing")).toEqual("1");
+            await expect(browsePage.facetCount("mdm-archived")).toEqual("3");
+            // Verify on Manage Flows page
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
             await expect(manageFlowPage.status("SimpleJSONFlow").getText()).toEqual("Finished");
