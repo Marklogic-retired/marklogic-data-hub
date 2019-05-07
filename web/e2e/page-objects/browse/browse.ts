@@ -21,6 +21,10 @@ export class BrowsePage extends AppPage {
     return element(by.cssContainingText('div.mdl-list__item-primary-content', databaseName));
   }
 
+  get databaseName() {
+    return element(by.css(".database-chooser > mdl-select")).getAttribute("ng-reflect-value");
+  }
+
   entitiesOnlyChkBox() {
     return element(by.css('app-search .mdl-checkbox'));
   }
