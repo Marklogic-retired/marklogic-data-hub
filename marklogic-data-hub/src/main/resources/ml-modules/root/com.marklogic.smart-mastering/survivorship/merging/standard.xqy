@@ -85,7 +85,7 @@ declare function merging:standard(
       let $max-length :=
         if ($length-weight gt 0) then
           fn:max(
-            $condensed-properties ! (. => map:get("values")) ! fn:string-length(fn:string-join(.//text()," "))
+            $condensed-properties ! (. => map:get("values")) ! fn:string-length(fn:string-join(./descendant-or-self::text()," "))
           )
         else 0
       for $property in $condensed-properties
@@ -99,7 +99,7 @@ declare function merging:standard(
       let $source-dateTime := fn:max($sources/dateTime[. castable as xs:dateTime] ! xs:dateTime(.))
       let $length-score :=
           if ($length-weight gt 0) then
-            if (fn:string-length(fn:string-join($prop-value//text()," ")) eq $max-length) then
+            if (fn:string-length(fn:string-join($prop-value/descendant-or-self::text()," ")) eq $max-length) then
               $length-weight
             else 0
           else 0
