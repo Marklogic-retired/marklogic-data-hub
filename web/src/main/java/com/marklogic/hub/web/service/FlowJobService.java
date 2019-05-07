@@ -44,6 +44,9 @@ public class FlowJobService extends ResourceManager {
 
     public FlowJobService() {
         super();
+        if(hubConfig != null) {
+            this.setupClient();
+        }
     }
 
     private void setupClient() {
@@ -51,7 +54,9 @@ public class FlowJobService extends ResourceManager {
     }
 
     public FlowJobs getJobs(String flowName) {
-        this.setupClient();
+        if(this.client == null) {
+            this.setupClient();
+        }
         try {
             return cachedJobsByFlowName.get(flowName, () -> {
                 client.init(ML_JOBS_NAME, this);
@@ -149,10 +154,14 @@ public class FlowJobService extends ResourceManager {
         }
         return cachedJobsByFlowName.getIfPresent(flowName);
     }
-
+    //TODO: fix this whole client mess and properly report exceptions
     private void release() {
         if(this.client != null) {
-            this.client.release();
+            try {
+                this.client.release();
+            } catch (Exception e) {
+                this.client = null;
+            }
         }
     }
 }
