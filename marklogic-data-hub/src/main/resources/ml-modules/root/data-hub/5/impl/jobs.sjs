@@ -155,7 +155,7 @@ class Jobs {
         timeStarted:  fn.currentDateTime(),
         timeEnded: "N/A",
         hostName: xdmp.hostName(),
-        reqTimeStamp,
+        reqTimeStamp: reqTimeStamp,
         reqTrnxID: xdmp.transaction(),
         writeTimeStamp: null,
         writeTrnxID: null,
