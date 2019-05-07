@@ -1,6 +1,6 @@
 import {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {$$, browser, by, element, ExpectedConditions as EC} from "protractor";
 
 export class ManageFlows extends AppPage {
 
@@ -50,6 +50,11 @@ export class ManageFlows extends AppPage {
     return await inputField.getAttribute("value");
   };
 
+  async isFlowFormEnabled(formID: string) {
+    let inputField = this.flowForm(formID);
+    return await browser.EC.elementToBeClickable(inputField);
+  };
+
   async clickAdvSettingsExpandCollapse() {
     console.log("CLicking advance settings");
     return await element(by.css("new-flow-dialog .mat-expansion-indicator")).click();
@@ -67,6 +72,10 @@ export class ManageFlows extends AppPage {
   async getFlowOptionsText(rowNum: number, column: string) {
     let flowOption = this.flowOptions(rowNum,column);
     return await flowOption.getAttribute("value");
+  }
+
+  getNumberOfOptions() {
+    return $$('.key-value-group').count();
   }
 
   /**
@@ -159,6 +168,11 @@ export class ManageFlows extends AppPage {
 
   docsFailed(flowName: string) {
     return element(by.css(`.flow-${flowName.toLowerCase()} .flow-docs-failed`));
+  }
+
+  async isRunFlowButtonEnabled(flowName: string) {
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`))
+    return await browser.EC.elementToBeClickable(run);
   }
 
   async clickRunFlowButton(flowName: string) {
@@ -267,6 +281,16 @@ export class ManageFlows extends AppPage {
     return element(by.css("div[class='mat-paginator-range-label']"));
   }
 
+  async createFlow(name: string) {
+    browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+    browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
+    await manageFlowPage.clickNewFlowButton();
+    browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
+    await manageFlowPage.setFlowForm("name", name);
+    await manageFlowPage.clickFlowCancelSave("save");
+    browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
+    await expect(manageFlowPage.flowName(name).getText()).toEqual(name);
+  }
 }
 
 let manageFlowPage = new ManageFlows();
