@@ -188,18 +188,20 @@ public class FlowStepModel {
     }
 
     public void setJobs(FlowJobs flowJobs, boolean fromRunFlow) {
-        this.jobIds = flowJobs.jobIds;
-        if (latestJob != null && latestJob.id != null && !this.jobIds.contains(latestJob.id)) {
-            this.jobIds.add(latestJob.id);
-            flowJobs.jobIds = this.jobIds;
-            flowJobs.latestJob = latestJob;
-            return;
+        if(flowJobs != null) {
+            this.jobIds = flowJobs.jobIds;
+            if (latestJob != null && latestJob.id != null && !this.jobIds.contains(latestJob.id)) {
+                this.jobIds.add(latestJob.id);
+                flowJobs.jobIds = this.jobIds;
+                flowJobs.latestJob = latestJob;
+                return;
+            }
+            if (fromRunFlow) {
+                //reset the latestJob info for until the running flow starts with a new jobId
+                flowJobs.latestJob = null;
+            }
+            this.latestJob = flowJobs.latestJob;
         }
-        if (fromRunFlow) {
-            //reset the latestJob info for until the running flow starts with a new jobId
-            flowJobs.latestJob = null;
-        }
-        this.latestJob = flowJobs.latestJob;
     }
 
     //for testing purpose
