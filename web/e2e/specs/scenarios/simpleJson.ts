@@ -191,7 +191,7 @@ export default function(qaProjectDir) {
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 8 of 8');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
             await expect(browsePage.facetName("SimpleJSONMapping").getText()).toEqual("SimpleJSONMapping");
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
@@ -281,7 +281,7 @@ export default function(qaProjectDir) {
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 8 of 8');
             await expect(browsePage.facetName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
             await expect(browsePage.facetName("mdm-merge").getText()).toEqual("mdm-merged");
             await expect(browsePage.facetCount("mdm-merged")).toEqual("1");
