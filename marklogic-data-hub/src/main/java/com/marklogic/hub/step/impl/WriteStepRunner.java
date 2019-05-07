@@ -83,6 +83,7 @@ public class WriteStepRunner implements StepRunner {
     private JobDocManager jobDocManager;
     private String outputCollections;
     private String outputPermissions;
+    private String outputFormat;
     private String inputFileType;
     private String outputURIReplacement;
     private AtomicBoolean isStopped = new AtomicBoolean(false);
@@ -257,6 +258,9 @@ public class WriteStepRunner implements StepRunner {
         }
         if (obj.getString("targetDatabase") != null) {
             this.withDestinationDatabase(obj.getString("targetDatabase"));
+        }
+        if (obj.getString("outputFormat") != null) {
+            outputFormat = obj.getString("outputFormat");
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -602,7 +606,7 @@ public class WriteStepRunner implements StepRunner {
                     }
                     uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
                     Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
-                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s.json"));
+                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json")));
                     try {
                         writeBatcher.addAll(documentStream);
                     }
