@@ -104,7 +104,6 @@ export class Step {
       }
       const newOptions = Object.assign(newStep.options, json.options);
       newStep.options = newOptions;
-      console.log('newStep from JSON', newStep);
     }
     return newStep;
   }

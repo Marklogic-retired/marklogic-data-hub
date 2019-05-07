@@ -89,11 +89,9 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
-      console.log('steps', resp);
       const newArray = resp.map( step => {
         return Step.fromJSON(step);
       });
-      console.log('new array', newArray);
       this.stepsArray = newArray;
       this.selectedStepId = (this.stepsArray.length > 0) ? this.stepsArray[0].id : null;
     });
