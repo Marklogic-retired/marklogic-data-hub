@@ -283,7 +283,7 @@ export default function(qaProjectDir) {
             browser.sleep(5000);
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 8 of 8');
             await expect(browsePage.facetName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
-            await expect(browsePage.facetName("mdm-merge").getText()).toEqual("mdm-merged");
+            await expect(browsePage.facetName("mdm-merged").getText()).toEqual("mdm-merged");
             await expect(browsePage.facetCount("mdm-merged")).toEqual("1");
             await expect(browsePage.facetCount("mdm-content")).toEqual("4");
             await expect(browsePage.facetCount("mdm-auditing")).toEqual("1");
