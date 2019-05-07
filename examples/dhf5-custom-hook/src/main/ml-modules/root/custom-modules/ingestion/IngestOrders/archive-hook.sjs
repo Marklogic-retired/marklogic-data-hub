@@ -26,6 +26,10 @@ for (const contentObject of content) {
    */
   const instance = order.envelope.instance;
 
+  /**
+   * Note that for better performance, a single query should be done based on all of the objects in the content
+   * array. This works fine though for the small set of data being ingested in this example.
+   */
   const existingDuplicateOrders = cts.search(cts.andQuery([
     cts.collectionQuery("IngestOrders"),
     cts.jsonPropertyValueQuery("id", instance.id),

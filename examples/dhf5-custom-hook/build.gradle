@@ -43,5 +43,6 @@ task loadOrders(type: com.marklogic.gradle.task.MlcpTask) {
     output_uri_suffix = ".json"
     output_uri_replace = ".*/input,''"
     generate_uri = true
+    thread_count = 24
 }
 

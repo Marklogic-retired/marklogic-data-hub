@@ -31,7 +31,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/Users/rrudin/dev/workspace/rjrudin-marklogic-data-hub/examples/dhf5-custom-hook/input/orders",
+        "inputFilePath" : "examples/dhf5-custom-hook/input/orders",
         "inputFileType" : "csv",
         "outputURIReplacement" : ".*/input,''"
       }
