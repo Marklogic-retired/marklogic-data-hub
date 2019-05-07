@@ -3,6 +3,8 @@ import { PropertyType } from './property.model';
 export class DefinitionType {
   description: string;
   primaryKey: string;
+  namespace: string;
+  namespacePrefix: string;
   required: Array<string>;
   elementRangeIndex: Array<string>;
   rangeIndex: Array<string>;
@@ -14,6 +16,8 @@ export class DefinitionType {
     this.description = json.description;
     this.primaryKey = json.primaryKey;
     this.required = json.required;
+    this.namespace = json.namespace;
+    this.namespacePrefix = json.namespacePrefix;
     this.elementRangeIndex = json.elementRangeIndex;
     this.rangeIndex = json.rangeIndex;
     this.wordLexicon = json.wordLexicon;
