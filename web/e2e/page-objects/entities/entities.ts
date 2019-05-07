@@ -26,7 +26,9 @@ export class EntityPage extends AppPage {
   }
 
   async selectEntity(entityName: string) {
-    await element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
+    let button = element(by.id(`aeb-${entityName}`)).element(by.css('div.title'));
+    await browser.executeScript("arguments[0].click();", button);
+    //await element(by.id(`aeb-${entityName}`)).element(by.css('div.title')).click();
   }
 
   entityBox(entityName: string) {
@@ -35,12 +37,12 @@ export class EntityPage extends AppPage {
 
   async clickEditEntity(entityName: string) {
     let button = element(by.css(`#aeb-${entityName} .fa-pencil`));
-    await browser.executeScript("arguments[0].click();", button)
+    await browser.executeScript("arguments[0].click();", button);
   }
 
   async clickDeleteEntity(entityName: string) {
     let button = element(by.css(`#aeb-${entityName} .fa-remove`));
-    await browser.executeScript("arguments[0].click();", button)
+    await browser.executeScript("arguments[0].click();", button);
     //return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
   }
 
@@ -86,6 +88,11 @@ export class EntityPage extends AppPage {
 
   get confirmDialogNoButton() {
     return element(by.buttonText('No'));
+  }
+
+  get clickConfirmDialogNoButton() {
+    let button = element(by.buttonText('No'));
+    return  browser.executeScript("arguments[0].click();", button);
   }
 
   get getProperties() {
