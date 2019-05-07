@@ -68,54 +68,46 @@ export class JobDetails extends AppPage {
     return element(by.id("job-details-table"));
   }
 
-  stepNameRowClass(stepName: string) {
-    return stepName.toLowerCase().replace(" ", "-");    
+  stepName(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-name`)); 
   }
 
-  async stepName(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-name`)); 
+  stepEntity(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-entity`)); 
   }
 
-  async stepEntity(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-entity`)); 
+  stepStatus(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-status`)); 
   }
 
-  async stepStatus(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-status a`)); 
+  stepEnded(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-ended`)); 
   }
 
-  async stepEnded(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-ended`)); 
+  stepDuration(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-duration`)); 
   }
 
-  async stepDuration(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-duration`)); 
+  stepCommitted(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-committed a`)); 
   }
 
-  async stepCommitted(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-committed a`)); 
+  async clickStepCommitted(stepName:string) {
+    let link = this.stepCommitted(stepName);
+    return await link.click();
   }
 
-  async stepErrors(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-errors a`)); 
+  stepErrors(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-errors a`)); 
   }
 
-  async stepActions(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-actions`)); 
+  stepActions(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-actions`)); 
   }
 
   async clickStepActions(stepName: string) {
-    let stepNameClass = this.stepNameRowClass(stepName);
     let menu = this.stepActions(stepName);
-    return await element(by.css(`.step-${stepNameClass} .step-actions`)).click();
+    return await menu.click();
   }
 
   /**

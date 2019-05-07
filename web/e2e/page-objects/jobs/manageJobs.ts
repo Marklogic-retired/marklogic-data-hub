@@ -17,6 +17,15 @@ export class ManageJobs extends AppPage {
 
   // Filters
 
+  get resetFiltersButton() {
+    return element(by.css("mat-icon.reset-filters-btn"));
+  }
+
+  async clickResetFiltersButton() {
+    let button = this.resetFiltersButton;
+    return await button.click();
+  }
+
   get flowNameFilter() {
     return element(by.css("mat-select#filter-flow-name"));
   }

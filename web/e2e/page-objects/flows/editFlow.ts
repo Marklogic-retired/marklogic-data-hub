@@ -81,6 +81,11 @@ export class EditFlow extends AppPage {
     return element(by.cssContainingText("a#latest-job-status", "Finished"));
   }
 
+  async clickFinishedLatestJobStatus() {
+    let link = this.finishedLatestJobStatus;
+    return await link.click();
+  }
+
   get jobStartedTimestamp() {
     return element(by.id("job-started-timestamp"));
   }
