@@ -89,9 +89,16 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
+
       const newArray = resp.map( step => {
-        return Step.fromJSON(step);
+        const newStep = Step.fromJSON(step, this.projectDirectory, this.databases);
+        // No Target Entity from default mapping step created by gradle
+        // if (newStep.stepDefinitionType === this.stepType.MAPPING) {
+        //   this.createMapping(newStep);
+        // }
+        return newStep;
       });
+      console.log('steps', newArray);
       this.stepsArray = newArray;
       this.selectedStepId = (this.stepsArray.length > 0) ? this.stepsArray[0].id : null;
     });
