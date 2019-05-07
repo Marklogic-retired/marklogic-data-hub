@@ -1269,7 +1269,7 @@ declare function merge-impl:get-sources(
   for $source in $sources
   let $last-updated :=
     if (fn:string-length($ts-path) > 0) then
-      fn:head(xdmp:unpath($ts-path, $ns-map, $source)[. castable as xs:dateTime] ! xs:dateTime(.))
+      fn:head(xdmp:unpath($ts-path, $ns-map, $doc)[. castable as xs:dateTime] ! xs:dateTime(.))
     else ()
   order by $last-updated descending
   return

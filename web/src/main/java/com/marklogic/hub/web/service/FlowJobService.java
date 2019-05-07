@@ -38,19 +38,25 @@ public class FlowJobService extends ResourceManager {
 
     private DatabaseClient client;
 
-    //use a cache with ttl 30 minutes or longer to reduce frequency for fetching data from DB
+    //use a cache with ttl 5 minutes to reduce frequency for fetching data from DB
     public final Cache<String, FlowJobs> cachedJobsByFlowName = CacheBuilder.newBuilder().expireAfterWrite(
-        30, TimeUnit.MINUTES).build();
+        5, TimeUnit.MINUTES).build();
 
     public FlowJobService() {
         super();
+        if(hubConfig != null) {
+            this.setupClient();
+        }
     }
 
-    public void setupClient() {
+    private void setupClient() {
         this.client = hubConfig.newJobDbClient();
     }
 
     public FlowJobs getJobs(String flowName) {
+        if(this.client == null) {
+            this.setupClient();
+        }
         try {
             return cachedJobsByFlowName.get(flowName, () -> {
                 client.init(ML_JOBS_NAME, this);
@@ -144,11 +150,18 @@ public class FlowJobService extends ResourceManager {
             if (cachedJobsByFlowName.getIfPresent(flowName) == null) {
                 cachedJobsByFlowName.invalidate(flowName);
             }
+            this.release();
         }
         return cachedJobsByFlowName.getIfPresent(flowName);
     }
-
-    public void release() {
-        this.client.release();
+    //TODO: fix this whole client mess and properly report exceptions
+    private void release() {
+        if(this.client != null) {
+            try {
+                this.client.release();
+            } catch (Exception e) {
+                this.client = null;
+            }
+        }
     }
 }

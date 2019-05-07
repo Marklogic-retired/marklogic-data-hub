@@ -99,7 +99,7 @@ class HubUtils {
     xdmp.invoke(moduleUri, parameters, {
       ignoreAmps: true,
       database: database ? xdmp.database(database): xdmp.database(),
-      user: xdmp.user(user)
+      userId: xdmp.user(user)
     })
   }
   /**
