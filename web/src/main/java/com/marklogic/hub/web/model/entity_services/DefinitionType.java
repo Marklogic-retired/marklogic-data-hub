@@ -29,6 +29,8 @@ public class DefinitionType extends JsonPojo {
     protected String name;
     protected String description;
     protected String primaryKey;
+    protected String namespace;
+    protected String namespacePrefix;
     protected List<String> required;
     protected List<String> pii;
     protected List<String> elementRangeIndex;
@@ -109,12 +111,30 @@ public class DefinitionType extends JsonPojo {
         this.properties = properties;
     }
 
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getNamespacePrefix() {
+        return namespacePrefix;
+    }
+
+    public void setNamespacePrefix(String namespacePrefix) {
+        this.namespacePrefix = namespacePrefix;
+    }
+
     public static DefinitionType fromJson(String name, JsonNode node) {
         DefinitionType definitionType = new DefinitionType();
         definitionType.setName(name);
 
         definitionType.setDescription(getValue(node, "description"));
         definitionType.setPrimaryKey(getValue(node, "primaryKey"));
+        definitionType.setNamespace(getValue(node, "namespace"));
+        definitionType.setNamespacePrefix(getValue(node, "namespacePrefix"));
 
         ArrayList<String> required = new ArrayList<>();
         JsonNode requiredNodes = node.get("required");
@@ -182,6 +202,8 @@ public class DefinitionType extends JsonPojo {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         writeStringIf(node, "description", description);
         writeStringIf(node, "primaryKey", primaryKey);
+        writeStringIf(node, "namespace", namespace);
+        writeStringIf(node, "namespacePrefix", namespacePrefix);
 
         ArrayNode requiredArray = JsonNodeFactory.instance.arrayNode();
         required.forEach(requiredArray::add);
