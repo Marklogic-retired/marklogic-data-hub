@@ -43,5 +43,6 @@ for (const contentObject of content) {
     // Generate a random URI so that previously archived documents are never overwritten
     const archiveUri = "/archive/" + sem.uuidString() + duplicateUri;
     xdmp.documentInsert(archiveUri, duplicateOrder, xdmp.documentGetPermissions(duplicateUri), archiveCollection);
+    xdmp.documentDelete(duplicateUri);
   }
 }
