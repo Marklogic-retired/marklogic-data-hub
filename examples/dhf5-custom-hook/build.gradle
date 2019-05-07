@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath("com.marklogic:ml-data-hub:${mlDHFVersion}")
+    }
+}
+plugins {
+    id 'net.saliman.properties' version '1.4.6'
+}
+
+apply plugin: 'com.marklogic.ml-data-hub'
+
+repositories {
+    jcenter()
+    maven { url "http://developer.marklogic.com/maven2/" }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    mlcp "com.marklogic:mlcp:9.0.9"
+    mlcp files("lib")
+}
+
+task loadOrders(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Example of executing a flow via mlcp instead of via QuickStart"
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = Integer.parseInt(mlStagingPort)
+    input_file_path = "input/orders"
+    input_file_type = "delimited_text"
+    document_type = "json"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
+    transform_param = "flow-name=LoadOrders"
+    output_collections = "IngestOrders"
+    output_permissions = "rest-reader,read,rest-writer,update"
+    output_uri_suffix = ".json"
+    output_uri_replace = ".*/input,''"
+    generate_uri = true
+    thread_count = 24
+}
+

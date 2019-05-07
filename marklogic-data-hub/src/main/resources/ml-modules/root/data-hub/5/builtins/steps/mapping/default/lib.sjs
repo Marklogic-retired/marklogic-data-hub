@@ -67,7 +67,9 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   if (!(content.nodeName === 'envelope' || (content.nodeKind === 'document'))) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
-  sourceContext = '/*:envelope/*:instance' + sourceContext;
+  if(content.nodeName === 'envelope' || content.nodeName === 'es:envelope') {
+    sourceContext = '/*:envelope/*:instance' + sourceContext;
+  }
 
   let definition = model.definitions[modelName];
   //first let's get our required props and PK

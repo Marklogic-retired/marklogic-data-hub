@@ -30,7 +30,12 @@ class HubUtils {
   }
 
   writeDocument(docUri, content, permissions, collections, database) {
-    xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections })`,
+    return fn.head(xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections }); 
+     let writeInfo = {
+      transaction: xdmp.transaction(),
+      dateTime: fn.currentDateTime()
+     };
+     writeInfo;`,
     {
     content: content,
     docUri:docUri,
@@ -42,11 +47,11 @@ class HubUtils {
      commit: 'auto',
      update: 'true',
      ignoreAmps: true
-    })
+    }));
   }
 
   writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
-    xdmp.eval(`
+    return fn.head(xdmp.eval(`
     let basePermissions = ${permissions};
     for (let content of writeQueue) {
       let context = (content.context||{});
@@ -54,7 +59,12 @@ class HubUtils {
       let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[]))));
       let metadata = context.metadata;
       xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
-    }`,
+    }
+    let writeInfo = {
+      transaction: xdmp.transaction(),
+      dateTime: fn.currentDateTime()
+     };
+     writeInfo;`,
       {
         writeQueue,
         permissions,
@@ -65,7 +75,7 @@ class HubUtils {
         commit: 'auto',
         update: 'true',
         ignoreAmps: true
-      })
+      }));
   }
 
   deleteDocument(docUri, database){
@@ -89,7 +99,7 @@ class HubUtils {
     xdmp.invoke(moduleUri, parameters, {
       ignoreAmps: true,
       database: database ? xdmp.database(database): xdmp.database(),
-      user: xdmp.user(user)
+      userId: xdmp.user(user)
     })
   }
   /**

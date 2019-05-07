@@ -17,6 +17,8 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.bootstrap.Installer;
+import com.marklogic.client.eval.EvalResult;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -102,6 +104,26 @@ public class FlowRunnerTest extends HubTestBase {
         RunStepResponse stepResp = resp.getStepResponses().get("1");
         Assertions.assertNotNull(stepResp.getStepStartTime());
         Assertions.assertNotNull(stepResp.getStepEndTime());
+    }
+
+    @Test
+    public void testIngestCSVasXML(){
+        Map<String,Object> opts = new HashMap<>();
+        opts.put("outputFormat","xml");
+
+        Map<String,Object> stepConfig = new HashMap<>();
+        Map<String,String> stepDetails = new HashMap<>();
+
+        stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
+        stepConfig.put("fileLocations", stepDetails);
+        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("3"), UUID.randomUUID().toString(),opts, stepConfig);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
+        EvalResult res = resultItr.next();
+        long count = Math.toIntExact((long) res.getNumber());
+        Assertions.assertEquals(count, 25);
     }
 
     @Test

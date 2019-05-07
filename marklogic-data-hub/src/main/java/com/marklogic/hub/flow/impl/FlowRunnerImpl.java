@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,7 +57,6 @@ public class FlowRunnerImpl implements FlowRunner{
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
-    static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     private ThreadPoolExecutor threadPool;
     private JobDocManager jobDocManager;
@@ -210,7 +208,14 @@ public class FlowRunnerImpl implements FlowRunner{
             while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
-                Map<String, Object> optsMap = new HashMap<>(flow.getOverrideOptions());
+                Map<String, Object> optsMap ;
+                if(flow.getOverrideOptions() != null) {
+                    optsMap = new HashMap<>(flow.getOverrideOptions());
+                }
+                else {
+                    optsMap = new HashMap<>();
+                }
+
                 AtomicLong errorCount = new AtomicLong();
                 AtomicLong successCount = new AtomicLong();
                 /*  If an exception occurs in step execution, we don't want the thread to die and affect other step execution.
@@ -376,6 +381,9 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
 
                 jobQueue.remove();
+                stepsMap.remove(jobId);
+                flowMap.remove(jobId);
+                flowResp.remove(runningJobId);
                 if (!jobQueue.isEmpty()) {
                     initializeFlow((String) jobQueue.peek());
                 } else {
