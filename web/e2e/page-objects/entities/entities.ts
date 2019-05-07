@@ -207,3 +207,5 @@ export class EntityPage extends AppPage {
 var entityPage = new EntityPage();
 export default entityPage;
 pages.addPage(entityPage);
+
+
