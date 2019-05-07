@@ -32,6 +32,7 @@ import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.*;
@@ -496,7 +497,7 @@ public class WriteStepRunner implements StepRunner {
         metadataValues.add("datahubCreatedByStep", flow.getStep(step).getStepDefinitionName());
         // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
         metadataValues.add("datahubCreatedOn", DATE_TIME_FORMAT.format(new Date()));
-        metadataValues.add("datahubCreatedBy", this.hubConfig.getFlowOperatorUserName());
+        metadataValues.add("datahubCreatedBy", ((HubConfigImpl) hubConfig).getMlUsername());
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;
         switch (inputFileType.toLowerCase()) {
