@@ -25,7 +25,7 @@
         class="entity-def"
         [attr.transform]="getTransform(entity)"
         >
-        <foreignObject id="fo-{{entity.name}}">
+        <foreignObject id="fo-{{entity.name}}" [attr.width]="entity.hubUi.width || 350" [attr.height]="entity.hubUi.height+4">
           <xhtml:div xmlns="http://www.w3.org/1999/xhtml" class="foreign" [ngStyle]="{ 'transform': mainTransform }">
             <app-entity-box xmlns="http://www.w3.org/1999/xhtml"
               id="aeb-{{entity.name}}"
