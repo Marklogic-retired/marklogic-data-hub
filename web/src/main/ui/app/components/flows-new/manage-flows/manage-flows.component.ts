@@ -84,7 +84,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
 
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      console.log('run enpoint', resp);
+      // console.log('run enpoint', resp);
       // TODO add response check
       const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
       this.pollFlow(flowIndex, runObject.id);

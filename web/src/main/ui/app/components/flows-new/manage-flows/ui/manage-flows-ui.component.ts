@@ -25,7 +25,6 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
 
   dataSource: MatTableDataSource<Flow>;
   runningStatus = false;
-  disableRun: any = {};
 
   @ViewChild(MatTable)
   table: MatTable<any>;
