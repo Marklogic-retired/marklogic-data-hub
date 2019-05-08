@@ -87,18 +87,18 @@ class RunFlowTask extends HubTask {
                 Integer.parseInt(project.property("threadCount")) : null
         }
 
-        if (inputFilePath == null || inputFilePath.isAllWhitespace()) {
-            inputFilePath ==  project.hasProperty("inputFilePath") ?
+        if (inputFilePath == null) {
+            inputFilePath = project.hasProperty("inputFilePath") ?
                 project.property("inputFilePath") : null
         }
 
-        if (inputFileType == null || inputFileType.isAllWhitespace()) {
-            inputFileType ==  project.hasProperty("inputFileType") ?
+        if (inputFileType == null) {
+            inputFileType = project.hasProperty("inputFileType") ?
                 project.property("inputFileType") : null
         }
 
-        if (outputURIReplacement == null || outputURIReplacement.isAllWhitespace()) {
-            outputURIReplacement ==  project.hasProperty("outputURIReplacement") ?
+        if (outputURIReplacement == null) {
+            outputURIReplacement = project.hasProperty("outputURIReplacement") ?
                 project.property("outputURIReplacement") : null
         }
 
@@ -151,11 +151,15 @@ class RunFlowTask extends HubTask {
 
         if(batchSize != null){
             runFlowString.append("\n\twith batch size: " + batchSize)
-            stepConfig.put("batchSize", batchsize)
+            stepConfig.put("batchSize", batchSize)
         }
         if(threadCount != null){
             runFlowString.append("\n\twith thread count: " + threadCount)
-            stepConfig.put("threadCount", batchSize)
+            stepConfig.put("threadCount", threadCount)
+        }
+        if(Boolean.TRUE.equals(failHard)) {
+            runFlowString.append("\n\t\twith fail hard:" + failHard.toString())
+            stepConfig.put("stopOnFailure", failHard)
         }
 
         if(inputFileType != null || inputFilePath != null || outputURIReplacement != null){
@@ -163,7 +167,7 @@ class RunFlowTask extends HubTask {
             Map<String, String> fileLocations = new HashMap<>()
             if(inputFileType != null) {
                 runFlowString.append("\n\t\tInput File Type:" + inputFileType.toString())
-                fileLocations.put("inputFileType", inputFilePath)
+                fileLocations.put("inputFileType", inputFileType)
             }
             if(inputFilePath != null) {
                 runFlowString.append("\n\t\tInput File Path:" + inputFilePath.toString())

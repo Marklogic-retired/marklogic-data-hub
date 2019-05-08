@@ -299,6 +299,9 @@ public class WriteStepRunner implements StepRunner {
                 this.outputURIReplacement = fileLocations.get("outputURIReplacement");
             }
         }
+        if(stepConfig.get("stopOnFailure") != null){
+            this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
+        }
 
         if (inputFilePath == null || inputFileType == null) {
             throw new RuntimeException("File path and type cannot be empty");
