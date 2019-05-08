@@ -126,7 +126,7 @@ export default function(tmpDir) {
 
     xit('Should be able to redeploy', async function() {
       await manageFlowPage.clickRedeployButton();
-      await manageFlowPage.clickRedeployConfirmation("Yes");
+      await manageFlowPage.clickRedeployConfirmationButton("YES");
     });
 
     it ('Should logout', async function() {
