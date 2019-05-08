@@ -145,6 +145,8 @@ export class Entity {
         'description': null,
         'name': null,
         'primaryKey': null,
+        'namespace': null,
+        'namespacePrefix': null,
         'properties': [],
         'elementRangeIndex': [],
         'rangeIndex': [],
