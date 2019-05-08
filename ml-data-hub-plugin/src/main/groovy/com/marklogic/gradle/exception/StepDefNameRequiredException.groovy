@@ -21,6 +21,6 @@ import org.gradle.api.GradleException
 
 class StepDefNameRequiredException extends GradleException {
     StepDefNameRequiredException() {
-        super("stepDefName property is required. Supply the parameter with -PstepDefName=YourStep")
+        super("stepDefName property is required. Supply the parameter with -PstepDefName=YourStepDefName")
     }
 }
