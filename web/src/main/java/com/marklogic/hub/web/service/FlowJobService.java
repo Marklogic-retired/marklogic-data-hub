@@ -23,12 +23,16 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FlowJobService extends ResourceManager {
     private static final String ML_JOBS_NAME = "ml:jobs";
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private FlowManager flowManager;
@@ -154,12 +158,15 @@ public class FlowJobService extends ResourceManager {
         }
         return cachedJobsByFlowName.getIfPresent(flowName);
     }
+
     //TODO: fix this whole client mess and properly report exceptions
     private void release() {
         if(this.client != null) {
             try {
                 this.client.release();
             } catch (Exception e) {
+                logger.error(e.getMessage());
+            } finally {
                 this.client = null;
             }
         }
