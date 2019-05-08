@@ -349,18 +349,28 @@ public class JSONObject {
     }
 
     /**
+     * Gets a list of String by key with/without null values
+     * @param key
+     * @param allowNull
+     * @return
+     */
+    public List<String> getArrayString(String key, boolean allowNull) {
+        List<String> listString = new ArrayList<>();
+        for (JsonNode s : json.get(key)) {
+            if (allowNull || !s.isNull()) {
+                listString.add(s.asText());
+            }
+        }
+        return listString;
+    }
+
+    /**
      * Gets a list of String by key
      * @param key
      * @return
      */
     public List<String> getArrayString(String key) {
-        List<String> listString = new ArrayList<>();
-        for (JsonNode s : json.get(key)) {
-            if (!s.isNull()) {
-                listString.add(s.asText());
-            }
-        }
-        return listString;
+        return getArrayString(key, true);
     }
 
     /**
