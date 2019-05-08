@@ -216,10 +216,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     });
   }
   setStepDefaults(step): void {
-    const defaultCollections = [];
-    if (step.name) {
-      defaultCollections.push(`${step.name}`);
-    }
+    const defaultCollections = [`${step.name}`];
     if (step.stepDefinitionType === StepType.MAPPING) {
       defaultCollections.push('mdm-content');
     }
@@ -227,10 +224,6 @@ export class EditFlowComponent implements OnInit, OnDestroy {
       defaultCollections.push(step.options.targetEntity);
     }
     step.options = Object.assign({ 'collections': defaultCollections }, step.options);
-    if (step.options.collections && step.options.collections.length) {
-      step.options.collections = step.options.collections
-        .filter((col) => !!col);
-    }
   }
 
   checkLatestJobStatus() {
