@@ -177,24 +177,7 @@ public class FlowImpl implements Flow {
         if (StringUtils.isEmpty(stepId)) {
             return null;
         }
-        String stepType = null;
-        String stepName = null;
 
-        // Split on the last occurrence of "-"
-        String[] stepStr = stepId.split("-(?!.*-)");
-        if (stepStr.length == 2) {
-            stepName = stepStr[0];
-            stepType = stepStr[1];
-        }
-
-        if (!StringUtils.isEmpty(stepName) && !StringUtils.isEmpty(stepType)) {
-            String finalStepName = stepName;
-            String finalStepType = stepType;
-            return this.steps.values().stream()
-                .filter(s -> s.getName().equalsIgnoreCase(finalStepName) && s.getStepDefinitionType().toString().equalsIgnoreCase(finalStepType))
-                .findFirst().get();
-        }
-
-        return null;
+        return steps.get(stepId);
     }
 }

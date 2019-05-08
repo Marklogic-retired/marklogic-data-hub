@@ -173,21 +173,22 @@ public class FlowManagerService {
     public StepModel getStep(String flowName, String stepId) {
         Flow flow = flowManager.getFlow(flowName);
         if (flow == null) {
-            throw new NotFoundException(flowName + " not found!");
+            throw new NotFoundException(flowName + " not found.");
         }
-        Step step = flow.getStepById(stepId);
+
+        Step step = flow.getStepById(getStepKeyInStepMap(flow, stepId));
         if (step == null) {
-            throw new NotFoundException(stepId + " not found!");
+            throw new NotFoundException(stepId + " not found.");
         }
-        StepModel stepModel = StepModel.transformToWebStepModel(step);
-        return stepModel;
+
+        return StepModel.transformToWebStepModel(step);
     }
 
     public StepModel createStep(String flowName, Integer stepOrder, String stepId, String stringStep) {
         StepModel stepModel;
         JsonNode stepJson;
         Flow flow = flowManager.getFlow(flowName);
-        Step existingStep = flow.getStepById(stepId);
+        Step existingStep = flow.getStepById(getStepKeyInStepMap(flow, stepId));
 
         if (existingStep == null && !StringUtils.isEmpty(stepId)) {
             throw new NotFoundException("Step " + stepId + " Not Found");
@@ -355,6 +356,10 @@ public class FlowManagerService {
 
 
     private String getStepKeyInStepMap(Flow flow, String stepId) {
+        if (flow == null || StringUtils.isEmpty(stepId)) {
+            return null;
+        }
+
         // Split on the last occurrence of "-"
         String[] stepStr = stepId.split("-(?!.*-)");
 
