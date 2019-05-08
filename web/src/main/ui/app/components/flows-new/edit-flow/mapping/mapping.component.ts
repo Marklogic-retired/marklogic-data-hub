@@ -132,17 +132,19 @@ export class MappingComponent implements OnInit {
   loadSampleDoc() {
     let self = this;
     this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 1).subscribe(response => {
-        self.targetEntity.hasDocs = (response.length > 0);
-        // Can only load sample doc if docs exist
-        if (self.targetEntity.hasDocs) {
-          if (!this.mapping.sourceURI) {
-            this.sampleDocURI = response[0].uri;
-          } else {
-            this.sampleDocURI = this.mapping.sourceURI;
-          }
-          this.editURIVal = this.sampleDocURI;
-          this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
+        if (self.targetEntity) {
+          self.targetEntity.hasDocs = (response.length > 0);
+          // Can only load sample doc if docs exist
+          if (self.targetEntity.hasDocs) {
+            if (!this.mapping.sourceURI) {
+              this.sampleDocURI = response[0].uri;
+            } else {
+              this.sampleDocURI = this.mapping.sourceURI;
+            }
+            this.editURIVal = this.sampleDocURI;
+            this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
 
+          }
         }
       },
       () => {},
