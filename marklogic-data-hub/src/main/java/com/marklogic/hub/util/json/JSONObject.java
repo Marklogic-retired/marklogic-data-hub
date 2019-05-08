@@ -356,7 +356,9 @@ public class JSONObject {
     public List<String> getArrayString(String key) {
         List<String> listString = new ArrayList<>();
         for (JsonNode s : json.get(key)) {
-            listString.add(s.asText());
+            if (!s.isNull()) {
+                listString.add(s.asText());
+            }
         }
         return listString;
     }
