@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
+
 import java.util.Iterator;
 
 public class StepModel {
@@ -130,6 +131,7 @@ public class StepModel {
     public void setModulePath(String modulePath) {
         this.modulePath = modulePath;
     }
+
     public static StepModel fromJson(JsonNode node) {
         StepModel step = new StepModel();
 
@@ -149,11 +151,7 @@ public class StepModel {
             step.setId(jsonObject.getString("id"));
         }
         else {
-            if (step.getName().startsWith("default-")) {
-                step.setId(step.getName());
-            } else {
-                step.setId(step.getName() + "-" + step.getStepDefinitionType());
-            }
+            step.setId(step.getName() + "-" + step.getStepDefinitionType());
         }
 
         step.setDescription(jsonObject.getString("description"));
@@ -219,11 +217,7 @@ public class StepModel {
 
     public static StepModel transformToWebStepModel(Step step) {
         StepModel stepModel = new StepModel();
-        if (step.getName().startsWith("default-")) {
-            stepModel.setId(step.getName());
-        } else {
-            stepModel.setId(step.getName() + "-" + step.getStepDefinitionType());
-        }
+        stepModel.setId(step.getName() + "-" + step.getStepDefinitionType());
         stepModel.setName(step.getName());
         stepModel.setStepDefinitionName(step.getStepDefinitionName());
         stepModel.setStepDefinitionType(step.getStepDefinitionType());
