@@ -273,13 +273,18 @@ public class DataHubImpl implements DataHub {
                     alteredString = StringUtils.rightPad(alteredString, 4, "0");
                 }
                 int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 9050) {
+                //Future proofing against 9.10 since we have an ES incompatibility that needs resolving
+                if (!isNightly && (ver < 9070 || ver > 9095)) {
                     return false;
                 }
             }
+            //Future proofing against 10 since we have an ES incompatibility that needs resolving
+            if(major == 10) {
+                return false;
+            }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                Date minDate = new GregorianCalendar(2018, 4, 5).getTime();
+                Date minDate = new GregorianCalendar(2018, 11, 5).getTime();
                 Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                 if (date.before(minDate)) {
                     return false;
