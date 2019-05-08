@@ -66,7 +66,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.runningJobService.stopPolling();
+    this.runningJobService.stopPolling(this.flow.id);
   }
 
   getFlow() {
@@ -155,7 +155,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
       console.log('stop flow response', resp);
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
-      this.runningJobService.stopPolling();
+      this.runningJobService.stopPollingAll();
     });
   }
   createStep(stepObject) {

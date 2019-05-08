@@ -39,7 +39,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
     this.getFlows();
   }
   ngOnDestroy(): void {
-    this.runningJobService.stopPolling();
+    this.runningJobService.stopPollingAll();
   }
 
   createFlow(newFlow) {
@@ -84,6 +84,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
 
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
+      console.log('run enpoint', resp);
       // TODO add response check
       const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
       this.pollFlow(flowIndex, runObject.id);
@@ -101,7 +102,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
     this.manageFlowsService.stopFlow(flowId).subscribe(resp => {
       console.log('stop flow response', resp);
       this.getFlows();
-      this.runningJobService.stopPolling();
+      this.runningJobService.stopPolling(flowId);
     });
   }
 
