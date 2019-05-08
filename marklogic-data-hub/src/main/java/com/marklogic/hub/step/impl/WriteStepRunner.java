@@ -522,6 +522,8 @@ public class WriteStepRunner implements StepRunner {
         final Format fileFormat = format;
         Iterator itr = uris.iterator();
         if(!isStopped.get()){
+            JobTicket jobTicket = dataMovementManager.startJob(writeBatcher);
+            ticketWrapper.put("jobTicket", jobTicket);
             while(itr.hasNext()) {
                 try {
                     File file = new File((String) itr.next());
@@ -531,9 +533,6 @@ public class WriteStepRunner implements StepRunner {
                     throw new RuntimeException(e);
                 }
             }
-            JobTicket jobTicket = dataMovementManager.startJob(writeBatcher);
-            ticketWrapper.put("jobTicket", jobTicket);
-
         }
 
         runningThread = new Thread(() -> {
