@@ -128,12 +128,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testValidateServer9nightly() {
-        assertTrue(dh.isServerVersionValid("9.0-20181106"));
-    }
-
-    @Test
-    public void testValidateServer9nightlyagain() {
-        assertFalse(dh.isServerVersionValid("9.0-20190508"));
+        assertTrue(dh.isServerVersionValid("9.0-20181110"));
     }
 
     @Test
@@ -153,7 +148,7 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testInvalidServer9nightly() {
-        assertFalse(dh.isServerVersionValid("9.0-20160719"));
+        assertFalse(dh.isServerVersionValid("9.0-20180719"));
     }
 
     @Test
