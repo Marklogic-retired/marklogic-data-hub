@@ -195,6 +195,9 @@ public class QueryStepRunner implements StepRunner {
         if(stepConfig.get("threadCount") != null) {
             this.threadCount = (int) stepConfig.get("threadCount");
         }
+        if(stepConfig.get("stopOnFailure") != null){
+            this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
+        }
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         if (options == null) {
