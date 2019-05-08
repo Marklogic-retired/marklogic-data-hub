@@ -6,9 +6,8 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +15,23 @@ import org.slf4j.LoggerFactory;
 public class FlowRunnerChecker {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    static class StepCounters {
+        long successfulEvents;
+        long failedEvents;
+        public StepCounters(long successfulEvents, long failedEvents) {
+            this.successfulEvents = successfulEvents;
+            this.failedEvents = failedEvents;
+        }
+    }
+
     private static FlowRunnerChecker instance;
     private FlowRunnerImpl flowRunner;
     private LatestJob latestJob;
-    private Set<String> completedSteps;
+    private Map<String, StepCounters> completedSteps;
 
     private FlowRunnerChecker(FlowRunnerImpl flowRunner) {
         latestJob = new LatestJob();
-        completedSteps = new HashSet<>();
+        completedSteps = new HashMap<>();
         this.flowRunner = flowRunner;
         flowRunner.onStatusChanged((jobId, step, jobStatus, percentComplete, successfulEvents, failedEvents, message) -> {
             latestJob.id = jobId;
@@ -61,19 +69,14 @@ public class FlowRunnerChecker {
                 if (latestJob.status.startsWith(JobStatus.RUNNING_PREFIX)) {
                     latestJob.successfulEvents = successfulEvents;
                     latestJob.failedEvents = failedEvents;
-                }
-                if (JobStatus.isStepDone(latestJob.status) || JobStatus.isJobDone(latestJob.status)) {
-                    if (!completedSteps.contains(latestJob.stepId)) {
-                        if (completedSteps.isEmpty()) {
-                            latestJob.successfulEvents = successfulEvents;
-                            latestJob.failedEvents = failedEvents;
-                        } else {
-                            latestJob.successfulEvents += successfulEvents;
-                            latestJob.failedEvents += failedEvents;
-                        }
-                        completedSteps.add(latestJob.stepId);
-                    }
-
+                } else if (JobStatus.isStepDone(latestJob.status) || JobStatus.isJobDone(latestJob.status)) {
+                    completedSteps.putIfAbsent(latestJob.stepId, new StepCounters(successfulEvents, failedEvents));
+                    latestJob.successfulEvents = 0;
+                    latestJob.failedEvents = 0;
+                    completedSteps.values().forEach( c -> {
+                        latestJob.successfulEvents += c.successfulEvents;
+                        latestJob.failedEvents += c.failedEvents;
+                    });
                 }
             }
             logger.debug(latestJob.toString());
@@ -93,7 +96,7 @@ public class FlowRunnerChecker {
         if (!flowRunner.isJobRunning() && StringUtils.isNotEmpty(latestJob.endTime)) {
             LatestJob retJob = latestJob;
             latestJob = new LatestJob();
-            completedSteps = new HashSet<>();
+            completedSteps = new HashMap<>();
             return retJob;
         }
         return latestJob;
