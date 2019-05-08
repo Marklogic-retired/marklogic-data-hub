@@ -1,7 +1,11 @@
 <div layout-padding layout="column" class="map-page">
 
+  <div *ngIf="!targetEntity" class="map-container">
+    <em>Before configuring this mapping you must set a target entity. You can create new entities in the <a [routerLink]="['/entities']">Entities</a> view.</em>
+  </div>
+
   <div *ngIf="targetEntity && !targetEntity.hasDocs" class="map-container">
-    <p>Before configuring this mapping you must ingest source documents</p>
+    <em>Before configuring this mapping you must ingest source documents.</em>
   </div>
 
   <div [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}" class="map-container">
