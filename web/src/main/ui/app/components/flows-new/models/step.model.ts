@@ -104,7 +104,7 @@ export class Step {
         newStep.options = new IngestionOptions();
         newStep.options.permissions = 'rest-reader,read,rest-writer,update';
         newStep.options.outputFormat = 'json';
-        newStep.options.targetDatabase = databases.final;
+        newStep.options.targetDatabase = databases.staging;
       }
       if (json.stepDefinitionType === StepType.MAPPING) {
         newStep.options = new MappingOptions();
