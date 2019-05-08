@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {timer} from 'rxjs';
 import {Flow} from "../models/flow.model";
+import {Step} from '../models/step.model';
 import {StepType} from '../models/step.model';
 import {ProjectService} from '../../../services/projects';
 import {ManageFlowsService} from "../services/manage-flows.service";
@@ -89,11 +89,16 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
-      console.log('steps', resp);
-      const newArray = [];
-      this.flow.steps.map(step => {
-        newArray.push(resp.find(item => item.id === step.id));
+
+      const newArray = resp.map( step => {
+        const newStep = Step.fromJSON(step, this.projectDirectory, this.databases);
+        // No Target Entity from default mapping step created by gradle
+        // if (newStep.stepDefinitionType === this.stepType.MAPPING) {
+        //   this.createMapping(newStep);
+        // }
+        return newStep;
       });
+      console.log('steps', newArray);
       this.stepsArray = newArray;
       this.selectedStepId = (this.stepsArray.length > 0) ? this.stepsArray[0].id : null;
     });

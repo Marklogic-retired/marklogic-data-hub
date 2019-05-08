@@ -42,20 +42,88 @@ export class Step {
     step.options.outputFormat = 'json';
     return step;
   }
+
   static createMappingStep(): Step {
     const step = new Step();
     step.options = new MappingOptions();
     return step;
   }
+
   static createMasteringStep(): Step {
     const step = new Step();
     step.options = new MasteringOptions();
     return step;
   }
+
   static createCustomStep(): Step {
     const step = new Step();
     step.modulePath = '';
     step.options = new CustomOptions();
     return step;
+  }
+
+  static fromJSON(json, projectDirectory, databases) {
+    const newStep = new Step();
+    if (json.id) {
+      newStep.id = json.id;
+    }
+    if (json.name) {
+      newStep.name = json.name;
+    }
+    if (json.selectedSource) {
+      newStep.selectedSource = json.selectedSource;
+    }
+    if (json.stepDefinitionName) {
+      newStep.stepDefinitionName = json.stepDefinitionName;
+    }
+    if (json.stepDefinitionType) {
+      newStep.stepDefinitionType = json.stepDefinitionType;
+    }
+    if (json.fileLocations) {
+      newStep.fileLocations = json.fileLocations;
+    }
+    if (json.isValid) {
+      newStep.isValid = json.isValid;
+    }
+    if (json.modulePath) {
+      newStep.modulePath = json.modulePath;
+    }
+    // Check options
+    if (json.options) {
+      // set defaults for each step type
+      if (json.stepDefinitionType === StepType.INGESTION) {
+        // Hard check to see if it's default gradle step
+        if (json.fileLocations.inputFilePath === 'path/to/folder') {
+          const fileLocations = {
+            inputFilePath: projectDirectory,
+            inputFileType: 'json',
+            outputURIReplacement: ''
+          };
+          newStep.fileLocations = fileLocations;
+        }
+        newStep.options = new IngestionOptions();
+        newStep.options.permissions = 'rest-reader,read,rest-writer,update';
+        newStep.options.outputFormat = 'json';
+        newStep.options.targetDatabase = databases.staging;
+      }
+      if (json.stepDefinitionType === StepType.MAPPING) {
+        newStep.options = new MappingOptions();
+        newStep.options.sourceDatabase = databases.staging;
+        newStep.options.targetDatabase = databases.final;
+      }
+      if (json.stepDefinitionType === StepType.MASTERING) {
+        newStep.options = new MasteringOptions();
+        newStep.options.sourceDatabase = databases.final;
+        newStep.options.targetDatabase = databases.final;
+      }
+      if (json.stepDefinitionType === StepType.CUSTOM) {
+        newStep.options = new CustomOptions();
+        newStep.options.sourceDatabase = databases.staging;
+        newStep.options.targetDatabase = databases.final;
+      }
+      const newOptions = Object.assign(newStep.options, json.options);
+      newStep.options = newOptions;
+    }
+    return newStep;
   }
 }
