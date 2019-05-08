@@ -251,8 +251,8 @@ public class WriteStepRunner implements StepRunner {
         JSONObject obj = new JSONObject(comboOptions);
 
 
-        if (obj.getArrayString("collections") != null) {
-            outputCollections = StringUtils.join(obj.getArrayString("collections"), ",");
+        if (obj.getArrayString("collections", false) != null) {
+            outputCollections = StringUtils.join(obj.getArrayString("collections", false), ",");
         }
         if (obj.getString("permissions") != null) {
             outputPermissions = obj.getString("permissions");
