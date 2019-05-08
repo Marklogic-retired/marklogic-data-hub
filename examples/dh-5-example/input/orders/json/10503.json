@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10503",
+  "CustomerID" : "HUNGO",
+  "EmployeeID" : "6",
+  "OrderDate" : "1997-04-11T10:19:22",
+  "RequiredDate" : "1997-05-09T18:37:14",
+  "ShippedDate" : "1997-04-16T22:46:39",
+  "ShipVia" : "2",
+  "Freight" : "16.7400",
+  "ShipName" : "Hungry Owl All-Night Grocers",
+  "ShipAddress" : "8 Johnstown Road",
+  "ShipCity" : "Cork",
+  "ShipRegion" : "Co. Cork",
+  "ShipPostalCode" : null,
+  "ShipCountry" : "Ireland",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "65",
+      "UnitPrice" : "21.0500",
+      "Quantity" : "20",
+      "Discount" : "0"
+    }
+  }
+}

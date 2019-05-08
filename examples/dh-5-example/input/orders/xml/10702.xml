@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-11-24T08:35:53</RequiredDate>
+  <ShipName>Alfred's Futterkiste</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>18.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>15</Quantity>
+      <ProductID>76</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-10-21T01:38:31</ShippedDate>
+  <ShipCity>Berlin</ShipCity>
+  <CustomerID>ALFKI</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>12209</ShipPostalCode>
+  <OrderID>10702</OrderID>
+  <OrderDate>1997-10-13T03:08:03</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Obere Str. 57</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>4</EmployeeID>
+  <Freight>23.9400</Freight>
+</Order>

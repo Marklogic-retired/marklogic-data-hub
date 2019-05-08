@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10323",
+  "CustomerID" : "KOENE",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-10-07T10:01:29",
+  "RequiredDate" : "1996-11-04T10:48:19",
+  "ShippedDate" : "1996-10-14T12:41:05",
+  "ShipVia" : "1",
+  "Freight" : "4.8800",
+  "ShipName" : "Königlich Essen",
+  "ShipAddress" : "Maubelstr. 90",
+  "ShipCity" : "Brandenburg",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "14776",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "39",
+      "UnitPrice" : "14.4000",
+      "Quantity" : "4",
+      "Discount" : "0"
+    }
+  }
+}

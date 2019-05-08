@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-05-01T03:54:48</RequiredDate>
+  <ShipName>Ottilies Käseladen</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>13.0000</UnitPrice>
+      <Discount>0.05</Discount>
+      <Quantity>21</Quantity>
+      <ProductID>77</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-04-10T04:02:39</ShippedDate>
+  <ShipCity>Köln</ShipCity>
+  <CustomerID>OTTIK</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>50739</ShipPostalCode>
+  <OrderID>10999</OrderID>
+  <OrderDate>1998-04-03T01:32:13</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Mehrheimerstr. 369</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>96.3500</Freight>
+</Order>

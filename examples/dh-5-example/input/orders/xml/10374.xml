@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-01-02T12:07:08</RequiredDate>
+  <ShipName>Wolski Zajazd</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>10.6000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>15</Quantity>
+      <ProductID>58</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-12-09T12:21:43</ShippedDate>
+  <ShipCity>Warszawa</ShipCity>
+  <CustomerID>WOLZA</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>01-012</ShipPostalCode>
+  <OrderID>10374</OrderID>
+  <OrderDate>1996-12-05T06:46:18</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>ul. Filtrowa 68</ShipAddress>
+  <ShipCountry>Poland</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>3.9400</Freight>
+</Order>

@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-05-05T07:48:13</RequiredDate>
+  <ShipName>Maison Dewey</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>18.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>6</Quantity>
+      <ProductID>76</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-04-20T02:20:28</ShippedDate>
+  <ShipCity>Bruxelles</ShipCity>
+  <CustomerID>MAISD</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>B-1180</ShipPostalCode>
+  <OrderID>11004</OrderID>
+  <OrderDate>1998-04-07T00:34:35</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Rue Joseph-Bens 532</ShipAddress>
+  <ShipCountry>Belgium</ShipCountry>
+  <EmployeeID>3</EmployeeID>
+  <Freight>44.8400</Freight>
+</Order>

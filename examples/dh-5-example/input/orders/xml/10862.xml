@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-13T13:05:23</RequiredDate>
+  <ShipName>Lehmanns Marktstand</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>7.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>8</Quantity>
+      <ProductID>52</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-02T00:08:05</ShippedDate>
+  <ShipCity>Frankfurt a.M.</ShipCity>
+  <CustomerID>LEHMS</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>60528</ShipPostalCode>
+  <OrderID>10862</OrderID>
+  <OrderDate>1998-01-30T01:16:27</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Magazinweg 7</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>53.2300</Freight>
+</Order>

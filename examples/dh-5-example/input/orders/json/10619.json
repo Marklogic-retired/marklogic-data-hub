@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10619",
+  "CustomerID" : "MEREP",
+  "EmployeeID" : "3",
+  "OrderDate" : "1997-08-04T13:36:40",
+  "RequiredDate" : "1997-09-01T04:57:27",
+  "ShippedDate" : "1997-08-07T21:09:20",
+  "ShipVia" : "3",
+  "Freight" : "91.0500",
+  "ShipName" : "Mère Paillarde",
+  "ShipAddress" : "43 rue St. Laurent",
+  "ShipCity" : "Montréal",
+  "ShipRegion" : "Québec",
+  "ShipPostalCode" : "H1J 1C3",
+  "ShipCountry" : "Canada",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "22",
+      "UnitPrice" : "21.0000",
+      "Quantity" : "40",
+      "Discount" : "0"
+    }
+  }
+}

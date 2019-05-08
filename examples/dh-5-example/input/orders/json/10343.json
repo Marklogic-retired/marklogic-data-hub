@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10343",
+  "CustomerID" : "LEHMS",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-10-31T11:40:27",
+  "RequiredDate" : "1996-11-28T14:28:54",
+  "ShippedDate" : "1996-11-06T03:11:39",
+  "ShipVia" : "1",
+  "Freight" : "110.3700",
+  "ShipName" : "Lehmanns Marktstand",
+  "ShipAddress" : "Magazinweg 7",
+  "ShipCity" : "Frankfurt a.M.",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "60528",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "76",
+      "UnitPrice" : "14.4000",
+      "Quantity" : "15",
+      "Discount" : "0"
+    }
+  }
+}

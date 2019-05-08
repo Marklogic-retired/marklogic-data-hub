@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10347",
+  "CustomerID" : "FAMIA",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-11-06T17:46:19",
+  "RequiredDate" : "1996-12-04T09:45:19",
+  "ShippedDate" : "1996-11-08T23:26:29",
+  "ShipVia" : "3",
+  "Freight" : "3.1000",
+  "ShipName" : "Familia Arquibaldo",
+  "ShipAddress" : "Rua Orós, 92",
+  "ShipCity" : "Sao Paulo",
+  "ShipRegion" : "SP",
+  "ShipPostalCode" : "05442-030",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "75",
+      "UnitPrice" : "6.2000",
+      "Quantity" : "6",
+      "Discount" : "0.15"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10259",
+  "CustomerID" : "CENTC",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-07-18T01:08:24",
+  "RequiredDate" : "1996-08-15T01:16:56",
+  "ShippedDate" : "1996-07-25T08:49:04",
+  "ShipVia" : "3",
+  "Freight" : "3.2500",
+  "ShipName" : "Centro comercial Moctezuma",
+  "ShipAddress" : "Sierras de Granada 9993",
+  "ShipCity" : "México D.F.",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "05022",
+  "ShipCountry" : "Mexico",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "37",
+      "UnitPrice" : "20.8000",
+      "Quantity" : "1",
+      "Discount" : "0"
+    }
+  }
+}

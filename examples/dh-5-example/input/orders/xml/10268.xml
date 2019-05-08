@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-08-27T02:20:47</RequiredDate>
+  <ShipName>GROSELLA-Restaurante</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>27.8000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>4</Quantity>
+      <ProductID>72</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-08-02T11:04:48</ShippedDate>
+  <ShipCity>Caracas</ShipCity>
+  <CustomerID>GROSR</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>1081</ShipPostalCode>
+  <OrderID>10268</OrderID>
+  <OrderDate>1996-07-30T06:29:45</OrderDate>
+  <ShipRegion>DF</ShipRegion>
+  <ShipAddress>5ª Ave. Los Palos Grandes</ShipAddress>
+  <ShipCountry>Venezuela</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>66.2900</Freight>
+</Order>

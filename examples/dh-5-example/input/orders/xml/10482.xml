@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-04-18T16:54:15</RequiredDate>
+  <ShipName>Lazy K Kountry Store</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>14.7000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>10</Quantity>
+      <ProductID>40</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-04-10T19:53:27</ShippedDate>
+  <ShipCity>Walla Walla</ShipCity>
+  <CustomerID>LAZYK</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>99362</ShipPostalCode>
+  <OrderID>10482</OrderID>
+  <OrderDate>1997-03-21T00:52:08</OrderDate>
+  <ShipRegion>WA</ShipRegion>
+  <ShipAddress>12 Orchestra Terrace</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>7.4800</Freight>
+</Order>

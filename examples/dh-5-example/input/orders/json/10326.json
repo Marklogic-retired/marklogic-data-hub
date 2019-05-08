@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10326",
+  "CustomerID" : "BOLID",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-10-10T20:11:57",
+  "RequiredDate" : "1996-11-07T03:24:24",
+  "ShippedDate" : "1996-10-14T22:11:44",
+  "ShipVia" : "2",
+  "Freight" : "77.9200",
+  "ShipName" : "Bólido Comidas preparadas",
+  "ShipAddress" : "C/ Araquil, 67",
+  "ShipCity" : "Madrid",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "28023",
+  "ShipCountry" : "Spain",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "75",
+      "UnitPrice" : "6.2000",
+      "Quantity" : "50",
+      "Discount" : "0"
+    }
+  }
+}

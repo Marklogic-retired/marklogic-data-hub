@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-09-06T14:02:33</RequiredDate>
+  <ShipName>Morgenstern Gesundkost</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>39.4000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>12</Quantity>
+      <ProductID>62</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-08-13T12:09:56</ShippedDate>
+  <ShipCity>Leipzig</ShipCity>
+  <CustomerID>MORGK</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>04179</ShipPostalCode>
+  <OrderID>10277</OrderID>
+  <OrderDate>1996-08-09T21:49:38</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Heerstr. 22</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>2</EmployeeID>
+  <Freight>125.7700</Freight>
+</Order>

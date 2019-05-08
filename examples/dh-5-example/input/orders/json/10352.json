@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10352",
+  "CustomerID" : "FURIB",
+  "EmployeeID" : "3",
+  "OrderDate" : "1996-11-12T11:13:30",
+  "RequiredDate" : "1996-11-26T01:10:56",
+  "ShippedDate" : "1996-11-18T16:55:44",
+  "ShipVia" : "3",
+  "Freight" : "1.3000",
+  "ShipName" : "Furia Bacalhau e Frutos do Mar",
+  "ShipAddress" : "Jardim das rosas n. 32",
+  "ShipCity" : "Lisboa",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "1675",
+  "ShipCountry" : "Portugal",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "54",
+      "UnitPrice" : "5.9000",
+      "Quantity" : "20",
+      "Discount" : "0.15"
+    }
+  }
+}

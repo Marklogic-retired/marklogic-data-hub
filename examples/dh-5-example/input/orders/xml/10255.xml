@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-08-09T09:02:47</RequiredDate>
+  <ShipName>Richter Supermarkt</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>44.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>30</Quantity>
+      <ProductID>59</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-07-15T03:58:12</ShippedDate>
+  <ShipCity>Genève</ShipCity>
+  <CustomerID>RICSU</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>1204</ShipPostalCode>
+  <OrderID>10255</OrderID>
+  <OrderDate>1996-07-12T00:26:39</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Starenweg 5</ShipAddress>
+  <ShipCountry>Switzerland</ShipCountry>
+  <EmployeeID>9</EmployeeID>
+  <Freight>148.3300</Freight>
+</Order>

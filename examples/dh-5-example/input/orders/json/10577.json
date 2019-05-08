@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10577",
+  "CustomerID" : "TRAIH",
+  "EmployeeID" : "9",
+  "OrderDate" : "1997-06-23T14:08:15",
+  "RequiredDate" : "1997-08-04T00:44:52",
+  "ShippedDate" : "1997-06-30T18:09:37",
+  "ShipVia" : "2",
+  "Freight" : "25.4100",
+  "ShipName" : "Trail's Head Gourmet Provisioners",
+  "ShipAddress" : "722 DaVinci Blvd.",
+  "ShipCity" : "Kirkland",
+  "ShipRegion" : "WA",
+  "ShipPostalCode" : "98034",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "77",
+      "UnitPrice" : "13.0000",
+      "Quantity" : "18",
+      "Discount" : "0"
+    }
+  }
+}

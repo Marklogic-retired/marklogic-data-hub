@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10998",
+  "CustomerID" : "WOLZA",
+  "EmployeeID" : "8",
+  "OrderDate" : "1998-04-03T01:44:36",
+  "RequiredDate" : "1998-04-17T03:24:51",
+  "ShippedDate" : "1998-04-17T00:16:24",
+  "ShipVia" : "2",
+  "Freight" : "20.3100",
+  "ShipName" : "Wolski Zajazd",
+  "ShipAddress" : "ul. Filtrowa 68",
+  "ShipCity" : "Warszawa",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "01-012",
+  "ShipCountry" : "Poland",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "75",
+      "UnitPrice" : "7.7500",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

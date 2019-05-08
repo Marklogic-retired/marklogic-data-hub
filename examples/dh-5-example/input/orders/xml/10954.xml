@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-04-28T21:36:57</RequiredDate>
+  <ShipName>LINO-Delicateses</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>34.0000</UnitPrice>
+      <Discount>0.15</Discount>
+      <Quantity>24</Quantity>
+      <ProductID>60</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-03-20T01:53:34</ShippedDate>
+  <ShipCity>I. de Margarita</ShipCity>
+  <CustomerID>LINOD</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>4980</ShipPostalCode>
+  <OrderID>10954</OrderID>
+  <OrderDate>1998-03-17T14:04:30</OrderDate>
+  <ShipRegion>Nueva Esparta</ShipRegion>
+  <ShipAddress>Ave. 5 de Mayo Porlamar</ShipAddress>
+  <ShipCountry>Venezuela</ShipCountry>
+  <EmployeeID>5</EmployeeID>
+  <Freight>27.9100</Freight>
+</Order>

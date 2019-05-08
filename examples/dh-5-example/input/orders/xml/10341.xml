@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-11-26T21:30:38</RequiredDate>
+  <ShipName>Simons bistro</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>44.0000</UnitPrice>
+      <Discount>0.15</Discount>
+      <Quantity>9</Quantity>
+      <ProductID>59</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-11-05T22:29:02</ShippedDate>
+  <ShipCity>Kobenhavn</ShipCity>
+  <CustomerID>SIMOB</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>1734</ShipPostalCode>
+  <OrderID>10341</OrderID>
+  <OrderDate>1996-10-29T09:48:19</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Vinbæltet 34</ShipAddress>
+  <ShipCountry>Denmark</ShipCountry>
+  <EmployeeID>7</EmployeeID>
+  <Freight>26.7800</Freight>
+</Order>

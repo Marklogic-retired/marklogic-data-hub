@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10274",
+  "CustomerID" : "VINET",
+  "EmployeeID" : "6",
+  "OrderDate" : "1996-08-06T15:08:25",
+  "RequiredDate" : "1996-09-03T08:13:01",
+  "ShippedDate" : "1996-08-16T07:32:22",
+  "ShipVia" : "1",
+  "Freight" : "6.0100",
+  "ShipName" : "Vins et alcools Chevalier",
+  "ShipAddress" : "59 rue de l'Abbaye",
+  "ShipCity" : "Reims",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "51100",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "72",
+      "UnitPrice" : "27.8000",
+      "Quantity" : "7",
+      "Discount" : "0"
+    }
+  }
+}

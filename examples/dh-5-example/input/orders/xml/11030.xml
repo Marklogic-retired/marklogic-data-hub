@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-05-15T01:32:45</RequiredDate>
+  <ShipName>Save-a-lot Markets</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>55.0000</UnitPrice>
+      <Discount>0.25</Discount>
+      <Quantity>100</Quantity>
+      <ProductID>59</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-04-27T20:17:00</ShippedDate>
+  <ShipCity>Boise</ShipCity>
+  <CustomerID>SAVEA</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>83720</ShipPostalCode>
+  <OrderID>11030</OrderID>
+  <OrderDate>1998-04-17T14:25:28</OrderDate>
+  <ShipRegion>ID</ShipRegion>
+  <ShipAddress>187 Suffolk Ln.</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>7</EmployeeID>
+  <Freight>830.7500</Freight>
+</Order>

@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-07-23T05:21:30</RequiredDate>
+  <ShipName>Let's Stop N Shop</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>7.7500</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>21</Quantity>
+      <ProductID>75</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-07-04T01:06:48</ShippedDate>
+  <ShipCity>San Francisco</ShipCity>
+  <CustomerID>LETSS</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>94117</ShipPostalCode>
+  <OrderID>10579</OrderID>
+  <OrderDate>1997-06-25T17:14:11</OrderDate>
+  <ShipRegion>CA</ShipRegion>
+  <ShipAddress>87 Polk St. Suite 5</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>13.7300</Freight>
+</Order>

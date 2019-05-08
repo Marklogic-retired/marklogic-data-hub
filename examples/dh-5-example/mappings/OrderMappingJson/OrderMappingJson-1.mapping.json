@@ -1,0 +1,20 @@
+{
+  "language" : "zxx",
+  "name" : "OrderMappingJson",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://marklogic.com/Order-0.0.1/Order",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "CustomerID" : {
+      "sourcedFrom" : "CustomerID"
+    },
+    "ShipCity" : {
+      "sourcedFrom" : "ShipCity"
+    },
+    "ShipAddress" : {
+      "sourcedFrom" : "ShipAddress"
+    }
+  }
+}

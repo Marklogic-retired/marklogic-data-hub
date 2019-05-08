@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-09-20T12:32:30</RequiredDate>
+  <ShipName>Reggiani Caseifici</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>10.0000</UnitPrice>
+      <Discount>0.1</Discount>
+      <Quantity>3</Quantity>
+      <ProductID>68</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-09-03T09:05:11</ShippedDate>
+  <ShipCity>Reggio Emilia</ShipCity>
+  <CustomerID>REGGC</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>42100</ShipPostalCode>
+  <OrderID>10288</OrderID>
+  <OrderDate>1996-08-23T02:13:47</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Strada Provinciale 124</ShipAddress>
+  <ShipCountry>Italy</ShipCountry>
+  <EmployeeID>4</EmployeeID>
+  <Freight>7.4500</Freight>
+</Order>

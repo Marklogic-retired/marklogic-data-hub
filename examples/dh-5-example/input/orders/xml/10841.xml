@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-02-17T00:25:31</RequiredDate>
+  <ShipName>Suprêmes délices</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>13.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>15</Quantity>
+      <ProductID>77</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-01-29T10:19:36</ShippedDate>
+  <ShipCity>Charleroi</ShipCity>
+  <CustomerID>SUPRD</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>B-6000</ShipPostalCode>
+  <OrderID>10841</OrderID>
+  <OrderDate>1998-01-20T01:42:14</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Boulevard Tirou, 255</ShipAddress>
+  <ShipCountry>Belgium</ShipCountry>
+  <EmployeeID>5</EmployeeID>
+  <Freight>424.3000</Freight>
+</Order>

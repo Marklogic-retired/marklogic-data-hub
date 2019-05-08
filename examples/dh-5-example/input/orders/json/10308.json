@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10308",
+  "CustomerID" : "ANATR",
+  "EmployeeID" : "7",
+  "OrderDate" : "1996-09-18T09:15:52",
+  "RequiredDate" : "1996-10-16T16:47:52",
+  "ShippedDate" : "1996-09-24T23:25:41",
+  "ShipVia" : "3",
+  "Freight" : "1.6100",
+  "ShipName" : "Ana Trujillo Emparedados y helados",
+  "ShipAddress" : "Avda. de la Constitución 2222",
+  "ShipCity" : "México D.F.",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "05021",
+  "ShipCountry" : "Mexico",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "70",
+      "UnitPrice" : "12.0000",
+      "Quantity" : "5",
+      "Discount" : "0"
+    }
+  }
+}

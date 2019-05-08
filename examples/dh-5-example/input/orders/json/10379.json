@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10379",
+  "CustomerID" : "QUEDE",
+  "EmployeeID" : "2",
+  "OrderDate" : "1996-12-11T20:00:05",
+  "RequiredDate" : "1997-01-08T12:15:12",
+  "ShippedDate" : "1996-12-13T13:04:23",
+  "ShipVia" : "1",
+  "Freight" : "45.0300",
+  "ShipName" : "Que Delícia",
+  "ShipAddress" : "Rua da Panificadora, 12",
+  "ShipCity" : "Rio de Janeiro",
+  "ShipRegion" : "RJ",
+  "ShipPostalCode" : "02389-673",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "65",
+      "UnitPrice" : "16.8000",
+      "Quantity" : "20",
+      "Discount" : "0.1"
+    }
+  }
+}

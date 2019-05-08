@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10499",
+  "CustomerID" : "LILAS",
+  "EmployeeID" : "4",
+  "OrderDate" : "1997-04-08T22:46:33",
+  "RequiredDate" : "1997-05-06T19:32:52",
+  "ShippedDate" : "1997-04-16T07:19:56",
+  "ShipVia" : "2",
+  "Freight" : "102.0200",
+  "ShipName" : "LILA-Supermercado",
+  "ShipAddress" : "Carrera 52 con Ave. Bolívar #65-98 Llano Largo",
+  "ShipCity" : "Barquisimeto",
+  "ShipRegion" : "Lara",
+  "ShipPostalCode" : "3508",
+  "ShipCountry" : "Venezuela",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "49",
+      "UnitPrice" : "20.0000",
+      "Quantity" : "25",
+      "Discount" : "0"
+    }
+  }
+}

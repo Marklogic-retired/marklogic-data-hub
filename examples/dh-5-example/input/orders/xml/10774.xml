@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-12-25T08:18:27</RequiredDate>
+  <ShipName>Folk och fä HB</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>17.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>50</Quantity>
+      <ProductID>66</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-12-12T02:30:55</ShippedDate>
+  <ShipCity>Bräcke</ShipCity>
+  <CustomerID>FOLKO</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>S-844 67</ShipPostalCode>
+  <OrderID>10774</OrderID>
+  <OrderDate>1997-12-11T12:43:07</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Åkergatan 24</ShipAddress>
+  <ShipCountry>Sweden</ShipCountry>
+  <EmployeeID>4</EmployeeID>
+  <Freight>48.2000</Freight>
+</Order>

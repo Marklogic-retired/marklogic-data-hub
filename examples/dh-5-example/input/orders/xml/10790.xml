@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-01-19T01:00:04</RequiredDate>
+  <ShipName>Gourmet Lanchonetes</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>38.0000</UnitPrice>
+      <Discount>0.15</Discount>
+      <Quantity>20</Quantity>
+      <ProductID>56</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-12-26T12:01:01</ShippedDate>
+  <ShipCity>Campinas</ShipCity>
+  <CustomerID>GOURL</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>04876-786</ShipPostalCode>
+  <OrderID>10790</OrderID>
+  <OrderDate>1997-12-22T01:53:36</OrderDate>
+  <ShipRegion>SP</ShipRegion>
+  <ShipAddress>Av. Brasil, 442</ShipAddress>
+  <ShipCountry>Brazil</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>28.2300</Freight>
+</Order>

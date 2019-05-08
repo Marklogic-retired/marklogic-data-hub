@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10945",
+  "CustomerID" : "MORGK",
+  "EmployeeID" : "4",
+  "OrderDate" : "1998-03-12T09:52:20",
+  "RequiredDate" : "1998-04-09T05:19:31",
+  "ShippedDate" : "1998-03-18T20:21:14",
+  "ShipVia" : "1",
+  "Freight" : "10.2200",
+  "ShipName" : "Morgenstern Gesundkost",
+  "ShipAddress" : "Heerstr. 22",
+  "ShipCity" : "Leipzig",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "04179",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "31",
+      "UnitPrice" : "12.5000",
+      "Quantity" : "10",
+      "Discount" : "0"
+    }
+  }
+}

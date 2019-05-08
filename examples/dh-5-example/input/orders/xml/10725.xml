@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-11-28T06:44:31</RequiredDate>
+  <ShipName>Familia Arquibaldo</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>24.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>6</Quantity>
+      <ProductID>55</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-11-05T23:41:13</ShippedDate>
+  <ShipCity>Sao Paulo</ShipCity>
+  <CustomerID>FAMIA</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>05442-030</ShipPostalCode>
+  <OrderID>10725</OrderID>
+  <OrderDate>1997-10-31T10:39:45</OrderDate>
+  <ShipRegion>SP</ShipRegion>
+  <ShipAddress>Rua Orós, 92</ShipAddress>
+  <ShipCountry>Brazil</ShipCountry>
+  <EmployeeID>4</EmployeeID>
+  <Freight>10.8300</Freight>
+</Order>

@@ -1,0 +1,23 @@
+{
+  "OrderID" : "11068",
+  "CustomerID" : "QUEEN",
+  "EmployeeID" : "8",
+  "OrderDate" : "1998-05-04T05:39:14",
+  "RequiredDate" : "1998-06-01T16:10:42",
+  "ShipVia" : "2",
+  "Freight" : "81.7500",
+  "ShipName" : "Queen Cozinha",
+  "ShipAddress" : "Alameda dos Canàrios, 891",
+  "ShipCity" : "Sao Paulo",
+  "ShipRegion" : "SP",
+  "ShipPostalCode" : "05487-020",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "77",
+      "UnitPrice" : "13.0000",
+      "Quantity" : "28",
+      "Discount" : "0.15"
+    }
+  }
+}

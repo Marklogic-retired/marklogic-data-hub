@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-16T21:25:37</RequiredDate>
+  <ShipName>Rattlesnake Canyon Grocery</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>263.5000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>40</Quantity>
+      <ProductID>38</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-23T17:21:40</ShippedDate>
+  <ShipCity>Albuquerque</ShipCity>
+  <CustomerID>RATTC</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>87110</ShipPostalCode>
+  <OrderID>10889</OrderID>
+  <OrderDate>1998-02-16T07:24:16</OrderDate>
+  <ShipRegion>NM</ShipRegion>
+  <ShipAddress>2817 Milton Dr.</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>9</EmployeeID>
+  <Freight>280.6100</Freight>
+</Order>

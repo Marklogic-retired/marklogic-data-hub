@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-12-06T18:47:33</RequiredDate>
+  <ShipName>Split Rail Beer &amp; Ale</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>5.9000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>24</Quantity>
+      <ProductID>54</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-11-15T15:32:28</ShippedDate>
+  <ShipCity>Lander</ShipCity>
+  <CustomerID>SPLIR</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>82520</ShipPostalCode>
+  <OrderID>10349</OrderID>
+  <OrderDate>1996-11-08T13:02:34</OrderDate>
+  <ShipRegion>WY</ShipRegion>
+  <ShipAddress>P.O. Box 555</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>7</EmployeeID>
+  <Freight>8.6300</Freight>
+</Order>

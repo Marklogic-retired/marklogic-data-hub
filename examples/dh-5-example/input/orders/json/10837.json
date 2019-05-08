@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10837",
+  "CustomerID" : "BERGS",
+  "EmployeeID" : "9",
+  "OrderDate" : "1998-01-16T22:18:07",
+  "RequiredDate" : "1998-02-13T16:12:11",
+  "ShippedDate" : "1998-01-23T07:42:52",
+  "ShipVia" : "3",
+  "Freight" : "13.3200",
+  "ShipName" : "Berglunds snabbköp",
+  "ShipAddress" : "Berguvsvägen  8",
+  "ShipCity" : "Luleå",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "S-958 22",
+  "ShipCountry" : "Sweden",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "76",
+      "UnitPrice" : "18.0000",
+      "Quantity" : "21",
+      "Discount" : "0.25"
+    }
+  }
+}

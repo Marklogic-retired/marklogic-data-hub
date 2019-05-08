@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-05-02T09:23:25</RequiredDate>
+  <ShipName>Tradiçao Hipermercados</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>10.0000</UnitPrice>
+      <Discount>0.05</Discount>
+      <Quantity>20</Quantity>
+      <ProductID>31</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-04-07T16:06:00</ShippedDate>
+  <ShipCity>Sao Paulo</ShipCity>
+  <CustomerID>TRADH</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>05634-030</ShipPostalCode>
+  <OrderID>10496</OrderID>
+  <OrderDate>1997-04-04T07:26:38</OrderDate>
+  <ShipRegion>SP</ShipRegion>
+  <ShipAddress>Av. Inês de Castro, 414</ShipAddress>
+  <ShipCountry>Brazil</ShipCountry>
+  <EmployeeID>7</EmployeeID>
+  <Freight>46.7700</Freight>
+</Order>

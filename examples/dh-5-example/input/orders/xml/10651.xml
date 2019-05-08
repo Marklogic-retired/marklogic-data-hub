@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-09-29T01:13:57</RequiredDate>
+  <ShipName>Die Wandernde Kuh</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>21.0000</UnitPrice>
+      <Discount>0.25</Discount>
+      <Quantity>20</Quantity>
+      <ProductID>22</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-09-11T17:13:17</ShippedDate>
+  <ShipCity>Stuttgart</ShipCity>
+  <CustomerID>WANDK</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>70563</ShipPostalCode>
+  <OrderID>10651</OrderID>
+  <OrderDate>1997-09-01T20:31:49</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Adenauerallee 900</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>20.6000</Freight>
+</Order>

@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10721",
+  "CustomerID" : "QUICK",
+  "EmployeeID" : "5",
+  "OrderDate" : "1997-10-29T03:25:30",
+  "RequiredDate" : "1997-11-26T10:29:20",
+  "ShippedDate" : "1997-10-31T22:55:50",
+  "ShipVia" : "3",
+  "Freight" : "48.9200",
+  "ShipName" : "QUICK-Stop",
+  "ShipAddress" : "Taucherstraße 10",
+  "ShipCity" : "Cunewalde",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "01307",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "44",
+      "UnitPrice" : "19.4500",
+      "Quantity" : "50",
+      "Discount" : "0.05"
+    }
+  }
+}

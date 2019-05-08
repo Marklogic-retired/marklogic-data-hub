@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10708",
+  "CustomerID" : "THEBI",
+  "EmployeeID" : "6",
+  "OrderDate" : "1997-10-17T04:37:26",
+  "RequiredDate" : "1997-11-28T21:03:31",
+  "ShippedDate" : "1997-11-05T02:45:44",
+  "ShipVia" : "2",
+  "Freight" : "2.9600",
+  "ShipName" : "The Big Cheese",
+  "ShipAddress" : "89 Jefferson Way Suite 2",
+  "ShipCity" : "Portland",
+  "ShipRegion" : "OR",
+  "ShipPostalCode" : "97201",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "36",
+      "UnitPrice" : "19.0000",
+      "Quantity" : "5",
+      "Discount" : "0"
+    }
+  }
+}

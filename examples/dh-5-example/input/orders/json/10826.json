@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10826",
+  "CustomerID" : "BLONP",
+  "EmployeeID" : "6",
+  "OrderDate" : "1998-01-12T19:50:11",
+  "RequiredDate" : "1998-02-09T17:12:15",
+  "ShippedDate" : "1998-02-06T12:53:10",
+  "ShipVia" : "1",
+  "Freight" : "7.0900",
+  "ShipName" : "Blondel père et fils",
+  "ShipAddress" : "24, place Kléber",
+  "ShipCity" : "Strasbourg",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "67000",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "57",
+      "UnitPrice" : "19.5000",
+      "Quantity" : "15",
+      "Discount" : "0"
+    }
+  }
+}

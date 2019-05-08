@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10995",
+  "CustomerID" : "PERIC",
+  "EmployeeID" : "1",
+  "OrderDate" : "1998-04-02T22:22:57",
+  "RequiredDate" : "1998-04-30T20:27:31",
+  "ShippedDate" : "1998-04-06T09:25:09",
+  "ShipVia" : "3",
+  "Freight" : "46.0000",
+  "ShipName" : "Pericles Comidas clásicas",
+  "ShipAddress" : "Calle Dr. Jorge Cash 321",
+  "ShipCity" : "México D.F.",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "05033",
+  "ShipCountry" : "Mexico",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "60",
+      "UnitPrice" : "34.0000",
+      "Quantity" : "4",
+      "Discount" : "0"
+    }
+  }
+}

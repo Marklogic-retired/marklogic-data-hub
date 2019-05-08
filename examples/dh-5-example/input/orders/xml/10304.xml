@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-10-10T12:35:13</RequiredDate>
+  <ShipName>Tortuga Restaurante</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>17.2000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>2</Quantity>
+      <ProductID>71</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-09-17T16:10:49</ShippedDate>
+  <ShipCity>México D.F.</ShipCity>
+  <CustomerID>TORTU</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>05033</ShipPostalCode>
+  <OrderID>10304</OrderID>
+  <OrderDate>1996-09-12T09:05:04</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Avda. Azteca 123</ShipAddress>
+  <ShipCountry>Mexico</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>63.7900</Freight>
+</Order>

@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10981",
+  "CustomerID" : "HANAR",
+  "EmployeeID" : "1",
+  "OrderDate" : "1998-03-27T17:07:08",
+  "RequiredDate" : "1998-04-24T22:35:43",
+  "ShippedDate" : "1998-04-02T13:04:58",
+  "ShipVia" : "2",
+  "Freight" : "193.3700",
+  "ShipName" : "Hanari Carnes",
+  "ShipAddress" : "Rua do Paço, 67",
+  "ShipCity" : "Rio de Janeiro",
+  "ShipRegion" : "RJ",
+  "ShipPostalCode" : "05454-876",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "38",
+      "UnitPrice" : "263.5000",
+      "Quantity" : "60",
+      "Discount" : "0"
+    }
+  }
+}

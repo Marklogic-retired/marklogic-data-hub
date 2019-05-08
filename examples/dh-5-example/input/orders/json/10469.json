@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10469",
+  "CustomerID" : "WHITC",
+  "EmployeeID" : "1",
+  "OrderDate" : "1997-03-10T17:22:29",
+  "RequiredDate" : "1997-04-07T00:09:26",
+  "ShippedDate" : "1997-03-14T06:35:50",
+  "ShipVia" : "1",
+  "Freight" : "60.1800",
+  "ShipName" : "White Clover Markets",
+  "ShipAddress" : "1029 - 12th Ave. S.",
+  "ShipCity" : "Seattle",
+  "ShipRegion" : "WA",
+  "ShipPostalCode" : "98124",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "44",
+      "UnitPrice" : "15.5000",
+      "Quantity" : "2",
+      "Discount" : "0.15"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-10-06T01:55:43</RequiredDate>
+  <ShipName>Hungry Coyote Import Store</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>81.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>21</Quantity>
+      <ProductID>20</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-10-15T21:18:27</ShippedDate>
+  <ShipCity>Elgin</ShipCity>
+  <CustomerID>HUNGC</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>97827</ShipPostalCode>
+  <OrderID>10660</OrderID>
+  <OrderDate>1997-09-08T05:00:58</OrderDate>
+  <ShipRegion>OR</ShipRegion>
+  <ShipAddress>City Center Plaza 516 Main St.</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>111.2900</Freight>
+</Order>

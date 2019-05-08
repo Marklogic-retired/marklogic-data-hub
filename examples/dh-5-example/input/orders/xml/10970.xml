@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-04-07T08:53:50</RequiredDate>
+  <ShipName>Bólido Comidas preparadas</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>7.0000</UnitPrice>
+      <Discount>0.2</Discount>
+      <Quantity>40</Quantity>
+      <ProductID>52</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-04-24T00:15:54</ShippedDate>
+  <ShipCity>Madrid</ShipCity>
+  <CustomerID>BOLID</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>28023</ShipPostalCode>
+  <OrderID>10970</OrderID>
+  <OrderDate>1998-03-24T06:41:30</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>C/ Araquil, 67</ShipAddress>
+  <ShipCountry>Spain</ShipCountry>
+  <EmployeeID>9</EmployeeID>
+  <Freight>16.1600</Freight>
+</Order>

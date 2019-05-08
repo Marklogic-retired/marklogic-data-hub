@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10950",
+  "CustomerID" : "MAGAA",
+  "EmployeeID" : "1",
+  "OrderDate" : "1998-03-16T21:22:58",
+  "RequiredDate" : "1998-04-13T18:10:25",
+  "ShippedDate" : "1998-03-23T10:43:44",
+  "ShipVia" : "2",
+  "Freight" : "2.5000",
+  "ShipName" : "Magazzini Alimentari Riuniti",
+  "ShipAddress" : "Via Ludovico il Moro 22",
+  "ShipCity" : "Bergamo",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "24100",
+  "ShipCountry" : "Italy",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "4",
+      "UnitPrice" : "22.0000",
+      "Quantity" : "5",
+      "Discount" : "0"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10844",
+  "CustomerID" : "PICCO",
+  "EmployeeID" : "8",
+  "OrderDate" : "1998-01-21T11:55:47",
+  "RequiredDate" : "1998-02-18T08:04:45",
+  "ShippedDate" : "1998-01-26T11:39:55",
+  "ShipVia" : "2",
+  "Freight" : "25.2200",
+  "ShipName" : "Piccolo und mehr",
+  "ShipAddress" : "Geislweg 14",
+  "ShipCity" : "Salzburg",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "5020",
+  "ShipCountry" : "Austria",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "22",
+      "UnitPrice" : "21.0000",
+      "Quantity" : "35",
+      "Discount" : "0"
+    }
+  }
+}

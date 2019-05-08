@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-25T00:30:55</RequiredDate>
+  <ShipName>Spécialités du monde</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>7.7500</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>14</Quantity>
+      <ProductID>75</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-27T16:10:07</ShippedDate>
+  <ShipCity>Paris</ShipCity>
+  <CustomerID>SPECD</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>75016</ShipPostalCode>
+  <OrderID>10907</OrderID>
+  <OrderDate>1998-02-25T04:10:11</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>25, rue Lauriston</ShipAddress>
+  <ShipCountry>France</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>9.1900</Freight>
+</Order>

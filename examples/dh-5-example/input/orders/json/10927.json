@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10927",
+  "CustomerID" : "LACOR",
+  "EmployeeID" : "4",
+  "OrderDate" : "1998-03-05T03:26:10",
+  "RequiredDate" : "1998-04-02T15:30:29",
+  "ShippedDate" : "1998-04-08T21:33:19",
+  "ShipVia" : "1",
+  "Freight" : "19.7900",
+  "ShipName" : "La corne d'abondance",
+  "ShipAddress" : "67, avenue de l'Europe",
+  "ShipCity" : "Versailles",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "78000",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "76",
+      "UnitPrice" : "18.0000",
+      "Quantity" : "20",
+      "Discount" : "0"
+    }
+  }
+}

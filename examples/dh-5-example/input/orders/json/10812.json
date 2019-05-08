@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10812",
+  "CustomerID" : "REGGC",
+  "EmployeeID" : "5",
+  "OrderDate" : "1998-01-02T00:53:29",
+  "RequiredDate" : "1998-01-30T11:03:13",
+  "ShippedDate" : "1998-01-12T23:55:41",
+  "ShipVia" : "1",
+  "Freight" : "59.7800",
+  "ShipName" : "Reggiani Caseifici",
+  "ShipAddress" : "Strada Provinciale 124",
+  "ShipCity" : "Reggio Emilia",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "42100",
+  "ShipCountry" : "Italy",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "77",
+      "UnitPrice" : "13.0000",
+      "Quantity" : "20",
+      "Discount" : "0"
+    }
+  }
+}

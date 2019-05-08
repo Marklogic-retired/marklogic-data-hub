@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10835",
+  "CustomerID" : "ALFKI",
+  "EmployeeID" : "1",
+  "OrderDate" : "1998-01-15T10:26:12",
+  "RequiredDate" : "1998-02-12T18:14:19",
+  "ShippedDate" : "1998-01-21T03:55:18",
+  "ShipVia" : "3",
+  "Freight" : "69.5300",
+  "ShipName" : "Alfred's Futterkiste",
+  "ShipAddress" : "Obere Str. 57",
+  "ShipCity" : "Berlin",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "12209",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "77",
+      "UnitPrice" : "13.0000",
+      "Quantity" : "2",
+      "Discount" : "0.2"
+    }
+  }
+}

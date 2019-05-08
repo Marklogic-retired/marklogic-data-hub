@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-12-31T14:40:01</RequiredDate>
+  <ShipName>Folies gourmandes</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>4.5000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>20</Quantity>
+      <ProductID>24</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-12-08T06:07:30</ShippedDate>
+  <ShipCity>Lille</ShipCity>
+  <CustomerID>FOLIG</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>59000</ShipPostalCode>
+  <OrderID>10763</OrderID>
+  <OrderDate>1997-12-03T00:55:39</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>184, chaussée de Tournai</ShipAddress>
+  <ShipCountry>France</ShipCountry>
+  <EmployeeID>3</EmployeeID>
+  <Freight>37.3500</Freight>
+</Order>

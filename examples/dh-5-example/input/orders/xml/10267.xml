@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-08-26T13:15:13</RequiredDate>
+  <ShipName>Frankenversand</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>14.4000</UnitPrice>
+      <Discount>0.15</Discount>
+      <Quantity>15</Quantity>
+      <ProductID>76</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-08-06T11:12:51</ShippedDate>
+  <ShipCity>München</ShipCity>
+  <CustomerID>FRANK</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>80805</ShipPostalCode>
+  <OrderID>10267</OrderID>
+  <OrderDate>1996-07-29T13:11:03</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Berliner Platz 43</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>4</EmployeeID>
+  <Freight>208.5800</Freight>
+</Order>

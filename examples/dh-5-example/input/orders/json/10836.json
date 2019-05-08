@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10836",
+  "CustomerID" : "ERNSH",
+  "EmployeeID" : "7",
+  "OrderDate" : "1998-01-16T21:29:21",
+  "RequiredDate" : "1998-02-13T10:32:34",
+  "ShippedDate" : "1998-01-21T19:37:42",
+  "ShipVia" : "1",
+  "Freight" : "411.8800",
+  "ShipName" : "Ernst Handel",
+  "ShipAddress" : "Kirchgasse 6",
+  "ShipCity" : "Graz",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "8010",
+  "ShipCountry" : "Austria",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "64",
+      "UnitPrice" : "33.2500",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

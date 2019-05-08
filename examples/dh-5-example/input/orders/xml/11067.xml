@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-05-18T09:00:48</RequiredDate>
+  <ShipName>Drachenblut Delikatessen</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>9.6500</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>9</Quantity>
+      <ProductID>41</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-05-06T07:05:53</ShippedDate>
+  <ShipCity>Aachen</ShipCity>
+  <CustomerID>DRACD</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>52066</ShipPostalCode>
+  <OrderID>11067</OrderID>
+  <OrderDate>1998-05-04T21:01:19</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Walserweg 21</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>7.9800</Freight>
+</Order>

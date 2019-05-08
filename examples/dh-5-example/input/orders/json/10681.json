@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10681",
+  "CustomerID" : "GREAL",
+  "EmployeeID" : "3",
+  "OrderDate" : "1997-09-25T03:27:25",
+  "RequiredDate" : "1997-10-23T19:35:40",
+  "ShippedDate" : "1997-09-30T22:27:51",
+  "ShipVia" : "3",
+  "Freight" : "76.1300",
+  "ShipName" : "Great Lakes Food Market",
+  "ShipAddress" : "2732 Baker Blvd.",
+  "ShipCity" : "Eugene",
+  "ShipRegion" : "OR",
+  "ShipPostalCode" : "97403",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "64",
+      "UnitPrice" : "33.2500",
+      "Quantity" : "28",
+      "Discount" : "0"
+    }
+  }
+}

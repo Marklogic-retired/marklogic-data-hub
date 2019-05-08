@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-26T23:02:52</RequiredDate>
+  <ShipName>Wilman Kala</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>28.5000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>5</Quantity>
+      <ProductID>61</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-03-04T20:52:52</ShippedDate>
+  <ShipCity>Helsinki</ShipCity>
+  <CustomerID>WILMK</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>21240</ShipPostalCode>
+  <OrderID>10910</OrderID>
+  <OrderDate>1998-02-26T21:33:07</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Keskuskatu 45</ShipAddress>
+  <ShipCountry>Finland</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>38.1100</Freight>
+</Order>

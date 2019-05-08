@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-08-08T03:22:15</RequiredDate>
+  <ShipName>Piccolo und mehr</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>21.0500</UnitPrice>
+      <Discount>0.2</Discount>
+      <Quantity>12</Quantity>
+      <ProductID>65</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-07-18T15:34:53</ShippedDate>
+  <ShipCity>Salzburg</ShipCity>
+  <CustomerID>PICCO</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>5020</ShipPostalCode>
+  <OrderID>10597</OrderID>
+  <OrderDate>1997-07-11T08:42:12</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Geislweg 14</ShipAddress>
+  <ShipCountry>Austria</ShipCountry>
+  <EmployeeID>7</EmployeeID>
+  <Freight>35.1200</Freight>
+</Order>

@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10299",
+  "CustomerID" : "RICAR",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-09-06T04:58:11",
+  "RequiredDate" : "1996-10-04T05:47:53",
+  "ShippedDate" : "1996-09-13T10:18:07",
+  "ShipVia" : "2",
+  "Freight" : "29.7600",
+  "ShipName" : "Ricardo Adocicados",
+  "ShipAddress" : "Av. Copacabana, 267",
+  "ShipCity" : "Rio de Janeiro",
+  "ShipRegion" : "RJ",
+  "ShipPostalCode" : "02389-890",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "70",
+      "UnitPrice" : "12.0000",
+      "Quantity" : "20",
+      "Discount" : "0"
+    }
+  }
+}

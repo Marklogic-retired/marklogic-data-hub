@@ -1,0 +1,23 @@
+<Order>
+  <RequiredDate>1998-05-27T17:03:39</RequiredDate>
+  <ShipName>Blauer See Delikatessen</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>28.5000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>4</Quantity>
+      <ProductID>61</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShipCity>Mannheim</ShipCity>
+  <CustomerID>BLAUS</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>68306</ShipPostalCode>
+  <OrderID>11058</OrderID>
+  <OrderDate>1998-04-29T14:37:26</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Forsterstr. 57</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>9</EmployeeID>
+  <Freight>31.1400</Freight>
+</Order>

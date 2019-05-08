@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10397",
+  "CustomerID" : "PRINI",
+  "EmployeeID" : "5",
+  "OrderDate" : "1996-12-27T01:53:27",
+  "RequiredDate" : "1997-01-24T22:22:25",
+  "ShippedDate" : "1997-01-02T02:21:29",
+  "ShipVia" : "1",
+  "Freight" : "60.2600",
+  "ShipName" : "Princesa Isabel Vinhos",
+  "ShipAddress" : "Estrada da saúde n. 58",
+  "ShipCity" : "Lisboa",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "1756",
+  "ShipCountry" : "Portugal",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "51",
+      "UnitPrice" : "42.4000",
+      "Quantity" : "18",
+      "Discount" : "0.15"
+    }
+  }
+}

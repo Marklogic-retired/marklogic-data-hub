@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10649",
+  "CustomerID" : "MAISD",
+  "EmployeeID" : "5",
+  "OrderDate" : "1997-08-28T22:01:40",
+  "RequiredDate" : "1997-09-25T20:34:09",
+  "ShippedDate" : "1997-08-29T10:00:46",
+  "ShipVia" : "3",
+  "Freight" : "6.2000",
+  "ShipName" : "Maison Dewey",
+  "ShipAddress" : "Rue Joseph-Bens 532",
+  "ShipCity" : "Bruxelles",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "B-1180",
+  "ShipCountry" : "Belgium",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "72",
+      "UnitPrice" : "34.8000",
+      "Quantity" : "15",
+      "Discount" : "0"
+    }
+  }
+}

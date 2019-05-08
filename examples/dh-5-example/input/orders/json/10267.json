@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10267",
+  "CustomerID" : "FRANK",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-07-29T13:11:03",
+  "RequiredDate" : "1996-08-26T13:15:13",
+  "ShippedDate" : "1996-08-06T11:12:51",
+  "ShipVia" : "1",
+  "Freight" : "208.5800",
+  "ShipName" : "Frankenversand",
+  "ShipAddress" : "Berliner Platz 43",
+  "ShipCity" : "München",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "80805",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "76",
+      "UnitPrice" : "14.4000",
+      "Quantity" : "15",
+      "Discount" : "0.15"
+    }
+  }
+}

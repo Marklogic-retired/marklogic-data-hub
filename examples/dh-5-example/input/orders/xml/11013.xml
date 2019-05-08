@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-05-07T10:41:42</RequiredDate>
+  <ShipName>Romero y tomillo</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>12.5000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>2</Quantity>
+      <ProductID>68</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-04-10T18:22:34</ShippedDate>
+  <ShipCity>Madrid</ShipCity>
+  <CustomerID>ROMEY</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>28001</ShipPostalCode>
+  <OrderID>11013</OrderID>
+  <OrderDate>1998-04-09T23:26:09</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Gran Vía, 1</ShipAddress>
+  <ShipCountry>Spain</ShipCountry>
+  <EmployeeID>2</EmployeeID>
+  <Freight>32.9900</Freight>
+</Order>

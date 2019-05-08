@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-12-13T22:33:36</RequiredDate>
+  <ShipName>Around the Horn</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>15.6000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>25</Quantity>
+      <ProductID>57</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-11-20T01:09:18</ShippedDate>
+  <ShipCity>Colchester</ShipCity>
+  <CustomerID>AROUT</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>CO7 6JX</ShipPostalCode>
+  <OrderID>10355</OrderID>
+  <OrderDate>1996-11-15T08:25:34</OrderDate>
+  <ShipRegion>Essex</ShipRegion>
+  <ShipAddress>Brook Farm Stratford St. Mary</ShipAddress>
+  <ShipCountry>UK</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>41.9500</Freight>
+</Order>

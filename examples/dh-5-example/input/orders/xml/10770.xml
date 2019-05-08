@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-01-06T07:30:03</RequiredDate>
+  <ShipName>Hanari Carnes</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>21.0000</UnitPrice>
+      <Discount>0.25</Discount>
+      <Quantity>15</Quantity>
+      <ProductID>11</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-12-17T04:01:26</ShippedDate>
+  <ShipCity>Rio de Janeiro</ShipCity>
+  <CustomerID>HANAR</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>05454-876</ShipPostalCode>
+  <OrderID>10770</OrderID>
+  <OrderDate>1997-12-09T20:41:37</OrderDate>
+  <ShipRegion>RJ</ShipRegion>
+  <ShipAddress>Rua do Paço, 67</ShipAddress>
+  <ShipCountry>Brazil</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>5.3200</Freight>
+</Order>

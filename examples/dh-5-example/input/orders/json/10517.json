@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10517",
+  "CustomerID" : "NORTS",
+  "EmployeeID" : "3",
+  "OrderDate" : "1997-04-24T15:40:56",
+  "RequiredDate" : "1997-05-22T13:41:49",
+  "ShippedDate" : "1997-04-29T06:02:07",
+  "ShipVia" : "3",
+  "Freight" : "32.0700",
+  "ShipName" : "North/South",
+  "ShipAddress" : "South House 300 Queensbridge",
+  "ShipCity" : "London",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "SW7 1RZ",
+  "ShipCountry" : "UK",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "70",
+      "UnitPrice" : "15.0000",
+      "Quantity" : "6",
+      "Discount" : "0"
+    }
+  }
+}

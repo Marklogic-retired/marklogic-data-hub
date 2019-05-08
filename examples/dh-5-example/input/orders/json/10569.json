@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10569",
+  "CustomerID" : "RATTC",
+  "EmployeeID" : "5",
+  "OrderDate" : "1997-06-16T02:03:54",
+  "RequiredDate" : "1997-07-14T16:16:47",
+  "ShippedDate" : "1997-07-11T00:53:40",
+  "ShipVia" : "1",
+  "Freight" : "58.9800",
+  "ShipName" : "Rattlesnake Canyon Grocery",
+  "ShipAddress" : "2817 Milton Dr.",
+  "ShipCity" : "Albuquerque",
+  "ShipRegion" : "NM",
+  "ShipPostalCode" : "87110",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "76",
+      "UnitPrice" : "18.0000",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-09T20:50:30</RequiredDate>
+  <ShipName>Ricardo Adocicados</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>62.5000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>25</Quantity>
+      <ProductID>18</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-19T14:01:02</ShippedDate>
+  <ShipCity>Rio de Janeiro</ShipCity>
+  <CustomerID>RICAR</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>02389-890</ShipPostalCode>
+  <OrderID>10877</OrderID>
+  <OrderDate>1998-02-09T00:14:19</OrderDate>
+  <ShipRegion>RJ</ShipRegion>
+  <ShipAddress>Av. Copacabana, 267</ShipAddress>
+  <ShipCountry>Brazil</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>38.0600</Freight>
+</Order>

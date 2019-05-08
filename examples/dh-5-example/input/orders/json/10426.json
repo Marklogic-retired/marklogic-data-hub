@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10426",
+  "CustomerID" : "GALED",
+  "EmployeeID" : "4",
+  "OrderDate" : "1997-01-27T14:05:40",
+  "RequiredDate" : "1997-02-24T01:34:45",
+  "ShippedDate" : "1997-02-06T13:26:35",
+  "ShipVia" : "1",
+  "Freight" : "18.6900",
+  "ShipName" : "Galería del gastronómo",
+  "ShipAddress" : "Rambla de Cataluña, 23",
+  "ShipCity" : "Barcelona",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "8022",
+  "ShipCountry" : "Spain",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "64",
+      "UnitPrice" : "26.6000",
+      "Quantity" : "7",
+      "Discount" : "0"
+    }
+  }
+}

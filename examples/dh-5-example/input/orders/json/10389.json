@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10389",
+  "CustomerID" : "BOTTM",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-12-20T17:25:43",
+  "RequiredDate" : "1997-01-17T06:31:34",
+  "ShippedDate" : "1996-12-24T09:18:00",
+  "ShipVia" : "2",
+  "Freight" : "47.4200",
+  "ShipName" : "Bottom-Dollar Markets",
+  "ShipAddress" : "23 Tsawassen Blvd.",
+  "ShipCity" : "Tsawassen",
+  "ShipRegion" : "BC",
+  "ShipPostalCode" : "T2F 8M4",
+  "ShipCountry" : "Canada",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "70",
+      "UnitPrice" : "12.0000",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

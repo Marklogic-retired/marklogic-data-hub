@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10480",
+  "CustomerID" : "FOLIG",
+  "EmployeeID" : "6",
+  "OrderDate" : "1997-03-20T16:33:42",
+  "RequiredDate" : "1997-04-17T14:57:18",
+  "ShippedDate" : "1997-03-24T10:37:11",
+  "ShipVia" : "2",
+  "Freight" : "1.3500",
+  "ShipName" : "Folies gourmandes",
+  "ShipAddress" : "184, chaussée de Tournai",
+  "ShipCity" : "Lille",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "59000",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "59",
+      "UnitPrice" : "44.0000",
+      "Quantity" : "12",
+      "Discount" : "0"
+    }
+  }
+}

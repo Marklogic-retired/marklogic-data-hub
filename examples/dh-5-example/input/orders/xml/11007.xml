@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-05-06T22:58:16</RequiredDate>
+  <ShipName>Princesa Isabel Vinhos</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>14.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>14</Quantity>
+      <ProductID>42</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-04-13T20:03:44</ShippedDate>
+  <ShipCity>Lisboa</ShipCity>
+  <CustomerID>PRINI</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>1756</ShipPostalCode>
+  <OrderID>11007</OrderID>
+  <OrderDate>1998-04-08T19:49:47</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Estrada da saúde n. 58</ShipAddress>
+  <ShipCountry>Portugal</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>202.2400</Freight>
+</Order>

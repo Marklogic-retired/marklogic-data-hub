@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10358",
+  "CustomerID" : "LAMAI",
+  "EmployeeID" : "5",
+  "OrderDate" : "1996-11-20T04:41:58",
+  "RequiredDate" : "1996-12-18T18:52:08",
+  "ShippedDate" : "1996-11-27T22:21:29",
+  "ShipVia" : "1",
+  "Freight" : "19.6400",
+  "ShipName" : "La maison d'Asie",
+  "ShipAddress" : "1 rue Alsace-Lorraine",
+  "ShipCity" : "Toulouse",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "31000",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "36",
+      "UnitPrice" : "15.2000",
+      "Quantity" : "20",
+      "Discount" : "0.05"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10550",
+  "CustomerID" : "GODOS",
+  "EmployeeID" : "7",
+  "OrderDate" : "1997-05-28T16:57:15",
+  "RequiredDate" : "1997-06-25T23:47:06",
+  "ShippedDate" : "1997-06-06T18:40:15",
+  "ShipVia" : "3",
+  "Freight" : "4.3200",
+  "ShipName" : "Godos Cocina Típica",
+  "ShipAddress" : "C/ Romero, 33",
+  "ShipCity" : "Sevilla",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "41101",
+  "ShipCountry" : "Spain",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "61",
+      "UnitPrice" : "28.5000",
+      "Quantity" : "10",
+      "Discount" : "0.1"
+    }
+  }
+}

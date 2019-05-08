@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10984",
+  "CustomerID" : "SAVEA",
+  "EmployeeID" : "1",
+  "OrderDate" : "1998-03-30T12:23:02",
+  "RequiredDate" : "1998-04-27T21:43:57",
+  "ShippedDate" : "1998-04-03T05:09:48",
+  "ShipVia" : "3",
+  "Freight" : "211.2200",
+  "ShipName" : "Save-a-lot Markets",
+  "ShipAddress" : "187 Suffolk Ln.",
+  "ShipCity" : "Boise",
+  "ShipRegion" : "ID",
+  "ShipPostalCode" : "83720",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "36",
+      "UnitPrice" : "19.0000",
+      "Quantity" : "40",
+      "Discount" : "0"
+    }
+  }
+}

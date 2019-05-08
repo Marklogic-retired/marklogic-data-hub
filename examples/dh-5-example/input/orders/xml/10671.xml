@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-10-15T23:50:12</RequiredDate>
+  <ShipName>France restauration</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>21.0500</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>12</Quantity>
+      <ProductID>65</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-09-24T14:40:45</ShippedDate>
+  <ShipCity>Nantes</ShipCity>
+  <CustomerID>FRANR</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>44000</ShipPostalCode>
+  <OrderID>10671</OrderID>
+  <OrderDate>1997-09-17T00:10:12</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>54, rue Royale</ShipAddress>
+  <ShipCountry>France</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>30.3400</Freight>
+</Order>

@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-05T00:09:20</RequiredDate>
+  <ShipName>Godos Cocina Típica</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>21.0500</UnitPrice>
+      <Discount>0.05</Discount>
+      <Quantity>21</Quantity>
+      <ProductID>65</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-09T11:00:39</ShippedDate>
+  <ShipCity>Sevilla</ShipCity>
+  <CustomerID>GODOS</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>41101</ShipPostalCode>
+  <OrderID>10872</OrderID>
+  <OrderDate>1998-02-05T14:41:50</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>C/ Romero, 33</ShipAddress>
+  <ShipCountry>Spain</ShipCountry>
+  <EmployeeID>5</EmployeeID>
+  <Freight>175.3200</Freight>
+</Order>

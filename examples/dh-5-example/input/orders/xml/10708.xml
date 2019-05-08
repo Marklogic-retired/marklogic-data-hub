@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-11-28T21:03:31</RequiredDate>
+  <ShipName>The Big Cheese</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>19.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>5</Quantity>
+      <ProductID>36</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-11-05T02:45:44</ShippedDate>
+  <ShipCity>Portland</ShipCity>
+  <CustomerID>THEBI</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>97201</ShipPostalCode>
+  <OrderID>10708</OrderID>
+  <OrderDate>1997-10-17T04:37:26</OrderDate>
+  <ShipRegion>OR</ShipRegion>
+  <ShipAddress>89 Jefferson Way Suite 2</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>2.9600</Freight>
+</Order>

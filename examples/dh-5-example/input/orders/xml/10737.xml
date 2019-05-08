@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-12-09T00:23:35</RequiredDate>
+  <ShipName>Vins et alcools Chevalier</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>9.6500</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>12</Quantity>
+      <ProductID>41</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-11-18T07:31:23</ShippedDate>
+  <ShipCity>Reims</ShipCity>
+  <CustomerID>VINET</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>51100</ShipPostalCode>
+  <OrderID>10737</OrderID>
+  <OrderDate>1997-11-11T09:16:24</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>59 rue de l'Abbaye</ShipAddress>
+  <ShipCountry>France</ShipCountry>
+  <EmployeeID>2</EmployeeID>
+  <Freight>7.7900</Freight>
+</Order>

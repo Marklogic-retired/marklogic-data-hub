@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10683",
+  "CustomerID" : "DUMON",
+  "EmployeeID" : "2",
+  "OrderDate" : "1997-09-26T14:41:24",
+  "RequiredDate" : "1997-10-24T01:09:47",
+  "ShippedDate" : "1997-10-01T15:20:20",
+  "ShipVia" : "1",
+  "Freight" : "4.4000",
+  "ShipName" : "Du monde entier",
+  "ShipAddress" : "67, rue des Cinquante Otages",
+  "ShipCity" : "Nantes",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "44000",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "52",
+      "UnitPrice" : "7.0000",
+      "Quantity" : "9",
+      "Discount" : "0"
+    }
+  }
+}

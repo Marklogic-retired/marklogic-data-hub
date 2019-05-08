@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-01-07T18:27:49</RequiredDate>
+  <ShipName>Eastern Connection</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>17.2000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>5</Quantity>
+      <ProductID>71</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-12-04T19:14:00</ShippedDate>
+  <ShipCity>London</ShipCity>
+  <CustomerID>EASTC</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>WX3 6FW</ShipPostalCode>
+  <OrderID>10364</OrderID>
+  <OrderDate>1996-11-26T16:02:06</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>35 King George</ShipAddress>
+  <ShipCountry>UK</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>71.9700</Freight>
+</Order>

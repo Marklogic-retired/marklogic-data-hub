@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10762",
+  "CustomerID" : "FOLKO",
+  "EmployeeID" : "3",
+  "OrderDate" : "1997-12-02T18:13:30",
+  "RequiredDate" : "1997-12-30T09:51:58",
+  "ShippedDate" : "1997-12-09T03:02:01",
+  "ShipVia" : "1",
+  "Freight" : "328.7400",
+  "ShipName" : "Folk och fä HB",
+  "ShipAddress" : "Åkergatan 24",
+  "ShipCity" : "Bräcke",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "S-844 67",
+  "ShipCountry" : "Sweden",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "56",
+      "UnitPrice" : "38.0000",
+      "Quantity" : "60",
+      "Discount" : "0"
+    }
+  }
+}

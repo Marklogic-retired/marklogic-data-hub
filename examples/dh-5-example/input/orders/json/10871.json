@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10871",
+  "CustomerID" : "BONAP",
+  "EmployeeID" : "9",
+  "OrderDate" : "1998-02-05T17:10:06",
+  "RequiredDate" : "1998-03-05T02:42:57",
+  "ShippedDate" : "1998-02-10T03:47:01",
+  "ShipVia" : "2",
+  "Freight" : "112.2700",
+  "ShipName" : "Bon app'",
+  "ShipAddress" : "12, rue des Bouchers",
+  "ShipCity" : "Marseille",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "13008",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "17",
+      "UnitPrice" : "39.0000",
+      "Quantity" : "16",
+      "Discount" : "0.05"
+    }
+  }
+}

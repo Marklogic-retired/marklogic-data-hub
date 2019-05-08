@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10669",
+  "CustomerID" : "SIMOB",
+  "EmployeeID" : "2",
+  "OrderDate" : "1997-09-15T22:12:18",
+  "RequiredDate" : "1997-10-13T13:56:55",
+  "ShippedDate" : "1997-09-22T20:09:38",
+  "ShipVia" : "1",
+  "Freight" : "24.3900",
+  "ShipName" : "Simons bistro",
+  "ShipAddress" : "Vinbæltet 34",
+  "ShipCity" : "Kobenhavn",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "1734",
+  "ShipCountry" : "Denmark",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "36",
+      "UnitPrice" : "19.0000",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

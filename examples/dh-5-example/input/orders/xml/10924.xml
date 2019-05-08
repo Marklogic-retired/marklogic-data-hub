@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-03T01:10:37</RequiredDate>
+  <ShipName>Berglunds snabbköp</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>25.8900</UnitPrice>
+      <Discount>0.25</Discount>
+      <Quantity>40</Quantity>
+      <ProductID>30</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-12T02:43:22</ShippedDate>
+  <ShipCity>Luleå</ShipCity>
+  <CustomerID>BERGS</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>S-958 22</ShipPostalCode>
+  <OrderID>10924</OrderID>
+  <OrderDate>1998-02-03T20:01:30</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Berguvsvägen  8</ShipAddress>
+  <ShipCountry>Sweden</ShipCountry>
+  <EmployeeID>5</EmployeeID>
+  <Freight>109.1100</Freight>
+</Order>

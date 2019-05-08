@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-03-18T05:25:53</RequiredDate>
+  <ShipName>Consolidated Holdings</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>27.8000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>10</Quantity>
+      <ProductID>72</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-02-07T05:42:16</ShippedDate>
+  <ShipCity>London</ShipCity>
+  <CustomerID>CONSH</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>WX1 6LT</ShipPostalCode>
+  <OrderID>10435</OrderID>
+  <OrderDate>1997-02-04T23:05:31</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Berkeley Gardens 12  Brewery</ShipAddress>
+  <ShipCountry>UK</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>9.2100</Freight>
+</Order>

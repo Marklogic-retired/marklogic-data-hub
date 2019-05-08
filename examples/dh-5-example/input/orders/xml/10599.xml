@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-08-26T17:36:12</RequiredDate>
+  <ShipName>B's Beverages</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>49.3000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>10</Quantity>
+      <ProductID>62</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-07-21T05:34:03</ShippedDate>
+  <ShipCity>London</ShipCity>
+  <CustomerID>BSBEV</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>EC2 5NT</ShipPostalCode>
+  <OrderID>10599</OrderID>
+  <OrderDate>1997-07-15T10:21:47</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Fauntleroy Circus</ShipAddress>
+  <ShipCountry>UK</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>29.9800</Freight>
+</Order>

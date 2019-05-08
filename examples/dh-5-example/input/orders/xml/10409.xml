@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-02-06T10:27:42</RequiredDate>
+  <ShipName>Océano Atlántico Ltda.</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>8.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>12</Quantity>
+      <ProductID>21</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-01-14T17:53:37</ShippedDate>
+  <ShipCity>Buenos Aires</ShipCity>
+  <CustomerID>OCEAN</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>1010</ShipPostalCode>
+  <OrderID>10409</OrderID>
+  <OrderDate>1997-01-09T08:05:26</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Ing. Gustavo Moncada 8585 Piso 20-A</ShipAddress>
+  <ShipCountry>Argentina</ShipCountry>
+  <EmployeeID>3</EmployeeID>
+  <Freight>29.8300</Freight>
+</Order>

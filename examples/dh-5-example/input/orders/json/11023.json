@@ -1,0 +1,24 @@
+{
+  "OrderID" : "11023",
+  "CustomerID" : "BSBEV",
+  "EmployeeID" : "1",
+  "OrderDate" : "1998-04-14T23:45:46",
+  "RequiredDate" : "1998-04-28T08:51:45",
+  "ShippedDate" : "1998-04-24T13:10:14",
+  "ShipVia" : "2",
+  "Freight" : "123.8300",
+  "ShipName" : "B's Beverages",
+  "ShipAddress" : "Fauntleroy Circus",
+  "ShipCity" : "London",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "EC2 5NT",
+  "ShipCountry" : "UK",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "43",
+      "UnitPrice" : "46.0000",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

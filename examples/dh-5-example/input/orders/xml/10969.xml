@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-04-20T09:49:09</RequiredDate>
+  <ShipName>Comércio Mineiro</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>12.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>9</Quantity>
+      <ProductID>46</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-03-30T04:06:43</ShippedDate>
+  <ShipCity>Sao Paulo</ShipCity>
+  <CustomerID>COMMI</CustomerID>
+  <ShipVia>2</ShipVia>
+  <ShipPostalCode>05432-043</ShipPostalCode>
+  <OrderID>10969</OrderID>
+  <OrderDate>1998-03-23T03:22:49</OrderDate>
+  <ShipRegion>SP</ShipRegion>
+  <ShipAddress>Av. dos Lusíadas, 23</ShipAddress>
+  <ShipCountry>Brazil</ShipCountry>
+  <EmployeeID>1</EmployeeID>
+  <Freight>0.2100</Freight>
+</Order>

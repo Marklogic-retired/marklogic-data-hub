@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1997-04-09T13:32:02</RequiredDate>
+  <ShipName>Seven Seas Imports</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>42.4000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>18</Quantity>
+      <ProductID>51</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1997-03-19T12:42:42</ShippedDate>
+  <ShipCity>London</ShipCity>
+  <CustomerID>SEVES</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>OX15 4NB</ShipPostalCode>
+  <OrderID>10472</OrderID>
+  <OrderDate>1997-03-12T14:35:20</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>90 Wadhurst Rd.</ShipAddress>
+  <ShipCountry>UK</ShipCountry>
+  <EmployeeID>8</EmployeeID>
+  <Freight>4.2000</Freight>
+</Order>

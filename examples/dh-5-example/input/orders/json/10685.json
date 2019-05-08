@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10685",
+  "CustomerID" : "GOURL",
+  "EmployeeID" : "4",
+  "OrderDate" : "1997-09-29T10:00:52",
+  "RequiredDate" : "1997-10-13T16:21:45",
+  "ShippedDate" : "1997-10-03T12:11:04",
+  "ShipVia" : "2",
+  "Freight" : "33.7500",
+  "ShipName" : "Gourmet Lanchonetes",
+  "ShipAddress" : "Av. Brasil, 442",
+  "ShipCity" : "Campinas",
+  "ShipRegion" : "SP",
+  "ShipPostalCode" : "04876-786",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "47",
+      "UnitPrice" : "9.5000",
+      "Quantity" : "15",
+      "Discount" : "0"
+    }
+  }
+}

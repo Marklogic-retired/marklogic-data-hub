@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10680",
+  "CustomerID" : "OLDWO",
+  "EmployeeID" : "1",
+  "OrderDate" : "1997-09-24T03:54:05",
+  "RequiredDate" : "1997-10-22T05:04:12",
+  "ShippedDate" : "1997-09-26T21:06:49",
+  "ShipVia" : "1",
+  "Freight" : "26.6100",
+  "ShipName" : "Old World Delicatessen",
+  "ShipAddress" : "2743 Bering St.",
+  "ShipCity" : "Anchorage",
+  "ShipRegion" : "AK",
+  "ShipPostalCode" : "99508",
+  "ShipCountry" : "USA",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "42",
+      "UnitPrice" : "14.0000",
+      "Quantity" : "40",
+      "Discount" : "0.25"
+    }
+  }
+}

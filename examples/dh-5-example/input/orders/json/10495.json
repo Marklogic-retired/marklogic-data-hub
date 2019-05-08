@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10495",
+  "CustomerID" : "LAUGB",
+  "EmployeeID" : "3",
+  "OrderDate" : "1997-04-03T22:15:06",
+  "RequiredDate" : "1997-05-01T02:35:48",
+  "ShippedDate" : "1997-04-11T07:16:14",
+  "ShipVia" : "3",
+  "Freight" : "4.6500",
+  "ShipName" : "Laughing Bacchus Wine Cellars",
+  "ShipAddress" : "2319 Elm St.",
+  "ShipCity" : "Vancouver",
+  "ShipRegion" : "BC",
+  "ShipPostalCode" : "V3F 2K1",
+  "ShipCountry" : "Canada",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "77",
+      "UnitPrice" : "10.4000",
+      "Quantity" : "5",
+      "Discount" : "0"
+    }
+  }
+}

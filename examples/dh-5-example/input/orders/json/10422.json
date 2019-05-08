@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10422",
+  "CustomerID" : "FRANS",
+  "EmployeeID" : "2",
+  "OrderDate" : "1997-01-22T22:16:49",
+  "RequiredDate" : "1997-02-19T05:31:57",
+  "ShippedDate" : "1997-01-31T15:19:50",
+  "ShipVia" : "1",
+  "Freight" : "3.0200",
+  "ShipName" : "Franchi S.p.A.",
+  "ShipAddress" : "Via Monte Bianco 34",
+  "ShipCity" : "Torino",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "10100",
+  "ShipCountry" : "Italy",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "26",
+      "UnitPrice" : "24.9000",
+      "Quantity" : "2",
+      "Discount" : "0"
+    }
+  }
+}

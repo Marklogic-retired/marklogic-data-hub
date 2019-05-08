@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10671",
+  "CustomerID" : "FRANR",
+  "EmployeeID" : "1",
+  "OrderDate" : "1997-09-17T00:10:12",
+  "RequiredDate" : "1997-10-15T23:50:12",
+  "ShippedDate" : "1997-09-24T14:40:45",
+  "ShipVia" : "1",
+  "Freight" : "30.3400",
+  "ShipName" : "France restauration",
+  "ShipAddress" : "54, rue Royale",
+  "ShipCity" : "Nantes",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "44000",
+  "ShipCountry" : "France",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "65",
+      "UnitPrice" : "21.0500",
+      "Quantity" : "12",
+      "Discount" : "0"
+    }
+  }
+}

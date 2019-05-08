@@ -1,0 +1,24 @@
+{
+  "OrderID" : "11041",
+  "CustomerID" : "CHOPS",
+  "EmployeeID" : "3",
+  "OrderDate" : "1998-04-22T07:13:15",
+  "RequiredDate" : "1998-05-20T18:51:39",
+  "ShippedDate" : "1998-04-28T19:20:32",
+  "ShipVia" : "2",
+  "Freight" : "48.2200",
+  "ShipName" : "Chop-suey Chinese",
+  "ShipAddress" : "Hauptstr. 31",
+  "ShipCity" : "Bern",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "3012",
+  "ShipCountry" : "Switzerland",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "63",
+      "UnitPrice" : "43.9000",
+      "Quantity" : "30",
+      "Discount" : "0"
+    }
+  }
+}

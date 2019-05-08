@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-18T22:15:13</RequiredDate>
+  <ShipName>Ernst Handel</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>34.0000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>100</Quantity>
+      <ProductID>60</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-23T02:07:46</ShippedDate>
+  <ShipCity>Graz</ShipCity>
+  <CustomerID>ERNSH</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>8010</ShipPostalCode>
+  <OrderID>10895</OrderID>
+  <OrderDate>1998-02-18T02:18:35</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Kirchgasse 6</ShipAddress>
+  <ShipCountry>Austria</ShipCountry>
+  <EmployeeID>3</EmployeeID>
+  <Freight>162.7500</Freight>
+</Order>

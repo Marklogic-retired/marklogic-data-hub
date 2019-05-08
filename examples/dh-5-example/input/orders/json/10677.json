@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10677",
+  "CustomerID" : "ANTON",
+  "EmployeeID" : "1",
+  "OrderDate" : "1997-09-22T23:37:25",
+  "RequiredDate" : "1997-10-20T03:30:31",
+  "ShippedDate" : "1997-09-26T11:15:19",
+  "ShipVia" : "3",
+  "Freight" : "4.0300",
+  "ShipName" : "Antonio Moreno Taquería",
+  "ShipAddress" : "Mataderos  2312",
+  "ShipCity" : "México D.F.",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "05023",
+  "ShipCountry" : "Mexico",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "33",
+      "UnitPrice" : "2.5000",
+      "Quantity" : "8",
+      "Discount" : "0.15"
+    }
+  }
+}

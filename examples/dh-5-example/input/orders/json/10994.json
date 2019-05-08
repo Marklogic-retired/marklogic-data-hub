@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10994",
+  "CustomerID" : "VAFFE",
+  "EmployeeID" : "2",
+  "OrderDate" : "1998-04-02T19:33:54",
+  "RequiredDate" : "1998-04-16T04:50:26",
+  "ShippedDate" : "1998-04-09T11:36:17",
+  "ShipVia" : "3",
+  "Freight" : "65.5300",
+  "ShipName" : "Vaffeljernet",
+  "ShipAddress" : "Smagsloget 45",
+  "ShipCity" : "Århus",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "8200",
+  "ShipCountry" : "Denmark",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "59",
+      "UnitPrice" : "55.0000",
+      "Quantity" : "18",
+      "Discount" : "0.05"
+    }
+  }
+}

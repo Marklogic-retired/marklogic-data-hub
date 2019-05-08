@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1998-03-24T00:21:04</RequiredDate>
+  <ShipName>White Clover Markets</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>49.3000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>35</Quantity>
+      <ProductID>62</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1998-02-27T02:03:48</ShippedDate>
+  <ShipCity>Seattle</ShipCity>
+  <CustomerID>WHITC</CustomerID>
+  <ShipVia>3</ShipVia>
+  <ShipPostalCode>98124</ShipPostalCode>
+  <OrderID>10904</OrderID>
+  <OrderDate>1998-02-24T11:50:25</OrderDate>
+  <ShipRegion>WA</ShipRegion>
+  <ShipAddress>1029 - 12th Ave. S.</ShipAddress>
+  <ShipCountry>USA</ShipCountry>
+  <EmployeeID>3</EmployeeID>
+  <Freight>162.9500</Freight>
+</Order>

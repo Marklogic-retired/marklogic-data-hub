@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10956",
+  "CustomerID" : "BLAUS",
+  "EmployeeID" : "6",
+  "OrderDate" : "1998-03-17T09:50:46",
+  "RequiredDate" : "1998-04-28T15:46:10",
+  "ShippedDate" : "1998-03-20T16:56:52",
+  "ShipVia" : "2",
+  "Freight" : "44.6500",
+  "ShipName" : "Blauer See Delikatessen",
+  "ShipAddress" : "Forsterstr. 57",
+  "ShipCity" : "Mannheim",
+  "ShipRegion" : null,
+  "ShipPostalCode" : "68306",
+  "ShipCountry" : "Germany",
+  "OrderDetails" : {
+    "OrderDetail" : {
+      "ProductID" : "51",
+      "UnitPrice" : "53.0000",
+      "Quantity" : "8",
+      "Discount" : "0"
+    }
+  }
+}
