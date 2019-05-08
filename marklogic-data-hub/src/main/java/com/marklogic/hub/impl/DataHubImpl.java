@@ -263,7 +263,8 @@ public class DataHubImpl implements DataHub {
                 versionString = versions.getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 9) {
+            //Future proofing against 10 since we have an ES incompatibility that needs resolving
+            if (major != 9) {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
@@ -277,10 +278,6 @@ public class DataHubImpl implements DataHub {
                 if (!isNightly && (ver < 9070 || ver > 9095)) {
                     return false;
                 }
-            }
-            //Future proofing against 10 since we have an ES incompatibility that needs resolving
-            if(major == 10) {
-                return false;
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
