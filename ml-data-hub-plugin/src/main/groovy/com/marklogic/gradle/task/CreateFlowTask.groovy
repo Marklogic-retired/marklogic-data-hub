@@ -32,7 +32,7 @@ class CreateFlowTask extends HubTask {
                 scaffolding.createDefaultFlow(flowName.toString())
 
                 println "IMPORTANT: Your new flow configuration file \"flows/" + flowName + ".flow.json\" contains step templates with " +
-                    "example values. The flow will not run as is. " +
+                    "example values, such as 'inputFilePath' and 'entity-name'. The flow will not run as is. " +
                     "You MUST customize the steps for your project before running the flow."
             }
         }
