@@ -217,14 +217,19 @@ class Flow {
     if (!combinedOptions.noWrite) {
       writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
     }
+    let stepDefTypeLowerCase = (stepDetails.type) ? stepDetails.type.toLowerCase(): stepDetails.type;
+    let stepName = stepRef.name || stepRef.stepDefinitionName;
     for (let content of this.writeQueue) {
       let info = {
         derivedFrom: content.previousUri || content.uri,
-        influencedBy: stepRef.stepDefinitionName,
-        status: (stepDetails.type === 'INGESTION') ? 'created' : 'updated',
+        influencedBy: stepName,
+        status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
         metadata: {}
       };
-      this.datahub.prov.createStepRecord(jobId, flowName, stepRef.name, stepRef.stepDefinitionName, stepRef.stepDefinitionType.toLowerCase(), content.uri, info);
+      let provResult = this.datahub.prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+      if (provResult instanceof Error) {
+        flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+      }
     }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";

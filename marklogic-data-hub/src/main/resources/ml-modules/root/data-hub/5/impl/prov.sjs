@@ -123,7 +123,15 @@ class Provenance {
         isValid = new Error(`Step type ${stepDefinitionType} not defined.  Must be of type: 'ingestion','mapping','mastering','custom'.`);
       }
     } else {
-      isValid = new Error(`Function requires all params 'flowId', 'stepName', 'stepDefinitionName', 'stepDefinitionType' and 'info' to be defined.`);
+      let missingParams = [
+        ['flowId',flowId],
+        ['stepName',stepName],
+        ['stepDefinitionName',stepDefinitionName],
+        ['stepDefinitionType',stepDefinitionType],
+        ['info', info]
+      ].filter((pair) => !pair[1])
+        .reduce((pair) => pair[0]);
+      isValid = new Error(`Function requires all params 'flowId', 'stepName', 'stepDefinitionName', 'stepDefinitionType' and 'info' to be defined. Missing: ${missingParams.join(', ')}`);
     }
     return isValid;
   }  
