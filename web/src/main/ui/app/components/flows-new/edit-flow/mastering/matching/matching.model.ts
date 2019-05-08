@@ -66,7 +66,7 @@ export class Matching {
         result.thresholds['threshold'].push(new Threshold(t));
       })
     }
-    if(config.tuning.maxScan) {
+    if(config.tuning && config.tuning.maxScan) {
       result.tuning['maxScan'] = config.tuning.maxScan;
     }
     return result;
