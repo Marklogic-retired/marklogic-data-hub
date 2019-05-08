@@ -179,7 +179,9 @@ class Flow {
       options.collections,
       ((stepRef.options || {}).collections || (stepDetails.options || {}).collections),
       (flow.options || {}).collections
-    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])));
+    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
+      // filter out any null/empty collections that may exist
+      .filter((col) => !!col);
     this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
     this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
