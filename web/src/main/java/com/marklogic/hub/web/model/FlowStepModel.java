@@ -167,14 +167,10 @@ public class FlowStepModel {
             sm.id = step.getName() + "-" + stepType;
             sm.stepKey = name;
             sm.name = stepName;
-            if (sm.name.startsWith("default-")) {
-                sm.id = sm.name;
-            } else {
-                sm.id = sm.name + "-" + stepType;
-            }
+            sm.id = sm.name + "-" + stepType;
             sm.stepDefinitionType = stepType;
             if (step.getOptions() != null && step.getOptions().get("targetEntity") != null &&
-                                                step.getOptions().get("targetEntity") instanceof TextNode) {
+                step.getOptions().get("targetEntity") instanceof TextNode) {
                 TextNode node = (TextNode) step.getOptions().get("targetEntity");
                 sm.targetEntity = node.asText();
             }

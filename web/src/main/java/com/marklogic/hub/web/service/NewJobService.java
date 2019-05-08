@@ -223,11 +223,7 @@ public class NewJobService extends ResourceManager {
             js.name = step.getName();
             js.stepDefinitionName = step.getStepDefinitionName();
             js.stepDefinitionType = step.getStepDefinitionType().toString();
-            if (js.name.startsWith("default-")) {
-                js.id = js.name;
-            } else {
-                js.id = step.getName() + "-" + js.stepDefinitionType;
-            }
+            js.id = step.getName() + "-" + js.stepDefinitionType;
             Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetEntity = ((TextNode) o.getOrDefault("targetEntity", new TextNode(""))).asText());
             Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetDatabase = ((TextNode) o.getOrDefault("targetDatabase", new TextNode(""))).asText());
 

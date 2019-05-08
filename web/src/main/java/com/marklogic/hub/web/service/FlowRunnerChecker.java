@@ -6,11 +6,12 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FlowRunnerChecker {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -18,6 +19,7 @@ public class FlowRunnerChecker {
     static class StepCounters {
         long successfulEvents;
         long failedEvents;
+
         public StepCounters(long successfulEvents, long failedEvents) {
             this.successfulEvents = successfulEvents;
             this.failedEvents = failedEvents;
@@ -35,11 +37,7 @@ public class FlowRunnerChecker {
         this.flowRunner = flowRunner;
         flowRunner.onStatusChanged((jobId, step, jobStatus, percentComplete, successfulEvents, failedEvents, message) -> {
             latestJob.id = jobId;
-            if (step.getName().startsWith("default-")) {
-                latestJob.stepId = step.getName();
-            } else {
-                latestJob.stepId = step.getName() + "-" + step.getStepDefinitionType();
-            }
+            latestJob.stepId = step.getName() + "-" + step.getStepDefinitionType();
             latestJob.stepName = step.getName();
             latestJob.stepRunningPercent = percentComplete;
 
@@ -69,11 +67,12 @@ public class FlowRunnerChecker {
                 if (latestJob.status.startsWith(JobStatus.RUNNING_PREFIX)) {
                     latestJob.successfulEvents = successfulEvents;
                     latestJob.failedEvents = failedEvents;
-                } else if (JobStatus.isStepDone(latestJob.status) || JobStatus.isJobDone(latestJob.status)) {
+                }
+                else if (JobStatus.isStepDone(latestJob.status) || JobStatus.isJobDone(latestJob.status)) {
                     completedSteps.putIfAbsent(latestJob.stepId, new StepCounters(successfulEvents, failedEvents));
                     latestJob.successfulEvents = 0;
                     latestJob.failedEvents = 0;
-                    completedSteps.values().forEach( c -> {
+                    completedSteps.values().forEach(c -> {
                         latestJob.successfulEvents += c.successfulEvents;
                         latestJob.failedEvents += c.failedEvents;
                     });
