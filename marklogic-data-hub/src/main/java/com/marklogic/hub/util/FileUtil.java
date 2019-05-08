@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FileUtil {
@@ -45,6 +46,7 @@ public class FileUtil {
                 }
             }
         }
+        Collections.sort(folders);
         return folders;
     }
     public static List<String> listDirectFolders(String rootDirectoryName) {
@@ -64,6 +66,7 @@ public class FileUtil {
                 }
             }
         }
+        Collections.sort(filenames);
         return filenames;
     }
     public static List<String> listDirectFiles(String rootDirectoryName) {
