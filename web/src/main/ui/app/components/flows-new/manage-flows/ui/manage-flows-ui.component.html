@@ -121,7 +121,7 @@
                     color="primary"
                     class="run-flow-button"
                     *ngIf="checkRunStatus(flow)"
-                    [disabled]="flow.steps.length ? false : true"
+                    [disabled]="checkRunDisabled(flow)"
                     (click)="openRunDialog(flow)"
             >
               <span>RUN</span>

@@ -21,6 +21,7 @@ function get(context, params) {
   let jobId = params["jobid"];
   let status = params["status"];
   let flow = params["flow-name"];
+  let latest = params["latest"];
 
   let resp = null;
 
@@ -35,6 +36,9 @@ function get(context, params) {
   }
   else if (fn.exists(flow)) {
     resp = datahub.jobs.getJobDocsByFlow(flow);
+  }
+  else if (fn.exists(latest)) {
+    resp = datahub.jobs.getLastestJobDocPerFlow();
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));

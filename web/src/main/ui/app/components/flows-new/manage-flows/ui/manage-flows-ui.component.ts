@@ -39,6 +39,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    console.log('manage flows', this.flows);
     this.dataSource = new MatTableDataSource<Flow>(this.flows);
   }
 
@@ -48,7 +49,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   }
 
   updateDataSource() {
-    this.dataSource.data = this.flows
+    this.dataSource.data = this.flows;
   }
 
   openRunDialog(flow: Flow) {
@@ -149,6 +150,17 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
       } else {
         return true;
       }
+    } else {
+      return true;
+    }
+  }
+
+  checkRunDisabled(flow: Flow): boolean {
+    if (flow.steps.length) {
+      if (flow.latestJob === null) {
+        return true;
+      }
+      return false;
     } else {
       return true;
     }

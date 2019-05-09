@@ -77,12 +77,12 @@ class Step {
   }
 
   getStepsByType(type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('type', type)];
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
     return cts.search(cts.andQuery(query)).toArray();
   }
 
   getStepByNameAndType(name, type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, 'case-insensitive'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
     let doc = fn.head(cts.search(cts.andQuery(query)));
     if(doc) {
       return doc.toObject();
@@ -90,7 +90,7 @@ class Step {
   }
 
   getStepProcessor(flow, name, type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, 'case-insensitive'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
     let doc = fn.head(cts.search(cts.andQuery(query)));
     if(doc){
       doc = doc.toObject();
