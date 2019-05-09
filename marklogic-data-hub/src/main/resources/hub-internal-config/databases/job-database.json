@@ -23,7 +23,7 @@
       "localname": "flow",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
-      "invalid-values": "reject"
+      "invalid-values": "ignore"
     },
     {
       "scalar-type": "dateTime",
@@ -31,7 +31,7 @@
       "localname": "startTime",
       "collation": "",
       "range-value-positions": false,
-      "invalid-values": "reject"
+      "invalid-values": "ignore"
     },
     {
       "scalar-type": "dateTime",
@@ -39,7 +39,7 @@
       "localname": "endTime",
       "collation": "",
       "range-value-positions": false,
-      "invalid-values": "reject"
+      "invalid-values": "ignore"
     },
     {
       "scalar-type": "dateTime",
@@ -47,7 +47,7 @@
       "localname": "timeStarted",
       "collation": "",
       "range-value-positions": false,
-      "invalid-values": "reject"
+      "invalid-values": "ignore"
     },
     {
       "scalar-type": "dateTime",
@@ -55,7 +55,7 @@
       "localname": "timeEnded",
       "collation": "",
       "range-value-positions": false,
-      "invalid-values": "reject"
+      "invalid-values": "ignore"
     },
     {
       "scalar-type": "string",
