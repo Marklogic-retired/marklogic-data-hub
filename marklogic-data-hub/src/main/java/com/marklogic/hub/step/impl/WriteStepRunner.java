@@ -405,14 +405,16 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
             JsonNode jobDoc;
             try {
-                try {
-                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
-                } catch (Exception e) {
-                    throw e;
-                }
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
+            }
+            catch (Exception e) {
+                throw e;
+            }
+            try {
                 return StepRunnerUtil.getResponse(jobDoc, step);
-            } catch (Exception ex) {
-            } finally {
+            }
+            catch (Exception ex)
+            {
                 return runStepResponse;
             }
         }
