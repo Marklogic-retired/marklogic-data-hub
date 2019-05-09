@@ -11,14 +11,13 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
 public class FlowStepModel {
     private String id;
@@ -186,17 +185,20 @@ public class FlowStepModel {
     public void setJobs(FlowJobs flowJobs, boolean fromRunFlow) {
         if(flowJobs != null) {
             this.jobIds = flowJobs.jobIds;
-            if (latestJob != null && latestJob.id != null && !this.jobIds.contains(latestJob.id)) {
+            if (fromRunFlow) {
+                //reset the latestJob info until the running flow starts with a new jobId
+                flowJobs.latestJob = null;
+                this.latestJob = null;
+                return;
+            } else if (latestJob != null && (latestJob.id != null && !this.jobIds.contains(latestJob.id))) {
                 this.jobIds.add(latestJob.id);
                 flowJobs.jobIds = this.jobIds;
                 flowJobs.latestJob = latestJob;
                 return;
             }
-            if (fromRunFlow) {
-                //reset the latestJob info for until the running flow starts with a new jobId
-                flowJobs.latestJob = null;
+            if (flowJobs.latestJob != null) {
+                this.latestJob = flowJobs.latestJob;
             }
-            this.latestJob = flowJobs.latestJob;
         }
     }
 
