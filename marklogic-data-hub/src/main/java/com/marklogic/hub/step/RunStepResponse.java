@@ -132,6 +132,10 @@ public class RunStepResponse {
         return jobId;
     }
 
+    public String getFlowName() {
+        return flowName;
+    }
+
     public Map<String, Object> getFullOutput() {
         return fullOutput;
     }

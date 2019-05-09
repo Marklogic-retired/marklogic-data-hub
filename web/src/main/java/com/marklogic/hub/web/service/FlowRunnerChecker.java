@@ -1,17 +1,17 @@
 package com.marklogic.hub.web.service;
 
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class FlowRunnerChecker {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -28,22 +28,24 @@ public class FlowRunnerChecker {
 
     private static FlowRunnerChecker instance;
     private FlowRunnerImpl flowRunner;
-    private LatestJob latestJob;
-    private Map<String, StepCounters> completedSteps;
+    private Map<String, LatestJob> latestJobByFlow;
+    private Map<String, Map<String, StepCounters>> completedStepsByFlow;
 
     private FlowRunnerChecker(FlowRunnerImpl flowRunner) {
-        latestJob = new LatestJob();
-        completedSteps = new HashMap<>();
+        latestJobByFlow = new HashMap<>();
+        completedStepsByFlow = new HashMap<>();
         this.flowRunner = flowRunner;
         flowRunner.onStatusChanged((jobId, step, jobStatus, percentComplete, successfulEvents, failedEvents, message) -> {
+            RunFlowResponse rfr = flowRunner.getJobResponseById(jobId);
+            logger.debug(rfr.toString());
+            String flowName = rfr.getFlowName();
+            LatestJob latestJob = latestJobByFlow.get(flowName);
+            Map<String, StepCounters> completedSteps = completedStepsByFlow.get(flowName);
+            //logger.debug(String.format("pct: %s, msg: %s, jobid: %s", latestJob.stepRunningPercent, message, jobId));
             latestJob.id = jobId;
             latestJob.stepId = step.getName() + "-" + step.getStepDefinitionType();
             latestJob.stepName = step.getName();
             latestJob.stepRunningPercent = percentComplete;
-
-            logger.debug(String.format("pct: %s, msg: %s, jobid: %s", latestJob.stepRunningPercent, message, jobId));
-            RunFlowResponse rfr = flowRunner.getJobResponseById(jobId);
-            logger.debug(rfr.toString());
 
             latestJob.startTime = rfr.getStartTime();
             latestJob.endTime = rfr.getEndTime();
@@ -91,13 +93,18 @@ public class FlowRunnerChecker {
         return instance;
     }
 
-    public LatestJob getLatestJob() {
+    public LatestJob getLatestJob(Flow flow) {
+        LatestJob latestJob = latestJobByFlow.get(flow.getName());
         if (!flowRunner.isJobRunning() && StringUtils.isNotEmpty(latestJob.endTime)) {
             LatestJob retJob = latestJob;
-            latestJob = new LatestJob();
-            completedSteps = new HashMap<>();
+            resetLatestJob(flow);
             return retJob;
         }
         return latestJob;
+    }
+
+    public void resetLatestJob(Flow flow) {
+        latestJobByFlow.put(flow.getName(), new LatestJob());
+        completedStepsByFlow.put(flow.getName(), new HashMap<>());
     }
 }

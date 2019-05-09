@@ -137,6 +137,7 @@ export default function(qaProjectDir) {
             await stepsPage.clickStepSourceCollectionOption("SimpleJSONIngest");
             await stepsPage.clickStepTargetEntityDropDown();
             browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("SimpleJSON")));
+            browser.sleep(5000);
             await stepsPage.clickStepTargetEntityOption("SimpleJSON");
             await stepsPage.clickStepCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
@@ -222,6 +223,7 @@ export default function(qaProjectDir) {
             await stepsPage.clickStepSourceCollectionOption("SimpleJSONMapping");
             await stepsPage.clickStepTargetEntityDropDown();
             browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("SimpleJSON")));
+            browser.sleep(5000);
             await stepsPage.clickStepTargetEntityOption("SimpleJSON");
             await stepsPage.clickStepCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));

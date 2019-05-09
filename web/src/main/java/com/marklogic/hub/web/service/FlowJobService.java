@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-
 @Service
 public class FlowJobService extends ResourceManager {
     private static final String ML_JOBS_NAME = "ml:jobs";
@@ -46,7 +45,7 @@ public class FlowJobService extends ResourceManager {
 
     //use a cache with ttl 5 minutes to reduce frequency for fetching data from DB
     public final Cache<String, FlowJobs> cachedJobsByFlowName = CacheBuilder.newBuilder().expireAfterWrite(
-        5, TimeUnit.MINUTES).build();
+        5, TimeUnit.SECONDS).build();
 
     public FlowJobService() {
         super();
@@ -56,127 +55,132 @@ public class FlowJobService extends ResourceManager {
     }
 
     private void setupClient() {
-        this.client = hubConfig.newJobDbClient();
+        client = hubConfig.newJobDbClient();
     }
 
-    public FlowJobs getJobs(String flowName) {
-        if (this.client == null) {
-            this.setupClient();
+    public FlowJobs getJobs(String flowName, boolean forceRefresh) {
+        if (forceRefresh) {
+            FlowJobs flowJobs = retrieveJobsByFlowName(flowName);
+            cachedJobsByFlowName.put(flowName, flowJobs);
+            return flowJobs;
         }
         try {
-            return cachedJobsByFlowName.get(flowName, () -> {
-                client.init(ML_JOBS_NAME, this);
-                RequestParameters params = new RequestParameters();
-                if (StringUtils.isNotEmpty(flowName)) {
-                    params.add("flow-name", flowName);
-                }
-
-                ServiceResultIterator resultItr = this.getServices().get(params);
-                if (resultItr == null || !resultItr.hasNext()) {
-                    throw new RuntimeException("Unable to get job document");
-                }
-                ServiceResult res = resultItr.next();
-                JsonNode jsonNode = res.getContent(new JacksonHandle()).get();
-
-                Flow flow = flowManager.getFlow(flowName);
-                Map<String, Step> steps = flow.getSteps();
-
-                List<String> jobs = new ArrayList<>();
-                LatestJob latestJob = new LatestJob();
-                FlowJobs flowJobs = new FlowJobs(jobs, latestJob);
-
-                final JsonNode[] lastJob = {null};
-                final String[] lastTime = {null, null}; //store last start and end time
-                if (jsonNode.isArray()) {
-                    jsonNode.forEach(job -> {
-                        JSONObject jobJson = new JSONObject(job.get("job"));
-                        String jobId = jobJson.getString("jobId");
-                        jobs.add(jobId);
-                        String currStartTime = jobJson.getString("timeStarted", "");
-                        String currEndTime = jobJson.getString("timeEnded", "");
-                        if (StringUtils.isEmpty(lastTime[0])) {
-                            lastTime[0] = currStartTime;
-                            lastTime[1] = currEndTime;
-                            lastJob[0] = jobJson.jsonNode();
-                        }
-                        else {
-                            try {
-                                int cmp = DatatypeConverter.parseDateTime(lastTime[0]).getTime().compareTo(DatatypeConverter.parseDateTime(currStartTime).getTime());
-                                if (cmp < 0) {
-                                    lastTime[0] = currStartTime;
-                                    lastTime[1] = currEndTime;
-                                    //lastJobId[0] = jobId;
-                                    lastJob[0] = jobJson.jsonNode();
-                                }
-                                else if (cmp == 0) { //compare end time just in case
-                                    if (DatatypeConverter.parseDateTime(lastTime[1]).getTime().compareTo(DatatypeConverter.parseDateTime(currEndTime).getTime()) < 0) {
-                                        lastTime[0] = currStartTime;
-                                        lastTime[1] = currEndTime;
-                                        lastJob[0] = jobJson.jsonNode();
-                                    }
-                                }
-                            }
-                            catch (Exception e) {
-                                //ignore, maybe log
-                            }
-                        }
-                    });
-                }
-
-                if (jobs.isEmpty() || lastJob[0] == null) {
-                    return flowJobs;
-                }
-                JSONObject jobJson = new JSONObject(lastJob[0]);
-
-                latestJob.id = jobJson.getString("jobId");
-                latestJob.startTime = jobJson.getString("timeStarted", "");
-                latestJob.endTime = jobJson.getString("timeEnded", "");
-                latestJob.status = jobJson.getString("jobStatus");
-
-                String completedKey = jobJson.getString("lastCompletedStep", "0");
-                String attemptedKey = jobJson.getString("lastAttemptedStep", "0");
-                String stepKey = Integer.compare(Integer.valueOf(completedKey), Integer.valueOf(attemptedKey)) < 0 ? attemptedKey : completedKey;
-                Optional.ofNullable(steps.get(stepKey)).ifPresent(s -> {
-                    latestJob.stepName = s.getName();
-                    latestJob.stepId = s.getName() + "-" + s.getStepDefinitionType();
-                });
-
-                JsonNode stepRes = jobJson.getNode("stepResponses");
-
-                if (stepRes != null) {
-                    stepRes.forEach(s -> {
-                        latestJob.successfulEvents += s.get("successfulEvents").asLong();
-                        latestJob.failedEvents += s.get("failedEvents").asLong();
-                        latestJob.output = s.get("stepOutput"); //last step output ?
-                    });
-                }
-
-                return flowJobs;
-            });
-        }
-        catch (Exception e) {
-
-        }
-        finally {
+            return cachedJobsByFlowName.get(flowName, () -> retrieveJobsByFlowName(flowName));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
             if (cachedJobsByFlowName.getIfPresent(flowName) == null) {
                 cachedJobsByFlowName.invalidate(flowName);
             }
-            this.release();
         }
+
         return cachedJobsByFlowName.getIfPresent(flowName);
     }
 
-    //TODO: fix this whole client mess and properly report exceptions
+    private FlowJobs retrieveJobsByFlowName(String flowName) {
+        if (client == null) {
+            setupClient();
+        }
+        client.init(ML_JOBS_NAME, this);
+        RequestParameters params = new RequestParameters();
+        if (StringUtils.isNotEmpty(flowName)) {
+            params.add("flow-name", flowName);
+        }
+
+        ServiceResultIterator resultItr = this.getServices().get(params);
+        if (resultItr == null || !resultItr.hasNext()) {
+            throw new RuntimeException("No jobs found for flow with name: " + flowName);
+        }
+        ServiceResult res = resultItr.next();
+        JsonNode jsonNode = res.getContent(new JacksonHandle()).get();
+
+        Flow flow = flowManager.getFlow(flowName);
+        Map<String, Step> steps = flow.getSteps();
+
+        List<String> jobs = new ArrayList<>();
+        LatestJob latestJob = new LatestJob();
+        FlowJobs flowJobs = new FlowJobs(jobs, latestJob);
+
+        final JsonNode[] lastJob = {null};
+        final String[] lastTime = {null, null}; //store last start and end time
+        if (jsonNode.isArray()) {
+            jsonNode.forEach(job -> {
+                JSONObject jobJson = new JSONObject(job.get("job"));
+                String jobId = jobJson.getString("jobId");
+                jobs.add(jobId);
+                String currStartTime = jobJson.getString("timeStarted", "");
+                String currEndTime = jobJson.getString("timeEnded", "");
+                if (StringUtils.isEmpty(lastTime[0])) {
+                    lastTime[0] = currStartTime;
+                    lastTime[1] = currEndTime;
+                    lastJob[0] = jobJson.jsonNode();
+                } else {
+                    try {
+                        int cmp = DatatypeConverter.parseDateTime(lastTime[0]).getTime().compareTo(DatatypeConverter.parseDateTime(currStartTime).getTime());
+                        if (cmp < 0) {
+                            lastTime[0] = currStartTime;
+                            lastTime[1] = currEndTime;
+                            //lastJobId[0] = jobId;
+                            lastJob[0] = jobJson.jsonNode();
+                        } else if (cmp == 0) { //compare end time just in case
+                            if (DatatypeConverter.parseDateTime(lastTime[1]).getTime().compareTo(DatatypeConverter.parseDateTime(currEndTime).getTime()) < 0) {
+                                lastTime[0] = currStartTime;
+                                lastTime[1] = currEndTime;
+                                lastJob[0] = jobJson.jsonNode();
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+            });
+        }
+
+        if (jobs.isEmpty() || lastJob[0] == null) {
+            return flowJobs;
+        }
+        JSONObject jobJson = new JSONObject(lastJob[0]);
+
+        latestJob.id = jobJson.getString("jobId");
+        latestJob.startTime = jobJson.getString("timeStarted", "");
+        latestJob.endTime = jobJson.getString("timeEnded", "");
+        if ("N/A".equals(latestJob.endTime)) {
+            latestJob.endTime = "";
+        }
+        latestJob.status = jobJson.getString("jobStatus");
+
+        String completedKey = jobJson.getString("lastCompletedStep", "0");
+        String attemptedKey = jobJson.getString("lastAttemptedStep", "0");
+        String stepKey = Integer.compare(Integer.valueOf(completedKey), Integer.valueOf(attemptedKey)) < 0 ? attemptedKey : completedKey;
+        Optional.ofNullable(steps.get(stepKey)).ifPresent(s -> {
+            latestJob.stepName = s.getName();
+            latestJob.stepId = s.getName() + "-" + s.getStepDefinitionType();
+        });
+
+        JsonNode stepRes = jobJson.getNode("stepResponses");
+
+        if (stepRes != null) {
+            stepRes.forEach(s -> {
+                latestJob.successfulEvents += s.get("successfulEvents") != null ? s.get("successfulEvents").asLong() : 0;
+                latestJob.failedEvents += s.get("failedEvents") != null ? s.get("failedEvents").asLong() : 0;
+                latestJob.output = s.get("stepOutput"); //last step output ?
+            });
+        }
+        this.release();
+
+        return flowJobs;
+    }
+
     private void release() {
-        if (this.client != null) {
+        if (client != null) {
             try {
-                this.client.release();
+                client.release();
             }
             catch (Exception e) {
                 logger.error(e.getMessage());
             }
             finally {
-                this.client = null;
+                client = null;
             }
         }
     }
