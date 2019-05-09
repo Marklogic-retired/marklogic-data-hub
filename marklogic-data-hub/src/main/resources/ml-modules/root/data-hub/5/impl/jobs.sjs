@@ -138,7 +138,7 @@ class Jobs {
       let timeQuery = [];
       for(let flowName of flowNames) {
         let time = cts.values(cts.jsonPropertyReference("timeStarted"), null, ["descending","limit=1"], cts.jsonPropertyRangeQuery("flow", "=", flowName));
-        timeQuery.push(cts.rangeQuery(cts.jsonPropertyReference("timeStarted"), "=", time));
+        timeQuery.push(cts.andQuery([cts.jsonPropertyRangeQuery("flow", "=", flowName), cts.rangeQuery(cts.jsonPropertyReference("timeStarted"), "=", time)]));
       }
       let results = cts.search(cts.orQuery(timeQuery));
       if(results) {
