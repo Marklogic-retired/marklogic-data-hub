@@ -132,6 +132,21 @@ class Jobs {
     return docs;
   }
 
+  getLastestJobDocPerFlow() {
+    return this.hubutils.queryLatest(function(){
+      let flowNames = cts.values(cts.jsonPropertyReference("flow"));
+      let timeQuery = [];
+      for(let flowName of flowNames) {
+        let time = cts.values(cts.jsonPropertyReference("timeStarted"), null, ["descending","limit=1"], cts.jsonPropertyRangeQuery("flow", "=", flowName));
+        timeQuery.push(cts.rangeQuery(cts.jsonPropertyReference("timeStarted"), "=", time));
+      }
+      let results = cts.search(cts.orQuery(timeQuery));
+      if(results) {
+       return results.toArray();
+      }
+    }, this.config.JOBDATABASE);
+  }
+
   getJobDocsByFlow(flowName) {
     return this.hubutils.queryLatest(function() {
       let query = [cts.collectionQuery('Job'),  cts.jsonPropertyValueQuery('flow', flowName, "case-insensitive")];
