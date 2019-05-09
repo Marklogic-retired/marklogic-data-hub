@@ -95,7 +95,7 @@ export class MappingComponent implements OnInit {
         this.sourceDbType = 'FINAL';
       }
       if(!this.step.options.collections || this.step.options.collections.length === 0){
-        this.step.options.collections = [`${this.step.name}`];
+        this.step.options.collections = [`${this.step.name}`, 'mdm-content'];
       }
       this.loadEntity();
       this.loadMap();
