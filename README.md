@@ -25,7 +25,7 @@ You can also go beyond the QuickStart app and start using Data Hub in your own J
 ## Contribute
 You do not need to download the code in the repository to use MarkLogic Data Hub.
 
-If you would like to plan to actively contribute changes to the Data Hub Framework.
+If you would like to plan to actively contribute changes to the Data Hub.
 
 If you really do want to contribute, see our [Contributing Guide](https://github.com/marklogic/marklogic-data-hub/blob/master/CONTRIBUTING.md) to get started.
 
