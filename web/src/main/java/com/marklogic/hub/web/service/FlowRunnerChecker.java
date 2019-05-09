@@ -6,12 +6,11 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class FlowRunnerChecker {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -95,9 +94,14 @@ public class FlowRunnerChecker {
         if (!flowRunner.isJobRunning() && StringUtils.isNotEmpty(latestJob.endTime)) {
             LatestJob retJob = latestJob;
             latestJob = new LatestJob();
-            completedSteps = new HashMap<>();
+            completedSteps = new HashMap();
             return retJob;
         }
         return latestJob;
+    }
+
+    public void resetLatestJob() {
+        latestJob = new LatestJob();
+        completedSteps = new HashMap<>();
     }
 }
