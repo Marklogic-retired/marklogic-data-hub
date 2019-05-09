@@ -89,7 +89,7 @@ public class FlowJobService extends ResourceManager {
 
         ServiceResultIterator resultItr = this.getServices().get(params);
         if (resultItr == null || !resultItr.hasNext()) {
-            throw new RuntimeException("Unable to get job document");
+            throw new RuntimeException("No jobs found for flow with name: " + flowName);
         }
         ServiceResult res = resultItr.next();
         JsonNode jsonNode = res.getContent(new JacksonHandle()).get();
@@ -161,8 +161,8 @@ public class FlowJobService extends ResourceManager {
 
         if (stepRes != null) {
             stepRes.forEach(s -> {
-                latestJob.successfulEvents += s.get("successfulEvents").asLong();
-                latestJob.failedEvents += s.get("failedEvents").asLong();
+                latestJob.successfulEvents += s.get("successfulEvents") != null ? s.get("successfulEvents").asLong() : 0;
+                latestJob.failedEvents += s.get("failedEvents") != null ? s.get("failedEvents").asLong() : 0;
                 latestJob.output = s.get("stepOutput"); //last step output ?
             });
         }

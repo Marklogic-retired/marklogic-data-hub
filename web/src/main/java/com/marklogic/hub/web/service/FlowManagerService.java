@@ -141,12 +141,11 @@ public class FlowManagerService {
     private FlowStepModel getFlowStepModel(Flow flow, boolean fromRunFlow) {
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
         if (fromRunFlow) {
-
-            FlowRunnerChecker.getInstance(flowRunner).resetLatestJob();
+            FlowRunnerChecker.getInstance(flowRunner).resetLatestJob(flow);
         }
         FlowJobs flowJobs = null;
         if (flowRunner.getRunningFlow() != null && flow.getName().equalsIgnoreCase(flowRunner.getRunningFlow().getName())) {
-            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob());
+            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob(flow));
         }
         if (fsm.latestJob != null  && (JobStatus.isJobDone(fsm.latestJob.status) || JobStatus.isStepDone(fsm.latestJob.status))) {
             flowJobs = flowJobService.getJobs(flow.getName(),true);

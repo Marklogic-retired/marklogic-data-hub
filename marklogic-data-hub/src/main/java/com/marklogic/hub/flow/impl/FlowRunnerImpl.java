@@ -384,7 +384,6 @@ public class FlowRunnerImpl implements FlowRunner{
                 stepsMap.remove(jobId);
                 flowMap.remove(jobId);
                 flowResp.remove(runningJobId);
-                runningFlow = null;
                 if (!jobQueue.isEmpty()) {
                     initializeFlow((String) jobQueue.peek());
                 } else {
@@ -436,7 +435,6 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Run the next queued flow if stop-on-error is set or if the step queue is empty
                 if(((FlowRunnerTask)r).getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
                     jobQueue.remove();
-                    runningFlow = null;
                     if (!jobQueue.isEmpty()) {
                         initializeFlow((String) jobQueue.peek());
                     } else {

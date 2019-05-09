@@ -405,16 +405,14 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
             JsonNode jobDoc;
             try {
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
-            }
-            catch (Exception e) {
-                throw e;
-            }
-            try {
+                try {
+                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
+                } catch (Exception e) {
+                    throw e;
+                }
                 return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
+            } finally {
                 return runStepResponse;
             }
         }
@@ -444,6 +442,7 @@ public class WriteStepRunner implements StepRunner {
                 //TODO: There is one additional item returned, it has to be investigated
                 successfulEvents.addAndGet(batch.getItems().length-1);
                 successfulBatches.addAndGet(1);
+                logger.debug(String.format("Current SuccessfulEvents: %d - FailedEvents: %d", successfulEvents.get(), failedEvents.get()));
                 runStatusListener(successfulBatches.get()+failedBatches.get(), batchCount, successfulEvents, failedEvents);
                 if (stepItemCompleteListeners.size() > 0) {
                     Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
