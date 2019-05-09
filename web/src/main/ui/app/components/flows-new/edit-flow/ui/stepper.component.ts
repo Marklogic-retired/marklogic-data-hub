@@ -64,7 +64,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
       runStatus = runStatus.replace('-', ' ');
       this.status = runStatus.split(' ');
     } else {
-      this.status = '';
+      this.status = [];
     }
 
   }
