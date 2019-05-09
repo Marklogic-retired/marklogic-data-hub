@@ -23,6 +23,7 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
@@ -34,15 +35,14 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FlowManagerService {
@@ -140,10 +140,19 @@ public class FlowManagerService {
 
     private FlowStepModel getFlowStepModel(Flow flow, boolean fromRunFlow) {
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        if (fromRunFlow) {
+
+            FlowRunnerChecker.getInstance(flowRunner).resetLatestJob();
+        }
+        FlowJobs flowJobs = null;
         if (flowRunner.getRunningFlow() != null && flow.getName().equalsIgnoreCase(flowRunner.getRunningFlow().getName())) {
             fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob());
         }
-        FlowJobs flowJobs = flowJobService.getJobs(flow.getName());
+        if (fsm.latestJob != null  && (JobStatus.isJobDone(fsm.latestJob.status) || JobStatus.isStepDone(fsm.latestJob.status))) {
+            flowJobs = flowJobService.getJobs(flow.getName(),true);
+        } else {
+            flowJobs = flowJobService.getJobs(flow.getName(),false);
+        }
         fsm.setJobs(flowJobs, fromRunFlow);
         return fsm;
     }
@@ -351,7 +360,7 @@ public class FlowManagerService {
         while (itr.hasNext()) {
             flowRunner.stopJob(itr.next());
         }
-        return getFlow(flowName, true);
+        return getFlow(flowName, false);
     }
 
 
