@@ -134,7 +134,7 @@ class RunFlowTask extends HubTask {
         Map<String, Object> options = new HashMap<>()
         def optionsString;
         if(project.ext.properties.containsKey("optionsFile")){
-            def jsonFile = new File(project.ext.optionsFile)
+            def jsonFile = new File(project.ext.optionsFile.trim())
             optionsString = jsonFile.text
         }
         else if(project.ext.properties.containsKey("options")) {
