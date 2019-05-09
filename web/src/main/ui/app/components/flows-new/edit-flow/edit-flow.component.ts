@@ -89,13 +89,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
-
       const newArray = resp.map( step => {
         const newStep = Step.fromJSON(step, this.projectDirectory, this.databases);
-        // No Target Entity from default mapping step created by gradle
-        // if (newStep.stepDefinitionType === this.stepType.MAPPING) {
-        //   this.createMapping(newStep);
-        // }
         return newStep;
       });
       console.log('steps', newArray);
@@ -155,7 +150,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
       console.log('stop flow response', resp);
       this.flow = Flow.fromJSON(resp);
       this.getSteps();
-      this.runningJobService.stopPollingAll();
+      this.runningJobService.stopPolling(flowid);
     });
   }
   createStep(stepObject) {

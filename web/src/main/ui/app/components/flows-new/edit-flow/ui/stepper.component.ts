@@ -59,9 +59,15 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
     }
   }
   setStatus(status: string) {
-    let runStatus = status.replace('_', ' ');
-    runStatus = runStatus.replace('-', ' ');
-    this.status = runStatus.split(' ');
+    console.log('stepper status', status);
+    if (status) {
+      let runStatus = status.replace('_', ' ');
+      runStatus = runStatus.replace('-', ' ');
+      this.status = runStatus.split(' ');
+    } else {
+      this.status = '';
+    }
+
   }
   toggleBody() {
     this.showBody = !this.showBody;
