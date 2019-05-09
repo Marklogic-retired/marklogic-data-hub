@@ -94,6 +94,9 @@ export class MappingComponent implements OnInit {
       } else if (this.step.options.sourceDatabase === this.envService.settings.finalDbName) {
         this.sourceDbType = 'FINAL';
       }
+      if(!this.step.options.collections || this.step.options.collections.length === 0){
+        this.step.options.collections = [`${this.step.name}`];
+      }
       this.loadEntity();
       this.loadMap();
     }
