@@ -45,7 +45,7 @@ public class FlowJobService extends ResourceManager {
 
     //use a cache with ttl 5 minutes to reduce frequency for fetching data from DB
     public final Cache<String, FlowJobs> cachedJobsByFlowName = CacheBuilder.newBuilder().expireAfterWrite(
-        5, TimeUnit.MINUTES).build();
+        5, TimeUnit.SECONDS).build();
 
     public FlowJobService() {
         super();
