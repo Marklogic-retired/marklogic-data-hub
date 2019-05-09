@@ -50,11 +50,4 @@ public interface JobMonitor {
 
     List<String> getBatchResponse(String jobId, String batchId);
 
-    /**
-     * The next step to be executed
-     * @param jobId the id of the job
-     * @return string denoting the next step of the job
-     */
-
-    String getNextStep(String jobId);
 }
