@@ -176,8 +176,8 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("SimpleJSONMapping");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             browser.sleep(5000);
+            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
@@ -267,8 +267,8 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("SimpleJSONMastering");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             browser.sleep(5000);
+            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
