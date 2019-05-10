@@ -15,15 +15,13 @@ export class RunningJobService {
   ) {}
 
   stopPollingAll() {
-    if (this.subscriptions) {
-      Object.keys(this.subscriptions).forEach(flowId => {
-        this.subscriptions[flowId].unsubscribe();
-      });
-    }
+    Object.keys(this.subscriptions).forEach(flowId => {
+      this.subscriptions[flowId].unsubscribe();
+    });
   }
 
   stopPolling(flowId: string) {
-    if (this.subscriptions[flowId]) {
+    if (this.subscriptions.hasOwnProperty(flowId)) {
       this.subscriptions[flowId].unsubscribe();
     }
   }
@@ -47,6 +45,14 @@ export class RunningJobService {
       let runStatus = flow.latestJob.status.replace('_', ' ');
       runStatus = runStatus.replace('-', ' ');
       runStatus = runStatus.split(' ');
+
+      if ( typeof runStatus === 'string' && runStatus === 'failed') {
+        if ( this.subscriptions[flow.id]) {
+          this.subscriptions[flow.id].unsubscribe();
+        }
+        return false;
+      }
+
       if (runStatus[0] === 'finished' || runStatus[0] === 'canceled' || runStatus[0] === 'failed') {
         if ( this.subscriptions[flow.id]) {
           this.subscriptions[flow.id].unsubscribe();
@@ -55,6 +61,7 @@ export class RunningJobService {
       } else {
         return true;
       }
+
     } else if (this.subscriptions[flow.id] && flow.latestJob === null) {
       return true;
     } else {

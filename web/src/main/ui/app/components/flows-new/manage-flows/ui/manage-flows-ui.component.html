@@ -62,8 +62,8 @@
         <ng-container matColumnDef="status">
           <mat-header-cell id="flow-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="flow-status" *matCellDef="let flow">
-            <span *ngIf="flow.latestJob">{{formatStatus(flow.status)}}</span>
-            <span *ngIf="!flow.latestJob">Never run</span>
+            <span *ngIf="flow.latestJob && flow.jobs.length">{{formatStatus(flow.status)}}</span>
+            <span *ngIf="!flow.jobs.length">Never run</span>
           </mat-cell>
         </ng-container>
 
