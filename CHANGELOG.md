@@ -2,34 +2,34 @@
 # [v5.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v5.0.0) (2019-05-09)
 **Epic:**
 <ul>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-856'>DHFPROD-856</a>] -         Smart Mastering as a top-level, native Hub capability OOTB
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-856'>DHFPROD-856</a>] - Smart Mastering as a top-level, native Hub capability OOTB
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1704'>DHFPROD-1704</a>] -         Flow Redesign
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1704'>DHFPROD-1704</a>] - Flow Redesign
 </ul>
     
 **Story:**
 <ul>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1659'>DHFPROD-1659</a>] -         Configure mastering flow from the UI
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1659'>DHFPROD-1659</a>] - Configure mastering flow from the UI
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1702'>DHFPROD-1702</a>] -          Create Ingest Step (and View, Update, Delete)
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1702'>DHFPROD-1702</a>] - Create Ingest Step (and View, Update, Delete)
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1703'>DHFPROD-1703</a>] -         Create Flow to run steps (and View, Update, Delete)
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1703'>DHFPROD-1703</a>] - Create Flow to run steps (and View, Update, Delete)
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1705'>DHFPROD-1705</a>] -         Create Mapping Step (and View, Update, Delete)
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1705'>DHFPROD-1705</a>] - Create Mapping Step (and View, Update, Delete)
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1708'>DHFPROD-1708</a>] -         Run Ingest Step
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1708'>DHFPROD-1708</a>] - Run Ingest Step
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1715'>DHFPROD-1715</a>] -         Run Mapping Step
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1715'>DHFPROD-1715</a>] - Run Mapping Step
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1856'>DHFPROD-1856</a>] -         Create Mastering Step Artifact (and View, Update, Delete)
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1856'>DHFPROD-1856</a>] - Create Mastering Step Artifact (and View, Update, Delete)
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1858'>DHFPROD-1858</a>] -         Create and Run a Custom Step
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1858'>DHFPROD-1858</a>] - Create and Run a Custom Step
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2009'>DHFPROD-2009</a>] -         Power ingestion in the UI (DMSDK instead of MLCP)
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2009'>DHFPROD-2009</a>] - Power ingestion in the UI (DMSDK instead of MLCP)
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2058'>DHFPROD-2058</a>] -         Mastering step backend should be model-driven
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2058'>DHFPROD-2058</a>] - Mastering step backend should be model-driven
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2075'>DHFPROD-2075</a>] -         Support creating flow with default steps from gradle
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2075'>DHFPROD-2075</a>] - Support creating flow with default steps from gradle
 </li>
 </ul>
 
