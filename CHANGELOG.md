@@ -1,15 +1,13 @@
 # Change Log
 # [v5.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v5.0.0) (2019-05-09)
-<h2>        Epic
-</h2>
+**Epic:**
 <ul>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-856'>DHFPROD-856</a>] -         Smart Mastering as a top-level, native Hub capability OOTB
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1704'>DHFPROD-1704</a>] -         Flow Redesign
 </ul>
     
-<h2>        Story
-</h2>
+**Story:**
 <ul>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1659'>DHFPROD-1659</a>] -         Configure mastering flow from the UI
 </li>
@@ -35,6 +33,23 @@
 </li>
 </ul>
 
+# [v4.3.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.3.0) (2019-04-16)
+
+**Fixed bugs:**
+- [DHFPROD-1417] - Make the title field required on Entity editor 
+- Enable namespace support in dhf [\#1580](https://github.com/marklogic/marklogic-data-hub/issues/1580)
+
+**Improvement**
+-  [DHFPROD-1417] - Adopt 3 new roles (Flow Dev, Flow Op, Data Hub Admin) to align with DHS roles
+
+
+# [v4.2.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.2) (2019-03-13)
+
+**Fixed bugs:**
+- empty collector result should be finished instead of failed job [\#1715](https://github.com/marklogic/marklogic-data-hub/issues/1715)
+- gradle hubRunFlow options does not lose dhf prefix [\#1536](https://github.com/marklogic/marklogic-data-hub/issues/1536)
+- [DHFPROD-1930] Data Hub Framework URI handling with diacritics
+- [DHFPROD-1929] Triggers dont get deployed to staging-triggers
 # [v4.2.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.1) (2019-02-27)
 
 
