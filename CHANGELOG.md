@@ -5,7 +5,9 @@
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-856'>DHFPROD-856</a>] - Smart Mastering as a top-level, native Hub capability OOTB
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1704'>DHFPROD-1704</a>] - Flow Redesign
-</ul>**Story:**
+</ul>
+
+**Improvement**
 <ul>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1659'>DHFPROD-1659</a>] - Configure mastering flow from the UI
 </li>
