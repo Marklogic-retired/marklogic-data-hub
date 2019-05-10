@@ -396,16 +396,27 @@ public class WriteStepRunner implements StepRunner {
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
-        if ( !isStopped.get() && (uris == null || uris.size() == 0 )) {
+
+        if (uris == null || uris.size() == 0 ) {
+            JsonNode jobDoc = null;
+            final String stepStatus;
+            if(isStopped.get()) {
+                stepStatus = JobStatus.CANCELED_PREFIX + step;
+            }
+            else {
+                stepStatus = JobStatus.COMPLETED_PREFIX + step;
+            }
+
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(runStepResponse.getJobId(), 100, JobStatus.COMPLETED_PREFIX + step, 0, 0, "provided file path returned 0 items");
+                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, 0, 0,
+                    (stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? "provided file path returned 0 items" : "job was stopped"));
             });
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             runStepResponse.setCounts(0,0,0,0,0);
-            runStepResponse.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            JsonNode jobDoc;
+            runStepResponse.withStatus(stepStatus);
+
             try {
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step, step, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 throw e;
