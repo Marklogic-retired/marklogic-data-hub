@@ -73,6 +73,7 @@ public interface FlowManager {
      * Creates a flow
      *
      * @param flowName - name of the flow
+     * @return a Flow object
      */
     Flow createFlow(String flowName);
 
@@ -109,30 +110,30 @@ public interface FlowManager {
 
     /**
      * Check if a flow has existed
-     * @param flowName
-     * @return
+     * @param flowName a flow name
+     * @return a boolean value
      */
     boolean isFlowExisted(String flowName);
 
     /**
      *
-     * @param flow
-     * @return
+     * @param flow a flow object
+     * @return a map of steps
      */
     Map<String, Step> getSteps(Flow flow);
 
     /**
      *
-     * @param flow
-     * @param stepMap
+     * @param flow a flow object
+     * @param stepMap a map of steps
      */
     void setSteps(Flow flow, Map<String, Step> stepMap);
 
     /**
      *
-     * @param flow
-     * @param stepNum
-     * @return
+     * @param flow a flow object
+     * @param stepNum step key
+     * @return a step
      */
     Step getStep(Flow flow, String stepNum);
 }

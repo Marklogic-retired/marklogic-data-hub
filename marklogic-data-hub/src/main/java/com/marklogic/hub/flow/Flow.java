@@ -38,42 +38,42 @@ public interface Flow {
     /**
      * Returns flow description
      *
-     * @return
+     * @return - a flow description
      */
     String getDescription();
 
     /**
      * Sets flow description
      *
-     * @param description
+     * @param description a flow description
      */
     void setDescription(String description);
 
     /**
      * Returns flow batch size
      *
-     * @return
+     * @return - flow batch size
      */
     int getBatchSize();
 
     /**
      * Set flow batch size
      *
-     * @param batchSize
+     * @param batchSize flow batch size
      */
     void setBatchSize(int batchSize);
 
     /**
      * Returns flow thread count
      *
-     * @return
+     * @return thread count for flow
      */
     int getThreadCount();
 
     /**
      * Sets flow thread count
      *
-     * @param threadCount
+     * @param threadCount thread count for flow
      */
     void setThreadCount(int threadCount);
 
@@ -137,13 +137,14 @@ public interface Flow {
     void setOverrideStepConfig(Map<String, Object> overrideStepConfig);
     
     /**
-     *
-     * @param stopOnError
+     * If set stops the flow on error
+     * @param stopOnError boolean flag to stop on error
      */
     void setStopOnError(boolean stopOnError);
+
     /**
-     *
-     * @return
+     * Returns the value for stop on error flag
+     * @return boolean flag to stop on error
      */
     boolean isStopOnError();
 
@@ -155,7 +156,7 @@ public interface Flow {
 
     /**
      * Sets version
-     * @param version
+     * @param version version for the flow
      */
     void setVersion(int version);
 
@@ -170,8 +171,8 @@ public interface Flow {
     /**
      * Get step Info by step id
      *
-     * @param stepId
-     * @return
+     * @param stepId id for the step
+     * @return a step
      */
     Step getStepById(String stepId);
 }

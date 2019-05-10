@@ -14,7 +14,7 @@ public interface FlowRunner {
      *
      * @param flow the flow to run
      * @param jobId the jobid to be used for the flow
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow, String jobId);
 
@@ -24,7 +24,7 @@ public interface FlowRunner {
      * @param flow the flow to run
      * @param steps the steps in the flow to run
      * @param jobId the jobid to be used for the flow
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow, List<String> steps, String jobId);
 
@@ -34,7 +34,7 @@ public interface FlowRunner {
      * @param flow the flow to run
      * @param jobId the jobid to be used for the flow
      * @param options the key/value options to be passed
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow, String jobId, Map<String, Object> options);
 
@@ -45,7 +45,7 @@ public interface FlowRunner {
      * @param steps the steps in the flow to run
      * @param jobId the jobid to be used for the flow
      * @param options the key/value options to be passed
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options);
 
@@ -57,7 +57,7 @@ public interface FlowRunner {
      * @param jobId the jobid to be used for the flow
      * @param options the key/value options to be passed
      * @param stepConfig the key/value config to override the running of the step
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options, Map<String, Object> stepConfig);
 
@@ -66,7 +66,7 @@ public interface FlowRunner {
      *
      * @param flow the flow to run
      * @param steps the steps in the flow to run
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow, List<String> steps);
 
@@ -74,7 +74,7 @@ public interface FlowRunner {
      * Runs the entire flow, with full defaults
      *
      * @param flow the flow to run
-     *
+     * @return a response object
      */
     RunFlowResponse runFlow(String flow);
 
@@ -98,6 +98,7 @@ public interface FlowRunner {
      * @param unit the time unit of the timeout argument
      *
      * @throws InterruptedException if interrupted while waiting
+     * @throws TimeoutException if times out
      */
     void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException;
 
