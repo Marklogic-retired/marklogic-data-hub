@@ -321,14 +321,14 @@ public class QueryStepRunner implements StepRunner {
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
                 listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, 0, 0,
-                    (JobStatus.COMPLETED_PREFIX.contains(stepStatus)? "collector returned 0 items" : "job was stopped"));
+                    (stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? "collector returned 0 items" : "job was stopped"));
             });
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, JobStatus.COMPLETED_PREFIX.contains(stepStatus)? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 throw e;
