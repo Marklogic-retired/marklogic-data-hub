@@ -23,6 +23,7 @@ public interface JobMonitor {
 
     /**
      * Sets the flow to be used with the flow runner
+     * @param jobId the id of the job
      * @param batchId the id of the batch
      * @return string denoting status of the batch
      *

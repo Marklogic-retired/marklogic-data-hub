@@ -21,6 +21,8 @@ public interface StepStatusListener {
      * @param jobId - the id of the job to change
      * @param percentComplete - the percentage of completeness expressed as an int
      * @param status - indicate intermediate status based on step status
+     * @param successfulEvents - the number of successful events
+     * @param failedEvents - the number of failed events
      * @param message - the message you'd like to send along with it
      */
     void onStatusChange(String jobId, int percentComplete, String status, long successfulEvents, long failedEvents, String message);

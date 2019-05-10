@@ -127,9 +127,9 @@ public class DataHubImpl implements DataHub {
     /**
      * Need to account for the group name in case the user has overridden the name of the "Default" group.
      *
-     * @param manageClient
-     * @param hubConfig
-     * @return
+     * @param manageClient manageClient object
+     * @param hubConfig hubConfig object
+     * @return constructed ServerManager object
      */
     protected ServerManager constructServerManager(ManageClient manageClient, HubConfig hubConfig) {
         AppConfig appConfig = hubConfig.getAppConfig();
@@ -563,7 +563,7 @@ public class DataHubImpl implements DataHub {
     /**
      * In a provisioned environment, only the databases defined by this pattern can be updated.
      *
-     * @return
+     * @return database name pattern
      */
     protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
         return Pattern.compile("(staging|final|job)-database.json");
