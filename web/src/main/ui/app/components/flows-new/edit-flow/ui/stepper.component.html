@@ -27,8 +27,8 @@
           <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.status">
           {{flow.jobs.length ? '': 'Never run'}}</span>
           <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">
-            <span *ngIf="flow.latestJob.status === 'running' && flow.latestJob.startTime !== null">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
-            <span *ngIf="flow.latestJob.status !== null && flow.latestJob.endTime !== null">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
+            <span *ngIf="flow.latestJob && flow.latestJob.status === 'running' && flow.latestJob.startTime !== null && flow.latestJob.startTime !== ''">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
+            <span *ngIf="flow.latestJob && flow.latestJob.status !== null && flow.latestJob.endTime !== null && flow.latestJob.endTime !== ''">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
           </div>
         </div>
         <a id="view-jobs-btn" *ngIf="flow.latestJob && flow.latestJob.id" class="text item view-jobs" [routerLink]="['/jobs']" [queryParams]="{flowName:flow.name}">View Jobs</a>
