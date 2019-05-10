@@ -259,18 +259,18 @@ public interface StepDefinition {
 
     /**
      *
-     * @param stepName
-     * @param stepDefinition
-     * @param step
-     * @return
+     * @param stepName name of the step
+     * @param stepDefinition step definition object to transform from
+     * @param step step object to be transformed
+     * @return a transformed step object
      */
     Step transformToStep(String stepName, StepDefinition stepDefinition, Step step);
 
     /**
      *
-     * @param stepDefinition
-     * @param step
-     * @return
+     * @param stepDefinition step definition to be transformed
+     * @param step step object to transform from
+     * @return a transformed step definition object
      */
     StepDefinition transformFromStep(StepDefinition stepDefinition, Step step);
 }

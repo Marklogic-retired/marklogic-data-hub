@@ -33,7 +33,7 @@ public interface LegacyFlowManager {
 
     /**
      * Set HubConfig
-     * @param hubConfig
+     * @param hubConfig a hubConfig object
      */
     void setHubConfig(HubConfig hubConfig);
 

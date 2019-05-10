@@ -142,6 +142,7 @@ public interface StepRunner {
      * @param unit the time unit of the timeout argument
      *
      * @throws InterruptedException if interrupted while waiting
+     * @throws TimeoutException if times out
      */
     void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException;
 
@@ -168,7 +169,7 @@ public interface StepRunner {
 
     /**
      * Returns the batch size
-     *
+     * @return batch size for step runner
      */
      int getBatchSize();
 
