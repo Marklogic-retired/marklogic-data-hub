@@ -28,6 +28,8 @@ class CreateMappingTask extends HubTask {
     void createMapping() {
         def propName = "mappingName"
         def mappingName = project.hasProperty(propName) ? project.property(propName) : null
+        def entityNameProp = "entityName"
+        def entityName = project.hasProperty(entityNameProp) ? project.property(entityNameProp) : null
         if (mappingName == null) {
             throw new MappingNameRequiredException()
         }
@@ -37,7 +39,13 @@ class CreateMappingTask extends HubTask {
         Scaffolding scaffolding = getScaffolding()
         scaffolding.createMappingDir(mappingName)
         MappingManager mappingManager = getMappingManager()
-        def mapping = mappingManager.createMapping(mappingName)
+        def mapping
+        if (entityName != null) {
+            println "entityName: " + entityName
+            mapping = mappingManager.createMapping(mappingName, entityName)
+        } else {
+            mapping = mappingManager.createMapping(mappingName)
+        }
         mappingManager.saveMapping(mapping)
     }
 }

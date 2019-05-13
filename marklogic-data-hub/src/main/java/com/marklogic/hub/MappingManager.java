@@ -47,6 +47,14 @@ public interface MappingManager {
      */
     Mapping createMapping(String mappingName);
 
+    /**
+     * Creates a mapping given a string name
+     * @param mappingName - the base name of the mapping you want to create
+     * @param entityName - the name of the entity being mapped to
+     * @return - a Mapping object
+     */
+    Mapping createMapping(String mappingName, String entityName);
+
      /**
      * Creates a mapping from a given JSON string
      * @param json - string representation of json

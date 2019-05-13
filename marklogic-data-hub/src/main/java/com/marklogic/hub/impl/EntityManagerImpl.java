@@ -34,6 +34,7 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -294,6 +295,22 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
         }
         return entities;
+    }
+
+    public HubEntity getEntity(String entityName) {
+        return getEntity(entityName, null);
+    }
+
+    public HubEntity getEntity(String entityName, String version) {
+        HubEntity entity = null;
+        for (HubEntity e: getEntities()) {
+            InfoType info = e.getInfo();
+            if (info.getTitle().equals(entityName) && (version == null || info.getVersion().equals(version))) {
+                entity = e;
+                break;
+            }
+        }
+        return entity;
     }
 
     public List<HubEntity> getEntities() {

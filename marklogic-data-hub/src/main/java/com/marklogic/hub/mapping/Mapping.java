@@ -2,6 +2,7 @@ package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.entity.HubEntity;
 
 import java.util.HashMap;
 
@@ -14,6 +15,16 @@ public interface Mapping {
      */
     static Mapping create(String mappingName) {
         return new MappingImpl(mappingName);
+    }
+
+    /**
+     * Creates an in-memory default instance of a mapping given a name
+     * @param mappingName - the name of the mapping
+     * @param entity - the entity the mapping is targeting
+     * @return a Mapping object to manipulate further
+     */
+    static Mapping create(String mappingName, HubEntity entity) {
+        return new MappingImpl(mappingName, entity);
     }
 
     /**
