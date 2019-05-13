@@ -35,7 +35,9 @@ function getSourceContext(sourceContext) {
 
 function getPath(sourceContext, connector, propertyName) {
   let path;
-  if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "NCName", propertyName)) {
+  // validExtractPath will recognize complex XPath, like attributes and filtered steps
+  // if not a validExtractPath, likely a JSON property with XPath incompatible name
+  if (cts.validExtractPath(propertyName)) {
     path = `${sourceContext}${connector}${propertyName}`;
   } else {
     if (connector.includes("*:")) {
