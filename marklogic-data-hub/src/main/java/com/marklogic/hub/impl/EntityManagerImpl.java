@@ -150,16 +150,23 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             List<JsonNode> entities = getAllEntities();
 
             if (entities.size() > 0) {
-                DbConfigsManager generator = new DbConfigsManager(hubConfig.newReverseFlowClient());
-                ObjectNode indexNode = generator.generateIndexes(entities);
+                DatabaseClient databaseClient = hubConfig.newReverseFlowClient();
+                try {
+                    DbConfigsManager generator = new DbConfigsManager(databaseClient);
+                    ObjectNode indexNode = generator.generateIndexes(entities);
 
-                // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
-                // ml-app-deployer removes these keys upon sending to marklogic.
-                indexNode.put("database-name", "%%mlFinalDbName%%");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
-                indexNode.put("database-name", "%%mlStagingDbName%%");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
-                return true;
+                    // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
+                    // ml-app-deployer removes these keys upon sending to marklogic.
+                    indexNode.put("database-name", "%%mlFinalDbName%%");
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
+                    indexNode.put("database-name", "%%mlStagingDbName%%");
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
+                    return true;
+                } finally {
+                    if (databaseClient != null) {
+                        databaseClient.release();
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
