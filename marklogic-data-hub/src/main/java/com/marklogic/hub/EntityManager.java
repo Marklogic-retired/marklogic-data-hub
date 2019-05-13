@@ -60,6 +60,10 @@ public interface EntityManager {
 
     boolean deployStagingQueryOptions();
 
+    HubEntity getEntity(String entityName);
+
+    HubEntity getEntity(String entityName, String version);
+
     List<HubEntity> getEntities();
 
     HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException;
