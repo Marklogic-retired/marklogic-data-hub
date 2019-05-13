@@ -1,5 +1,6 @@
 package com.marklogic.hub.web.web;
 
+import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.model.JobModel;
 import com.marklogic.hub.web.service.NewJobService;
 import java.io.IOException;
@@ -20,18 +21,28 @@ public class NewJobController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getJobs(@RequestParam(value = "flowName", required = false) String flowName) throws IOException {
-        jobService.setupClient();
-        List<JobModel> jobModels = jobService.getJobs(flowName);
-        jobService.release();
+        List<JobModel> jobModels;
+        try {
+            jobService.setupClient();
+            jobModels = jobService.getJobs(flowName);
+            jobService.release();
+        } catch (Exception ex) {
+            throw new DataHubException(ex.getMessage(), ex);
+        }
         return new ResponseEntity<>(jobModels, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getJob(@PathVariable String jobId) {
-        jobService.setupClient();
-        List<JobModel> jobModels = jobService.getJobs(null, jobId);
-        jobService.release();
+        List<JobModel> jobModels;
+        try {
+            jobService.setupClient();
+            jobModels = jobService.getJobs(null, jobId);
+            jobService.release();
+        } catch (Exception ex) {
+            throw new DataHubException(ex.getMessage(), ex);
+        }
         return new ResponseEntity<>(jobModels, HttpStatus.OK);
     }
 
