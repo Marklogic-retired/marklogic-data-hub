@@ -60,9 +60,9 @@ public interface EntityManager {
 
     boolean deployStagingQueryOptions();
 
-    HubEntity getEntity(String entityName);
+    HubEntity getEntityFromProject(String entityName);
 
-    HubEntity getEntity(String entityName, String version);
+    HubEntity getEntityFromProject(String entityName, String version);
 
     List<HubEntity> getEntities();
 
