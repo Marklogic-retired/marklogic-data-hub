@@ -228,16 +228,16 @@ public class NewJobService extends ResourceManager {
             Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetDatabase = ((TextNode) o.getOrDefault("targetDatabase", new TextNode(""))).asText());
 
             JsonNode res = stepRes.get(key);
-            js.totalEvents = res.get("totalEvents") != null ? res.get("totalEvents").asLong() : 0;
-            js.successfulEvents = res.get("successfulEvents") != null ? res.get("successfulEvents").asLong() : 0;
-            js.failedEvents = res.get("failedEvents") != null ? res.get("failedEvents").asLong() : 0;
+            js.totalEvents = getLong(res,"totalEvents");
+            js.successfulEvents = getLong(res, "successfulEvents");
+            js.failedEvents = getLong(res,"failedEvents");
 
             counters[0] += js.successfulEvents;
             counters[1] += js.failedEvents;
 
-            js.successfulBatches = res.get("successfulBatches") != null ? res.get("successfulBatches").asLong() : 0;
-            js.failedBatches = res.get("failedBatches") != null ? res.get("failedBatches").asLong() : 0;
-            js.success = res.get("success") != null ? res.get("success").asBoolean() : false;
+            js.successfulBatches = getLong(res, "successfulBatches");
+            js.failedBatches = getLong(res, "failedBatches");
+            js.success = res.has("success") ? res.get("success").asBoolean() : false;
 
             if (res.get("stepStartTime") != null) {
                 js.startTime = res.get("stepStartTime").asText();
@@ -254,6 +254,13 @@ public class NewJobService extends ResourceManager {
 
         jm.successfulEvents = counters[0];
         jm.failedEvents = counters[1];
+    }
+
+    private long getLong(JsonNode node, String propertyName) {
+        if (node.has(propertyName)) {
+            return node.get(propertyName).asLong();
+        }
+        return 0;
     }
 
     public void release() {
