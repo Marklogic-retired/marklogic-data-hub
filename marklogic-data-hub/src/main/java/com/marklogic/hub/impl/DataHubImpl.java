@@ -42,7 +42,6 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
 import com.marklogic.hub.flow.FlowRunner;
@@ -526,7 +525,10 @@ public class DataHubImpl implements DataHub {
             }
         }
         AppConfig appConfig = hubConfig.getAppConfig();
-        CMASettings.getInstance().setCmaSettings(appConfig);
+
+        appConfig.setDeployForestsWithCma(true);
+        appConfig.setDeployPrivilegesWithCma(true);
+        appConfig.setDeployAmpsWithCma(true);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
@@ -591,7 +593,10 @@ public class DataHubImpl implements DataHub {
         commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
 
         AppConfig appConfig = hubConfig.getAppConfig();
-        CMASettings.getInstance().setCmaSettings(appConfig);
+
+        appConfig.setDeployForestsWithCma(true);
+        appConfig.setDeployPrivilegesWithCma(true);
+        appConfig.setDeployAmpsWithCma(true);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(commandMap);
