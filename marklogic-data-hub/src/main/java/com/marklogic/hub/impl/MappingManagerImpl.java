@@ -73,7 +73,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         }
         catch (DataHubProjectException e) {
             if (entityName != null) {
-                HubEntity entity = entityManager.getEntity(entityName);
+                HubEntity entity = entityManager.getEntityFromProject(entityName);
                 return Mapping.create(mappingName, entity);
             } else {
                 return Mapping.create(mappingName);

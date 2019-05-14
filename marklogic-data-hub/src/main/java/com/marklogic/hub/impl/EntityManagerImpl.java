@@ -297,11 +297,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
-    public HubEntity getEntity(String entityName) {
-        return getEntity(entityName, null);
+    public HubEntity getEntityFromProject(String entityName) {
+        return getEntityFromProject(entityName, null);
     }
 
-    public HubEntity getEntity(String entityName, String version) {
+    public HubEntity getEntityFromProject(String entityName, String version) {
         HubEntity entity = null;
         for (HubEntity e: getEntities()) {
             InfoType info = e.getInfo();
