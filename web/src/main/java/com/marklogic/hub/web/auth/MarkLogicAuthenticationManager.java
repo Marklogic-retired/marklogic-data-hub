@@ -18,6 +18,7 @@ package com.marklogic.hub.web.auth;
 
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.ManageConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -75,7 +76,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
         int projectId = token.getProjectId();
         String environment = token.getEnvironment();
 
-        if (username == "" || password == "" || hostname == "") {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(hostname)) {
           throw new BadCredentialsException("Invalid credentials");
         }
         /**
