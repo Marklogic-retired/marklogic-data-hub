@@ -63,6 +63,7 @@ class CreateMappingTaskTest extends BaseTest {
         File mappingDir = Paths.get(testProjectDir.root.toString(), "mappings", "my-new-mapping").toFile()
         mappingDir.isDirectory() == true
         getStagingDocCount("http://marklogic.com/data-hub/mappings") == 1
+        getMappingManager().getMapping("my-new-mapping").getTargetEntityType().equals("http://example.com/my-new-entity-0.0.1/my-new-entity")
     }
 
 }
