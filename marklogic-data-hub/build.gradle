@@ -62,7 +62,12 @@ dependencies {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
+
+    // Provides support for invoking marklogic-unit-test tests via JUnit
+    testCompile "com.marklogic:marklogic-junit:0.11.0"
+    mlRestApi "com.marklogic:marklogic-unit-test-modules:0.12.0"
 }
+
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.hosts.HostManager
 
@@ -262,14 +267,10 @@ ext {
         customTokens.put("%%mlModulesDbName%%", mlModulesDbName)
         customTokens.put("%%mlStagingTriggersDbName%%", mlStagingTriggersDbName)
         customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
-
-        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
-
     }
 }
 
 def propFile = file("gradle.properties")
-String fileContents = propFile.text
 boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
 boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
 def props = new Properties()
@@ -360,6 +361,16 @@ task setupSSL{
         }
     }
 }
+
+task loadTestModules(type: com.marklogic.gradle.task.client.LoadModulesTask) {
+    description = "Loads marklogic-unit-test and test modules. This is used instead of mlLoadModules to avoid overwriting " +
+        "the collections set on Hub core modules and the tokens replaced in those modules."
+    doFirst {
+        mlAppConfig.modulePaths = ["build/mlRestApi/marklogic-unit-test-modules/ml-modules", "src/test/ml-modules"]
+    }
+}
+loadTestModules.dependsOn mlPrepareRestApiDependencies // ensures that marklogic-unit-test is downloaded
+bootstrap.finalizedBy loadTestModules
 
 setupSSL.dependsOn(testClasses)
 bootstrap.dependsOn(setupSSL)

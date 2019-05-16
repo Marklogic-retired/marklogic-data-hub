@@ -60,15 +60,17 @@ public class MasterTest extends HubTestBase {
         this.deleteProjectDir();
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
-    private void installProject() throws IOException, URISyntaxException {
-            String[] directoriesToCopy = new String[]{"input", "flows", "src", "step-definitions", "entities", "mappings"};
-            for (final String subDirectory: directoriesToCopy) {
-                final Path subProjectPath = projectPath.resolve(subDirectory);
-                subProjectPath.toFile().mkdir();
-                Path subResourcePath = Paths.get("master-test", subDirectory);
-                copyFileStructure(subResourcePath, subProjectPath);
-            }
 
+    private void installProject() throws IOException {
+        LoadTestModules.loadTestModules(host, finalPort, secUser, secPassword, HubConfig.DEFAULT_MODULES_DB_NAME);
+
+        String[] directoriesToCopy = new String[]{"input", "flows", "step-definitions", "entities", "mappings"};
+        for (final String subDirectory : directoriesToCopy) {
+            final Path subProjectPath = projectPath.resolve(subDirectory);
+            subProjectPath.toFile().mkdir();
+            Path subResourcePath = Paths.get("master-test", subDirectory);
+            copyFileStructure(subResourcePath, subProjectPath);
+        }
     }
 
     private void copyFileStructure(Path resourcePath, Path projectPath) throws IOException {
