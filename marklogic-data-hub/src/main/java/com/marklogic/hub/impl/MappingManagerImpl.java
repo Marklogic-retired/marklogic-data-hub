@@ -51,10 +51,10 @@ import java.util.stream.Collectors;
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
     @Autowired
-    private HubConfig hubConfig;
+    protected HubConfig hubConfig;
 
     @Autowired
-    private HubProject hubProject;
+    protected HubProject hubProject;
 
     @Autowired
     private Scaffolding scaffolding;

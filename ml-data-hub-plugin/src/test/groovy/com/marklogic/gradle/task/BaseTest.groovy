@@ -32,7 +32,9 @@ import com.marklogic.client.io.StringHandle
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
+import com.marklogic.hub.MappingManager
 import com.marklogic.hub.impl.HubConfigImpl
+import com.marklogic.hub.impl.MappingManagerImpl
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.databases.DatabaseManager
 import com.marklogic.rest.util.Fragment
@@ -302,6 +304,13 @@ class BaseTest extends Specification {
             }
 
         }
+    }
+
+    public MappingManager getMappingManager() {
+        return new MappingManagerImpl(){{
+            hubConfig = hubConfig();
+            hubProject = hubConfig().getHubProject();
+        }};
     }
 
     def setupSpec() {
