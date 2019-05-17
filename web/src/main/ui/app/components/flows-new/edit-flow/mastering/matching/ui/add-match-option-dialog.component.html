@@ -2,7 +2,7 @@
 <div id="match-option-dialog" mat-dialog-content [formGroup]="form" class="content">
 
   <mat-form-field layout-fill>
-    <mat-select id="match-option-type" placeholder="Match Type" formControlName="matchType" [(value)]="selectedType">
+    <mat-select id="match-option-type" placeholder="Match Type" formControlName="matchType" (selectionChange)="selectedTypeChanged()" [(value)]="selectedType">
       <mat-option value="exact">Exact</mat-option>
       <mat-option value="synonym">Synonym</mat-option>
       <mat-option value="double metaphone">Double Metaphone</mat-option>
@@ -76,11 +76,13 @@
   <div *ngIf="selectedType === 'zip'">
     <mat-form-field layout-fill>
       <mat-label>5-Matches-9 Boost</mat-label>
-      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9"/>
+      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9" required />
+      <mat-error id="match-option-zip-zip5match9-error" *ngIf="form.get('zip5match9').invalid">A number is required</mat-error>
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>9-Matches-5 Weight</mat-label>
-      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5"/>
+      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5" required />
+      <mat-error id="match-option-zip-zip9match5-error" *ngIf="form.get('zip9match5').invalid">A number is required</mat-error>
     </mat-form-field>
   </div>
 

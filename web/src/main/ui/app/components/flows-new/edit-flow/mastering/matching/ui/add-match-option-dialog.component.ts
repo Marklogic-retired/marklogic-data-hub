@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchOption } from "../match-options.model";
-import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import {FormBuilder, FormGroup, FormArray, FormControl, Validators, ValidatorFn} from "@angular/forms";
 import { WeightValidator } from '../../../../validators/weight.validator';
 import { AddMatchOptionValidator } from '../../../../validators/add-match-option.validator';
 import { forOwn } from 'lodash';
@@ -22,6 +22,7 @@ export class AddMatchOptionDialogComponent {
   props: FormArray;
   selectedType: string;
   propertiesReduce: FormArray;
+  weightValidators: Array<ValidatorFn> = [Validators.required, WeightValidator];
 
   constructor(
     private fb: FormBuilder,
@@ -33,8 +34,7 @@ export class AddMatchOptionDialogComponent {
     this.form = this.fb.group({
       propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
-      weight: [this.data.option ? this.data.option.weight : '',
-        [Validators.required, WeightValidator]],
+      weight: [this.data.option ? this.data.option.weight : ''],
       thesaurus: [this.data.option ? this.data.option.thesaurus : ''],
       filter: [this.data.option ? this.data.option.filter : ''],
       dictionary: [this.data.option ? this.data.option.dictionary : ''],
@@ -52,6 +52,24 @@ export class AddMatchOptionDialogComponent {
       this.data.option.matchType : 'exact';
     this.form.setControl('propertiesReduce', this.createProps());
     this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
+  }
+
+  selectedTypeChanged() {
+    const weightControl = this.form.get('weight');
+    const zip5match9Control = this.form.get('zip5match9');
+    const zip9match5Control = this.form.get('zip9match5');
+    if (this.selectedType === 'zip') {
+      zip5match9Control.setValidators(this.weightValidators);
+      zip9match5Control.setValidators(this.weightValidators);
+      weightControl.clearValidators();
+      weightControl.reset();
+    } else {
+      weightControl.setValidators(this.weightValidators);
+      zip5match9Control.clearValidators();
+      zip5match9Control.reset();
+      zip9match5Control.clearValidators();
+      zip9match5Control.reset();
+    }
   }
 
   createProps() {
