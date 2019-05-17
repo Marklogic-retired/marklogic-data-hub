@@ -206,23 +206,33 @@ public class DefinitionType extends JsonPojo {
         writeStringIf(node, "namespacePrefix", namespacePrefix);
 
         ArrayNode requiredArray = JsonNodeFactory.instance.arrayNode();
-        required.forEach(requiredArray::add);
+        if (required != null) {
+            required.forEach(requiredArray::add);
+        }
         node.set("required", requiredArray);
 
         ArrayNode piiArray = JsonNodeFactory.instance.arrayNode();
-        pii.forEach(piiArray::add);
+        if (pii != null) {
+            pii.forEach(piiArray::add);
+        }
         node.set("pii", piiArray);
 
         ArrayNode elementRangeIndexArray = JsonNodeFactory.instance.arrayNode();
-        elementRangeIndex.forEach(elementRangeIndexArray ::add);
+        if (elementRangeIndex != null) {
+            elementRangeIndex.forEach(elementRangeIndexArray::add);
+        }
         node.set("elementRangeIndex", elementRangeIndexArray);
 
         ArrayNode rangeIndexArray = JsonNodeFactory.instance.arrayNode();
-        rangeIndex.forEach(rangeIndexArray ::add);
+        if (rangeIndex != null) {
+            rangeIndex.forEach(rangeIndexArray::add);
+        }
         node.set("rangeIndex", rangeIndexArray);
 
         ArrayNode wordLexiconArray = JsonNodeFactory.instance.arrayNode();
-        wordLexicon.forEach(wordLexiconArray::add);
+        if (wordLexicon != null) {
+            wordLexicon.forEach(wordLexiconArray::add);
+        }
         node.set("wordLexicon", wordLexiconArray);
 
         ObjectNode propertiesObj = JsonNodeFactory.instance.objectNode();

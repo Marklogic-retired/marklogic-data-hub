@@ -13,6 +13,9 @@ repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
     maven { url 'https://developer.marklogic.com/maven2/' }
+
+    // Needed for marklogic-junit
+    maven { url 'https://dl.bintray.com/marklogic-community/Maven/' }
 }
 
 group = 'com.marklogic'
@@ -62,7 +65,12 @@ dependencies {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
+
+    // Provides support for invoking marklogic-unit-test tests via JUnit
+    testCompile "com.marklogic:marklogic-junit:1.0.beta"
+    mlRestApi "com.marklogic:marklogic-unit-test-modules:1.0.beta"
 }
+
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.hosts.HostManager
 
@@ -264,12 +272,10 @@ ext {
         customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
 
         modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
-
     }
 }
 
 def propFile = file("gradle.properties")
-String fileContents = propFile.text
 boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
 boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
 def props = new Properties()
@@ -360,6 +366,8 @@ task setupSSL{
         }
     }
 }
+
+bootstrap.finalizedBy mlPrepareRestApiDependencies // ensures that marklogic-unit-test is downloaded
 
 setupSSL.dependsOn(testClasses)
 bootstrap.dependsOn(setupSSL)
