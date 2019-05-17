@@ -8,7 +8,7 @@ export class MasteringStep extends AppPage {
    * @param option = [Matching/Merging]
    */  
   masteringTab(option: string) {
-    return element(by.cssContainingText("mat-tab-label-content", option));  
+    return element(by.cssContainingText(".mat-tab-label-content", option));  
   }
 
   /**
@@ -732,7 +732,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("merge-option-max-values"));    
   }
 
-  async setMergeOptionDialogMaxValues(value: string) {
+  async setMergeOptionDialogMaxValues(value: number) {
     let inputField = this.mergeOptionDialogMaxValues;
     await inputField.clear();
     return await inputField.sendKeys(value);
@@ -742,7 +742,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("merge-option-max-sources"));    
   }
 
-  async setMergeOptionDialogMaxSources(value: string) {
+  async setMergeOptionDialogMaxSources(value: number) {
     let inputField = this.mergeOptionDialogMaxSources;
     await inputField.clear();
     return await inputField.sendKeys(value);
@@ -754,7 +754,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("merge-option-length"));    
   }
 
-  async setMergeOptionDialogLength(value: string) {
+  async setMergeOptionDialogLength(value: number) {
     let inputField = this.mergeOptionDialogLength;
     await inputField.clear();
     return await inputField.sendKeys(value);
@@ -1018,7 +1018,7 @@ export class MasteringStep extends AppPage {
   // Merge Collections
 
   get mergeCollectionsAddButton() {
-    return element(by.css("#merge-collections button.new-strategy-button"));
+    return element(by.css("#merge-collections button.new-collection-button"));
   }
 
   async clickMergeCollectionsAddButton() {
@@ -1164,8 +1164,100 @@ export class MasteringStep extends AppPage {
     let menuOption = this.mergeCollectionDialogEventOptions(option);
     return await menuOption.click();
   }
+  
+  /*
+  * collectionNumber starts with 0
+  */
+  
+  // Collection To Add
 
-  // TO DO add, remove, set collections
+  collectionToAdd(collectionNumber: number) {
+    return element(by.css(`#merge-collection-add-container div.add-group[ng-reflect-name="${collectionNumber}"] .add-key-${collectionNumber}`));
+  }
+
+  get addCollectionToAddButton() {
+    return element(by.id("merge-collection-add-add-btn"));
+  }
+
+  async clickAddCollectionToAddButton() {
+    let button = this.addCollectionToAddButton;
+    return await button.click();
+  }
+
+  async setCollectionToAdd(collectionNumber: number, collectionName: string) {
+    let inputField = this.collectionToAdd(collectionNumber);
+    await inputField.clear();
+    return await inputField.sendKeys(collectionName);
+  }
+
+  removeCollectionToAddButton(collectionNumber: number) {
+    return element(by.css(`#merge-collection-add-container div.add-group[ng-reflect-name="${collectionNumber}"] .add-remove-collection-btn`));
+  }
+
+  async clickRemoveCollectionToAddButton(collectionNumber: number) {
+    let button = this.removeCollectionToAddButton(collectionNumber);
+    return await button.click();
+  }
+
+  // Collection To Remove
+
+  collectionToRemove(collectionNumber: number) {
+    return element(by.css(`#merge-collection-remove-container div.remove-group[ng-reflect-name="${collectionNumber}"] .remove-key-${collectionNumber}`));
+  }
+
+  get addCollectionToRemoveButton() {
+    return element(by.id("merge-collection-add-remove-btn"));
+  }
+
+  async clickAddCollectionToRemoveButton() {
+    let button = this.addCollectionToRemoveButton;
+    return await button.click();
+  }
+
+  async setCollectionToRemove(collectionNumber: number, collectionName: string) {
+    let inputField = this.collectionToRemove(collectionNumber);
+    await inputField.clear();
+    return await inputField.sendKeys(collectionName);
+  }
+
+  removeCollectionToRemoveButton(collectionNumber: number) {
+    return element(by.css(`#merge-collection-remove-container div.remove-group[ng-reflect-name="${collectionNumber}"] .remove-remove-collection-btn`));
+  }
+
+  async clickRemoveCollectionToRemoveButton(collectionNumber: number) {
+    let button = this.removeCollectionToRemoveButton(collectionNumber);
+    return await button.click();
+  }
+
+  // Collection to Set
+  
+  collectionToSet(collectionNumber: number) {
+    return element(by.css(`#merge-collection-set-container div.set-group[ng-reflect-name="${collectionNumber}"] .set-key-${collectionNumber}`));
+  }
+
+  get addCollectionToSetButton() {
+    return element(by.id("merge-collection-add-set-btn"));
+  }
+
+  async clickAddCollectionToSetButton() {
+    let button = this.addCollectionToSetButton;
+    return await button.click();
+  }
+
+  async setCollectionToSet(collectionNumber: number, collectionName: string) {
+    let inputField = this.collectionToSet(collectionNumber);
+    await inputField.clear();
+    return await inputField.sendKeys(collectionName);
+  }
+
+  removeCollectionToSetButton(collectionNumber: number) {
+    return element(by.css(`#merge-collection-set-container div.set-group[ng-reflect-name="${collectionNumber}"] .set-remove-collection-btn`));
+  }
+
+  async clickRemoveCollectionToSetButton(collectionNumber: number) {
+    let button = this.removeCollectionToSetButton(collectionNumber);
+    return await button.click();
+  }
 
   /**
    * @param option = [cancel/save]

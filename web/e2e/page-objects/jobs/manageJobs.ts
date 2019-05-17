@@ -81,7 +81,7 @@ export class ManageJobs extends AppPage {
   }
 
   get textFilter() {
-    return element(by.css("#filter-by-text input"));
+    return element(by.id("filter-by-text"));
   }
 
   async setTextFilter(input: string) {
