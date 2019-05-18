@@ -529,10 +529,9 @@ export default function(qaProjectDir) {
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            browser.sleep(10000);
+            browser.sleep(50000);
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2006');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
-            await expect(browsePage.facetName("customer-merge").getText()).toEqual("customer-merge");
             await expect(browsePage.facetCount("MasteringCustomer")).toEqual("2006");
             await expect(browsePage.facetCount("customer-merge")).toEqual("1");
             await expect(browsePage.facetCount("customer-notify")).toEqual("1");
