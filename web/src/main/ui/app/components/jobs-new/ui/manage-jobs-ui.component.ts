@@ -140,15 +140,23 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   }
 
   friendlyDate(dt): string {
-    return (dt) ? moment(dt).fromNow() : '';
+    if ( dt === 'N/A') {
+      return 'In progress';
+    } else {
+      return (dt) ? moment(dt).fromNow() : '';
+    }
   }
 
   friendlyDuration(dt1, dt2): any {
     moment.relativeTimeThreshold('s', 60);
     moment.relativeTimeThreshold('ss', 3);
-    return (dt1 && dt2) ?
+    if (dt2 === 'N/A') {
+      return 'In progress';
+    } else {
+      return (dt1 && dt2) ?
       moment.duration(moment(dt1).diff(moment(dt2))).humanize() :
       '';
+    }
   }
 
   formatStatus(status):string {

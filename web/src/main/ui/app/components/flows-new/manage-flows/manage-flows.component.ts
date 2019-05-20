@@ -1,6 +1,5 @@
 import {Component, ViewChild, OnInit, OnDestroy} from "@angular/core";
 import {Flow} from "../models/flow.model";
-import { timer } from 'rxjs';
 import {ManageFlowsService} from "../services/manage-flows.service";
 import { RunningJobService } from '../../jobs-new/services/running-job-service';
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
@@ -74,26 +73,25 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
         this.flows.push(flowObject);
         const isFlowRunning = this.runningJobService.checkJobStatus(flowObject);
         if (isFlowRunning) {
-          const flowIndex = this.flows.findIndex(obj => obj.id === flowObject.id);
-          this.pollFlow(flowIndex, flowObject.id);
+          this.pollFlow(flowObject.id);
         }
       });
       this.flowsPageUi.renderRows();
     });
   }
 
-  runFlow(runObject): void {
+  runFlow(runObject: any): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
       // console.log('run enpoint', resp);
       // TODO add response check
-      const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
-      this.pollFlow(flowIndex, runObject.id);
+      this.pollFlow(runObject.id);
     });
   }
 
-  pollFlow(index: number, flowId: string) {
+  pollFlow(flowId: string) {
     this.runningJobService.pollFlowById(flowId).subscribe( poll => {
-      this.flows[index] = Flow.fromJSON(poll);
+      const flowIndex = this.flows.findIndex(obj => obj.id === flowId);
+      this.flows[flowIndex] = Flow.fromJSON(poll);
       this.flowsPageUi.renderRows();
     });
   }
