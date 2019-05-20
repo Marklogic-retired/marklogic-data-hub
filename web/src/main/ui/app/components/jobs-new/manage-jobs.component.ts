@@ -1,5 +1,6 @@
-import { Component, ViewChild, OnInit } from "@angular/core";
+import { Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
 import { ManageJobsService } from "./manage-jobs.service";
+import { RunningJobService } from './services/running-job-service';
 import { ManageJobsUiComponent } from "./ui/manage-jobs-ui.component";
 import { Job } from './models/job.model';
 import * as _ from "lodash";
@@ -13,7 +14,7 @@ import * as _ from "lodash";
     </jobs-page-ui>
   `
 })
-export class ManageJobsComponent implements OnInit {
+export class ManageJobsComponent implements OnInit, OnDestroy {
 
   @ViewChild(ManageJobsUiComponent)
   jobsPageUi: ManageJobsUiComponent;
@@ -21,12 +22,16 @@ export class ManageJobsComponent implements OnInit {
   jobs = [];
 
   constructor(
-    private manageJobsService: ManageJobsService
+    private manageJobsService: ManageJobsService,
+    private runningJobService: RunningJobService
   ) {
   }
 
   ngOnInit() {
     this.getJobs();
+  }
+  ngOnDestroy(): void {
+    this.runningJobService.stopPollingAll();
   }
 
   getJobs() {
@@ -36,10 +41,22 @@ export class ManageJobsComponent implements OnInit {
         return true;
       });
       _.forEach(resp, job => {
-        this.jobs.push(Job.fromJSON(job));
+        const jobObject = Job.fromJSON(job);
+        this.jobs.push(jobObject);
+        const isJobRunning = this.runningJobService.checkJobObjectStatus(job);
+        if (isJobRunning) {
+          this.pollJob(jobObject.id);
+        }
       });
       this.jobsPageUi.renderRows();
     });
+  }
 
+  pollJob(jobId: string) {
+    this.runningJobService.pollJobById(jobId).subscribe( poll => {
+      const jobIndex = this.jobs.findIndex(obj => obj.id === jobId);
+      this.jobs[jobIndex] = Job.fromJSON(poll);
+      this.jobsPageUi.renderRows();
+    });
   }
 }
