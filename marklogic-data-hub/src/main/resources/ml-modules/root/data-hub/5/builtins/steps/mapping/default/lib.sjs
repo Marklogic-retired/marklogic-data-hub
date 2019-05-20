@@ -39,6 +39,10 @@ function getPath(sourceContext, connector, propertyName) {
   // if not a validExtractPath, likely a JSON property with XPath incompatible name
   if (cts.validExtractPath(propertyName)) {
     path = `${sourceContext}${connector}${propertyName}`;
+    if (connector.includes("*:") && !cts.validExtractPath(path)) {
+      connector = connector.replace("*:", "");
+      path = `${sourceContext}${connector}${propertyName}`;
+    }
   } else {
     if (connector.includes("*:")) {
       connector = connector.replace("*:", "");

@@ -684,6 +684,17 @@ public class HubTestBase {
         return count;
     }
 
+    protected int getDocCountByQuery(String database, String query) {
+        int count = 0;
+        EvalResultIterator resultItr = runInDatabase("xdmp:estimate(cts:search(fn:collection()," + query + "))", database);
+        if (resultItr == null || ! resultItr.hasNext()) {
+            return count;
+        }
+        EvalResult res = resultItr.next();
+        count = Math.toIntExact((long) res.getNumber());
+        return count;
+    }
+
     protected int getTelemetryInstallCount(){
         int count = 0;
         EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
