@@ -482,7 +482,7 @@ export default function(qaProjectDir) {
             // Add onMerge Collection
             await masteringStepPage.clickMergeCollectionsAddButton();
             browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
-            await masteringStepPage.setCollectionToSet(0, "customer-merge");
+            await masteringStepPage.setCollectionToSet(0, "CustomerMerge");
             await masteringStepPage.clickMergeCollectionCancelSaveButton("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
             browser.sleep(3000);
@@ -529,12 +529,12 @@ export default function(qaProjectDir) {
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            browser.sleep(5000);
+            browser.sleep(1000);
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2006');
-            browser.wait(EC.elementToBeClickable(browsePage.facetName("customer-merge")));
+            browser.wait(EC.elementToBeClickable(browsePage.facetName("CustomerMerge")));
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
             await expect(browsePage.facetCount("MasteringCustomer")).toEqual("2006");
-            await expect(browsePage.facetCount("customer-merge")).toEqual("1");
+            await expect(browsePage.facetCount("CustomerMerge")).toEqual("1");
             await expect(browsePage.facetCount("customer-notify")).toEqual("1");
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
