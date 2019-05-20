@@ -567,7 +567,6 @@ export default function(qaProjectDir) {
         });
 
         // Cleanup
-
         it('should delete AdvantageFlow', async function() {
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
