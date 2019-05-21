@@ -482,8 +482,10 @@ export default function(qaProjectDir) {
             // Add onMerge Collection
             await masteringStepPage.clickMergeCollectionsAddButton();
             browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
+            await masteringStepPage.clickMergeCollectionDialogEventMenu();
+            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onMerge")));
+            await masteringStepPage.clickMergeCollectionDialogEventOptions("onMerge")
             await masteringStepPage.setCollectionToSet(0, "customer-merge");
-            browser.sleep(5000);
             await masteringStepPage.clickMergeCollectionCancelSaveButton("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
             browser.sleep(3000);
@@ -530,7 +532,7 @@ export default function(qaProjectDir) {
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            browser.sleep(1000);
+            browser.sleep(10000);
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2006');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
             await expect(browsePage.facetCount("MasteringCustomer")).toEqual("2006");
