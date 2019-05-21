@@ -75,6 +75,7 @@ function post(context, params, input) {
         if(! jobDoc.job.stepResponses[step]){
           jobDoc.job.stepResponses[step] = {};
           jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
+          jobDoc.job.stepResponses[step].status = "running step " + step;
         }
         else {
           let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
