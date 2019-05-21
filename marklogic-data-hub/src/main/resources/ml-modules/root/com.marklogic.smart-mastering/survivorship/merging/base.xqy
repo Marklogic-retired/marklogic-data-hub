@@ -1264,7 +1264,7 @@ declare function merge-impl:get-sources(
   for $doc in $docs
   let $sources := $doc/(es:envelope|object-node("envelope"))
       /(es:headers|object-node("headers"))
-      /(sm:sources/sm:source|array-node("sources")/object-node("sources")|object-node("sources"))
+      /(*:sources/(*:source|*:name)|array-node("sources")/object-node("sources")|object-node("sources"))
   let $sources := if (fn:empty($sources)) then object-node { "name": xdmp:node-uri($doc) } else $sources
   for $source in $sources
   let $last-updated :=
@@ -1274,7 +1274,7 @@ declare function merge-impl:get-sources(
   order by $last-updated descending
   return
     object-node {
-      "name": fn:string($source/*:name),
+      "name": fn:string($source/descendant-or-self::*:name),
       "dateTime": fn:string($last-updated),
       "documentUri": xdmp:node-uri($doc)
     }
