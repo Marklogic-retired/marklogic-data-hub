@@ -40,7 +40,8 @@ export class IngestComponent implements OnInit {
       permissions,
       outputFormat,
       sourceQuery,
-      targetDatabase
+      targetDatabase,
+      headers
     } = this.step.options;
 
     const fileLocations = {
@@ -54,7 +55,12 @@ export class IngestComponent implements OnInit {
       permissions: permissions || "rest-reader,read,rest-writer,update",
       outputFormat: outputFormat || 'json',
       sourceQuery: sourceQuery || '',
-      targetDatabase: targetDatabase || ''
+      targetDatabase: targetDatabase || '',
+      headers: headers || {
+        sources: [{ name: this.flow.name }],
+        createdOn: 'currentDateTime',
+        createdBy: 'currentUser'
+      }
     };
 
     this.step.fileLocations = fileLocations;
