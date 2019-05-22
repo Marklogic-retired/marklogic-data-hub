@@ -82,13 +82,14 @@ describe('Component: ManageFlowsUI', () => {
 
   it('should reflect the number of provided flows in the table', () => {
     expect(component).toBeTruthy();
-    component.flows = [Flow.fromJSON(flowsModelArray[0]), Flow.fromJSON(flowsModelArray[1])];
+    component.flows = flowsModelArray.map(f => Flow.fromJSON(f));
     fixture.detectChanges();
     const labelDE: DebugElement = fixture.debugElement.query(By.css(Selectors.PAGINATOR_RANGE_LABEL));
     expect(labelDE).toBeTruthy();
     expect(labelDE.nativeElement).toBeTruthy();
     const label: HTMLElement = labelDE.nativeElement;
     expect(label.innerText).toBeTruthy();
+    expect(label.innerText.indexOf(' of ')).toBeGreaterThan(0);
     expect(parseInt(label.innerText.split(' of ')[1])).toEqual(2);
   });
 });
