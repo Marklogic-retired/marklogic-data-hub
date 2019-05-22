@@ -80,6 +80,10 @@ configurations.all {
     exclude group: "log4j", module: "log4j"
 }
 
+// The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
+bootJar {
+    mainClassName = "com.marklogic.hub.cli.Installer"
+}
 
 node {
   // Version of node to use.
@@ -131,19 +135,25 @@ processResources {
     filesMatching("**/version.properties") {
         expand(project: project)
     }
+
+    // Includes installer-specific files into the jar produced by bootJar
+    from ("src/installer") {
+        into "."
+    }
 }
 
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
-    gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
-    project.hasProperty('skipui')
-    )
-   ) {
-  processResources.dependsOn copyUIAssets
+        gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("bootjar") ||
+        project.hasProperty('skipui')
+)
+) {
+    processResources.dependsOn copyUIAssets
 }
 
 tasks.clean.dependsOn cleanUI
