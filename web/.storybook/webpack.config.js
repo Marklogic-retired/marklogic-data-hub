@@ -8,7 +8,7 @@ module.exports = async ({config, mode}) => {
   }));
   config.module.rules.push(
     {
-      test: [/\.stories\.ts?$/, /index\.ts$/],
+      test: [/\.stories\.ts?$/],
       loaders: [
         {
           loader: require.resolve('@storybook/addon-storysource/loader'),

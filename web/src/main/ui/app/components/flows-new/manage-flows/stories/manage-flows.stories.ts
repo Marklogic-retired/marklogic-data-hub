@@ -1,11 +1,8 @@
-import {action} from '@storybook/addon-actions';
-import {centered} from '@storybook/addon-centered/angular';
 import {boolean, object, text, withKnobs} from '@storybook/addon-knobs';
 import {moduleMetadata, storiesOf} from '@storybook/angular';
 import {ManageFlowsModule} from "../../manage-flows.module";
 import {ThemeModule} from "../../../index";
 import {StoryCardComponent} from "../../../../utils";
-import {ManageFlowsUiComponent} from "../ui/manage-flows-ui.component";
 import {
   MatButtonModule,
   MatChipsModule,
@@ -23,10 +20,27 @@ import {
 } from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {flowsModelArray} from "./manage-flows.data";
+import {ActivatedRouteStub} from "../../../../utils/stories/router-stubs";
+import {ActivatedRoute, Route, RouterModule} from "@angular/router";
+import {RouterTestingModule} from "@angular/router/testing";
+import {Component} from "@angular/core";
+import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.component";
+import {EditFlowModule} from "../..";
+
+@Component({
+  template: ''
+})
+class DummyComponent {
+}
+
+const routes: Route[] = [
+  {path: '', component: DummyComponent},
+  {path: 'flows', component: DummyComponent}
+];
 
 storiesOf('Components|Flows', module)
   .addDecorator(withKnobs)
-  .addDecorator(centered)
+  //.addDecorator(centered)
   .addDecorator(
     moduleMetadata({
       imports: [
@@ -45,19 +59,22 @@ storiesOf('Components|Flows', module)
         MatSnackBarModule,
         MatTableModule,
         MatTabsModule,
-        ManageFlowsModule
+        ManageFlowsModule,
+        RouterModule,
+        RouterTestingModule.withRoutes(routes),
+        EditFlowModule
       ],
       declarations: [
-        ManageFlowsUiComponent,
-        StoryCardComponent
+        StoryCardComponent,
+        DummyComponent
+      ],
+      providers: [
       ]
     })
   ).add('Flows Manage Page', () => ({
   template: `
       <mlui-dhf-theme>
-          <mlui-story-card [width]="'1000px'" [height]="'1500px'">
-            <flows-page-ui [flows]="flowsModels"></flows-page-ui>
-          </mlui-story-card>
+        <flows-page-ui [flows]="flowsModels"></flows-page-ui>
       </mlui-dhf-theme>
     `,
   props: {

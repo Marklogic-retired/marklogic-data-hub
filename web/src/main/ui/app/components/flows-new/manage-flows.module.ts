@@ -30,6 +30,9 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
   ],
   entryComponents: [
     FlowSettingsDialogComponent
+  ],
+  exports: [
+    ManageFlowsUiComponent
   ]
 })
 export class ManageFlowsModule {}
