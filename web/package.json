@@ -102,10 +102,10 @@
     "jasmine-reporters": "^2.3.2",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "^4.1.0",
-    "karma-chrome-launcher": "~2.2.0",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-cli": "~1.0.1",
     "karma-coverage-istanbul-reporter": "^2.0.4",
-    "karma-firefox-launcher": "^1.0.1",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "karma-spec-reporter": "0.0.32",
@@ -124,6 +124,7 @@
     "tmp": "0.0.33",
     "ts-node": "~4.1.0",
     "tslint": "^5.12.1",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "uuid": "^3.3.2"
   }
 }

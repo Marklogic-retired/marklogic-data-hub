@@ -1,9 +1,9 @@
 import {isNumber} from "util";
-import uuid from "uuid";
+import * as uuid from "uuid/v4";
 
 export class Flow {
 
-  public id: string = uuid.v4();
+  public id: string = uuid();
   public name: string = '';
   public description: string;
   public batchSize: number;
