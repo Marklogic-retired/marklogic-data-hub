@@ -74,7 +74,11 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
   if(fn.head(content.xpath('/*:envelope'))) {
-    sourceContext = '/*:envelope/*:instance' + sourceContext;
+    let leadingXPath = '/*:envelope/*:instance';
+    if (fn.count(content.xpath('/*:envelope/*:instance/(element() except *:info)')) === 1) {
+      leadingXPath = leadingXPath + "/*";
+    }
+    sourceContext = leadingXPath + sourceContext;
   }
 
   let definition = model.definitions[modelName];
