@@ -25,7 +25,7 @@ export class MappingUiComponent implements OnChanges {
   private uriOrig: string = '';
   private connsOrig: object = {};
 
-  public valMaxLen: number = 17;
+  public valMaxLen: number = 15;
 
   public filterFocus: object = {};
   public filterText: object = {};
