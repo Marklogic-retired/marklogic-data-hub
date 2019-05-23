@@ -33,7 +33,7 @@ DHF projects and DHS projects have the following default configurations:
   | jobs        | 8013  | analytics          |
   {:.table-b1gray}
 
-  {% include note.html type="IMPORTANT" content="Use port 8004 to deploy the Data Hub Framework core **only**. To deploy custom plugins (REST extensions, search options, etc.) against the STAGING database, use port 8011." %}
+  {% include note.html type="IMPORTANT" content="Use port 8004 to deploy the Data Hub Framework core **only**. To deploy custom plugins (REST extensions, search options, etc.) against the FINAL database, use port 8011." %}
 
 - Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See [Data Hub Service Roles](https://cloudservices.marklogic.com/help?type=datahub&subtype=user#DHSroles).
 
