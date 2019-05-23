@@ -75,7 +75,12 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         hubConfig.initHubProject();
         hubConfig.refreshProject();
 
-        scaffolding.createEntity(ENTITY);
+        try {
+            scaffolding.createEntity(ENTITY);
+        }
+        catch (DataHubProjectException e) {
+            // Entity is already present
+        }
 
         Path legacyEntityDir = projectDir.resolve("plugins/entities/" + ENTITY);
         Path entityDir = projectDir.resolve("entities");
