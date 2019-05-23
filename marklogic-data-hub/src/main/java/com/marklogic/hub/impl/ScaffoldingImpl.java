@@ -23,6 +23,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -78,12 +79,18 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Override public void createEntity(String entityName) {
         Path entityDir = project.getHubEntitiesDir();
+
+        File entityFile = entityDir.resolve(entityName + ".entity.json").toFile();
+        if (entityFile.exists()) {
+            throw new DataHubProjectException("Entity with that name already exists.");
+        }
+
         File entityDirFile = entityDir.toFile();
         if(!entityDirFile.exists()){
             entityDirFile.mkdirs();
         }
         String fileContents = getFileContent("scaffolding/Entity.json", entityName);
-        writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
+        writeToFile(fileContents, entityFile);
     }
 
     @Override public void createLegacyMappingDir(String mappingName) {
