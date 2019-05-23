@@ -20,11 +20,9 @@ import {
 } from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {flowsModelArray} from "./manage-flows.data";
-import {ActivatedRouteStub} from "../../../../utils/stories/router-stubs";
-import {ActivatedRoute, Route, RouterModule} from "@angular/router";
+import {Route, RouterModule} from "@angular/router";
 import {RouterTestingModule} from "@angular/router/testing";
 import {Component} from "@angular/core";
-import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.component";
 import {EditFlowModule} from "../..";
 
 @Component({
