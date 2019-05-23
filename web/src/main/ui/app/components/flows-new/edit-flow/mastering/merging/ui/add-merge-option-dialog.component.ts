@@ -23,7 +23,7 @@ export class AddMergeOptionDialogComponent {
   selectedType: string;
   propertyName: string;
   sourceWeights: FormArray;
-  strategies: any;
+  strategies: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -53,10 +53,11 @@ export class AddMergeOptionDialogComponent {
     })
     this.selectedType = (this.data.option && this.data.option.mergeType) ?
       this.data.option.mergeType : 'standard';
-    this.strategies = (this.data.strategies && this.data.strategies.strategies) ?
-      this.data.strategies.strategies.map(s => {
-        if (!s.default) return s.name;
-      }) : [];
+    if (this.data.strategies && this.data.strategies.strategies) {
+      this.data.strategies.strategies.forEach(s => {
+        if (!s.default) this.strategies.push(s.name);
+      });
+    }
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
   }
