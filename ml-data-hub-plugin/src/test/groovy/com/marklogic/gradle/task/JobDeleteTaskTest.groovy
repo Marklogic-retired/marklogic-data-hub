@@ -27,7 +27,7 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class JobDeleteTaskTest extends BaseTest {
-    private final int JOB_COUNT = 3
+    private final static int JOB_COUNT = 3
 
     def setupSpec() {
         createGradleFiles()
