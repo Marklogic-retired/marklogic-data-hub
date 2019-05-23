@@ -70,4 +70,22 @@ class CreateEntityTaskTest extends BaseTest {
         getModulesDocCount() == modCount
     }
 
+    def "create entity with same name"() {
+        given:
+        propertiesFile << """
+            ext {
+                entityName=my-duplicate-entity
+            }
+        """
+
+        when:
+        runTask('hubCreateEntity')
+        def result = runFailTask('hubCreateEntity')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains('Entity with the same name is already present')
+        result.task(":hubCreateEntity").outcome == FAILED
+    }
+
 }
