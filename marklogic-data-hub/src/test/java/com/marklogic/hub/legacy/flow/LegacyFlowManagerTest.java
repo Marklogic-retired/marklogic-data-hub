@@ -21,6 +21,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.collector.LegacyCollector;
 import com.marklogic.hub.main.MainPlugin;
@@ -172,7 +173,12 @@ public class LegacyFlowManagerTest extends HubTestBase {
     @Test
     public void testGetLocalFlows() throws IOException {
         createProjectDir(PROJECT_PATH);
-        scaffolding.createEntity("my-entity");
+        try {
+            scaffolding.createEntity("my-entity");
+        }
+        catch (DataHubProjectException e) {
+            // Entity is already present
+        }
 
         assertEquals(0, fm.getLocalFlows().size());
 
@@ -200,7 +206,12 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlowFromProperties() throws IOException {
-        scaffolding.createEntity("my-entity");
+        try {
+            scaffolding.createEntity("my-entity");
+        }
+        catch (DataHubProjectException e) {
+            // Entity is already present
+        }
 
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
