@@ -25,8 +25,9 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -75,7 +76,14 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @BeforeEach
     public void setup() {
         createProjectDir();
-        scaffolding.createEntity(ENTITY);
+
+        try {
+            scaffolding.createEntity(ENTITY);
+        }
+        catch (DataHubProjectException e) {
+            // Entity is already present
+        }
+
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
