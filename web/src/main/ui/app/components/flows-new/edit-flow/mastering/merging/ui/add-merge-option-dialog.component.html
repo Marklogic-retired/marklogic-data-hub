@@ -4,7 +4,7 @@
   <mat-form-field layout-fill>
     <mat-select id="merge-option-type" placeholder="Merge Type" formControlName="mergeType" [(value)]="selectedType">
       <mat-option id="merge-option-type-standard" value="standard">Standard</mat-option>
-      <mat-option id="merge-option-type-strategy" value="strategy">Strategy</mat-option>
+      <mat-option id="merge-option-type-strategy" value="strategy" [disabled]="strategies.length === 0">Strategy</mat-option>
       <mat-option id="merge-option-type-custom" value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
