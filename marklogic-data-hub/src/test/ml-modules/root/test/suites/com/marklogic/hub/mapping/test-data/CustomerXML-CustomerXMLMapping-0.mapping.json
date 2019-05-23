@@ -1,0 +1,17 @@
+{
+  "language" : "zxx",
+  "name" : "CustomerXML-CustomerXMLMapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "Customer-0.0.1/Customer",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "id": {
+      "sourcedFrom": "@CustomerID"
+    },
+    "firstname": {
+      "sourcedFrom": "property[@name = 'name']/@value"
+    }
+  }
+}

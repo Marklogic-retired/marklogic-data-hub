@@ -1,7 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-var mapping = null;
+// caching mappings in key to object since tests can have multiple mappings run in same transaction
+var mappings = {};
 var entityModel = null;
 
 function main(content, options) {
@@ -28,6 +29,8 @@ function main(content, options) {
   let doc = content.value;
 
   //then we grab our mapping
+  let mappingKey = options.mapping ? `${options.mapping.name}:${options.mapping.version}` : null;
+  let mapping = mappings[mappingKey];
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     let version = parseInt(options.mapping.version);
     if(isNaN(version)){
@@ -35,8 +38,10 @@ function main(content, options) {
       throw Error('Mapping version ('+options.mapping.version+') is invalid.');
     }
     mapping = lib.getMappingWithVersion(options.mapping.name, version);
+    mappings[mappingKey] = mapping;
   } else if (!mapping && options.mapping && options.mapping.name) {
     mapping = lib.getMapping(options.mapping.name);
+    mappings[mappingKey] = mapping;
   } else if (!mapping) {
     datahub.debug.log({message: 'You must specify a mapping name.', type: 'error'});
     throw Error('You must specify a mapping name.');
