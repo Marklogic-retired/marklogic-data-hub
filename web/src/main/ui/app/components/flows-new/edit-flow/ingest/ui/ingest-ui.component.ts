@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 
 const settings = {
   inputFilePath: {
-    label: 'Source File Path',
+    label: 'Source Directory Path',
     description: 'Fhe filesystem location(s) to use for input. Default is current project path relative to the server location',
     value: '.'
   },

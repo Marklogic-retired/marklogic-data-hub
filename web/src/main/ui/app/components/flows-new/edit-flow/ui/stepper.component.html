@@ -67,7 +67,7 @@
               </div>
               <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label}}</h3>
               <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
-                <div class="summary-label">Source File Path</div>
+                <div class="summary-label">Source Directory Path</div>
                 <div class="summary-content" *ngIf="stepsArray[i].fileLocations.inputFilePath"
                 title="{{stepsArray[i].fileLocations.inputFilePath}}">
                   {{stepsArray[i].fileLocations.inputFilePath | truncate : -23}}
