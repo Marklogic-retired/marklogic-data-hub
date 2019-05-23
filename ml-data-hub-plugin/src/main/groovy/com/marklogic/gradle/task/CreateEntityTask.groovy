@@ -17,7 +17,9 @@
 
 package com.marklogic.gradle.task
 
+import com.marklogic.gradle.exception.EntityAlreadyPresentException
 import com.marklogic.gradle.exception.EntityNameRequiredException
+import com.marklogic.hub.error.DataHubProjectException
 import org.gradle.api.tasks.TaskAction
 
 class CreateEntityTask extends HubTask {
@@ -33,6 +35,11 @@ class CreateEntityTask extends HubTask {
         println "entityName: " + entityName
         println "projectDir: " + projectDir.toString()
 
-        getScaffolding().createEntity(entityName)
+        try {
+            getScaffolding().createEntity(entityName)
+        }
+        catch (DataHubProjectException e) {
+            throw new EntityAlreadyPresentException()
+        }
     }
 }
