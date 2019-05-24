@@ -1,6 +1,6 @@
 import {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {$, by, element} from "protractor";
 
 export class MappingStep extends AppPage {
   
@@ -44,8 +44,12 @@ export class MappingStep extends AppPage {
     return element(by.css('#source-heading .fa-remove'));
   }
 
+  get sourceURITitleAttribute() {
+    return element(by.css('#source-heading .sample-doc-uri')).getAttribute("ng-reflect-tooltip");
+  }
+
   get sourceURITitle() {
-    return element(by.css('#source-heading .sample-doc-uri')).getAttribute('title');
+    return element(by.css('#source-heading .sample-doc-uri')).getText();
   }
 
   get editSourceURIConfirmationMessage() {
@@ -130,6 +134,10 @@ export class MappingStep extends AppPage {
     return element(by.cssContainingText('.prop-select-content .prop-type', propertyType));
   }
 
+  verifySourcePropertyTypeByName(propertyName: string, propertyType: string) {
+    return element(by.cssContainingText(`.prop-entity-${propertyName} .prop-select-content .prop-type`, propertyType));
+  }
+
   verifyDropdownPropertyType(entityProperty: string, propertyType: string) {
     return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-type`, propertyType));
   }
@@ -141,6 +149,15 @@ export class MappingStep extends AppPage {
   verifyDropdownPropertyValue(entityProperty: string, propertyValue: string) {
     return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-val`, propertyValue));
   }
+
+  get sourceHelpLink() {
+    return $("#source .help-icon > a").getAttribute("href");
+  }
+
+  get targetSourceLink() {
+    return $("#target .help-icon > a").getAttribute("href");
+  }
+
 }
 
 let mappingStepPage = new MappingStep();

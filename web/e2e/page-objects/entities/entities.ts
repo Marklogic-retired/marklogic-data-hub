@@ -2,7 +2,7 @@ import {
   protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder,
   ElementArrayFinder, Key
 } from 'protractor'
-import {AppPage} from '../appPage';
+import appPage, {AppPage} from '../appPage';
 import {pages} from '../page';
 import {Element} from "@angular/compiler";
 
@@ -195,6 +195,9 @@ export class EntityPage extends AppPage {
   getEntityBoxURI(entityName: string) {
     return this.entity(entityName).element(by.css('.baseuri > div')).getText();
   }
+
+  properties: string[] = ['id', 'fname', 'lname', 'eyeColor', 'synonym', 'zip'];
+
 }
 
 var entityPage = new EntityPage();

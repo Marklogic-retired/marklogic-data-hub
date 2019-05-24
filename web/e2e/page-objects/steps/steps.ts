@@ -1,11 +1,18 @@
 import {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, element, ExpectedConditions as EC} from "protractor";
+import manageFlowPage from "../flows/manageFlows";
+import editFlowPage from "../flows/editFlow";
 
 export class Steps extends AppPage {
 
-  // Step Dialog
+  qaProjectDir: string = '';
 
+  setQaProjectDir(path: string) {
+    this.qaProjectDir = path;
+  }
+
+  // Step Dialog
   get stepDialog() {
     return element(by.id("step-dialog"));
   }
@@ -51,6 +58,11 @@ export class Steps extends AppPage {
     let inputField = this.stepName;
     await inputField.clear();
     return await inputField.sendKeys(input);
+  }
+
+  async isStepInputFieldEnabled(flowName: string) {
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`))
+    return await run.isEnabled();
   }
 
   get stepDescription() {
@@ -209,11 +221,11 @@ export class Steps extends AppPage {
   }
 
   stepContainerDeleteButton(stepName: string) {
-    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../mat-icon[@class="step-delete"]`));  
+    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div/div/mat-icon`));
   }
 
   async clickStepSelectContainerDeleteButton(stepName: string) {
-    let stepContainerDelete = this.clickStepSelectContainerDeleteButton(stepName);
+    let stepContainerDelete = this.stepContainerDeleteButton(stepName);
     return await stepContainerDelete.click();
   }
 
@@ -230,8 +242,17 @@ export class Steps extends AppPage {
   }
 
   stepContainerSummaryContent(stepName: string) {
-    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div[@class="summary"]/div[@class="summary-content"]`));  
+    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div[@class="summary"]/div[@class="summary-content ng-star-inserted"]`));
   }
+
+  stepContainersSummaryContent(stepName: string) {
+    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div[@class="summary"]/div[@class="summary-content ng-star-inserted"]`));
+  }
+
+  get lastStepContainer() {
+    return element.all(by.xpath(`(//h3[@class="step-name"]/..)[last()]`));
+  }
+
 
   // Step details header 
 
@@ -265,6 +286,109 @@ export class Steps extends AppPage {
     let menuEditOption = this.stepMenuEditOption;
     return await menuEditOption.click();
   }
+
+  async removeStep(stepName: string) {
+    await this.clickStepSelectContainerDeleteButton(stepName);
+    await browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
+    await browser.sleep(1000);
+    await manageFlowPage.clickDeleteConfirmationButton("YES");
+    await browser.sleep(1000);
+    await browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
+  }
+
+  ingestion = {
+    stepType: 'Ingestion',
+    stepName: 'json-ingestion',
+    stepDesc: 'json ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '\\input\\timur\\json',
+    sourceFileType: 'JSON',
+    targetFileType: 'JSON',
+  };
+
+  mapping = {
+    stepType: 'Mapping',
+    stepName: 'json-mapping',
+    stepDesc: 'json mapping description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-ingestion',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-STAGING',
+    targetDatabase: 'data-hub-qa-FINAL',
+  };
+
+  mapping2 = {
+    stepType: 'Mapping',
+    stepName: 'json-mapping2',
+    stepDesc: 'json mapping description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-ingestion',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-STAGING',
+    targetDatabase: 'data-hub-qa-STAGING',
+  };
+
+  mastering = {
+    stepType: 'Mastering',
+    stepName: 'json-mastering',
+    stepDesc: 'json mastering description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-mapping',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-FINAL',
+    targetDatabase: 'data-hub-qa-FINAL',
+  };
+
+  json = {
+    stepType: 'Ingestion',
+    stepName: 'json-ingestion',
+    stepDesc: 'json ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '\\input\\timur\\json',
+    sourceFileType: 'JSON',
+    targetFileType: 'JSON',
+  };
+
+  xml = {
+    stepType: 'Ingestion',
+    stepName: 'xml-ingestion',
+    stepDesc: 'xml ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '\\input\\timur\\xml',
+    sourceFileType: 'XML',
+    targetFileType: 'JSON',
+  };
+
+  csv = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '\\input\\timur\\csv',
+    sourceFileType: 'CSV',
+    targetFileType: 'JSON',
+  };
+
+  text = {
+    stepType: 'Ingestion',
+    stepName: 'text-ingestion',
+    stepDesc: 'text ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '\\input\\timur\\text',
+    sourceFileType: 'Text',
+    targetFileType: 'Text',
+  };
+
+  binary = {
+    stepType: 'Ingestion',
+    stepName: 'binary-ingestion',
+    stepDesc: 'binary ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '\\input\\timur\\binary',
+    sourceFileType: 'Binary',
+    targetFileType: 'JSON',
+  };
+
 
 }
 

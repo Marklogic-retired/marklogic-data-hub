@@ -20,14 +20,14 @@ export class FlowPage extends AppPage {
   }
 
   async clickEntityDisclosure(entityName: string) {
-    browser.wait(EC.elementToBeClickable(this.entityDisclosure("PIIEntity")), 10000);
+    await browser.wait(EC.elementToBeClickable(this.entityDisclosure("PIIEntity")), 10000);
     await this.entityDisclosure("PIIEntity").click();
-    browser.sleep(3000);
-    browser.wait(EC.elementToBeClickable(this.inputFlowButton("PIIEntity")));
-    browser.wait(EC.elementToBeClickable(this.entityDisclosure(entityName)), 10000);
+    await browser.sleep(3000);
+    await browser.wait(EC.elementToBeClickable(this.inputFlowButton("PIIEntity")));
+    await browser.wait(EC.elementToBeClickable(this.entityDisclosure(entityName)), 10000);
     await this.entityDisclosure(entityName).click();
-    browser.sleep(3000);
-    browser.wait(EC.elementToBeClickable(this.inputFlowButton(entityName)));
+    await browser.sleep(3000);
+    await browser.wait(EC.elementToBeClickable(this.inputFlowButton(entityName)));
   }
 
   get newFlowDialog() {
@@ -416,6 +416,49 @@ export class FlowPage extends AppPage {
     browser.wait(EC.stalenessOf(this.newFlowDialog));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
+
+  flow1 = {
+    flowName: 'TestFlow1',
+    flowDesc: 'Description Flow 1'
+  };
+
+  flow2 = {
+    flowName: 'TestFlow2',
+    flowDesc: 'Description Flow 2'
+  };
+
+  flow3 = {
+    flowName: 'TestFlow3',
+    flowDesc: 'Description Flow 3'
+  };
+
+  flow4 = {
+    flowName: 'TestFlow4',
+    flowDesc: 'Description Flow 4'
+  };
+
+  flow5 = {
+    flowName: 'TestFlow5',
+    flowDesc: 'Description Flow 5'
+  };
+
+  flow6 = {
+    flowName: 'TestFlow6',
+    flowDesc: 'Description Flow 6'
+  };
+
+  flowWithOptions = {
+    flowName: 'TestFlow1',
+    flowDesc: 'Test flow1 description',
+    batchSize: 100,
+    threadCount: 4,
+    options: {
+      0: ['key1', 'value1'],
+      1: ['key2', 'value2']
+    }
+  };
+
+
 }
 
 var flowPage = new FlowPage();

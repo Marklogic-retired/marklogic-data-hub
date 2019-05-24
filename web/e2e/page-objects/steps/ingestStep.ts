@@ -1,4 +1,4 @@
-import {protractor} from "protractor";
+import {browser, protractor} from "protractor";
 import {AppPage} from "../appPage";
 import {pages} from '../page';
 import {by, element} from "protractor";
@@ -23,6 +23,7 @@ export class IngestStep extends AppPage {
   async clickSourceFileTypeDropDown() {
     let dropDown = this.sourceFileTypeDropDown;
     return await dropDown.click();
+
   }
   
   /**
@@ -34,7 +35,13 @@ export class IngestStep extends AppPage {
 
   async clickSourceFileTypeOption(option: string) {
     let sourceFileTypeOption = this.sourceFileTypeOptions(option);
-    return await sourceFileTypeOption.click();
+    await browser.executeScript("arguments[0].click();", sourceFileTypeOption);
+    //return await sourceFileTypeOption.click();
+  }
+
+  async setSourceFileType(option: string) {
+    await this.clickSourceFileTypeDropDown;
+    return await this.clickSourceFileTypeOption(option);
   }
 
   get targetFileTypeDropDown() {
@@ -56,6 +63,12 @@ export class IngestStep extends AppPage {
   async clickTargetFileTypeOption(option: string) {
     let targetFileTypeOption = this.targetFileTypeOptions(option);
     return await targetFileTypeOption.click();
+  }
+
+  async setTargetFileType(option: string) {
+    await this.clickTargetFileTypeDropDown;
+    browser.sleep(1000);
+    return await this.clickTargetFileTypeOption(option);
   }
 
   get targetPermissions() {
