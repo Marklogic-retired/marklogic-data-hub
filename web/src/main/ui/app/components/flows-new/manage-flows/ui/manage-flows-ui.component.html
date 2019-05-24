@@ -29,12 +29,10 @@
     <!-- / HEADER -->
 
     <div class="content-card">
-
       <mat-table id="flows-table"
                  class="flows-table"
                  #table [dataSource]="dataSource"
-                 matSort>
-
+                 matSort>    
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <mat-header-cell id="flow-name-sort-btn" *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
@@ -148,7 +146,7 @@
         </mat-row>
 
       </mat-table>
-
+      <mat-progress-bar *ngIf="!flows.length" color="primary" mode="indeterminate"></mat-progress-bar>
       <mat-paginator id="flow-pagination"
                      #paginator
                      [length]="flows.length"
