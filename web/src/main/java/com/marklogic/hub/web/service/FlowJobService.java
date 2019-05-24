@@ -13,6 +13,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
@@ -41,6 +42,9 @@ public class FlowJobService extends ResourceManager {
 
     @Autowired
     private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunnerImpl flowRunner;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -117,7 +121,7 @@ public class FlowJobService extends ResourceManager {
                 String currStartTime = jobJson.getString("timeStarted", "");
                 String currEndTime = jobJson.getString("timeEnded", "");
 
-                if (cachedJobsByFlowName.size() == 0) {
+                if (cachedJobsByFlowName.size() == 0 && flowRunner.getRunningFlow() == null) {
                     if (StringUtils.isNotEmpty(jobStatus) && jobStatus.startsWith(RUNNING_PREFIX)) {
                         //invalid state on the job database that may be caused by unexpected server shutdown or crashed
                         staleStateJobIds.add(jobId);
