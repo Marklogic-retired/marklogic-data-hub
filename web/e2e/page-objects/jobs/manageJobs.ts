@@ -1,6 +1,6 @@
-import {AppPage} from "../appPage";
+import appPage, {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, ExpectedConditions as EC, element} from "protractor";
 
 export class ManageJobs extends AppPage {
 
@@ -235,6 +235,15 @@ export class ManageJobs extends AppPage {
   async clickJobPaginationNavigation(direction: string) {
     let navigation = this.jobPaginationNavigation(direction);
     return await navigation.click();
+  }
+
+  async getFlowJobsCount(flow) {
+    await appPage.jobsTab.click();
+    browser.wait(EC.visibilityOf(manageJobsPage.jobsPageHeader));
+    await manageJobsPage.clickFlowNameFilter();
+    browser.wait(EC.elementToBeClickable(manageJobsPage.flowNameFilterOptions(flow.flowName)));
+    await manageJobsPage.clickFlowNameFilterOptions(flow.flowName);
+    return await this.getJobsCount(flow.flowName);
   }
 }
 

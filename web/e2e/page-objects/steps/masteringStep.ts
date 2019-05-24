@@ -1,6 +1,7 @@
 import {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, element, Key} from "protractor";
+import {isBrowserEvents} from "@angular/core/src/render3/discovery_utils";
 
 export class MasteringStep extends AppPage {
   
@@ -8,7 +9,7 @@ export class MasteringStep extends AppPage {
    * @param option = [Matching/Merging]
    */  
   masteringTab(option: string) {
-    return element(by.cssContainingText(".mat-tab-label-content", option));  
+    return element(by.cssContainingText(".mat-tab-label-content", option));
   }
 
   /**
@@ -47,15 +48,18 @@ export class MasteringStep extends AppPage {
   }
 
   matchOptionOtherThesaurus(property: string) {
-    return element(by.xpath(`//mat-row[@class="match-option-${property}//mat-cell[@class="match-option-other"]//span[@class="other-label" and contains(text(), "Thesaurus")]/../span[@title]`));  
+    return element(by.xpath(`//mat-row[contains(@class,'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "Thesaurus")]/../span[@title]`));
   }
 
   matchOptionOtherFilter(property: string) {
-    return element(by.xpath(`//mat-row[@class="match-option-${property}//mat-cell[@class="match-option-other"]//span[@class="other-label" and contains(text(), "Filter")]`));  
+    return element(by.xpath(`//mat-row[contains(@class, 'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "Filter")]/..`));
   }
 
   matchOptionOtherDictionary(property: string) {
-    return element(by.xpath(`//mat-row[@class="match-option-${property}//mat-cell[@class="match-option-other"]//span[@class="other-label" and contains(text(), "Dictionary")]/../span[@title]`));  
+    return element(by.xpath(`//mat-row[contains(@class, 'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "Dictionary")]/../span[@title]`));
   }
 
   matchOptionOtherDistanceThreshold(property: string) {
@@ -63,15 +67,23 @@ export class MasteringStep extends AppPage {
   }
 
   matchOptionOtherCollation(property: string) {
-    return element(by.xpath(`//mat-row[@class="match-option-${property}//mat-cell[@class="match-option-other"]//span[@class="other-label" and contains(text(), "Collation")]/../span[@title]`));  
+    return element(by.xpath(`//mat-row[contains(@class, 'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "Collation")]/../span[@title]`));
   }
 
   matchOptionOtherURI(property: string) {
-    return element(by.xpath(`//mat-row[@class="match-option-${property}//mat-cell[@class="match-option-other"]//span[@class="other-label" and contains(text(), "URI")]/../span[@title]`));  
+    return element(by.xpath(`//mat-row[contains(@class, 'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "URI")]/..`));
   }
 
   matchOptionOtherFunction(property: string) {
-    return element(by.xpath(`//mat-row[@class="match-option-${property}//mat-cell[@class="match-option-other"]//span[@class="other-label" and contains(text(), "Function")]`));  
+    return element(by.xpath(`//mat-row[contains(@class, 'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "Function")]/..`));
+  }
+
+  matchOptionOtherNamespace(property: string) {
+    return element(by.xpath(`//mat-row[contains(@class, 'match-option-${property}')]
+    //mat-cell[contains(@class,'match-option-other')]//span[@class="other-label" and contains(text(), "Namespace")]/..`));
   }
 
   matchOptionOtherZip5Match9(property: string) {
@@ -99,7 +111,7 @@ export class MasteringStep extends AppPage {
    * @param option = [edit/delete]
    */
   matchOptionMenuOptions(option: string) {
-    return element(by.id(`match-option-menu-${option}-btn`));
+    return element(by.css(`.match-option-menu-${option}-btn`));
   }
 
   /**
@@ -108,7 +120,8 @@ export class MasteringStep extends AppPage {
    */
   async clickMatchOptionMenuOption(option: string) {
     let menuOption = this.matchOptionMenuOptions(option);
-    return await menuOption.click();
+    await browser.sleep(500);
+    await browser.executeScript("arguments[0].click();", menuOption);
   }
 
   async clickMatchOptionWeight(property: string) {
@@ -120,10 +133,15 @@ export class MasteringStep extends AppPage {
     return element(by.css(`.match-option-${property} .match-option-weight input.mat-input-element`));    
   }
 
-  async setMatchOptionWeight(property: string, newValue: string) {
+  setMatchOptionWeight(property: string, newValue: string) {
     let weightInput = this.matchOptionWeightInput(property);
-    await weightInput.clear();
-    return await weightInput.sendKeys(newValue);  
+    browser.actions().mouseMove(weightInput).click().perform();
+    for (let i = 0; i < 3; i++) {
+      browser.actions().sendKeys(Key.ARROW_LEFT).sendKeys(Key.DELETE).perform();
+    }
+    browser.actions().sendKeys(newValue).sendKeys(Key.ENTER).perform();
+    //await weightInput.clear();
+    //return await weightInput.sendKeys(newValue);
   }
 
   async clickMatchOptionOtherDistanceThreshold(property: string) {
@@ -272,7 +290,7 @@ export class MasteringStep extends AppPage {
   }
 
   get matchOptionDialogMetaphoneDistanceThreshold() {
-    return element(by.id("match-option-metaphone-distance-threshold"));    
+    return element(by.id("match-option-metaphone-distance-threshold"));
   }
 
   async setMatchOptionDialogMetaphoneDistanceThreshold(value: string) {
@@ -341,6 +359,30 @@ export class MasteringStep extends AppPage {
     return await inputField.sendKeys(value);
   }
 
+  get matchOptionPropertyToMatchAddButton() {
+    return element(by.css(".add-property-btn"));
+  }
+
+  async clickPropertyToMatchAddButton() {
+    return await this.matchOptionPropertyToMatchAddButton.click();
+  }
+
+  get matchOptionPropertyNameMenu() {
+    return element(by.css("#properties-reduce div[formarrayname='propertiesReduce']:last-child .mat-select-placeholder"));
+  }
+
+  async clickMatchOptionPropertyNameMenu() {
+    return await this.matchOptionPropertyNameMenu.click();
+  }
+
+  get optionDialogWindow() {
+    return element(by.css('.mat-dialog-container'));
+  }
+
+  clickOptionCancelDeleteButton(option: string) {
+    return element(by.cssContainingText(".mat-dialog-container .mat-button-wrapper", option)).click();
+  }
+
   /**
    * @param option = [cancel/save]
    */
@@ -372,23 +414,38 @@ export class MasteringStep extends AppPage {
   }
 
   matchThresholdName(name: string) {
-    return element(by.css(`.match-threshold-${name} .match-option-name`));
+    return element(by.css(`.match-threshold-${name.toLowerCase()} .match-threshold-name`));
   }
 
   matchThresholdWeight(name: string) {
-    return element(by.css(`.match-threshold-${name} .match-option-weight .weight-value`));
+    return element(by.css(`.match-threshold-${name.toLowerCase()} .match-threshold-weight .weight-value`));
   }
 
   matchThresholdAction(name: string) {
-    return element(by.css(`.match-threshold-${name} .match-option-action`));
+    return element(by.css(`.match-threshold-${name.toLowerCase()} .match-threshold-action`));
   }
 
   matchThresholdMenu(name: string) {
-    return element(by.css(`.match-threshold-${name} .match-threshold-menu`));
+    return element(by.css(`.match-threshold-${name.toLowerCase()} .match-threshold-menu`));
+  }
+
+  matchThresholdOtherURI(name: string) {
+    return element(by.xpath(`//mat-row[contains(@class, 'match-threshold-${name.toLowerCase()}')]
+    //mat-cell//div//div//span[@class="action-label" and contains(text(), "URI")]/..`));
+  }
+
+  matchThresholdOtherFunction(name: string) {
+    return element(by.xpath(`//mat-row[contains(@class, 'match-threshold-${name.toLowerCase()}')]
+    //mat-cell//div//div//span[@class="action-label" and contains(text(), "Function")]/..`));
+  }
+
+  matchThresholdOtherNamespace(name: string) {
+    return element(by.xpath(`//mat-row[contains(@class, 'match-threshold-${name.toLowerCase()}')]
+    //mat-cell//div//div//span[@class="action-label" and contains(text(), "Namespace")]/..`));
   }
 
   async clickMatchThresholdMenu(name: string) {
-    let menu = this.matchThresholdMenu(name);
+    let menu = this.matchThresholdMenu(name.toLowerCase());
     return await menu.click();
   }
 
@@ -400,7 +457,7 @@ export class MasteringStep extends AppPage {
    * @param option = [edit/delete]
    */
   matchThresholdMenuOptions(option: string) {
-    return element(by.id(`match-threshold-menu-${option}-btn`));
+    return element(by.css(`.match-threshold-menu-${option}-btn`));
   }
 
   /**
@@ -408,7 +465,7 @@ export class MasteringStep extends AppPage {
    */
   async clickMatchThresholdMenuOption(option: string) {
     let menuOption = this.matchThresholdMenuOptions(option);
-    return await menuOption.click();
+    return await browser.executeScript("arguments[0].click();", menuOption);
   }
 
   async clickMatchThresholdWeight(name: string) {
@@ -529,7 +586,7 @@ export class MasteringStep extends AppPage {
   }
 
   get matchThresholdDialogCustomFunction() {
-    return element(by.id("match-theshold-custom-function"));    
+    return element(by.id("match-threshold-custom-function"));
   }
 
   async setMatchThresholdDialogCustomFunction(value: string) {
@@ -571,7 +628,7 @@ export class MasteringStep extends AppPage {
 
   async clickMergeOptionsAddButton() {
     let button = this.mergeOptionsAddButton;
-    return await button.click();
+    return await browser.executeScript("arguments[0].click();", button);
   }
 
   get mergeOptionsTable() {
@@ -583,7 +640,7 @@ export class MasteringStep extends AppPage {
   }
 
   mergeOptionType(property: string) {
-    return element(by.css(`.merge-option-${property} .merge-column-mergeType .capitalize`));
+    return element(by.css(`.merge-option-${property} .mat-column-mergeType .capitalize`));
   }
 
   mergeOptionDetails(property: string) {
@@ -614,7 +671,7 @@ export class MasteringStep extends AppPage {
     return element(by.css(`.merge-option-${property} .merge-option-menu`));
   }
 
-  async clickMergeOptionMenu(property: string) {
+  async clickMergeOptionMenu(name: string) {
     let menu = this.mergeOptionMenu(name);
     return await menu.click();
   }
@@ -622,12 +679,27 @@ export class MasteringStep extends AppPage {
   get mergeOptionMenuDialog() {
     return element(by.css(".merge-option-menu-dialog"));
   }
-  
+
+  mergeOptionURI(name: string) {
+    return element(by.xpath(`//mat-row[contains(@class,'merge-option-${name}')]//mat-cell//div//div//
+    span[@class="details-custom-label" and contains(text(), "URI")]/../span[@title]`));
+  }
+
+  mergeOptionFunction(name: string) {
+    return element(by.xpath(`//mat-row[contains(@class,'merge-option-${name}')]//mat-cell//div//div//
+    span[@class="details-custom-label" and contains(text(), "Function")]/..`));
+  }
+
+  mergeOptionNamespace(name: string) {
+    return element(by.xpath(`//mat-row[contains(@class,'merge-option-${name}')]//mat-cell//div//div//
+    span[@class="details-custom-label" and contains(text(), "Namespace")]/../span[@title]`));
+  }
+
   /**
    * @param option = [edit/delete]
    */
   mergeOptionMenuOptions(option: string) {
-    return element(by.id(`merge-option-menu-${option}-btn`));
+    return element(by.css(`.merge-option-menu-${option}-btn`));
   }
 
   /**
@@ -749,6 +821,29 @@ export class MasteringStep extends AppPage {
   }
 
   // TO-DO add remove source name and weight
+  async clickMergeOptionDialogAddSourceWeight() {
+    return element(by.id("add-merge-option-source-weight-btn")).click();
+  }
+
+  async clickMergeOptionDialogRemoveSourceWeight() {
+    return element(by.id("remove-merge-option-source-weight-btn-0")).click();
+  }
+
+  async addSourceNameForSourceWeightOptionDialog(name: string, row: number) {
+    return element(by.css(`#source-weights-wrapper .source-weights-name-${row}`)).sendKeys(name);
+  }
+
+  async addWeightForSourceWeightOptionDialog(weight: string, row: number) {
+    return element(by.css(`#source-weights-wrapper .source-weights-weight-${row}`)).sendKeys(weight);
+  }
+
+
+
+
+
+
+
+
 
   get mergeOptionDialogLength() {
     return element(by.id("merge-option-length"));    
@@ -826,7 +921,7 @@ export class MasteringStep extends AppPage {
   // Merge Strategies
   
   get mergeStrategiesAddButton() {
-    return element(by.css("#merge-strategies button.new-strategy-button"));
+    return element(by.css(".new-strategy-button"));
   }
 
   async clickMergeStrategiesAddButton() {
@@ -841,31 +936,31 @@ export class MasteringStep extends AppPage {
   // merge strategy row has the wrong id: merge-option
 
   mergeStrategyProperty(name: string) {
-    return element(by.css(`.merge-strategy-${name} .mat-column-strategyName .merge-strategy-property`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .mat-column-strategyName .merge-strategy-property`));
   }
 
   mergeStrategyMaxValues(name: string) {
-    return element(by.css(`.merge-strategy-${name} .merge-strategy-max-values .max-values-value`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .merge-strategy-max-values .max-values-value`));
   }
 
   mergeStrategyMaxSources(name: string) {
-    return element(by.css(`.merge-strategy-${name} .merge-strategy-max-sources .max-sources-value`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .merge-strategy-max-sources .max-sources-value`));
   }
 
   mergeStrategySourceWeightsName(name: string) {
-    return element(by.css(`.merge-strategy-${name} .merge-strategy-source-weights .other-item`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .merge-strategy-source-weights .other-item`));
   }
 
   mergeStrategySourceWeightsValue(name: string) {
-    return element(by.css(`.merge-strategy-${name} .merge-strategy-source-weights .other-item .source-weights-value`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .merge-strategy-source-weights .other-item .source-weights-value`));
   }
 
   mergeStrategyLength(name: string) {
-    return element(by.css(`.merge-strategy-${name} .merge-strategy-length .length-value`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .merge-strategy-length .length-value`));
   }
 
   mergeStrategyMenu(name: string) {
-    return element(by.css(`.merge-strategy-${name} .merge-strategy-menu`));
+    return element(by.css(`.merge-strategy-${name.toLowerCase()} .merge-strategy-menu`));
   }
 
   async clickMergeStrategyMenu(name: string) {
@@ -881,7 +976,7 @@ export class MasteringStep extends AppPage {
    * @param option = [edit/delete]
    */
   mergeStrategyMenuOptions(option: string) {
-    return element(by.id(`merge-strategy-menu-${option}-btn`));
+    return element(by.css(`.merge-strategy-menu-${option}-btn`));
   }
 
   /**
@@ -889,7 +984,8 @@ export class MasteringStep extends AppPage {
    */
   async clickMergeStrategyMenuOptions(option: string) {
     let menuOption = this.mergeStrategyMenuOptions(option);
-    return await menuOption.click();
+    return await browser.executeScript("arguments[0].click();", menuOption);
+    // return await menuOption.click();
   }
 
   get mergeStrategyPagination() {
@@ -989,6 +1085,32 @@ export class MasteringStep extends AppPage {
   }
 
   // TO-DO add remove source name and weight
+  async clickMergeStrategyDialogAddSourceWeight() {
+    return element(by.id("add-merge-strategy-source-weight-btn")).click();
+  }
+
+  async clickMergeStrategyDialogRemoveSourceWeight() {
+    return element(by.id("id=remove-merge-strategy-source-weight-btn-0")).click();
+  }
+
+  async addSourceNameForSourceWeightStrategyDialog(name: string, row: number) {
+    return element(by.css(`#source-weights-wrapper .source-weights-name-${row}`)).sendKeys(name);
+  }
+
+  async addWeightForSourceWeightStrategyDialog(weight: string, row: number) {
+    return element(by.css(`#source-weights-wrapper .source-weights-weight-${row}`)).sendKeys(weight);
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   get mergeStrategyDialogLength() {
     return element(by.id("merge-strategy-length"));    
@@ -1119,10 +1241,25 @@ export class MasteringStep extends AppPage {
     return element(by.css(".timestamp-container input"))
   }
 
-  async setTimestampPath(path: string) {
+  setTimestampPath(path: string) {
     let inputField = this.timestampPath;
-    await inputField.clear();
-    return await inputField.sendKeys(path);
+    //clear the path if is not empty
+    this.timestampPath.getAttribute('ng-reflect-model').then(function (value) {
+      let length = value.toString().length;
+      if (length > 0) {
+        browser.actions().mouseMove(inputField).click().perform();
+        for (let i = 0; i < 100; i++) {
+          browser.actions().sendKeys(Key.ARROW_LEFT).perform();
+        }
+        browser.sleep(500);
+        for (let i = 0; i < 100; i++) {
+          browser.actions().sendKeys(Key.DELETE).perform();
+        }
+      }
+    });
+    browser.sleep(2000);
+    browser.actions().mouseMove(inputField).click().sendKeys(path).mouseMove(this.timestampPathSaveButton).click().perform();
+    browser.sleep(2000);
   }
 
   get timestampPathSaveButton() {
@@ -1130,9 +1267,15 @@ export class MasteringStep extends AppPage {
   }
 
   async clickTimestampPathSaveButton() {
-    let button = this.timestampPathSaveButton;
-    return await button.click();  
+    return await browser.actions().mouseMove(this.timestampPathSaveButton).click().perform();
   }
+
+  get timestampPathText() {
+    return this.timestampPath.getAttribute('ng-reflect-model').then(function (value) {
+      return value.toString()
+    });
+  }
+
 
   // Merge Collection Dialog
 
@@ -1164,11 +1307,11 @@ export class MasteringStep extends AppPage {
     let menuOption = this.mergeCollectionDialogEventOptions(option);
     return await menuOption.click();
   }
-  
+
   /*
   * collectionNumber starts with 0
   */
-  
+
   // Collection To Add
 
   collectionToAdd(collectionNumber: number) {
@@ -1230,7 +1373,7 @@ export class MasteringStep extends AppPage {
   }
 
   // Collection to Set
-  
+
   collectionToSet(collectionNumber: number) {
     return element(by.css(`#merge-collection-set-container div.set-group[ng-reflect-name="${collectionNumber}"] .set-key-${collectionNumber}`));
   }

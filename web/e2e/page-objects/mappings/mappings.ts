@@ -4,7 +4,7 @@ import { pages } from '../page';
 
 export class MappingsPage extends AppPage {
 
-  //to get the login box locater
+  //to get the login box locator
   locator() {
     return by.css('.maps-page');
   }
@@ -44,6 +44,14 @@ export class MappingsPage extends AppPage {
 
   deleteConfirmationDelete() {
     return element(by.cssContainingText(this.dialogComponentActions(), 'Delete'));
+  }
+
+  changeSourseConfirmationCancel() {
+    return element(by.cssContainingText(this.dialogComponentActions(), 'Cancel'));
+  }
+
+  changeSourseConfirmationOk() {
+    return element(by.cssContainingText(this.dialogComponentActions(), 'OK'));
   }
 
   //New Map Dialog Box
