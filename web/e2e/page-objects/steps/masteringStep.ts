@@ -295,7 +295,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("match-option-zip-zip5match9"));    
   }
 
-  async setMatchOptionDialogZip5Match9(value: string) {
+  async setMatchOptionDialogZip5Match9(value: number) {
     let inputField = this.matchOptionDialogZip5Match9;
     await inputField.clear();
     return await inputField.sendKeys(value);
@@ -305,7 +305,7 @@ export class MasteringStep extends AppPage {
     return element(by.id("match-option-zip-zip9match5"));    
   }
 
-  async setMatchOptionDialogZip9Match5(value: string) {
+  async setMatchOptionDialogZip9Match5(value: number) {
     let inputField = this.matchOptionDialogZip9Match5;
     await inputField.clear();
     return await inputField.sendKeys(value);

@@ -1,10 +1,6 @@
-import {
-  protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder,
-  ElementArrayFinder
-} from 'protractor'
+import { element, by, protractor } from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
-import {Element} from "@angular/compiler";
 
 export class BrowsePage extends AppPage {
 
@@ -33,8 +29,26 @@ export class BrowsePage extends AppPage {
     return element(by.css('.search-box > form > input'));
   }
 
+  async setSearchBox(keyword: string) {
+    let searchField = this.searchBox();
+    await searchField.clear();
+    return await searchField.sendKeys(keyword);
+  }
+
   searchButton() {
     return element(by.buttonText('Search'));
+  }
+
+  async clickSearchButton() {
+    let button = this.searchButton();
+    return await button.click();
+  }
+
+  async searchKeyword(keyword: string) {
+    let searchField = this.searchBox();
+    await searchField.clear();
+    await searchField.sendKeys(keyword);  
+    await searchField.sendKeys(protractor.Key.ENTER);
   }
 
   get noDataText() {
@@ -55,6 +69,11 @@ export class BrowsePage extends AppPage {
 
   facetName(collection: string) {
     return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`));
+  }
+
+  async clickFacetName(collection: string) {
+    let facet = this.facetName(collection);
+    return await facet.click();
   }
 
   facetCount(collection: string) {
