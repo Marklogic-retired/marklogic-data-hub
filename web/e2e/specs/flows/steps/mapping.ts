@@ -120,7 +120,7 @@ export default function (qaProjectDir) {
       let url = await mappingStepPage.sourceURITitleAttribute;
       await mappingStepPage.editSourceURI.click();
       await mappingStepPage.inputSourceURI.clear();
-      await mappingStepPage.inputSourceURI.sendKeys(url + '/web/e2e/qa-project/input/timur/json/doc4.json');
+      await mappingStepPage.inputSourceURI.sendKeys(url + '/web/e2e/qa-project/input/flow-test/json/doc4.json');
       await mappingStepPage.editSourceURITick.click();
       // if (mappingStepPage.dialogComponentContent.isDisplayed()) {
       //   if (mappingStepPage.editSourceURIConfirmationOK.isDisplayed()) {
