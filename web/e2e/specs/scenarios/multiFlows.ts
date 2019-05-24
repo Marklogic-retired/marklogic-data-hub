@@ -113,18 +113,18 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("IngestAdvantage").getText()).toEqual("IngestAdvantage");
             await expect(jobDetailsPage.stepStatus("IngestAdvantage").getText()).toEqual("Completed step 1");
-            await expect(jobDetailsPage.stepCommitted("IngestAdvantage").getText()).toEqual("1,002");   
+            await expect(jobDetailsPage.stepCommitted("IngestAdvantage").getText()).toEqual("1,003");   
             await jobDetailsPage.clickStepCommitted("IngestAdvantage");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1002');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1003');
             await expect(browsePage.facetName("IngestAdvantage").getText()).toEqual("IngestAdvantage");
             // Verify on Manage Flows page
             await appPage.flowsTab.click()
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
             await expect(manageFlowPage.status("AdvantageFlow").getText()).toEqual("Finished");
-            await expect(manageFlowPage.docsCommitted("AdvantageFlow").getText()).toEqual("1,002");
+            await expect(manageFlowPage.docsCommitted("AdvantageFlow").getText()).toEqual("1,003");
         });
 
         it('should create and run MappingAdvantage step', async function() {
@@ -197,7 +197,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MappingAdvantage");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(5000);
+            browser.sleep(10000);
             browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
@@ -209,18 +209,18 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("MappingAdvantage").getText()).toEqual("MappingAdvantage");
             await expect(jobDetailsPage.stepStatus("MappingAdvantage").getText()).toEqual("Completed step 2");
-            await expect(jobDetailsPage.stepCommitted("MappingAdvantage").getText()).toEqual("1,002");   
+            await expect(jobDetailsPage.stepCommitted("MappingAdvantage").getText()).toEqual("1,003");   
             await jobDetailsPage.clickStepCommitted("MappingAdvantage");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1002');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1003');
             await expect(browsePage.facetName("MappingAdvantage").getText()).toEqual("MappingAdvantage");
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
             await expect(manageFlowPage.status("AdvantageFlow").getText()).toEqual("Finished");
-            await expect(manageFlowPage.docsCommitted("AdvantageFlow").getText()).toEqual("1,002");
+            await expect(manageFlowPage.docsCommitted("AdvantageFlow").getText()).toEqual("1,003");
         });
 
         it('should create Bedrock Flow', async function() {
@@ -271,18 +271,18 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("IngestBedrock").getText()).toEqual("IngestBedrock");
             await expect(jobDetailsPage.stepStatus("IngestBedrock").getText()).toEqual("Completed step 1");
-            await expect(jobDetailsPage.stepCommitted("IngestBedrock").getText()).toEqual("1,001");   
+            await expect(jobDetailsPage.stepCommitted("IngestBedrock").getText()).toEqual("1,002");   
             await jobDetailsPage.clickStepCommitted("IngestBedrock");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1001');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1002');
             await expect(browsePage.facetName("IngestBedrock").getText()).toEqual("IngestBedrock");
             // Verify on Manage Flows page
             await appPage.flowsTab.click()
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("BedrockFlow")));
             await expect(manageFlowPage.status("BedrockFlow").getText()).toEqual("Finished");
-            await expect(manageFlowPage.docsCommitted("BedrockFlow").getText()).toEqual("1,001");
+            await expect(manageFlowPage.docsCommitted("BedrockFlow").getText()).toEqual("1,002");
         });
 
         it('should create and run MappingBedrock step', async function() {
@@ -355,7 +355,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MappingBedrock");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(5000);
+            browser.sleep(10000);
             browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
@@ -367,18 +367,18 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("MappingBedrock").getText()).toEqual("MappingBedrock");
             await expect(jobDetailsPage.stepStatus("MappingBedrock").getText()).toEqual("Completed step 2");
-            await expect(jobDetailsPage.stepCommitted("MappingBedrock").getText()).toEqual("1,001");   
+            await expect(jobDetailsPage.stepCommitted("MappingBedrock").getText()).toEqual("1,002");   
             await jobDetailsPage.clickStepCommitted("MappingBedrock");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1001');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1002');
             await expect(browsePage.facetName("MappingBedrock").getText()).toEqual("MappingBedrock");
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("BedrockFlow")));
             await expect(manageFlowPage.status("BedrockFlow").getText()).toEqual("Finished");
-            await expect(manageFlowPage.docsCommitted("BedrockFlow").getText()).toEqual("1,001");
+            await expect(manageFlowPage.docsCommitted("BedrockFlow").getText()).toEqual("1,002");
         });     
         
         it('should create Mastering Flow', async function() {
@@ -444,6 +444,19 @@ export default function(qaProjectDir) {
             await masteringStepPage.setMatchOptionDialogWeight(20);
             await masteringStepPage.clickMatchOptionCancelSave("save");
             browser.sleep(3000);
+            // Add matching option for zip
+            await masteringStepPage.clickMatchOptionsAddButton();
+            browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
+            await masteringStepPage.clickMatchOptionDialogTypeMenu();
+            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogTypeOptions("Zip")));
+            await masteringStepPage.clickMatchOptionDialogTypeOption("Zip");
+            await masteringStepPage.clickMatchOptionDialogPropertyMenu();
+            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("zip")));
+            await masteringStepPage.clickMatchOptionDialogPropertyOption("zip");
+            await masteringStepPage.setMatchOptionDialogZip5Match9(20);
+            await masteringStepPage.setMatchOptionDialogZip9Match5(20);
+            await masteringStepPage.clickMatchOptionCancelSave("save");
+            browser.sleep(3000);
             // Add DefiniteMatch matching threshold
             await masteringStepPage.clickMatchThresholdsAddButton();
             browser.wait(EC.visibilityOf(masteringStepPage.matchThresholdDialog));
@@ -476,6 +489,17 @@ export default function(qaProjectDir) {
             browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("id")));
             await masteringStepPage.clickMergeOptionDialogPropertyOption("id");
             await masteringStepPage.setMergeOptionDialogMaxValues(1);
+            await masteringStepPage.clickMergeOptionCancelSave("save");
+            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            browser.sleep(3000);
+            // Add Merging Option for zip
+            await masteringStepPage.clickMergeOptionsAddButton();
+            browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
+            await masteringStepPage.clickMergeOptionDialogPropertyMenu();
+            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("zip")));
+            await masteringStepPage.clickMergeOptionDialogPropertyOption("zip");
+            await masteringStepPage.setMergeOptionDialogMaxValues(1);
+            await masteringStepPage.setMergeOptionDialogLength(10);
             await masteringStepPage.clickMergeOptionCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
             browser.sleep(3000);
@@ -528,21 +552,33 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
             await expect(jobDetailsPage.stepStatus("MasteringCustomer").getText()).toEqual("Completed step 1");
-            await expect(jobDetailsPage.stepCommitted("MasteringCustomer").getText()).toEqual("2,003");   
+            await expect(jobDetailsPage.stepCommitted("MasteringCustomer").getText()).toEqual("2,005");   
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             browser.sleep(10000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2006');
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2010');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
-            await expect(browsePage.facetCount("MasteringCustomer")).toEqual("2006");
-            await expect(browsePage.facetCount("customer-merge")).toEqual("1");
+            await expect(browsePage.facetCount("MasteringCustomer")).toEqual("2010");
+            await expect(browsePage.facetCount("customer-merge")).toEqual("2");
             await expect(browsePage.facetCount("customer-notify")).toEqual("1");
+            // Verify the merge results
+            await browsePage.clickFacetName("customer-merge");
+            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 2 of 2');
+            // Verify the merge doc from exact match
+            await browsePage.searchKeyword("dray");
+            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+            // Verify the merge doc from zip match
+            await browsePage.searchKeyword("arya");
+            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
             await expect(manageFlowPage.status("MasteringFlow").getText()).toEqual("Finished");
-            await expect(manageFlowPage.docsCommitted("MasteringFlow").getText()).toEqual("2,003");
+            await expect(manageFlowPage.docsCommitted("MasteringFlow").getText()).toEqual("2,005");
         });
 
         it('should list AdvantageFlow jobs', async function() {
