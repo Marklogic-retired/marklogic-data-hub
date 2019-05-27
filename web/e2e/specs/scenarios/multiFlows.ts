@@ -198,7 +198,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectStepToRun("MappingAdvantage");
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(10000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.sleep(5000);
