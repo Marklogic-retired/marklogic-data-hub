@@ -176,7 +176,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("SimpleJSONMapping");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(10000);
+            browser.sleep(5000);
             browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
