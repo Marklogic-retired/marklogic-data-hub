@@ -5,7 +5,8 @@ import { Component, Input } from '@angular/core';
   template: `
   <div class="spinner-container" *ngIf="isLoading">
     <mat-progress-spinner
-      diameter="50"
+      diameter="28"
+      strokeWidth="3"
       color="primary"
       mode="indeterminate"
     ></mat-progress-spinner>

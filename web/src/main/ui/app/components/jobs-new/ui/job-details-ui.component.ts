@@ -17,6 +17,7 @@ export class JobDetailsUiComponent implements OnChanges, AfterViewInit, OnInit {
   filterValues = {};
   targetDatabase = 'STAGING';
   @Input() job: Job;
+  @Input() isLoading: boolean;
 
   dataSource: MatTableDataSource<any>;
 
