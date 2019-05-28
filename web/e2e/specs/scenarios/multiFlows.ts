@@ -536,7 +536,7 @@ export default function(qaProjectDir) {
             browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
-            // unselect run all
+            // Unselect run all
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MasteringCustomer");
             await editFlowPage.clickButtonRunCancel("flow");
