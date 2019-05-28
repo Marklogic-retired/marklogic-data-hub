@@ -176,17 +176,21 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.description = this.newStepForm.value.description;
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
-      this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+      // Accept empty source query for custom step
+      if (this.newStepForm.value.sourceQuery === '') {
+        this.newStep.options.sourceQuery = 'cts.collectionQuery([])';
+      } else {
+        this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+      }
       this.newStep.options.sourceCollection = '';
     } else if (this.newStep.selectedSource === 'collection') {
-      const ctsUri = `cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"])`;
+      let ctsUri = `cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"])`;
+      // Accept empty source collection for custom step
+      if (this.newStepForm.value.sourceCollection === '') {
+        ctsUri = 'cts.collectionQuery([])';
+      }
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
-    } else {
-      // Custom Step: Neither collection nor query chosen
-      const ctsUri = 'cts.collectionQuery([])';
-      this.newStep.options.sourceQuery = ctsUri;
-      this.newStep.options.sourceCollection = '';
     }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
