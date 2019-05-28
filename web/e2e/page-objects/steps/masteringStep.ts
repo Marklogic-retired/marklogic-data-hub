@@ -787,6 +787,7 @@ export class MasteringStep extends AppPage {
   }
 
   async clickMergeOptionDialogPropertyMenu() {
+    await browser.sleep(500);
     let menu = this.mergeOptionDialogPropertyMenu;
     return await menu.click();
   }

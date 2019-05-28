@@ -386,14 +386,14 @@ export default function (qaProjectDir) {
       await masteringStepPage.clickMergeOptionDialogPropertyMenu();
       await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("id")));
       await masteringStepPage.clickMergeOptionDialogPropertyOption("id");
-      await masteringStepPage.setMergeOptionDialogMaxValues('2');
-      await masteringStepPage.setMergeOptionDialogMaxSources('6');
+      await masteringStepPage.setMergeOptionDialogMaxValues(2);
+      await masteringStepPage.setMergeOptionDialogMaxSources(6);
       await masteringStepPage.clickMergeOptionDialogAddSourceWeight();
       await masteringStepPage.addSourceNameForSourceWeightOptionDialog('fname', 0);
       await masteringStepPage.addWeightForSourceWeightOptionDialog('5', 0);
       await masteringStepPage.addSourceNameForSourceWeightOptionDialog('lname', 1);
       await masteringStepPage.addWeightForSourceWeightOptionDialog('5', 1);
-      await masteringStepPage.setMergeOptionDialogLength('10');
+      await masteringStepPage.setMergeOptionDialogLength(10);
       await masteringStepPage.clickMergeOptionCancelSave("save");
       await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
       await browser.sleep(2000);
@@ -407,25 +407,6 @@ export default function (qaProjectDir) {
       await expect(masteringStepPage.mergeOptionSourceWeightsName('id', 2).getText()).toContain('lname');
       await expect(masteringStepPage.mergeOptionSourceWeightsValue('id', 2).getText()).toContain('5');
       await expect(masteringStepPage.mergeOptionLength('id').getText()).toContain('10');
-    });
-
-    it('should add strategy type merge option', async function () {
-      await masteringStepPage.clickMasteringTab('Merging');
-      await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionsAddButton));
-      await masteringStepPage.clickMergeOptionsAddButton();
-      await browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
-      await masteringStepPage.clickMergeOptionDialogTypeMenu();
-      await masteringStepPage.clickMergeOptionDialogTypeOption('Strategy');
-      await masteringStepPage.clickMergeOptionDialogPropertyMenu();
-      await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("fname")));
-      await masteringStepPage.clickMergeOptionDialogPropertyOption("fname");
-      //add strategy later
-      await masteringStepPage.clickMergeOptionCancelSave("save");
-      await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
-      await browser.sleep(2000);
-      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-      await expect(masteringStepPage.mergeOptionProperty('fname').getText()).toContain('fname');
-      await expect(masteringStepPage.mergeOptionType('fname').getText()).toContain('Strategy');
     });
 
     it('should add custom type merge option', async function () {
@@ -505,6 +486,27 @@ export default function (qaProjectDir) {
       await expect(masteringStepPage.mergeStrategySourceWeightsValue('NonDefault').getText()).toContain('5');
       await expect(masteringStepPage.mergeStrategyLength('NonDefault').getText()).toContain('5');
     });
+
+    //add merge option for the non default strategy
+    it('should add strategy type merge option', async function () {
+      await masteringStepPage.clickMasteringTab('Merging');
+      await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionsAddButton));
+      await masteringStepPage.clickMergeOptionsAddButton();
+      await browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
+      await masteringStepPage.clickMergeOptionDialogTypeMenu();
+      await masteringStepPage.clickMergeOptionDialogTypeOption('Strategy');
+      await masteringStepPage.clickMergeOptionDialogPropertyMenu();
+      await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("fname")));
+      await masteringStepPage.clickMergeOptionDialogPropertyOption("fname");
+      //add strategy later
+      await masteringStepPage.clickMergeOptionCancelSave("save");
+      await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
+      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      await expect(masteringStepPage.mergeOptionProperty('fname').getText()).toContain('fname');
+      await expect(masteringStepPage.mergeOptionType('fname').getText()).toContain('Strategy');
+    });
+
 
     it('should modify merge option', async function () {
       await masteringStepPage.clickMasteringTab('Merging');

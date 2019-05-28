@@ -48,10 +48,13 @@ export default function (qaProjectDir) {
       await manageFlowPage.flowForm("desc").clear();
       await manageFlowPage.setFlowForm("desc", 'Modified flow desc');
       await manageFlowPage.clickFlowCancelSave("save");
+      await browser.sleep(3000);
     });
 
     it('Should delete flow', async function () {
       await appPage.flowsTab.click();
+      await browser.sleep(3000);
+      await manageFlowPage.clickFlowName(flow1.flowName);
       await browser.sleep(3000);
       await editFlowPage.clickFlowMenu();
       await browser.wait(EC.elementToBeClickable(editFlowPage.flowMenuOptions("delete")));
