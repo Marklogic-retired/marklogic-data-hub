@@ -15,7 +15,7 @@ import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.compone
 export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'targetEntity', 'status', 'jobsNumber', 'lastJobFinished', 'docsCommitted', 'docsFailed', 'actions'];
   @Input() flows: Array<Flow> = [];
-
+  @Input() isLoading: boolean;
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();

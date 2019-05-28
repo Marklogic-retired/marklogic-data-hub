@@ -10,6 +10,7 @@ import * as _ from "lodash";
   template: `
     <jobs-page-ui
       [jobs]="this.jobs"
+      [isLoading]="this.isLoading"
     >
     </jobs-page-ui>
   `
@@ -18,7 +19,7 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
 
   @ViewChild(ManageJobsUiComponent)
   jobsPageUi: ManageJobsUiComponent;
-
+  isLoading = true;
   jobs = [];
 
   constructor(
@@ -48,6 +49,7 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
           this.pollJob(jobObject.id);
         }
       });
+      this.isLoading = false;
       this.jobsPageUi.renderRows();
     });
   }
