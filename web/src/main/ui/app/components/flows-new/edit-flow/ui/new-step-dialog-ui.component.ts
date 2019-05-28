@@ -177,7 +177,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
       // Accept empty source query for custom step
-      if (this.newStepForm.value.sourceQuery === '') {
+      if (this.newStepForm.value.sourceQuery === '' && this.newStep.stepDefinitionType === StepType.CUSTOM) {
         this.newStep.options.sourceQuery = 'cts.collectionQuery([])';
       } else {
         this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
@@ -186,7 +186,7 @@ export class NewStepDialogUiComponent implements OnInit {
     } else if (this.newStep.selectedSource === 'collection') {
       let ctsUri = `cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"])`;
       // Accept empty source collection for custom step
-      if (this.newStepForm.value.sourceCollection === '') {
+      if (this.newStepForm.value.sourceCollection === '' && this.newStep.stepDefinitionType === StepType.CUSTOM) {
         ctsUri = 'cts.collectionQuery([])';
       }
       this.newStep.options.sourceQuery = ctsUri;
