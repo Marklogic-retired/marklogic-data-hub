@@ -147,7 +147,7 @@ export class EditFlow extends AppPage {
   }
 
   async addStep(flow, step) {
-    await appPage.flowsTab.click();
+    await appPage.clickFlowTab();
     await browser.sleep(3000);
     await manageFlowPage.clickFlowname(flow.flowName);
     await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
