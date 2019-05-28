@@ -92,7 +92,7 @@ export default function(qaProjectDir) {
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(5000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
@@ -177,7 +177,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectStepToRun("SimpleJSONMapping");
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(5000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
@@ -268,7 +268,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectStepToRun("SimpleJSONMastering");
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(5000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));

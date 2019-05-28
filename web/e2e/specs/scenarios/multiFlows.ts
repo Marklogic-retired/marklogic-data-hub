@@ -102,7 +102,7 @@ export default function(qaProjectDir) {
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(5000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.sleep(5000);
@@ -260,7 +260,7 @@ export default function(qaProjectDir) {
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(5000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.sleep(5000);
@@ -356,7 +356,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectStepToRun("MappingBedrock");
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(10000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.sleep(5000);
@@ -541,7 +541,7 @@ export default function(qaProjectDir) {
             await editFlowPage.selectStepToRun("MasteringCustomer");
             await editFlowPage.clickButtonRunCancel("flow");
             browser.sleep(5000);
-            browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             browser.sleep(5000);
