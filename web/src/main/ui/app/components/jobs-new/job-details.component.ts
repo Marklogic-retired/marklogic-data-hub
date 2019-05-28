@@ -11,6 +11,7 @@ import * as _ from "lodash";
   template: `
     <job-details-page-ui
       [job]="this.job"
+      [isLoading]="this.isLoading"
     >
     </job-details-page-ui>
   `
@@ -19,7 +20,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   jobId: string;
   public job: Job;
-
+  isLoading = true;
   constructor(
     private manageJobsService: ManageJobsService,
     private runningJobService: RunningJobService,
@@ -43,6 +44,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         console.log('job by id response', resp);
         // Job by ID is an array with single job object
         // Update payload to be just an object?
+        this.isLoading = false;
         this.job = Job.fromJSON(resp[0]);
         const isJobRunning = this.runningJobService.checkJobObjectStatus(this.job);
         if ( isJobRunning ) {
