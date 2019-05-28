@@ -11,8 +11,6 @@ export function NewStepDialogValidator(group: FormGroup) {
       if (!group.value.targetEntity) {
         errors['noTargetEntity'] = true;
       }
-      /* falls through */
-    case StepType.CUSTOM:
       if (
         (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
         (group.value.selectedSource === 'query' && !group.value.sourceQuery) ||

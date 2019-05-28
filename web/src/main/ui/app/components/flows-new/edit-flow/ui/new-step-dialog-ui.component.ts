@@ -148,7 +148,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.isCustom = type === StepType.CUSTOM;
     this.isMapping = type === StepType.MAPPING;
     this.isMastering = type === StepType.MASTERING;
-    this.sourceRequired = this.isMapping || this.isMastering || this.isCustom;
+    this.sourceRequired = this.isMapping || this.isMastering;
     this.entityRequired = this.isMapping || this.isMastering;
   }
 
@@ -178,10 +178,15 @@ export class NewStepDialogUiComponent implements OnInit {
     if (this.newStep.selectedSource === 'query') {
       this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
       this.newStep.options.sourceCollection = '';
-    } else {
+    } else if (this.newStep.selectedSource === 'collection') {
       const ctsUri = `cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"])`;
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+    } else {
+      // Custom Step: Neither collection nor query chosen
+      const ctsUri = 'cts.collectionQuery([])';
+      this.newStep.options.sourceQuery = ctsUri;
+      this.newStep.options.sourceCollection = '';
     }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
