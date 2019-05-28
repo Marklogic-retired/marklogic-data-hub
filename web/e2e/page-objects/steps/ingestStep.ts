@@ -23,7 +23,6 @@ export class IngestStep extends AppPage {
   async clickSourceFileTypeDropDown() {
     let dropDown = this.sourceFileTypeDropDown;
     return await dropDown.click();
-
   }
   
   /**
