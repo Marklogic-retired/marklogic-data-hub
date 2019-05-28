@@ -1100,7 +1100,7 @@ export class MasteringStep extends AppPage {
   async addWeightForSourceWeightStrategyDialog(weight: string, row: number) {
     return element(by.css(`#source-weights-wrapper .source-weights-weight-${row}`)).sendKeys(weight);
   }
-  
+
   get mergeStrategyDialogLength() {
     return element(by.id("merge-strategy-length"));    
   }

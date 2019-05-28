@@ -27,6 +27,7 @@ export default function (qaProjectDir) {
 
     it('Should add a step to the flow', async function () {
       await appPage.flowsTab.click();
+      await browser.sleep(3000);
       await manageFlowPage.createFlow(flow1);
     });
 

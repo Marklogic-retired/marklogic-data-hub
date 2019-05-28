@@ -1,4 +1,4 @@
-import {browser, ExpectedConditions as EC, Ptor} from 'protractor';
+import {browser, by, ExpectedConditions as EC, Ptor} from 'protractor';
 import loginPage from '../../../page-objects/auth/login';
 import dashboardPage from '../../../page-objects/dashboard/dashboard';
 import appPage from '../../../page-objects/appPage';
@@ -7,6 +7,7 @@ import editFlowPage from "../../../page-objects/flows/editFlow";
 import stepsPage from "../../../page-objects/steps/steps";
 import ingestStepPage from "../../../page-objects/steps/ingestStep";
 import flowPage from "../../../page-objects/flows/flows";
+import entityPage from "../../../page-objects/entities/entities";
 
 export default function (qaProjectDir) {
   describe('Verify ingestion step test', () => {
@@ -35,6 +36,8 @@ export default function (qaProjectDir) {
     });
 
     it('Create an ingestion step with the name and description', async function () {
+      await browser.refresh();
+      await browser.sleep(5000);
       await appPage.flowsTab.click();
       //add a flow
       await manageFlowPage.createFlow(flow1);

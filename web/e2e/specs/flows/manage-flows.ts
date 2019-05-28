@@ -34,7 +34,11 @@ export default function (qaProjectDir) {
     });
 
     it('should create entity', async function () {
+      await browser.refresh();
+      await browser.sleep(5000);
       await appPage.entitiesTab.click();
+      await browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
       await browser.sleep(5000);
@@ -53,7 +57,7 @@ export default function (qaProjectDir) {
       }
 
       await entityPage.saveEntity.click();
-      await browser.sleep(10000);
+      await browser.sleep(5000);
       await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       await expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
@@ -118,6 +122,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should not be able to change flow title', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow2.flowName);
       await browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("edit")));
       await expect(manageFlowPage.flowMenuOptions("edit").getText()).toEqual("Edit Settings");
@@ -130,6 +136,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should be able to Edit flow settings', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow2.flowName);
       await browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("edit")));
       await expect(manageFlowPage.flowMenuOptions("edit").getText()).toEqual("Edit Settings");
@@ -163,6 +171,8 @@ export default function (qaProjectDir) {
     });
 
     it('Verify edited flow settings ', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow2.flowName);
       await browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("edit")));
       await expect(manageFlowPage.flowMenuOptions("edit").getText()).toEqual("Edit Settings");
@@ -190,6 +200,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should be able to run a flow with particular steps', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRunFlowButton(flow1.flowName);
       await browser.wait(EC.visibilityOf(manageFlowPage.runFlowHeader));
       await expect(manageFlowPage.runFlowHeader.getText()).toEqual("Run Flow");
@@ -202,6 +214,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should be able to run a flow with all steps', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRunFlowButton(flow1.flowName);
       await browser.wait(EC.visibilityOf(manageFlowPage.runFlowHeader));
       await expect(manageFlowPage.runFlowHeader.getText()).toEqual("Run Flow");
@@ -211,6 +225,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should sort all columns', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.columnToSort("Name");
       await manageFlowPage.columnToSort("Target Entity");
       await manageFlowPage.columnToSort("Status");
@@ -251,6 +267,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should be able to redeploy', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRedeployButton();
       await browser.sleep(2000);
       await manageFlowPage.clickRedeployConfirmationButton("YES");
@@ -258,6 +276,7 @@ export default function (qaProjectDir) {
 
     it('Should be able to delete flow', async function () {
       await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow1.flowName);
       await browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("delete")));
       await expect(manageFlowPage.flowMenuOptions("delete").getText()).toEqual("Delete");
@@ -276,7 +295,7 @@ export default function (qaProjectDir) {
 
     it('Should remove flows', async function () {
       await browser.refresh();
-      await browser.sleep(5000);
+      await browser.sleep(2000);
       await appPage.flowsTab.click();
       await manageFlowPage.removeFlow(flow2);
       await manageFlowPage.removeFlow(flowsPage.flow3);

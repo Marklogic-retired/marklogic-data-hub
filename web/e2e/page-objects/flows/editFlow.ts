@@ -148,6 +148,7 @@ export class EditFlow extends AppPage {
 
   async addStep(flow, step) {
     await appPage.flowsTab.click();
+    await browser.sleep(3000);
     await manageFlowPage.clickFlowname(flow.flowName);
     await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
     //click on the most recent step container
