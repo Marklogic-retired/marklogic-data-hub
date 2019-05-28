@@ -19,6 +19,7 @@ export class StepComponent implements OnChanges {
   @Input() projectDirectory: any;
   @Input() selectedStepId: string;
   @Input() flowEnded: string;
+  @Input() sourceQuery: string;
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
@@ -33,8 +34,8 @@ export class StepComponent implements OnChanges {
     public dialog: MatDialog
   ) {}
 
-  // workaround for: https://github.com/angular/material2/issues/7006
   ngOnChanges(changes: any) {
+    // workaround for: https://github.com/angular/material2/issues/7006
     if (changes &&
       changes.selectedStepId &&
       this.step.stepDefinitionType === this.stepType.MASTERING &&
@@ -47,6 +48,11 @@ export class StepComponent implements OnChanges {
       // reload mapping in case of new source docs
       if (this.mappingStep)
         this.mappingStep.loadMap();
+    }
+    if (changes.sourceQuery) {
+      // reset source doc URI on source change
+      if (this.mappingStep)
+        this.mappingStep.sourceChanged();
     }
   }
 

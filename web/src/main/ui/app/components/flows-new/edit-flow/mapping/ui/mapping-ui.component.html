@@ -93,7 +93,7 @@
         </p>
       </div>
 
-      <div *ngIf="targetEntity?.definition.properties.length === 0">
+      <div *ngIf="targetEntity?.definition.properties.length === 0" class="no-properties">
         <em>{{ targetEntity?.info.title }} has no properties to map. Add them in the <a [routerLink]="['/entities']">Entities</a> view.</em>
       </div>
 

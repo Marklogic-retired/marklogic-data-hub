@@ -253,6 +253,13 @@ export class MappingComponent implements OnInit {
     }
   }
 
+  // Parent component can trigger mapping reset if source changes
+  sourceChanged(): void {
+    this.sampleDocURI = '';
+    this.conns = {};
+    this.saveMap();
+  }
+
   /**
    * Interpret the datatype of a property value
    * Recognize all JSON types: array, object, number, boolean, null
