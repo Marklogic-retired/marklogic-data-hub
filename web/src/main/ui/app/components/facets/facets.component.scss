@@ -28,21 +28,40 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
     padding: 2px;
     padding-top: 10px;
     cursor: pointer;
+    position: relative;
 
     .fa {
       color: $bg-color;
       font-size: 11px;
     }
 
-    .facet-small-name {
-      font-size: .59vw;
+    .facet-add-pos {
+      float: left;
+      margin-top: 5px;
     }
 
-    .mdl-badge {
-      &:after {
-        width: 48px;
-        border-radius: 10%;
-      }
+    .ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .facet-name-list {
+      width: 82%;
+      font-size: 0.84em;
+      display: inline-block;
+    }
+
+    .facet-count {
+      position: absolute;
+      right: 3px;
+      top: 9px;
+      min-width: 10%;
+      padding: 0 3px;
+      border-radius: 10%;
+      background: $bg-color;
+      color: white;
+      text-align: center;
     }
   }
 
@@ -51,22 +70,32 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
   }
 }
 
-/deep/ span.badge.mdl-badge[data-badge] {
-  float: right;
-  &:after {
-    top: -5px;
-    background: $bg-color;
-  }
-}
-
 .chiclets {
   button {
     font-size: 10px;
     margin-bottom: 5px;
+    display: inline-block;
+    width: 100%;
 
     .chiclet-name {
-        font-size: .54vw;
+        font-size: 1em;
+        display: inline-block;
+        width: 90%;
+        text-transform: none;
     }
+
+    .ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fa-remove {
+      position: absolute;
+      margin: 12px 0 0 0;
+      right: 16px;
+    }
+
   }
 
   margin-bottom: 10px;
