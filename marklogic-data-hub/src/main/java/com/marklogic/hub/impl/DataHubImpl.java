@@ -544,10 +544,13 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void updateIndexes() {
+        // First deploy protected paths (can add more resources here in the future)
+        AppConfig appConfig = hubConfig.getAppConfig();
+        new SimpleAppDeployer(getManageClient(), getAdminManager(), new DeployProtectedPathsCommand()).deploy(appConfig);
+
+        // Then deploy databases, utilizing a pattern for filenames when in a provisioned environment
         SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
-
-        AppConfig appConfig = hubConfig.getAppConfig();
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
@@ -555,7 +558,7 @@ public class DataHubImpl implements DataHub {
             if (hubConfig.getIsProvisionedEnvironment()) {
                 appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
             }
-            deployer.deploy(hubConfig.getAppConfig());
+            deployer.deploy(appConfig);
         } finally {
             appConfig.setCreateForests(originalCreateForests);
             appConfig.setResourceFilenamesIncludePattern(originalIncludePattern);

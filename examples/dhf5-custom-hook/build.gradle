@@ -1,18 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        mavenLocal()
-    }
-    dependencies {
-        classpath("com.marklogic:ml-data-hub:${mlDHFVersion}")
-    }
-}
 plugins {
     id 'net.saliman.properties' version '1.4.6'
+    id 'com.marklogic.ml-data-hub' version '5.0.0'
 }
-
-apply plugin: 'com.marklogic.ml-data-hub'
 
 repositories {
     jcenter()
