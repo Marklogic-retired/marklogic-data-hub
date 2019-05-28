@@ -36,7 +36,9 @@ export default function (qaProjectDir) {
     });
 
     it('Should edit flow', async function () {
-      await manageFlowPage.clickFlowname(flow1.flowName);
+      await appPage.flowsTab.click();
+      await browser.sleep(3000);
+      await manageFlowPage.clickFlowName(flow1.flowName);
       await browser.sleep(3000);
       await editFlowPage.clickFlowMenu();
       await browser.wait(EC.elementToBeClickable(editFlowPage.flowMenuOptions("edit")));
@@ -49,6 +51,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should delete flow', async function () {
+      await appPage.flowsTab.click();
+      await browser.sleep(3000);
       await editFlowPage.clickFlowMenu();
       await browser.wait(EC.elementToBeClickable(editFlowPage.flowMenuOptions("delete")));
       await editFlowPage.clickFlowMenuOption('delete');

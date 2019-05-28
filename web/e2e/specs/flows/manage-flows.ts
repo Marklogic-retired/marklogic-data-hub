@@ -270,7 +270,8 @@ export default function (qaProjectDir) {
       await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRedeployButton();
-      await browser.sleep(2000);
+      await browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
       await manageFlowPage.clickRedeployConfirmationButton("YES");
     });
 
