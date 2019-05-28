@@ -3,28 +3,26 @@ import { StepType } from '../models/step.model';
 import * as _ from "lodash";
 
 export function NewStepDialogValidator(group: FormGroup) {
-  let stepType: typeof StepType = StepType;
   let errors = {};
-  if (group.value.stepDefinitionType === stepType.MAPPING ||
-      group.value.stepDefinitionType === stepType.MASTERING
+
+  switch (group.value.stepDefinitionType) {
+    case StepType.MAPPING:
+    case StepType.MASTERING:
+      if (!group.value.targetEntity) {
+        errors['noTargetEntity'] = true;
+      }
+      /* falls through */
+    case StepType.CUSTOM:
+      if (
+        (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
+        (group.value.selectedSource === 'query' && !group.value.sourceQuery) ||
+        (group.value.selectedSource === '')
       ) {
-    if (!group.value.targetEntity) {
-      errors['noTargetEntity'] = true;
-    }
-    if ( 
-          (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
-          (group.value.selectedSource === 'query' && !group.value.sourceQuery)
-        ) {
-      errors['noSource'] = true;
-    }
-  }
-  if (group.value.stepDefinitionType === stepType.CUSTOM) {
-    if (
-      (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
-      (group.value.selectedSource === 'query' && !group.value.sourceQuery)
-    ) {
-      errors['noSource'] = true;
-    }
+        errors['noSource'] = true;
+      }
+      break;
+    default:
+      break;
   }
   return _.isEmpty(errors) ? null : errors;
 }
