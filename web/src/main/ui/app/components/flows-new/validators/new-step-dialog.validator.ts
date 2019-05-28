@@ -19,14 +19,6 @@ export function NewStepDialogValidator(group: FormGroup) {
         errors['noSource'] = true;
       }
       break;
-    case StepType.CUSTOM:
-      if (
-        (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
-        (group.value.selectedSource === 'query' && !group.value.sourceQuery)
-      ) {
-        errors['noSource'] = true;
-      }
-      break;
     default:
       break;
   }
