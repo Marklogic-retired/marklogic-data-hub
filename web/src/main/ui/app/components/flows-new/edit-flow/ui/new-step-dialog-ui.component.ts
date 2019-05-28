@@ -149,7 +149,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.isCustom = type === this.stepType.CUSTOM;
     this.isMapping = type === this.stepType.MAPPING;
     this.isMastering = type === this.stepType.MASTERING;
-    this.sourceRequired = this.isMapping || this.isMastering;
+    this.sourceRequired = this.isMapping || this.isMastering || this.isCustom;
     this.entityRequired = this.isMapping || this.isMastering;
   }
 

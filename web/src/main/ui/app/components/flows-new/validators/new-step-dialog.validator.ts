@@ -6,7 +6,8 @@ export function NewStepDialogValidator(group: FormGroup) {
   let stepType: typeof StepType = StepType;
   let errors = {};
   if (group.value.stepDefinitionType === stepType.MAPPING ||
-      group.value.stepDefinitionType === stepType.MASTERING) {
+      group.value.stepDefinitionType === stepType.MASTERING
+      ) {
     if (!group.value.targetEntity) {
       errors['noTargetEntity'] = true;
     }
@@ -14,6 +15,14 @@ export function NewStepDialogValidator(group: FormGroup) {
           (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
           (group.value.selectedSource === 'query' && !group.value.sourceQuery)
         ) {
+      errors['noSource'] = true;
+    }
+  }
+  if (group.value.stepDefinitionType === stepType.CUSTOM) {
+    if (
+      (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
+      (group.value.selectedSource === 'query' && !group.value.sourceQuery)
+    ) {
       errors['noSource'] = true;
     }
   }
