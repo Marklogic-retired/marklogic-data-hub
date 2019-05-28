@@ -27,8 +27,7 @@ export class NewStepDialogUiComponent implements OnInit {
   @Output() saveClicked = new EventEmitter();
 
   public newStep: Step;
-  public stepType: typeof StepType = StepType;
-  readonly stepOptions = Object.keys(this.stepType);
+  readonly stepOptions = Object.keys(StepType);
 
   newStepForm: FormGroup;
   databases: any = [];
@@ -110,28 +109,28 @@ export class NewStepDialogUiComponent implements OnInit {
   }
   stepTypeChange() {
     const type = this.newStepForm.value.stepDefinitionType;
-    if (type === this.stepType.MAPPING) {
+    if (type === StepType.MAPPING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createMappingStep();
     }
-    if (type === this.stepType.MASTERING) {
+    if (type === StepType.MASTERING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createMasteringStep();
     }
-    if (type === this.stepType.CUSTOM) {
+    if (type === StepType.CUSTOM) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createCustomStep();
     }
-    if (type === this.stepType.INGESTION) {
+    if (type === StepType.INGESTION) {
       this.newStepForm.patchValue({
         sourceDatabase: '',
         targetDatabase: this.databaseObject.staging
@@ -145,10 +144,10 @@ export class NewStepDialogUiComponent implements OnInit {
 
   setType(type: string) {
     this.type = type;
-    this.isIngestion = type === this.stepType.INGESTION;
-    this.isCustom = type === this.stepType.CUSTOM;
-    this.isMapping = type === this.stepType.MAPPING;
-    this.isMastering = type === this.stepType.MASTERING;
+    this.isIngestion = type === StepType.INGESTION;
+    this.isCustom = type === StepType.CUSTOM;
+    this.isMapping = type === StepType.MAPPING;
+    this.isMastering = type === StepType.MASTERING;
     this.sourceRequired = this.isMapping || this.isMastering || this.isCustom;
     this.entityRequired = this.isMapping || this.isMastering;
   }
@@ -162,13 +161,13 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
     }
 
-    if (this.newStep.stepDefinitionType === this.stepType.CUSTOM) {
+    if (this.newStep.stepDefinitionType === StepType.CUSTOM) {
       this.newStep.stepDefinitionName = this.newStep.name;
     } else {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
     }
 
-    if (this.newStep.stepDefinitionType === this.stepType.INGESTION) {
+    if (this.newStep.stepDefinitionType === StepType.INGESTION) {
       let collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
       // always a single collection based on the step name
       this.newStep.options.collections = [ collection ];
