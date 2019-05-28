@@ -296,7 +296,7 @@ export class ManageFlows extends AppPage {
   }
 
   async createFlow(flow) {
-    await appPage.flowsTab.click();
+    await appPage.clickFlowTab();
     await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
     await manageFlowPage.clickNewFlowButton();

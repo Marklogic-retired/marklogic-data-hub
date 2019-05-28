@@ -98,9 +98,6 @@ export default function (qaProjectDir) {
     });
 
     it('Should ingest JSON', async function () {
-      await appPage.flowsTab.click();
-      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
-      //await manageFlowPage.redeploy();
       await manageFlowPage.createFlow(flow1);
       await editFlowPage.addStep(flow1, json);
       await browser.sleep(2000);
@@ -119,9 +116,6 @@ export default function (qaProjectDir) {
     });
 
     it('Should ingest XML', async function () {
-      await appPage.flowsTab.click();
-      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
-      //await manageFlowPage.redeploy();
       await manageFlowPage.createFlow(flow1);
       await editFlowPage.addStep(flow1, xml);
       await browser.sleep(2000);
@@ -140,9 +134,6 @@ export default function (qaProjectDir) {
     });
 
     it('Should ingest CSV', async function () {
-      await appPage.flowsTab.click();
-      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
-      //await manageFlowPage.redeploy();
       await manageFlowPage.createFlow(flow1);
       await browser.sleep(2000);
       await editFlowPage.addStep(flow1, csv);
@@ -161,9 +152,6 @@ export default function (qaProjectDir) {
     });
 
     it('Should ingest Text', async function () {
-      await appPage.flowsTab.click();
-      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
-      //await manageFlowPage.redeploy();
       await manageFlowPage.createFlow(flow1);
       await editFlowPage.addStep(flow1, text);
       await browser.sleep(2000);
@@ -179,9 +167,6 @@ export default function (qaProjectDir) {
     });
 
     it('Should ingest Binary', async function () {
-      await appPage.flowsTab.click();
-      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
-      //await manageFlowPage.redeploy();
       await manageFlowPage.createFlow(flow1);
       await editFlowPage.addStep(flow1, binary);
       await browser.sleep(2000);

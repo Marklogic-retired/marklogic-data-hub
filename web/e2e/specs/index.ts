@@ -50,11 +50,11 @@ describe('DataHub', function () {
   });
 
   auth(qaProjectDirectory);
-  entity(qaProjectDirectory);
+  //entity(qaProjectDirectory);
   flows(qaProjectDirectory);
   //create(qaProjectDirectory);
   //runFlows(qaProjectDirectory);
-  scenarios(qaProjectDirectory);
+  //scenarios(qaProjectDirectory);
   //jobs();
   //runTraces();
   //mappings();

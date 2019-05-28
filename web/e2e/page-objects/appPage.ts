@@ -41,6 +41,10 @@ export class AppPage extends Page {
     return element(by.css('#flows-tab'));
   }
 
+  async clickFlowTab() {
+   return await browser.executeScript("arguments[0].click();", this.flowsTab);
+  }
+
   get mappingsTab() {
     return element(by.css('#mappings-tab'))
   }
