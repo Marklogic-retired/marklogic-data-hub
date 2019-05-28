@@ -11,6 +11,7 @@ import * as _ from "lodash";
   template: `
     <flows-page-ui
       [flows]="this.flows"
+      [isLoading]="this.isLoading"
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
       (saveFlow)="this.saveFlow($event)"
@@ -26,7 +27,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
   @ViewChild(ManageFlowsUiComponent)
   flowsPageUi: ManageFlowsUiComponent;
   flows = [];
-
+  isLoading = true;
   constructor(
     private manageFlowsService: ManageFlowsService,
     private runningJobService: RunningJobService,
@@ -76,6 +77,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
           this.pollFlow(flowObject.id);
         }
       });
+      this.isLoading = false;
       this.flowsPageUi.renderRows();
     });
   }

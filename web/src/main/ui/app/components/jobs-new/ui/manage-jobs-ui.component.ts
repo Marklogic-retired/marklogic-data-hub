@@ -22,6 +22,7 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   flowValues = [];
   statusValues = [];
   @Input() jobs: Array<any> = [];
+  @Input() isLoading: Boolean;
 
   dataSource: MatTableDataSource<any>;
 

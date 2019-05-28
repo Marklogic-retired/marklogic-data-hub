@@ -146,7 +146,7 @@
         </mat-row>
 
       </mat-table>
-      <mat-progress-bar *ngIf="!flows.length" color="primary" mode="indeterminate"></mat-progress-bar>
+      <app-spinner [isLoading]="isLoading"></app-spinner>
       <mat-paginator id="flow-pagination"
                      #paginator
                      [length]="flows.length"
