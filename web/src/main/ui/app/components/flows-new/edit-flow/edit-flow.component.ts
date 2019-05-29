@@ -156,8 +156,9 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   createStep(stepObject) {
     this.setStepDefaults(stepObject.step);
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
+      const newStep = Step.fromJSON(resp, this.projectDirectory, this.databases);
       const index = stepObject.index - 1;
-      this.stepsArray.splice(index, 0, resp);
+      this.stepsArray.splice(index, 0, newStep);
       console.log('stepsArray', this.stepsArray);
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         this.flow = Flow.fromJSON(resp);
