@@ -301,7 +301,7 @@ export class Steps extends AppPage {
     stepName: 'json-ingestion',
     stepDesc: 'json ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
-    path: '\\input\\flow-test\\json',
+    path: '/input/flow-test/json',
     sourceFileType: 'JSON',
     targetFileType: 'JSON',
   };
@@ -344,7 +344,7 @@ export class Steps extends AppPage {
     stepName: 'json-ingestion',
     stepDesc: 'json ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
-    path: '\\input\\flow-test\\json',
+    path: '/input/flow-test/json',
     sourceFileType: 'JSON',
     targetFileType: 'JSON',
   };
@@ -354,7 +354,7 @@ export class Steps extends AppPage {
     stepName: 'xml-ingestion',
     stepDesc: 'xml ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
-    path: '\\input\\flow-test\\xml',
+    path: '/input/flow-test/xml',
     sourceFileType: 'XML',
     targetFileType: 'JSON',
   };
@@ -364,7 +364,7 @@ export class Steps extends AppPage {
     stepName: 'csv-ingestion',
     stepDesc: 'csv ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
-    path: '\\input\\flow-test\\csv',
+    path: '/input/flow-test/csv',
     sourceFileType: 'CSV',
     targetFileType: 'JSON',
   };
@@ -374,7 +374,7 @@ export class Steps extends AppPage {
     stepName: 'text-ingestion',
     stepDesc: 'text ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
-    path: '\\input\\flow-test\\text',
+    path: '/input/flow-test/text',
     sourceFileType: 'Text',
     targetFileType: 'Text',
   };
@@ -384,7 +384,7 @@ export class Steps extends AppPage {
     stepName: 'binary-ingestion',
     stepDesc: 'binary ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
-    path: '\\input\\flow-test\\binary',
+    path: '/input/flow-test/binary',
     sourceFileType: 'Binary',
     targetFileType: 'JSON',
   };

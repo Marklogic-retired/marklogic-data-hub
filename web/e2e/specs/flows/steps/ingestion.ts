@@ -16,11 +16,11 @@ export default function (qaProjectDir) {
     });
 
     editFlowPage.setQaProjectDir(qaProjectDir);
-    let flow1 = flowPage.flow7;
-    let flow2 = flowPage.flow8;
-    let flow3 = flowPage.flow9;
-    let flow4 = flowPage.flow10;
-    let flow5 = flowPage.flow11;
+    let flow1 = flowPage.flow1;
+    let flow2 = flowPage.flow2;
+    let flow3 = flowPage.flow3;
+    let flow4 = flowPage.flow4;
+    let flow5 = flowPage.flow5;
     let json = stepsPage.json;
     let xml = stepsPage.xml;
     let csv = stepsPage.csv;
