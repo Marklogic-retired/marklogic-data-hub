@@ -73,6 +73,10 @@ export class EditFlow extends AppPage {
     return element(by.css("a.latest-job-status"));
   }
 
+  get runningLatestJobStatus() {
+    return element(by.cssContainingText("a#latest-job-status", "Running"));
+  }
+
   get completedLatestJobStatus() {
     return element(by.cssContainingText("a#latest-job-status", "Completed"));
   }
