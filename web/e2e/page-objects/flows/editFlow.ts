@@ -147,35 +147,49 @@ export class EditFlow extends AppPage {
   }
 
   async addStep(flow, step) {
-    await appPage.clickFlowTab();
+    await console.log('click flow tab');
+    await appPage.flowsTab.click();
+    //await appPage.clickFlowTab();
     await browser.sleep(3000);
+    await console.log('click flow name');
     await manageFlowPage.clickFlowname(flow.flowName);
     await browser.sleep(5000);
     //await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
     //click on the most recent step container
+    console.log('select last step');
     if (stepsPage.lastStepContainer != null) {
       await stepsPage.lastStepContainer.click();
       await browser.sleep(500);
     }
+    console.log('click new step button');
     await editFlowPage.clickNewStepButton();
     await browser.sleep(2000);
     //await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+    console.log('click step type dropdown');
     await stepsPage.clickStepTypeDropDown();
     if (step.stepType.toLowerCase() === 'ingestion') {
       await browser.sleep(3000);
      // await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
+      console.log('click step type option');
       await stepsPage.clickStepTypeOption(step.stepType);
       await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      console.log('set step name');
       await stepsPage.setStepName(step.stepName);
+      console.log('set step desc');
       await stepsPage.setStepDescription(step.stepDesc);
+      console.log('click save step');
       await stepsPage.clickStepCancelSave("save");
-      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      //await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      browser.sleep(2000);
+      console.log('set ingest path');
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
       await ingestStepPage.setInputFilePath(this.qaProjectDir + step.path);
       await browser.sleep(1000);
+      console.log('set ingest source type');
       await ingestStepPage.sourceFileTypeDropDown.click();
       await ingestStepPage.clickSourceFileTypeOption(step.sourceFileType);
       await browser.sleep(1000);
+      console.log('set ingest target type');
       await ingestStepPage.targetFileTypeDropDown.click();
       await ingestStepPage.clickSourceFileTypeOption(step.targetFileType);
     } else {

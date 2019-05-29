@@ -297,11 +297,14 @@ export class ManageFlows extends AppPage {
 
   async createFlow(flow) {
     await console.log('create flow');
-    await appPage.clickFlowTab();
+    //await appPage.clickFlowTab();
+    await appPage.flowsTab.click();
     await browser.sleep(3000);
+    console.log('flow tab clicked');
     //await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     //await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
     await manageFlowPage.clickNewFlowButton();
+    console.log('new flow button clicked');
     await browser.sleep(2000);
     // await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
     await manageFlowPage.setFlowForm("name", flow.flowName);
@@ -324,6 +327,7 @@ export class ManageFlows extends AppPage {
         await manageFlowPage.setFlowOptions(n, "value", flow.options.n[1]);
       }
     }
+    console.log('click save button');
     await manageFlowPage.clickFlowCancelSave("save");
     await browser.sleep(2000);
    // await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
