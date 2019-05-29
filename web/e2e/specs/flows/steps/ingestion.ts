@@ -123,7 +123,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await console.log('click run flow ok button');
       await editFlowPage.clickButtonRunCancel("flow");
-      await console.log('waiting for finished latest job status to appear');
+      await console.log('waiting for finished latest job status notification to appear');
       await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
       await browser.sleep(2000);
       await console.log('finished latest job status appeared');
