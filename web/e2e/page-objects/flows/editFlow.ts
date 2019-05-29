@@ -199,6 +199,7 @@ export class EditFlow extends AppPage {
   }
 
   async verifyFlow() {
+    await console.log('verify flow on edit flow page');
     await expect(editFlowPage.flowLatestJobStatus).toEqual("Finished");
     await expect(editFlowPage.jobStartedTimestamp.isDisplayed).toBeTruthy();
     await expect(editFlowPage.viewJobsButton.isEnabled).toBeTruthy();

@@ -28,7 +28,7 @@ export default function (qaProjectDir) {
     let binary = stepsPage.binary;
 
 
-    xit('should login and go to flows page', async function () {
+    it('should login and go to flows page', async function () {
       //await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
@@ -124,7 +124,9 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
+      await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow1, "Finished", 1, 6, 0);
+      await console.log('remove flow');
       await manageFlowPage.removeFlow(flow1);
     //  await appPage.dashboardTab.click();
       //await dashboardPage.clearJobDatabase();
@@ -142,7 +144,9 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
+      await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow2, "Finished", 1, 1, 0);
+      await console.log('remove flow');
       await manageFlowPage.removeFlow(flow2);
      // await appPage.dashboardTab.click();
       //await dashboardPage.clearJobDatabase();
@@ -160,7 +164,9 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
+      await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow3, "Finished", 1, '1,884', 0);
+      await console.log('remove flow');
       await manageFlowPage.removeFlow(flow3);
      // await appPage.dashboardTab.click();
       //await dashboardPage.clearJobDatabase();
@@ -175,7 +181,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickButtonRunCancel("flow");
       await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
       await browser.sleep(5000);
+      await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow4, "Finished", 1, 1, 0);
+      await console.log('remove flow');
       await manageFlowPage.removeFlow(flow4);
    //   await appPage.dashboardTab.click();
      // await dashboardPage.clearJobDatabase();
@@ -193,7 +201,9 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
+      await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow5, "Finished", 1, 1, 0);
+      await console.log('remove flow');
       await manageFlowPage.removeFlow(flow5);
     //  await appPage.dashboardTab.click();
       //await dashboardPage.clearJobDatabase();
