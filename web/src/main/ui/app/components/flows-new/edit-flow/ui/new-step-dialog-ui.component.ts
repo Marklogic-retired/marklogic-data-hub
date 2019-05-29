@@ -191,6 +191,9 @@ export class NewStepDialogUiComponent implements OnInit {
       }
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+    } else {
+      this.newStep.options.sourceQuery = 'cts.collectionQuery([])';
+      this.newStep.options.sourceCollection = '';
     }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
