@@ -16,11 +16,11 @@ export default function (qaProjectDir) {
     });
 
     editFlowPage.setQaProjectDir(qaProjectDir);
-    let flow1 = flowPage.flow1;
-    let flow2 = flowPage.flow2;
-    let flow3 = flowPage.flow3;
-    let flow4 = flowPage.flow4;
-    let flow5 = flowPage.flow5;
+    let flow1 = flowPage.flow7;
+    let flow2 = flowPage.flow8;
+    let flow3 = flowPage.flow9;
+    let flow4 = flowPage.flow10;
+    let flow5 = flowPage.flow11;
     let json = stepsPage.json;
     let xml = stepsPage.xml;
     let csv = stepsPage.csv;
@@ -115,7 +115,7 @@ export default function (qaProjectDir) {
     it('Should ingest JSON', async function () {
       await manageFlowPage.createFlow(flow1);
       await editFlowPage.addStep(flow1, json);
-      await browser.sleep(2000);
+      await browser.sleep(5000);
       await console.log('click run flow button');
       await editFlowPage.clickRunFlowButton();
       await browser.sleep(3000);
@@ -141,7 +141,7 @@ export default function (qaProjectDir) {
     it('Should ingest XML', async function () {
       await manageFlowPage.createFlow(flow2);
       await editFlowPage.addStep(flow2, xml);
-      await browser.sleep(2000);
+      await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -160,7 +160,7 @@ export default function (qaProjectDir) {
 
     it('Should ingest CSV', async function () {
       await manageFlowPage.createFlow(flow3);
-      await browser.sleep(2000);
+      await browser.sleep(5000);
       await editFlowPage.addStep(flow3, csv);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -181,7 +181,7 @@ export default function (qaProjectDir) {
     it('Should ingest Text', async function () {
       await manageFlowPage.createFlow(flow4);
       await editFlowPage.addStep(flow4, text);
-      await browser.sleep(2000);
+      await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -198,7 +198,7 @@ export default function (qaProjectDir) {
     it('Should ingest Binary', async function () {
       await manageFlowPage.createFlow(flow5);
       await editFlowPage.addStep(flow5, binary);
-      await browser.sleep(2000);
+      await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
