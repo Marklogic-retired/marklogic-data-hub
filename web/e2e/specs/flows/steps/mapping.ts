@@ -79,7 +79,7 @@ export default function (qaProjectDir) {
         .toEqual("https://marklogic.github.io/marklogic-data-hub/refs/index-settings/");
     });
 
-    it('should select a different source doc', async function () {
+    xit('should select a different source doc', async function () {
       await stepsPage.stepSelectContainer(mapping.stepName).click();
       await browser.sleep(10000);
       let url = await mappingStepPage.sourceURITitleAttribute;
