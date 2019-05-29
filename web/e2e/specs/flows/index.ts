@@ -11,6 +11,6 @@ export default function (tmpDir) {
     editFlows(tmpDir);
     verifyIngestion(tmpDir);
     // verifyMapping(tmpDir);
-    // verifyMastering(tmpDir);
+    verifyMastering(tmpDir);
   })
 }
