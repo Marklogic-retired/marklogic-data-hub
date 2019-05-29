@@ -37,38 +37,9 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     });
 
-    xit('should create entity', async function () {
-      await appPage.entitiesTab.click();
-      await entityPage.toolsButton.click();
-      await entityPage.newEntityButton.click();
-      await browser.sleep(5000);
-      await expect(entityPage.entityEditor.isDisplayed()).toBe(true);
-      await entityPage.entityTitle.sendKeys('Person');
-      await entityPage.entityDescription.sendKeys('Person description');
-      await console.log('add properties to the entity');
-
-      for (let property of properties) {
-        let lastProperty = entityPage.lastProperty;
-        await console.log('add ' + property + ' property');
-        await entityPage.addProperty.click();
-        await entityPage.getPropertyName(lastProperty).sendKeys(property);
-        await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
-        await entityPage.getPropertyDescription(lastProperty).sendKeys(property + ' description');
-        await entityPage.getPropertyPrimaryKey(lastProperty).click();
-      }
-
-      await entityPage.saveEntity.click();
-      await browser.sleep(10000);
-      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      await expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
-      await entityPage.confirmDialogYesButton.click();
-      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
-      await expect(entityPage.getEntityBox('Person').isDisplayed()).toBe(true);
-      await entityPage.toolsButton.click();
-      await expect(entityPage.getEntityBoxDescription('Person')).toEqual('Person description');
-    });
-
     it('should create flow', async function () {
+      await browser.refresh();
+      await browser.sleep(8000);
       await manageFlowPage.createFlow(flow);
     });
 

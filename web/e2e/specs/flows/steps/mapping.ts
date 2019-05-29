@@ -17,11 +17,11 @@ export default function (qaProjectDir) {
     });
 
     editFlowPage.setQaProjectDir(qaProjectDir);
-    let flow1 = flowPage.flow1;
+    let flow1 = flowPage.flow7;
+    let flow2 = flowPage.flow8;
     let ingestion = stepsPage.ingestion;
     let mapping = stepsPage.mapping;
     let mapping2 = stepsPage.mapping2;
-    let properties = entityPage.properties;
 
     xit('should login and go to flows page', async function () {
       //await loginPage.browseButton.click();
@@ -35,37 +35,6 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     });
 
-    xit('should create entity', async function () {
-      await appPage.entitiesTab.click();
-      await entityPage.toolsButton.click();
-      await entityPage.newEntityButton.click();
-      await browser.sleep(5000);
-      await expect(entityPage.entityEditor.isDisplayed()).toBe(true);
-      await entityPage.entityTitle.sendKeys('Person');
-      await entityPage.entityDescription.sendKeys('Person description');
-      await console.log('add properties to the entity');
-
-      for (let property of properties) {
-        let lastProperty = entityPage.lastProperty;
-        await console.log('add ' + property + ' property');
-        await entityPage.addProperty.click();
-        await entityPage.getPropertyName(lastProperty).sendKeys(property);
-        await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
-        await entityPage.getPropertyDescription(lastProperty).sendKeys(property + ' description');
-        await entityPage.getPropertyPrimaryKey(lastProperty).click();
-      }
-
-      await entityPage.saveEntity.click();
-      await browser.sleep(10000);
-      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      await expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
-      await entityPage.confirmDialogYesButton.click();
-      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
-      await expect(entityPage.getEntityBox('Person').isDisplayed()).toBe(true);
-      await entityPage.toolsButton.click();
-      await expect(entityPage.getEntityBoxDescription('Person')).toEqual('Person description');
-    });
-
     it('should create flow', async function () {
       await appPage.dashboardTab.click();
       await dashboardPage.clearAllDatabases();
@@ -74,7 +43,7 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flow1);
     });
 
-    it('should redeploy', async function () {
+    xit('should redeploy', async function () {
       await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRedeployButton();
@@ -102,10 +71,6 @@ export default function (qaProjectDir) {
 
     });
 
-    xit('should create mapping step with name, description and non default source/target databases', async function () {
-      await editFlowPage.addStep(flow1, mapping2);
-    });
-
     it('should verify source and entity help links', async function () {
       await stepsPage.stepSelectContainer(mapping.stepName).click();
       await expect(mappingStepPage.sourceHelpLink)
@@ -120,7 +85,7 @@ export default function (qaProjectDir) {
       let url = await mappingStepPage.sourceURITitleAttribute;
       await mappingStepPage.editSourceURI.click();
       await mappingStepPage.inputSourceURI.clear();
-      await mappingStepPage.inputSourceURI.sendKeys(url + '/web/e2e/qa-project/input/flow-test/json/doc4.json');
+      await mappingStepPage.inputSourceURI.sendKeys(url + '/web/e2e/qa-project/input/flow-test/json/doc2.json');
       await mappingStepPage.editSourceURITick.click();
       // if (mappingStepPage.dialogComponentContent.isDisplayed()) {
       //   if (mappingStepPage.editSourceURIConfirmationOK.isDisplayed()) {
@@ -128,7 +93,7 @@ export default function (qaProjectDir) {
       //   }
       // }
       await browser.sleep(3000);
-      await expect(mappingStepPage.sourceURITitle).toContain('doc4.json');
+      await expect(mappingStepPage.sourceURITitle).toContain('doc2.json');
     });
 
     it('should create mappings', async function () {
@@ -250,6 +215,13 @@ export default function (qaProjectDir) {
       await expect(manageFlowPage.targetEntity(flow1.flowName).getText()).toEqual('Person');
     });
 
+    it('should create mapping step with name, description and non default source/target databases', async function () {
+      await appPage.clickFlowTab();
+      await browser.sleep(3000);
+      await manageFlowPage.createFlow(flow2);
+      await editFlowPage.addStep(flow2, mapping2);
+    });
+
     it('should remove steps and flow', async function () {
       await appPage.flowsTab.click();
       await browser.sleep(2000);
@@ -260,6 +232,7 @@ export default function (qaProjectDir) {
       await stepsPage.removeStep(mapping.stepName);
       //remove flow
       await manageFlowPage.removeFlow(flow1);
+      await manageFlowPage.removeFlow(flow2);
       await appPage.dashboardTab.click();
       await browser.sleep(3000);
       await dashboardPage.clearAllDatabases();

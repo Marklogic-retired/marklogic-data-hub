@@ -447,6 +447,17 @@ export class FlowPage extends AppPage {
     flowDesc: 'Description Flow 6'
   };
 
+  flow7 = {
+    flowName: 'TestFlow7',
+    flowDesc: 'Description Flow 7'
+  };
+
+  flow8 = {
+    flowName: 'TestFlow8',
+    flowDesc: 'Description Flow 8'
+  };
+
+
   flowWithOptions = {
     flowName: 'TestFlow1',
     flowDesc: 'Test flow1 description',
