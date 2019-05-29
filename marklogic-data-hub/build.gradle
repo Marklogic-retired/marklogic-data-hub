@@ -281,7 +281,7 @@ ext {
         customTokens.put("%%mlStagingTriggersDbName%%", mlStagingTriggersDbName)
         customTokens.put("%%mlStagingSchemasDbName%%", mlStagingSchemasDbName)
 
-        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules"]
+        modulePaths = ["marklogic-data-hub/src/main/resources/ml-modules", "marklogic-data-hub/src/test/ml-modules"]
     }
 }
 

@@ -484,7 +484,7 @@ declare function extut:get-extension-function(
         )
 };
 
-declare private function extut:get-extension-function(
+declare function extut:get-extension-function(
     $extension-type as xs:string,
     $extension-name as xs:string,
     $function-name  as xs:string,
@@ -514,7 +514,7 @@ declare private function extut:get-extension-function(
                       ("5" , map:get($system-resource-extensions-50,$extension-name))
                     else ("4", $_)
             let $function    :=
-                if (empty($system-module))
+                if (fn:count($system-module) < 2)
                 then xdmp:function(
                     if ($source-format eq "xquery")
                         then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)
