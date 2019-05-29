@@ -150,18 +150,20 @@ export class EditFlow extends AppPage {
     await appPage.clickFlowTab();
     await browser.sleep(3000);
     await manageFlowPage.clickFlowname(flow.flowName);
-    await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+    await browser.sleep(5000);
+    //await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
     //click on the most recent step container
     if (stepsPage.lastStepContainer != null) {
       await stepsPage.lastStepContainer.click();
       await browser.sleep(500);
     }
     await editFlowPage.clickNewStepButton();
-    await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+    await browser.sleep(2000);
+    //await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
     await stepsPage.clickStepTypeDropDown();
-
     if (step.stepType.toLowerCase() === 'ingestion') {
-      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
+      await browser.sleep(3000);
+     // await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
       await stepsPage.clickStepTypeOption(step.stepType);
       await browser.wait(EC.visibilityOf(stepsPage.stepName));
       await stepsPage.setStepName(step.stepName);
@@ -183,12 +185,15 @@ export class EditFlow extends AppPage {
       await stepsPage.setStepName(step.stepName);
       await stepsPage.setStepDescription(step.stepDesc);
       await stepsPage.clickSourceTypeRadioButton("collection");
-      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await browser.sleep(2000);
+      //await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
       await stepsPage.clickStepSourceCollectionDropDown();
-      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions(step.sourceCollection)));
+      await browser.sleep(2000);
+      //await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions(step.sourceCollection)));
       await stepsPage.clickStepSourceCollectionOption(step.sourceCollection);
       await stepsPage.clickStepTargetEntityDropDown();
-      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions(step.targetEntity)));
+      await browser.sleep(2000);
+      // await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions(step.targetEntity)));
       await stepsPage.clickStepTargetEntityOption(step.targetEntity);
       await stepsPage.clickStepCancelSave("save");
       await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
