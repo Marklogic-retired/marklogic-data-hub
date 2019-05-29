@@ -17,11 +17,16 @@ export default function (qaProjectDir) {
 
     editFlowPage.setQaProjectDir(qaProjectDir);
     let flow1 = flowPage.flow1;
+    let flow2 = flowPage.flow2;
+    let flow3 = flowPage.flow3;
+    let flow4 = flowPage.flow4;
+    let flow5 = flowPage.flow5;
     let json = stepsPage.json;
     let xml = stepsPage.xml;
     let csv = stepsPage.csv;
     let text = stepsPage.text;
     let binary = stepsPage.binary;
+
 
     xit('should login and go to flows page', async function () {
       //await loginPage.browseButton.click();
@@ -84,17 +89,27 @@ export default function (qaProjectDir) {
       await stepsPage.removeStep(json.stepName);
     });
 
-    it('Should remove flow and clean all databases', async function () {
+    it('Should remove flow', async function () {
       await browser.refresh();
       await browser.sleep(5000);
       await appPage.flowsTab.click();
       await manageFlowPage.removeFlow(flow1);
-      await appPage.dashboardTab.click();
-      await dashboardPage.clearJobDatabase();
+      //await appPage.dashboardTab.click();
+      //await dashboardPage.clearJobDatabase();
     });
 
     xit('Verify ingestion to target database', async function () {
 
+    });
+
+    xit('Should redeploy', async function () {
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+      await manageFlowPage.clickRedeployButton();
+      await browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
+      await manageFlowPage.clickRedeployConfirmationButton("YES");
+      await browser.sleep(10000);
     });
 
     it('Should ingest JSON', async function () {
@@ -111,13 +126,13 @@ export default function (qaProjectDir) {
       // //verify on manage flows view
       await manageFlowPage.verifyFlow(flow1, "Finished", 1, 6, 0);
       await manageFlowPage.removeFlow(flow1);
-      await appPage.dashboardTab.click();
-      await dashboardPage.clearJobDatabase();
+    //  await appPage.dashboardTab.click();
+      //await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest XML', async function () {
-      await manageFlowPage.createFlow(flow1);
-      await editFlowPage.addStep(flow1, xml);
+      await manageFlowPage.createFlow(flow2);
+      await editFlowPage.addStep(flow2, xml);
       await browser.sleep(2000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -127,16 +142,16 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
-      await manageFlowPage.verifyFlow(flow1, "Finished", 1, 1, 0);
-      await manageFlowPage.removeFlow(flow1);
-      await appPage.dashboardTab.click();
-      await dashboardPage.clearJobDatabase();
+      await manageFlowPage.verifyFlow(flow2, "Finished", 1, 1, 0);
+      await manageFlowPage.removeFlow(flow2);
+     // await appPage.dashboardTab.click();
+      //await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest CSV', async function () {
-      await manageFlowPage.createFlow(flow1);
+      await manageFlowPage.createFlow(flow3);
       await browser.sleep(2000);
-      await editFlowPage.addStep(flow1, csv);
+      await editFlowPage.addStep(flow3, csv);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -145,30 +160,30 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
-      await manageFlowPage.verifyFlow(flow1, "Finished", 1, '1,884', 0);
-      await manageFlowPage.removeFlow(flow1);
-      await appPage.dashboardTab.click();
-      await dashboardPage.clearJobDatabase();
+      await manageFlowPage.verifyFlow(flow3, "Finished", 1, '1,884', 0);
+      await manageFlowPage.removeFlow(flow3);
+     // await appPage.dashboardTab.click();
+      //await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest Text', async function () {
-      await manageFlowPage.createFlow(flow1);
-      await editFlowPage.addStep(flow1, text);
+      await manageFlowPage.createFlow(flow4);
+      await editFlowPage.addStep(flow4, text);
       await browser.sleep(2000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
       await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
       await browser.sleep(5000);
-      await manageFlowPage.verifyFlow(flow1, "Finished", 1, 1, 0);
-      await manageFlowPage.removeFlow(flow1);
-      await appPage.dashboardTab.click();
-      await dashboardPage.clearJobDatabase();
+      await manageFlowPage.verifyFlow(flow4, "Finished", 1, 1, 0);
+      await manageFlowPage.removeFlow(flow4);
+   //   await appPage.dashboardTab.click();
+     // await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest Binary', async function () {
-      await manageFlowPage.createFlow(flow1);
-      await editFlowPage.addStep(flow1, binary);
+      await manageFlowPage.createFlow(flow5);
+      await editFlowPage.addStep(flow5, binary);
       await browser.sleep(2000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -178,10 +193,10 @@ export default function (qaProjectDir) {
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
-      await manageFlowPage.verifyFlow(flow1, "Finished", 1, 1, 0);
-      await manageFlowPage.removeFlow(flow1);
-      await appPage.dashboardTab.click();
-      await dashboardPage.clearJobDatabase();
+      await manageFlowPage.verifyFlow(flow5, "Finished", 1, 1, 0);
+      await manageFlowPage.removeFlow(flow5);
+    //  await appPage.dashboardTab.click();
+      //await dashboardPage.clearJobDatabase();
     });
 
     xit('Should logout', async function () {
