@@ -191,6 +191,7 @@ export class EditFlow extends AppPage {
       await browser.sleep(1000);
       console.log('set ingest target type');
       await ingestStepPage.targetFileTypeDropDown.click();
+      console.log('click target file drop down');
       await ingestStepPage.clickSourceFileTypeOption(step.targetFileType);
     } else {
       await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
