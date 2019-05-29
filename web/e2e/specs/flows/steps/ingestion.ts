@@ -116,17 +116,17 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flow1);
       await editFlowPage.addStep(flow1, json);
       await browser.sleep(2000);
-      console.log('click run flow button');
+      await console.log('click run flow button');
       await editFlowPage.clickRunFlowButton();
       await browser.sleep(3000);
-      console.log('run flow button clicked');
+      await console.log('run flow button clicked');
       //await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
-      console.log('click run flow ok button');
+      await console.log('click run flow ok button');
       await editFlowPage.clickButtonRunCancel("flow");
-      console.log('waiting for finished latest job status to appear');
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(5000);
-      console.log('finished latest job status appeared');
+      await console.log('waiting for finished latest job status to appear');
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus)); //this doesn't appear when running tests on Jenkins server
+      await browser.sleep(20000);
+      await console.log('finished latest job status appeared');
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
@@ -145,8 +145,8 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(5000);
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(20000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
@@ -165,8 +165,8 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(5000);
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(20000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -185,8 +185,8 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(5000);
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(20000);
       await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow4, "Finished", 1, 1, 0);
       await console.log('remove flow');
@@ -202,8 +202,8 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(5000);
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(20000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
