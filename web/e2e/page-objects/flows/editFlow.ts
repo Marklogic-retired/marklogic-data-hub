@@ -184,6 +184,8 @@ export class EditFlow extends AppPage {
       console.log('set ingest path');
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
       await ingestStepPage.setInputFilePath(this.qaProjectDir + step.path);
+      console.log('Print the ingest path');
+      console.log(this.qaProjectDir + step.path);
       await browser.sleep(1000);
       console.log('set ingest source type');
       await ingestStepPage.sourceFileTypeDropDown.click();
