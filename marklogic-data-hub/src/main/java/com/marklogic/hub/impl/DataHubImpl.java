@@ -394,6 +394,11 @@ public class DataHubImpl implements DataHub {
         }
     }
 
+    public void deleteDocument(String uri, DatabaseKind databaseKind) {
+        String query = "xdmp:document-delete(\"" + uri + "\")";
+        runInDatabase(query, hubConfig.getDbName(databaseKind));
+    }
+
     public List<Command> buildListOfCommands() {
         Map<String, List<Command>> commandMap = buildCommandMap();
         List<Command> commands = new ArrayList<>();
