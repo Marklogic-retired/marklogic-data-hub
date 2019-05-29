@@ -225,7 +225,6 @@ export class EditFlow extends AppPage {
   }
 }
 
-
 let editFlowPage = new EditFlow();
 export default editFlowPage;
 pages.addPage(editFlowPage);
