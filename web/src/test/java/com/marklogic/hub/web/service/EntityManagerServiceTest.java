@@ -19,12 +19,13 @@ package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.document.DocumentPage;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
@@ -47,8 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
@@ -149,6 +149,22 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         List<String> expected = Arrays.asList(ENTITY, ENTITY2);
         List<String> actual = Arrays.asList(entities.get(0).getName(), entities.get(1).getName());
         assertTrue(expected.containsAll(actual));
+    }
+
+    @Test
+    public void deleteEntity() throws IOException {
+        List<EntityModel> entities = entityMgrService.getEntities();
+        assertEquals(1, entities.size());
+
+        entityMgrService.deleteEntity(ENTITY);
+
+        entities = entityMgrService.getEntities();
+        assertEquals(0, entities.size());
+
+        DocumentPage doc = finalDocMgr.read("/entities/" + ENTITY + ".entity.json");
+        assertFalse(doc.hasNext());
+        doc = stagingDocMgr.read("/entities/" + ENTITY + ".entity.json");
+        assertFalse(doc.hasNext());
     }
 
     @Test
