@@ -266,7 +266,7 @@ export default function (qaProjectDir) {
       await expect(manageFlowPage.pageRangeText.getText()).toEqual("1 - 6 of 6");
     });
 
-    it('Should be able to redeploy', async function () {
+    xit('Should be able to redeploy', async function () {
       await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRedeployButton();
