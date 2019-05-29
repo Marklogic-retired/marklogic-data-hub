@@ -148,13 +148,12 @@ export class EditFlow extends AppPage {
 
   async addStep(flow, step) {
     await console.log('click flow tab');
-    await appPage.flowsTab.click();
-    //await appPage.clickFlowTab();
+    await appPage.clickFlowTab();
     await browser.sleep(3000);
     await console.log('click flow name');
     await manageFlowPage.clickFlowname(flow.flowName);
-    await browser.sleep(5000);
-    //await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+    await browser.sleep(3000);
+    await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
     //click on the most recent step container
     console.log('select last step');
     if (stepsPage.lastStepContainer != null) {
@@ -164,12 +163,12 @@ export class EditFlow extends AppPage {
     console.log('click new step button');
     await editFlowPage.clickNewStepButton();
     await browser.sleep(2000);
-    //await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+    await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
     console.log('click step type dropdown');
     await stepsPage.clickStepTypeDropDown();
     if (step.stepType.toLowerCase() === 'ingestion') {
       await browser.sleep(3000);
-     // await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
       console.log('click step type option');
       await stepsPage.clickStepTypeOption(step.stepType);
       await browser.wait(EC.visibilityOf(stepsPage.stepName));
@@ -179,7 +178,7 @@ export class EditFlow extends AppPage {
       await stepsPage.setStepDescription(step.stepDesc);
       console.log('click save step');
       await stepsPage.clickStepCancelSave("save");
-      //await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
       browser.sleep(2000);
       console.log('set ingest path');
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
@@ -203,14 +202,14 @@ export class EditFlow extends AppPage {
       await stepsPage.setStepDescription(step.stepDesc);
       await stepsPage.clickSourceTypeRadioButton("collection");
       await browser.sleep(2000);
-      //await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
       await stepsPage.clickStepSourceCollectionDropDown();
       await browser.sleep(2000);
-      //await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions(step.sourceCollection)));
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions(step.sourceCollection)));
       await stepsPage.clickStepSourceCollectionOption(step.sourceCollection);
       await stepsPage.clickStepTargetEntityDropDown();
       await browser.sleep(2000);
-      // await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions(step.targetEntity)));
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions(step.targetEntity)));
       await stepsPage.clickStepTargetEntityOption(step.targetEntity);
       await stepsPage.clickStepCancelSave("save");
       await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));

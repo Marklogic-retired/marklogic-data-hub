@@ -10,7 +10,7 @@ export default function (tmpDir) {
     manageFlows(tmpDir);
     editFlows(tmpDir);
     verifyIngestion(tmpDir);
-    // verifyMapping(tmpDir);
+    verifyMapping(tmpDir);
     verifyMastering(tmpDir);
   })
 }

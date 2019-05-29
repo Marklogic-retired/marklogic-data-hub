@@ -297,16 +297,15 @@ export class ManageFlows extends AppPage {
 
   async createFlow(flow) {
     await console.log('create flow');
-    //await appPage.clickFlowTab();
-    await appPage.flowsTab.click();
+    await appPage.clickFlowTab();
     await browser.sleep(3000);
     console.log('flow tab clicked');
-    //await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
-    //await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
     await manageFlowPage.clickNewFlowButton();
     console.log('new flow button clicked');
     await browser.sleep(2000);
-    // await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
     await manageFlowPage.setFlowForm("name", flow.flowName);
     if (flow.flowDesc != null) {
       await manageFlowPage.setFlowForm("desc", flow.flowDesc);
@@ -330,9 +329,9 @@ export class ManageFlows extends AppPage {
     console.log('click save button');
     await manageFlowPage.clickFlowCancelSave("save");
     await browser.sleep(2000);
-   // await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
+    await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
     await browser.sleep(5000);
-    //await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
     await expect(manageFlowPage.flowName(flow.flowName).getText()).toEqual(flow.flowName);
     await browser.sleep(3000);
   }

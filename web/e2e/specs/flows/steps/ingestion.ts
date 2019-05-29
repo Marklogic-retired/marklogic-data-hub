@@ -120,22 +120,20 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.sleep(3000);
       await console.log('run flow button clicked');
-      //await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await console.log('click run flow ok button');
       await editFlowPage.clickButtonRunCancel("flow");
       await console.log('waiting for finished latest job status to appear');
-      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus)); //this doesn't appear when running tests on Jenkins server
-      await browser.sleep(20000);
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
       await console.log('finished latest job status appeared');
       //verify on edit flow view
       await editFlowPage.verifyFlow();
-      // //verify on manage flows view
+      //verify on manage flows view
       await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow1, "Finished", 1, 6, 0);
       await console.log('remove flow');
       await manageFlowPage.removeFlow(flow1);
-    //  await appPage.dashboardTab.click();
-      //await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest XML', async function () {
@@ -145,8 +143,8 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(20000);
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
@@ -154,8 +152,6 @@ export default function (qaProjectDir) {
       await manageFlowPage.verifyFlow(flow2, "Finished", 1, 1, 0);
       await console.log('remove flow');
       await manageFlowPage.removeFlow(flow2);
-     // await appPage.dashboardTab.click();
-      //await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest CSV', async function () {
@@ -165,8 +161,8 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(20000);
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -174,8 +170,6 @@ export default function (qaProjectDir) {
       await manageFlowPage.verifyFlow(flow3, "Finished", 1, '1,884', 0);
       await console.log('remove flow');
       await manageFlowPage.removeFlow(flow3);
-     // await appPage.dashboardTab.click();
-      //await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest Text', async function () {
@@ -185,14 +179,12 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(20000);
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
       await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow4, "Finished", 1, 1, 0);
       await console.log('remove flow');
       await manageFlowPage.removeFlow(flow4);
-   //   await appPage.dashboardTab.click();
-     // await dashboardPage.clearJobDatabase();
     });
 
     it('Should ingest Binary', async function () {
@@ -202,17 +194,15 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(20000);
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
-      // //verify on manage flows view
+      //verify on manage flows view
       await console.log('verify flow');
       await manageFlowPage.verifyFlow(flow5, "Finished", 1, 1, 0);
       await console.log('remove flow');
       await manageFlowPage.removeFlow(flow5);
-    //  await appPage.dashboardTab.click();
-      //await dashboardPage.clearJobDatabase();
     });
 
     xit('Should logout', async function () {

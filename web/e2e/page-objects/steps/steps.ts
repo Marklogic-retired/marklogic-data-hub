@@ -226,7 +226,8 @@ export class Steps extends AppPage {
 
   async clickStepSelectContainerDeleteButton(stepName: string) {
     let stepContainerDelete = this.stepContainerDeleteButton(stepName);
-    return await stepContainerDelete.click();
+    browser.executeScript("arguments[0].click();", stepContainerDelete);
+    //return await stepContainerDelete.click();
   }
 
   stepContainerValidStatus(stepName: string) {
@@ -266,7 +267,8 @@ export class Steps extends AppPage {
   
   async clickStepMenu() {
     let button = this.stepMenu;
-    return await button.click();
+    //return await button.click();
+    return await browser.executeScript("arguments[0].click();", button);
   }
   
   get stepExpandCollapseButton() {
