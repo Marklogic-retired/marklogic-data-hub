@@ -63,6 +63,13 @@ public interface DataHub {
     void clearUserModules();
 
     /**
+     * Deletes document based on supplied doc uri in supplied database
+     * @param uri - document uri
+     * @param databaseKind - database type
+     */
+    void deleteDocument(String uri, DatabaseKind databaseKind);
+
+    /**
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.

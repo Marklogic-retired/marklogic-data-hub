@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.entity.HubEntity;
@@ -145,6 +146,8 @@ public class EntityManagerService {
         File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION).toFile();
         if (entitiesFile.exists()) {
             em.deleteEntity(entity);
+            dataHubService.deleteDocument("/entities/" + entity + ENTITY_FILE_EXTENSION, DatabaseKind.STAGING);
+            dataHubService.deleteDocument("/entities/" + entity + ENTITY_FILE_EXTENSION, DatabaseKind.FINAL);
         }
     }
 
