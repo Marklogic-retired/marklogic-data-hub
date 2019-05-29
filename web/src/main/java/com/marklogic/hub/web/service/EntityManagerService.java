@@ -143,11 +143,12 @@ public class EntityManagerService {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION).toFile();
+        String entityFileName = entity + ENTITY_FILE_EXTENSION;
+        File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entityFileName).toFile();
         if (entitiesFile.exists()) {
             em.deleteEntity(entity);
-            dataHubService.deleteDocument("/entities/" + entity + ENTITY_FILE_EXTENSION, DatabaseKind.STAGING);
-            dataHubService.deleteDocument("/entities/" + entity + ENTITY_FILE_EXTENSION, DatabaseKind.FINAL);
+            dataHubService.deleteDocument("/entities/" + entityFileName, DatabaseKind.STAGING);
+            dataHubService.deleteDocument("/entities/" + entityFileName, DatabaseKind.FINAL);
         }
     }
 
