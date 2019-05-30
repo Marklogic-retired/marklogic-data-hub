@@ -223,13 +223,8 @@ export default function (qaProjectDir) {
     });
 
     it('should remove steps and flow', async function () {
-      await appPage.clickFlowTab()
+      await appPage.clickFlowTab();
       await browser.sleep(2000);
-      //remove steps
-      await manageFlowPage.clickFlowname(flow1.flowName);
-      await browser.sleep(3000);
-      await stepsPage.removeStep(ingestion.stepName);
-      await stepsPage.removeStep(mapping.stepName);
       //remove flow
       console.log('remove flow1');
       await manageFlowPage.removeFlow(flow1);
