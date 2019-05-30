@@ -337,7 +337,7 @@ export class ManageFlows extends AppPage {
   }
 
   async removeFlow(flow) {
-    await appPage.flowsTab.click();
+    await appPage.clickFlowTab();
     await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
     await manageFlowPage.clickFlowMenu(flow.flowName);
     await browser.wait(EC.visibilityOf(manageFlowPage.flowMenuPanel));

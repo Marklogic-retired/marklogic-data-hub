@@ -223,7 +223,7 @@ export default function (qaProjectDir) {
     });
 
     it('should remove steps and flow', async function () {
-      await appPage.flowsTab.click();
+      await appPage.clickFlowTab()
       await browser.sleep(2000);
       //remove steps
       await manageFlowPage.clickFlowname(flow1.flowName);
@@ -231,10 +231,16 @@ export default function (qaProjectDir) {
       await stepsPage.removeStep(ingestion.stepName);
       await stepsPage.removeStep(mapping.stepName);
       //remove flow
+      console.log('remove flow1');
       await manageFlowPage.removeFlow(flow1);
+    });
+
+    it('should remove second flow', async function () {
+      await appPage.clickFlowTab();
+      await browser.sleep(2000);
+      //remove flow
+      console.log('remove flow2');
       await manageFlowPage.removeFlow(flow2);
-      await appPage.dashboardTab.click();
-      await browser.sleep(3000);
     });
   });
 }
