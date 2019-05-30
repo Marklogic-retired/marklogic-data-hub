@@ -65,7 +65,7 @@
                   <mat-icon *ngIf="!flow.latestJob || status[0] !== 'running'" (click)="deleteStepClicked(stepsArray[i])" class="step-delete delete-icon">delete</mat-icon>
                 </div>
               </div>
-              <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label | truncate : 18}}</h3>
+              <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label}}</h3>
               <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
                 <div class="summary-label">Source Directory Path</div>
                 <div class="summary-content" *ngIf="stepsArray[i].fileLocations.inputFilePath"
