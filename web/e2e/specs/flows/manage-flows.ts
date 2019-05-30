@@ -192,14 +192,9 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader))
     });
 
-    it('Should be able to add steps to the flow', async function () {
-      await editFlowPage.addStep(flow1, ingestion);
-      await editFlowPage.addStep(flow1, mapping);
-      await editFlowPage.addStep(flow1, mastering);
-      await appPage.flowsTab.click();
-    });
-
     it('Should be able to run a flow with particular steps', async function () {
+      await browser.refresh();
+      await browser.sleep(5000);
       await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRunFlowButton(flow1.flowName);

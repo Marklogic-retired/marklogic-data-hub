@@ -177,8 +177,9 @@ export class EditFlow extends AppPage {
       console.log('set step desc');
       await stepsPage.setStepDescription(step.stepDesc);
       console.log('click save step');
+      browser.sleep(2000);
       await stepsPage.clickStepCancelSave("save");
-      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      //await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
       browser.sleep(2000);
       console.log('set ingest path');
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);

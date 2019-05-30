@@ -194,8 +194,8 @@ export class Steps extends AppPage {
    */
   async clickStepCancelSave(option: string) {
     let button = this.stepCancelSaveButton(option);
-    browser.executeScript("arguments[0].click();", button);
-   // return await button.click();
+    //browser.executeScript("arguments[0].click();", button);
+    return await button.click();
   }
   
   // Steps container
