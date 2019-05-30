@@ -345,53 +345,54 @@ class FlowUtils {
         if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'NCName', key) && key !== '$type') {
           let nsKey = this.getElementName(namespace, namespacePrefix, key);
           let prop = entityInstance[key];
-          if (prop instanceof Sequence) {
+          let isArray = prop instanceof Array;
+          if (isArray || prop instanceof Sequence) {
             for (let item of prop) {
-              if (item instanceof ObjectNode) {
-                this.instanceToCanonicalXml(item);
-              } else {
-                nb.startElement(nsKey, ns);
-                if (item) {
-                  nb.addNode(item);
-                }
-                nb.endElement();
-              }
+              this.instanceItemToCanonicalXml(nb, item, nsKey, ns, isArray);
             }
-          } else if (prop instanceof Array) {
-            for (let item of prop) {
-              if (item instanceof Object) {
-                nb.startElement(nsKey, ns);
-                nb.addAttribute('datatype', 'array');
-                let canonical = this.instanceToCanonicalXml(item);
-                if (canonical) {
-                  nb.addNode(canonical);
-                }
-                nb.endElement();
-              }
-              else {
-                nb.startElement(nsKey, ns);
-                nb.addAttribute('datatype', 'array');
-                if (item) {
-                  nb.addNode(item);
-                }
-                nb.endElement();
-              }
-            }
-          }
-          else {
-            nb.startElement(nsKey, ns);
-            if(prop) {
-              nb.addText(prop.toString());
-            }
-            nb.endElement();
+          } else {
+            this.instanceItemToCanonicalXml(nb, prop, nsKey, ns, false);
           }
         }
-
       }
     }
     nb.endElement();
     nb.endElement();
     return nb.toNode();
+  }
+
+  instanceItemToCanonicalXml(nb, item, nsKey, ns, isArray) {
+    if (item instanceof Object) {
+      if (isArray) {
+        nb.startElement(nsKey, ns);
+        nb.addAttribute('datatype', 'array');
+      }
+      let canonical = this.instanceToCanonicalXml(item);
+      if (canonical) {
+        nb.addNode(canonical);
+      }
+      if (isArray) {
+        nb.endElement();
+      }
+    }
+    else {
+      nb.startElement(nsKey, ns);
+      if (isArray) {
+        nb.addAttribute('datatype', 'array');
+      }
+      if (item instanceof Node) {
+        nb.addNode(item);
+      } else if (item instanceof Number) {
+        nb.addNumber(item);
+      } else if (item instanceof Boolean) {
+        nb.addBoolean(item);
+      } else if (item === null) {
+        nb.addNull();
+      } else {
+        nb.addText(fn.string(item));
+      }
+      nb.endElement();
+    }
   }
 
   xmlToJson(content) {

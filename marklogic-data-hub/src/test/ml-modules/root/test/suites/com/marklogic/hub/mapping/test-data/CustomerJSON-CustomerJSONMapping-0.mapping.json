@@ -12,6 +12,9 @@
     },
     "firstname": {
       "sourcedFrom": "FirstName"
+    },
+    "interests": {
+      "sourcedFrom": "Interests"
     }
   }
 }

@@ -2,7 +2,18 @@
   "envelope": {
     "instance": {
       "FirstName": "Bob",
-      "CustomerID": "Customer-1234"
+      "CustomerID": "Customer-1234",
+      "Interests": [
+        "astronomy",
+        "baseball",
+        "programming"
+      ],
+      "Misc": [
+        123,
+        true,
+        null,
+        { "info":  "text"}
+      ]
     }
   }
 }
