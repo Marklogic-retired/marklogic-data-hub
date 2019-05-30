@@ -202,6 +202,9 @@ export class EntityPage extends AppPage {
   getEntityBoxURI(entityName: string) {
     return this.entity(entityName).element(by.css('.baseuri > div')).getText();
   }
+
+  properties: string[] = ['id', 'fname', 'lname', 'eyeColor', 'synonym', 'zip'];
+
 }
 
 var entityPage = new EntityPage();

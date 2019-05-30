@@ -71,6 +71,10 @@ export class AppPage extends Page {
   isMenuOptionDisplayed(link :string) {
     return element(by.css(`a.link-${link}`)).isDisplayed()
   }
+
+  async clickFlowTab() {
+    return await browser.executeScript("arguments[0].click();", this.flowsTab);
+  }
 }
 
 var appPage = new AppPage();
