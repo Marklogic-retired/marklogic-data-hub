@@ -235,7 +235,6 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeFlow(flow2);
       await appPage.dashboardTab.click();
       await browser.sleep(3000);
-      await dashboardPage.clearAllDatabases();
     });
   });
 }

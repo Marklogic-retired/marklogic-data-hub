@@ -347,7 +347,7 @@ export class ManageFlows extends AppPage {
     await manageFlowPage.clickDeleteConfirmationButton("YES");
     await browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
     await browser.wait(EC.invisibilityOf(manageFlowPage.flowName(flow.flowName)));
-    await browser.sleep(1000);
+    await browser.sleep(3000);
   }
 
   async verifyFlow(flow, status, jobsCount, docsCommitted, docsFailed) {
