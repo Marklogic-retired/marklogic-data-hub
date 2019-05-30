@@ -16,6 +16,7 @@
 package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
@@ -35,17 +36,20 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.*;
+
 @Service
 public class FlowManagerService {
+
+    public static final String FLOW_FILE_EXTENSION = ".flow.json";
 
     @Autowired
     private FlowManager flowManager;
@@ -162,6 +166,8 @@ public class FlowManagerService {
 
     public void deleteFlow(String flowName) {
         flowManager.deleteFlow(flowName);
+        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.STAGING);
+        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.FINAL);
     }
 
     public List<StepModel> getSteps(String flowName) {
