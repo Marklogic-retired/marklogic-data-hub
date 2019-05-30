@@ -21,7 +21,7 @@ export default function (qaProjectDir) {
     let mapping = stepsPage.mapping;
     let mastering = stepsPage.mastering;
 
-    it('should login and go to flows page', async function () {
+    xit('should login and go to flows page', async function () {
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
       await browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
