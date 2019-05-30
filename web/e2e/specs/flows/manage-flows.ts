@@ -298,7 +298,7 @@ export default function (qaProjectDir) {
 
     it('Should remove flows', async function () {
       await browser.refresh();
-      await browser.sleep(2000);
+      await browser.sleep(5000);
       await appPage.clickFlowTab();
       await manageFlowPage.removeFlow(flow2);
       await manageFlowPage.removeFlow(flowsPage.flow3);
