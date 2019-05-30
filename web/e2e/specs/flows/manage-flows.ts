@@ -21,7 +21,7 @@ export default function (qaProjectDir) {
     let mapping = stepsPage.mapping;
     let mastering = stepsPage.mastering;
 
-    xit('should login and go to flows page', async function () {
+    it('should login and go to flows page', async function () {
       //await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
@@ -184,18 +184,26 @@ export default function (qaProjectDir) {
       await manageFlowPage.clickAdvSettingsExpandCollapse();
       await expect(manageFlowPage.getFlowFormText("batch-size")).toEqual("200");
       await expect(manageFlowPage.getFlowFormText("thread-count")).toEqual("6");
-      //browser.sleep(60000);
       await expect(manageFlowPage.getFlowOptionsText(0, "key")).toEqual("Key4");
       await expect(manageFlowPage.getFlowOptionsText(0, "value")).toEqual("Value4");
       await expect(manageFlowPage.getNumberOfOptions()).toEqual(1);
       await manageFlowPage.clickFlowCancelSave("cancel");
-      await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader))
+      await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
+      await browser.sleep(3000);
+    });
+
+    it('Should be able to add steps to the flow', async function () {
+      await appPage.clickFlowTab();
+      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+      await editFlowPage.addStep(flow1, ingestion);
+      await editFlowPage.addStep(flow1, mapping);
+      await editFlowPage.addStep(flow1, mastering);
     });
 
     it('Should be able to run a flow with particular steps', async function () {
-      await browser.refresh();
-      await browser.sleep(5000);
-      await appPage.flowsTab.click();
+      await appPage.clickFlowTab();
+      await browser.sleep(2000);
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRunFlowButton(flow1.flowName);
       await browser.wait(EC.visibilityOf(manageFlowPage.runFlowHeader));
@@ -209,7 +217,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should be able to run a flow with all steps', async function () {
-      await appPage.flowsTab.click();
+      await appPage.clickFlowTab();
+      await browser.sleep(2000);
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickRunFlowButton(flow1.flowName);
       await browser.wait(EC.visibilityOf(manageFlowPage.runFlowHeader));
