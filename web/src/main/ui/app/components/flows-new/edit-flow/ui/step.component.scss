@@ -26,6 +26,8 @@ header {
 
 .steps-header {
   display: flex;
+  overflow: hidden;
+  width: 90%;
   > button:last-child {
     margin-left: 8px;
   }
@@ -36,7 +38,8 @@ header {
 }
 
 header > .steps-header:last-child {
-  width: 40%;
+  width: 8%;
+  margin-top: 5px;
   justify-content: flex-end;
 }
 
