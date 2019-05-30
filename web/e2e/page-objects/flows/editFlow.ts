@@ -1,8 +1,17 @@
-import {AppPage} from "../appPage";
+import appPage, {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, ExpectedConditions as EC, element} from "protractor";
+import manageFlowPage from "./manageFlows";
+import stepsPage from "../steps/steps";
+import ingestStepPage from "../steps/ingestStep";
 
 export class EditFlow extends AppPage {
+
+  qaProjectDir: string = '';
+
+  setQaProjectDir(path: string) {
+    this.qaProjectDir = path;
+  }
 
   // Edit Flow page locator
   locator() {
@@ -85,6 +94,10 @@ export class EditFlow extends AppPage {
     return element(by.cssContainingText("a#latest-job-status", "Finished"));
   }
 
+  get flowLatestJobStatus() {
+    return element(by.css("a#latest-job-status")).getText();
+  }
+
   async clickFinishedLatestJobStatus() {
     let link = this.finishedLatestJobStatus;
     return await link.click();
@@ -133,6 +146,77 @@ export class EditFlow extends AppPage {
     let menuOption = this.flowMenuOptions(option);
     return await menuOption.click();
   }
+
+  /**
+   * Create step
+   * @param flow object
+   * @param step object
+   */
+  async addStep(flow, step) {
+    await appPage.flowsTab.click();
+    await browser.sleep(3000);
+    await manageFlowPage.clickFlowname(flow.flowName);
+    await browser.sleep(3000);
+    await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+    //click on the most recent step container
+    if (stepsPage.lastStepContainer != null) {
+      await stepsPage.lastStepContainer.click();
+      await browser.sleep(500);
+    }
+    await editFlowPage.clickNewStepButton();
+    await browser.sleep(2000);
+    await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+    await stepsPage.clickStepTypeDropDown();
+    if (step.stepType.toLowerCase() === 'ingestion') {
+      await browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
+      await stepsPage.clickStepTypeOption(step.stepType);
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await stepsPage.setStepName(step.stepName);
+      await stepsPage.setStepDescription(step.stepDesc);
+      browser.sleep(2000);
+      await stepsPage.clickStepCancelSave("save");
+      browser.sleep(2000);
+      await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
+      await ingestStepPage.setInputFilePath(this.qaProjectDir + step.path);
+      await browser.sleep(1000);
+      await ingestStepPage.sourceFileTypeDropDown.click();
+      await ingestStepPage.clickSourceFileTypeOption(step.sourceFileType);
+      await browser.sleep(1000);
+      await ingestStepPage.targetFileTypeDropDown.click();
+      await ingestStepPage.clickSourceFileTypeOption(step.targetFileType);
+    } else {
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions(step.stepType)));
+      await stepsPage.clickStepTypeOption(step.stepType);
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await stepsPage.setStepName(step.stepName);
+      await stepsPage.setStepDescription(step.stepDesc);
+      await stepsPage.clickSourceTypeRadioButton("collection");
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await stepsPage.clickStepSourceCollectionDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions(step.sourceCollection)));
+      await stepsPage.clickStepSourceCollectionOption(step.sourceCollection);
+      await stepsPage.clickStepTargetEntityDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions(step.targetEntity)));
+      await stepsPage.clickStepTargetEntityOption(step.targetEntity);
+      await stepsPage.clickStepCancelSave("save");
+      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      await browser.sleep(5000);
+      await stepsPage.stepSelectContainer(step.stepName).click();
+      await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
+    }
+  }
+
+  async verifyFlow() {
+    await console.log('verify flow on edit flow page');
+    await expect(editFlowPage.flowLatestJobStatus).toEqual("Finished");
+    await expect(editFlowPage.jobStartedTimestamp.isDisplayed).toBeTruthy();
+    await expect(editFlowPage.viewJobsButton.isEnabled).toBeTruthy();
+  }
+
 
 }
 

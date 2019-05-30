@@ -1,6 +1,6 @@
-import {AppPage} from "../appPage";
+import appPage, {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, ExpectedConditions as EC, element, $$} from "protractor";
 
 export class ManageFlows extends AppPage {
 
@@ -50,6 +50,11 @@ export class ManageFlows extends AppPage {
     return await inputField.getAttribute("value");
   };
 
+  async isFlowFormEnabled(formID: string) {
+    let inputField = this.flowForm(formID);
+    return await inputField.isEnabled();
+  };
+
   async clickAdvSettingsExpandCollapse() {
     console.log("CLicking advance settings");
     return await element(by.css("new-flow-dialog .mat-expansion-indicator")).click();
@@ -75,7 +80,8 @@ export class ManageFlows extends AppPage {
    * @param column = [key/value]
    */
   async setFlowOptions(rowNum: number, column: string, input: string) {
-    let flowOption = this.flowOptions(rowNum,column);
+    let flowOption = this.flowOptions(rowNum, column);
+    await flowOption.clear();
     return await flowOption.sendKeys(input);
   }
 
@@ -167,12 +173,18 @@ export class ManageFlows extends AppPage {
   }
 
   async clickFlowMenu(flowName: string) {
+    await browser.sleep(1000);
     let menu = element(by.css(`.flow-${flowName.toLowerCase()} .flow-menu`));
-    return await menu.click();
+    return await browser.executeScript("arguments[0].click();", menu);
   }
 
   get flowMenuPanel() {
     return element(by.css(".mat-menu-panel .mat-menu-content"));
+  }
+
+  async isRunFlowButtonEnabled(flowName: string) {
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`));
+    return await run.isEnabled();
   }
   
   flowMenuOptions(option: string) {
@@ -184,8 +196,9 @@ export class ManageFlows extends AppPage {
    * @param option = [edit/delete]
    */
   async clickFlowMenuOption(option: string) {
+    await browser.sleep(1000);
     let menuOption = this.flowMenuOptions(option);
-    return await menuOption.click();
+    return await browser.executeScript("arguments[0].click();", menuOption);
   }
 
   // Delete Flow confirmation box
@@ -241,9 +254,10 @@ export class ManageFlows extends AppPage {
   /**
    * Pagination
    */
-
   async clickPaginationDropDown() {
-    return await element(by.id("mat-select-0")).click();
+    await browser.sleep(1000);
+    let dropDownButton = element(by.css(".mat-select"));
+    return await dropDownButton.click();
   }
 
   itemsPerPage(value: number) {
@@ -267,6 +281,78 @@ export class ManageFlows extends AppPage {
     return element(by.css("div[class='mat-paginator-range-label']"));
   }
 
+  getNumberOfOptions() {
+    return $$('.key-value-group').count();
+  }
+
+  async createFlow(flow) {
+    await appPage.clickFlowTab();
+    await browser.sleep(3000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
+    await manageFlowPage.clickNewFlowButton();
+    await browser.sleep(2000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
+    await manageFlowPage.setFlowForm("name", flow.flowName);
+    if (flow.flowDesc != null) {
+      await manageFlowPage.setFlowForm("desc", flow.flowDesc);
+    }
+    if (flow.batchSize != null || flow.threadCount != null || (flow.options != null && flow.options.size > 0)) {
+      await manageFlowPage.clickAdvSettingsExpandCollapse();
+    }
+    if (flow.batchSize != null) {
+      await manageFlowPage.setFlowForm("batch-size", flow.batchSize);
+    }
+    if (flow.threadCount != null) {
+      await manageFlowPage.setFlowForm("thread-count", flow.threadCount);
+    }
+    if (flow.options != null) {
+      for (let n of flow.options) {
+        await manageFlowPage.addOptions.click();
+        await manageFlowPage.setFlowOptions(n, "key", flow.options.n[0]);
+        await manageFlowPage.setFlowOptions(n, "value", flow.options.n[1]);
+      }
+    }
+    await manageFlowPage.clickFlowCancelSave("save");
+    await browser.sleep(2000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
+    await browser.sleep(5000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await expect(manageFlowPage.flowName(flow.flowName).getText()).toEqual(flow.flowName);
+    await browser.sleep(3000);
+  }
+
+  async removeFlow(flow) {
+    await appPage.clickFlowTab();
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await manageFlowPage.clickFlowMenu(flow.flowName);
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowMenuPanel));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("delete")));
+    await manageFlowPage.clickFlowMenuOption("delete");
+    await browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
+    await manageFlowPage.clickDeleteConfirmationButton("YES");
+    await browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
+    await browser.wait(EC.invisibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await browser.sleep(3000);
+  }
+
+  async verifyFlow(flow, status, jobsCount, docsCommitted, docsFailed) {
+    await appPage.flowsTab.click();
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await expect(manageFlowPage.status(flow.flowName).getText()).toEqual(status);
+    await expect(manageFlowPage.jobs(flow.flowName).getText()).toEqual(jobsCount.toString());
+    await expect(manageFlowPage.lastJobFinished(flow.flowName).isDisplayed).toBeTruthy();
+    await expect(manageFlowPage.docsCommitted(flow.flowName).getText()).toEqual(docsCommitted.toString());
+    await expect(manageFlowPage.docsFailed(flow.flowName).getText()).toEqual(docsFailed.toString());
+  }
+
+  async redeploy() {
+    await manageFlowPage.clickRedeployButton();
+    await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
+    await browser.sleep(1000);
+    await manageFlowPage.clickRedeployConfirmationButton('YES');
+    await browser.sleep(30000);
+  }
 }
 
 let manageFlowPage = new ManageFlows();
