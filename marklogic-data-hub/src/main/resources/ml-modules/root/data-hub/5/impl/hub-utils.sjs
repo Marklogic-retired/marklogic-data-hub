@@ -52,13 +52,30 @@ class HubUtils {
 
   writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
     return fn.head(xdmp.eval(`
+    const temporal = require("/MarkLogic/temporal.xqy");
+
+    const temporalCollections = temporal.collections().toArray().reduce((acc, col) => {
+      acc[col] = true;
+      return acc;
+    }, {});
     let basePermissions = ${permissions};
     for (let content of writeQueue) {
       let context = (content.context||{});
       let permissions = (basePermissions || []).concat((context.permissions||[]));
-      let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[]))));
+      let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
       let metadata = context.metadata;
-      xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+      let temporalCollection = collections.find((col) => temporalCollections[col]);
+      if (temporalCollection) {
+        temporal.documentInsert(temporalCollection, content.uri, content.value, 
+          {
+            permissions, 
+            collections: collections.filter((col) => !temporalCollections[col]), 
+            metadata
+          }
+         );
+      } else {
+        xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+      }
     }
     let writeInfo = {
       transaction: xdmp.transaction(),
