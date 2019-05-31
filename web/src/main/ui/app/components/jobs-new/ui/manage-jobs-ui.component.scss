@@ -44,6 +44,11 @@ button {
     font-size: 12px;
     /* color: #666; */
   }
+  .flow-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .job-status a {
