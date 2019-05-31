@@ -143,6 +143,11 @@ export class ManageFlows extends AppPage {
     return await link.click();
   }
 
+  async clickFlowName(flowname: string) {
+    let link = this.flowName(flowname);
+    return await browser.executeScript("arguments[0].click();", link);
+  }
+
   targetEntity(flowName: string) {
     return element(by.css(`.flow-${flowName.toLowerCase()} .flow-entity`));
   }

@@ -143,6 +143,7 @@ export class EditFlow extends AppPage {
    * @param option = [edit/delete]
    */
   async clickFlowMenuOption(option: string) {
+    await browser.sleep(1000);
     let menuOption = this.flowMenuOptions(option);
     return await menuOption.click();
   }

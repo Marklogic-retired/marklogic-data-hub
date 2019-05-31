@@ -5,7 +5,6 @@ import appPage from '../../page-objects/appPage';
 import settingsPage from '../../page-objects/settings/settings'
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 
-
 const fs = require('fs-extra');
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
@@ -28,7 +27,6 @@ export default function (qaProjectDir) {
       await loginPage.login();
       await browser.sleep(5000);
       browser.wait(EC.visibilityOf(dashboardPage.clearFinalButton()));
-      //dashboardPage.isLoaded();
     });
 
     /**
@@ -99,7 +97,7 @@ export default function (qaProjectDir) {
       browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('Person');
-      await entityPage.entityVersion.sendKeys(Key.chord(Key.CONTROL, "a"), '1');
+      await entityPage.setEntityVersion('1');
       await entityPage.entityDescription.sendKeys('Person description');
       await entityPage.entityURI.sendKeys('Person URI');
       console.log('add properties to Person entity');
@@ -195,9 +193,9 @@ export default function (qaProjectDir) {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       console.log('modify description');
-      await entityPage.entityDescription.sendKeys(Key.chord(Key.CONTROL, "a"), 'Modified Product description');
+      await entityPage.setEntityDescription('Modified Product description');
       console.log('modify URI');
-      await entityPage.entityURI.sendKeys(Key.chord(Key.CONTROL, "a"), 'Modified Product URI');
+      await entityPage.setEntityURI('Modified Product URI');
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -220,9 +218,11 @@ export default function (qaProjectDir) {
       browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       console.log('remove description');
-      await entityPage.entityDescription.sendKeys(Key.chord(Key.CONTROL, "a"), Key.DELETE);
+      await entityPage.clearInputField(entityPage.entityDescription);
+      //await entityPage.entityDescription.clear();
       console.log('remove URI');
-      await entityPage.entityURI.sendKeys(Key.chord(Key.CONTROL, "a"), Key.DELETE);
+      await entityPage.clearInputField(entityPage.entityURI);
+      //await entityPage.entityURI.clear(); //may fail
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -389,7 +389,9 @@ export default function (qaProjectDir) {
       console.log('modify id property');
       let idProperty = entityPage.getPropertyByPosition(1);
       await entityPage.getPropertyType(idProperty).element(by.cssContainingText('option', 'integer')).click();
-      await entityPage.getPropertyDescription(idProperty).sendKeys(Key.chord(Key.CONTROL, "a"), 'Modified id description');
+      //await entityPage.getPropertyDescription(idProperty).clear(); //may fail
+      await entityPage.clearInputField(entityPage.getPropertyDescription(idProperty));
+      await entityPage.getPropertyDescription(idProperty).sendKeys('Modified id description');
       expect(entityPage.getPropertyType(idProperty).getAttribute('value')).toContain('integer');
       expect(entityPage.getPropertyDescription(idProperty).getAttribute('value')).toEqual('Modified id description');
       await entityPage.saveEntity.click();
