@@ -7,6 +7,7 @@ import {
 } from "../../../common/form-validators/existing-step-name-validator";
 import {Flow} from "../../models/flow.model";
 import * as _ from 'lodash';
+import {FlowsTooltips} from "../../tooltips/flows.tooltips";
 
 @Component({
   selector: 'app-new-step-dialog-ui',
@@ -47,6 +48,7 @@ export class NewStepDialogUiComponent implements OnInit {
 
   ngOnInit() {
     let selectedSource;
+    this.tooltips = FlowsTooltips.stepSettings;
     this.databases = Object.values(this.databaseObject).slice(0, -1);
     if (this.step) {
       this.newStep = this.step;
