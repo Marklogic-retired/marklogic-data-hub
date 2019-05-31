@@ -103,24 +103,24 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
 
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
 
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
 
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
         installUserModules(getDataHubAdminConfig(), true);
     }
@@ -150,8 +150,8 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String inputPath = getResourceFile("flow-manager/input.json").getAbsolutePath();
-        String basePath = getResourceFile("flow-manager").getAbsolutePath();
+        String inputPath = getResourceFile("legacy-flow-manager/input.json").getAbsolutePath();
+        String basePath = getResourceFile("legacy-flow-manager").getAbsolutePath();
         JsonNode mlcpOptions = objectMapper.readTree(
             "{" +
                 "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
@@ -172,7 +172,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         mlcpRunner.join();
 
         assertEquals(1, getStagingDocCount());
-        String expected = getResource("flow-manager/final.json");
+        String expected = getResource("legacy-flow-manager/final.json");
 
         String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
         JSONAssert.assertEquals(expected, actual, false);
@@ -186,7 +186,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
-        installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
+        installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         setEnvConfig();
@@ -226,7 +226,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
-        installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
+        installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
 
         String pdir = "C:\\some\\crazy\\path\\to\\project";
         //EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
