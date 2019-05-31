@@ -1,0 +1,79 @@
+{
+  "name": "testFlow",
+  "description": "flow description",
+  "stopOnError": "true",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "default-ingestion",
+      "name": "e2e-xml",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "xml",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "options": {
+        "outputFormat": "xml",
+        "collections": ["xml-coll"]
+      }
+    },
+    "2": {
+      "stepDefinitionName": "json-ingestion",
+      "name": "e2e-json",
+      "stepDefinitionType": "INGESTION",
+      "customHook": {},
+      "options": {}
+    },
+    "3": {
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "name": "csv",
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "csv",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "outputFormat": "json",
+        "collections": ["csv-coll"]
+      }
+    },
+    "4": {
+      "stepDefinitionName": "json-mapping",
+      "stepDefinitionType": "MAPPING",
+      "name": "json-map",
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "options": {}
+    },
+    "5": {
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "name": "xml-mapping",
+      "options": {
+        "collections": ["xml-map"],
+        "outputFormat": "xml",
+        "mapping": {
+          "name": "e2e-mapping",
+          "version": 1
+        },
+        "sourceQuery": "cts.collectionQuery('xml-coll')"
+      },
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+    }
+  }
+}
