@@ -1,6 +1,9 @@
 {
   "envelope": {
     "instance": {
+      "Metadata": {
+        "CreatedOn": "2000-01-01"
+      },
       "FirstName": "Bob",
       "CustomerID": "Customer-1234",
       "Interests": [

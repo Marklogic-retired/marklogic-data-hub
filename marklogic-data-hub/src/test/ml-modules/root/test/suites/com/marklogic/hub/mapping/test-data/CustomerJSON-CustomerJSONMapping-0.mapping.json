@@ -15,6 +15,9 @@
     },
     "interests": {
       "sourcedFrom": "Interests"
+    },
+    "updated": {
+      "sourcedFrom": "Metadata/CreatedOn"
     }
   }
 }

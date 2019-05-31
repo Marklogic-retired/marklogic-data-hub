@@ -362,7 +362,7 @@ class FlowUtils {
   }
 
   instanceItemToCanonicalXml(nb, item, nsKey, ns, isArray) {
-    if (item instanceof Object) {
+    if (item instanceof Object && !(item instanceof xs.anyAtomicType)) {
       if (isArray) {
         nb.startElement(nsKey, ns);
         nb.addAttribute('datatype', 'array');
@@ -375,20 +375,20 @@ class FlowUtils {
         // TODO the line below doesn't add to the node builder...
         // this.instanceToCanonicalXml(item);
       }
-    }
-    else {
+    } else {
       nb.startElement(nsKey, ns);
       if (isArray) {
         nb.addAttribute('datatype', 'array');
       }
+
       if (item instanceof Node) {
         nb.addNode(item);
       } else if (item instanceof Number) {
         nb.addNumber(item);
       } else if (item instanceof Boolean) {
         nb.addBoolean(item);
-      } else {
-        nb.addText(fn.string(item));
+      } else if (item !== null) {
+        nb.addText(item.toString());
       }
       nb.endElement();
     }
