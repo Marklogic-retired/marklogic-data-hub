@@ -3,6 +3,7 @@ import {Component, Inject, OnInit} from "@angular/core";
 import {Flow} from "../../models/flow.model";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {CustomFieldValidator} from "../../../common";
+import {Tooltips} from "../../tooltips/manage-flows.tooltips";
 import {forEach, forOwn, find} from 'lodash';
 
 @Component({
@@ -14,6 +15,7 @@ export class FlowSettingsDialogComponent implements OnInit {
 
   form: FormGroup;
   options: FormArray;
+  tooltips: any;
 
   constructor(
     private fb: FormBuilder,
@@ -22,6 +24,7 @@ export class FlowSettingsDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.tooltips = Tooltips.tooltips;
     this.form = this.fb.group({
       name: [this.data.flow ? this.data.flow.name : '', [
         Validators.required,
