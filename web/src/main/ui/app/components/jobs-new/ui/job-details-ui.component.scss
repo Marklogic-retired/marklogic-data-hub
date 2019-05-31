@@ -34,6 +34,7 @@ button {
       position: relative;
       float: left;
       width: 220px;
+      padding-right: 7px;
       .label {
         display: inline-block;
         font-size: 12px;
@@ -47,6 +48,8 @@ button {
       .flow-name{
         font-size: 18px;
         font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .job-id {
         font-size: 12px;
@@ -264,6 +267,9 @@ button {
 .name-container {
   position: relative;
   width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header h1 {
