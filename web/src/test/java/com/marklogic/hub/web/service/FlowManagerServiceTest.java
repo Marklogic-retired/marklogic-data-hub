@@ -72,7 +72,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void deleteFlow() {
+    void deleteFlow() throws InterruptedException {
         List<String> flowList = flowManagerService.getFlowNames();
         assertEquals(1, flowList.size());
 
@@ -80,6 +80,9 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
         flowList = flowManagerService.getFlowNames();
         assertEquals(0, flowList.size());
+
+        // Adding sleep to delete artifacts from the db via async call
+        Thread.sleep(1000);
 
         DocumentPage doc = stagingDocMgr.read("/flows/" + FLOW + ".flow.json");
         assertFalse(doc.hasNext());

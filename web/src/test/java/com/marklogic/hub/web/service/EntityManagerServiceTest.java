@@ -157,7 +157,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void deleteEntity() throws IOException {
+    public void deleteEntity() throws IOException, InterruptedException {
         List<EntityModel> entities = entityMgrService.getEntities();
         assertEquals(1, entities.size());
 
@@ -165,6 +165,9 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
 
         entities = entityMgrService.getEntities();
         assertEquals(0, entities.size());
+
+        // Adding sleep to delete artifacts from the db via async call
+        Thread.sleep(1000);
 
         DocumentPage doc = finalDocMgr.read("/entities/" + ENTITY + ".entity.json");
         assertFalse(doc.hasNext());
