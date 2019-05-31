@@ -366,13 +366,14 @@ class FlowUtils {
       if (isArray) {
         nb.startElement(nsKey, ns);
         nb.addAttribute('datatype', 'array');
-      }
-      let canonical = this.instanceToCanonicalXml(item);
-      if (canonical) {
-        nb.addNode(canonical);
-      }
-      if (isArray) {
+        let canonical = this.instanceToCanonicalXml(item);
+        if (canonical) {
+          nb.addNode(canonical);
+        }
         nb.endElement();
+      } else {
+        // TODO the line below doesn't add to the node builder...
+        // this.instanceToCanonicalXml(item);
       }
     }
     else {
@@ -386,8 +387,6 @@ class FlowUtils {
         nb.addNumber(item);
       } else if (item instanceof Boolean) {
         nb.addBoolean(item);
-      } else if (item === null) {
-        nb.addNull();
       } else {
         nb.addText(fn.string(item));
       }
