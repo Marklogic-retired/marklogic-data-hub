@@ -58,12 +58,44 @@ export class EntityPage extends AppPage {
     return element(by.css('mdl-textfield[label=Version] input'));
   }
 
+  async setEntityVersion(input: string) {
+    let inputField = this.entityVersion;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
+  }
+
   get entityDescription() {
     return element(by.css('mdl-textfield[label=Description] input'));
   }
 
+  async setEntityDescription(input: string) {
+    let inputField = this.entityDescription;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
+  }
+
+  async clearInputField(element) {
+    await element.click();
+    for (let i = 0; i < 50; i++) {
+      await browser.actions().sendKeys(Key.ARROW_LEFT).perform();
+      await browser.actions().sendKeys(Key.DELETE).perform();
+    }
+  }
+
   get entityURI() {
     return element(by.css('mdl-textfield[label="Base URI"] input'));
+  }
+
+  async setEntityURI(input: string) {
+    let inputField = this.entityURI;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
+  }
+
+  async clearEntityURI(input: string) {
+    let inputField = this.entityURI;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
   }
 
   getEntityBox(entityName: string) {
