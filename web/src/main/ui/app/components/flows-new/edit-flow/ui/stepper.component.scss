@@ -250,3 +250,26 @@ mat-icon {
 .view-jobs-disabled {
   color: #ccc;
 }
+
+@media (max-width: 1400px) { 
+  header {
+    .flow-container {
+      h2 {
+        max-width: 300px;
+      }
+    }
+  }
+  #latest-job-info {
+    width: 240px;
+  }
+}
+
+@media (max-width: 1200px) { 
+  header {
+    .flow-container {
+      h2 {
+        max-width: 250px;
+      }
+    }
+  }
+}
