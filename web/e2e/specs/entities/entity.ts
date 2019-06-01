@@ -25,8 +25,6 @@ export default function (qaProjectDir) {
       await loginPage.clickNext('EnvironmentTab');
       browser.wait(EC.visibilityOf(loginPage.loginTab));
       await loginPage.login();
-      await browser.sleep(5000);
-      browser.wait(EC.visibilityOf(dashboardPage.clearFinalButton()));
     });
 
     /**
@@ -59,6 +57,7 @@ export default function (qaProjectDir) {
     it('should create a new Product entity with description and URI', async function () {
       await appPage.entitiesTab.click();
       await browser.refresh();
+      await appPage.entitiesTab.click();
       browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //create Product entity
       console.log('create Product entity');
@@ -219,10 +218,8 @@ export default function (qaProjectDir) {
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       console.log('remove description');
       await entityPage.clearInputField(entityPage.entityDescription);
-      //await entityPage.entityDescription.clear();
       console.log('remove URI');
       await entityPage.clearInputField(entityPage.entityURI);
-      //await entityPage.entityURI.clear(); //may fail
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);

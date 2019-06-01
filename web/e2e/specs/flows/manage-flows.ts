@@ -4,8 +4,9 @@ import appPage from '../../page-objects/appPage';
 import manageFlowPage from "../../page-objects/flows/manageFlows";
 import entityPage from "../../page-objects/entities/entities";
 import editFlowPage from "../../page-objects/flows/editFlow";
-import flowsPage from "../../page-objects/flows/flows";
 import stepsPage from "../../page-objects/steps/steps";
+import stepsData from "../../test-objects/stepConfig";
+import flowData from "../../test-objects/flowConfig";
 
 export default function (qaProjectDir) {
   describe('Manage Flows Test', () => {
@@ -15,11 +16,11 @@ export default function (qaProjectDir) {
 
     stepsPage.setQaProjectDir(qaProjectDir);
     let properties = entityPage.properties;
-    let flow1 = flowsPage.flow1;
-    let flow2 = flowsPage.flow2;
-    let ingestion = stepsPage.ingestion;
-    let mapping = stepsPage.mapping;
-    let mastering = stepsPage.mastering;
+    let flow1 = flowData.flow1;
+    let flow2 = flowData.flow2;
+    let ingestion = stepsData.ingestion;
+    let mapping = stepsData.mapping;
+    let mastering = stepsData.mastering;
 
     xit('should login and go to flows page', async function () {
       await loginPage.setCurrentFolder(qaProjectDir);
@@ -111,7 +112,7 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeOptions(2).click();
       await manageFlowPage.clickFlowCancelSave("save");
       await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
-      await browser.sleep(1000);
+      await browser.sleep(3000);
       await expect(manageFlowPage.flowName(flow2.flowName).getText()).toEqual('TestFlow2');
       await expect(manageFlowPage.status(flow2.flowName).getText()).toEqual('Never run');
       await expect(manageFlowPage.jobs(flow2.flowName).getText()).toEqual('0');
@@ -239,10 +240,10 @@ export default function (qaProjectDir) {
     });
 
     it('Should be able to paginate', async function () {
-      await manageFlowPage.createFlow(flowsPage.flow3);
-      await manageFlowPage.createFlow(flowsPage.flow4);
-      await manageFlowPage.createFlow(flowsPage.flow5);
-      await manageFlowPage.createFlow(flowsPage.flow6);
+      await manageFlowPage.createFlow(flowData.flow3);
+      await manageFlowPage.createFlow(flowData.flow4);
+      await manageFlowPage.createFlow(flowData.flow5);
+      await manageFlowPage.createFlow(flowData.flow6);
 
       await expect(manageFlowPage.pageRangeText.getText()).toEqual("1 - 6 of 6");
       await manageFlowPage.clickPaginationDropDown();
@@ -301,10 +302,10 @@ export default function (qaProjectDir) {
       await browser.waitForAngular();
       await appPage.clickFlowTab();
       await manageFlowPage.removeFlow(flow2);
-      await manageFlowPage.removeFlow(flowsPage.flow3);
-      await manageFlowPage.removeFlow(flowsPage.flow4);
-      await manageFlowPage.removeFlow(flowsPage.flow5);
-      await manageFlowPage.removeFlow(flowsPage.flow6);
+      await manageFlowPage.removeFlow(flowData.flow3);
+      await manageFlowPage.removeFlow(flowData.flow4);
+      await manageFlowPage.removeFlow(flowData.flow5);
+      await manageFlowPage.removeFlow(flowData.flow6);
     });
 
     xit('Should logout', async function () {
