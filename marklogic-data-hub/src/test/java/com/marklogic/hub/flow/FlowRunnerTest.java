@@ -127,6 +127,26 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @Test
+    public void testIngestTextAsJson(){
+        Map<String,Object> opts = new HashMap<>();
+        opts.put("outputFormat","json");
+        List<String> coll = new ArrayList<>();
+        coll.add("text-collection");
+        opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        opts.put("collections", coll);
+
+        Map<String,Object> stepConfig = new HashMap<>();
+        Map<String,String> stepDetails = new HashMap<>();
+        stepDetails.put("inputFileType","text");
+        stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
+        stepConfig.put("fileLocations", stepDetails);
+        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("2"), UUID.randomUUID().toString(),opts, stepConfig);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "text-collection") == 1);
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+    }
+
+    @Test
     public void testEmptyCollector(){
         Map<String,Object> opts = new HashMap<>();
         opts.put("sourceQuery", "cts.collectionQuery('non-existent-collection')");
