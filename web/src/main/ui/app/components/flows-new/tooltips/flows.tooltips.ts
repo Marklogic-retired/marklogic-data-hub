@@ -20,10 +20,7 @@ export class FlowsTooltips {
     sourceType: '',
     targetType: '',
     targetPerms: '',
-    targetURIReplace: '',
-    sourceType: '',
-    sourcePath: '',
-    sourceType: ''
+    targetURIReplace: ''
   }
 
   static mapping: any = {
