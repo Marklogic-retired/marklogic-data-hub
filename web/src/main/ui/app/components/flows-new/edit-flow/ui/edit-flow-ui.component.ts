@@ -123,6 +123,7 @@ export class EditFlowUiComponent implements OnChanges {
         this.flow.description = response.description;
         this.flow.batchSize = response.batchSize;
         this.flow.threadCount = response.threadCount;
+        this.flow.options = response.options;
         this.saveFlow.emit(this.flow);
       }
     });
