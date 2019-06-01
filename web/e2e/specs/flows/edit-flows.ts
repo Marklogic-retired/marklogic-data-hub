@@ -2,8 +2,8 @@ import {browser, ExpectedConditions as EC, Ptor} from 'protractor';
 import appPage from '../../page-objects/appPage';
 import manageFlowPage from "../../page-objects/flows/manageFlows";
 import editFlowPage from "../../page-objects/flows/editFlow";
-import flowPage from "../../page-objects/flows/flows";
 import loginPage from "../../page-objects/auth/login";
+import flowData from "../../test-objects/flowConfig";
 
 export default function (qaProjectDir) {
   describe('Edit Flows Test', () => {
@@ -11,7 +11,7 @@ export default function (qaProjectDir) {
       browser.driver.manage().window().maximize();
     });
 
-    let flow1 = flowPage.flowWithOptions;
+    let flow1 = flowData.flowWithOptions;
 
     xit('should login and go to flows page', async function () {
       await loginPage.setCurrentFolder(qaProjectDir);
@@ -24,9 +24,11 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     });
 
-    it('Should add a step to the flow', async function () {
-      await appPage.clickFlowTab();
-      await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+    it('Should add a flow', async function () {
+      await browser.refresh();
+      await browser.waitForAngular();
+      //await appPage.clickFlowTab();
+      //await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.createFlow(flow1);
     });
 

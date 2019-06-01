@@ -76,8 +76,10 @@ export class EntityPage extends AppPage {
 
   async clearInputField(element) {
     await element.click();
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 100; i++) {
       await browser.actions().sendKeys(Key.ARROW_LEFT).perform();
+    }
+    for (let i = 0; i < 100; i++) {
       await browser.actions().sendKeys(Key.DELETE).perform();
     }
   }

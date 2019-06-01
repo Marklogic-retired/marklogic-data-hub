@@ -6,8 +6,8 @@ import manageFlowPage from "../../../page-objects/flows/manageFlows";
 import editFlowPage from "../../../page-objects/flows/editFlow";
 import stepsPage from "../../../page-objects/steps/steps";
 import ingestStepPage from "../../../page-objects/steps/ingestStep";
-import flowPage from "../../../page-objects/flows/flows";
-import entityPage from "../../../page-objects/entities/entities";
+import stepsData from "../../../test-objects/stepConfig";
+import flowData from "../../../test-objects/flowConfig";
 
 export default function (qaProjectDir) {
   describe('Verify ingestion step test', () => {
@@ -16,17 +16,16 @@ export default function (qaProjectDir) {
     });
 
     editFlowPage.setQaProjectDir(qaProjectDir);
-    let flow1 = flowPage.flow1;
-    let flow2 = flowPage.flow2;
-    let flow3 = flowPage.flow3;
-    let flow4 = flowPage.flow4;
-    let flow5 = flowPage.flow5;
-    let json = stepsPage.json;
-    let xml = stepsPage.xml;
-    let csv = stepsPage.csv;
-    let text = stepsPage.text;
-    let binary = stepsPage.binary;
-
+    let flow1 = flowData.flow1;
+    let flow2 = flowData.flow2;
+    let flow3 = flowData.flow3;
+    let flow4 = flowData.flow4;
+    let flow5 = flowData.flow5;
+    let json = stepsData.json;
+    let xml = stepsData.xml;
+    let csv = stepsData.csv;
+    let text = stepsData.text;
+    let binary = stepsData.binary;
 
     xit('should login and go to flows page', async function () {
       //await loginPage.browseButton.click();
