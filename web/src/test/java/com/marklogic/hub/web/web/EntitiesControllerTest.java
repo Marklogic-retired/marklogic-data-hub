@@ -83,13 +83,13 @@ class EntitiesControllerTest extends BaseTestController {
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
         installUserModules(getDataHubAdminConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
-        installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
+        installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
 
         //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
         setEnvConfig();
@@ -123,13 +123,13 @@ class EntitiesControllerTest extends BaseTestController {
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
 
         installUserModules(getDataHubAdminConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
-        installStagingDoc("/staged.json", meta, "flow-manager/staged.json");
+        installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
 
         setEnvConfig();
 
