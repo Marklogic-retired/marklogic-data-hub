@@ -43,6 +43,13 @@
         "updated" : {
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "interests" : {
+          "datatype" : "array",
+          "items": {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
         }
       }
     }

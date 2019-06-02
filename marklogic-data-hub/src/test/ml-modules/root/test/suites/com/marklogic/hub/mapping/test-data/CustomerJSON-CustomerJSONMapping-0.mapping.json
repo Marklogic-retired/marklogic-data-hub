@@ -12,6 +12,12 @@
     },
     "firstname": {
       "sourcedFrom": "FirstName"
+    },
+    "interests": {
+      "sourcedFrom": "Interests"
+    },
+    "updated": {
+      "sourcedFrom": "Metadata/CreatedOn"
     }
   }
 }

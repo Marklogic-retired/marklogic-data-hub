@@ -12,6 +12,9 @@
     },
     "firstname": {
       "sourcedFrom": "property[@name = 'name']/@value"
+    },
+    "interests": {
+      "sourcedFrom": "property[@name = 'interest']/@value"
     }
   }
 }
