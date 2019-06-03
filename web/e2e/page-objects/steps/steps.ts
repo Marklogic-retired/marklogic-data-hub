@@ -187,13 +187,19 @@ export class Steps extends AppPage {
     return element(by.id(`step-${option}-btn`));
   }
 
+  get stepDialogBox() {
+    return element(by.css("mat-dialog-container"));
+  }
+
   /**
    * clickStepCancelSave
    * @param option = [cancel/save]
    */
   async clickStepCancelSave(option: string) {
     let button = this.stepCancelSaveButton(option);
-    return await button.click();
+    await browser.wait(EC.elementToBeClickable(button));
+    await button.click();
+    return await browser.wait(EC.invisibilityOf(this.stepDialogBox));
   }
   
   // Steps container

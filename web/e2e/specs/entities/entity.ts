@@ -157,7 +157,6 @@ export default function (qaProjectDir) {
       expect(entityPage.getPropertyName(lnameProperty).getAttribute('value')).toEqual('lname');
       expect(entityPage.getPropertyType(lnameProperty).getAttribute('value')).toContain('string');
       expect(entityPage.getPropertyDescription(lnameProperty).getAttribute('value')).toEqual('lname description');
-      browser.sleep(180000);
       expect(entityPage.hasClass(entityPage.getPropertyPii(lnameProperty), 'active')).toBe(true);
       await entityPage.cancelEntity.click();
       browser.wait(EC.invisibilityOf(entityPage.entityEditor));
@@ -644,7 +643,7 @@ export default function (qaProjectDir) {
       fs.copy(attachmentPiiFilePath, qaProjectDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
     });
 
-    it('should redeploy hub to make the pii takes effect', async function () {
+    xit('should redeploy hub to make the pii takes effect', async function () {
       await appPage.settingsTab.click();
       settingsPage.isLoaded();
       await settingsPage.redeployButton.click();

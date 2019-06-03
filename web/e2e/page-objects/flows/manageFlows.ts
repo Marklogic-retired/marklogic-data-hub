@@ -1,9 +1,8 @@
 import appPage, {AppPage} from "../appPage";
-import { pages } from '../page';
+import {pages} from '../page';
 import {browser, by, ExpectedConditions as EC, element, $$} from "protractor";
 
 export class ManageFlows extends AppPage {
-
 
 
   //to get the login box locator
@@ -24,6 +23,10 @@ export class ManageFlows extends AppPage {
     return await button.click();
   }
 
+  get flowDialogBox() {
+    return element(by.css(".mat-dialog-container"));
+  }
+
   /**
    * flowDialogBoxHeader
    * @param boxType = ["New Flow"/"Flow Settings"]
@@ -36,12 +39,14 @@ export class ManageFlows extends AppPage {
    * flowForm
    * @param formID = [name/desc/batch-size/thread-count]
    */
-  flowForm(formID: string){
+  flowForm(formID: string) {
     return element(by.id(`flow-${formID}`));
   }
 
   async setFlowForm(formID: string, input: string) {
+    await browser.sleep(500);
     let inputField = this.flowForm(formID);
+    await browser.wait(EC.elementToBeClickable(inputField));
     return await inputField.sendKeys(input);
   };
 
@@ -55,9 +60,14 @@ export class ManageFlows extends AppPage {
     return await inputField.isEnabled();
   };
 
+  get advSettingsExpandCollapse() {
+    return element(by.css("new-flow-dialog .mat-expansion-indicator"));
+  }
+
   async clickAdvSettingsExpandCollapse() {
-    console.log("CLicking advance settings");
-    return await element(by.css("new-flow-dialog .mat-expansion-indicator")).click();
+    await browser.sleep(1000);
+    await console.log("CLicking advance settings");
+    return await this.advSettingsExpandCollapse.click();
   }
 
   get addOptions() {
@@ -70,7 +80,7 @@ export class ManageFlows extends AppPage {
   }
 
   async getFlowOptionsText(rowNum: number, column: string) {
-    let flowOption = this.flowOptions(rowNum,column);
+    let flowOption = this.flowOptions(rowNum, column);
     return await flowOption.getAttribute("value");
   }
 
@@ -99,7 +109,7 @@ export class ManageFlows extends AppPage {
    * @param option = [cancel/save]
    */
   async clickFlowCancelSave(option: string) {
-    let button = this.flowCancelSaveButton(option)
+    let button = this.flowCancelSaveButton(option);
     return await button.click();
   }
 
@@ -191,7 +201,7 @@ export class ManageFlows extends AppPage {
     let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`));
     return await run.isEnabled();
   }
-  
+
   flowMenuOptions(option: string) {
     return element(by.css(`.mat-menu-panel .mat-menu-content .flow-menu-${option}-btn`));
   }
@@ -298,11 +308,14 @@ export class ManageFlows extends AppPage {
     await manageFlowPage.clickNewFlowButton();
     await browser.sleep(2000);
     await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.flowForm('name')), 5000);
     await manageFlowPage.setFlowForm("name", flow.flowName);
     if (flow.flowDesc != null) {
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.flowForm('desc')), 5000);
       await manageFlowPage.setFlowForm("desc", flow.flowDesc);
     }
     if (flow.batchSize != null || flow.threadCount != null || (flow.options != null && flow.options.size > 0)) {
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.advSettingsExpandCollapse), 5000);
       await manageFlowPage.clickAdvSettingsExpandCollapse();
     }
     if (flow.batchSize != null) {
@@ -318,10 +331,11 @@ export class ManageFlows extends AppPage {
         await manageFlowPage.setFlowOptions(n, "value", flow.options.n[1]);
       }
     }
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.flowCancelSaveButton('save')));
     await manageFlowPage.clickFlowCancelSave("save");
-    await browser.sleep(2000);
+    await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBox));
     await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
-    await browser.sleep(5000);
+    //await browser.sleep(5000);
     await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
     await expect(manageFlowPage.flowName(flow.flowName).getText()).toEqual(flow.flowName);
     await browser.sleep(3000);
