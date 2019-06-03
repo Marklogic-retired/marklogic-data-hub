@@ -181,7 +181,6 @@ export class EditFlow extends AppPage {
       await stepsPage.setStepDescription(step.stepDesc);
       browser.sleep(2000);
       await stepsPage.clickStepCancelSave("save");
-     // await browser.wait(EC.invisibilityOf(this.stepDialogBox));
       browser.sleep(2000);
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
       await ingestStepPage.setInputFilePath(this.qaProjectDir + step.path);

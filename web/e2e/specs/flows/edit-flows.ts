@@ -25,8 +25,6 @@ export default function (qaProjectDir) {
     });
 
     it('Should add a flow', async function () {
-      //await browser.refresh();
-      //await browser.waitForAngular();
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.createFlow(flow1);
