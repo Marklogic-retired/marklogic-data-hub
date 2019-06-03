@@ -186,7 +186,7 @@ class Jobs {
     let docs = [];
     let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)];
     if (step) {
-      query.push(cts.jsonPropertyValueQuery("step", step));
+      query.push(cts.jsonPropertyValueQuery("stepNumber", step));
     }
     this.hubutils.queryLatest(function () {
       let uris = cts.uris("", null, cts.andQuery(query));
