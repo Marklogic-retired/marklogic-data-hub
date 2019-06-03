@@ -6,4 +6,5 @@ export class MappingOptions {
   public targetDatabase: string;
   public mapping: any;
   public targetEntity: string;
+  public outputFormat: string;
 }

@@ -46,12 +46,14 @@ export class Step {
   static createMappingStep(): Step {
     const step = new Step();
     step.options = new MappingOptions();
+    step.options.outputFormat = 'json';
     return step;
   }
 
   static createMasteringStep(): Step {
     const step = new Step();
     step.options = new MasteringOptions();
+    step.options.outputFormat = 'json';
     return step;
   }
 
@@ -59,6 +61,7 @@ export class Step {
     const step = new Step();
     step.modulePath = '';
     step.options = new CustomOptions();
+    step.options.outputFormat = 'json';
     return step;
   }
 
