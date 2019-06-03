@@ -167,26 +167,20 @@ export class MappingComponent implements OnInit {
     this.editURIVal = uri;
     this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
-      this.sampleDocSrc = doc;
-      if(this.sampleDocSrc['envelope']) {
-        _.forEach(this.sampleDocSrc['envelope']['instance'], function (val, key) {
-          let prop = {
-            key: key,
-            val: String(val),
-            type: self.getType(val)
-          };
-          self.sampleDocSrcProps.push(prop);
-        });
-      } else {
-        _.forEach(this.sampleDocSrc, function (val, key) {
-          let prop = {
-            key: key,
-            val: String(val),
-            type: self.getType(val)
-          };
-          self.sampleDocSrcProps.push(prop);
-        });
+      this.sampleDocSrc = this.normalizeToJSON(doc);
+      let startRoot = this.sampleDocSrc['envelope'] ? this.sampleDocSrc['envelope']['instance'] : this.sampleDocSrc;
+      const rootKeys = Object.keys(startRoot);
+      if (rootKeys.length === 1 && startRoot[rootKeys[0]] instanceof Object) {
+        startRoot = startRoot[rootKeys[0]];
       }
+      _.forEach(startRoot, function (val, key) {
+          let prop = {
+            key: key,
+            val: String(val),
+            type: self.getType(val)
+          };
+          self.sampleDocSrcProps.push(prop);
+        });
       this.sampleDocURI = uri;
       this.mapping.sourceURI = uri;
       if (save) {
@@ -199,6 +193,28 @@ export class MappingComponent implements OnInit {
         self.mappingUI.uriNotFound(uri);
         }
       );
+  }
+
+  normalizeToJSON(input: any): any {
+    if (typeof input === 'string') {
+      const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
+      const object = {};
+      const nodeToJSON = function (obj, node) {
+        node.childNodes.forEach((childNode) => {
+          if (childNode.childNodes.length === 0 ||  (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+            if (childNode.nodeName !== '#text') {
+              obj[childNode.nodeName] = childNode.textContent;
+            }
+          } else {
+            obj[childNode.nodeName] = {};
+            nodeToJSON(obj[childNode.nodeName], childNode);
+          }
+        });
+      };
+      nodeToJSON(object, parsedXML);
+      return object;
+    }
+    return input;
   }
 
   saveMap(): void {
