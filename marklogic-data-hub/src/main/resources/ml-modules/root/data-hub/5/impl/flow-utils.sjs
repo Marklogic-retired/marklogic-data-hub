@@ -125,7 +125,7 @@ class FlowUtils {
     }
 
     if (dataFormat === this.consts.JSON) {
-      if(instance.root) {
+      if(instance && instance.root) {
         instance = instance.root;
       }
       return {
