@@ -559,9 +559,9 @@ export default function(qaProjectDir) {
             browser.sleep(10000);
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2010');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
-            await expect(browsePage.facetCount("MasteringCustomer")).toEqual("2010");
-            await expect(browsePage.facetCount("customer-merge")).toEqual("2");
-            await expect(browsePage.facetCount("customer-notify")).toEqual("1");
+            await expect(browsePage.facetCount("MasteringCustomer").getText()).toEqual("2010");
+            await expect(browsePage.facetCount("customer-merge").getText()).toEqual("2");
+            await expect(browsePage.facetCount("customer-notify").getText()).toEqual("1");
             // Verify the merge results
             await browsePage.clickFacetName("customer-merge");
             browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
