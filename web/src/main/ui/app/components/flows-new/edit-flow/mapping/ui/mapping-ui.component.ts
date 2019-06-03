@@ -31,6 +31,7 @@ export class MappingUiComponent implements OnChanges {
   public filterText: object = {};
 
   public editingURI: boolean = false;
+  public editingSourceContext: boolean = false;
 
   /**
    * Update the sample document based on a URI.
