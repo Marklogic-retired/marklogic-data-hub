@@ -1,6 +1,8 @@
 import manageFlows from './manage-flows'
 import editFlows from './edit-flows'
 import verifyIngestion from './steps/ingestion'
+import verifyMapping from './steps/mapping'
+
 
 
 export default function (tmpDir) {
@@ -8,7 +10,7 @@ export default function (tmpDir) {
     manageFlows(tmpDir);
     editFlows(tmpDir);
     verifyIngestion(tmpDir);
-    // verifyMapping(tmpDir);
+    verifyMapping(tmpDir);
     // verifyMastering(tmpDir);
   })
 }

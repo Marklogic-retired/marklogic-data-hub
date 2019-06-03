@@ -28,7 +28,6 @@ export default function (qaProjectDir) {
     let binary = stepsData.binary;
 
     xit('should login and go to flows page', async function () {
-      //await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
       await browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
@@ -93,8 +92,6 @@ export default function (qaProjectDir) {
       await browser.waitForAngular();
       await appPage.flowsTab.click();
       await manageFlowPage.removeFlow(flow1);
-      //await appPage.dashboardTab.click();
-      //await dashboardPage.clearJobDatabase();
     });
 
     xit('Verify ingestion to target database', async function () {
