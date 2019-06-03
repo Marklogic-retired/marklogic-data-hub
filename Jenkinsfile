@@ -28,7 +28,7 @@ pipeline{
 		agent { label 'dhfLinuxAgent'}
 			steps{
 				script{
-        props = readProperties file:'$WORKSPACE/data-hub/pipeline.properties';
+        props = readProperties file:'data-hub/pipeline.properties';
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0];
 				def transitionInput =[transition: [id: '41']]
