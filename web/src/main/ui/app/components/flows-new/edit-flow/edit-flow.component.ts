@@ -147,10 +147,6 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   stopFlow(flowid): void {
     this.manageFlowsService.stopFlow(flowid).subscribe(resp => {
-      console.log('stop flow response', resp);
-      this.flow = Flow.fromJSON(resp);
-      this.getSteps();
-      this.runningJobService.stopPolling(flowid);
     });
   }
   createStep(stepObject) {
