@@ -100,9 +100,6 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
 
   stopFlow(flowId) {
     this.manageFlowsService.stopFlow(flowId).subscribe(resp => {
-      console.log('stop flow response', resp);
-      this.getFlows();
-      this.runningJobService.stopPolling(flowId);
     });
   }
 
