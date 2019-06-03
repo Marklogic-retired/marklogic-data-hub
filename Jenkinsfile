@@ -544,7 +544,7 @@ pipeline{
 		script{
 			//JIRA_ID=env.CHANGE_TITLE.split(':')[0]
 			prResponse = sh (returnStdout: true, script:'''
-			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"develop\" , \"base\": \"''''+props['ReleaseBranch']+''''\" }' '''+githubAPIUrl+'''/pulls ''')
+			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"develop\" , \"base\": \"'''+props['ReleaseBranch']+'''\" }' '''+githubAPIUrl+'''/pulls ''')
 			println(prResponse)
 			def slurper = new JsonSlurper().parseText(prResponse)
 			println(slurper.number)
