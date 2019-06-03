@@ -5,6 +5,7 @@ def JIRA_ID="";
 def commitMessage="";
 def prResponse="";
 def prNumber;
+def props;
 def githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
 pipeline{
 	agent none;
@@ -27,6 +28,7 @@ pipeline{
 		agent { label 'dhfLinuxAgent'}
 			steps{
 				script{
+        props = readProperties file:'pipeline.properties';
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0];
 				def transitionInput =[transition: [id: '41']]
@@ -533,7 +535,7 @@ pipeline{
 		}
 		stage('Merge PR to Release Branch'){
 		when {
-  			branch '4.x-develop'
+  			branch 'develop'
   			beforeAgent true
 		}
 		agent {label 'master'}
@@ -542,7 +544,7 @@ pipeline{
 		script{
 			//JIRA_ID=env.CHANGE_TITLE.split(':')[0]
 			prResponse = sh (returnStdout: true, script:'''
-			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"4.x-develop\" , \"base\": \"release/4.2.2\" }' '''+githubAPIUrl+'''/pulls ''')
+			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"develop\" , \"base\": \"''''+props['ReleaseBranch']+''''\" }' '''+githubAPIUrl+'''/pulls ''')
 			println(prResponse)
 			def slurper = new JsonSlurper().parseText(prResponse)
 			println(slurper.number)
@@ -578,7 +580,7 @@ pipeline{
 		}
 		stage('Sanity Tests'){
 			when {
-  			branch 'Release/4.2.2'
+  			branch props['ReleaseBranch']
   			beforeAgent true
 		}
 			agent { label 'dhfLinuxAgent'}
