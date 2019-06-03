@@ -14,7 +14,7 @@ function main(content, options) {
   }
 
   let instance = content.value.root || content.value;
-  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT || outputFormat === Node.TEXT_NODE) {
+  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
     return content;
   }
   else if (instance.nodeType === Node.TEXT_NODE) {
