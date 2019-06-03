@@ -6,6 +6,7 @@ export class MasteringOptions {
   public sourceCollection: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
+  public outputFormat: string;
   public matchOptions: Matching;
   public mergeOptions: Merging;
   constructor() {

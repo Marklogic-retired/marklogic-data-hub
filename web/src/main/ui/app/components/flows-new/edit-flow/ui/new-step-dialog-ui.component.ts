@@ -28,7 +28,26 @@ export class NewStepDialogUiComponent implements OnInit {
 
   public newStep: Step;
   readonly stepOptions = Object.keys(StepType);
+  readonly outputFormats = [
+    {
+      label: 'JSON',
+      value: 'json',
+    },
+    {
+      label: 'XML',
+      value: 'xml',
+    },
+    {
+      label: 'Text',
+      value: 'text',
+    },
+    {
+      label: 'Binary',
+      value: 'binary',
+    }
+  ];
 
+  outputFormatOptions = [];
   newStepForm: FormGroup;
   databases: any = [];
   type: string = null;
@@ -74,7 +93,8 @@ export class NewStepDialogUiComponent implements OnInit {
       sourceCollection: [(this.step && this.step.options.sourceCollection) ? this.step.options.sourceCollection : ''],
       targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
       sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
-      targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : '']
+      targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : ''],
+      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json']
     }, { validators: NewStepDialogValidator });
 
     if (this.step && this.step.options && this.step.options.sourceDatabase)
@@ -151,6 +171,13 @@ export class NewStepDialogUiComponent implements OnInit {
     this.isMastering = type === StepType.MASTERING;
     this.sourceRequired = this.isMapping || this.isMastering;
     this.entityRequired = this.isMapping || this.isMastering;
+
+    if (this.isIngestion || this.isCustom) {
+      this.outputFormatOptions = this.outputFormats;
+    }
+    if (this.isMapping || this.isMastering) {
+      this.outputFormatOptions = this.outputFormats.slice(0, 2);
+    }
   }
 
   onSave() {
@@ -199,6 +226,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.options.targetDatabase = this.newStepForm.value.targetDatabase;
+    this.newStep.options.outputFormat = this.newStepForm.value.outputFormat;
 
     if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);

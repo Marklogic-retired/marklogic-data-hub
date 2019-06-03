@@ -3,4 +3,5 @@ export class CustomOptions {
   public sourceCollection: string = '';
   public sourceDatabase: string = '';
   public targetDatabase: string;
+  public outputFormat: string;
 }
