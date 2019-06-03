@@ -68,7 +68,7 @@ export class BrowsePage extends AppPage {
   }
 
   facetName(collection: string) {
-    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`));
+    return element(by.cssContainingText(".facet-list .facet-value .facet-name-list", collection));
   }
 
   async clickFacetName(collection: string) {
@@ -77,8 +77,8 @@ export class BrowsePage extends AppPage {
   }
 
   facetCount(collection: string) {
-    return element(by.css(`div.facet-list div.facet-value span[title="${collection}"]`))
-      .element(by.xpath('following-sibling::span')).getAttribute('data-badge');
+    return element(by.cssContainingText(".facet-list .facet-value .facet-name-list", collection))
+      .element(by.xpath("following-sibling::span"));
   }
 }
 
