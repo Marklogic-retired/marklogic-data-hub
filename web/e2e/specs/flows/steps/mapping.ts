@@ -56,10 +56,6 @@ export default function (qaProjectDir) {
       await editFlowPage.addStep(flow1, mapping);
     });
 
-    xit('should create mapping step with name, description and query', async function () {
-
-    });
-
     it('should verify source and entity help links', async function () {
       await stepsPage.stepSelectContainer(mapping.stepName).click();
       await expect(mappingStepPage.sourceHelpLink)

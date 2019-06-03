@@ -335,7 +335,6 @@ export class ManageFlows extends AppPage {
     await manageFlowPage.clickFlowCancelSave("save");
     await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBox));
     await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
-    //await browser.sleep(5000);
     await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
     await expect(manageFlowPage.flowName(flow.flowName).getText()).toEqual(flow.flowName);
     await browser.sleep(3000);
