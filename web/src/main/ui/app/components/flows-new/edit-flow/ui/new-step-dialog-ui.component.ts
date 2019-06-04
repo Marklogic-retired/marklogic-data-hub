@@ -172,7 +172,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.sourceRequired = this.isMapping || this.isMastering;
     this.entityRequired = this.isMapping || this.isMastering;
 
-    if (this.isIngestion || this.isCustom) {
+    if (this.isCustom) {
       this.outputFormatOptions = this.outputFormats;
     }
     if (this.isMapping || this.isMastering) {

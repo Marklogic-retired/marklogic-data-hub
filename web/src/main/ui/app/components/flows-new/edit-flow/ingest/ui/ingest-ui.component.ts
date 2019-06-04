@@ -7,7 +7,7 @@ const settings = {
     value: '.'
   },
   fileTypes: {
-    label: 'Source File Type',
+    label: 'Source Format',
     description: 'The input file type. Accepted value: txt, json, xml, binary, csv, or all.\nDefault: json.',
     options: [
       {
@@ -33,7 +33,7 @@ const settings = {
     ]
   },
   outputDocTypes: {
-    label: 'Target File Type',
+    label: 'Target Format',
     description: 'The type of document to create. Accepted values: xml, json. Default: json.',
     options: [
       {
