@@ -22,10 +22,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
-import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
-import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
-import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -530,15 +527,10 @@ public class DataHubImpl implements DataHub {
                 throw new DataHubConfigurationException(e);
             }
         }
-        AppConfig appConfig = hubConfig.getAppConfig();
-
-        appConfig.setDeployForestsWithCma(true);
-        appConfig.setDeployPrivilegesWithCma(true);
-        appConfig.setDeployAmpsWithCma(true);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.deploy(appConfig);
+        finalDeployer.deploy(hubConfig.getAppConfig());
     }
 
     /**
@@ -601,15 +593,9 @@ public class DataHubImpl implements DataHub {
         // Removing this command as databases are deleted by other DatabaseCommands
         commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
 
-        AppConfig appConfig = hubConfig.getAppConfig();
-
-        appConfig.setDeployForestsWithCma(true);
-        appConfig.setDeployPrivilegesWithCma(true);
-        appConfig.setDeployAmpsWithCma(true);
-
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(commandMap);
-        finalDeployer.undeploy(appConfig);
+        finalDeployer.undeploy(hubConfig.getAppConfig());
     }
 
     private void runInDatabase(String query, String databaseName) {
@@ -659,11 +645,9 @@ public class DataHubImpl implements DataHub {
     private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
         List<Command> dbCommands = new ArrayList<>();
         for (Command c : commandMap.get("mlDatabaseCommands")) {
-            if (!(c instanceof DeployContentDatabasesCommand || c instanceof DeployTriggersDatabaseCommand || c instanceof DeploySchemasDatabaseCommand)) {
-                dbCommands.add(c);
-                if (c instanceof DeployOtherDatabasesCommand) {
-                    ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
-                }
+            dbCommands.add(c);
+            if (c instanceof DeployOtherDatabasesCommand) {
+                ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
             }
         }
         commandMap.put("mlDatabaseCommands", dbCommands);
