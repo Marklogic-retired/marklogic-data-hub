@@ -14,22 +14,40 @@ function main(content, options) {
   }
 
   let instance = content.value.root || content.value;
-  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT || outputFormat === Node.TEXT_NODE) {
-    return content;
-  } else {
-    let triples = [];
-    let headers = datahub.flow.flowUtils.createHeaders(options);
-
-    if (options.triples && Array.isArray(options.triples)) {
-      for (let triple of options.triples) {
-        triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
-      }
-    }
-
-    content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-
+  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
     return content;
   }
+  else if (instance.nodeType === Node.TEXT_NODE) {
+    try {
+      let options;
+      if(outputFormat === datahub.flow.consts.XML) {
+        options = "format-xml";
+      }
+      else {
+        options = "format-json";
+      }
+      instance = fn.head(xdmp.unquote(instance, null, options));
+    }
+    catch (e) {
+      let errMsg = 'The input text document is not a valid ' + outputFormat + ' .';
+      datahub.debug.log({message: errMsg, type: 'error'});
+      throw Error(errMsg);
+    }
+  }
+
+  let triples = [];
+  let headers = datahub.flow.flowUtils.createHeaders(options);
+
+  if (options.triples && Array.isArray(options.triples)) {
+    for (let triple of options.triples) {
+      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+    }
+  }
+
+  content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+
+  return content;
+
 }
 
 module.exports = {
