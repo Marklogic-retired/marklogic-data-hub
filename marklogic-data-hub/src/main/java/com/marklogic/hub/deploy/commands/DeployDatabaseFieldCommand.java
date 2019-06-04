@@ -45,7 +45,7 @@ public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
     private final static Namespace MANAGE_NS = Namespace.getNamespace("http://marklogic.com/manage");
 
     public DeployDatabaseFieldCommand() {
-        setExecuteSortOrder(SortOrderConstants.DEPLOY_CONTENT_DATABASES + 1);
+        setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES + 1);
     }
 
     @Override
