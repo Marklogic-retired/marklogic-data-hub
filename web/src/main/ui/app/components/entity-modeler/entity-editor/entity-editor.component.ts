@@ -30,7 +30,7 @@ export class EntityEditorComponent implements AfterViewChecked {
   dataTypes: Array<any>;
 
   entityBackup: string = null;
-
+  editing: boolean = false;
   // used for toggling > 1 of the following
   indexHeader: boolean = false;
   wordLexiconHeader: boolean = false;
@@ -70,6 +70,12 @@ export class EntityEditorComponent implements AfterViewChecked {
     this.actions = actions;
     this.dataTypes = dataTypes;
     this.entityBackup = JSON.stringify(this.entity);
+
+    if (entity.info.title === null) {
+      this.editing = false;
+    } else {
+      this.editing = true;
+    }
     // Set property ui flags based on entity state
     this.entity.definition.properties.forEach((property) => {
       property.isPrimaryKey = this.entity.definition.primaryKey === property.name;
@@ -233,7 +239,7 @@ export class EntityEditorComponent implements AfterViewChecked {
   saveEntity() {
     if (this.actions.save) {
       const duplicate = this.entities.filter( entity => entity.info.title === this.entity.info.title);
-      if (duplicate.length) {
+      if (duplicate.length && !this.editing) {
         this.validTitle = true;
         this.isTitleDuplicate = true;
         return;
