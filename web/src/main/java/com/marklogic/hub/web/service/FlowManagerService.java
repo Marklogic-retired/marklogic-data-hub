@@ -320,26 +320,37 @@ public class FlowManagerService {
         Flow flow = flowManager.getFlow(flowName);
         String key = getStepKeyInStepMap(flow, stepId);
 
-        if (key != null && !key.isEmpty()) {
-            try {
-                Map<String, Step> stepMap = flowManager.getSteps(flow);
-                Step step = stepMap.remove(key);
-                flowManager.setSteps(flow, stepMap);
-                flowManager.saveFlow(flow);
-
-//                // Don't delete the Step from the filesystem so that we can later on reuse the step.
-//                if (step.getType().equals(Step.StepDefinitionType.CUSTOM)) {
-//                    stepManagerService.deleteStepDefinition(step);
-//                }
-            }
-            catch (DataHubProjectException e) {
-                throw new NotFoundException(e.getMessage());
-            }
-        }
-        else {
+        if (StringUtils.isEmpty(key)) {
             throw new BadRequestException("Invalid Step Id");
         }
 
+        try {
+            Map<String, Step> stepMap = flowManager.getSteps(flow);
+            int stepOrder = Integer.parseInt(key);
+
+            if (stepOrder == stepMap.size()) {
+                stepMap.remove(key);
+            }
+            else {
+                Map<String, Step> newStepMap = new LinkedHashMap<>();
+                final int[] newStepOrder = {1};
+                final int[] stepIndex = {1};
+                stepMap.values().forEach(step -> {
+                    if (stepIndex[0] != stepOrder) {
+                        newStepMap.put(String.valueOf(newStepOrder[0]++), step);
+                    }
+                    stepIndex[0]++;
+                });
+
+                stepMap = newStepMap;
+            }
+
+            flowManager.setSteps(flow, stepMap);
+            flowManager.saveFlow(flow);
+        }
+        catch (DataHubProjectException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
     public FlowStepModel runFlow(String flowName, List<String> steps) {
