@@ -46,12 +46,6 @@
         </mat-expansion-panel-header>
 
         <mat-form-field *ngIf="!isIngestion">
-          <mat-select id="step-output-format" class="type-select" placeholder="Target Format" formControlName="outputFormat">
-            <mat-option class="type-option" *ngFor="let outputFormat of outputFormatOptions" [value]="outputFormat.value">{{outputFormat.label}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field *ngIf="!isIngestion">
           <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
@@ -61,6 +55,12 @@
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field *ngIf="!isIngestion">
+          <mat-select id="step-output-format" class="type-select" placeholder="Target Format" formControlName="outputFormat">
+            <mat-option class="type-option" *ngFor="let outputFormat of outputFormatOptions" [value]="outputFormat.value">{{outputFormat.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
       </mat-expansion-panel>
     </mat-accordion>
   </div>
