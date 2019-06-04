@@ -239,7 +239,7 @@ export class EntityEditorComponent implements AfterViewChecked {
   saveEntity() {
     if (this.actions.save) {
       const duplicate = this.entities.filter( entity => entity.info.title === this.entity.info.title);
-      if (duplicate.length) {
+      if (duplicate.length && !this.editing) {
         this.validTitle = true;
         this.isTitleDuplicate = true;
         return;
