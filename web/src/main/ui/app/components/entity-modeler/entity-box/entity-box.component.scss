@@ -55,7 +55,7 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
     .edit-area {
       float: right;
 
-      .fa-remove {
+      .fa-trash {
         color: $red-color;
       }
 
