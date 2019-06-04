@@ -1,17 +1,13 @@
-buildscript {
-    repositories {
-        maven { url 'http://distro.marklogic.com/nexus/repository/maven-releases/'}
-        maven { url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
-        jcenter()
-        mavenLocal()
-    }
-    dependencies {
-        classpath "com.marklogic:ml-data-hub:5.0-SNAPSHOT"
-    }
-}
-
 plugins {
     id 'net.saliman.properties' version '1.4.6'
+    id 'com.marklogic.ml-data-hub' version '5.0.0'
 }
 
 apply plugin: "com.marklogic.ml-data-hub"
+
+task extractZip (type: Copy) {
+    from zipTree('input.zip')
+    def destDir = System.getProperty("user.dir")
+    println("input directory is extracted to: " + destDir + "/input")
+    destinationDir = file(destDir)
+}

@@ -39,7 +39,7 @@
       "options": {
         "sourceQuery": "cts.collectionQuery('mastering-flow-ingest-json')",
         "mapping": {
-          "name": "OrderMapping1",
+          "name": "OrderMappingJson",
           "version": 1
         },
         "sourceDatabase": "data-hub-STAGING",
