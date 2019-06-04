@@ -32,11 +32,11 @@ public class LoadTestModules {
          * because that will overwrite some collections and tokens set by the Installer program.
          */
         config.getModulePaths().clear();
-        config.getModulePaths().add("marklogic-data-hub/build/mlRestApi/marklogic-unit-test-modules/ml-modules");
+        config.getModulePaths().add("marklogic-data-hub/build/mlBundle/marklogic-unit-test-modules/ml-modules");
         config.getModulePaths().add("marklogic-data-hub/src/test/ml-modules");
-        config.getModulePaths().add("build/mlRestApi/marklogic-unit-test-modules/ml-modules");
+        config.getModulePaths().add("build/mlBundle/marklogic-unit-test-modules/ml-modules");
         config.getModulePaths().add("src/test/ml-modules");
-        config.getModulePaths().add("../build/mlRestApi/marklogic-unit-test-modules/ml-modules");
+        config.getModulePaths().add("../build/mlBundle/marklogic-unit-test-modules/ml-modules");
         config.getModulePaths().add("../src/test/ml-modules");
 
         new SimpleAppDeployer(new LoadModulesCommand()).deploy(config);
