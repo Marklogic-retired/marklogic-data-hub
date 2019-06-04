@@ -53,3 +53,17 @@ div.key-value-group {
     border: 0;
   }
 }
+
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: -8px;
+}
+
+/deep/ .mat-tooltip.options-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: 0;
+}

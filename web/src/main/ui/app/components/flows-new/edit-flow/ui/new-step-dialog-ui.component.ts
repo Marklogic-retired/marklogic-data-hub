@@ -40,6 +40,7 @@ export class NewStepDialogUiComponent implements OnInit {
   entityRequired: boolean = false;
   hasSelectedCollection: boolean = false;
   hasSelectedQuery: boolean = false;
+  tooltips: any;
 
   constructor(
     private formBuilder: FormBuilder) {}
