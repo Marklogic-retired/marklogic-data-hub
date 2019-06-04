@@ -19,7 +19,9 @@ package com.marklogic.hub.web.service;
 
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
 import org.junit.jupiter.api.AfterEach;
@@ -34,6 +36,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,6 +51,9 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
     @Autowired
     FlowManagerService flowManagerService;
+
+    @Autowired
+    FlowManager flowManager;
 
     @Autowired
     HubConfigImpl hubConfig;
@@ -88,5 +94,39 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         assertFalse(doc.hasNext());
         doc = finalDocMgr.read("/flows/" + FLOW + ".flow.json");
         assertFalse(doc.hasNext());
+    }
+
+    @Test
+    void deleteFirstStep() {
+        Map<String, Step> stepMap = flowManager.getSteps(flowManager.getFlow(FLOW));
+        assertEquals(5, stepMap.size());
+
+        String firstStepId = stepMap.get("1").getName() + "-" + stepMap.get("1").getStepDefinitionType();
+        flowManagerService.deleteStep(FLOW, firstStepId);
+        assertEquals(stepMap.get("2").getName(), flowManager.getStep(flowManager.getFlow(FLOW), "1").getName());
+        assertEquals(4, flowManager.getSteps(flowManager.getFlow(FLOW)).size());
+
+    }
+
+    @Test
+    void deleteLastStep() {
+        Map<String, Step> stepMap = flowManager.getSteps(flowManager.getFlow(FLOW));
+        assertEquals(5, stepMap.size());
+
+        String lastStepId = stepMap.get("5").getName() + "-" + stepMap.get("5").getStepDefinitionType();
+        flowManagerService.deleteStep(FLOW, lastStepId);
+        assertEquals(stepMap.get("4").getName(), flowManager.getStep(flowManager.getFlow(FLOW), "4").getName());
+        assertEquals(4, flowManager.getSteps(flowManager.getFlow(FLOW)).size());
+    }
+
+    @Test
+    void deleteMiddleStep() {
+        Map<String, Step> stepMap = flowManager.getSteps(flowManager.getFlow(FLOW));
+        assertEquals(5, stepMap.size());
+
+        String midStepId = stepMap.get("3").getName() + "-" + stepMap.get("3").getStepDefinitionType();
+        flowManagerService.deleteStep(FLOW, midStepId);
+        assertEquals(stepMap.get("4").getName(), flowManager.getStep(flowManager.getFlow(FLOW), "3").getName());
+        assertEquals(4, flowManager.getSteps(flowManager.getFlow(FLOW)).size());
     }
 }
