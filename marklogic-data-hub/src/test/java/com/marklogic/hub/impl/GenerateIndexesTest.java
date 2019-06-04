@@ -34,13 +34,21 @@ public class GenerateIndexesTest extends HubTestBase {
     @Test
     public void sharedPropertyWithNullNamespace() {
         final String namespace = null;
-        givenAnEntityWithTitleProperty("Book", namespace);
-        givenAnEntityWithTitleProperty("Movie", namespace);
+        givenAnEntityWithTitleProperty("Book", namespace, true);
+        givenAnEntityWithTitleProperty("Movie", namespace, true);
         whenTheIndexesAreBuilt();
         thenTheresOnlyOneRangeIndexForTheSharedProperty(namespace);
     }
 
-    private void givenAnEntityWithTitleProperty(String entityName, String namespace) {
+    @Test
+    public void entityWithNoRangeIndexes() {
+        final String namespace = null;
+        givenAnEntityWithTitleProperty("Book", namespace, false);
+        whenTheIndexesAreBuilt();
+        thenNoRangeIndexesExist();
+    }
+
+    private void givenAnEntityWithTitleProperty(String entityName, String namespace, boolean includeRangeIndex) {
         PropertyType titleProperty = new PropertyType();
         titleProperty.setDatatype("string");
         titleProperty.setCollation("http://marklogic.com/collation/codepoint");
@@ -49,7 +57,9 @@ public class GenerateIndexesTest extends HubTestBase {
         DefinitionType defType = new DefinitionType();
         defType.setNamespace(namespace);
         defType.setProperties(Arrays.asList(titleProperty));
-        defType.setElementRangeIndex(Arrays.asList("title"));
+        if (includeRangeIndex) {
+            defType.setElementRangeIndex(Arrays.asList("title"));
+        }
 
         HubEntity entity = new HubEntity();
         DefinitionsType definitions = new DefinitionsType();
@@ -77,5 +87,9 @@ public class GenerateIndexesTest extends HubTestBase {
         } else {
             assertEquals(namespace, index.get("namespace-uri").asText());
         }
+    }
+
+    private void thenNoRangeIndexesExist() {
+        assertFalse(indexes.has("range-element-index"));
     }
 }
