@@ -1,17 +1,13 @@
 export class FlowsTooltips {
 
   static flowSettings: any = {
-    batchSize: 'The number of documents to process per batch. Each batch goes through all the steps in a flow before the next batch starts. Must be 1 or more. Default is 100.',
+    batchSize: 'The number of documents to process per batch. Default is 100.',
     threadCount: 'The number of threads to use when running a flow. Default is 4.',
     options: 'Key-value pairs to pass as parameters to custom modules in every step in the flow.'
   }
 
-  static stepSettings: any = {
-    stepType: 'The type of the step to create.',
-  }
-
   static ingest: any = {
-    targetDatabase: 'The database where to store the processed data. For ingestion, choose the STAGING database where you want to store the ingested data. Default is data-hub-STAGING.'
+    targetDatabase: 'The database where to store the processed data. For ingestion, choose the STAGING database where you want to store the ingested data. Default is data-hub-STAGING.',
     sourcePath: 'The location of your source files.',
     sourceType: 'The format of your source files. Default is JSON.',
     targetType: 'The format that you want your data to be stored as. Default is JSON.',
