@@ -1,0 +1,151 @@
+{
+  "name" : "CustomerMastering",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "CustomerMaster",
+      "description" : "",
+      "options" : {
+        "stepUpdate" : true,
+        "sourceQuery" : "cts.collectionQuery([\"AdvantageMap\", \"BedrockMap\"])",
+        "acceptsBatch" : true,
+        "targetEntity" : "Customer",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "CustomerMaster", "Customer" ],
+        "mergeOptions" : {
+          "matchOptions" : "",
+          "propertyDefs" : {
+            "properties" : [ {
+              "localname" : "postal",
+              "name" : "postal"
+            }, {
+              "localname" : "id",
+              "name" : "id"
+            }, {
+              "localname" : "updated",
+              "name" : "updated"
+            } ],
+            "namespaces" : { }
+          },
+          "algorithms" : {
+            "stdAlgorithm" : {
+              "timestamp" : {
+                "path" : "/envelope/instance/Customer/updated"
+              }
+            },
+            "custom" : [ ],
+            "collections" : {
+              "onMerge" : {
+                "add" : {
+                  "collection" : [ "" ]
+                },
+                "remove" : {
+                  "collection" : [ "" ]
+                },
+                "set" : {
+                  "collection" : [ "customer-merge" ]
+                }
+              }
+            }
+          },
+          "mergeStrategies" : [ ],
+          "merging" : [ {
+            "propertyName" : "postal",
+            "maxValues" : "1",
+            "length" : {
+              "weight" : "10"
+            },
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "id",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "updated",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          } ]
+        },
+        "matchOptions" : {
+          "dataFormat" : "json",
+          "propertyDefs" : {
+            "property" : [ {
+              "localname" : "firstname",
+              "name" : "firstname"
+            }, {
+              "localname" : "lastname",
+              "name" : "lastname"
+            }, {
+              "localname" : "email",
+              "name" : "email"
+            } ]
+          },
+          "algorithms" : {
+            "algorithm" : [ {
+              "name" : "double-metaphone",
+              "function" : "double-metaphone",
+              "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+              "at" : "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy"
+            }, {
+              "name" : "thesaurus",
+              "function" : "thesaurus",
+              "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+              "at" : "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy"
+            }, {
+              "name" : "zip-match",
+              "function" : "zip-match",
+              "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+              "at" : "/com.marklogic.smart-mastering/algorithms/zip.xqy"
+            }, {
+              "name" : "standard-reduction",
+              "function" : "standard-reduction"
+            } ]
+          },
+          "collections" : {
+            "content" : [ ]
+          },
+          "scoring" : {
+            "add" : [ {
+              "propertyName" : "firstname",
+              "weight" : "5"
+            }, {
+              "propertyName" : "lastname",
+              "weight" : "10"
+            }, {
+              "propertyName" : "email",
+              "weight" : "20"
+            } ],
+            "expand" : [ ],
+            "reduce" : [ ]
+          },
+          "actions" : {
+            "action" : [ ]
+          },
+          "thresholds" : {
+            "threshold" : [ {
+              "above" : "25",
+              "label" : "Definite Match",
+              "action" : "merge"
+            } ]
+          },
+          "tuning" : {
+            "maxScan" : 200
+          }
+        },
+        "sourceCollection" : "",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "default-mastering",
+      "stepDefinitionType" : "MASTERING"
+    }
+  }
+}
