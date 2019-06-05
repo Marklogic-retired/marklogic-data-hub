@@ -183,25 +183,28 @@ duplicates are considered to have the same local name, namespace URI, and collat
 declare function hent:remove-duplicate-range-indexes($database-config as item())
 {
   let $indexes := map:get($database-config, "range-element-index")
-  where fn:exists($indexes)
   return
-    let $index-map := map:map()
-    let $_ :=
-      for $index in json:array-values($indexes)
-      let $key := fn:string-join(
-        (
-          "localname", map:get($index, "localname"),
-          "namespace", map:get($index, "namespace-uri"),
-          "collation", map:get($index, "collation")
-        ), "-"
-      )
-      where fn:not(map:contains($index-map, $key))
-      return map:put($index-map, $key, $index)
+    if (fn:exists($indexes)) then
+      let $index-map := map:map()
+      let $_ :=
+        for $index in json:array-values($indexes)
+        let $key := fn:string-join(
+          (
+            "localname", map:get($index, "localname"),
+            "namespace", map:get($index, "namespace-uri"),
+            "collation", map:get($index, "collation")
+          ), "-"
+        )
+        where fn:not(map:contains($index-map, $key))
+        return map:put($index-map, $key, $index)
 
-    let $deduplicated-indexes := json:array()
-    let $_ := map:keys($index-map) ! json:array-push($deduplicated-indexes, map:get($index-map, .))
-    let $_ := map:put($database-config, "range-element-index", $deduplicated-indexes)
-    return ()
+      let $deduplicated-indexes := json:array()
+      let $_ := map:keys($index-map) ! json:array-push($deduplicated-indexes, map:get($index-map, .))
+      let $_ := map:put($database-config, "range-element-index", $deduplicated-indexes)
+      return ()
+    else
+      let $_ := map:put($database-config, "range-element-index", json:array())
+      return ()
 };
 
 declare variable $generated-primary-key-column as xs:string := "DataHubGeneratedPrimaryKey";

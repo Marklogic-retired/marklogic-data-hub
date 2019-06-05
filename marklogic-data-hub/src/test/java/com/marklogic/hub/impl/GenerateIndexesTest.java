@@ -45,7 +45,7 @@ public class GenerateIndexesTest extends HubTestBase {
         final String namespace = null;
         givenAnEntityWithTitleProperty("Book", namespace, false);
         whenTheIndexesAreBuilt();
-        thenNoRangeIndexesExist();
+        thenAnEmptyRangeIndexArrayExists();
     }
 
     private void givenAnEntityWithTitleProperty(String entityName, String namespace, boolean includeRangeIndex) {
@@ -89,7 +89,10 @@ public class GenerateIndexesTest extends HubTestBase {
         }
     }
 
-    private void thenNoRangeIndexesExist() {
-        assertFalse(indexes.has("range-element-index"));
+    private void thenAnEmptyRangeIndexArrayExists() {
+        ArrayNode rangeIndexes = (ArrayNode) indexes.get("range-element-index");
+        assertEquals(0, rangeIndexes.size(),
+            "An empty array is needed here so that if indexes were previously defined for entity properties, and then" +
+                "they are removed, the empty array ensures that they are removed from the database. ");
     }
 }
