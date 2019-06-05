@@ -95,6 +95,12 @@ function main(content, options) {
   //now let's make our attachments, if it's xml, it'll be passed as string
   instance['$attachments'] = doc;
 
+  content.value = buildEnvelope(doc, instance, outputFormat, options);
+  return content;
+}
+
+// Extracted for unit testing purposes
+function buildEnvelope(doc, instance, outputFormat, options) {
   let triples = [];
   let headers = datahub.flow.flowUtils.createHeaders(options);
 
@@ -103,12 +109,28 @@ function main(content, options) {
       triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
     }
   }
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-  content.value = envelope;
 
-  return content;
+  let docHeaders = datahub.flow.flowUtils.getHeaders(doc);
+  let docTriples = datahub.flow.flowUtils.getTriples(doc);
+
+  if(docHeaders) {
+    docHeaders = docHeaders.toObject();
+  } else {
+    docHeaders = {};
+  }
+  if(docTriples){
+    docTriples = docTriples.toObject();
+  } else {
+    docTriples = [];
+  }
+
+  headers = Object.assign({}, headers, docHeaders);
+  triples = triples.concat(docTriples);
+
+  return datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }
 
 module.exports = {
-  main: main
+  main: main,
+  buildEnvelope: buildEnvelope
 };
