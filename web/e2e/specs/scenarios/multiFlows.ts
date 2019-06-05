@@ -197,11 +197,11 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MappingAdvantage");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(10000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
+            await browser.sleep(10000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.sleep(5000);
+            await browser.sleep(5000);
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
@@ -279,7 +279,7 @@ export default function(qaProjectDir) {
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1002');
             await expect(browsePage.facetName("IngestBedrock").getText()).toEqual("IngestBedrock");
             // Verify on Manage Flows page
-            await appPage.flowsTab.click()
+            await appPage.flowsTab.click();
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("BedrockFlow")));
             await expect(manageFlowPage.status("BedrockFlow").getText()).toEqual("Finished");
             await expect(manageFlowPage.docsCommitted("BedrockFlow").getText()).toEqual("1,002");
@@ -355,11 +355,11 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MappingBedrock");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(10000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
+            await browser.sleep(10000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.sleep(5000);
+            await browser.sleep(5000);
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
@@ -540,11 +540,11 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MasteringCustomer");
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.sleep(5000);
+            await browser.sleep(5000);
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
             browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
