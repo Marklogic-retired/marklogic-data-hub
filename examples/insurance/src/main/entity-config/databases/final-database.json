@@ -5,6 +5,7 @@
   } ],
   "range-element-index" : [ {
     "invalid-values" : "reject",
+    "collation": "",
     "localname" : "updated",
     "namespace-uri" : null,
     "range-value-positions" : false,
