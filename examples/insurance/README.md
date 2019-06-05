@@ -64,10 +64,10 @@ CUSTOMER
 id         string
 firstname  string
 lastname   string
+postal     string
 phone      string
 email      string
 pin        int
-postal     string
 updated    dateTime
 ```
 
