@@ -1,4 +1,4 @@
-# Data Hub Example: Integrating Customer Data
+# Data Hub Example: Integrating Insurance Customer Data
 
 ## Scenario
 
