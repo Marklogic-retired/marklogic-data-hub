@@ -28,6 +28,20 @@ function main(content, options) {
   // let doc = cts.doc(id);
   let doc = content.value;
 
+  let docHeaders = datahub.flow.flowUtils.getHeaders(doc);
+  let docTriples = datahub.flow.flowUtils.getTriples(doc);
+
+  if(docHeaders) {
+    docHeaders = docHeaders.toObject();
+  } else {
+    docHeaders = {};
+  }
+  if(docTriples){
+    docTriples = docTriples.toObject();
+  } else {
+    docTriples = [];
+  }
+
   //then we grab our mapping
   let mappingKey = options.mapping ? `${options.mapping.name}:${options.mapping.version}` : null;
   let mapping = mappings[mappingKey];
@@ -103,6 +117,10 @@ function main(content, options) {
       triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
     }
   }
+
+  headers = Object.assign({}, headers, docHeaders);
+  triples = triples.concat(docTriples);
+
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
   content.value = envelope;
 
