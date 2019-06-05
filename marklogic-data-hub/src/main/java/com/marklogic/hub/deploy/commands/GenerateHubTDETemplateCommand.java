@@ -123,7 +123,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     //Method to obtain es-style model
     private String generateModel(File f) {
         String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
-            "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
+            "at \"/data-hub/5/impl/hub-entities.xqy\";\n" +
             String.format("hent:get-model(\"%s\")", extractEntityNameFromFilename(f.getName()).get());
         EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
         if (resp.hasNext()) {

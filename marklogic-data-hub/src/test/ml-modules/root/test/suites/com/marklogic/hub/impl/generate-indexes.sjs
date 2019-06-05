@@ -1,5 +1,5 @@
 const test = require("/test/test-helper.xqy");
-const hent = require("/data-hub/4/impl/hub-entities.xqy");
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
 function generateIndexes(entityDefinitionArray) {
   return hent.dumpIndexes(entityDefinitionArray).toObject()["range-element-index"];
