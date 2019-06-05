@@ -162,17 +162,13 @@ export default function (qaProjectDir) {
       //clear old jobs
       await appPage.flowsTab.click();
       await manageFlowPage.clickFlowname(flow1.flowName);
-      //await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await console.log('click run flow');
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.selectRunAll();
-     // await browser.sleep(1000);
       await editFlowPage.selectStepToRun(mapping.stepName);
-     // await browser.sleep(3000);
       await editFlowPage.clickButtonRunCancel("flow");
       await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      //await browser.sleep(5000);
       //verify on edit flow view
       await console.log('verify flow on edit flow page');
       await editFlowPage.verifyFlow();
@@ -214,16 +210,5 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeFlow(flow2);
     });
 
-    it('should remove Person entity', async function () {
-      await appPage.entitiesTab.click();
-      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
-      await console.log('remove Person entity');
-      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
-      await entityPage.toolsButton.click();
-      await entityPage.clickDeleteEntity('Person');
-      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      await expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
-      await entityPage.confirmDialogYesButton.click();
-    });
   });
 }

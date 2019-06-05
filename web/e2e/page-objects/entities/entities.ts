@@ -214,7 +214,7 @@ export class EntityPage extends AppPage {
   }
 
   get errorInvalidTitleMessage() {
-    return element(by.cssContainingText('.alert-text', 'Only Alphanumeric characters are allowed in the Title'));
+    return element(by.cssContainingText('.alert-text', 'Only alphanumeric characters are allowed in the Title'));
   }
 
   get toast() {
