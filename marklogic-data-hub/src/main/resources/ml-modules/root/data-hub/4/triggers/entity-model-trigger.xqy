@@ -2,7 +2,7 @@ xquery version '1.0-ml';
 
 import module namespace es = "http://marklogic.com/entity-services"
   at "/MarkLogic/entity-services/entity-services.xqy";
-import module namespace hent = "http://marklogic.com/data-hub/hub-entities" at "/data-hub/4/impl/hub-entities.xqy";
+import module namespace hent = "http://marklogic.com/data-hub/hub-entities" at "/data-hub/5/impl/hub-entities.xqy";
 import module namespace tde = "http://marklogic.com/xdmp/tde"
         at "/MarkLogic/tde.xqy";
 import module namespace trgr = 'http://marklogic.com/xdmp/triggers' at '/MarkLogic/triggers.xqy';
