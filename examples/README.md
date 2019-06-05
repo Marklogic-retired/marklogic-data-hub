@@ -1,6 +1,10 @@
-# Data Hub Framework Examples
+# Data Hub Examples
 
-This folder contains working examples of various DHF usage scenarios.
+## Data Hub 5
+
+1. [insurance](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/insurance) - an example that ingests, maps, and masters customer data from two fictitious insurance companies
+
+## Examples from Previous Versions
 
 1. [DHS-e2e](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/DHS-e2e) - an end to end example demonstrating ingestion, harmonization and retrieval of data in DHS environment
 1. [barebones](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/barebones) - an example of the minimum configuration necessary to run a Gradle based Data Hub
