@@ -74,9 +74,12 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
       await manageFlowPage.setFlowForm("name", flow1.flowName);
       await manageFlowPage.setFlowForm("desc", flow1.flowDesc);
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.flowCancelSaveButton('save')));
       await manageFlowPage.clickFlowCancelSave("save");
+      await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBox));
       await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
-      await browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow1.flowName)));
+      await browser.sleep(2000);
       await expect(manageFlowPage.flowName(flow1.flowName).getText()).toEqual('TestFlow1');
       await expect(manageFlowPage.targetEntity(flow1.flowName).getText.length == 0);
       await expect(manageFlowPage.status(flow1.flowName).getText()).toEqual('Never run');
@@ -110,9 +113,12 @@ export default function (qaProjectDir) {
       await manageFlowPage.setFlowOptions(2, "key", "Key3");
       await manageFlowPage.setFlowOptions(2, "value", "Value3");
       await manageFlowPage.removeOptions(2).click();
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.flowCancelSaveButton('save')));
       await manageFlowPage.clickFlowCancelSave("save");
+      await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBox));
       await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
-      await browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow2.flowName)));
+      await browser.sleep(2000);
       await expect(manageFlowPage.flowName(flow2.flowName).getText()).toEqual('TestFlow2');
       await expect(manageFlowPage.status(flow2.flowName).getText()).toEqual('Never run');
       await expect(manageFlowPage.jobs(flow2.flowName).getText()).toEqual('0');
@@ -130,7 +136,11 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader("Flow Settings")));
       await expect(manageFlowPage.getFlowFormText("name")).toEqual("TestFlow2");
       await expect(manageFlowPage.isFlowFormEnabled("name")).toBe(false);
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.flowCancelSaveButton('cancel')));
       await manageFlowPage.clickFlowCancelSave("cancel");
+      await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBox));
+      await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
+      await browser.sleep(2000);
       await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBoxHeader('Flow Settings')));
     });
 
