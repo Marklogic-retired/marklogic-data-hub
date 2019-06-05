@@ -10,24 +10,24 @@
 
 The project has flows predefined for integrating the customer data.
 
-- AdvantageFlow: Has steps for ingesting and mapping Advantage customer data.
-- BedrockFlow: Has steps for ingesting and mapping Bedrock customer data.
-- CustomerMastering: Has a mastering step for matching and merging duplicate customers across the Advantage and Bedrock datasets.
+- **AdvantageFlow**: Has steps for ingesting and mapping Advantage customer data.
+- **BedrockFlow**: Has steps for ingesting and mapping Bedrock customer data.
+- **CustomerMastering**: Has a mastering step for matching and merging duplicate customers across the Advantage and Bedrock datasets.
 
-Finish configuring the flows and run the steps to complete the integration.
+You can finish configuring the flows and run the steps to complete the integration.
 
 ## How to Integrate the Customer Data
 
 1. Start the Data Hub and select the project folder: examples/insurance
-2. View the AdvantageFlow flow. Configure the AdvantageIngest step by setting the Source Directory Path to the datasets/advantage directory.
-3. Ingest the Advantage dataset by running the AdvantageIngest step. This ingests 100 Advantage customer documents into the staging database. You can view the documents in the Browse Data view.
-4. With the Advantage customer data ingested, configure the AdvantageMap step in the AdvantageFlow flow.
-5. Run the AdvantageMap step in the AdvantageFlow flow. This harmonizes the 100 Advantage customer documents into the final database. You can view the documents in the Browse Data view.
-6. View the BedrockFlow flow. Configure the BedrockIngest step by setting the Source Directory Path to the datasets/bedrock directory.
-5. Ingest the Bedrock dataset by running the BedrockIngest step. This ingests 100 Bedrock customer documents into the staging database. You can view the documents in the Browse Data view.
-6. With the Bedrock customer data ingested, configure the BedrockMap step in the BedrockFlow flow.
-7. Run the BedrockMap step in the BedrockFlow flow. This harmonizes the 100 Bedrock customer documents into the final database. You can view the documents in the Browse Data view.
-8. Run the CustomerMaster flow to master the Advantage and Bedrock customer data. This merges documents for two matching customers in the final database. You can view the results in the Browse Data view.
+2. View the `AdvantageFlow` flow. Configure the `AdvantageIngest` step by setting the Source Directory Path to the `datasets/advantage` directory.
+3. Ingest the Advantage dataset by running the `AdvantageIngest` step. This ingests 100 Advantage customer documents into the staging database. You can view the documents in the Browse Data view.
+4. With the Advantage customer data ingested, configure the `AdvantageMap` step in the `AdvantageFlow` flow.
+5. Run the `AdvantageMap` step in the `AdvantageFlow` flow. This harmonizes the 100 Advantage customer documents into the final database. You can view the documents in the Browse Data view.
+6. View the `BedrockFlow` flow. Configure the `BedrockIngest` step by setting the Source Directory Path to the `datasets/bedrock` directory.
+7. Ingest the Bedrock dataset by running the `BedrockIngest` step. This ingests 100 Bedrock customer documents into the staging database. You can view the documents in the Browse Data view.
+8. With the Bedrock customer data ingested, configure the `BedrockMap` step in the `BedrockFlow` flow.
+9. Run the `BedrockMap` step in the `BedrockFlow` flow. This harmonizes the 100 Bedrock customer documents into the final database. You can view the documents in the Browse Data view.
+10. Run the `CustomerMaster` flow to master the Advantage and Bedrock customer data. This merges documents for two matching customers in the final database. You can view the results in the Browse Data view.
 
 
 ## Example Customer Data
@@ -61,14 +61,14 @@ id, first_name, last_name, email, zip, pin, insurance_id, last_updated
 
 ```
 CUSTOMER
-id	       string
+id         string
 firstname  string
 lastname   string
-phone	   string
+phone      string
 email      string
-pin	       int
-postal	   string
-updated	   dateTime
+pin        int
+postal     string
+updated    dateTime
 ```
 
 
