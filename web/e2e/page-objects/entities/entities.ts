@@ -41,9 +41,8 @@ export class EntityPage extends AppPage {
   }
 
   async clickDeleteEntity(entityName: string) {
-    let button = element(by.css(`#aeb-${entityName} .fa-remove`));
+    let button = element(by.css(`#aeb-${entityName} .fa-trash`));
     await browser.executeScript("arguments[0].click();", button);
-    //return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
   }
 
   editEntityButton(entityName: string) {
