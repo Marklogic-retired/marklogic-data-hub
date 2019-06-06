@@ -22,6 +22,14 @@
           color="primary"
           (click)="this.stopClicked()">STOP</button>
         <div id="latest-job-info">
+          <div class="spinner-container" *ngIf="runFlowClicked && flow.latestJob.status === null">
+            <mat-progress-spinner 
+              diameter="22"
+              strokeWidth="3"
+              color="primary"
+              mode="indeterminate"
+            ></mat-progress-spinner>
+          </div>
           <a id="latest-job-status" *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.status" [routerLink]="['/jobs', flow.latestJob.id]">
           {{formatStatus(flow.latestJob.status)}}</a>
           <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.status">

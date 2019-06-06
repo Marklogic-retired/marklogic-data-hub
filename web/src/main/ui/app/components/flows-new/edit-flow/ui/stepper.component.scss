@@ -239,8 +239,12 @@ mat-icon {
 #latest-job-info {
   width: 335px;
   #latest-job-status,
-  #job-started-timestamp {
+  #job-started-timestamp, .spinner-container {
     display: inline-block;
+  }
+  .spinner-container {
+    margin-top: 7px;
+    margin-left: 6px;
   }
   #latest-job-status {
     padding: 0 10px;
