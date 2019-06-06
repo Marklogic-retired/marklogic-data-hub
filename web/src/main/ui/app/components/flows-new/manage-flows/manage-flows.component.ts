@@ -85,11 +85,9 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
   }
 
   runFlow(runObject: any): void {
+    this.runFlowClicked[runObject.id] = true;
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      const runResp = Flow.fromJSON(resp);
-      if (runResp.latestJob === null) {
-        this.runFlowClicked[runResp.id] = true;
-      }
+    // TODO add error handling for error response, set runFlowClicked[flow.id] = false;
       this.pollFlow(runObject.id);
     });
   }
