@@ -90,17 +90,25 @@ declare function es-impl:get-entity-descriptors()
   $_entity-descriptors
 };
 
+declare variable $_cached-entities as map:map := map:map();
+
 declare function es-impl:get-entity-def($target-entity as item()?) as object-node()?
 {
   if (fn:exists($target-entity)) then
-    let $entity-def := es-impl:get-entity-descriptors()/object-node()[(entityIRI,entityTitle) = $target-entity]
-    return
-      if (fn:exists($entity-def)) then
-        $entity-def
-      else
-        fn:error($const:ENTITY-NOT-FOUND-ERROR, ("Specified entity not found"), ($target-entity))
+    if (map:contains($_cached-entities, $target-entity)) then
+      map:get($_cached-entities, $target-entity)
+    else
+      let $entity-def := fn:head(es-impl:get-entity-descriptors()/object-node()[(entityIRI,entityTitle) = $target-entity])
+      return
+        if (fn:exists($entity-def)) then (
+          map:put($_cached-entities, $target-entity, $entity-def),
+          $entity-def
+        ) else
+          fn:error($const:ENTITY-NOT-FOUND-ERROR, ("Specified entity not found"), ($target-entity))
   else ()
 };
+
+declare variable $_cached-entity-properties as map:map := map:map();
 
 declare function es-impl:get-entity-def-property(
   $entity-def as object-node()?,
@@ -108,11 +116,17 @@ declare function es-impl:get-entity-def-property(
 ) as object-node()?
 {
   if (fn:exists($entity-def)) then
-    let $property-def := $entity-def/properties[title = $property-title]
+    let $key := fn:generate-id($entity-def) || "|" || $property-title
     return
-      if (fn:exists($property-def)) then
-        $property-def
+      if (map:contains($_cached-entity-properties, $key)) then
+        map:get($_cached-entity-properties, $key)
       else
-        fn:error($const:ENTITY-PROPERTY-NOT-FOUND-ERROR, ("Specified entity property not found"), ($entity-def, $property-title))
+        let $property-def := $entity-def/properties[title = $property-title]
+        return
+          if (fn:exists($property-def)) then (
+            map:put($_cached-entity-properties, $key, $property-def),
+            $property-def
+          ) else
+            fn:error($const:ENTITY-PROPERTY-NOT-FOUND-ERROR, ("Specified entity property not found"), ($entity-def, $property-title))
   else ()
 };

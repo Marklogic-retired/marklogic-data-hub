@@ -17,6 +17,11 @@
         "properties": [
           {
             "namespace": "",
+            "localname": "id",
+            "name": "id"
+          },
+          {
+            "namespace": "",
             "localname": "firstName",
             "name": "firstName"
           },
@@ -43,12 +48,12 @@
         {
           "default": "true",
           "maxSources": "1",
-          "sourceWeights": {
+          "sourceWeights": [{
             "source": {
               "name": "A",
               "weight": "10"
             }
-          }
+          }]
         }
       ]
     },
