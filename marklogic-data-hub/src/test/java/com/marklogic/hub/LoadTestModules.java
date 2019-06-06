@@ -27,6 +27,13 @@ public class LoadTestModules {
         config.setModulesDatabaseName(modulesDatabaseName);
 
         /**
+         * Setting this to a small number to fix some issues on Jenkins where jobs are picking up test modules
+         * from multiple places. This ensures that a single transaction doesn't try to write the same module
+         * twice.
+         */
+        config.setModulesLoaderBatchSize(5);
+
+        /**
          * Adjust this to the possible paths that contain test modules (the path depends on how this test is run - e.g.
          * via an IDE or via Gradle). We don't need nor want to load from src/main/resources/ml-modules
          * because that will overwrite some collections and tokens set by the Installer program.
