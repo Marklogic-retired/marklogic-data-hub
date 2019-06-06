@@ -528,9 +528,19 @@ public class DataHubImpl implements DataHub {
             }
         }
 
+        /**
+         * Starting in 5.0.1, with ml-app-deployer 3.15.0, CMA usage is enabled by default. But a bug in ML 9.0-7
+         * and 9.0-8 prevents user deployment from working correctly. So have to disable user deployment via CMA to
+         * be compatible with 9.0-7, which also means disabling combined requests (as the first combined request
+         * involves deploying users and several other security resources).
+         */
+        AppConfig appConfig = hubConfig.getAppConfig();
+        appConfig.getCmaConfig().setCombineRequests(false);
+        appConfig.getCmaConfig().setDeployUsers(false);
+
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.deploy(hubConfig.getAppConfig());
+        finalDeployer.deploy(appConfig);
     }
 
     /**

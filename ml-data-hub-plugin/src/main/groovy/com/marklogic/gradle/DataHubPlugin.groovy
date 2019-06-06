@@ -225,6 +225,15 @@ class DataHubPlugin implements Plugin<Project> {
             hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
             hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
+            /**
+             * Starting in 5.0.1, with ml-app-deployer 3.15.0, CMA usage is enabled by default. But a bug in ML 9.0-7
+             * and 9.0-8 prevents user deployment from working correctly. So have to disable user deployment via CMA to
+             * be compatible with 9.0-7, which also means disabling combined requests (as the first combined request
+             * involves deploying users and several other security resources).
+             */
+            hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
+
             project.extensions.add("hubConfig", hubConfig)
             project.extensions.add("hubProject", hubProject)
             project.extensions.add("dataHub", dataHub)
