@@ -101,14 +101,14 @@ export default function(qaProjectDir) {
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.sleep(5000);
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.sleep(5000);
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("AdvantageFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("IngestAdvantage").getText()).toEqual("IngestAdvantage");
@@ -202,9 +202,9 @@ export default function(qaProjectDir) {
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             await browser.sleep(5000);
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("AdvantageFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("MappingAdvantage").getText()).toEqual("MappingAdvantage");
@@ -259,14 +259,14 @@ export default function(qaProjectDir) {
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.sleep(5000);
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.sleep(5000);
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("BedrockFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("IngestBedrock").getText()).toEqual("IngestBedrock");
@@ -360,9 +360,9 @@ export default function(qaProjectDir) {
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             await browser.sleep(5000);
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("BedrockFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("MappingBedrock").getText()).toEqual("MappingBedrock");
@@ -540,14 +540,14 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MasteringCustomer");
             await editFlowPage.clickButtonRunCancel("flow");
-            await browser.sleep(5000);
+            await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
             await browser.sleep(5000);
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("MasteringFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
