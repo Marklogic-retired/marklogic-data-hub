@@ -15,6 +15,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
 
   @Input() flow: any;
   @Input() stepsArray: any;
+  @Input() runFlowClicked: boolean;
   @Output() newStep = new EventEmitter();
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();

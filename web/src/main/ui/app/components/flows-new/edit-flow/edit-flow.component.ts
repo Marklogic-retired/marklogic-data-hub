@@ -22,6 +22,7 @@ import * as _ from "lodash";
     [selectedStepId]="selectedStepId"
     [projectDirectory]="projectDirectory"
     [flowEnded]="flowEnded"
+    [runFlowClicked]="runFlowClicked"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -49,6 +50,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   projectDirectory: string;
   flowEnded: string = '';
   stepType: typeof StepType = StepType;
+  runFlowClicked: boolean = false;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -134,13 +136,16 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   runFlow(runObject): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      // TODO add response check
-      console.log('run flow resp', resp);
+      const runResp = Flow.fromJSON(resp);
+      if (runResp.latestJob === null) {
+        this.runFlowClicked = true;
+      }
       this.runningJobService.pollFlowById(runObject.id).subscribe( poll => {
         this.flow = Flow.fromJSON(poll);
         // set flag on flow job end
         if (!this.runningJobService.checkJobStatus(this.flow) && (this.flow.latestJob !== null)) {
           this.flowEnded = this.flow.latestJob.id;
+          this.runFlowClicked = false;
         }
       });
     });

@@ -8,6 +8,7 @@
     *ngIf="flow && stepsArray"
     [flow]="flow"
     [stepsArray]="stepsArray"
+    [runFlowClicked]="runFlowClicked"
     (newStep)="openStepDialog($event)"
     (runFlow)="openRunDialog(flow)"
     (stopFlow)="openStopDialog($event)"
