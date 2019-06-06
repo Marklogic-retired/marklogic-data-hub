@@ -58,7 +58,7 @@ function processInstance(model, mapping, content) {
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
-  if (content.nodeKind === 'element' && sourceContext !== '/')  {
+  if (content instanceof XMLDocument && sourceContext !== '/' && sourceContext !== '//')  {
     sourceContext = getSourceContext(sourceContext);
   }
   let mappingProperties = mapping.properties;
@@ -75,7 +75,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   }
   if(fn.head(content.xpath('/*:envelope'))) {
     let leadingXPath = '/*:envelope/*:instance';
-    if (fn.count(content.xpath('/*:envelope/*:instance/(element() except *:info)')) === 1) {
+    if (fn.count(content.xpath('/*:envelope/*:instance/(element() except *:info)')) === 1 && sourceContext === '/') {
       leadingXPath = leadingXPath + "/*";
     }
     sourceContext = leadingXPath + sourceContext;
