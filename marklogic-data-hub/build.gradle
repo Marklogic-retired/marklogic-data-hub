@@ -45,6 +45,9 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
 
+    // For installer program
+    implementation "com.beust:jcommander:1.72"
+
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
@@ -150,6 +153,7 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("bootjar") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:bootjar") ||
         project.hasProperty('skipui')
 )
 ) {

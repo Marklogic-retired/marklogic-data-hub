@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-public class InstallerTest extends HubTestBase {
+public class LocalInstallTest extends HubTestBase {
 
     @Test
     public void testInitialization() throws IOException {
-        Installer installer = new Installer(super.dataHub, super.adminHubConfig);
+        InstallLocalDhfCommand installer = new InstallLocalDhfCommand(super.dataHub, super.adminHubConfig);
 
         File tempDir = new File(System.getProperty("java.io.tmpdir"), getClass().getName());
         if (tempDir.exists()) {
@@ -31,7 +31,9 @@ public class InstallerTest extends HubTestBase {
         }
         tempDir.mkdirs();
 
-        installer.initializeProject(tempDir);
+        Options options = new Options();
+        options.setProjectPath(tempDir.getAbsolutePath());
+        installer.initializeProject(options);
 
         ObjectNode database = installer.readJsonFromFile(new File(tempDir, "src/main/ml-config/databases/final-database.json"));
         assertFalse(database.has("range-element-index"), "The empty range index should have been removed so that " +
