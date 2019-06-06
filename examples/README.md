@@ -4,6 +4,8 @@
 
 1. [insurance](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/insurance) - an example that ingests, maps, and masters customer data from two fictitious insurance companies
 
+1. [dh-5-example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dh-5-example) - an example that demonstrated getting started with configuring and using ingestion, mapping and mastering flows using gradle
+
 ## Examples from Previous Versions
 
 1. [DHS-e2e](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/DHS-e2e) - an end to end example demonstrating ingestion, harmonization and retrieval of data in DHS environment
