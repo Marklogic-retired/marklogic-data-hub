@@ -135,11 +135,9 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     });
   }
   runFlow(runObject): void {
+    this.runFlowClicked = true;
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      const runResp = Flow.fromJSON(resp);
-      if (runResp.latestJob === null) {
-        this.runFlowClicked = true;
-      }
+      // TODO add error handling for error response, set runFlowClicked = false;
       this.runningJobService.pollFlowById(runObject.id).subscribe( poll => {
         this.flow = Flow.fromJSON(poll);
         // set flag on flow job end
