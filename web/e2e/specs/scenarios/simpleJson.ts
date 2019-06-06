@@ -91,13 +91,13 @@ export default function(qaProjectDir) {
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("SimpleJSONFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("SimpleJSONIngest").getText()).toEqual("SimpleJSONIngest");
@@ -180,9 +180,9 @@ export default function(qaProjectDir) {
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("SimpleJSONFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("SimpleJSONMapping").getText()).toEqual("SimpleJSONMapping");
@@ -267,13 +267,13 @@ export default function(qaProjectDir) {
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("SimpleJSONMastering");
             await editFlowPage.clickButtonRunCancel("flow");
-            await browser.sleep(5000);
+            await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
             await editFlowPage.clickFinishedLatestJobStatus();
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
-            browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
+            await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
             await expect(jobDetailsPage.jobSummaryFlowName.getText()).toEqual("SimpleJSONFlow");
             await expect(jobDetailsPage.jobSummaryJobId.getText()).not.toBeNull;
             await expect(jobDetailsPage.stepName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
