@@ -67,6 +67,8 @@ export class RunningJobService {
 
     } else if (this.subscriptions[flow.id] && flow.latestJob === null) {
       return true;
+    } else if (this.subscriptions[flow.id] && flow.latestJob.status === null) {
+      return true;
     } else {
       return false;
     }

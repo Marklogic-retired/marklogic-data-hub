@@ -24,6 +24,7 @@ export class EditFlowUiComponent implements OnChanges {
   @Input() selectedStepId: any;
   @Input() projectDirectory: any;
   @Input() flowEnded: any;
+  @Input() runFlowClicked: boolean;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -75,8 +76,6 @@ export class EditFlowUiComponent implements OnChanges {
     });
 
     dialogRef.afterClosed().subscribe(response => {
-      // TODO add ability to run individual steps
-      console.log('The run dialog was closed', response);
       if ( response ) {
         const runObject = {
           id: this.flow.id,

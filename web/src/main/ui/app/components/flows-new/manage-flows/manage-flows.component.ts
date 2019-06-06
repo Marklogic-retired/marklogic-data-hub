@@ -12,6 +12,7 @@ import * as _ from "lodash";
     <flows-page-ui
       [flows]="this.flows"
       [isLoading]="this.isLoading"
+      [runFlowClicked]="this.runFlowClicked"
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
       (saveFlow)="this.saveFlow($event)"
@@ -28,6 +29,7 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
   flowsPageUi: ManageFlowsUiComponent;
   flows = [];
   isLoading = true;
+  runFlowClicked: any = {};
   constructor(
     private manageFlowsService: ManageFlowsService,
     private runningJobService: RunningJobService,
@@ -84,8 +86,10 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
 
   runFlow(runObject: any): void {
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      // console.log('run enpoint', resp);
-      // TODO add response check
+      const runResp = Flow.fromJSON(resp);
+      if (runResp.latestJob === null) {
+        this.runFlowClicked[runResp.id] = true;
+      }
       this.pollFlow(runObject.id);
     });
   }
@@ -95,6 +99,9 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
       const flowIndex = this.flows.findIndex(obj => obj.id === flowId);
       this.flows[flowIndex] = Flow.fromJSON(poll);
       this.flowsPageUi.renderRows();
+      if (!this.runningJobService.checkJobStatus(this.flows[flowIndex]) && (this.flows[flowIndex] !== null)) {
+        this.runFlowClicked[this.flows[flowIndex].id] = false;
+      }
     });
   }
 
