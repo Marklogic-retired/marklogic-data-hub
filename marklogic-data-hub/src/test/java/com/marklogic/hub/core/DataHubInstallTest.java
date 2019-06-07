@@ -250,7 +250,7 @@ public class DataHubInstallTest extends HubTestBase {
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
-        HubConfig hubConfig = getDataHubAdminConfig(path);
+        HubConfig hubConfig = getDataHubAdminConfig();
         dataHub.clearUserModules();
 
 
