@@ -2,7 +2,11 @@
 <div id="merge-strategy-dialog" mat-dialog-content [formGroup]="form" class="content">
 
   <div id="merge-strategy-default-container">
-    <label>Default?</label>
+    <label
+    [matTooltip]="tooltips.merging.defaultStrategy"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500">Default?</label>
     <mat-radio-group id="merge-strategy-default" formControlName="default" [(ngModel)]="selectedDefault">
       <mat-radio-button id="merge-strategy-default-yes-radio" value="true">Yes</mat-radio-button>
       <mat-radio-button id="merge-strategy-default-no-radio" value="false">No</mat-radio-button>
@@ -17,20 +21,32 @@
     <input id="merge-strategy-name" matInput formControlName="name"/>
   </mat-form-field>
 
-  <mat-form-field layout-fill>
+  <mat-form-field 
+    [matTooltip]="tooltips.merging.maxValues"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500"layout-fill>
     <mat-label>Max Values</mat-label>
     <input id="merge-strategy-max-values" matInput formControlName="maxValues"/>
     <mat-error id="merge-strategy-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
-  <mat-form-field layout-fill>
+  <mat-form-field 
+    [matTooltip]="tooltips.merging.maxSources"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500" layout-fill>
     <mat-label>Max Sources</mat-label>
     <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
     <mat-error id="merge-strategy-max-sources-error" *ngIf="form.get('maxSources').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <div id="merge-strategy-source-weights-container">
-    <mat-label>Source Weights</mat-label>
+    <mat-label 
+    [matTooltip]="tooltips.merging.sourceWeights"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500" >Source Weights</mat-label>
     <button id="add-merge-strategy-source-weight-btn" mat-icon-button (click)="onAddSourceWeight()">
       <mat-icon>add_circle</mat-icon>
     </button>
@@ -56,7 +72,11 @@
     </div>
   </div>
 
-  <mat-form-field layout-fill>
+  <mat-form-field 
+    [matTooltip]="tooltips.merging.lengthWeight"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500" layout-fill>
     <mat-label>Length Weight</mat-label>
     <input id="merge-strategy-length" matInput formControlName="length"/>
     <mat-error id="merge-strategy-length-error" *ngIf="form.get('length').invalid">Enter a number</mat-error>
