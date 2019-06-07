@@ -542,14 +542,11 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
-        /**
-         * Starting in 5.0.1, with ml-app-deployer 3.15.0, CMA usage is enabled by default. But a bug in ML 9.0-7
-         * and 9.0-8 prevents user deployment from working correctly. So have to disable user deployment via CMA to
-         * be compatible with 9.0-7, which also means disabling combined requests (as the first combined request
-         * involves deploying users and several other security resources).
-         */
+        // Turning off CMA for resources that have bugs in ML 9.0-7/8
         AppConfig appConfig = hubConfig.getAppConfig();
         appConfig.getCmaConfig().setCombineRequests(false);
+        appConfig.getCmaConfig().setDeployDatabases(false);
+        appConfig.getCmaConfig().setDeployRoles(false);
         appConfig.getCmaConfig().setDeployUsers(false);
 
         // in AWS setting this fails...
