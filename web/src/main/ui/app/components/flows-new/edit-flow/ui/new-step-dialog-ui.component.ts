@@ -2,6 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Step, StepType } from '../../models/step.model';
 import {NewStepDialogValidator} from '../../validators/new-step-dialog.validator';
+import {FlowsTooltips} from "../../tooltips/flows.tooltips";
 import {
   ExistingStepNameValidator
 } from "../../../common/form-validators/existing-step-name-validator";
@@ -65,6 +66,7 @@ export class NewStepDialogUiComponent implements OnInit {
     private formBuilder: FormBuilder) {}
 
   ngOnInit() {
+    this.tooltips = FlowsTooltips.ingest;
     let selectedSource;
     this.databases = Object.values(this.databaseObject).slice(0, -1);
     if (this.step) {
@@ -135,6 +137,7 @@ export class NewStepDialogUiComponent implements OnInit {
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
+      this.tooltips = FlowsTooltips.mapping;
       this.newStep = Step.createMappingStep();
     }
     if (type === StepType.MASTERING) {
@@ -142,6 +145,7 @@ export class NewStepDialogUiComponent implements OnInit {
         sourceDatabase: this.databaseObject.final,
         targetDatabase: this.databaseObject.final
       });
+      this.tooltips = FlowsTooltips.mastering;
       this.newStep = Step.createMasteringStep();
     }
     if (type === StepType.CUSTOM) {
@@ -149,6 +153,7 @@ export class NewStepDialogUiComponent implements OnInit {
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
+      this.tooltips = FlowsTooltips.custom;
       this.newStep = Step.createCustomStep();
     }
     if (type === StepType.INGESTION) {
@@ -157,6 +162,7 @@ export class NewStepDialogUiComponent implements OnInit {
         targetDatabase: this.databaseObject.staging
       });
       this.newStep = Step.createIngestionStep(this.projectDirectory);
+      this.tooltips = FlowsTooltips.ingest;
     } else {
       this.getCollections.emit(this.newStepForm.value.sourceDatabase);
     }

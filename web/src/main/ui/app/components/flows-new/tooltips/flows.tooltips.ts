@@ -60,5 +60,8 @@ export class FlowsTooltips {
     }
 
   }
+  static custom: any = {
+      dummy: 'placeholder'
+  }
 
 }
