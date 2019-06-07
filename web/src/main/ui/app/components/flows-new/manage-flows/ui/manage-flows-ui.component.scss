@@ -220,6 +220,9 @@ button {
   cursor: pointer;
 }
 
+.spinner-container {
+  margin-left: 8px;
+}
 /deep/ #flow-last-job-finished-sort-btn.mat-header-cell,
 /deep/ .mat-cell.flow-last-job-finished {
   padding-left: 30px;
