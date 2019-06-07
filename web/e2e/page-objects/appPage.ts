@@ -1,4 +1,5 @@
 import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
+import dashboardPage from './dashboard/dashboard';
 import { pages } from './page';
 import { Page } from './page';
 var request = require('request').defaults({ strictSSL: false });
@@ -75,6 +76,17 @@ export class AppPage extends Page {
   async clickFlowTab() {
     return await browser.executeScript("arguments[0].click();", this.flowsTab);
   }
+
+  async clickDashboardTab() {
+    await browser.executeScript("arguments[0].click();", this.dashboardTab);
+    await browser.waitForAngular();
+  }
+
+  async clickTab(tab) {
+    await browser.executeScript("arguments[0].click();", tab);
+    await browser.waitForAngular();
+  }
+
 }
 
 var appPage = new AppPage();

@@ -369,7 +369,7 @@ export class ManageFlows extends AppPage {
     await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
     await browser.sleep(1000);
     await manageFlowPage.clickRedeployConfirmationButton('YES');
-    await browser.sleep(30000);
+    await browser.sleep(20000);
   }
 }
 
