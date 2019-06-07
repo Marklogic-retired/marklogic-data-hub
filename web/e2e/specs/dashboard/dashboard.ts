@@ -23,14 +23,12 @@ export default function(qaProjectDir) {
 
     it('should remove staging documents', async function () {
       await appPage.clickDashboardTab();
-      await expect(dashboardPage.stagingCount().getText()).toBeGreaterThan(0);
       await dashboardPage.clearStagingDatabase();
       await expect(dashboardPage.stagingCount().getText()).toBe('0');
     });
 
     it('should remove final documents', async function () {
       await appPage.clickDashboardTab();
-      await expect(dashboardPage.finalCount().getText()).toBeGreaterThan(0);
       await dashboardPage.clearFinalDatabase();
       await expect(dashboardPage.finalCount().getText()).toBe('0');
     });
