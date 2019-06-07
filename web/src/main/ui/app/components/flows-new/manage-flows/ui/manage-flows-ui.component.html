@@ -60,6 +60,14 @@
         <ng-container matColumnDef="status">
           <mat-header-cell id="flow-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="flow-status" *matCellDef="let flow">
+              <div class="spinner-container" *ngIf="runFlowClicked[flow.id] && flow.latestJob.status === null">
+                  <mat-progress-spinner 
+                    diameter="22"
+                    strokeWidth="3"
+                    color="primary"
+                    mode="indeterminate"
+                  ></mat-progress-spinner>
+                </div>
             <span *ngIf="flow.latestJob && flow.jobs.length">{{formatStatus(flow.status)}}</span>
             <span *ngIf="!flow.jobs.length">Never run</span>
           </mat-cell>
