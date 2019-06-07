@@ -12,3 +12,10 @@ div.label {
   font-size: 20px;
   font-weight: normal;
 }
+
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: -8px;
+}
