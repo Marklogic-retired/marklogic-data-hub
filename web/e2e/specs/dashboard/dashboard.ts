@@ -43,6 +43,5 @@ export default function(qaProjectDir) {
       await expect(dashboardPage.finalCount().getText()).toBe('0');
       await expect(dashboardPage.jobCount().getText()).toBe('0');
     });
-
   });
 }
