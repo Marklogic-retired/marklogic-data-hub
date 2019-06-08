@@ -1,4 +1,5 @@
 export class MappingOptions {
+  public additionalCollections: string[] = [];
   public collections: string[] = [];
   public sourceQuery: string = '';
   public sourceCollection: string = '';

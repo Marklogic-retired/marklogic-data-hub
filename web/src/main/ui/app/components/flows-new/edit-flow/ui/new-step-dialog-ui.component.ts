@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { Step, StepType } from '../../models/step.model';
 import {NewStepDialogValidator} from '../../validators/new-step-dialog.validator';
 import {
@@ -49,6 +49,7 @@ export class NewStepDialogUiComponent implements OnInit {
 
   outputFormatOptions = [];
   newStepForm: FormGroup;
+  additionalCollections: FormArray;
   databases: any = [];
   type: string = null;
   isIngestion: boolean = false;
@@ -94,8 +95,11 @@ export class NewStepDialogUiComponent implements OnInit {
       targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
       sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
       targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : ''],
-      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json']
+      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json'],
+      additionalCollections: [(this.step && this.step.options.additionalCollections) ? this.step.options.additionalCollections : []]
     }, { validators: NewStepDialogValidator });
+
+    this.additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
 
     if (this.step && this.step.options && this.step.options.sourceDatabase)
       this.getCollections.emit(this.step.options.sourceDatabase);
@@ -234,5 +238,14 @@ export class NewStepDialogUiComponent implements OnInit {
   }
   capitalFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+  onAddTargetCollection() {
+    const additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
+    additionalCollections.push('');
+  }
+
+  onAddRemoveCollection(i) {
+    const additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
+    additionalCollections.removeAt(i);
   }
 }

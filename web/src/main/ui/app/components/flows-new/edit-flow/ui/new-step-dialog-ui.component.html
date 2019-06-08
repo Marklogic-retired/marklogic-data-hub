@@ -61,6 +61,26 @@
           </mat-select>
         </mat-form-field>
 
+      <mat-label>Additional Target Collections</mat-label>
+      <button id="add-additional-collection-btn" mat-icon-button (click)="onAddTargetCollection()">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+      <div
+        id="additional-collections-wrapper"
+        formArrayName="additionalCollections" >
+        <!-- *ngFor="let sw of this.sourceWeights.controls; let i = index;"> -->
+        <div [formGroupName]="i" class="additional-collections-group">
+          <mat-form-field>
+            <input [class]="'add-target-collecions-' + i" matInput formControlName="collections"/>
+            <!-- TODO validate weights in SourceWeight options -->
+            <mat-error id="'add-target-collections-' + i + '-error" *ngIf="sourceWeights.controls[i].get('weight').invalid">Enter a string</mat-error>
+          </mat-form-field>
+          <button [id]="'remove-merge-option-source-weight-btn-' + i" mat-icon-button (click)="onAddRemoveCollection(i)">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+      </div>
+
       </mat-expansion-panel>
     </mat-accordion>
   </div>
