@@ -128,7 +128,11 @@
 </mat-menu>
 
 <div class="timestamp-container">
-  <div class="h2">Timestamp Path</div>
+  <div class="h2"
+    [matTooltip]="tooltips.merging.timestamp"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="50000">Timestamp Path</div>
   <mat-form-field class="editing-field" appearance="standard">
     <input matInput [(ngModel)]="timestamp" />
   </mat-form-field>

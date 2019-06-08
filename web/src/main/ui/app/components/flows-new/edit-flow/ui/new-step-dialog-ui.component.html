@@ -64,22 +64,12 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-form-field *ngIf="!isIngestion"
-        [matTooltip]="tooltips.sourceDatabase"
-        matTooltipPosition="left"
-        matTooltipShowDelay="500"
-        matTooltipHideDelay="500"
-        >  
+        <mat-form-field *ngIf="!isIngestion">  
           <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field
-        [matTooltip]="tooltips.targetDatabase"
-        matTooltipPosition="left"
-        matTooltipShowDelay="500"
-        matTooltipHideDelay="500"
-        >
+        <mat-form-field>
           <mat-select id="step-target-database" placeholder="Target Database" formControlName="targetDatabase">
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
