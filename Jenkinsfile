@@ -411,7 +411,7 @@ pipeline{
 		stage('w12_cluster_9.0-6'){
 			agent { label 'master'}
 			steps{ 
-				build 'dhf-core-4.x-develop-winserver2012-cluster_9.0-6'
+				build '/4.x/dhf-core-4.x-develop-winserver2012-cluster_9.0-6'
 					script{
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -440,7 +440,7 @@ pipeline{
 		stage('qs_rh7_singlenode'){
 			agent { label 'master'}
 			steps{ 
-				build 'NO_CI_dhf-qs-4.x-develop-rh7'
+				build '/4.x/NO_CI_dhf-qs-4.x-develop-rh7'
 					script{
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -467,7 +467,7 @@ pipeline{
 		stage('qs_w12_singlenode'){
 			agent { label 'master'}
 			steps{ 
-				build 'NO_CI_dhf-qs-4.x-develop-winserver2012'
+				build '/4.x/NO_CI_dhf-qs-4.x-develop-winserver2012'
 					script{
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
