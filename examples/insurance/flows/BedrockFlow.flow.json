@@ -25,13 +25,13 @@
         "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/Users/mwooldri/data-hub",
+        "inputFilePath" : "/PATH/TO/datasets/bedrock",
         "inputFileType" : "csv",
         "outputURIReplacement" : ""
       }
