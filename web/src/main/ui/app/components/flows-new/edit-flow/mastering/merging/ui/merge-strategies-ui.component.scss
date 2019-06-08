@@ -61,6 +61,13 @@
   cursor: pointer!important;
 }
 
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: -250px;
+  max-width: 230px !important;
+}
+
 $header-height: 70px !default;
 
 button {

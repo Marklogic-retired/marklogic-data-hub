@@ -13,13 +13,8 @@
       [absoluteOnly]="true"
     ></app-folder-browser>
 
-    <div class="label"
-    [matTooltip]="tooltips.sourceType"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
-    >{{config.fileTypes.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <div class="label">{{config.fileTypes.label}}</div>
+    <mat-form-field layout-fill class="source-file-type">
       <mat-select
         id="source-file-type-select"
         [(ngModel)]="this.step.fileLocations.inputFileType"
@@ -37,7 +32,7 @@
 
     <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
       <div class="label">{{config.csvSeparator.label}}</div>
-      <mat-form-field layout-fill appearance="outline" class="csv-separator-field">
+      <mat-form-field layout-fill class="csv-separator-field">
         <mat-select
           id="csv-separator-select"
           [(ngModel)]="this.step.fileLocations.separator"
@@ -60,7 +55,7 @@
     matTooltipShowDelay="500"
     matTooltipHideDelay="500" 
     >{{config.outputDocTypes.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <mat-form-field layout-fill class="target-file-type">
       <mat-select
         id="target-file-type-select"
         [(ngModel)]="this.step.options.outputFormat"
@@ -82,7 +77,7 @@
     matTooltipShowDelay="500"
     matTooltipHideDelay="500" 
     >{{config.outputPermissions.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <mat-form-field layout-fill class="target-permissions-field">
       <input
         id="target-permissions"
         matInput
@@ -97,9 +92,10 @@
     [matTooltip]="tooltips.targetURIReplace"
     matTooltipPosition="left"
     matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
+    matTooltipHideDelay="500"
+    matTooltipClass="target-uri-replace" 
     >{{config.outputURIReplacement.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <mat-form-field layout-fill class="target-uri-replace-field">
       <mat-hint>Optional</mat-hint>
       <input
         id="target-uri-replace"
