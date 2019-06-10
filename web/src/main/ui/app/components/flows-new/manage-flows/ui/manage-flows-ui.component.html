@@ -69,7 +69,7 @@
                   ></mat-progress-spinner>
                 </div>
             <span *ngIf="flow.latestJob && flow.jobs.length">{{formatStatus(flow.status)}}</span>
-            <span *ngIf="!flow.jobs.length">Never run</span>
+            <span *ngIf="!flow.jobs.length && !runFlowClicked[flow.id]">Never run</span>
           </mat-cell>
         </ng-container>
 
