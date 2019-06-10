@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchThreshold } from "../match-thresholds.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { WeightValidator } from '../../../../validators/weight.validator';
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 
 export interface DialogData {
   stepName: string;
@@ -15,7 +16,7 @@ export interface DialogData {
   styleUrls: ['./add-match-threshold-dialog.component.scss'],
 })
 export class AddMatchThresholdDialogComponent {
-
+  tooltips: any;
   form: FormGroup;
   selectedAction: string;
 
@@ -26,6 +27,8 @@ export class AddMatchThresholdDialogComponent {
   }
 
   ngOnInit() {
+    console.log("threshold")
+    this.tooltips = FlowsTooltips.mastering.matching;
     this.form = this.fb.group({
       label: [this.data.option ? this.data.option.label : '',
         [Validators.required]],

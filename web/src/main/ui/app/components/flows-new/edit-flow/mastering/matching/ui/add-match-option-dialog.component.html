@@ -12,7 +12,8 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="selectedType !== 'reduce'" layout-fill>
+  <mat-form-field
+    *ngIf="selectedType !== 'reduce'" layout-fill>
     <mat-select id="match-option-property" placeholder="Property to Match *" formControlName="propertyName" [(value)]="propertyName">
       <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
     </mat-select>
@@ -30,7 +31,11 @@
       formArrayName="propertiesReduce"
       *ngFor="let prop of this.propertiesReduce.controls; let i = index;">
       <div [formGroupName]="i" class="prop-group">
-        <mat-form-field layout-fill>
+        <mat-form-field
+          [matTooltip]="tooltips.propsReduce"
+          matTooltipPosition="left"
+          matTooltipShowDelay="500"
+          matTooltipHideDelay="500" layout-fill>
           <mat-select class="match-option-property-reduce" required placeholder="Property Name" formControlName="name">
             <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
           </mat-select>
@@ -42,44 +47,77 @@
     </div>
   </div>
 
-  <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
+  <mat-form-field
+    [matTooltip]="selectedType === 'reduce' ? tooltips.weightReduce : tooltips.weightOption"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500"
+    *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
     <input id="match-option-weight" matInput formControlName="weight" required />
     <mat-error id="match-option-weight-error" *ngIf="form.get('weight').invalid">A number is required</mat-error>
   </mat-form-field>
 
   <div *ngIf="selectedType === 'synonym'">
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.thesaurusURI"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>Thesaurus URI</mat-label>
       <input id="match-option-synonym-thesaurus" matInput formControlName="thesaurus"/>
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.filter"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <textarea id="match-option-synonym-filter" matInput formControlName="filter" placeholder="Filter"></textarea>
     </mat-form-field>
   </div>
 
   <div *ngIf="selectedType === 'double metaphone'">
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.directoryURI"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>Dictionary URI</mat-label>
       <input id="match-option-metaphone-dictionary" matInput formControlName="dictionary"/>
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.distanceThresh"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>Distance Threshold</mat-label>
       <input id="match-option-metaphone-distance-threshold" matInput formControlName="distanceThreshold"/>
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.collation"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>Collation</mat-label>
       <input id="match-option-metaphone-distance-collation" matInput formControlName="collation"/>
     </mat-form-field>
   </div>
 
   <div *ngIf="selectedType === 'zip'">
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.zip5matches9"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>5-Matches-9 Boost</mat-label>
       <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9" required />
       <mat-error id="match-option-zip-zip5match9-error" *ngIf="form.get('zip5match9').invalid">A number is required</mat-error>
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.zip9matches5"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>9-Matches-5 Weight</mat-label>
       <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5" required />
       <mat-error id="match-option-zip-zip9match5-error" *ngIf="form.get('zip9match5').invalid">A number is required</mat-error>
@@ -87,15 +125,27 @@
   </div>
 
   <div *ngIf="selectedType === 'custom'">
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.customURI"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>URI</mat-label>
       <input id="match-option-custom-uri" matInput formControlName="customUri"/>
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.customFunc"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>Function</mat-label>
       <input id="match-option-custom-function" matInput formControlName="customFunction"/>
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.customNS"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" layout-fill>
       <mat-label>Namespace</mat-label>
       <input id="match-option-custom-namespace" matInput formControlName="customNs"/>
     </mat-form-field>
