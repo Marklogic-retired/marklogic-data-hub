@@ -28,3 +28,9 @@ div.prop-group input {
   position: relative;
   top: -2px;
 }
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: -8px;
+}
