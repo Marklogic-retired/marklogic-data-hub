@@ -7,3 +7,9 @@
   padding: 12px 0;
   margin-bottom: -20px;
 }
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: -8px;
+}
