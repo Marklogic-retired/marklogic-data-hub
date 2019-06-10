@@ -12,6 +12,13 @@ mat-radio-button {
   margin-left: 10px;
 }
 
+.additional-collections-group {
+  display: flex;
+  mat-form-field {
+    width: 60%;
+  }
+}
+
 .type-select, .type-option {
   text-transform: capitalize;
 }
