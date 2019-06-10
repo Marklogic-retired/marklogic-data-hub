@@ -19,7 +19,7 @@ export default function(qaProjectDir) {
           browser.refresh();
         });
 
-        it('should login and go to entities page', async function() {
+        xit('should login and go to entities page', async function() {
             //await loginPage.browseButton.click();
             await loginPage.setCurrentFolder(qaProjectDir);
             await loginPage.clickNext('ProjectDirTab');
