@@ -32,6 +32,11 @@ const settings = {
       }
     ]
   },
+  SourceFormatDelimiter: {
+    label: 'Source Format Delimiter',
+    description: 'The delimiter character used in the delimited file. Accepted values are comma(,), tab(" "), Default: (,)',
+    value: ','
+  },
   outputDocTypes: {
     label: 'Target Format',
     description: 'The type of document to create. Accepted values: xml, json. Default: json.',

@@ -31,6 +31,22 @@
       </mat-select>
     </mat-form-field>
 
+
+<!--  New text field for Source format delimiter -->
+<div class="label" *ngIf="this.step.fileLocations.inputFileType === 'csv'">Source Format Delimiter</div>
+<mat-form-field *ngIf="this.step.fileLocations.inputFileType === 'csv'" layout-fill appearance="outline"
+style="width:100px !important">
+  <input
+    id="delimiter"
+    matInput
+    [(ngModel)]="this.config.SourceFormatDelimiter.value"
+    name="delimiter"
+    (blur)="onChange()"
+    (keypress)="onKeyChange($event)"
+  />
+</mat-form-field>
+  <!-- ####################### -->
+
     <div class="label">{{config.outputDocTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
