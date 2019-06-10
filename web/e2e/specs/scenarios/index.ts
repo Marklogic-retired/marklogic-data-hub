@@ -3,7 +3,7 @@ import multiFlows from './multiFlows'
 
 export default function(qaProjectDir) {
   describe('scenarios', function() {
-    simpleJson(qaProjectDir);
+    //simpleJson(qaProjectDir);
     multiFlows(qaProjectDir);
   })
 }
