@@ -35,7 +35,7 @@ export class FlowsTooltips {
         weightOption: 'A factor that signifies the relative importance of the rule.',
         thesaurusURI: 'The path to a thesaurus that is stored in a MarkLogic Server database and used to determine synonyms.',
         filter: 'A node in the thesaurus to use as a filter. For example, <thsr:qualifier>birds</thsr:qualifier>.',
-        directoryURI: 'The path to a phonetic dictionary that is stored in a database and used when comparing words phonetically. ',
+        dictionaryURI: 'The path to a phonetic dictionary that is stored in a database and used when comparing words phonetically. ',
         distanceThresh: 'The threshold below which the phonetic difference (distance) between two strings is considered insignificant; i.e., the strings are similar to each other.',
         collation: 'The URI to the collation to use. A collation specifies the order for sorting strings.',
         zip5matches9: 'The weight to use if, given one 9-digit zip code and one 5-digit zip code, the first five digits of the zip codes match.',
