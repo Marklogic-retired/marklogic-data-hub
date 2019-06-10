@@ -67,15 +67,14 @@
       </button>
       <div
         id="additional-collections-wrapper"
-        formArrayName="additionalCollections" >
-        <!-- *ngFor="let sw of this.sourceWeights.controls; let i = index;"> -->
+        formArrayName="additionalCollections"
+        *ngFor="let collection of this.additionalCollections.controls; let i=index" >
         <div [formGroupName]="i" class="additional-collections-group">
           <mat-form-field>
-            <input [class]="'add-target-collecions-' + i" matInput formControlName="collections"/>
-            <!-- TODO validate weights in SourceWeight options -->
-            <mat-error id="'add-target-collections-' + i + '-error" *ngIf="sourceWeights.controls[i].get('weight').invalid">Enter a string</mat-error>
+            <input [class]="'add-target-collecions-' + i" matInput formControlName="addCollection"/>
+            <mat-error id="'add-target-collections-' + i + '-error">Enter a string</mat-error>
           </mat-form-field>
-          <button [id]="'remove-merge-option-source-weight-btn-' + i" mat-icon-button (click)="onAddRemoveCollection(i)">
+          <button [id]="'remove-target-collection-btn-' + i" mat-icon-button (click)="onAddRemoveCollection(i)">
             <mat-icon>remove_circle</mat-icon>
           </button>
         </div>

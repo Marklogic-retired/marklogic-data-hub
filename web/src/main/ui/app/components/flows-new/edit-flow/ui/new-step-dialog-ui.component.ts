@@ -95,10 +95,10 @@ export class NewStepDialogUiComponent implements OnInit {
       targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
       sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
       targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : ''],
-      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json'],
-      additionalCollections: [(this.step && this.step.options.additionalCollections) ? this.step.options.additionalCollections : []]
+      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json']
     }, { validators: NewStepDialogValidator });
 
+    this.newStepForm.setControl('additionalCollections', this.createTargetCollections());
     this.additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
 
     if (this.step && this.step.options && this.step.options.sourceDatabase)
@@ -110,6 +110,10 @@ export class NewStepDialogUiComponent implements OnInit {
       this.setType(type);
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
+
+      if (this.newStep.options.hasOwnProperty('additionalCollections')) {
+        this.newStep.options.collections = this.newStep.options.collections.filter(val => !this.newStep.options.additionalCollections.includes(val));
+      }
     }
   }
   getNameErrorMessage() {
@@ -199,12 +203,6 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
     }
 
-    if (this.newStep.stepDefinitionType === StepType.INGESTION) {
-      let collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
-      // always a single collection based on the step name
-      this.newStep.options.collections = [ collection ];
-    }
-
     this.newStep.description = this.newStepForm.value.description;
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
@@ -232,6 +230,15 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.options.targetDatabase = this.newStepForm.value.targetDatabase;
     this.newStep.options.outputFormat = this.newStepForm.value.outputFormat;
 
+    this.newStep.options.additionalCollections = this.getValidTargetCollections();
+
+    if (this.newStep.stepDefinitionType === StepType.INGESTION) {
+      const collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
+      // always a single collection based on the step name
+      this.newStep.options.collections = [collection];
+    }
+    this.newStep.options.collections.push(...this.newStep.options.additionalCollections);
+
     if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);
     }
@@ -239,13 +246,38 @@ export class NewStepDialogUiComponent implements OnInit {
   capitalFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
+  createTargetCollection(collection) {
+    return this.formBuilder.group({
+      addCollection: new FormControl (collection)
+    });
+  }
+  createTargetCollections() {
+    const result = [];
+    if (this.isUpdate && this.step.options.hasOwnProperty('additionalCollections') && this.step.options.additionalCollections.length) {
+      this.step.options.additionalCollections.forEach(collection => {
+        result.push(this.createTargetCollection(collection));
+      });
+      return this.formBuilder.array(result);
+    } else {
+      return this.formBuilder.array([this.createTargetCollection('')]);
+    }
+  }
   onAddTargetCollection() {
     const additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
-    additionalCollections.push('');
+    additionalCollections.push(this.createTargetCollection(''));
   }
-
   onAddRemoveCollection(i) {
     const additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
     additionalCollections.removeAt(i);
+  }
+
+  getValidTargetCollections() {
+    const validTargetCollections = [];
+    this.newStepForm.value.additionalCollections.forEach( collection => {
+      if (collection !== '') {
+        validTargetCollections.push(collection.addCollection);
+      }
+    });
+    return validTargetCollections;
   }
 }
