@@ -39,9 +39,13 @@ export default function (qaProjectDir) {
 
     it('should verify navigation to the next, last, previous, first pages', async function () {
       await browsePage.clickPaginate('next');
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
       await browsePage.clickPaginate('previous');
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
       await browsePage.clickPaginate('last');
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
       await browsePage.clickPaginate('first');
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
     });
 
     it('should verify can copy document uri to clipboard', async function () {
