@@ -86,7 +86,7 @@ class UpdateIndexesTaskTest extends BaseTest {
 		notThrown(UnexpectedBuildFailure)
 		result.task(":mlUpdateIndexes").outcome == SUCCESS
 		/* <><> TODO <><>
-		 * The two assert statements fial when running against existing
+		 * The two assert statements fail when running against existing
 		 * databases.  They are commented-out until DHFPROD-2574 is
 		 * addressed.
 		 */
