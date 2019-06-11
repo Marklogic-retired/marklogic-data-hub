@@ -62,6 +62,7 @@ export class AddMatchOptionDialogComponent {
 
   selectedTypeChanged() {
     const weightControl = this.form.get('weight');
+    console.log("weightControl", weightControl)
     const zip5match9Control = this.form.get('zip5match9');
     const zip9match5Control = this.form.get('zip9match5');
     const thesaurusControl = this.form.get('thesaurus');
