@@ -7,6 +7,7 @@ import {
 } from "../../../common/form-validators/existing-step-name-validator";
 import {Flow} from "../../models/flow.model";
 import * as _ from 'lodash';
+import {InstantErrorStateMatcher} from "../../validators/instant-error-match.validator";
 
 @Component({
   selector: 'app-new-step-dialog-ui',
@@ -47,6 +48,7 @@ export class NewStepDialogUiComponent implements OnInit {
     }
   ];
 
+  instantErrorMatcher: InstantErrorStateMatcher;
   outputFormatOptions = [];
   newStepForm: FormGroup;
   additionalCollections: FormArray;
@@ -79,6 +81,7 @@ export class NewStepDialogUiComponent implements OnInit {
       else if (this.step && this.step.options && this.step.options.sourceCollection)
         selectedSource = 'collection';
     }
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
     this.hasSelectedCollection = selectedSource === 'collection';
     this.hasSelectedQuery = selectedSource === 'query';
     this.newStepForm = this.formBuilder.group({

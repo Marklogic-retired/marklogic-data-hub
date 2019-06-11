@@ -5,6 +5,7 @@ import {FormBuilder, FormGroup, FormArray, FormControl, Validators, ValidatorFn}
 import { WeightValidator } from '../../../../validators/weight.validator';
 import { AddMatchOptionValidator } from '../../../../validators/add-match-option.validator';
 import { forOwn } from 'lodash';
+import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
 
 export interface DialogData {
   stepName: string;
@@ -17,7 +18,7 @@ export interface DialogData {
   styleUrls: ['./add-match-option-dialog.component.scss'],
 })
 export class AddMatchOptionDialogComponent {
-
+  instantErrorMatcher: InstantErrorStateMatcher;
   form: FormGroup;
   props: FormArray;
   selectedType: string;
@@ -52,10 +53,13 @@ export class AddMatchOptionDialogComponent {
       this.data.option.matchType : 'exact';
     this.form.setControl('propertiesReduce', this.createProps());
     this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
+    this.selectedTypeChanged();
   }
 
   selectedTypeChanged() {
     const weightControl = this.form.get('weight');
+    console.log("weightControl", weightControl)
     const zip5match9Control = this.form.get('zip5match9');
     const zip9match5Control = this.form.get('zip9match5');
     if (this.selectedType === 'zip') {

@@ -44,7 +44,7 @@
 
   <mat-form-field *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
-    <input id="match-option-weight" matInput formControlName="weight" required />
+    <input id="match-option-weight" matInput formControlName="weight" required [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="match-option-weight-error" *ngIf="form.get('weight').invalid">A number is required</mat-error>
   </mat-form-field>
 
@@ -76,12 +76,12 @@
   <div *ngIf="selectedType === 'zip'">
     <mat-form-field layout-fill>
       <mat-label>5-Matches-9 Boost</mat-label>
-      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9" required />
+      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9" required [errorStateMatcher]="instantErrorMatcher"/>
       <mat-error id="match-option-zip-zip5match9-error" *ngIf="form.get('zip5match9').invalid">A number is required</mat-error>
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>9-Matches-5 Weight</mat-label>
-      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5" required />
+      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5" required [errorStateMatcher]="instantErrorMatcher"/>
       <mat-error id="match-option-zip-zip9match5-error" *ngIf="form.get('zip9match5').invalid">A number is required</mat-error>
     </mat-form-field>
   </div>

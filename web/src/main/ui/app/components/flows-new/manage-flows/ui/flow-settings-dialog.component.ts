@@ -5,6 +5,7 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angul
 import {CustomFieldValidator} from "../../../common";
 import {FlowsTooltips} from "../../tooltips/flows.tooltips";
 import {forEach, forOwn, find} from 'lodash';
+import {InstantErrorStateMatcher} from "../../validators/instant-error-match.validator";
 
 @Component({
   selector: 'new-flow-dialog',
@@ -13,6 +14,7 @@ import {forEach, forOwn, find} from 'lodash';
 })
 export class FlowSettingsDialogComponent implements OnInit {
 
+  instantErrorMatcher: InstantErrorStateMatcher;
   form: FormGroup;
   options: FormArray;
   tooltips: any;
@@ -24,6 +26,7 @@ export class FlowSettingsDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
     this.tooltips = FlowsTooltips.flowSettings;
     this.form = this.fb.group({
       name: [this.data.flow ? this.data.flow.name : '', [
