@@ -28,7 +28,6 @@ export class BrowsePage extends AppPage {
     await this.waitForSpinnerDisappear();
   }
 
-
   get getStagingDatabase() {
     return $("mdl-select[ng-reflect-model='STAGING']");
   }
@@ -36,8 +35,7 @@ export class BrowsePage extends AppPage {
   get getFinalDatabase() {
     return $("mdl-select[ng-reflect-model='FINAL']");
   }
-
-
+  
   get databaseName() {
     return element(by.css(".database-chooser > mdl-select")).getAttribute("ng-reflect-value");
   }
@@ -153,7 +151,7 @@ export class BrowsePage extends AppPage {
    *
    * @param page: first, previous, next, last
    */
-  async paginateClick(page: string) {
+  async clickPaginate(page: string) {
     page = page.toLowerCase();
     let p;
     if (page == 'first') {

@@ -38,10 +38,10 @@ export default function (qaProjectDir) {
     });
 
     it('should verify navigation to the next, last, previous, first pages', async function () {
-      await browsePage.paginateClick('next');
-      await browsePage.paginateClick('previous');
-      await browsePage.paginateClick('last');
-      await browsePage.paginateClick('first');
+      await browsePage.clickPaginate('next');
+      await browsePage.clickPaginate('previous');
+      await browsePage.clickPaginate('last');
+      await browsePage.clickPaginate('first');
     });
 
     it('should verify can copy document uri to clipboard', async function () {
