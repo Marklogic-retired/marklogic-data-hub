@@ -539,6 +539,15 @@ public class WriteStepRunner implements StepRunner {
             while(itr.hasNext()) {
                 try {
                     File file = new File((String) itr.next());
+                    if("csv".equalsIgnoreCase(inputFileType)) {
+                        //Add "file" to options so that it gets added to header in enode code
+                        options.put("file", file.getAbsolutePath());
+                        optionString = jsonToString(options);
+                        serverTransform.remove("options");
+                        serverTransform.addParameter("options", optionString);
+                        //Add additional document metadata
+                        metadataValues.add("datahubCreatedUsingFile" , file.getAbsolutePath());
+                    }
                     addToBatcher(file, fileFormat);
                 }
                 catch (Exception e) {

@@ -19,6 +19,7 @@ package com.marklogic.hub.flow;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -104,6 +105,13 @@ public class FlowRunnerTest extends HubTestBase {
         RunStepResponse stepResp = resp.getStepResponses().get("1");
         Assertions.assertNotNull(stepResp.getStepStartTime());
         Assertions.assertNotNull(stepResp.getStepEndTime());
+        EvalResultIterator itr = runInDatabase("fn:collection(\"csv-coll\")[1]/envelope/headers/createdUsingFile", HubConfig.DEFAULT_STAGING_NAME);
+        EvalResult res = itr.next();
+        StringHandle sh = new StringHandle();
+        res.get(sh);
+        String file = sh.get();
+        Assertions.assertNotNull(file);
+        Assertions.assertTrue(file.contains("ye-olde-project/input/ingest.csv"));
     }
 
     @Test
