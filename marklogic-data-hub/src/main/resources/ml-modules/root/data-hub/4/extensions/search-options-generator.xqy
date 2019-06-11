@@ -21,7 +21,7 @@ import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/data-hub/4/impl/debug-lib.xqy";
 
 import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
-  at "/data-hub/4/impl/hub-entities.xqy";
+  at "/data-hub/5/impl/hub-entities.xqy";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/data-hub/4/impl/perflog-lib.xqy";

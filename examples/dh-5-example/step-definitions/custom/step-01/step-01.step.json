@@ -1,0 +1,15 @@
+{
+  "language" : "zxx",
+  "name" : "step-01",
+  "description" : null,
+  "type" : "CUSTOM",
+  "version" : 1,
+  "options" : {
+    "collections" : [ "step-01" ]
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/custom/step-01/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

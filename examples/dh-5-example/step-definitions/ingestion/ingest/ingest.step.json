@@ -1,0 +1,21 @@
+{
+  "language" : "zxx",
+  "name" : "ingest",
+  "description" : null,
+  "type" : "INGESTION",
+  "version" : 1,
+  "options" : {
+    "collections" : [ "ingest" ],
+    "outputFormat" : "json"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/ingestion/ingest/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "fileLocations" : {
+    "inputFilePath" : "",
+    "outputURIReplacement" : "",
+    "inputFileType" : ""
+  }
+}

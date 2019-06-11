@@ -20,7 +20,7 @@ public class EntityServicesManager extends com.marklogic.client.ext.es.EntitySer
     protected String generateCode(String modelUri, String functionName) {
         if ("extraction-template-generate".equals(functionName)) {
             String xquery = "import module namespace es = \"http://marklogic.com/entity-services\" at \"/MarkLogic/entity-services/entity-services.xqy\"; \n" +
-                "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\" at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
+                "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\" at \"/data-hub/5/impl/hub-entities.xqy\";\n" +
                 "declare variable $entity-title external; \n" +
                 "hent:dump-tde(json:to-array(es:model-validate(hent:get-model($entity-title))))";
             return client.newServerEval().xquery(xquery).addVariable("entity-title", extractEntityNameFromURI(modelUri).get()).eval().next().getString();

@@ -414,22 +414,19 @@ public class HubTestBase {
         LegacyTracing.create(stagingClient).disable();
     }
 
-    protected HubConfig getDataHubAdminConfig(String projectDir) {
-        if (isSslRun() || isCertAuth()) {
-            certInit();
-        }
-        adminHubConfig.setMlUsername(user);
-        adminHubConfig.setMlPassword(password);
-        wireClients();
-        return adminHubConfig;
-    }
-
     protected HubConfigImpl getDataHubAdminConfig() {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
+
+        // Turning off CMA for resources that have bugs in ML 9.0-7/8
+        adminHubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
+
         wireClients();
         return adminHubConfig;
     }

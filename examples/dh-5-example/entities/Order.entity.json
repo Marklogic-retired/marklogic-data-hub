@@ -1,0 +1,24 @@
+{
+  "info" : {
+    "title" : "Order",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/",
+    "description" : "An Order entity"
+  },
+  "definitions" : {
+    "Order" : {
+      "description" : "The Order entity root.",
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "elementRangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "pii" : [ ],
+      "properties" : {
+        "OrderID": { "datatype": "string" },
+	"CustomerID": { "datatype": "string" },
+	"ShipCity": { "datatype": "string" },
+	"ShipAddress": { "datatype": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<Order>
+  <RequiredDate>1996-08-16T03:39:38</RequiredDate>
+  <ShipName>Toms Spezialitäten</ShipName>
+  <OrderDetails>
+    <OrderDetail>
+      <UnitPrice>42.4000</UnitPrice>
+      <Discount>0</Discount>
+      <Quantity>40</Quantity>
+      <ProductID>51</ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate>1996-07-10T14:39:39</ShippedDate>
+  <ShipCity>Münster</ShipCity>
+  <CustomerID>TOMSP</CustomerID>
+  <ShipVia>1</ShipVia>
+  <ShipPostalCode>44087</ShipPostalCode>
+  <OrderID>10249</OrderID>
+  <OrderDate>1996-07-05T06:39:18</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Luisenstr. 48</ShipAddress>
+  <ShipCountry>Germany</ShipCountry>
+  <EmployeeID>6</EmployeeID>
+  <Freight>11.6100</Freight>
+</Order>

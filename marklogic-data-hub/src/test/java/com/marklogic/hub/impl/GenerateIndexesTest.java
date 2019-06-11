@@ -34,13 +34,21 @@ public class GenerateIndexesTest extends HubTestBase {
     @Test
     public void sharedPropertyWithNullNamespace() {
         final String namespace = null;
-        givenAnEntityWithTitleProperty("Book", namespace);
-        givenAnEntityWithTitleProperty("Movie", namespace);
+        givenAnEntityWithTitleProperty("Book", namespace, true);
+        givenAnEntityWithTitleProperty("Movie", namespace, true);
         whenTheIndexesAreBuilt();
         thenTheresOnlyOneRangeIndexForTheSharedProperty(namespace);
     }
 
-    private void givenAnEntityWithTitleProperty(String entityName, String namespace) {
+    @Test
+    public void entityWithNoRangeIndexes() {
+        final String namespace = null;
+        givenAnEntityWithTitleProperty("Book", namespace, false);
+        whenTheIndexesAreBuilt();
+        thenAnEmptyRangeIndexArrayExists();
+    }
+
+    private void givenAnEntityWithTitleProperty(String entityName, String namespace, boolean includeRangeIndex) {
         PropertyType titleProperty = new PropertyType();
         titleProperty.setDatatype("string");
         titleProperty.setCollation("http://marklogic.com/collation/codepoint");
@@ -49,7 +57,9 @@ public class GenerateIndexesTest extends HubTestBase {
         DefinitionType defType = new DefinitionType();
         defType.setNamespace(namespace);
         defType.setProperties(Arrays.asList(titleProperty));
-        defType.setElementRangeIndex(Arrays.asList("title"));
+        if (includeRangeIndex) {
+            defType.setElementRangeIndex(Arrays.asList("title"));
+        }
 
         HubEntity entity = new HubEntity();
         DefinitionsType definitions = new DefinitionsType();
@@ -77,5 +87,12 @@ public class GenerateIndexesTest extends HubTestBase {
         } else {
             assertEquals(namespace, index.get("namespace-uri").asText());
         }
+    }
+
+    private void thenAnEmptyRangeIndexArrayExists() {
+        ArrayNode rangeIndexes = (ArrayNode) indexes.get("range-element-index");
+        assertEquals(0, rangeIndexes.size(),
+            "An empty array is needed here so that if indexes were previously defined for entity properties, and then" +
+                "they are removed, the empty array ensures that they are removed from the database. ");
     }
 }

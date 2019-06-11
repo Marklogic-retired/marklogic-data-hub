@@ -19,11 +19,11 @@ You can finish configuring the flows and run the steps to complete the integrati
 ## How to Integrate the Customer Data
 
 1. Start the Data Hub and select the project folder: examples/insurance
-2. View the `AdvantageFlow` flow. Configure the `AdvantageIngest` step by setting the Source Directory Path to the `datasets/advantage` directory.
+2. View the `AdvantageFlow` flow. Configure the `AdvantageIngest` step by setting the Source Directory Path to the `datasets/advantage` directory (exact path will depend on your filesystem).
 3. Ingest the Advantage dataset by running the `AdvantageIngest` step. This ingests 100 Advantage customer documents into the staging database. You can view the documents in the Browse Data view.
 4. With the Advantage customer data ingested, configure the `AdvantageMap` step in the `AdvantageFlow` flow.
 5. Run the `AdvantageMap` step in the `AdvantageFlow` flow. This harmonizes the 100 Advantage customer documents into the final database. You can view the documents in the Browse Data view.
-6. View the `BedrockFlow` flow. Configure the `BedrockIngest` step by setting the Source Directory Path to the `datasets/bedrock` directory.
+6. View the `BedrockFlow` flow. Configure the `BedrockIngest` step by setting the Source Directory Path to the `datasets/bedrock` directory (exact path will depend on your filesystem).
 7. Ingest the Bedrock dataset by running the `BedrockIngest` step. This ingests 100 Bedrock customer documents into the staging database. You can view the documents in the Browse Data view.
 8. With the Bedrock customer data ingested, configure the `BedrockMap` step in the `BedrockFlow` flow.
 9. Run the `BedrockMap` step in the `BedrockFlow` flow. This harmonizes the 100 Bedrock customer documents into the final database. You can view the documents in the Browse Data view.
@@ -57,7 +57,7 @@ id, first_name, last_name, email, zip, pin, insurance_id, last_updated
 22, Gisella, Raven, gravenl@furl.net, 186018, 4369, BTGbvwJw, 2010-09-06T15:09:40
 ```
 
-## Surise Insurance Target Entity
+## Sunrise Insurance Target Entity
 
 ```
 CUSTOMER
