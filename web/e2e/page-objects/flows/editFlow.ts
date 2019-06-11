@@ -100,7 +100,7 @@ export class EditFlow extends AppPage {
 
   async clickFinishedLatestJobStatus() {
     let link = this.finishedLatestJobStatus;
-    return await link.click();
+    await browser.executeScript("arguments[0].click();", link);
   }
 
   get jobStartedTimestamp() {
