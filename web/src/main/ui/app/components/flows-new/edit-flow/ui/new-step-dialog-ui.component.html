@@ -71,6 +71,7 @@
         *ngFor="let collection of this.additionalCollections.controls; let i=index" >
         <div [formGroupName]="i" class="additional-collections-group">
           <mat-form-field>
+            <mat-label>Collection Name</mat-label>
             <input [class]="'add-target-collecions-' + i" matInput formControlName="addCollection"/>
             <mat-error id="'add-target-collections-' + i + '-error">Enter a string</mat-error>
           </mat-form-field>
