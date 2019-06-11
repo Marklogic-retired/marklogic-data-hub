@@ -12,7 +12,8 @@ export class FlowsTooltips {
     sourceType: 'The format of your source files. Default is JSON.',
     targetType: 'The format that you want your data to be stored as. Default is JSON.',
     targetPerms: 'The comma-separated roles required to access the ingested data.',
-    targetURIReplace: 'A comma-separated list of replacements used to customize the URIs of the ingested records. The list is comprised of regular expression patterns and their replacement strings. The replacement strings must be enclosed in single quotes.'
+    targetURIReplace: 'A comma-separated list of replacements used to customize the URIs of the ingested records. The list is comprised of regular expression patterns and their replacement strings. The replacement strings must be enclosed in single quotes.',
+    delimiter: 'The delimiter character for the CSV file. Default is a comma (",").'
   }
 
   static mapping: any = {

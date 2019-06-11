@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import { FlowsTooltips } from '../../../tooltips/flows.tooltips';
 
 const settings = {
   inputFilePath: {
@@ -34,7 +35,7 @@ const settings = {
   },
   SourceFormatDelimiter: {
     label: 'Source Format Delimiter',
-    description: 'The delimiter character used in the delimited file. Accepted values are comma(,), tab(" "), Default: (,)',
+    description: 'The delimiter character used in the delimited file. Accepted values are comma(,), tab(" "). Default: (,)',
     value: ','
   },
   outputDocTypes: {
@@ -75,13 +76,18 @@ const settings = {
   templateUrl: './ingest-ui.component.html',
   styleUrls: ['./ingest-ui.component.scss']
 })
-export class IngestUiComponent {
+export class IngestUiComponent implements OnInit{
 
   @Input() step: any;
   @Input() flow: any;
   @Output() saveStep = new EventEmitter();
+  tooltips: any;
 
   constructor() {
+  }
+
+  ngOnInit(): void {
+    this.tooltips = FlowsTooltips.ingest;
   }
 
   config = settings;
