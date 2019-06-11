@@ -107,6 +107,12 @@ public interface FlowManager {
      */
     void saveFlow(Flow flow);
 
+    /**
+     *
+     * @param flow
+     * @param stepKey the step map key corresponding to the step to delete
+     */
+    void deleteStep(Flow flow, String stepKey);
 
     /**
      * Check if a flow has existed

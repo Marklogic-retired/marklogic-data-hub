@@ -1101,7 +1101,17 @@ public class HubTestBase {
                 ReflectionUtils.makeAccessible(f);
                 ReflectionUtils.setField(f, adminHubConfig, null);                
             }
-            
+        }
+    }
+
+    protected void copyTestFlowIntoProject() {
+        try {
+            FileUtils.copyFileToDirectory(
+                getResourceFile("flow-manager-test/test-flow.flow.json"),
+                adminHubConfig.getFlowsDir().toFile()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

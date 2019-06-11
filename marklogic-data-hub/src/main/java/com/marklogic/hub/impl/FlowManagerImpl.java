@@ -20,11 +20,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
@@ -36,15 +40,22 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class FlowManagerImpl implements FlowManager {
+public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Autowired
     private HubConfig hubConfig;
+
+    @Autowired
+    private MappingManager mappingManager;
+
+    @Autowired
+    private StepDefinitionManager stepDefinitionManager;
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -152,6 +163,71 @@ public class FlowManagerImpl implements FlowManager {
         else {
             throw new DataHubProjectException("The specified flow doesn't exist.");
         }
+    }
+
+    @Override
+    public void deleteStep(Flow flow, String key) {
+        Map<String, Step> stepMap = getSteps(flow);
+        int stepOrder = Integer.parseInt(key);
+
+        Step removedStep = null;
+
+        if (stepOrder == stepMap.size()) {
+            removedStep = stepMap.remove(key);
+        }
+        else {
+            Map<String, Step> newStepMap = new LinkedHashMap<>();
+            final int[] newStepOrder = {1};
+            final int[] stepIndex = {1};
+            for (Step step : stepMap.values()) {
+                if (stepIndex[0] != stepOrder) {
+                    newStepMap.put(String.valueOf(newStepOrder[0]++), step);
+                } else {
+                    removedStep = step;
+                }
+                stepIndex[0]++;
+            }
+            stepMap = newStepMap;
+        }
+
+        setSteps(flow, stepMap);
+        saveFlow(flow);
+        deleteRelatedStepArtifacts(flow, removedStep);
+    }
+
+    protected void deleteRelatedStepArtifacts(Flow flow, Step removedStep) {
+        if (removedStep == null) {
+            return;
+        }
+
+        if (removedStep.isMappingStep() && !stepIsReferencedByAFlow(removedStep.getName(), StepDefinition.StepDefinitionType.MAPPING)) {
+            logger.info("Deleting mapping as it's no longer referenced by any flows: " + removedStep.getName());
+            final String mappingName = flow.getName() + "-" + removedStep.getName();
+            mappingManager.deleteMapping(mappingName);
+        }
+        else if (removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM)) {
+            logger.info("Deleting custom step as it's no longer referenced by any flows: " + removedStep.getName() +
+                ". The module associated with this step will not be deleted in case other modules refer to it.");
+            StepDefinition stepDef = StepDefinition.create(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM);
+            stepDefinitionManager.deleteStepDefinition(stepDef);
+        }
+    }
+
+    /**
+     *
+     * @param stepName
+     * @param stepType
+     * @return true if any flow has a step with the given name and type
+     */
+    protected boolean stepIsReferencedByAFlow(String stepName, StepDefinition.StepDefinitionType stepType) {
+        for (Flow flow : getFlows()) {
+            for (Step step : flow.getSteps().values()) {
+                if (stepType.equals(step.getStepDefinitionType()) && stepName.equals(step.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

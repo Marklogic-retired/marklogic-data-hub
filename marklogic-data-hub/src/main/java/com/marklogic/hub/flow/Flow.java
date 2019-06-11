@@ -107,10 +107,10 @@ public interface Flow {
 
     /**
      * Gets the step specified by string key
-     * @param stepNum the string key of the step (usually 1, 2, 3 etc)
+     * @param stepKey the string key of the step (usually 1, 2, 3 etc)
      * @return the step object that is stored in the flow
      */
-    Step getStep(String stepNum);
+    Step getStep(String stepKey);
 
     /**
      * Gets the overridden options that were set at java runtime
@@ -169,10 +169,12 @@ public interface Flow {
     Flow deserialize(JsonNode json);
 
     /**
-     * Get step Info by step id
+     * Use getStep instead. "Id" is a misnomer here; this is expected to a map key.
      *
      * @param stepId id for the step
      * @return a step
      */
+    @Deprecated
     Step getStepById(String stepId);
+
 }

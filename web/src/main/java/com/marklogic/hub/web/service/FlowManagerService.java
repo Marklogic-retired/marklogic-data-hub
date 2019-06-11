@@ -190,7 +190,7 @@ public class FlowManagerService {
             throw new NotFoundException(flowName + " not found.");
         }
 
-        Step step = flow.getStepById(getStepKeyInStepMap(flow, stepId));
+        Step step = flow.getStep(getStepKeyInStepMap(flow, stepId));
         if (step == null) {
             throw new NotFoundException(stepId + " not found.");
         }
@@ -202,7 +202,7 @@ public class FlowManagerService {
         StepModel stepModel;
         JsonNode stepJson;
         Flow flow = flowManager.getFlow(flowName);
-        Step existingStep = flow.getStepById(getStepKeyInStepMap(flow, stepId));
+        Step existingStep = flow.getStep(getStepKeyInStepMap(flow, stepId));
 
         if (existingStep == null && !StringUtils.isEmpty(stepId)) {
             throw new NotFoundException("Step " + stepId + " Not Found");
@@ -325,28 +325,7 @@ public class FlowManagerService {
         }
 
         try {
-            Map<String, Step> stepMap = flowManager.getSteps(flow);
-            int stepOrder = Integer.parseInt(key);
-
-            if (stepOrder == stepMap.size()) {
-                stepMap.remove(key);
-            }
-            else {
-                Map<String, Step> newStepMap = new LinkedHashMap<>();
-                final int[] newStepOrder = {1};
-                final int[] stepIndex = {1};
-                stepMap.values().forEach(step -> {
-                    if (stepIndex[0] != stepOrder) {
-                        newStepMap.put(String.valueOf(newStepOrder[0]++), step);
-                    }
-                    stepIndex[0]++;
-                });
-
-                stepMap = newStepMap;
-            }
-
-            flowManager.setSteps(flow, stepMap);
-            flowManager.saveFlow(flow);
+            flowManager.deleteStep(flow, key);
         }
         catch (DataHubProjectException e) {
             throw new NotFoundException(e.getMessage());

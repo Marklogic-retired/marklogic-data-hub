@@ -201,4 +201,12 @@ public class Step {
 
         return true;
     }
+
+    public boolean isMappingStep() {
+        return StepDefinition.StepDefinitionType.MAPPING.equals(stepDefinitionType);
+    }
+
+    public boolean isCustomStep() {
+        return StepDefinition.StepDefinitionType.CUSTOM.equals(stepDefinitionType);
+    }
 }

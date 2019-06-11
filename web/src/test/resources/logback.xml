@@ -16,7 +16,15 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
-  <logger name="com.marklogic.hub" level="WARN" additivity="false">
+  <logger name="com.marklogic.hub" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.hub.impl.HubConfigImpl" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.hub.impl.HubProjectImpl" level="WARN" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 
