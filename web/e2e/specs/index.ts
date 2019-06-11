@@ -2,8 +2,8 @@ import {browser, $} from 'protractor';
 import auth from './auth';
 import entity from './entities';
 import flows from './flows';
+import browseData from './browse';
 import dashboard from './dashboard';
-import runFlows from './run';
 import jobs from './jobs';
 import runTraces from './traces';
 import mappings from './mappings';
@@ -55,6 +55,7 @@ describe('DataHub', function () {
   //runFlows(qaProjectDirectory);
   scenarios(qaProjectDirectory);
   //jobs();
+  browseData(qaProjectDirectory);
   //runTraces();
   //mappings();
   dashboard(qaProjectDirectory);
