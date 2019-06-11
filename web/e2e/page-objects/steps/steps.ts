@@ -198,7 +198,7 @@ export class Steps extends AppPage {
   async clickStepCancelSave(option: string) {
     let button = this.stepCancelSaveButton(option);
     await browser.wait(EC.elementToBeClickable(button));
-    await button.click();
+    await browser.executeScript("arguments[0].click();", button);
     return await browser.wait(EC.invisibilityOf(this.stepDialogBox));
   }
   
