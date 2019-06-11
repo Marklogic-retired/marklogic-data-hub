@@ -12,11 +12,14 @@ mat-radio-button {
   margin-left: 10px;
 }
 
-.additional-collections-group {
-  display: flex;
-  mat-form-field {
-    width: 60%;
-  }
+#additional-collections-wrapper .mat-form-field {
+  width: 390px;
+}
+
+div.additional-collections-group input {
+  border: 0;
+  outline-width: 0;
+  width: 300px;
 }
 
 .type-select, .type-option {
