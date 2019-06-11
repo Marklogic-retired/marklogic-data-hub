@@ -237,6 +237,11 @@ export class NewStepDialogUiComponent implements OnInit {
       // always a single collection based on the step name
       this.newStep.options.collections = [collection];
     }
+    if (this.newStep.stepDefinitionType === StepType.MAPPING || this.newStep.stepDefinitionType === StepType.MASTERING) {
+      const collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
+      this.newStep.options.collections = [collection];
+      this.newStep.options.collections.push(this.newStep.options.targetEntity);
+    }
     this.newStep.options.collections.push(...this.newStep.options.additionalCollections);
 
     if (this.newStep.name !== '') {
