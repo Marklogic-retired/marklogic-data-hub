@@ -112,12 +112,19 @@ class HubUtils {
     return xdmp.invokeFunction(queryFunction, { commit: 'auto', update: 'false', ignoreAmps: true, database: database ? xdmp.database(database): xdmp.database()})
   }
 
-  invoke(moduleUri, parameters, user = xdmp.getCurrentUser(), database) {
-    xdmp.invoke(moduleUri, parameters, {
-      ignoreAmps: true,
-      database: database ? xdmp.database(database): xdmp.database(),
-      userId: xdmp.user(user)
-    })
+  invoke(moduleUri, parameters, user = null, database) {
+    let options = {
+      ignoreAmps: true
+    };
+
+    if(user && user !== xdmp.getCurrentUser()) {
+      options.userId = xdmp.user(user);
+    }
+    
+    if(database) {
+      options.database = database ? xdmp.database(database): xdmp.database();
+    }
+    xdmp.invoke(moduleUri, parameters, options)
   }
   /**
   * Generate and return a UUID
