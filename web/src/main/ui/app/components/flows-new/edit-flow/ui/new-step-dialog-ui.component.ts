@@ -111,8 +111,16 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
 
+      // Removing Target entity when editing
+
+
       if (this.newStep.options.hasOwnProperty('additionalCollections')) {
         this.newStep.options.collections = this.newStep.options.collections.filter(val => !this.newStep.options.additionalCollections.includes(val));
+      }
+      if (this.newStep.stepDefinitionType === StepType.MAPPING || this.newStep.stepDefinitionType === StepType.MASTERING || this.newStep.stepDefinitionType === StepType.CUSTOM ) {
+        if (this.newStep.options.targetEntity) {
+          this.newStep.options.collections = this.newStep.options.collections.filter(val => val !== this.newStep.options.targetEntity);
+        }
       }
     }
   }
@@ -231,19 +239,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.options.outputFormat = this.newStepForm.value.outputFormat;
 
     this.newStep.options.additionalCollections = this.getValidTargetCollections();
-
-    if (this.newStep.stepDefinitionType === StepType.INGESTION) {
-      const collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
-      // always a single collection based on the step name
-      this.newStep.options.collections = [collection];
-    }
-    if (this.newStep.stepDefinitionType === StepType.MAPPING || this.newStep.stepDefinitionType === StepType.MASTERING) {
-      const collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
-      this.newStep.options.collections = [collection];
-      this.newStep.options.collections.push(this.newStep.options.targetEntity);
-    }
-    this.newStep.options.collections.push(...this.newStep.options.additionalCollections);
-
+    this.setCollections();
     if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);
     }
@@ -277,12 +273,46 @@ export class NewStepDialogUiComponent implements OnInit {
   }
 
   getValidTargetCollections() {
-    const validTargetCollections = [];
+    const validTargetCollections = new Set;
     this.newStepForm.value.additionalCollections.forEach( collection => {
-      if (collection !== '') {
-        validTargetCollections.push(collection.addCollection);
+      if (collection.addCollection) {
+        validTargetCollections.add(collection.addCollection);
       }
     });
-    return validTargetCollections;
+    return Array.from(validTargetCollections);
+  }
+  setCollections() {
+    const collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
+
+    if (!this.isUpdate) {
+      switch (this.newStep.stepDefinitionType) {
+        case StepType.INGESTION:
+          this.newStep.options.collections = [collection];
+          break;
+          case StepType.MAPPING:
+          case StepType.MASTERING:
+          case StepType.CUSTOM:
+          this.newStep.options.collections = [collection];
+          if (this.newStep.options.targetEntity) {
+            this.newStep.options.collections.push(this.newStep.options.targetEntity);
+          }
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (this.newStep.stepDefinitionType) {
+        case StepType.MAPPING:
+        case StepType.MASTERING:
+        case StepType.CUSTOM:
+          if (this.newStep.options.targetEntity) {
+            this.newStep.options.collections.push(this.newStep.options.targetEntity);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    this.newStep.options.collections.push(...this.newStep.options.additionalCollections);
   }
 }
