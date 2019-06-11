@@ -3,7 +3,6 @@ package com.marklogic.hub.cli;
 import com.beust.jcommander.Parameters;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.mgmt.resource.security.UserManager;
 import com.marklogic.rest.util.ResourcesFragment;
@@ -11,13 +10,9 @@ import com.marklogic.rest.util.ResourcesFragment;
 @Parameters(commandDescription = "Verify a DHF installation in a local (non-DHS) environment")
 public class VerifyLocalDhfCommand extends AbstractVerifyCommand {
 
-    public VerifyLocalDhfCommand(HubConfigImpl hubConfig) {
-        super(hubConfig);
-    }
-
     @Override
     public void run(Options options) {
-        initializeProject(hubConfig, options, System.getProperties());
+        initializeProject(options, System.getProperties());
 
         long start = System.currentTimeMillis();
 

@@ -2,7 +2,6 @@ package com.marklogic.hub.cli;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.api.security.Amp;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -14,12 +13,6 @@ import com.marklogic.rest.util.ResourcesFragment;
 import org.springframework.util.Assert;
 
 public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
-
-    protected HubConfigImpl hubConfig;
-
-    public AbstractVerifyCommand(HubConfigImpl hubConfig) {
-        this.hubConfig = hubConfig;
-    }
 
     protected String[] getDhfRoleNames() {
         return new String[]{"flow-developer-role", "flow-operator-role", "data-hub-admin-role"};

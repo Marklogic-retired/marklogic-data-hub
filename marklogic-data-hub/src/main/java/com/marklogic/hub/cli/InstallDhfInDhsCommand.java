@@ -8,7 +8,6 @@ import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
-import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.resource.hosts.HostManager;
 import org.springframework.http.ResponseEntity;
@@ -27,19 +26,11 @@ public class InstallDhfInDhsCommand extends AbstractInstallerCommand {
     )
     private String hostname;
 
-    private DataHubImpl dataHub;
-    private HubConfigImpl hubConfig;
-
-    public InstallDhfInDhsCommand(DataHubImpl dataHub, HubConfigImpl hubConfig) {
-        this.dataHub = dataHub;
-        this.hubConfig = hubConfig;
-    }
-
     @Override
     public void run(Options options) {
-        logger.info("Installing DHF version " + hubConfig.getJarVersion());
-
         initializeProject(options);
+
+        logger.info("Installing DHF version " + hubConfig.getJarVersion());
 
         HubAppDeployer deployer = new HubAppDeployer(
             hubConfig.getManageClient(), hubConfig.getAdminManager(), null, hubConfig.newStagingClient());
@@ -122,7 +113,7 @@ public class InstallDhfInDhsCommand extends AbstractInstallerCommand {
         props.setProperty("mlModulePermissions",
             "rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute");
 
-        initializeProject(hubConfig, options, props);
+        initializeProject(options, props);
     }
 
     protected void setHostToGroup(HubConfigImpl hubConfig, String groupName) {

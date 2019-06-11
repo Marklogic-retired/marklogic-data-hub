@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.hub.impl.DataHubImpl;
+import com.marklogic.hub.cli.upgrader.Upgrader;
+import com.marklogic.hub.cli.upgrader.UpgraderFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.resource.security.UserManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
@@ -21,19 +22,32 @@ public class InstallLocalDhfCommand extends AbstractInstallerCommand {
 
     private ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
 
-    private DataHubImpl dataHub;
-    private HubConfigImpl hubConfig;
-
-    public InstallLocalDhfCommand(DataHubImpl dataHub, HubConfigImpl hubConfig) {
-        this.dataHub = dataHub;
-        this.hubConfig = hubConfig;
-    }
-
     @Override
     public void run(Options options) {
-        logger.info("Installing DHF version " + hubConfig.getJarVersion());
         initializeProject(options);
+
+        logger.info("Installing DHF version " + hubConfig.getJarVersion());
+
+        /**
+         * Okay - so we check to see if the modules database exists already - can use the Manage API for that.
+         * If so, we get the version of the existing install. We then pass that into an UpgraderFactory that
+         * gives us back an Upgrader based on that version (the Upgrader will always be based on the version of the
+         * current code.
+         */
+        final String existingVersion = getExistingDhfVersion();
+        logger.info("VERSION: " + existingVersion);
+
+        Upgrader upgrader = null;
+        if (existingVersion != null) {
+            upgrader = UpgraderFactory.newUpgrader(existingVersion);
+            upgrader.beforeInstall(context, this, options);
+        }
+
         dataHub.install();
+
+        if (upgrader != null) {
+            upgrader.afterInstall(context, this, options);
+        }
     }
 
     /**
@@ -44,7 +58,7 @@ public class InstallLocalDhfCommand extends AbstractInstallerCommand {
      * @param options
      */
     protected void initializeProject(Options options) {
-        File projectDir = initializeProject(hubConfig, options, System.getProperties());
+        File projectDir = initializeProject(options, System.getProperties());
         removeEmptyRangeIndexArrayFromFinalDatabaseFile(projectDir);
         removePasswordsFromUserFiles(projectDir, hubConfig);
     }

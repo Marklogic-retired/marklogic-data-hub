@@ -1,11 +1,6 @@
 package com.marklogic.hub.cli;
 
 import com.beust.jcommander.JCommander;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Intended for installing and upgrading DHF via a command-line interface. It is expected to be run as the main class
@@ -24,34 +19,48 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class Installer {
 
+    /**
+     * For an upgrade - the command can return its version and what versions it can upgrade from.
+     * <p>
+     * Let's say 5.0.2 is the first version on DHS.
+     * Then 5.1.0 comes out. It would be able to upgrade from 5.0.2.
+     * Then 5.2.0 comes out. It can upgrade from 5.1.0 (via some class) and from 5.0.2 to 5.1.0 (via another class). Or
+     * maybe that's just one class, from 5.0.2 to 5.2.0, which reuses the 5.0.2 to 5.1.0 and optimizes as necessary.
+     * <p>
+     * So a user is on 5.0.2. They want to upgrade. DHS should be able to use the DHF installer(s?) to tell the user
+     * they can upgrade to 5.1.0 and 5.2.0. But I think DHS should consult multiple installers to find that out, as
+     * perhaps 5.1.0 relies on a file that's no longer in 5.2.0 - but perhaps that's considered a breaking change that
+     * should require a major version change.
+     * <p>
+     * Ideally, the 5.2.0 jar can inform what versions can be upgraded to - 5.1 and 5.2 - and then based on what the user
+     * chooses, DHS selects the appropriate installer.
+     * <p>
+     * I think the "upgrade" command can then do whatever upgrade work is necessary and then install the latest version
+     * - order doesn't matter, it's an implementation detail, as the client will just say "please upgrade".
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(ApplicationConfig.class);
-        final DataHubImpl dataHub = context.getBean(DataHubImpl.class);
-        final HubConfigImpl hubConfig = context.getBean(HubConfigImpl.class);
-
         Options options = new Options();
         JCommander commander = JCommander
             .newBuilder()
             .addObject(options)
-            .addCommand("dhsInstall", new InstallDhfInDhsCommand(dataHub, hubConfig))
-            .addCommand("dhsVerify", new VerifyDhfInDhsCommand(hubConfig))
-            .addCommand("localInstall", new InstallLocalDhfCommand(dataHub, hubConfig))
-            .addCommand("localVerify", new VerifyLocalDhfCommand(hubConfig))
+            .addCommand("dhsInstall", new InstallDhfInDhsCommand())
+            .addCommand("dhsVerify", new VerifyDhfInDhsCommand())
+            .addCommand("localInstall", new InstallLocalDhfCommand())
+            .addCommand("localVerify", new VerifyLocalDhfCommand())
+            .addCommand("upgradeInfo", new UpgradeInfoCommand())
             .build();
 
-        try {
-            commander.setProgramName("java -jar <name of jar>");
-            commander.parse(args);
+        commander.setProgramName("java -jar <name of jar>");
+        commander.parse(args);
 
-            String parsedCommand = commander.getParsedCommand();
-            if (parsedCommand == null) {
-                commander.usage();
-            } else {
-                InstallerCommand command = (InstallerCommand) commander.getCommands().get(parsedCommand).getObjects().get(0);
-                command.run(options);
-            }
-        } finally {
-            context.close();
+        String parsedCommand = commander.getParsedCommand();
+        if (parsedCommand == null) {
+            commander.usage();
+        } else {
+            InstallerCommand command = (InstallerCommand) commander.getCommands().get(parsedCommand).getObjects().get(0);
+            command.run(options);
         }
     }
 }

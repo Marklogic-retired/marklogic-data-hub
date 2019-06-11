@@ -1,13 +1,24 @@
 package com.marklogic.hub.cli;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 
 public abstract class AbstractInstallerCommand extends LoggingObject implements InstallerCommand {
+
+    protected ConfigurableApplicationContext context;
+    protected HubConfigImpl hubConfig;
+    protected DataHubImpl dataHub;
 
     /**
      * The intended use case is that an installer command can be run from any directory, which means we need to first
@@ -17,7 +28,14 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
      *
      * @param options
      */
-    protected File initializeProject(HubConfigImpl hubConfig, Options options, Properties props) {
+    protected File initializeProject(Options options, Properties props) {
+        SpringApplication app = new SpringApplication(ApplicationConfig.class);
+        app.setBannerMode(Banner.Mode.OFF);
+
+        this.context = app.run();
+        this.dataHub = context.getBean(DataHubImpl.class);
+        this.hubConfig = context.getBean(HubConfigImpl.class);
+
         final File projectDir = new File(options.getProjectPath());
 
         logger.info("Initializing DHF into project directory: " + projectDir);
@@ -36,4 +54,24 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
 
         return projectDir;
     }
+
+    protected String getExistingDhfVersion() {
+        final String modulesDbName = hubConfig.getAppConfig().getModulesDatabaseName();
+        if (modulesDbName != null) {
+            DatabaseManager mgr = new DatabaseManager(hubConfig.getManageClient());
+            if (mgr.exists(modulesDbName)) {
+                DatabaseClient client = hubConfig.newStagingClient();
+                try {
+                    return client.newServerEval()
+                        .javascript("require('/com.marklogic.hub/config.sjs').HUBVERSION")
+                        .evalAs(String.class);
+                } finally {
+                    client.release();
+                }
+            }
+        }
+        return null;
+    }
+
+
 }

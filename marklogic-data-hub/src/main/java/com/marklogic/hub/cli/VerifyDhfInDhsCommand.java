@@ -5,7 +5,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.mgmt.resource.security.UserManager;
 import com.marklogic.rest.util.ResourcesFragment;
@@ -18,13 +17,9 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
     private static final String CURATOR = "Curator";
     private static final String EVALUATOR = "Evaluator";
 
-    public VerifyDhfInDhsCommand(HubConfigImpl hubConfig) {
-        super(hubConfig);
-    }
-
     @Override
     public void run(Options options) {
-        initializeProject(hubConfig, options, System.getProperties());
+        initializeProject(options, System.getProperties());
 
         long start = System.currentTimeMillis();
 
