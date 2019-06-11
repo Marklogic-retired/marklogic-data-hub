@@ -87,6 +87,11 @@ export class AppPage extends Page {
     await browser.waitForAngular();
   }
 
+  async clickBrowseDataTab() {
+    await browser.executeScript("arguments[0].click();", this.browseDataTab);
+    await browser.waitForAngular();
+  }
+
 }
 
 var appPage = new AppPage();
