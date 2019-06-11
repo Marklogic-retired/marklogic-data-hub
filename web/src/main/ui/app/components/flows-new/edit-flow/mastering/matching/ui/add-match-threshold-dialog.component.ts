@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchThreshold } from "../match-thresholds.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { WeightValidator } from '../../../../validators/weight.validator';
+import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
 
 export interface DialogData {
   stepName: string;
@@ -16,6 +17,7 @@ export interface DialogData {
 })
 export class AddMatchThresholdDialogComponent {
 
+  instantErrorMatcher: InstantErrorStateMatcher;
   form: FormGroup;
   selectedAction: string;
 
@@ -40,6 +42,7 @@ export class AddMatchThresholdDialogComponent {
     })
     this.selectedAction = (this.data.option && this.data.option.action) ?
       this.data.option.action : 'merge';
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
   }
 
   onNoClick(): void {
