@@ -31,6 +31,9 @@ div.prop-group input {
 /deep/ .mat-tooltip {
   white-space: pre-line !important;
   position: relative;
-  left: 427px;
+  left: 448px;
   top: -8px;
+}
+/deep/ .mat-tooltip.weight-tooltip {
+  max-width: 260px !important;
 }
