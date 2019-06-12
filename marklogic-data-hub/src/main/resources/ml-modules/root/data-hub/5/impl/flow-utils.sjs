@@ -505,9 +505,6 @@ class FlowUtils {
     for (let key in options.headers) {
       headers[key] = this.evalSubstituteVal(options.headers[key]);
     }
-    if(options.file) {
-      headers["createdUsingFile"] = options.file;
-    }
     return headers;
   }
 
