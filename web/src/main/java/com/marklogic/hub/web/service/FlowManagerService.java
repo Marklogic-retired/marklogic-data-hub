@@ -91,7 +91,7 @@ public class FlowManagerService {
         try {
             jsonObject = new JSONObject(flowJson);
 
-            JSONUtils.trimText(jsonObject);
+            JSONUtils.trimText(jsonObject, "separator");
         }
         catch (IOException e) {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
@@ -211,7 +211,7 @@ public class FlowManagerService {
         try {
             stepJson = JSONObject.readInput(stringStep);
 
-            JSONUtils.trimText(stepJson);
+            JSONUtils.trimText(stepJson, "separator");
 
             stepModel = StepModel.fromJson(stepJson);
         }
