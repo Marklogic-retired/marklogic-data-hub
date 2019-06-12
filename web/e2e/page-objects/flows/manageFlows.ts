@@ -171,7 +171,12 @@ export class ManageFlows extends AppPage {
   }
 
   lastJobFinished(flowName: string) {
-    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-last-job-finished`))
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-last-job-finished a`))
+  }
+
+  async clickLastJobFinished(flowName: string) {
+    let link = this.lastJobFinished(flowName);
+    return await link.click();
   }
 
   docsCommitted(flowName: string) {
