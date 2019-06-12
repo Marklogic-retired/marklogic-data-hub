@@ -98,6 +98,17 @@ export class IngestUiComponent {
     }
   }
 
+  onKeyDown(event: KeyboardEvent) {
+    // allow the user to type a tab
+    if (event.keyCode === 9) {
+      if (event.currentTarget instanceof HTMLInputElement && event.currentTarget.attributes['allowTab']) {
+        let target: HTMLInputElement = event.currentTarget as HTMLInputElement;
+        target.value = "\t";
+        event.preventDefault();
+      }
+    }
+  }
+
   onChange() {
     this.saveStep.emit(this.step);
   }
