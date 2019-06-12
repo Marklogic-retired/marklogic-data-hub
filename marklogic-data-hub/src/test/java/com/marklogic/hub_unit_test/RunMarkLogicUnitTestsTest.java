@@ -1,5 +1,6 @@
-package com.marklogic.hub;
+package com.marklogic.hub_unit_test;
 
+import com.marklogic.hub_unit_test.TestConfig;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
 import com.marklogic.junit5.spring.AbstractSpringMarkLogicTest;
 import com.marklogic.test.unit.TestModule;

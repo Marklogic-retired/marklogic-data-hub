@@ -145,6 +145,7 @@ processResources {
 if (!(
     gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("testunit") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
@@ -327,6 +328,13 @@ task testIntegration(type: Test) {
 task testBootstrap(type: Test) {
     useJUnitPlatform  {
         include 'com/marklogic/bootstrap/**'
+    }
+}
+
+task testUnit(type: Test) {
+    description = "Run the marklogic-unit-test tests, which also forces those modules to be loaded"
+    useJUnitPlatform {
+        include 'com/marklogic/hub_unit_test/RunMarkLogicUnitTestsTest*'
     }
 }
 

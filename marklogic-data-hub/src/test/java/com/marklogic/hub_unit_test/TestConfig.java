@@ -1,8 +1,9 @@
-package com.marklogic.hub;
+package com.marklogic.hub_unit_test;
 
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
+import com.marklogic.hub.LoadTestModules;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,9 @@ import javax.annotation.PostConstruct;
 
 /**
  * Spring configuration class that defines a connection to the final REST server in the test project.
+ *
+ * This isn't in the "com.marklogic.hub" package so that it's not picked up by Spring ComponentScan annotations that
+ * scan that package.
  */
 @Configuration
 @PropertySource(
