@@ -241,10 +241,8 @@ declare function proc-impl:process-match-and-merge-with-options(
       )
       return (
         $distinct-uris ! map:put($merged-into, ., $merge-uri),
-        $merged-doc-def
-          => map:get("audit-trace")
-          => map:with("hidden", fn:true()),
         map:new((
+          map:entry("previousUri", $distinct-uris),
           map:entry("uri", $merge-uri),
           map:entry("value",
             $merged-doc

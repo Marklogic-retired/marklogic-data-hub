@@ -14,8 +14,8 @@
   limitations under the License.
 */
 'use strict';
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const datahub = DataHubSingleton.instance();
 const urisInBatch = [];
 for (let requestField of xdmp.getRequestFieldNames()) {
   let fieldValue = fn.head(xdmp.getRequestField(requestField));

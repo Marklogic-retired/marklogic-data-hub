@@ -1,5 +1,5 @@
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const datahub = DataHubSingleton.instance();
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
@@ -84,9 +84,10 @@ function main(content, options) {
   }
 
   let instance;
+  let provenance = {};
   //Then we obtain the instance and process it from the source context
   try {
-    instance = lib.processInstance(entityModel, mapping, doc);
+    instance = lib.processInstance(entityModel, mapping, doc, provenance);
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
@@ -96,6 +97,7 @@ function main(content, options) {
   instance['$attachments'] = doc;
 
   content.value = buildEnvelope(doc, instance, outputFormat, options);
+  content.provenance = { [content.uri]: provenance };
   return content;
 }
 
