@@ -20,7 +20,11 @@
   </mat-form-field>
 
   <div *ngIf="selectedType === 'reduce'" id="properties-reduce">
-    <mat-label>
+    <mat-label
+      [matTooltip]="tooltips.propsReduce"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       Properties to Match
     </mat-label>
     <button class="add-property-btn" mat-icon-button (click)="onAddProp()">
@@ -31,11 +35,7 @@
       formArrayName="propertiesReduce"
       *ngFor="let prop of this.propertiesReduce.controls; let i = index;">
       <div [formGroupName]="i" class="prop-group">
-        <mat-form-field
-          [matTooltip]="tooltips.propsReduce"
-          matTooltipPosition="left"
-          matTooltipShowDelay="500"
-          matTooltipHideDelay="500" layout-fill>
+        <mat-form-field layout-fill>
           <mat-select class="match-option-property-reduce" required placeholder="Property Name" formControlName="name">
             <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
           </mat-select>
@@ -51,7 +51,8 @@
     [matTooltip]="selectedType === 'reduce' ? tooltips.weightReduce : tooltips.weightOption"
     matTooltipPosition="left"
     matTooltipShowDelay="500"
-    matTooltipHideDelay="500"
+    matTooltipHideDelay="500000"
+    matTooltipClass="weight-tooltip"
     *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
     <input id="match-option-weight" matInput formControlName="weight" required title="" [errorStateMatcher]="instantErrorMatcher"/>
