@@ -34,6 +34,8 @@
     <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
       <mat-form-field layout-fill appearance="outline">
         <input id="csv-separator" matInput [(ngModel)]="this.step.fileLocations.separator" name="separator"
+          (keydown)="onKeyDown($event)"
+          [attr.allowTab]="true"
           (blur)="onChange()" (keypress)="onKeyChange($event)" maxlength="1" />
       </mat-form-field>
     </div>
