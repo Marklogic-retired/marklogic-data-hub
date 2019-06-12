@@ -52,11 +52,11 @@ function getPath(sourceContext, connector, propertyName) {
   return path;
 }
 
-function processInstance(model, mapping, content) {
- return extractInstanceFromModel(model, model.info.title, mapping, content);
+function processInstance(model, mapping, content, provenance = {}) {
+ return extractInstanceFromModel(model, model.info.title, mapping, content, provenance);
 }
 
-function extractInstanceFromModel(model, modelName, mapping, content) {
+function extractInstanceFromModel(model, modelName, mapping, content, provenance = {}) {
   let sourceContext = mapping.sourceContext;
   if (content instanceof XMLDocument && sourceContext !== '/' && sourceContext !== '//')  {
     sourceContext = getSourceContext(sourceContext);
@@ -80,7 +80,6 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     }
     sourceContext = leadingXPath + sourceContext;
   }
-
   let definition = model.definitions[modelName];
   //first let's get our required props and PK
   let required = definition.required;
@@ -94,6 +93,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     let dataType = prop["datatype"];
     let valueSource = null;
     let connector = "";
+    let xpathToSource;
     if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
       if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')){
         connector += '/';
@@ -101,7 +101,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
         connector += '*:';
       }
-      valueSource = content.xpath(getPath(sourceContext, connector, mappingProperties[property].sourcedFrom));
+      xpathToSource = getPath(sourceContext, connector, mappingProperties[property].sourcedFrom);
     } else {
       if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
         connector += '/';
@@ -109,8 +109,9 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       if (property.indexOf(':') === -1) {
         connector += '*:';
       }
-      valueSource = content.xpath(getPath(sourceContext, connector, property));
+      xpathToSource = getPath(sourceContext, connector, property);
     }
+    valueSource = content.xpath(xpathToSource);
     if (dataType !== 'array') {
       valueSource = fn.head(valueSource);
     }
@@ -157,6 +158,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     if (required.indexOf(property) > -1 && !value) {
       throw Error('The property: ' + property + ' is required property on the model: ' + modelName + ' and must have a valid value. Value was: ' + valueSource + '.');
     }
+    provenance[xpathToSource] = { destination: property, value: xdmp.quote(value)};
     instance[property] = value;
   }
   }

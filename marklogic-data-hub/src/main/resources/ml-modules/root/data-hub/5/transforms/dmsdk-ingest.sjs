@@ -1,6 +1,6 @@
 'use strict';
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const datahub = DataHubSingleton.instance();
 
 function transform(context, params, content) {
 

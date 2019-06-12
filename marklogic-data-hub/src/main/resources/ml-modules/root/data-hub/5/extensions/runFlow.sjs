@@ -14,7 +14,7 @@
  limitations under the License.
  */
 'use strict';
-const DataHub = require("/data-hub/5/datahub.sjs");
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 
 function get(context, params) {
   return post(context, params, null);
@@ -27,7 +27,9 @@ function post(context, params, input) {
     fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   } else {
     let options = params["options"] ? JSON.parse(params["options"]) : {};
-    const datahub = new DataHub({ performanceMetrics: !!options.performanceMetrics });
+    const datahub = DataHubSingleton.instance({
+      performanceMetrics: !!options.performanceMetrics
+    });
     let jobId = params["job-id"];
     let flow = datahub.flow.getFlow(flowName);
     let stepRef = flow.steps[stepNumber];

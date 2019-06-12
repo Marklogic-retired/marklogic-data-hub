@@ -25,7 +25,9 @@ class Provenance {
    * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
    */
   constructor(config = null, datahub = null) {
-    this.granularityLevels          = ['fine','coarse'];
+    this.FINE_LEVEL = 'fine';
+    this.COARSE_LEVEL = 'coarse';
+    this.granularityLevels          = [this.FINE_LEVEL,this.COARSE_LEVEL];
     this.config = {};
     this.config.granularityLevel    = config && config.granularityLevel || 'coarse';
     this.config.JOBDATABASE         = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
@@ -38,7 +40,14 @@ class Provenance {
         capitalize: (str) => { return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str; }
       };
     }
-  }  
+  }
+
+  granularityLevel(level = null) {
+    if (level) {
+      this.config.granularityLevel = level;
+    }
+    return this.config.granularityLevel;
+  }
 
   /**
    * Get array of provTypes for a given step type for provenance record creation
@@ -456,7 +465,7 @@ class Provenance {
   }  
 
   /**
-   * @desc Create a provenance merge property record for multiple property records
+   * @desc Create a provenance for altered property record for multiple property records
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
@@ -468,17 +477,17 @@ class Provenance {
    * @param {Object} info
    * @param {string} info.influencedBy - the Step ID assoicated this record
    * @return {Object} key/value pairs mapping property names to their provenance IDs, 
-   *                  for use with follow-up createStepPropertyMergeRecords() call
+   *                  for use with follow-up createStepPropertyAlterationRecords() call
    */
-  createStepPropertyMergeRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, propertyName, docURIs, propertyProvIds, info) {
+  createStepPropertyAlterationRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, propertyName, docURIs, propertyProvIds, info) {
     let resp = [];
-    let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURI, info);
+    let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURIs, info);
     if (!(isValid instanceof Error)) {
       if (docURIs && docURIs.length > 0 &&
         propertyProvIds && propertyProvIds.length > 0) {
         let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
         let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_merged`;
-        let provTypes = ['ps:Flow','ps:Entity','dhf:MergedEntityProperty',`dhf:${capitalizedStepType}MergedEntityProperty`, propertyName];
+        let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntityProperty',`dhf:${capitalizedStepType}AlteredEntityProperty`, propertyName];
         let recordOpts = {
           provTypes,
           relations: {
@@ -501,37 +510,37 @@ class Provenance {
     }
     return resp;
   }
-  
+
   /**
-   * @desc Create a provenance merge record for multiple property records
+   * @desc Create a provenance alteration record for multiple property records
    * @param {string} jobId - the ID of the job being executed (unique), this will generate 
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
    * @param {string} stepDefinitionType - the type of step definition within a flow ['ingestion','mapping','mastering','custom']
    * @param {Array}  docURI - the new URI of the document created after the merge
-   * @param {Array}  propertyProvIds - the provenance record ids of the properties being merged by this step
+   * @param {Array}  propertyProvIds - the provenance record ids of the properties being altered by this step
    * @param {Object} info
    * @param {string} info.influencedBy - the Step ID assoicated this record
    * @return {Object} key/value pairs mapping property names to their provenance IDs, 
-   *                  for use with follow-up createStepPropertyMergeRecords() call
+   *                  for use with follow-up createStepDocumentAlterationRecords() call
    */
-  createStepDocumentMergeRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, newDocURI, documentProvIds, mergedPropertyProvIds, info) {
+  createStepDocumentAlterationRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, newDocURI, documentProvIds, alteredPropertyProvIds, info) {
     let resp = [];
-    let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURI, info);
+    let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, documentProvIds, info);
     if (!(isValid instanceof Error)) { 
       if (documentProvIds && documentProvIds.length > 0 &&
-        mergedPropertyProvIds && mergedPropertyProvIds.length > 0) {
+        alteredPropertyProvIds && alteredPropertyProvIds.length > 0) {
         let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
         let provId = `${jobId + flowId + stepDefinitionType + newDocURI}`;
-        let provTypes = ['ps:Flow','ps:Entity','dhf:MergedEntity',`dhf:${capitalizedStepType}MergedEntity`];
+        let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntity',`dhf:${capitalizedStepType}AlteredEntity`];
         let recordOpts = {
           provTypes,
           relations: {
             associatedWith: [flowId, stepName, stepDefinitionName],
             generatedBy: jobId,
             derivedFrom: documentProvIds,
-            hadMember: mergedPropertyProvIds,
+            hadMember: alteredPropertyProvIds,
             influencedBy: info && info.influencedBy,
           },
           attributes: { location: newDocURI }
@@ -541,7 +550,7 @@ class Provenance {
           this.config.commitQueue.push([provId, recordOpts, info.metadata]);
         resp = provId;
       } else {
-        resp = new Error(`Function requires param 'documentProvIds' & 'mergedPropertyProvIds' to be defined.`);
+        resp = new Error(`Function requires param 'documentProvIds' & 'alteredPropertyProvIds' to be defined.`);
       }
     } else {
       resp = isValid

@@ -1,7 +1,8 @@
 {
   "name": "myNewFlow",
   "options": {
-    "collections": ["myNewFlow"]
+    "collections": ["myNewFlow"],
+    "provenanceGranularityLevel": "fine"
   },
   "description": "flow description",
   "steps": {
