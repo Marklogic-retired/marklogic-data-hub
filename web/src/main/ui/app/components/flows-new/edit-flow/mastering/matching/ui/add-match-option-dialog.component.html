@@ -20,7 +20,11 @@
   </mat-form-field>
 
   <div *ngIf="selectedType === 'reduce'" id="properties-reduce">
-    <mat-label>
+    <mat-label
+      [matTooltip]="tooltips.propsReduce"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       Properties to Match
     </mat-label>
     <button class="add-property-btn" mat-icon-button (click)="onAddProp()">
@@ -31,11 +35,7 @@
       formArrayName="propertiesReduce"
       *ngFor="let prop of this.propertiesReduce.controls; let i = index;">
       <div [formGroupName]="i" class="prop-group">
-        <mat-form-field
-          [matTooltip]="tooltips.propsReduce"
-          matTooltipPosition="left"
-          matTooltipShowDelay="500"
-          matTooltipHideDelay="500" layout-fill>
+        <mat-form-field layout-fill>
           <mat-select class="match-option-property-reduce" required placeholder="Property Name" formControlName="name">
             <mat-option class="type-option" *ngFor="let prop of data.entityProps" [value]="prop.name">{{prop.name}}</mat-option>
           </mat-select>
@@ -51,10 +51,11 @@
     [matTooltip]="selectedType === 'reduce' ? tooltips.weightReduce : tooltips.weightOption"
     matTooltipPosition="left"
     matTooltipShowDelay="500"
-    matTooltipHideDelay="500"
+    matTooltipHideDelay="500000"
+    matTooltipClass="weight-tooltip"
     *ngIf="selectedType !== 'zip'" layout-fill>
     <mat-label>Weight</mat-label>
-    <input id="match-option-weight" matInput formControlName="weight" required title=" "/>
+    <input id="match-option-weight" matInput formControlName="weight" required title=""/>
     <mat-error id="match-option-weight-error" *ngIf="form.get('weight').invalid">A number is required</mat-error>
   </mat-form-field>
 
@@ -110,7 +111,7 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>5-Matches-9 Boost</mat-label>
-      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9" required title=" "/>
+      <input id="match-option-zip-zip5match9" matInput formControlName="zip5match9" required title=""/>
       <mat-error id="match-option-zip-zip5match9-error" *ngIf="form.get('zip5match9').invalid">A number is required</mat-error>
     </mat-form-field>
     <mat-form-field
@@ -119,7 +120,7 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>9-Matches-5 Weight</mat-label>
-      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5" required title=" "/>
+      <input id="match-option-zip-zip9match5" matInput formControlName="zip9match5" required title=""/>
       <mat-error id="match-option-zip-zip9match5-error" *ngIf="form.get('zip9match5').invalid">A number is required</mat-error>
     </mat-form-field>
   </div>
