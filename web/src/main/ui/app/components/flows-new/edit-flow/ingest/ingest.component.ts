@@ -32,7 +32,8 @@ export class IngestComponent implements OnInit {
     const {
       inputFilePath,
       inputFileType,
-      outputURIReplacement
+      outputURIReplacement,
+      separator
     } = this.step.fileLocations;
 
     const {
@@ -48,7 +49,8 @@ export class IngestComponent implements OnInit {
     const fileLocations = {
       inputFilePath: inputFilePath || this.projectDirectory || '.',
       inputFileType: inputFileType || 'json',
-      outputURIReplacement: outputURIReplacement || ''
+      outputURIReplacement: outputURIReplacement || '',
+      separator: separator || ','
     };
 
     const options = {

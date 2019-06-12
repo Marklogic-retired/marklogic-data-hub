@@ -37,7 +37,7 @@
       "batchSize" : null,
       "threadCount" : null,
       "fileLocations": {
-        "inputFilePath": "input",
+        "inputFilePath": "input/csv",
         "inputFileType": "csv",
         "outputURIReplacement": ".*/input,''"
       },
@@ -47,6 +47,25 @@
       }
     },
     "4": {
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "name": "csv",
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "fileLocations": {
+        "inputFilePath": "input/tabs",
+        "inputFileType": "csv",
+        "outputURIReplacement": ".*/input,''",
+        "separator": "\t"
+      },
+      "options": {
+        "outputFormat": "json",
+        "collections": ["csv-tab-coll"]
+      }
+    },
+    "5": {
       "stepDefinitionName": "json-mapping",
       "stepDefinitionType": "MAPPING",
       "name": "json-map",
@@ -56,7 +75,7 @@
       "threadCount" : null,
       "options": {}
     },
-    "5": {
+    "6": {
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "name": "xml-mapping",

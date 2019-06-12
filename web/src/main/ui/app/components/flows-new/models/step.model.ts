@@ -24,6 +24,7 @@ export class Step {
     inputFilePath: string;
     inputFileType: string;
     outputURIReplacement: string;
+    separator: string;
   };
   // Custom only
   public modulePath: string;
@@ -34,7 +35,8 @@ export class Step {
     const fileLocations = {
       inputFilePath: filePath,
       inputFileType: 'json',
-      outputURIReplacement: ''
+      outputURIReplacement: '',
+      separator: ',',
     };
     step.fileLocations = fileLocations;
     step.options = new IngestionOptions();
@@ -100,7 +102,8 @@ export class Step {
           const fileLocations = {
             inputFilePath: projectDirectory,
             inputFileType: 'json',
-            outputURIReplacement: ''
+            outputURIReplacement: '',
+            separator: ','
           };
           newStep.fileLocations = fileLocations;
         }

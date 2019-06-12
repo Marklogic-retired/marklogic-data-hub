@@ -31,6 +31,13 @@
       </mat-select>
     </mat-form-field>
 
+    <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
+      <mat-form-field layout-fill appearance="outline">
+        <input id="csv-separator" matInput [(ngModel)]="this.step.fileLocations.separator" name="separator"
+          (blur)="onChange()" (keypress)="onKeyChange($event)" maxlength="1" />
+      </mat-form-field>
+    </div>
+
     <div class="label">{{config.outputDocTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select
