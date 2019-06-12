@@ -285,7 +285,7 @@ class Flow {
           hook.module,
           parameters,
           hook.user || xdmp.getCurrentUser(),
-          hook.database || hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase
+          hook.database || (hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase)
         );
       }
     }
