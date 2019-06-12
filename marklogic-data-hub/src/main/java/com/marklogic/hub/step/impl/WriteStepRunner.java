@@ -18,6 +18,7 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.document.DocumentWriteOperation;
@@ -87,6 +88,7 @@ public class WriteStepRunner implements StepRunner {
     private String outputFormat;
     private String inputFileType;
     private String outputURIReplacement;
+    private char csvColumnSeparator;
     private AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
@@ -280,6 +282,8 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
+        String separator = (String)fileLocation.get("separator");
+        csvColumnSeparator = separator != null ? separator.charAt(0) : ',';
 
         if(stepConfig.get("batchSize") != null){
             this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
@@ -611,7 +615,10 @@ public class WriteStepRunner implements StepRunner {
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
         if(inputFileType.equalsIgnoreCase("csv")) {
-            JacksonCSVSplitter splitter = new JacksonCSVSplitter();
+            CsvSchema schema = CsvSchema.emptySchema()
+                .withHeader()
+                .withColumnSeparator(csvColumnSeparator);
+            JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
             try {
                 if(! writeBatcher.isStopped()) {
                     Stream<JacksonHandle> contentStream = splitter.split(docStream);

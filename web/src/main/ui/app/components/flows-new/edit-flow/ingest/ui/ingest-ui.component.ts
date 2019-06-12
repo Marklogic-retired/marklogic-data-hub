@@ -32,6 +32,11 @@ const settings = {
       }
     ]
   },
+  csvSeparator: {
+    label: 'CSV Separator',
+    description: 'The csv file separator. Defaults to ,',
+    value: ','
+  },
   outputDocTypes: {
     label: 'Target Format',
     description: 'The type of document to create. Accepted values: xml, json. Default: json.',
