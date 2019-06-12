@@ -94,7 +94,9 @@ export default function(qaProjectDir) {
             await browser.sleep(5000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
+            await manageFlowPage.clickLastJobFinished("SimpleJSONFlow");
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
@@ -179,7 +181,9 @@ export default function(qaProjectDir) {
             await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
+            await manageFlowPage.clickLastJobFinished("SimpleJSONFlow");
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
@@ -270,7 +274,9 @@ export default function(qaProjectDir) {
             await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
+            await manageFlowPage.clickLastJobFinished("SimpleJSONFlow");
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsTable));
