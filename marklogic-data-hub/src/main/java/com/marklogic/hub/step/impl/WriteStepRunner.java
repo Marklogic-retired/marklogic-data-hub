@@ -282,12 +282,6 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
-        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
-            separator =((String) fileLocation.get("separator")).trim();
-            if (separator.equals("\\t")) {
-                separator = "\t";
-            }
-        }
 
         if(stepConfig.get("batchSize") != null){
             this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
@@ -310,8 +304,8 @@ public class WriteStepRunner implements StepRunner {
                 if(! this.inputFileType.equalsIgnoreCase("csv")){
                     throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'");
                 }
-                this.separator = fileLocations.get("separator").trim();
-                if (separator.equals("\\t")) {
+                this.separator = ((String) fileLocation.get("separator")).trim();
+                if (separator.equalsIgnoreCase("\\t")) {
                     separator = "\t";
                 }
             }
