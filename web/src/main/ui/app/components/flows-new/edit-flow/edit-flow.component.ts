@@ -23,6 +23,7 @@ import * as _ from "lodash";
     [projectDirectory]="projectDirectory"
     [flowEnded]="flowEnded"
     [runFlowClicked]="runFlowClicked"
+    [disableSelect]="disableSelect"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -51,6 +52,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   flowEnded: string = '';
   stepType: typeof StepType = StepType;
   runFlowClicked: boolean = false;
+  disableSelect: boolean = false;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -154,6 +156,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   createStep(stepObject) {
     this.setStepDefaults(stepObject.step);
+    this.disableSelect = true;
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
       const newStep = Step.fromJSON(resp, this.projectDirectory, this.databases);
       const index = stepObject.index - 1;
@@ -161,6 +164,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
       console.log('stepsArray', this.stepsArray);
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         this.flow = Flow.fromJSON(resp);
+        this.disableSelect = false;
       });
       if (stepObject.step.stepDefinitionType === this.stepType.MAPPING) {
         this.createMapping(resp);

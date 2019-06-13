@@ -25,6 +25,7 @@ export class EditFlowUiComponent implements OnChanges {
   @Input() projectDirectory: any;
   @Input() flowEnded: any;
   @Input() runFlowClicked: boolean;
+  @Input() disableSelect: boolean;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -33,6 +34,7 @@ export class EditFlowUiComponent implements OnChanges {
   @Output() stepCreate = new EventEmitter();
   @Output() stepUpdate = new EventEmitter();
   @Output() stepDelete = new EventEmitter();
+
 
   constructor(
     public dialog: MatDialog,
