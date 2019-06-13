@@ -308,7 +308,7 @@ public class WriteStepRunner implements StepRunner {
             }
             if(fileLocations.get("separator") != null) {
                 if(! this.inputFileType.equalsIgnoreCase("csv")){
-                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType );
+                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'");
                 }
                 this.separator = fileLocations.get("separator").trim();
                 if (separator.equals("\\t")) {
