@@ -240,9 +240,6 @@ export default function(qaProjectDir) {
             await masteringStepPage.clickMatchOptionDialogPropertyMenu();
             await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("id")));
             await masteringStepPage.clickMatchOptionDialogPropertyOption("id");
-            await masteringStepPage.clickMatchThresholdDialogActionMenu();
-            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchThresholdDialogActionOptions("Merge")));
-            await masteringStepPage.clickMatchThresholdDialogActionOptions("Merge");
             await masteringStepPage.setMatchOptionDialogWeight(10);
             await masteringStepPage.clickMatchOptionCancelSave("save");
             await browser.sleep(3000);
