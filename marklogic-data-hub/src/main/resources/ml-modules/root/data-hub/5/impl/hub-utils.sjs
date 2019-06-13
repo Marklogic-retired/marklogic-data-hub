@@ -66,6 +66,10 @@ class HubUtils {
       let metadata = context.metadata;
       let temporalCollection = collections.find((col) => temporalCollections[col]);
       if (temporalCollection) {
+        // temporalDocURI is managed by the temporal package and must not be carried forward.
+        if (metadata) {
+          delete metadata.temporalDocURI;
+        }
         temporal.documentInsert(temporalCollection, content.uri, content.value, 
           {
             permissions, 
