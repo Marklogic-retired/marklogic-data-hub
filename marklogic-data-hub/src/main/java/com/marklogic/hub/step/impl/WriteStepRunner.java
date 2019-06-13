@@ -88,8 +88,7 @@ public class WriteStepRunner implements StepRunner {
     private String outputFormat;
     private String inputFileType;
     private String outputURIReplacement;
-    private String separator;
-    private char csvColumnSeparator = ',';
+    private String separator = ",";
     private AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
@@ -283,22 +282,11 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
-we do not need a member variable "csvColumnSeparator", instead
-private char csvColumnSeparator = ','; => private static final CSV_DEFAULT_COLUMN_SEPARATOR = ','; 
-       separator = Character.toString(CSV_DEFAULT_COLUMN_SEPARATOR);
-        if (inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
-           String tmp =((String) fileLocation.get("separator")).trim(); 
-           if (tmp.equals("\\t") {
-               separator = "\t";
-           }
-        }
-     
-     changed line 627 => .withColumnSeparator(separator.charAt(0));
+        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
             separator =((String) fileLocation.get("separator")).trim();
             if (separator.equals("\\t")) {
                 separator = "\t";
             }
-            csvColumnSeparator = separator != null ? separator.charAt(0) : ',';
         }
 
         if(stepConfig.get("batchSize") != null){
@@ -634,7 +622,7 @@ private char csvColumnSeparator = ','; => private static final CSV_DEFAULT_COLUM
         if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
             CsvSchema schema = CsvSchema.emptySchema()
                 .withHeader()
-                .withColumnSeparator(csvColumnSeparator);
+                .withColumnSeparator(separator.charAt(0));
             JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
             try {
                 if(! writeBatcher.isStopped()) {
