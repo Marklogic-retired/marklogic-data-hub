@@ -187,7 +187,7 @@ class RunFlowTask extends HubTask {
             }
             if(separator != null) {
                 if(inputFileType != null && !inputFileType.equalsIgnoreCase("csv")) {
-                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType)
+                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'")
                 }
                 runFlowString.append("\n\t\tSeparator:" + separator.toString())
                 fileLocations.put("separator", separator)
