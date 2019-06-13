@@ -35,7 +35,24 @@ const settings = {
   csvSeparator: {
     label: 'CSV Separator',
     description: 'The csv file separator. Defaults to ,',
-    value: ','
+    options: [
+      {
+        label: 'Comma',
+        value: ',',
+      },
+      {
+        label: 'Pipe',
+        value: '|',
+      },
+      {
+        label: 'Semi-Colon',
+        value: ';',
+      },
+      {
+        label: 'Tab',
+        value: '\\t',
+      }
+    ]
   },
   outputDocTypes: {
     label: 'Target Format',
