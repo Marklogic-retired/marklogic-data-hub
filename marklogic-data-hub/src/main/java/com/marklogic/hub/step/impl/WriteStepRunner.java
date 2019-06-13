@@ -283,6 +283,9 @@ public class WriteStepRunner implements StepRunner {
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
         String separator = (String)fileLocation.get("separator");
+        if( separator.equals("\\t")){
+            separator = "\t";
+        }
         csvColumnSeparator = separator != null ? separator.charAt(0) : ',';
 
         if(stepConfig.get("batchSize") != null){
@@ -614,7 +617,7 @@ public class WriteStepRunner implements StepRunner {
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
-        if(inputFileType.equalsIgnoreCase("csv")) {
+        if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("txt") || inputFileType.equalsIgnoreCase("psv")) {
             CsvSchema schema = CsvSchema.emptySchema()
                 .withHeader()
                 .withColumnSeparator(csvColumnSeparator);
