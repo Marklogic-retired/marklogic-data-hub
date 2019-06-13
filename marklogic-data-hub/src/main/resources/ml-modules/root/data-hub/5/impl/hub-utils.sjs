@@ -113,7 +113,7 @@ class HubUtils {
   }
 
   invoke(moduleUri, parameters, user = null, database) {
-    let options = buildInvokeOptions(user, database);
+    let options = this.buildInvokeOptions(user, database);
     xdmp.invoke(moduleUri, parameters, options)
   }
 
