@@ -128,8 +128,12 @@ public class EntityManagerService {
 
 
         if (fullpath == null) {
-            Path filePath = hubConfig.getHubEntitiesDir().resolve(entity.getName() + ENTITY_FILE_EXTENSION);
-            if (Files.exists(filePath)) {
+            String entityFileName = entity.getName() + ENTITY_FILE_EXTENSION;
+
+            File entityFile = hubConfig.getHubEntitiesDir().resolve(entityFileName).toFile();
+            String canonicalFileName = Paths.get(entityFile.getCanonicalPath()).getFileName().toString();
+
+            if (entityFile.exists() && !entityFileName.equals(canonicalFileName)) {
                 // Possibly a case insensitive file-system
                 throw new DataHubProjectException("An entity with this name already exists.");
             }
