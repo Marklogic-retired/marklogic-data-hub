@@ -88,7 +88,8 @@ public class WriteStepRunner implements StepRunner {
     private String outputFormat;
     private String inputFileType;
     private String outputURIReplacement;
-    private char csvColumnSeparator;
+    private String separator;
+    private char csvColumnSeparator = ',';
     private AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
@@ -282,11 +283,13 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
-        String separator = (String)fileLocation.get("separator");
-        if( separator.equals("\\t")){
-            separator = "\t";
+        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get(separator) != null) {
+            separator =((String) fileLocation.get("separator")).trim();
+            if (separator.equals("\\t")) {
+                separator = "\t";
+            }
+            csvColumnSeparator = separator != null ? separator.charAt(0) : ',';
         }
-        csvColumnSeparator = separator != null ? separator.charAt(0) : ',';
 
         if(stepConfig.get("batchSize") != null){
             this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
@@ -617,7 +620,8 @@ public class WriteStepRunner implements StepRunner {
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
-        if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("txt") || inputFileType.equalsIgnoreCase("psv")) {
+        //note these ORs are for forward compatibility if we swap out the filecollector for another lib
+        if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
             CsvSchema schema = CsvSchema.emptySchema()
                 .withHeader()
                 .withColumnSeparator(csvColumnSeparator);
