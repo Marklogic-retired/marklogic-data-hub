@@ -42,13 +42,6 @@
         "outputURIReplacement": ".*/input,''"
       },
       "options": {
-        "headers" : {
-          "sources" : [ {
-            "name" : "testFlow"
-          } ],
-          "createdOn" : "currentDateTime",
-          "createdBy" : "currentUser"
-        },
         "outputFormat": "json",
         "collections": ["csv-coll"]
       }
