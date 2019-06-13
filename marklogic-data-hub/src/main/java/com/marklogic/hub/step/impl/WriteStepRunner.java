@@ -283,7 +283,17 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
-        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get(separator) != null) {
+we do not need a member variable "csvColumnSeparator", instead
+private char csvColumnSeparator = ','; => private static final CSV_DEFAULT_COLUMN_SEPARATOR = ','; 
+       separator = Character.toString(CSV_DEFAULT_COLUMN_SEPARATOR);
+        if (inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
+           String tmp =((String) fileLocation.get("separator")).trim(); 
+           if (tmp.equals("\\t") {
+               separator = "\t";
+           }
+        }
+     
+     changed line 627 => .withColumnSeparator(separator.charAt(0));
             separator =((String) fileLocation.get("separator")).trim();
             if (separator.equals("\\t")) {
                 separator = "\t";
