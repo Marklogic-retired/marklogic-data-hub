@@ -50,6 +50,9 @@ class RunFlowTask extends HubTask {
     public String outputURIReplacement
 
     @Input
+    public String separator
+
+    @Input
     public Boolean showOptions
 
     @Input
@@ -95,6 +98,11 @@ class RunFlowTask extends HubTask {
         if (inputFileType == null) {
             inputFileType = project.hasProperty("inputFileType") ?
                 project.property("inputFileType") : null
+        }
+
+        if (separator == null) {
+            separator = project.hasProperty("separator") ?
+                project.property("separator") : null
         }
 
         if (outputURIReplacement == null) {
@@ -162,7 +170,7 @@ class RunFlowTask extends HubTask {
             stepConfig.put("stopOnFailure", failHard)
         }
 
-        if(inputFileType != null || inputFilePath != null || outputURIReplacement != null){
+        if(inputFileType != null || inputFilePath != null || outputURIReplacement != null || separator !=null){
             runFlowString.append("\n\tWith File Locations Settings:")
             Map<String, String> fileLocations = new HashMap<>()
             if(inputFileType != null) {
@@ -177,6 +185,14 @@ class RunFlowTask extends HubTask {
                 runFlowString.append("\n\t\tOutput URI Replacement:" + outputURIReplacement.toString())
                 fileLocations.put("outputURIReplacement", outputURIReplacement)
             }
+            if(separator != null) {
+                if(inputFileType != null && !inputFileType.equalsIgnoreCase("csv")) {
+                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType)
+                }
+                runFlowString.append("\n\t\tSeparator:" + separator.toString())
+                fileLocations.put("separator", separator)
+            }
+
             stepConfig.put("fileLocations", fileLocations)
         }
         if (showOptions) {
