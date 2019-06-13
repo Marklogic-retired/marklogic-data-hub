@@ -282,7 +282,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         stepConfig.put("fileLocations", stepDetails);
         stepConfig.put("batchSize", "1");
-        opts.put("outputFormat", "Binary");
+        opts.put("outputFormat", "binary");
         opts.put("collections", coll);
         opts.put("permissions", "rest-reader,read");
         RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
@@ -295,7 +295,7 @@ public class FlowRunnerTest extends HubTestBase {
 
         stepConfig.put("fileLocations", stepDetails);
         stepConfig.put("batchSize", "1");
-        opts.put("outputFormat", "Text");
+        opts.put("outputFormat", "text");
         RunFlowResponse resp1 = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
         fr.awaitCompletion();
 

@@ -58,7 +58,7 @@
         "inputFilePath": "input/tabs",
         "inputFileType": "csv",
         "outputURIReplacement": ".*/input,''",
-        "separator": "\t"
+        "separator": "\\t"
       },
       "options": {
         "outputFormat": "json",
