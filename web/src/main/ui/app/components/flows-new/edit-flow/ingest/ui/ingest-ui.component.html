@@ -31,11 +31,11 @@
       </mat-select>
     </mat-form-field>
 
-  <div class="label">{{config.csvSeparator.label}}</div>
     <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
-      <mat-form-field layout-fill appearance="outline">
+      <div class="label">{{config.csvSeparator.label}}</div>
+      <mat-form-field layout-fill appearance="outline" class="csv-separator-field">
         <mat-select
-          id="csv-separator"
+          id="csv-separator-select"
           [(ngModel)]="this.step.fileLocations.separator"
           name="seperator"
           (selectionChange)="onChange()"

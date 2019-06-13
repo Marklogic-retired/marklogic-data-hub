@@ -37,15 +37,15 @@ const settings = {
     description: 'The csv file separator. Defaults to ,',
     options: [
       {
-        label: 'Comma',
+        label: ',',
         value: ',',
       },
       {
-        label: 'Pipe',
+        label: '|',
         value: '|',
       },
       {
-        label: 'Semi-Colon',
+        label: ';',
         value: ';',
       },
       {
