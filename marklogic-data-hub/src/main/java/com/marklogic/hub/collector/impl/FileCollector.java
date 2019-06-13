@@ -59,10 +59,11 @@ public class FileCollector {
                 (filePath, fileAttr) -> fileAttr.isRegularFile())
                 .forEach(path -> {
                     File file = path.toFile();
-                    if (fileFormat.get(inputFormat.toLowerCase()).contains(FilenameUtils.getExtension(file.getName()).toLowerCase())) {
+                    String fileName = FilenameUtils.getExtension(file.getName()).toLowerCase();
+                    if (fileFormat.containsKey(inputFormat.toLowerCase()) && fileFormat.get(inputFormat.toLowerCase()).contains(fileName)) {
                         results.add(path.toFile().getAbsolutePath());
                     }
-                    else if("binary".equalsIgnoreCase(inputFormat) && !fileFormat.values().contains(FilenameUtils.getExtension(file.getName().toLowerCase()))){
+                    else if("binary".equalsIgnoreCase(inputFormat) && !csvExts.contains(fileName) && !jsonExts.contains(fileName) && !xmlExts.contains(fileName)){
                         results.add(path.toFile().getAbsolutePath());
                     }
                 });
