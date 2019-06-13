@@ -144,16 +144,17 @@ class Flow {
     //set the flow in the context
     this.globalContext.flow = flow;
 
-
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
-    if(!jobDoc){
+    if(!(jobDoc || options.disableJobOutput)) {
       jobDoc = this.datahub.jobs.createJob(flowName, jobId);
     }
-    if (jobDoc && jobDoc.job) {
-      jobDoc = jobDoc.job;
+    if (jobDoc) {
+      if (jobDoc.job) {
+        jobDoc = jobDoc.job;
+      }
+      //set the jobid in the context based on the jobdoc response
+      this.globalContext.jobId = jobDoc.jobId;
     }
-    //set the jobid in the context based on the jobdoc response
-    this.globalContext.jobId = jobDoc.jobId;
     this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
     this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
 
@@ -187,7 +188,7 @@ class Flow {
     this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
     this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
-    if (!combinedOptions.noBatchWrite) {
+    if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
       let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
       this.globalContext.batchId = batchDoc.batch.batchId;
     }
@@ -249,8 +250,12 @@ class Flow {
           batchStatus = "failed";
         }
       }
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
-      this.datahub.prov.commit();
+      if (!combinedOptions.disableJobOutput) {
+        this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
+      }
+      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+        this.datahub.prov.commit();
+      }
     }
 
     let resp = {

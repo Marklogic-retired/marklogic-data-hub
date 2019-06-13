@@ -25,6 +25,7 @@ class Provenance {
    * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
    */
   constructor(config = null, datahub = null) {
+    this.OFF_LEVEL = 'off';
     this.FINE_LEVEL = 'fine';
     this.COARSE_LEVEL = 'coarse';
     this.granularityLevels          = [this.FINE_LEVEL,this.COARSE_LEVEL];
