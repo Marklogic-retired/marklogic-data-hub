@@ -267,6 +267,7 @@ declare function merge-impl:generate-provenance-details(
         ))
       )
     )
+  )
 };
 
 (:
@@ -307,9 +308,9 @@ declare function merge-impl:rollback-merge(
       order by $auditing-doc//prov:time ! xs:dateTime(.) descending
       return $auditing-doc
     )
-  let $previous-uris := $latest-auditing-receipt-for-doc//*:previous-uri[. ne $merged-doc-uri] ! fn:string(.)
   let $merge-doc-headers := fn:doc($merged-doc-uri)/*:envelope/*:headers
-  let $all-contributing-uris := $merge-doc-headers/*:merges/*:document-uri ! fn:string(.)
+  let $all-contributing-uris := $merge-doc-headers/*:merges/*:document-uri
+  let $previous-uris := $all-contributing-uris[(@last-merge|../last-merge) = fn:true()] ! fn:string(.)
   where fn:exists($latest-auditing-receipt-for-doc)
   return (
     let $prevent-auto-match :=
@@ -331,13 +332,21 @@ declare function merge-impl:rollback-merge(
       let $doc-available := fn:doc-available($merge-options-ref)
       where $castable-as-hex or $doc-available
       return
-        merge-impl:save-merge-models-by-uri(
-          $all-contributing-uris[fn:not(. = $previous-uris)],
-          if ($castable-as-hex) then
-            xdmp:zip-get(binary { $merge-options-ref }, "merge-options.xml")/*
-          else
-            fn:doc($merge-options-ref)/*
-        )
+        let $rollback-uris := $all-contributing-uris[fn:not(. = $previous-uris)]
+        let $rollback-uris-merged :=
+          for $uri in $rollback-uris[fn:starts-with(., $MERGED-DIR)]
+          return
+            fn:doc($uri)/*:envelope/*:headers/*:merges/*:document-uri
+        let $uris-for-save := $rollback-uris[fn:not(. = $rollback-uris-merged)]
+        let $_save :=
+          merge-impl:save-merge-models-by-uri(
+            $uris-for-save,
+            if ($castable-as-hex) then
+              xdmp:zip-get(binary { $merge-options-ref }, "merge-options.xml")/*
+            else
+              fn:doc($merge-options-ref)/*
+          )
+        return ()
     else (),
     if ($retain-rollback-info) then (
       xdmp:document-set-collections($merged-doc-uri,
@@ -446,6 +455,7 @@ declare function merge-impl:build-merge-models-by-uri(
       => map:with("value",
           merge-impl:build-merge-models-by-final-properties(
             $id,
+            $uris,
             $docs,
             $wrapper-qnames,
             $final-properties,
@@ -468,6 +478,7 @@ declare function merge-impl:build-merge-models-by-uri(
  :)
 declare function merge-impl:build-merge-models-by-final-properties(
   $id as xs:string,
+  $uris as xs:string*,
   $docs as node()*,
   $wrapper-qnames as xs:QName*,
   $final-properties as item()*,
@@ -480,6 +491,7 @@ declare function merge-impl:build-merge-models-by-final-properties(
   if ($docs instance of document-node(element())+) then
     merge-impl:build-merge-models-by-final-properties-to-xml(
       $id,
+      $uris,
       $docs,
       $wrapper-qnames,
       $final-properties,
@@ -491,6 +503,7 @@ declare function merge-impl:build-merge-models-by-final-properties(
   else
     merge-impl:build-merge-models-by-final-properties-to-json(
       $id,
+      $uris,
       $docs,
       $wrapper-qnames,
       $final-properties,
@@ -513,6 +526,7 @@ declare function merge-impl:build-merge-models-by-final-properties(
  :)
 declare function merge-impl:build-merge-models-by-final-properties-to-xml(
   $id as xs:string,
+  $uris as xs:string*,
   $docs as node()*,
   $wrapper-qnames as xs:QName*,
   $final-properties as item()*,
@@ -522,8 +536,6 @@ declare function merge-impl:build-merge-models-by-final-properties-to-xml(
   $merge-options as element()?
 ) as element(es:envelope)
 {
-  let $uris := $docs ! xdmp:node-uri(.)
-  return
     <es:envelope>
       {
         merge-impl:build-headers($id, $docs, $uris, $final-headers, $headers-ns-map, $merge-options, $const:FORMAT-XML)
@@ -569,8 +581,10 @@ declare function merge-impl:build-headers(
   if ($format = ($const:FORMAT-XML, $const:FORMAT-JSON)) then
     ()
   else fn:error(xs:QName("SM-INVALID-FORMAT"), "merge-impl:build-headers called with invalid format " || $format),
-
-
+  let $all-uris := fn:distinct-values((
+    $docs ! xdmp:node-uri(.),
+    $uris
+  ))
   let $is-xml := $format = $const:FORMAT-XML
   (: remove "/*:envelope/*:headers" from the paths; already accounted for :)
   let $configured-paths := $final-headers ! map:get(., "path") ! fn:replace(., "/.*headers(/.*)", "$1")
@@ -617,8 +631,12 @@ declare function merge-impl:build-headers(
       <es:headers>
         <sm:id>{$id}</sm:id>
         <sm:merges>{
-          $docs/es:envelope/es:headers/sm:merges/sm:document-uri,
-          $uris ! element sm:document-uri { . }
+          for $uri in $all-uris
+          return
+            element sm:document-uri {
+              attribute last-merge {$uri = $uris},
+              $uri
+            }
         }</sm:merges>
         <sm:sources>{
           merge-impl:distinct-node-values($docs/es:envelope/es:headers/sm:sources/sm:source)
@@ -645,8 +663,9 @@ declare function merge-impl:build-headers(
         map:new((
           map:entry("id", $id),
           map:entry("merges", array-node {
-            $docs/envelope/headers/merges/object-node(),
-            $uris ! object-node { "document-uri": . }
+            for $uri in $all-uris
+            return
+              object-node { "document-uri": $uri, "last-merge": $uri = $uris }
           }),
           map:entry("sources", array-node {
             merge-impl:distinct-node-values($docs/envelope/headers/sources)
@@ -919,6 +938,7 @@ declare function merge-impl:map-to-json($m as map:map)
  :)
 declare function merge-impl:build-merge-models-by-final-properties-to-json(
   $id as xs:string,
+  $uris as xs:string*,
   $docs as node()*,
   $wrapper-qnames as xs:QName*,
   $final-properties as item()*,
@@ -927,8 +947,6 @@ declare function merge-impl:build-merge-models-by-final-properties-to-json(
   $merge-options as element()?
 )
 {
-  let $uris := $docs ! xdmp:node-uri(.)
-  return
     object-node {
       "envelope": object-node {
         "headers": merge-impl:build-headers($id, $docs, $uris, $final-headers, (), $merge-options, $const:FORMAT-JSON),
