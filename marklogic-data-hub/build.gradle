@@ -44,9 +44,12 @@ dependencies {
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
-
+    
     // For installer program
     implementation "com.beust:jcommander:1.72"
+    //https://github.com/jaegertracing/jaeger-client-java/tree/master/jaeger-core
+    compile("io.jaegertracing:jaeger-core:0.35.4")
+    compile("io.jaegertracing:jaeger-thrift:0.35.4")
 
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
