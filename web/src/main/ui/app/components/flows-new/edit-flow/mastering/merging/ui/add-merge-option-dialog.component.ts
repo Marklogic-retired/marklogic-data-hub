@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@ang
 import { WeightValidator } from '../../../../validators/weight.validator';
 import { SourceWeightValidator } from '../../../../validators/source-weight.validator';
 import { forOwn } from 'lodash';
+import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
 
 export interface DialogData {
   stepName: string;
@@ -18,6 +19,8 @@ export interface DialogData {
 })
 export class AddMergeOptionDialogComponent {
 
+
+  instantErrorMatcher: InstantErrorStateMatcher;
   form: FormGroup;
   props: FormArray;
   selectedType: string;
@@ -60,6 +63,7 @@ export class AddMergeOptionDialogComponent {
     }
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
   }
 
   createSourceWeights() {
