@@ -1,7 +1,6 @@
 .step-icons {
-  position: absolute;
-  left: 0;
-  top: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .step-icon {
@@ -9,6 +8,7 @@
   width: 20px;
   display: inline-block;
   margin-right: 3px;
+  margin-bottom: 1px;
 }
 
 .ingestion {

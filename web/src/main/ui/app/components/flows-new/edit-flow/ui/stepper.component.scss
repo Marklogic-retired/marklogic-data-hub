@@ -31,6 +31,11 @@ header {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
+    h2 {
+      max-width: 500px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
   .item {
     margin: 0 12px;
@@ -172,6 +177,8 @@ header {
       font-size: 16px;
       font-weight: 500;
       line-height: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .summary {
       margin: 6px;
@@ -232,8 +239,12 @@ mat-icon {
 #latest-job-info {
   width: 335px;
   #latest-job-status,
-  #job-started-timestamp {
+  #job-started-timestamp, .spinner-container {
     display: inline-block;
+  }
+  .spinner-container {
+    margin-top: 7px;
+    margin-left: 6px;
   }
   #latest-job-status {
     padding: 0 10px;
@@ -242,4 +253,27 @@ mat-icon {
 
 .view-jobs-disabled {
   color: #ccc;
+}
+
+@media (max-width: 1400px) { 
+  header {
+    .flow-container {
+      h2 {
+        max-width: 300px;
+      }
+    }
+  }
+  #latest-job-info {
+    width: 240px;
+  }
+}
+
+@media (max-width: 1200px) { 
+  header {
+    .flow-container {
+      h2 {
+        max-width: 250px;
+      }
+    }
+  }
 }

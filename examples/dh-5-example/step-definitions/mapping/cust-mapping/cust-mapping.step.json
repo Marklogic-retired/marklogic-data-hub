@@ -1,0 +1,18 @@
+{
+  "language" : "zxx",
+  "name" : "cust-mapping",
+  "description" : null,
+  "type" : "MAPPING",
+  "version" : 1,
+  "options" : {
+    "sourceQuery" : "cts.collectionQuery('default-ingestion')",
+    "collections" : [ "cust-mapping" ],
+    "sourceDatabase" : "data-hub-STAGING",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/mapping/cust-mapping/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

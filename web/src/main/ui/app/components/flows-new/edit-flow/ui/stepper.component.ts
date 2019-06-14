@@ -15,6 +15,8 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
 
   @Input() flow: any;
   @Input() stepsArray: any;
+  @Input() runFlowClicked: boolean;
+  @Input() disableSelect: boolean;
   @Output() newStep = new EventEmitter();
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
@@ -59,9 +61,14 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
     }
   }
   setStatus(status: string) {
-    let runStatus = status.replace('_', ' ');
-    runStatus = runStatus.replace('-', ' ');
-    this.status = runStatus.split(' ');
+    if (status) {
+      let runStatus = status.replace('_', ' ');
+      runStatus = runStatus.replace('-', ' ');
+      this.status = runStatus.split(' ');
+    } else {
+      this.status = [];
+    }
+
   }
   toggleBody() {
     this.showBody = !this.showBody;
@@ -73,8 +80,10 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
     this.updateFlow.emit();
   }
   stepClicked(index: number): void {
-    this.selectedIndex = index;
-    this.stepSelected.emit(index);
+    if (!this.disableSelect) {
+      this.selectedIndex = index;
+      this.stepSelected.emit(index);
+    }
   }
   newStepClicked(): void {
     let index = this.selectedIndex + 2;

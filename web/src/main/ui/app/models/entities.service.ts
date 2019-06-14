@@ -144,6 +144,7 @@ export class EntitiesService {
       component: EntityEditorComponent,
       providers: [
         {provide: 'entity', useValue: entity},
+        {provide: 'entities', useValue: this.entities},
         {provide: 'actions', useValue: actions},
         {provide: 'dataTypes', useValue: this.getDataTypes()}
       ],

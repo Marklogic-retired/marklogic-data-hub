@@ -30,13 +30,13 @@
       (pageChanged)="pageChanged.emit($event)"></app-pagination>
     <div *ngIf="!loadingTraces && (!searchResponse || searchResponse.total === 0)">No Data</div>
     <div class="mdl-grid results">
-      <div class="mdl-cell mdl-cell--2-col">
+      <div class="mdl-cell mdl-cell--3-col">
         <app-facets
           [facets]="searchResponse.facets"
           [(activeFacets)]="activeFacets"
           (activeFacetsChange)="onActiveFacetsChange.emit($event)"></app-facets>
       </div>
-      <div class="mdl-cell mdl-cell--10-col">
+      <div class="mdl-cell mdl-cell--9-col">
         <div *ngIf="searchResponse && searchResponse.total > 0">
           <div *ngFor="let result of searchResponse.results" class="result">
             <div class="link">

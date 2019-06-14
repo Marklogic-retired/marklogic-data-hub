@@ -1,4 +1,5 @@
 export class MappingOptions {
+  public additionalCollections: string[] = [];
   public collections: string[] = [];
   public sourceQuery: string = '';
   public sourceCollection: string = '';
@@ -6,4 +7,5 @@ export class MappingOptions {
   public targetDatabase: string;
   public mapping: any;
   public targetEntity: string;
+  public outputFormat: string;
 }

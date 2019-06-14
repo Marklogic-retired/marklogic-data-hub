@@ -29,12 +29,10 @@
     <!-- / HEADER -->
 
     <div class="content-card">
-
       <mat-table id="flows-table"
                  class="flows-table"
                  #table [dataSource]="dataSource"
-                 matSort>
-
+                 matSort>    
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <mat-header-cell id="flow-name-sort-btn" *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
@@ -62,8 +60,16 @@
         <ng-container matColumnDef="status">
           <mat-header-cell id="flow-status-sort-btn" *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell class="flow-status" *matCellDef="let flow">
-            <span *ngIf="flow.latestJob">{{formatStatus(flow.status)}}</span>
-            <span *ngIf="!flow.latestJob">Never run</span>
+              <div class="spinner-container" *ngIf="runFlowClicked[flow.id] && flow.latestJob.status === null">
+                  <mat-progress-spinner 
+                    diameter="22"
+                    strokeWidth="3"
+                    color="primary"
+                    mode="indeterminate"
+                  ></mat-progress-spinner>
+                </div>
+            <span *ngIf="flow.latestJob && flow.jobs.length">{{formatStatus(flow.status)}}</span>
+            <span *ngIf="!flow.jobs.length && !runFlowClicked[flow.id]">Never run</span>
           </mat-cell>
         </ng-container>
 
@@ -148,7 +154,7 @@
         </mat-row>
 
       </mat-table>
-
+      <app-spinner [isLoading]="isLoading"></app-spinner>
       <mat-paginator id="flow-pagination"
                      #paginator
                      [length]="flows.length"

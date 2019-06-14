@@ -2,8 +2,6 @@ import {  browser, ExpectedConditions as EC} from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import settingsPage from '../../page-objects/settings/settings';
 import appPage from '../../page-objects/appPage';
-import dashboardPage from "../../page-objects/dashboard/dashboard";
-const fs = require('fs-extra');
 
 export default function(tmpDir) {
   describe('Uninstall', () => {
@@ -35,10 +33,6 @@ export default function(tmpDir) {
 
     it ('should uninstall the hub', function() {
       browser.wait(EC.elementToBeClickable(loginPage.browseButton));
-    });
-
-    it ('should remove the temp folder', function() {
-      fs.remove(tmpDir);
     });
   });
 }

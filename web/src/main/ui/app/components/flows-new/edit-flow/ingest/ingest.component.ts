@@ -32,29 +32,39 @@ export class IngestComponent implements OnInit {
     const {
       inputFilePath,
       inputFileType,
-      outputURIReplacement
+      outputURIReplacement,
+      separator
     } = this.step.fileLocations;
 
     const {
+      additionalCollections,
       collections,
       permissions,
       outputFormat,
       sourceQuery,
-      targetDatabase
+      targetDatabase,
+      headers
     } = this.step.options;
 
     const fileLocations = {
       inputFilePath: inputFilePath || this.projectDirectory || '.',
       inputFileType: inputFileType || 'json',
-      outputURIReplacement: outputURIReplacement || ''
+      outputURIReplacement: outputURIReplacement || '',
+      separator: separator || ','
     };
 
     const options = {
+      additionalCollections: additionalCollections || [],
       collections: collections || [`${this.step.name}`],
       permissions: permissions || "rest-reader,read,rest-writer,update",
       outputFormat: outputFormat || 'json',
       sourceQuery: sourceQuery || '',
-      targetDatabase: targetDatabase || ''
+      targetDatabase: targetDatabase || '',
+      headers: headers || {
+        sources: [{ name: this.flow.name }],
+        createdOn: 'currentDateTime',
+        createdBy: 'currentUser'
+      }
     };
 
     this.step.fileLocations = fileLocations;

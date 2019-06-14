@@ -22,6 +22,8 @@ import * as _ from "lodash";
     [selectedStepId]="selectedStepId"
     [projectDirectory]="projectDirectory"
     [flowEnded]="flowEnded"
+    [runFlowClicked]="runFlowClicked"
+    [disableSelect]="disableSelect"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -49,6 +51,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   projectDirectory: string;
   flowEnded: string = '';
   stepType: typeof StepType = StepType;
+  runFlowClicked: boolean = false;
+  disableSelect: boolean = false;
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -89,13 +93,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
-
       const newArray = resp.map( step => {
         const newStep = Step.fromJSON(step, this.projectDirectory, this.databases);
-        // No Target Entity from default mapping step created by gradle
-        // if (newStep.stepDefinitionType === this.stepType.MAPPING) {
-        //   this.createMapping(newStep);
-        // }
         return newStep;
       });
       console.log('steps', newArray);
@@ -138,34 +137,34 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     });
   }
   runFlow(runObject): void {
+    this.runFlowClicked = true;
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      // TODO add response check
-      console.log('run flow resp', resp);
+      // TODO add error handling for error response, set runFlowClicked = false;
       this.runningJobService.pollFlowById(runObject.id).subscribe( poll => {
         this.flow = Flow.fromJSON(poll);
         // set flag on flow job end
         if (!this.runningJobService.checkJobStatus(this.flow) && (this.flow.latestJob !== null)) {
           this.flowEnded = this.flow.latestJob.id;
+          this.runFlowClicked = false;
         }
       });
     });
   }
   stopFlow(flowid): void {
     this.manageFlowsService.stopFlow(flowid).subscribe(resp => {
-      console.log('stop flow response', resp);
-      this.flow = Flow.fromJSON(resp);
-      this.getSteps();
-      this.runningJobService.stopPollingAll();
     });
   }
   createStep(stepObject) {
     this.setStepDefaults(stepObject.step);
+    this.disableSelect = true;
     this.manageFlowsService.createStep(this.flow.id, stepObject.index, stepObject.step).subscribe(resp => {
+      const newStep = Step.fromJSON(resp, this.projectDirectory, this.databases);
       const index = stepObject.index - 1;
-      this.stepsArray.splice(index, 0, resp);
+      this.stepsArray.splice(index, 0, newStep);
       console.log('stepsArray', this.stepsArray);
       this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
         this.flow = Flow.fromJSON(resp);
+        this.disableSelect = false;
       });
       if (stepObject.step.stepDefinitionType === this.stepType.MAPPING) {
         this.createMapping(resp);

@@ -31,6 +31,25 @@
       </mat-select>
     </mat-form-field>
 
+    <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
+      <div class="label">{{config.csvSeparator.label}}</div>
+      <mat-form-field layout-fill appearance="outline" class="csv-separator-field">
+        <mat-select
+          id="csv-separator-select"
+          [(ngModel)]="this.step.fileLocations.separator"
+          name="separator"
+          (selectionChange)="onChange()"
+        >
+          <mat-option
+            *ngFor="let option of config.csvSeparator.options"
+            [value]="option.value"
+            [id]="'csv-separator-option-' + option.value"
+          >{{option.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
     <div class="label">{{config.outputDocTypes.label}}</div>
     <mat-form-field layout-fill appearance="outline">
       <mat-select

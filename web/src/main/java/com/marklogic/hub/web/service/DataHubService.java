@@ -19,6 +19,7 @@ package com.marklogic.hub.web.service;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
@@ -123,6 +124,11 @@ public class DataHubService {
         }
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.reinstallUserModules");
 
+    }
+
+    @Async
+    public void deleteDocument(String uri, DatabaseKind databaseKind) {
+        dataHub.deleteDocument(uri, databaseKind);
     }
 
     @Async

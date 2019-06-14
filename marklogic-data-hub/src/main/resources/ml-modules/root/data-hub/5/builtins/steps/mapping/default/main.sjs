@@ -1,7 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-var mapping = null;
+// caching mappings in key to object since tests can have multiple mappings run in same transaction
+var mappings = {};
 var entityModel = null;
 
 function main(content, options) {
@@ -28,6 +29,8 @@ function main(content, options) {
   let doc = content.value;
 
   //then we grab our mapping
+  let mappingKey = options.mapping ? `${options.mapping.name}:${options.mapping.version}` : null;
+  let mapping = mappings[mappingKey];
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     let version = parseInt(options.mapping.version);
     if(isNaN(version)){
@@ -35,8 +38,10 @@ function main(content, options) {
       throw Error('Mapping version ('+options.mapping.version+') is invalid.');
     }
     mapping = lib.getMappingWithVersion(options.mapping.name, version);
+    mappings[mappingKey] = mapping;
   } else if (!mapping && options.mapping && options.mapping.name) {
     mapping = lib.getMapping(options.mapping.name);
+    mappings[mappingKey] = mapping;
   } else if (!mapping) {
     datahub.debug.log({message: 'You must specify a mapping name.', type: 'error'});
     throw Error('You must specify a mapping name.');
@@ -90,6 +95,12 @@ function main(content, options) {
   //now let's make our attachments, if it's xml, it'll be passed as string
   instance['$attachments'] = doc;
 
+  content.value = buildEnvelope(doc, instance, outputFormat, options);
+  return content;
+}
+
+// Extracted for unit testing purposes
+function buildEnvelope(doc, instance, outputFormat, options) {
   let triples = [];
   let headers = datahub.flow.flowUtils.createHeaders(options);
 
@@ -98,12 +109,28 @@ function main(content, options) {
       triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
     }
   }
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-  content.value = envelope;
 
-  return content;
+  let docHeaders = datahub.flow.flowUtils.getHeaders(doc);
+  let docTriples = datahub.flow.flowUtils.getTriples(doc);
+
+  if(docHeaders) {
+    docHeaders = docHeaders.toObject();
+  } else {
+    docHeaders = {};
+  }
+  if(docTriples){
+    docTriples = docTriples.toObject();
+  } else {
+    docTriples = [];
+  }
+
+  headers = Object.assign({}, headers, docHeaders);
+  triples = triples.concat(docTriples);
+
+  return datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }
 
 module.exports = {
-  main: main
+  main: main,
+  buildEnvelope: buildEnvelope
 };

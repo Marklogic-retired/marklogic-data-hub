@@ -1,5 +1,5 @@
 .map-page {
-  padding: 20px 40px 150px 40px;
+  padding: 20px 40px 320px 40px;
 }
 
 .map-container {
@@ -194,6 +194,7 @@ p.item-identifying-info {
     padding: 0;
     cursor:pointer;
   }
+  width: 459px;
 }
 
 /* ENTITY INDEX ICONS */
@@ -258,4 +259,8 @@ p.item-identifying-info {
 /* Widen tooltip container for long phrases */
 /deep/ .tooltip .tooltip-inner {
   max-width: 350px;
+}
+
+.no-properties {
+  padding: 10px 0 0 2px;
 }

@@ -5,7 +5,6 @@ import appPage from '../../page-objects/appPage';
 import settingsPage from '../../page-objects/settings/settings'
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 
-
 const fs = require('fs-extra');
 
 const selectCardinalityOneToOneOption = 'select option:nth-child(1)';
@@ -22,13 +21,10 @@ export default function (qaProjectDir) {
       //await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
+      await browser.wait(EC.elementToBeClickable(loginPage.environmentTab));
       await loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await browser.wait(EC.visibilityOf(loginPage.loginTab));
       await loginPage.login();
-      await browser.sleep(5000);
-      browser.wait(EC.visibilityOf(dashboardPage.clearFinalButton()));
-      //dashboardPage.isLoaded();
     });
 
     /**
@@ -40,14 +36,14 @@ export default function (qaProjectDir) {
       console.log('create Order entity');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
-      browser.sleep(5000);
+      await browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('Order');
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       expect(entityPage.getEntityBox('Order').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
       // move entity Order
@@ -61,7 +57,9 @@ export default function (qaProjectDir) {
     it('should create a new Product entity with description and URI', async function () {
       await appPage.entitiesTab.click();
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await appPage.entitiesTab.click();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //create Product entity
       console.log('create Product entity');
       await entityPage.toolsButton.click();
@@ -72,10 +70,10 @@ export default function (qaProjectDir) {
       await entityPage.entityDescription.sendKeys('Product description');
       await entityPage.entityURI.sendKeys('Product URI');
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('Product description');
@@ -91,15 +89,16 @@ export default function (qaProjectDir) {
      */
     it('should create a new Person entity with version, description, URI and properties', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //create Person entity
       console.log('create Person entity');
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
-      browser.sleep(5000);
+      await browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('Person');
-      await entityPage.entityVersion.sendKeys(Key.chord(Key.CONTROL, "a"), '1');
+      await entityPage.setEntityVersion('1');
       await entityPage.entityDescription.sendKeys('Person description');
       await entityPage.entityURI.sendKeys('Person URI');
       console.log('add properties to Person entity');
@@ -128,7 +127,7 @@ export default function (qaProjectDir) {
       await entityPage.getPropertyDescription(lastProperty).sendKeys('lname description');
       await entityPage.getPropertyPii(lastProperty).click();
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
       browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
@@ -141,10 +140,10 @@ export default function (qaProjectDir) {
 
     it('should verify properties to Person entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('verify properties to Person entity');
       await entityPage.clickEditEntity('Person');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let idProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(idProperty).getAttribute('value')).toEqual('id');
@@ -160,10 +159,9 @@ export default function (qaProjectDir) {
       expect(entityPage.getPropertyName(lnameProperty).getAttribute('value')).toEqual('lname');
       expect(entityPage.getPropertyType(lnameProperty).getAttribute('value')).toContain('string');
       expect(entityPage.getPropertyDescription(lnameProperty).getAttribute('value')).toEqual('lname description');
-      browser.sleep(180000);
       expect(entityPage.hasClass(entityPage.getPropertyPii(lnameProperty), 'active')).toBe(true);
       await entityPage.cancelEntity.click();
-      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     /**
@@ -171,11 +169,12 @@ export default function (qaProjectDir) {
      */
     it('should add description and URI to Order entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //add properties
       console.log('add description and URI to Order entity');
       await entityPage.clickEditEntity('Order');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityDescription.sendKeys('Order description');
       await entityPage.entityURI.sendKeys('Order URI');
@@ -188,22 +187,23 @@ export default function (qaProjectDir) {
      */
     it('should modify the Product entity change description and URI', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //modify Product entity
-      console.log('modify Product entity');
+      await console.log('modify Product entity');
       await entityPage.clickEditEntity('Product');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
-      console.log('modify description');
-      await entityPage.entityDescription.sendKeys(Key.chord(Key.CONTROL, "a"), 'Modified Product description');
-      console.log('modify URI');
-      await entityPage.entityURI.sendKeys(Key.chord(Key.CONTROL, "a"), 'Modified Product URI');
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await expect(entityPage.entityEditor.isDisplayed()).toBe(true);
+      await console.log('modify description');
+      await entityPage.setEntityDescription('Modified Product description');
+      await console.log('modify URI');
+      await entityPage.setEntityURI('Modified Product URI');
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
-      expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
+      await expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('Modified Product description');
       await expect(entityPage.getEntityBoxURI('Product')).toEqual('Modified Product URI');
     });
@@ -213,21 +213,22 @@ export default function (qaProjectDir) {
      */
     it('should modify the Product entity remove description and URI', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //modify Product entity
       console.log('modify Product entity');
       await entityPage.clickEditEntity('Product');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       console.log('remove description');
-      await entityPage.entityDescription.sendKeys(Key.chord(Key.CONTROL, "a"), Key.DELETE);
+      await entityPage.clearInputField(entityPage.entityDescription);
       console.log('remove URI');
-      await entityPage.entityURI.sendKeys(Key.chord(Key.CONTROL, "a"), Key.DELETE);
+      await entityPage.clearInputField(entityPage.entityURI);
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('No description yet');
       await expect(entityPage.getEntityBoxURI('Product')).toEqual('No Base URI yet');
@@ -238,13 +239,14 @@ export default function (qaProjectDir) {
      */
     it('should add properties to Product entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //add properties
       console.log('add properties to Product entity');
       console.log('edit Product entity');
       let lastProperty = entityPage.lastProperty;
       await entityPage.clickEditEntity('Product');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       // add sku property
       console.log('add sku property');
@@ -270,17 +272,18 @@ export default function (qaProjectDir) {
       await entityPage.getPropertyDescription(lastProperty).sendKeys('titlePii description');
       await entityPage.getPropertyPii(lastProperty).click();
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
     });
 
     it('should verify properties to Product entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('verify properties to Product entity');
       await entityPage.clickEditEntity('Product');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let skuProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(skuProperty).getAttribute('value')).toEqual('sku');
@@ -303,13 +306,14 @@ export default function (qaProjectDir) {
 
     it('should add properties to Order entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //add properties
       console.log('add properties to Order entity');
       console.log('edit Order entity');
       let lastProperty = entityPage.lastProperty;
       await entityPage.clickEditEntity('Order');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       // add id property
       console.log('add id property');
       await entityPage.addProperty.click();
@@ -344,10 +348,11 @@ export default function (qaProjectDir) {
 
     it('should verify properties to Order entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('verify properties to Order entity');
       await entityPage.clickEditEntity('Order');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let idProperty = entityPage.getPropertyByPosition(1);
       // verify that primary key is retained
@@ -380,16 +385,19 @@ export default function (qaProjectDir) {
      */
     it('should modify properties to Product entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //add properties
       console.log('modify properties of Product entity');
       await entityPage.clickEditEntity('Product');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       // modify id property
       console.log('modify id property');
       let idProperty = entityPage.getPropertyByPosition(1);
       await entityPage.getPropertyType(idProperty).element(by.cssContainingText('option', 'integer')).click();
-      await entityPage.getPropertyDescription(idProperty).sendKeys(Key.chord(Key.CONTROL, "a"), 'Modified id description');
+      //await entityPage.getPropertyDescription(idProperty).clear(); //may fail
+      await entityPage.clearInputField(entityPage.getPropertyDescription(idProperty));
+      await entityPage.getPropertyDescription(idProperty).sendKeys('Modified id description');
       expect(entityPage.getPropertyType(idProperty).getAttribute('value')).toContain('integer');
       expect(entityPage.getPropertyDescription(idProperty).getAttribute('value')).toEqual('Modified id description');
       await entityPage.saveEntity.click();
@@ -403,12 +411,13 @@ export default function (qaProjectDir) {
      */
     it('should remove properties from Product entity', async function () {
       await browser.refresh();
+      await browser.waitForAngular();
       await appPage.entitiesTab.click();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       //add properties
       console.log('modify properties of Product entity');
       await entityPage.clickEditEntity('Product');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       entityPage.getPropertiesCount().then(function (props) {
         expect(props).toEqual(3)
       });
@@ -416,16 +425,16 @@ export default function (qaProjectDir) {
       // remove 1 property
       console.log('remove 1 property');
       expect(lastProperty.isDisplayed());
-      browser.wait(EC.visibilityOf(entityPage.getPropertyCheckBox(lastProperty)));
+      await browser.wait(EC.visibilityOf(entityPage.getPropertyCheckBox(lastProperty)));
       await entityPage.getPropertyCheckBox(lastProperty).click();
       await entityPage.deleteProperty.click();
-      browser.sleep(5000);
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.sleep(5000);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
-      browser.sleep(5000);
-      browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
-      entityPage.getPropertiesCount().then(function (props) {
+      await browser.sleep(5000);
+      await browser.wait(EC.elementToBeClickable(entityPage.saveEntity));
+      await entityPage.getPropertiesCount().then(function (props) {
         expect(props).toEqual(2)
       });
       await entityPage.saveEntity.click();
@@ -436,19 +445,21 @@ export default function (qaProjectDir) {
 
     it('should create a new entity for PII', async function () {
       await appPage.entitiesTab.click();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.refresh();
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
-      browser.sleep(5000);
+      await browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('PIIEntity');
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
       expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       await entityPage.clickConfirmDialogNoButton;
       //await entityPage.confirmDialogNoButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
-      expect(entityPage.getEntityBox('PIIEntity').isDisplayed()).toBe(true);
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
+      await expect(entityPage.getEntityBox('PIIEntity').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
       // move entity PIIEntity
       await entityPage.selectEntity('PIIEntity');
@@ -457,14 +468,15 @@ export default function (qaProjectDir) {
 
     it('should create a pii property', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       await entityPage.clickEditEntity('PIIEntity');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       //tell the UI to add the visual row
       await entityPage.addProperty.click();
       //now compare to see if the current count is 1
-      entityPage.getPropertiesCount().then(function (props) {
+      await entityPage.getPropertiesCount().then(function (props) {
         expect(props).toEqual(1)
       });
 
@@ -489,17 +501,18 @@ export default function (qaProjectDir) {
       await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       await entityPage.getPropertyDescription(lastProperty).sendKeys("not a pii property");
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
     });
 
     it('should verify pii property to PII entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('verify pii property to PII entity');
       await entityPage.clickEditEntity('PIIEntity');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let piiProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
@@ -529,15 +542,16 @@ export default function (qaProjectDir) {
 
     it('should verify naming conventions on properties', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       await entityPage.clickEditEntity('PIIEntity');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       // add test property to verify white spaces
       console.log('add test property');
       await entityPage.addProperty.click();
       let lastProperty = entityPage.lastProperty;
-      entityPage.getPropertyName(lastProperty).sendKeys('test white space');
+      await entityPage.getPropertyName(lastProperty).sendKeys('test white space');
       // verify the error message on white space in property name
       let errorMessage = entityPage.errorWhiteSpaceMessage;
       expect(errorMessage.getText()).toBe('Property names are required, must be unique and whitespaces are not allowed');
@@ -549,9 +563,10 @@ export default function (qaProjectDir) {
 
     it('should not be able to create duplicate properties', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       await entityPage.clickEditEntity('PIIEntity');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       // add test property to verify duplicate property
       console.log('add duplicate property');
@@ -564,32 +579,37 @@ export default function (qaProjectDir) {
       // verify if the Save button is disabled on white space
       expect(entityPage.saveEntity.isEnabled()).toBe(false);
       await entityPage.cancelEntity.click();
-      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it('should not be able to use invalid character and space as title', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
-      await entityPage.clickEditEntity('PIIEntity');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
-      expect(entityPage.entityEditor.isDisplayed()).toBe(true);
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await entityPage.toolsButton.click();
+      await entityPage.newEntityButton.click();
+      await browser.sleep(5000);
+      await expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('$%# myTitle^&%*');
       await entityPage.saveEntity.click();
       // verify the error message on invalid character on title
-      expect(entityPage.errorInvalidTitleMessage.isDisplayed()).toBe(true);
+      await browser.sleep(500);
+      await expect(entityPage.errorInvalidTitleMessage.isDisplayed()).toBe(true);
       await entityPage.cancelEntity.click();
-      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it('should logout and login', async function () {
       await entityPage.logout();
+      await browser.waitForAngular();
       loginPage.isLoaded();
       await loginPage.clickNext('ProjectDirTab');
-      browser.wait(EC.visibilityOf(loginPage.environmentTab));
+      await browser.wait(EC.visibilityOf(loginPage.environmentTab));
       await loginPage.clickNext('EnvironmentTab');
-      browser.wait(EC.visibilityOf(loginPage.loginTab));
+      await browser.wait(EC.visibilityOf(loginPage.loginTab));
       await loginPage.login();
-      browser.wait(EC.elementToBeClickable(appPage.odhLogo));
+      await browser.wait(EC.elementToBeClickable(appPage.odhLogo));
+      await browser.waitForAngular();
     });
 
     it('should go to the entity page', async function () {
@@ -599,10 +619,11 @@ export default function (qaProjectDir) {
 
     it('should verify pii property is retained after logout', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('verify pii property is retained after logout');
       await entityPage.clickEditEntity('PIIEntity');
-      browser.wait(EC.visibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       let piiProperty = entityPage.getPropertyByPosition(1);
       expect(entityPage.getPropertyName(piiProperty).getAttribute('value')).toEqual('pii_test');
@@ -614,23 +635,24 @@ export default function (qaProjectDir) {
       // Verify that PII attribute is not checked
       expect(entityPage.hasClass(entityPage.getPropertyPii(nonPiiProperty), 'active')).toBe(false);
       await entityPage.cancelEntity.click();
-      browser.wait(EC.invisibilityOf(entityPage.entityEditor));
+      await browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
     it('should create a new entity for WorldBank', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       await entityPage.toolsButton.click();
       await entityPage.newEntityButton.click();
-      browser.sleep(5000);
+      await browser.sleep(5000);
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('WorldBank');
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogNoButton));
       expect(entityPage.confirmDialogNoButton.isDisplayed()).toBe(true);
       //await entityPage.confirmDialogNoButton.click();
       await entityPage.clickConfirmDialogNoButton;
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
       expect(entityPage.getEntityBox('WorldBank').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
       // move entity WorldBank
@@ -645,9 +667,9 @@ export default function (qaProjectDir) {
       fs.copy(attachmentPiiFilePath, qaProjectDir + '/src/main/ml-config/security/protected-paths/attachment-pii.json');
     });
 
-    it('should redeploy hub to make the pii takes effect', async function () {
+    xit('should redeploy hub to make the pii takes effect', async function () {
       await appPage.settingsTab.click();
-      settingsPage.isLoaded();
+      await settingsPage.isLoaded();
       await settingsPage.redeployButton.click();
       browser.wait(EC.elementToBeClickable(settingsPage.redeployConfirmation));
       await settingsPage.redeployConfirmation.click();
@@ -662,90 +684,94 @@ export default function (qaProjectDir) {
      */
     it('should remove Order entity', async function () {
       await appPage.entitiesTab.click();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('remove Order entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Order')));
       //await entityPage.toolsButton.click();
       await entityPage.clickDeleteEntity('Order');
-      browser.sleep(3000);
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.sleep(3000);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
       //count entities
       console.log('verify entity is deleted by count');
-      entityPage.getEntitiesCount().then(function (entities) {
+      await entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 4)
       });
     });
 
     it('should remove Product entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('remove Product entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       await entityPage.toolsButton.click();
       await entityPage.clickDeleteEntity('Product');
-      browser.sleep(3000);
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.sleep(3000);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
       //count entities
       console.log('verify entity is deleted by count');
-      entityPage.getEntitiesCount().then(function (entities) {
+      await entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 3)
       });
     });
 
     it('should remove Person entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('remove Person entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Person')));
       await entityPage.toolsButton.click();
       await entityPage.clickDeleteEntity('Person');
-      browser.sleep(3000);
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.sleep(3000);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
       //count entities
       console.log('verify entity is deleted by count');
-      entityPage.getEntitiesCount().then(function (entities) {
+      await entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 2)
       });
     });
 
     it('should remove PIIEntity entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('remove PIIEntity entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('PIIEntity')));
       await entityPage.toolsButton.click();
       await entityPage.clickDeleteEntity('PIIEntity');
-      browser.sleep(3000);
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.sleep(3000);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
       //count entities
       console.log('verify entity is deleted by count');
-      entityPage.getEntitiesCount().then(function (entities) {
+      await entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 1)
       });
     });
 
     it('should remove WorldBank entity', async function () {
       await browser.refresh();
-      browser.wait(EC.visibilityOf(entityPage.toolsButton));
+      await browser.waitForAngular();
+      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('remove WorldBank entity');
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('WorldBank')));
       await entityPage.toolsButton.click();
       await entityPage.clickDeleteEntity('WorldBank');
-      browser.sleep(3000);
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.sleep(3000);
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
       await entityPage.confirmDialogYesButton.click();
       //count entities
       console.log('verify entity is deleted by count');
-      entityPage.getEntitiesCount().then(function (entities) {
+      await entityPage.getEntitiesCount().then(function (entities) {
         expect(entities === 0)
       });
     });

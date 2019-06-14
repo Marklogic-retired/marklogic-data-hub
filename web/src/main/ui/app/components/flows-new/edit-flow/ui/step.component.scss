@@ -26,8 +26,13 @@ header {
 
 .steps-header {
   display: flex;
+  width: 90%;
   > button:last-child {
     margin-left: 8px;
+  }
+  h2 {
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 
@@ -36,7 +41,8 @@ header {
 }
 
 header > .steps-header:last-child {
-  width: 40%;
+  width: 8%;
+  margin-top: 5px;
   justify-content: flex-end;
 }
 

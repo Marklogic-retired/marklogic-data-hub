@@ -13,7 +13,7 @@
                 class="item"
                 mat-raised-button
                 color="primary"
-                [disabled]="flow.steps.length ? false : true"
+                [disabled]="!flow.steps.length || runFlowClicked ? true : false"
                 (click)="this.runClicked()">RUN</button>
         <button *ngIf="flow.latestJob && status[0] === 'running'"
           id="stop-flow-btn"
@@ -22,13 +22,21 @@
           color="primary"
           (click)="this.stopClicked()">STOP</button>
         <div id="latest-job-info">
+          <div class="spinner-container" *ngIf="runFlowClicked && flow.latestJob.status === null">
+            <mat-progress-spinner 
+              diameter="22"
+              strokeWidth="3"
+              color="primary"
+              mode="indeterminate"
+            ></mat-progress-spinner>
+          </div>
           <a id="latest-job-status" *ngIf="flow.latestJob && flow.latestJob.id && flow.latestJob.status" [routerLink]="['/jobs', flow.latestJob.id]">
           {{formatStatus(flow.latestJob.status)}}</a>
-          <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.status">
-          {{flow.latestJob === null ? '': 'Never run'}}</span>
+          <span id="latest-job-status" *ngIf="!flow.latestJob || !flow.latestJob.status && !runFlowClicked">
+          {{flow.jobs.length ? '': 'Never run'}}</span>
           <div id="job-started-timestamp" *ngIf="flow.latestJob" class="text item">
-            <span *ngIf="flow.latestJob.status === 'running' && flow.latestJob.startTime !== null">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
-            <span *ngIf="flow.latestJob.status !== null && flow.latestJob.endTime !== null">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
+            <span *ngIf="flow.latestJob && flow.latestJob.status === 'running' && flow.latestJob.startTime !== null && flow.latestJob.startTime !== ''">Started {{friendlyDate(flow.latestJob.startTime)}}</span>
+            <span *ngIf="flow.latestJob && flow.latestJob.status !== null && flow.latestJob.endTime !== null && flow.latestJob.endTime !== ''">Ended {{friendlyDate(flow.latestJob.endTime)}}</span>
           </div>
         </div>
         <a id="view-jobs-btn" *ngIf="flow.latestJob && flow.latestJob.id" class="text item view-jobs" [routerLink]="['/jobs']" [queryParams]="{flowName:flow.name}">View Jobs</a>
@@ -67,7 +75,7 @@
               </div>
               <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label}}</h3>
               <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
-                <div class="summary-label">Source File Path</div>
+                <div class="summary-label">Source Directory Path</div>
                 <div class="summary-content" *ngIf="stepsArray[i].fileLocations.inputFilePath"
                 title="{{stepsArray[i].fileLocations.inputFilePath}}">
                   {{stepsArray[i].fileLocations.inputFilePath | truncate : -23}}

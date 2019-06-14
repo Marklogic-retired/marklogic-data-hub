@@ -41,9 +41,8 @@ export class EntityPage extends AppPage {
   }
 
   async clickDeleteEntity(entityName: string) {
-    let button = element(by.css(`#aeb-${entityName} .fa-remove`));
+    let button = element(by.css(`#aeb-${entityName} .fa-trash`));
     await browser.executeScript("arguments[0].click();", button);
-    //return element(by.css('svg > .nodes * #fo-' + entityName + ' > .foreign > app-entity-box > .entity-def-box > app-resizable > .title > .edit-area > .delete-entity > i'));
   }
 
   editEntityButton(entityName: string) {
@@ -58,12 +57,46 @@ export class EntityPage extends AppPage {
     return element(by.css('mdl-textfield[label=Version] input'));
   }
 
+  async setEntityVersion(input: string) {
+    let inputField = this.entityVersion;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
+  }
+
   get entityDescription() {
     return element(by.css('mdl-textfield[label=Description] input'));
   }
 
+  async setEntityDescription(input: string) {
+    let inputField = this.entityDescription;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
+  }
+
+  async clearInputField(element) {
+    await element.click();
+    for (let i = 0; i < 100; i++) {
+      await browser.actions().sendKeys(Key.ARROW_LEFT).perform();
+    }
+    for (let i = 0; i < 100; i++) {
+      await browser.actions().sendKeys(Key.DELETE).perform();
+    }
+  }
+
   get entityURI() {
     return element(by.css('mdl-textfield[label="Base URI"] input'));
+  }
+
+  async setEntityURI(input: string) {
+    let inputField = this.entityURI;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
+  }
+
+  async clearEntityURI(input: string) {
+    let inputField = this.entityURI;
+    await inputField.clear();
+    return await inputField.sendKeys(input);
   }
 
   getEntityBox(entityName: string) {
@@ -180,7 +213,7 @@ export class EntityPage extends AppPage {
   }
 
   get errorInvalidTitleMessage() {
-    return element(by.cssContainingText('.alert-text', 'Only Alphanumeric characters are allowed in the Title'));
+    return element(by.cssContainingText('.alert-text', 'Only alphanumeric characters are allowed in the Title'));
   }
 
   get toast() {
@@ -202,6 +235,9 @@ export class EntityPage extends AppPage {
   getEntityBoxURI(entityName: string) {
     return this.entity(entityName).element(by.css('.baseuri > div')).getText();
   }
+
+  properties: string[] = ['id', 'fname', 'lname', 'eyeColor', 'synonym', 'zip'];
+
 }
 
 var entityPage = new EntityPage();

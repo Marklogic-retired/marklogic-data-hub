@@ -225,6 +225,12 @@ class DataHubPlugin implements Plugin<Project> {
             hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
             hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
+            // Turning off CMA for resources that have bugs in ML 9.0-7/8
+            hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
+
             project.extensions.add("hubConfig", hubConfig)
             project.extensions.add("hubProject", hubProject)
             project.extensions.add("dataHub", dataHub)

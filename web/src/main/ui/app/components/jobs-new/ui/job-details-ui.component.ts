@@ -12,11 +12,12 @@ import * as _ from "lodash";
   templateUrl: './job-details-ui.component.html',
   styleUrls: ['./job-details-ui.component.scss']
 })
-export class JobDetailsUiComponent implements OnChanges {
+export class JobDetailsUiComponent implements OnChanges, AfterViewInit, OnInit {
   displayedColumns = ['name', 'stepType', 'status', 'endTime', 'duration', 'committed', 'errors'];
   filterValues = {};
   targetDatabase = 'STAGING';
   @Input() job: Job;
+  @Input() isLoading: boolean;
 
   dataSource: MatTableDataSource<any>;
 
@@ -24,7 +25,7 @@ export class JobDetailsUiComponent implements OnChanges {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public dialog: MatDialog){
+  constructor(public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -44,7 +45,6 @@ export class JobDetailsUiComponent implements OnChanges {
     }
   }
   ngOnChanges(changes: SimpleChanges) {
-    console.log('job changes', changes);
     if ( changes.hasOwnProperty('job')) {
       if (!changes.job.firstChange && changes.job.currentValue ) {
         this.renderRows();
@@ -55,7 +55,6 @@ export class JobDetailsUiComponent implements OnChanges {
   }
 
   updateDataSource() {
-    console.log('this.job data source', this.job);
     this.job.steps.forEach((step) => {
       if (step.targetDatabase) {
         step.targetDatabase = /FINAL/.test(step.targetDatabase) ? 'FINAL' : 'STAGING';

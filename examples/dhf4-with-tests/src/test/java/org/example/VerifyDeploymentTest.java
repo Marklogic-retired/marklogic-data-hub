@@ -179,7 +179,7 @@ public class VerifyDeploymentTest extends AbstractDataHubTest {
 
         boolean wasInstalledViaQuickStart = wasInstalledViaQuickStart(databaseClient);
 
-        assertEquals(107, getModuleCountInDirectory("/data-hub/4/"), "DHF 4.1.0 has 107 modules in this directory");
+        assertEquals(109, getModuleCountInDirectory("/data-hub/4/"), "DHF 4.3.1 has 109 modules in this directory");
 
 
         if (wasInstalledViaQuickStart) {
@@ -215,9 +215,9 @@ public class VerifyDeploymentTest extends AbstractDataHubTest {
             "staging/default.xml; and staging/staging-entity-options.xml");
 
         if (wasInstalledViaQuickStart) {
-            assertEquals(153, getModuleCountInDirectory("/"));
+            assertEquals(155, getModuleCountInDirectory("/"));
         } else {
-            assertEquals(177, getModuleCountInDirectory("/"));
+            assertEquals(179, getModuleCountInDirectory("/"));
         }
     }
 

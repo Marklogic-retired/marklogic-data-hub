@@ -2,7 +2,7 @@
 <div id="flow-dialog" mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field layout-fill>
     <mat-label>Flow name</mat-label>
-    <input id="flow-name" matInput formControlName="name" required />
+    <input id="flow-name" matInput formControlName="name" required [errorStateMatcher]="instantErrorMatcher" />
     <mat-error id="step-name-error" *ngIf="form.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
   </mat-form-field>
   <mat-form-field layout-fill>
@@ -15,18 +15,33 @@
         Advanced Settings
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-form-field>
+    <mat-form-field
+      [matTooltip]="tooltips.batchSize"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       <mat-label>Batch Size</mat-label>
       <input id="flow-batch-size" matInput formControlName="batchSize"
       />
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field
+      [matTooltip]="tooltips.threadCount"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       <mat-label>Thread Count</mat-label>
       <input id="flow-thread-count" matInput formControlName="threadCount"
       />
     </mat-form-field>
     <mat-label>
-      Options
+      <span
+        [matTooltip]="tooltips.options"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"
+        matTooltipClass="options-tooltip">
+        Options
+      </span>
     </mat-label>
     <button class="flow-add-option-btn" mat-icon-button (click)="onAddOption()">
       <mat-icon>add_circle</mat-icon>

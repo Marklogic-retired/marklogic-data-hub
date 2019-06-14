@@ -144,7 +144,7 @@
         </mat-row>
 
       </mat-table>
-
+      <app-spinner [isLoading]="isLoading"></app-spinner>
       <mat-paginator id="jobs-pagination"
                      #paginator
                      [length]="jobs.length"

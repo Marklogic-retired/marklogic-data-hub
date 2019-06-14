@@ -12,3 +12,7 @@ div.label {
   font-size: 20px;
   font-weight: normal;
 }
+
+/deep/ .csv-separator-field {
+  padding: 8px 0 !important;
+}

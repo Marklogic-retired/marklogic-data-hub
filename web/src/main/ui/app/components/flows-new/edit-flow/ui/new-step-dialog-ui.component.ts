@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { Step, StepType } from '../../models/step.model';
 import {NewStepDialogValidator} from '../../validators/new-step-dialog.validator';
 import {
@@ -7,6 +7,7 @@ import {
 } from "../../../common/form-validators/existing-step-name-validator";
 import {Flow} from "../../models/flow.model";
 import * as _ from 'lodash';
+import {InstantErrorStateMatcher} from "../../validators/instant-error-match.validator";
 
 @Component({
   selector: 'app-new-step-dialog-ui',
@@ -27,10 +28,30 @@ export class NewStepDialogUiComponent implements OnInit {
   @Output() saveClicked = new EventEmitter();
 
   public newStep: Step;
-  public stepType: typeof StepType = StepType;
-  readonly stepOptions = Object.keys(this.stepType);
+  readonly stepOptions = Object.keys(StepType);
+  readonly outputFormats = [
+    {
+      label: 'JSON',
+      value: 'json',
+    },
+    {
+      label: 'XML',
+      value: 'xml',
+    },
+    {
+      label: 'Text',
+      value: 'text',
+    },
+    {
+      label: 'Binary',
+      value: 'binary',
+    }
+  ];
 
+  instantErrorMatcher: InstantErrorStateMatcher;
+  outputFormatOptions = [];
   newStepForm: FormGroup;
+  additionalCollections: FormArray;
   databases: any = [];
   type: string = null;
   isIngestion: boolean = false;
@@ -41,6 +62,7 @@ export class NewStepDialogUiComponent implements OnInit {
   entityRequired: boolean = false;
   hasSelectedCollection: boolean = false;
   hasSelectedQuery: boolean = false;
+  tooltips: any;
 
   constructor(
     private formBuilder: FormBuilder) {}
@@ -59,6 +81,7 @@ export class NewStepDialogUiComponent implements OnInit {
       else if (this.step && this.step.options && this.step.options.sourceCollection)
         selectedSource = 'collection';
     }
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
     this.hasSelectedCollection = selectedSource === 'collection';
     this.hasSelectedQuery = selectedSource === 'query';
     this.newStepForm = this.formBuilder.group({
@@ -74,8 +97,12 @@ export class NewStepDialogUiComponent implements OnInit {
       sourceCollection: [(this.step && this.step.options.sourceCollection) ? this.step.options.sourceCollection : ''],
       targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
       sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
-      targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : '']
+      targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : ''],
+      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json']
     }, { validators: NewStepDialogValidator });
+
+    this.newStepForm.setControl('additionalCollections', this.createTargetCollections());
+    this.additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
 
     if (this.step && this.step.options && this.step.options.sourceDatabase)
       this.getCollections.emit(this.step.options.sourceDatabase);
@@ -86,6 +113,18 @@ export class NewStepDialogUiComponent implements OnInit {
       this.setType(type);
       this.newStepForm.controls['stepDefinitionType'].disable();
       this.newStepForm.controls['name'].disable();
+
+      // Removing Target entity when editing
+
+
+      if (this.newStep.options.hasOwnProperty('additionalCollections')) {
+        this.newStep.options.collections = this.newStep.options.collections.filter(val => !this.newStep.options.additionalCollections.includes(val));
+      }
+      if (this.newStep.stepDefinitionType === StepType.MAPPING || this.newStep.stepDefinitionType === StepType.MASTERING || this.newStep.stepDefinitionType === StepType.CUSTOM ) {
+        if (this.newStep.options.targetEntity) {
+          this.newStep.options.collections = this.newStep.options.collections.filter(val => val !== this.newStep.options.targetEntity);
+        }
+      }
     }
   }
   getNameErrorMessage() {
@@ -110,28 +149,28 @@ export class NewStepDialogUiComponent implements OnInit {
   }
   stepTypeChange() {
     const type = this.newStepForm.value.stepDefinitionType;
-    if (type === this.stepType.MAPPING) {
+    if (type === StepType.MAPPING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createMappingStep();
     }
-    if (type === this.stepType.MASTERING) {
+    if (type === StepType.MASTERING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createMasteringStep();
     }
-    if (type === this.stepType.CUSTOM) {
+    if (type === StepType.CUSTOM) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
         targetDatabase: this.databaseObject.final
       });
       this.newStep = Step.createCustomStep();
     }
-    if (type === this.stepType.INGESTION) {
+    if (type === StepType.INGESTION) {
       this.newStepForm.patchValue({
         sourceDatabase: '',
         targetDatabase: this.databaseObject.staging
@@ -145,12 +184,19 @@ export class NewStepDialogUiComponent implements OnInit {
 
   setType(type: string) {
     this.type = type;
-    this.isIngestion = type === this.stepType.INGESTION;
-    this.isCustom = type === this.stepType.CUSTOM;
-    this.isMapping = type === this.stepType.MAPPING;
-    this.isMastering = type === this.stepType.MASTERING;
+    this.isIngestion = type === StepType.INGESTION;
+    this.isCustom = type === StepType.CUSTOM;
+    this.isMapping = type === StepType.MAPPING;
+    this.isMastering = type === StepType.MASTERING;
     this.sourceRequired = this.isMapping || this.isMastering;
     this.entityRequired = this.isMapping || this.isMastering;
+
+    if (this.isCustom) {
+      this.outputFormatOptions = this.outputFormats;
+    }
+    if (this.isMapping || this.isMastering) {
+      this.outputFormatOptions = this.outputFormats.slice(0, 2);
+    }
   }
 
   onSave() {
@@ -162,37 +208,114 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
     }
 
-    if (this.newStep.stepDefinitionType === this.stepType.CUSTOM) {
+    if (this.newStep.stepDefinitionType === StepType.CUSTOM) {
       this.newStep.stepDefinitionName = this.newStep.name;
     } else {
       this.newStep.stepDefinitionName = 'default-' + (this.newStepForm.value.stepDefinitionType || '').toLowerCase();
     }
 
-    if (this.newStep.stepDefinitionType === this.stepType.INGESTION) {
-      let collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
-      // always a single collection based on the step name
-      this.newStep.options.collections = [ collection ];
-    }
-
     this.newStep.description = this.newStepForm.value.description;
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
-      this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+      // Accept empty source query for custom step
+      if (this.newStepForm.value.sourceQuery === '' && this.newStep.stepDefinitionType === StepType.CUSTOM) {
+        this.newStep.options.sourceQuery = 'cts.collectionQuery([])';
+      } else {
+        this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
+      }
       this.newStep.options.sourceCollection = '';
-    } else {
-      const ctsUri = `cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"])`;
+    } else if (this.newStep.selectedSource === 'collection') {
+      let ctsUri = `cts.collectionQuery([\"${this.newStepForm.value.sourceCollection}\"])`;
+      // Accept empty source collection for custom step
+      if (this.newStepForm.value.sourceCollection === '' && this.newStep.stepDefinitionType === StepType.CUSTOM) {
+        ctsUri = 'cts.collectionQuery([])';
+      }
       this.newStep.options.sourceQuery = ctsUri;
       this.newStep.options.sourceCollection = this.newStepForm.value.sourceCollection;
+    } else {
+      this.newStep.options.sourceQuery = 'cts.collectionQuery([])';
+      this.newStep.options.sourceCollection = '';
     }
     this.newStep.options.targetEntity = this.newStepForm.value.targetEntity;
     this.newStep.options.sourceDatabase = this.newStepForm.value.sourceDatabase;
     this.newStep.options.targetDatabase = this.newStepForm.value.targetDatabase;
+    this.newStep.options.outputFormat = this.newStepForm.value.outputFormat;
 
+    this.newStep.options.additionalCollections = this.getValidTargetCollections();
+    this.setCollections();
     if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);
     }
   }
   capitalFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+  createTargetCollection(collection) {
+    return this.formBuilder.group({
+      addCollection: new FormControl (collection)
+    });
+  }
+  createTargetCollections() {
+    const result = [];
+    if (this.isUpdate && this.step.options.hasOwnProperty('additionalCollections') && this.step.options.additionalCollections.length) {
+      this.step.options.additionalCollections.forEach(collection => {
+        result.push(this.createTargetCollection(collection));
+      });
+      return this.formBuilder.array(result);
+    } else {
+      return this.formBuilder.array([this.createTargetCollection('')]);
+    }
+  }
+  onAddTargetCollection() {
+    const additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
+    additionalCollections.push(this.createTargetCollection(''));
+  }
+  onAddRemoveCollection(i) {
+    const additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
+    additionalCollections.removeAt(i);
+  }
+
+  getValidTargetCollections() {
+    const validTargetCollections = new Set;
+    this.newStepForm.value.additionalCollections.forEach( collection => {
+      if (collection.addCollection) {
+        validTargetCollections.add(collection.addCollection);
+      }
+    });
+    return Array.from(validTargetCollections);
+  }
+  setCollections() {
+    const collection = (this.isUpdate) ? this.newStepForm.getRawValue().name : this.newStepForm.value.name;
+
+    if (!this.isUpdate) {
+      switch (this.newStep.stepDefinitionType) {
+        case StepType.INGESTION:
+          this.newStep.options.collections = [collection];
+          break;
+          case StepType.MAPPING:
+          case StepType.MASTERING:
+          case StepType.CUSTOM:
+          this.newStep.options.collections = [collection];
+          if (this.newStep.options.targetEntity) {
+            this.newStep.options.collections.push(this.newStep.options.targetEntity);
+          }
+          break;
+        default:
+          break;
+      }
+    } else {
+      switch (this.newStep.stepDefinitionType) {
+        case StepType.MAPPING:
+        case StepType.MASTERING:
+        case StepType.CUSTOM:
+          if (this.newStep.options.targetEntity) {
+            this.newStep.options.collections.push(this.newStep.options.targetEntity);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    this.newStep.options.collections.push(...this.newStep.options.additionalCollections);
   }
 }

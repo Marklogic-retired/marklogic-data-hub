@@ -19,12 +19,13 @@ package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.document.DocumentPage;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
@@ -47,8 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
@@ -75,7 +75,12 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         hubConfig.initHubProject();
         hubConfig.refreshProject();
 
-        scaffolding.createEntity(ENTITY);
+        try {
+            scaffolding.createEntity(ENTITY);
+        }
+        catch (DataHubProjectException e) {
+            // Entity is already present
+        }
 
         Path legacyEntityDir = projectDir.resolve("plugins/entities/" + ENTITY);
         Path entityDir = projectDir.resolve("entities");
@@ -97,21 +102,21 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         scaffolding.createLegacyFlow(ENTITY, "xqy-xml-input-flow", FlowType.INPUT,
             CodeFormat.XQUERY, DataFormat.XML);
 
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
 
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
 
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
 
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
+        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
         installUserModules(getDataHubAdminConfig(), true);
     }
@@ -149,6 +154,25 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         List<String> expected = Arrays.asList(ENTITY, ENTITY2);
         List<String> actual = Arrays.asList(entities.get(0).getName(), entities.get(1).getName());
         assertTrue(expected.containsAll(actual));
+    }
+
+    @Test
+    public void deleteEntity() throws IOException, InterruptedException {
+        List<EntityModel> entities = entityMgrService.getEntities();
+        assertEquals(1, entities.size());
+
+        entityMgrService.deleteEntity(ENTITY);
+
+        entities = entityMgrService.getEntities();
+        assertEquals(0, entities.size());
+
+        // Adding sleep to delete artifacts from the db via async call
+        Thread.sleep(1000);
+
+        DocumentPage doc = finalDocMgr.read("/entities/" + ENTITY + ".entity.json");
+        assertFalse(doc.hasNext());
+        doc = stagingDocMgr.read("/entities/" + ENTITY + ".entity.json");
+        assertFalse(doc.hasNext());
     }
 
     @Test

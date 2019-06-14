@@ -9,13 +9,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FileCollector {
     private String filePath;
     private String inputFormat;
     private HubConfig hubConfig;
+    private Set<String> textExts = new HashSet<>(Arrays.asList("txt"));
+    private Set<String> jsonExts = new HashSet<>(Arrays.asList("json"));
+    private Set<String> csvExts = new HashSet<>(Arrays.asList("txt","csv","tsv","psv"));
+    private Set<String> xmlExts = new HashSet<>(Arrays.asList("xml"));
 
     public FileCollector(String filePath, String inputFormat) {
         this.filePath = filePath;
@@ -33,11 +36,11 @@ public class FileCollector {
         DiskQueue<String> results;
         //Currently the map has inputFormat => file-extension. We can in future use something like Tika to detect format, then
         // it would map to application/xml etc
-        Map<String, String> fileFormat = new HashMap<>();
-        fileFormat.put("text", "txt");
-        fileFormat.put("json", "json");
-        fileFormat.put("csv", "csv");
-        fileFormat.put("xml", "xml");
+        Map<String, Set<String>> fileFormat = new HashMap<>();
+        fileFormat.put("text", textExts);
+        fileFormat.put("json", jsonExts);
+        fileFormat.put("csv", csvExts);
+        fileFormat.put("xml", xmlExts);
 
 
         try {
@@ -56,10 +59,11 @@ public class FileCollector {
                 (filePath, fileAttr) -> fileAttr.isRegularFile())
                 .forEach(path -> {
                     File file = path.toFile();
-                    if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(fileFormat.get(inputFormat.toLowerCase()))) {
+                    String fileName = FilenameUtils.getExtension(file.getName()).toLowerCase();
+                    if (fileFormat.containsKey(inputFormat.toLowerCase()) && fileFormat.get(inputFormat.toLowerCase()).contains(fileName)) {
                         results.add(path.toFile().getAbsolutePath());
                     }
-                    else if("binary".equalsIgnoreCase(inputFormat) && !fileFormat.values().contains(FilenameUtils.getExtension(file.getName().toLowerCase()))){
+                    else if("binary".equalsIgnoreCase(inputFormat) && !csvExts.contains(fileName) && !jsonExts.contains(fileName) && !xmlExts.contains(fileName)){
                         results.add(path.toFile().getAbsolutePath());
                     }
                 });

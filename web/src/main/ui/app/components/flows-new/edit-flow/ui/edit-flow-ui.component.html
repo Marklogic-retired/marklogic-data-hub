@@ -8,6 +8,8 @@
     *ngIf="flow && stepsArray"
     [flow]="flow"
     [stepsArray]="stepsArray"
+    [runFlowClicked]="runFlowClicked"
+    [disableSelect]="disableSelect"
     (newStep)="openStepDialog($event)"
     (runFlow)="openRunDialog(flow)"
     (stopFlow)="openStopDialog($event)"
@@ -26,6 +28,7 @@
         [entities]="entities"
         [projectDirectory]="projectDirectory"
         [flowEnded]="flowEnded"
+        [sourceQuery]="step.options.sourceQuery"
         (updateStep)="updateStep($event)"
       ></app-step>
     </cdk-step>

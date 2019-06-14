@@ -35,8 +35,14 @@ function getSourceContext(sourceContext) {
 
 function getPath(sourceContext, connector, propertyName) {
   let path;
-  if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "NCName", propertyName)) {
+  // validExtractPath will recognize complex XPath, like attributes and filtered steps
+  // if not a validExtractPath, likely a JSON property with XPath incompatible name
+  if (cts.validExtractPath(propertyName)) {
     path = `${sourceContext}${connector}${propertyName}`;
+    if (connector.includes("*:") && !cts.validExtractPath(path)) {
+      connector = connector.replace("*:", "");
+      path = `${sourceContext}${connector}${propertyName}`;
+    }
   } else {
     if (connector.includes("*:")) {
       connector = connector.replace("*:", "");
@@ -52,7 +58,7 @@ function processInstance(model, mapping, content) {
 
 function extractInstanceFromModel(model, modelName, mapping, content) {
   let sourceContext = mapping.sourceContext;
-  if (content.nodeKind === 'element' && sourceContext !== '/')  {
+  if (content instanceof XMLDocument && sourceContext !== '/' && sourceContext !== '//')  {
     sourceContext = getSourceContext(sourceContext);
   }
   let mappingProperties = mapping.properties;
@@ -68,7 +74,11 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
   if(fn.head(content.xpath('/*:envelope'))) {
-    sourceContext = '/*:envelope/*:instance' + sourceContext;
+    let leadingXPath = '/*:envelope/*:instance';
+    if (fn.count(content.xpath('/*:envelope/*:instance/(element() except *:info)')) === 1 && sourceContext === '/') {
+      leadingXPath = leadingXPath + "/*";
+    }
+    sourceContext = leadingXPath + sourceContext;
   }
 
   let definition = model.definitions[modelName];

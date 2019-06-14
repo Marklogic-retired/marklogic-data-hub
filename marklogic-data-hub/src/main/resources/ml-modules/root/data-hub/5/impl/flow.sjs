@@ -266,38 +266,58 @@ class Flow {
     // declareUpdate({explicitCommit: true});
     let flowInstance = this;
     let processor = flowInstance.step.getStepProcessor(flowInstance, step.stepDefinitionName, step.stepDefinitionType);
-    if(!(processor && processor.run)) {
+    if (!(processor && processor.run)) {
       let errorMsq = `Could not find main() function for process ${step.stepDefinitionType}/${step.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
       flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});
       throw Error(errorMsq);
     }
 
-      let hookOperation = function() {};
-      let hook = step.customHook;
-      if(!hook || !hook.module){
-        hook = processor.customHook;
+    let hookOperation = function () {};
+    let hook = step.customHook;
+    if (!hook || !hook.module) {
+      hook = processor.customHook;
+    }
+    if (hook && hook.module) {
+      // Include all of the step context in the parameters for the custom hook to make use of
+      let parameters = Object.assign({uris, content, options, flowName, stepNumber, step}, hook.parameters);
+      hookOperation = function () {
+        flowInstance.datahub.hubUtils.invoke(
+          hook.module,
+          parameters,
+          hook.user || xdmp.getCurrentUser(),
+          hook.database || (hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase)
+        );
       }
-      if (hook && hook.module) {
-        // Include all of the step context in the parameters for the custom hook to make use of
-        let parameters = Object.assign({uris, content, options, flowName, stepNumber, step}, hook.parameters);
-        hookOperation = function () {
-          flowInstance.datahub.hubUtils.invoke(
-            hook.module,
-            parameters,
-            hook.user || xdmp.getCurrentUser(),
-            hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase
-          );
-        }
+    }
+    if (hook && hook.runBefore) {
+      hookOperation();
+    }
+    let normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
+    if (options.acceptsBatch) {
+      try {
+        let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), options, processor.run));
+        flowInstance.processResults(results, options, flowName, step);
+        flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
+      } catch (e) {
+        flowInstance.globalContext.batchErrors.push({
+          "stack": e.stack,
+          "code": e.code,
+          "data": e.data,
+          "message": e.message,
+          "name": e.name,
+          "retryable": e.retryable,
+          "stackFrames": e.stackFrames
+        });
+        flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
+        flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
       }
-      if (hook && hook.runBefore) {
-        hookOperation();
-      }
-      let normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
-      if (options.acceptsBatch) {
+    } else {
+      for (let contentItem of content) {
+        flowInstance.globalContext.uri = contentItem.uri;
         try {
-          let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), options, processor.run));
+          let results = normalizeToSequence(flowInstance.runMain(contentItem, options, processor.run));
           flowInstance.processResults(results, options, flowName, step);
-          flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
+          flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
         } catch (e) {
           flowInstance.globalContext.batchErrors.push({
             "stack": e.stack,
@@ -308,35 +328,15 @@ class Flow {
             "retryable": e.retryable,
             "stackFrames": e.stackFrames
           });
-          flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
+          flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
           flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
         }
-      } else {
-        for (let contentItem of content) {
-          flowInstance.globalContext.uri = contentItem.uri;
-          try {
-            let results = normalizeToSequence(flowInstance.runMain(contentItem, options, processor.run));
-            flowInstance.processResults(results, options, flowName, step);
-            flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
-          } catch (e) {
-            flowInstance.globalContext.batchErrors.push({
-              "stack": e.stack,
-              "code": e.code,
-              "data": e.data,
-              "message": e.message,
-              "name": e.name,
-              "retryable": e.retryable,
-              "stackFrames": e.stackFrames
-            });
-            flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
-            flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
-          }
-        }
       }
-      flowInstance.globalContext.uri = null;
-      if (hook && !hook.runBefore) {
-        hookOperation();
-      }
+    }
+    flowInstance.globalContext.uri = null;
+    if (hook && !hook.runBefore) {
+      hookOperation();
+    }
   }
 
   processResults(results, combinedOptions, flowName, step) {

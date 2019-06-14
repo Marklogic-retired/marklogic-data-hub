@@ -131,7 +131,7 @@ public class NewJobService extends ResourceManager {
         this.client = hubConfig.newJobDbClient();
     }
 
-    public List<JobModel> getJobs(String flowId) throws IOException {
+    public List<JobModel> getJobs(String flowId) {
         // temporarily send static job payload to client
         /*ObjectMapper mapper = new ObjectMapper();
         List<JobModel> jobModels = mapper.readValue(JOB_RESPONSE, List.class);*/
@@ -228,16 +228,16 @@ public class NewJobService extends ResourceManager {
             Optional.ofNullable(step.getOptions()).ifPresent(o -> js.targetDatabase = ((TextNode) o.getOrDefault("targetDatabase", new TextNode(""))).asText());
 
             JsonNode res = stepRes.get(key);
-            js.totalEvents = res.get("totalEvents").asLong();
-            js.successfulEvents = res.get("successfulEvents").asLong();
-            js.failedEvents = res.get("failedEvents").asLong();
+            js.totalEvents = getLong(res,"totalEvents");
+            js.successfulEvents = getLong(res, "successfulEvents");
+            js.failedEvents = getLong(res,"failedEvents");
 
             counters[0] += js.successfulEvents;
             counters[1] += js.failedEvents;
 
-            js.successfulBatches = res.get("successfulBatches").asLong();
-            js.failedBatches = res.get("failedBatches").asLong();
-            js.success = res.get("success").asBoolean();
+            js.successfulBatches = getLong(res, "successfulBatches");
+            js.failedBatches = getLong(res, "failedBatches");
+            js.success = res.has("success") ? res.get("success").asBoolean() : false;
 
             if (res.get("stepStartTime") != null) {
                 js.startTime = res.get("stepStartTime").asText();
@@ -246,14 +246,21 @@ public class NewJobService extends ResourceManager {
                 js.endTime = res.get("stepEndTime").asText();
             }
 
-            js.status = res.get("status").asText();
+            js.status = res.get("status") != null ? res.get("status").asText() : null;
             js.stepOutput = res.get("stepOutput");
-            js.fullOutput = res.get("fullOutput").asText();
+            js.fullOutput = res.get("fullOutput") != null ? res.get("fullOutput").asText() : null;
             jm.stepModels.add(js);
         }
 
         jm.successfulEvents = counters[0];
         jm.failedEvents = counters[1];
+    }
+
+    private long getLong(JsonNode node, String propertyName) {
+        if (node.has(propertyName)) {
+            return node.get(propertyName).asLong();
+        }
+        return 0;
     }
 
     public void release() {

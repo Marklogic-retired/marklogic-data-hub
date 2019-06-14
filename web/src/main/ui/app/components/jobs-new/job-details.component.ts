@@ -1,6 +1,7 @@
-import { Component, ViewChild, OnInit } from "@angular/core";
+import { Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from '@angular/router';
 import { ManageJobsService } from "./manage-jobs.service";
+import { RunningJobService } from './services/running-job-service';
 import { JobDetailsUiComponent } from "./ui/job-details-ui.component";
 import { Job } from './models/job.model';
 import * as _ from "lodash";
@@ -10,20 +11,19 @@ import * as _ from "lodash";
   template: `
     <job-details-page-ui
       [job]="this.job"
+      [isLoading]="this.isLoading"
     >
     </job-details-page-ui>
   `
 })
-export class JobDetailsComponent implements OnInit{
-
-  // @ViewChild(JobDetailsUiComponent)
-  // jobDetailsPageUi: JobDetailsUiComponent;
+export class JobDetailsComponent implements OnInit, OnDestroy {
 
   jobId: string;
   public job: Job;
-
+  isLoading = true;
   constructor(
     private manageJobsService: ManageJobsService,
+    private runningJobService: RunningJobService,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {
@@ -31,6 +31,9 @@ export class JobDetailsComponent implements OnInit{
 
   ngOnInit() {
     this.getJob();
+  }
+  ngOnDestroy(): void {
+    this.runningJobService.stopPolling(this.jobId);
   }
   getJob() {
     this.jobId = this.activatedRoute.snapshot.paramMap.get('jobId');
@@ -41,11 +44,15 @@ export class JobDetailsComponent implements OnInit{
         console.log('job by id response', resp);
         // Job by ID is an array with single job object
         // Update payload to be just an object?
+        this.isLoading = false;
         this.job = Job.fromJSON(resp[0]);
-        // this.jobDetailsPageUi.renderRows();
+        const isJobRunning = this.runningJobService.checkJobObjectStatus(this.job);
+        if ( isJobRunning ) {
+          this.runningJobService.pollJobById(this.jobId).subscribe( poll => {
+            this.job = Job.fromJSON(poll);
+          });
+        }
       });
     }
-    // this.job = this.manageJobsService.getJobById(this.jobId);
-    // console.log('this.job', this.job);
   }
 }

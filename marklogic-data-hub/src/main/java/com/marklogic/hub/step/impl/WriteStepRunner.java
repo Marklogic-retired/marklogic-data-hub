@@ -18,6 +18,7 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.document.DocumentWriteOperation;
@@ -87,6 +88,7 @@ public class WriteStepRunner implements StepRunner {
     private String outputFormat;
     private String inputFileType;
     private String outputURIReplacement;
+    private String separator = ",";
     private AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
@@ -280,6 +282,9 @@ public class WriteStepRunner implements StepRunner {
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
+        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
+            this.separator =((String) fileLocation.get("separator")).trim();
+        }
 
         if(stepConfig.get("batchSize") != null){
             this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
@@ -298,7 +303,18 @@ public class WriteStepRunner implements StepRunner {
             if(fileLocations.get("outputURIReplacement") != null) {
                 this.outputURIReplacement = fileLocations.get("outputURIReplacement");
             }
+            if(fileLocations.get("separator") != null) {
+                if(! this.inputFileType.equalsIgnoreCase("csv")){
+                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'");
+                }
+                this.separator = ((String) fileLocation.get("separator")).trim();
+            }
         }
+
+        if (separator != null && separator.equalsIgnoreCase("\\t")) {
+            this.separator = "\t";
+        }
+
         if(stepConfig.get("stopOnFailure") != null){
             this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
         }
@@ -610,8 +626,12 @@ public class WriteStepRunner implements StepRunner {
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
-        if(inputFileType.equalsIgnoreCase("csv")) {
-            JacksonCSVSplitter splitter = new JacksonCSVSplitter();
+        //note these ORs are for forward compatibility if we swap out the filecollector for another lib
+        if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
+            CsvSchema schema = CsvSchema.emptySchema()
+                .withHeader()
+                .withColumnSeparator(separator.charAt(0));
+            JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
             try {
                 if(! writeBatcher.isStopped()) {
                     Stream<JacksonHandle> contentStream = splitter.split(docStream);

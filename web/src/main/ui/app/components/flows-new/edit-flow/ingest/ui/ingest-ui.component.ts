@@ -2,12 +2,12 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 
 const settings = {
   inputFilePath: {
-    label: 'Source File Path',
+    label: 'Source Directory Path',
     description: 'Fhe filesystem location(s) to use for input. Default is current project path relative to the server location',
     value: '.'
   },
   fileTypes: {
-    label: 'Source File Type',
+    label: 'Source Format',
     description: 'The input file type. Accepted value: txt, json, xml, binary, csv, or all.\nDefault: json.',
     options: [
       {
@@ -32,8 +32,30 @@ const settings = {
       }
     ]
   },
+  csvSeparator: {
+    label: 'CSV Separator',
+    description: 'The csv file separator. Defaults to ,',
+    options: [
+      {
+        label: ',',
+        value: ',',
+      },
+      {
+        label: '|',
+        value: '|',
+      },
+      {
+        label: ';',
+        value: ';',
+      },
+      {
+        label: 'Tab',
+        value: '\\t',
+      }
+    ]
+  },
   outputDocTypes: {
-    label: 'Target File Type',
+    label: 'Target Format',
     description: 'The type of document to create. Accepted values: xml, json. Default: json.',
     options: [
       {
@@ -90,6 +112,17 @@ export class IngestUiComponent {
   onKeyChange(event) {
     if (event.key === 'Enter') {
       this.onChange();
+    }
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    // allow the user to type a tab
+    if (event.keyCode === 9) {
+      if (event.currentTarget instanceof HTMLInputElement && event.currentTarget.attributes['allowTab']) {
+        let target: HTMLInputElement = event.currentTarget as HTMLInputElement;
+        target.value = "\t";
+        event.preventDefault();
+      }
     }
   }
 

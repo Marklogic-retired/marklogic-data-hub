@@ -25,11 +25,12 @@ export class EntityEditorComponent implements AfterViewChecked {
   @ViewChild('dialogContent') el:ElementRef;
 
   entity: Entity;
+  entities: any;
   actions: any;
   dataTypes: Array<any>;
 
   entityBackup: string = null;
-
+  editing: boolean = false;
   // used for toggling > 1 of the following
   indexHeader: boolean = false;
   wordLexiconHeader: boolean = false;
@@ -49,6 +50,7 @@ export class EntityEditorComponent implements AfterViewChecked {
 
   propAdded: boolean = false;
   validTitle: boolean = true;
+  isTitleDuplicate: boolean = false;
 
   // property name pattern: name cannot have space characters in it
   readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
@@ -59,13 +61,21 @@ export class EntityEditorComponent implements AfterViewChecked {
     private dialog: MdlDialogReference,
     private dialogService: MdlDialogService,
     @Inject('entity') entity,
+    @Inject('entities') entities,
     @Inject('actions') actions: any,
     @Inject('dataTypes') dataTypes
   ) {
     this.entity = entity;
+    this.entities = entities;
     this.actions = actions;
     this.dataTypes = dataTypes;
     this.entityBackup = JSON.stringify(this.entity);
+
+    if (entity.info.title === null) {
+      this.editing = false;
+    } else {
+      this.editing = true;
+    }
     // Set property ui flags based on entity state
     this.entity.definition.properties.forEach((property) => {
       property.isPrimaryKey = this.entity.definition.primaryKey === property.name;
@@ -228,7 +238,16 @@ export class EntityEditorComponent implements AfterViewChecked {
 
   saveEntity() {
     if (this.actions.save) {
-      if (this.ENTITY_TITLE_REGEX.test(this.entity.info.title) || this.entity.info.title === '') {
+      const duplicate = this.entities.filter( entity => entity.info.title.toLowerCase() === this.entity.info.title.toLowerCase());
+      if (duplicate.length && !this.editing) {
+        this.validTitle = true;
+        this.isTitleDuplicate = true;
+        return;
+      } else {
+        this.isTitleDuplicate = false;
+      }
+
+      if (this.ENTITY_TITLE_REGEX.test(this.entity.info.title) || this.entity.info.title === '' || this.entity.info.title === null ) {
         // invalid characters in title
         this.validTitle = false;
         return;

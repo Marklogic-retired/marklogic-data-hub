@@ -20,9 +20,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingImpl;
@@ -49,22 +51,33 @@ import java.util.stream.Collectors;
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
     @Autowired
-    private HubConfig hubConfig;
+    protected HubConfig hubConfig;
 
     @Autowired
-    private HubProject hubProject;
+    protected HubProject hubProject;
 
     @Autowired
     private Scaffolding scaffolding;
 
+    @Autowired
+    private EntityManager entityManager;
 
     @Override public Mapping createMapping(String mappingName) {
+        return createMapping(mappingName, null);
+    }
+
+    @Override public Mapping createMapping(String mappingName, String entityName) {
         try {
             getMapping(mappingName);
             throw new DataHubProjectException("Mapping with that name already exists");
         }
         catch (DataHubProjectException e) {
-           return Mapping.create(mappingName);
+            if (entityName != null) {
+                HubEntity entity = entityManager.getEntityFromProject(entityName);
+                return Mapping.create(mappingName, entity);
+            } else {
+                return Mapping.create(mappingName);
+            }
         }
     }
 

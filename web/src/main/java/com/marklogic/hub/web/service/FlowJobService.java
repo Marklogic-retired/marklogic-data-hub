@@ -7,27 +7,32 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.DatatypeConverter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import static com.marklogic.hub.job.JobStatus.RUNNING_PREFIX;
 
 @Service
 public class FlowJobService extends ResourceManager {
@@ -37,6 +42,9 @@ public class FlowJobService extends ResourceManager {
 
     @Autowired
     private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunnerImpl flowRunner;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -103,13 +111,24 @@ public class FlowJobService extends ResourceManager {
 
         final JsonNode[] lastJob = {null};
         final String[] lastTime = {null, null}; //store last start and end time
+        List<String> staleStateJobIds = new ArrayList<>();
         if (jsonNode.isArray()) {
             jsonNode.forEach(job -> {
                 JSONObject jobJson = new JSONObject(job.get("job"));
                 String jobId = jobJson.getString("jobId");
+                String jobStatus = jobJson.getString("jobStatus");
                 jobs.add(jobId);
                 String currStartTime = jobJson.getString("timeStarted", "");
                 String currEndTime = jobJson.getString("timeEnded", "");
+
+                if (cachedJobsByFlowName.size() == 0 && flowRunner.getRunningFlow() == null) {
+                    if (StringUtils.isNotEmpty(jobStatus) && jobStatus.startsWith(RUNNING_PREFIX)) {
+                        //invalid state on the job database that may be caused by unexpected server shutdown or crashed
+                        staleStateJobIds.add(jobId);
+                        latestJob.status = JobStatus.FAILED.toString();
+                    }
+                }
+
                 if (StringUtils.isEmpty(lastTime[0])) {
                     lastTime[0] = currStartTime;
                     lastTime[1] = currEndTime;
@@ -147,7 +166,10 @@ public class FlowJobService extends ResourceManager {
         if ("N/A".equals(latestJob.endTime)) {
             latestJob.endTime = "";
         }
-        latestJob.status = jobJson.getString("jobStatus");
+
+        if (!staleStateJobIds.contains(latestJob.id)) {
+            latestJob.status = jobJson.getString("jobStatus");
+        }
 
         String completedKey = jobJson.getString("lastCompletedStep", "0");
         String attemptedKey = jobJson.getString("lastAttemptedStep", "0");
@@ -166,9 +188,31 @@ public class FlowJobService extends ResourceManager {
                 latestJob.output = s.get("stepOutput"); //last step output ?
             });
         }
-        this.release();
 
+        if (!staleStateJobIds.isEmpty()) {
+            updateJobStaleStates(staleStateJobIds);
+        }
+
+        this.release();
         return flowJobs;
+    }
+
+    /**
+     * Set the jobStatus as Failed and timeEnded due to server failure during flow running
+     * @param staleStateJobIds
+     */
+    private void updateJobStaleStates(List<String> staleStateJobIds) {
+        RequestParameters params = new RequestParameters();
+        for (String jobId : staleStateJobIds) {
+            params.add("jobid", jobId);
+            params.add("status", JobStatus.FAILED.toString());
+
+            try {
+                this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
+            } catch (Exception e) {
+                logger.error(jobId + ":" + e.getMessage());
+            }
+        }
     }
 
     private void release() {

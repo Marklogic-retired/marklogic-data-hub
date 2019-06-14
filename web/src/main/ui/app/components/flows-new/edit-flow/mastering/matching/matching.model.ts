@@ -119,14 +119,15 @@ export class Matching {
    * Add definitions for the included algorithms.
    */
   addAlgorithmDefaults() {
+    let defaultNS = 'http://marklogic.com/smart-mastering/algorithms'
     let defaultAlgs = [
-      ['double-metaphone', '/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy'],
-      ['thesaurus', '/com.marklogic.smart-mastering/algorithms/thesaurus.xqy'],
-      ['zip-match', '/com.marklogic.smart-mastering/algorithms/zip.xqy'],
-      ['standard-reduction', null]
+      ['double-metaphone', '/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy', defaultNS],
+      ['thesaurus', '/com.marklogic.smart-mastering/algorithms/thesaurus.xqy', defaultNS],
+      ['zip-match', '/com.marklogic.smart-mastering/algorithms/zip.xqy', defaultNS],
+      ['standard-reduction', null, '']
     ]
     defaultAlgs.forEach(a => {
-      this.addAlgorithm(a[0], a[1], a[0], '');
+      this.addAlgorithm(a[0], a[1], a[0], a[2]);
     })
   }
 

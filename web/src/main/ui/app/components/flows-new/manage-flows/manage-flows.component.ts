@@ -1,6 +1,5 @@
 import {Component, ViewChild, OnInit, OnDestroy} from "@angular/core";
 import {Flow} from "../models/flow.model";
-import { timer } from 'rxjs';
 import {ManageFlowsService} from "../services/manage-flows.service";
 import { RunningJobService } from '../../jobs-new/services/running-job-service';
 import {ManageFlowsUiComponent} from "./ui/manage-flows-ui.component";
@@ -12,6 +11,8 @@ import * as _ from "lodash";
   template: `
     <flows-page-ui
       [flows]="this.flows"
+      [isLoading]="this.isLoading"
+      [runFlowClicked]="this.runFlowClicked"
       (createFlow)="this.createFlow($event)"
       (deleteFlow)="this.deleteFlow($event)"
       (saveFlow)="this.saveFlow($event)"
@@ -27,7 +28,8 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
   @ViewChild(ManageFlowsUiComponent)
   flowsPageUi: ManageFlowsUiComponent;
   flows = [];
-
+  isLoading = true;
+  runFlowClicked: any = {};
   constructor(
     private manageFlowsService: ManageFlowsService,
     private runningJobService: RunningJobService,
@@ -74,35 +76,35 @@ export class ManageFlowsComponent implements OnInit, OnDestroy {
         this.flows.push(flowObject);
         const isFlowRunning = this.runningJobService.checkJobStatus(flowObject);
         if (isFlowRunning) {
-          const flowIndex = this.flows.findIndex(obj => obj.id === flowObject.id);
-          this.pollFlow(flowIndex, flowObject.id);
+          this.pollFlow(flowObject.id);
         }
       });
+      this.isLoading = false;
       this.flowsPageUi.renderRows();
     });
   }
 
-  runFlow(runObject): void {
+  runFlow(runObject: any): void {
+    this.runFlowClicked[runObject.id] = true;
     this.manageFlowsService.runFlow(runObject).subscribe(resp => {
-      // console.log('run enpoint', resp);
-      // TODO add response check
-      const flowIndex = this.flows.findIndex(flow => flow.id === runObject.id);
-      this.pollFlow(flowIndex, runObject.id);
+    // TODO add error handling for error response, set runFlowClicked[flow.id] = false;
+      this.pollFlow(runObject.id);
     });
   }
 
-  pollFlow(index: number, flowId: string) {
+  pollFlow(flowId: string) {
     this.runningJobService.pollFlowById(flowId).subscribe( poll => {
-      this.flows[index] = Flow.fromJSON(poll);
+      const flowIndex = this.flows.findIndex(obj => obj.id === flowId);
+      this.flows[flowIndex] = Flow.fromJSON(poll);
       this.flowsPageUi.renderRows();
+      if (!this.runningJobService.checkJobStatus(this.flows[flowIndex]) && (this.flows[flowIndex] !== null)) {
+        this.runFlowClicked[this.flows[flowIndex].id] = false;
+      }
     });
   }
 
   stopFlow(flowId) {
     this.manageFlowsService.stopFlow(flowId).subscribe(resp => {
-      console.log('stop flow response', resp);
-      this.getFlows();
-      this.runningJobService.stopPolling(flowId);
     });
   }
 

@@ -180,6 +180,7 @@ declare function proc-impl:process-match-and-merge-with-options(
         merge-impl:options-from-json($merge-options)
       else
         $merge-options
+  let $target-entity := $matching-options/matcher:target-entity ! fn:string(.)
   let $actions := fn:distinct-values(($matching-options/matcher:actions/matcher:action/@name ! fn:string(.), $const:MERGE-ACTION, $const:NOTIFY-ACTION))
   let $thresholds := $matching-options/matcher:thresholds/matcher:threshold[(@action|matcher:action) = $actions]
   let $threshold-labels := $thresholds/(@label|matcher:label)
@@ -251,19 +252,22 @@ declare function proc-impl:process-match-and-merge-with-options(
           map:entry("context",
             map:new((
               map:entry("collections",
-                coll-impl:on-merge(
-                  map:new((
-                    for $uri in $distinct-uris
-                    let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
-                    return
-                      map:entry(
-                        $uri,
-                        $write-object
-                          => map:get("context")
-                          => map:get("collections")
-                      )
-                  )),
-                  $on-merge-options
+                (
+                  coll-impl:on-merge(
+                    map:new((
+                      for $uri in $distinct-uris
+                      let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
+                      return
+                        map:entry(
+                          $uri,
+                          $write-object
+                            => map:get("context")
+                            => map:get("collections")
+                        )
+                    )),
+                    $on-merge-options
+                  ),
+                  $target-entity
                 )
               ),
               map:entry("permissions",
@@ -335,9 +339,12 @@ declare function proc-impl:process-match-and-merge-with-options(
           => map:get("context")
         let $current-collections := $write-context
           => map:get("collections")
-        let $new-collections := coll-impl:on-no-match(
-          map:entry($uri, $current-collections),
-          $on-no-match
+        let $new-collections := (
+          coll-impl:on-no-match(
+            map:entry($uri, $current-collections),
+            $on-no-match
+          ),
+          $target-entity
         )
         let $_update := $write-context
           => map:put("collections", $new-collections)

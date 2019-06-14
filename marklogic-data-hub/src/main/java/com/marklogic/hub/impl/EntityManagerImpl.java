@@ -34,6 +34,7 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -150,17 +151,23 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             List<JsonNode> entities = getAllEntities();
 
             if (entities.size() > 0) {
-                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
-                String indexes = generator.getIndexes(entities);
+                DatabaseClient databaseClient = hubConfig.newReverseFlowClient();
+                try {
+                    DbConfigsManager generator = new DbConfigsManager(databaseClient);
+                    ObjectNode indexNode = generator.generateIndexes(entities);
 
-                // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
-                // ml-app-deployer removes these keys upon sending to marklogic.
-                ObjectNode indexNode = (ObjectNode) mapper.readTree(indexes);
-                indexNode.put("database-name", "%%mlFinalDbName%%");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
-                indexNode.put("database-name", "%%mlStagingDbName%%");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
-                return true;
+                    // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
+                    // ml-app-deployer removes these keys upon sending to marklogic.
+                    indexNode.put("database-name", "%%mlFinalDbName%%");
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
+                    indexNode.put("database-name", "%%mlStagingDbName%%");
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
+                    return true;
+                } finally {
+                    if (databaseClient != null) {
+                        databaseClient.release();
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -296,6 +303,22 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
+    public HubEntity getEntityFromProject(String entityName) {
+        return getEntityFromProject(entityName, null);
+    }
+
+    public HubEntity getEntityFromProject(String entityName, String version) {
+        HubEntity entity = null;
+        for (HubEntity e: getEntities()) {
+            InfoType info = e.getInfo();
+            if (info.getTitle().equals(entityName) && (version == null || info.getVersion().equals(version))) {
+                entity = e;
+                break;
+            }
+        }
+        return entity;
+    }
+
     public List<HubEntity> getEntities() {
         List<HubEntity> entities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
@@ -308,8 +331,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                     JsonNode node = objectMapper.readTree(fileInputStream);
                     entities.add(HubEntity.fromJson(entityDef.getAbsolutePath(), node));
                     fileInputStream.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -347,8 +369,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                     FileUtils.moveDirectory(origLegacyEntityDir.toFile(), newLegacyEntityDir.toFile());
                 }
             }
-        }
-        else {
+        } else {
             Path dir = hubConfig.getHubEntitiesDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
@@ -409,33 +430,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
                 if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate query options");
-                }
-                ResourceServices.ServiceResult res = resultItr.next();
-                return res.getContent(new StringHandle()).get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "{}";
-        }
-    }
-
-    private class DbIndexGenerator extends ResourceManager {
-        private static final String NAME = "ml:dbConfigs";
-
-        private RequestParameters params = new RequestParameters();
-
-        DbIndexGenerator(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        public String getIndexes(List<JsonNode> entities) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode node = objectMapper.valueToTree(entities);
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || !resultItr.hasNext()) {
-                    throw new IOException("Unable to generate database indexes");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();

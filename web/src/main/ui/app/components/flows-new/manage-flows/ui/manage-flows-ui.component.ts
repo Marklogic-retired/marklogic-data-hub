@@ -15,7 +15,8 @@ import {RunFlowDialogComponent} from "../../edit-flow/ui/run-flow-dialog.compone
 export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'targetEntity', 'status', 'jobsNumber', 'lastJobFinished', 'docsCommitted', 'docsFailed', 'actions'];
   @Input() flows: Array<Flow> = [];
-
+  @Input() isLoading: boolean;
+  @Input() runFlowClicked: any = {};
   @Output() deleteFlow = new EventEmitter();
   @Output() createFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -157,7 +158,7 @@ export class ManageFlowsUiComponent implements OnInit, AfterViewInit {
 
   checkRunDisabled(flow: Flow): boolean {
     if (flow.steps.length) {
-      if (flow.latestJob === null) {
+      if (this.runFlowClicked[flow.id] === true) {
         return true;
       }
       return false;

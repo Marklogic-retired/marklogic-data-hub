@@ -24,7 +24,6 @@ import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.gradle.task.BaseTest
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
-import spock.lang.Ignore
 
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -176,8 +175,10 @@ class TlsTest extends BaseTest {
                 mlAppConfig {
                     appServicesSslContext = newSslContext
                     appServicesSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    appServicesTrustManager = new SimpleX509TrustManager()
                     restSslContext = newSslContext
                     restSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    restTrustManager = new SimpleX509TrustManager()
                 }
 
                 mlManageConfig {
@@ -193,12 +194,15 @@ class TlsTest extends BaseTest {
                 hubConfig {
                     stagingSslContext = newSslContext
                     stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    stagingTrustManager = new SimpleX509TrustManager()
                      
                     finalSslContext = newSslContext
                     finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    finalTrustManager = new SimpleX509TrustManager()
 
                     jobSslContext = newSslContext
                     jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+                    jobTrustManager = new SimpleX509TrustManager()
                 }
 
                 mlManageClient.setManageConfig(mlManageConfig)
@@ -255,9 +259,11 @@ class TlsTest extends BaseTest {
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+        hubConfig().stagingTrustManager = new SimpleX509TrustManager()
         
         hubConfig().finalSslContext = newSslContext
         hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+        hubConfig().finalTrustManager = new SimpleX509TrustManager()
         print(result.output)
 
         then:

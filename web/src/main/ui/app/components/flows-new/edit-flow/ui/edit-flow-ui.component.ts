@@ -24,6 +24,8 @@ export class EditFlowUiComponent implements OnChanges {
   @Input() selectedStepId: any;
   @Input() projectDirectory: any;
   @Input() flowEnded: any;
+  @Input() runFlowClicked: boolean;
+  @Input() disableSelect: boolean;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -32,6 +34,7 @@ export class EditFlowUiComponent implements OnChanges {
   @Output() stepCreate = new EventEmitter();
   @Output() stepUpdate = new EventEmitter();
   @Output() stepDelete = new EventEmitter();
+
 
   constructor(
     public dialog: MatDialog,
@@ -75,8 +78,6 @@ export class EditFlowUiComponent implements OnChanges {
     });
 
     dialogRef.afterClosed().subscribe(response => {
-      // TODO add ability to run individual steps
-      console.log('The run dialog was closed', response);
       if ( response ) {
         const runObject = {
           id: this.flow.id,
@@ -123,6 +124,7 @@ export class EditFlowUiComponent implements OnChanges {
         this.flow.description = response.description;
         this.flow.batchSize = response.batchSize;
         this.flow.threadCount = response.threadCount;
+        this.flow.options = response.options;
         this.saveFlow.emit(this.flow);
       }
     });

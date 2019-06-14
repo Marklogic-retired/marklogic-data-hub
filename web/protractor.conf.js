@@ -10,6 +10,7 @@ exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
   suites: {
     all: './e2e/specs/index.ts',
+    smoke: './e2e/specs/smoke/index.ts',
     auth: './e2e/specs/auth/auth.ts'
   },
   capabilities: {

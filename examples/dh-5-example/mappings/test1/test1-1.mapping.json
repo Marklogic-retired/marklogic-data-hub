@@ -1,0 +1,14 @@
+{
+  "language" : "zxx",
+  "name" : "test1",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/modelName-version/entityType",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "id"
+    }
+  }
+}

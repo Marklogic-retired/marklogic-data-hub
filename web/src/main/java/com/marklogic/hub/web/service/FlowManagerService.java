@@ -16,6 +16,7 @@
 package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
@@ -35,17 +36,20 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.*;
+
 @Service
 public class FlowManagerService {
+
+    public static final String FLOW_FILE_EXTENSION = ".flow.json";
 
     @Autowired
     private FlowManager flowManager;
@@ -87,7 +91,7 @@ public class FlowManagerService {
         try {
             jsonObject = new JSONObject(flowJson);
 
-            JSONUtils.trimText(jsonObject);
+            JSONUtils.trimText(jsonObject, "separator");
         }
         catch (IOException e) {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
@@ -162,6 +166,8 @@ public class FlowManagerService {
 
     public void deleteFlow(String flowName) {
         flowManager.deleteFlow(flowName);
+        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.STAGING);
+        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.FINAL);
     }
 
     public List<StepModel> getSteps(String flowName) {
@@ -205,7 +211,7 @@ public class FlowManagerService {
         try {
             stepJson = JSONObject.readInput(stringStep);
 
-            JSONUtils.trimText(stepJson);
+            JSONUtils.trimText(stepJson, "separator");
 
             stepModel = StepModel.fromJson(stepJson);
         }
@@ -314,26 +320,37 @@ public class FlowManagerService {
         Flow flow = flowManager.getFlow(flowName);
         String key = getStepKeyInStepMap(flow, stepId);
 
-        if (key != null && !key.isEmpty()) {
-            try {
-                Map<String, Step> stepMap = flowManager.getSteps(flow);
-                Step step = stepMap.remove(key);
-                flowManager.setSteps(flow, stepMap);
-                flowManager.saveFlow(flow);
-
-//                // Don't delete the Step from the filesystem so that we can later on reuse the step.
-//                if (step.getType().equals(Step.StepDefinitionType.CUSTOM)) {
-//                    stepManagerService.deleteStepDefinition(step);
-//                }
-            }
-            catch (DataHubProjectException e) {
-                throw new NotFoundException(e.getMessage());
-            }
-        }
-        else {
+        if (StringUtils.isEmpty(key)) {
             throw new BadRequestException("Invalid Step Id");
         }
 
+        try {
+            Map<String, Step> stepMap = flowManager.getSteps(flow);
+            int stepOrder = Integer.parseInt(key);
+
+            if (stepOrder == stepMap.size()) {
+                stepMap.remove(key);
+            }
+            else {
+                Map<String, Step> newStepMap = new LinkedHashMap<>();
+                final int[] newStepOrder = {1};
+                final int[] stepIndex = {1};
+                stepMap.values().forEach(step -> {
+                    if (stepIndex[0] != stepOrder) {
+                        newStepMap.put(String.valueOf(newStepOrder[0]++), step);
+                    }
+                    stepIndex[0]++;
+                });
+
+                stepMap = newStepMap;
+            }
+
+            flowManager.setSteps(flow, stepMap);
+            flowManager.saveFlow(flow);
+        }
+        catch (DataHubProjectException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
     public FlowStepModel runFlow(String flowName, List<String> steps) {

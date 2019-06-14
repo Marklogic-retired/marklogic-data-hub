@@ -161,7 +161,7 @@
         </mat-row>
 
       </mat-table>
-
+      <app-spinner [isLoading]="isLoading"></app-spinner>
       <mat-paginator id="step-pagination"
                      *ngIf="job"
                      #paginator

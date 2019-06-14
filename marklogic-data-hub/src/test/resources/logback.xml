@@ -20,4 +20,12 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+  <!-- Helps verifies that test modules are loaded correctly -->
+  <logger name="com.marklogic.client.ext" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  <logger name="com.marklogic.hub.unittest" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
 </configuration>

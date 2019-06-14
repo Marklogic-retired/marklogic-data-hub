@@ -125,7 +125,7 @@ class FlowUtils {
     }
 
     if (dataFormat === this.consts.JSON) {
-      if(instance.root) {
+      if(instance && instance.root) {
         instance = instance.root;
       }
       return {
@@ -345,53 +345,53 @@ class FlowUtils {
         if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'NCName', key) && key !== '$type') {
           let nsKey = this.getElementName(namespace, namespacePrefix, key);
           let prop = entityInstance[key];
-          if (prop instanceof Sequence) {
+          let isArray = prop instanceof Array;
+          if (isArray || prop instanceof Sequence) {
             for (let item of prop) {
-              if (item instanceof ObjectNode) {
-                this.instanceToCanonicalXml(item);
-              } else {
-                nb.startElement(nsKey, ns);
-                if (item) {
-                  nb.addNode(item);
-                }
-                nb.endElement();
-              }
+              this.instanceItemToCanonicalXml(nb, item, nsKey, ns, isArray);
             }
-          } else if (prop instanceof Array) {
-            for (let item of prop) {
-              if (item instanceof Object) {
-                nb.startElement(nsKey, ns);
-                nb.addAttribute('datatype', 'array');
-                let canonical = this.instanceToCanonicalXml(item);
-                if (canonical) {
-                  nb.addNode(canonical);
-                }
-                nb.endElement();
-              }
-              else {
-                nb.startElement(nsKey, ns);
-                nb.addAttribute('datatype', 'array');
-                if (item) {
-                  nb.addNode(item);
-                }
-                nb.endElement();
-              }
-            }
-          }
-          else {
-            nb.startElement(nsKey, ns);
-            if(prop) {
-              nb.addText(prop.toString());
-            }
-            nb.endElement();
+          } else {
+            this.instanceItemToCanonicalXml(nb, prop, nsKey, ns, false);
           }
         }
-
       }
     }
     nb.endElement();
     nb.endElement();
     return nb.toNode();
+  }
+
+  instanceItemToCanonicalXml(nb, item, nsKey, ns, isArray) {
+    if (item instanceof Object && !(item instanceof xs.anyAtomicType)) {
+      if (isArray) {
+        nb.startElement(nsKey, ns);
+        nb.addAttribute('datatype', 'array');
+        let canonical = this.instanceToCanonicalXml(item);
+        if (canonical) {
+          nb.addNode(canonical);
+        }
+        nb.endElement();
+      } else {
+        // TODO the line below doesn't add to the node builder...
+        // this.instanceToCanonicalXml(item);
+      }
+    } else {
+      nb.startElement(nsKey, ns);
+      if (isArray) {
+        nb.addAttribute('datatype', 'array');
+      }
+
+      if (item instanceof Node) {
+        nb.addNode(item);
+      } else if (item instanceof Number) {
+        nb.addNumber(item);
+      } else if (item instanceof Boolean) {
+        nb.addBoolean(item);
+      } else if (item !== null) {
+        nb.addText(item.toString());
+      }
+      nb.endElement();
+    }
   }
 
   xmlToJson(content) {
@@ -531,7 +531,10 @@ class FlowUtils {
 
   getHeaders(doc) {
     let headers = fn.head(doc.xpath('/*:envelope/*:headers'));
-    if(fn.count(headers) === 0) {
+    if (fn.count(headers) === 0) {
+      headers = null;
+    }
+    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:headers/*'))) == 0) {
       headers = null;
     }
     return headers;
@@ -539,7 +542,10 @@ class FlowUtils {
 
   getTriples(doc) {
     let triples = doc.xpath('/*:envelope/*:triples');
-    if(fn.count(triples) === 0) {
+    if (fn.count(triples) === 0) {
+      triples = null;
+    }
+    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:triples/*'))) == 0) {
       triples = null;
     }
     return triples;

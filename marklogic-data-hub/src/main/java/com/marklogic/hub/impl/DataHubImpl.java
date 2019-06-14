@@ -22,10 +22,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
-import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
-import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
-import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -42,7 +39,6 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
 import com.marklogic.hub.flow.FlowRunner;
@@ -263,28 +259,57 @@ public class DataHubImpl implements DataHub {
                 versionString = versions.getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            //Future proofing against 10 since we have an ES incompatibility that needs resolving
-            if (major != 9) {
+            if (!(major == 9 || major == 10)) {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            //Support any 9.0 version > 9.0-7 and all 10.0 versions.
             if (major == 9) {
-                String alteredString = versionString.replaceAll("[^\\d]+", "");
-                if (alteredString.length() < 4) {
-                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
+                int minor = 0;
+
+                //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
+                if(versionString.matches("^.*-(.+)\\..*")) {
+                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
                 }
-                int ver = Integer.parseInt(alteredString.substring(0, 4));
-                //Future proofing against 9.10 since we have an ES incompatibility that needs resolving
-                if (!isNightly && (ver < 9070 || ver > 9095)) {
+                else if(versionString.matches("^.*-(.+)$")){
+                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
+                }
+                //left pad minor version with 0 if it is < 10
+                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
+
+                int hotFixNum = 0;
+
+                //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
+                if(versionString.matches("^.*-(.+)\\.(.*)")) {
+                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
+                }
+                //left pad minor version with 0 if it is < 10
+                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
+                String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
+                int ver = Integer.parseInt(alteredString);
+
+                //ver >= 700 => 9.0-7 and above is supported
+                if (!isNightly && ver < 700) {
                     return false;
                 }
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                Date minDate = new GregorianCalendar(2018, Calendar.NOVEMBER, 5).getTime();
-                Date date = new SimpleDateFormat("y-M-d").parse(dateString);
-                if (date.before(minDate)) {
-                    return false;
+                //Support all 9.0-nightly on or after 11/5/2018
+                if(major == 9) {
+                    Date minDate = new GregorianCalendar(2018, Calendar.NOVEMBER, 5).getTime();
+                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                    if (date.before(minDate)) {
+                        return false;
+                    }
+                }
+                //Support all 10.0-nightly on or after 6/11/2019
+                if(major == 10) {
+                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 1).getTime();
+                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                    if (date.before(minDate)) {
+                        return false;
+                    }
                 }
             }
 
@@ -393,6 +418,12 @@ public class DataHubImpl implements DataHub {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteDocument(String uri, DatabaseKind databaseKind) {
+        String query = "xdmp:document-delete(\"" + uri + "\")";
+        logger.info("Deleting URI " + uri + " from " + databaseKind + " database.");
+        runInDatabase(query, hubConfig.getDbName(databaseKind));
     }
 
     public List<Command> buildListOfCommands() {
@@ -511,6 +542,13 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
+        // Turning off CMA for resources that have bugs in ML 9.0-7/8
+        AppConfig appConfig = hubConfig.getAppConfig();
+        appConfig.getCmaConfig().setCombineRequests(false);
+        appConfig.getCmaConfig().setDeployDatabases(false);
+        appConfig.getCmaConfig().setDeployRoles(false);
+        appConfig.getCmaConfig().setDeployUsers(false);
+
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
@@ -525,8 +563,6 @@ public class DataHubImpl implements DataHub {
                 throw new DataHubConfigurationException(e);
             }
         }
-        AppConfig appConfig = hubConfig.getAppConfig();
-        CMASettings.getInstance().setCmaSettings(appConfig);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
@@ -542,10 +578,13 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void updateIndexes() {
+        // First deploy protected paths (can add more resources here in the future)
+        AppConfig appConfig = hubConfig.getAppConfig();
+        new SimpleAppDeployer(getManageClient(), getAdminManager(), new DeployProtectedPathsCommand()).deploy(appConfig);
+
+        // Then deploy databases, utilizing a pattern for filenames when in a provisioned environment
         SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
-
-        AppConfig appConfig = hubConfig.getAppConfig();
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
@@ -553,7 +592,7 @@ public class DataHubImpl implements DataHub {
             if (hubConfig.getIsProvisionedEnvironment()) {
                 appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
             }
-            deployer.deploy(hubConfig.getAppConfig());
+            deployer.deploy(appConfig);
         } finally {
             appConfig.setCreateForests(originalCreateForests);
             appConfig.setResourceFilenamesIncludePattern(originalIncludePattern);
@@ -590,12 +629,9 @@ public class DataHubImpl implements DataHub {
         // Removing this command as databases are deleted by other DatabaseCommands
         commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
 
-        AppConfig appConfig = hubConfig.getAppConfig();
-        CMASettings.getInstance().setCmaSettings(appConfig);
-
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(commandMap);
-        finalDeployer.undeploy(appConfig);
+        finalDeployer.undeploy(hubConfig.getAppConfig());
     }
 
     private void runInDatabase(String query, String databaseName) {
@@ -645,11 +681,9 @@ public class DataHubImpl implements DataHub {
     private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
         List<Command> dbCommands = new ArrayList<>();
         for (Command c : commandMap.get("mlDatabaseCommands")) {
-            if (!(c instanceof DeployContentDatabasesCommand || c instanceof DeployTriggersDatabaseCommand || c instanceof DeploySchemasDatabaseCommand)) {
-                dbCommands.add(c);
-                if (c instanceof DeployOtherDatabasesCommand) {
-                    ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
-                }
+            dbCommands.add(c);
+            if (c instanceof DeployOtherDatabasesCommand) {
+                ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
             }
         }
         commandMap.put("mlDatabaseCommands", dbCommands);

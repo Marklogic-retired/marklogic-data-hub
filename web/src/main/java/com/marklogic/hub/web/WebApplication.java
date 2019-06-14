@@ -16,8 +16,6 @@
  */
 package com.marklogic.hub.web;
 
-import com.marklogic.contentpump.ContentPump;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

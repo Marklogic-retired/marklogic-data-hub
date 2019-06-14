@@ -1,11 +1,17 @@
 import {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, ExpectedConditions as EC, element} from "protractor";
+import manageFlowPage from "../flows/manageFlows";
 
 export class Steps extends AppPage {
 
-  // Step Dialog
+  qaProjectDir: string = '';
 
+  setQaProjectDir(path: string) {
+    this.qaProjectDir = path;
+  }
+
+  // Step Dialog
   get stepDialog() {
     return element(by.id("step-dialog"));
   }
@@ -51,6 +57,11 @@ export class Steps extends AppPage {
     let inputField = this.stepName;
     await inputField.clear();
     return await inputField.sendKeys(input);
+  }
+
+  async isStepInputFieldEnabled(flowName: string) {
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`))
+    return await run.isEnabled();
   }
 
   get stepDescription() {
@@ -176,13 +187,19 @@ export class Steps extends AppPage {
     return element(by.id(`step-${option}-btn`));
   }
 
+  get stepDialogBox() {
+    return element(by.css("mat-dialog-container"));
+  }
+
   /**
    * clickStepCancelSave
    * @param option = [cancel/save]
    */
   async clickStepCancelSave(option: string) {
-    let button = this.stepCancelSaveButton(option)
-    return await button.click();
+    let button = this.stepCancelSaveButton(option);
+    await browser.wait(EC.elementToBeClickable(button));
+    await browser.executeScript("arguments[0].click();", button);
+    return await browser.wait(EC.invisibilityOf(this.stepDialogBox));
   }
   
   // Steps container
@@ -209,12 +226,13 @@ export class Steps extends AppPage {
   }
 
   stepContainerDeleteButton(stepName: string) {
-    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../mat-icon[@class="step-delete"]`));  
+    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div/div/mat-icon`));
   }
 
   async clickStepSelectContainerDeleteButton(stepName: string) {
-    let stepContainerDelete = this.clickStepSelectContainerDeleteButton(stepName);
-    return await stepContainerDelete.click();
+    let stepContainerDelete = this.stepContainerDeleteButton(stepName);
+    browser.executeScript("arguments[0].click();", stepContainerDelete);
+    //return await stepContainerDelete.click();
   }
 
   stepContainerValidStatus(stepName: string) {
@@ -230,10 +248,19 @@ export class Steps extends AppPage {
   }
 
   stepContainerSummaryContent(stepName: string) {
-    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div[@class="summary"]/div[@class="summary-content"]`));  
+    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div[@class="summary"]/div[@class="summary-content ng-star-inserted"]`));
   }
 
-  // Step details header 
+  stepContainersSummaryContent(stepName: string) {
+    return element(by.xpath(`//h3[@class="step-name" and contains(text(), "${stepName}")]/../div[@class="summary"]/div[@class="summary-content ng-star-inserted"]`));
+  }
+
+  get lastStepContainer() {
+    return element.all(by.xpath(`(//h3[@class="step-name"]/..)[last()]`));
+  }
+
+
+  // Step details header
 
   get stepDetailsName() {
     return element(by.id("step-details-name"));
@@ -245,7 +272,8 @@ export class Steps extends AppPage {
   
   async clickStepMenu() {
     let button = this.stepMenu;
-    return await button.click();
+    //return await button.click();
+    return await browser.executeScript("arguments[0].click();", button);
   }
   
   get stepExpandCollapseButton() {
@@ -264,6 +292,15 @@ export class Steps extends AppPage {
   async clickStepMenuEditOption() {
     let menuEditOption = this.stepMenuEditOption;
     return await menuEditOption.click();
+  }
+
+  async removeStep(stepName: string) {
+    await this.clickStepSelectContainerDeleteButton(stepName);
+    await browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
+    await browser.sleep(1000);
+    await manageFlowPage.clickDeleteConfirmationButton("YES");
+    await browser.sleep(1000);
+    await browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
   }
 
 }

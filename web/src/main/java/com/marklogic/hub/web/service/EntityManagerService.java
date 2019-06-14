@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.entity.HubEntity;
@@ -127,6 +128,16 @@ public class EntityManagerService {
 
 
         if (fullpath == null) {
+            String entityFileName = entity.getName() + ENTITY_FILE_EXTENSION;
+
+            File entityFile = hubConfig.getHubEntitiesDir().resolve(entityFileName).toFile();
+            String canonicalFileName = Paths.get(entityFile.getCanonicalPath()).getFileName().toString();
+
+            if (entityFile.exists() && !entityFileName.equals(canonicalFileName)) {
+                // Possibly a case insensitive file-system
+                throw new DataHubProjectException("An entity with this name already exists.");
+            }
+
             em.saveEntity(hubEntity, false);
         }
         else {
@@ -142,9 +153,12 @@ public class EntityManagerService {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION).toFile();
+        String entityFileName = entity + ENTITY_FILE_EXTENSION;
+        File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entityFileName).toFile();
         if (entitiesFile.exists()) {
             em.deleteEntity(entity);
+            dataHubService.deleteDocument("/entities/" + entityFileName, DatabaseKind.STAGING);
+            dataHubService.deleteDocument("/entities/" + entityFileName, DatabaseKind.FINAL);
         }
     }
 
