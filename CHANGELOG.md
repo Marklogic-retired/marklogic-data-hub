@@ -1,5 +1,83 @@
 # Change Log
 
+## [v5.0.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/5.0.1) (2019-06-14)
+
+Improvements
+
+    [DHFPROD-2517] - Handle temporal docs natively in data hub
+    [DHFPROD-2544] - Ingest doesn't set source information for use with mastering
+    [DHFPROD-2648] - UI support for specifying delimiter (separator) for CSV ingestion
+    [DHFPROD-2340] - Add outputFormat option to all steps (backend and Quickstart)
+    [DHFPROD-2561] - Add Collections field to all steps (Quickstart)
+    [DHFPROD-2149] - Add tooltips for 'New flow' dialog
+    [DHFPROD-2610] - Deploy DHF using ml-gradle and ml-app-deployer version 3.15.0
+    [DHFPROD-2611] - Deploy DHF bootstrap project via ml-gradle 3.15.0
+
+Bug
+
+    [DHFPROD-1878] - Long text allows facet numbers to exceed their container
+    [DHFPROD-2027] - Steps number are limited to nine on Manage Flows page
+    [DHFPROD-2172] - Entity box content structure breaks if resize Chrome page on Windows
+    [DHFPROD-2179] - DMSDK Ingestion Performance is one order of magnitute worse than mlcp
+    [DHFPROD-2207] - mlDeploy on DataHub fails with no group named "Default" on Marklogic server
+    [DHFPROD-2271] - Some lags on loading flows and jobs if you have a lot of them
+    [DHFPROD-2290] - On reduce type match options, able to create empty 2nd to nth property names
+    [DHFPROD-2295] - Entity box element doesn't resize to accommodate content on Windows(Chrome). 
+    [DHFPROD-2297] - Entity box content is not visible using Chrome if apply Windows scale and layout. 
+    [DHFPROD-2324] - Fix mapping to work with XML on quickstart UI
+    [DHFPROD-2341] - Mapping source doc uri is not updated with changing to different collection
+    [DHFPROD-2343] - Deleting an entity via "x" icon on QuickStart UI doesn't remove the entity definition on database
+    [DHFPROD-2348] - BUG: Stopped flow is missing latest job status and timestamp.
+    [DHFPROD-2365] - The jobs tab doesn't show the jobs
+    [DHFPROD-2399] - Browse data results page is not retained if you click back on browser from doc viewer page
+    [DHFPROD-2446] - optionsFile command line argument ignored
+    [DHFPROD-2449] - Bad Json documents  on harmonizing XML documents with outputFormat json 
+    [DHFPROD-2451] - Extra header and triple elements in XML harmonization
+    [DHFPROD-2452] - BUG: Text document failed to ingest. 
+    [DHFPROD-2488] - UI: The Delete button in the entity card is an X, instead of a trash icon
+    [DHFPROD-2493] - No error on incorrect -PinputFileType option provided
+    [DHFPROD-2496] - Duplicate entries in database index settings if entities contain the same fields
+    [DHFPROD-2499] - hubCreateMapping gradle command with -PentityName creates targetEntityType without that entity
+    [DHFPROD-2500] - Mapping doesnt work for attributes in the xml input document
+    [DHFPROD-2503] - Mapping collection on browse data page disappeared after running mastering step
+    [DHFPROD-2514] - A long string on step name will goes beyond the step container
+    [DHFPROD-2516] - How to do temporal ?
+    [DHFPROD-2522] - Change the label "Source File Path" to "Source Folder/Directory Path" on Ingestion as it creates confusion
+    [DHFPROD-2523] - Clicking Running link while running the flows produces 500 internal error
+    [DHFPROD-2526] - A flow keeps running status when the Data-hub app server is down during the running period 
+    [DHFPROD-2527] - Need to put a space in front of Jobs label on the tab (between the icon and the label)
+    [DHFPROD-2528] - Disable merge strategy dropdown if there is no strategy
+    [DHFPROD-2529] - PII defined in Entity, protected paths not created
+    [DHFPROD-2532] - Mapping drop down flowing off the screen
+    [DHFPROD-2538] - Improve job query by flowName
+    [DHFPROD-2539] - A Mastering step with zip or double-metaphone matching fails with "no namespace" error
+    [DHFPROD-2545] - protected-prov collection file is ignored when hub is initialized
+    [DHFPROD-2547] - Default final database has an empty array of range indexes
+    [DHFPROD-2548] - Entity artifacts are overridden when creating with an existing entity name
+    [DHFPROD-2555] - Mapping Step Should Put Docs in Collection for Entity
+    [DHFPROD-2556] - Mastering Step, Synonym Match Option with Thesaurus Issue
+    [DHFPROD-2567] - To run a custom step, user can't leave the source collection empty
+    [DHFPROD-2570] - Ingestion/mapping of json as xml and xml as json are having issues with objects and arrays
+    [DHFPROD-2572] - Adding options to flow does not work
+    [DHFPROD-2581] - Can't add a new step after deleting a step between 2 steps
+    [DHFPROD-2585] - Error while creating a new entity from datahub UI
+    [DHFPROD-2588] - DHF 5.0.0: REST API transform broken - impacting Nifi Flows
+    [DHFPROD-2589] - BUG: The status of the cancelled flow doesn't update. 
+    [DHFPROD-2601] - Ingested source information not maintained through mapping
+    [DHFPROD-2615] - Generate indexes fails when no range indexes are set
+    [DHFPROD-2616] - BUG: Cannot modify the entity.
+    [DHFPROD-2625] - Update DH preInstall check to consider ML-10.0-1 server
+    [DHFPROD-2627] - UX fix: Add appropriate UI feedback after starting a flow run
+    [DHFPROD-2634] - Cannot deploy datahub using 9.0-7 & 9.0-8 server versions
+    [DHFPROD-2635] - Users should be able to set delimiter (other than comma) for ingestion
+    [DHFPROD-2656] - Running a custom hook with user param is running into privilege issue
+    [DHFPROD-2660] - Custom hook missing database parameter
+    [DHFPROD-2662] - REGRESSION: Unable to edit an entity to update the indexes from QS
+    [DHFPROD-2667] - Getting "buildInvokeOptions is not defined" while running a custom hook with database parameter
+    [DHFPROD-2668] - Mapping and Mastering is failing with temporal documents
+
+
+
 ## [v4.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/4.1.0) (2018-12-19)
 
 Bug
