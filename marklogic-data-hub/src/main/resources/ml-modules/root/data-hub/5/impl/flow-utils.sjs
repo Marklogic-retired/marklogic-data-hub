@@ -531,7 +531,10 @@ class FlowUtils {
 
   getHeaders(doc) {
     let headers = fn.head(doc.xpath('/*:envelope/*:headers'));
-    if(fn.count(headers) === 0) {
+    if (fn.count(headers) === 0) {
+      headers = null;
+    }
+    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:headers/*'))) == 0) {
       headers = null;
     }
     return headers;
@@ -539,7 +542,10 @@ class FlowUtils {
 
   getTriples(doc) {
     let triples = doc.xpath('/*:envelope/*:triples');
-    if(fn.count(triples) === 0) {
+    if (fn.count(triples) === 0) {
+      triples = null;
+    }
+    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:triples/*'))) == 0) {
       triples = null;
     }
     return triples;
