@@ -145,8 +145,8 @@ bintray {
 }
 
 pluginBundle {
-    website = 'http://www.gradle.org/'
-    vcsUrl = 'git@github.com:marklogic/marklogic-data-hub.git'
+    website = 'https://marklogic.github.io/marklogic-data-hub/'
+    vcsUrl = 'https://github.com/marklogic/marklogic-data-hub.git'
     description = 'ml-data-hub A gradle plugin for Data Hub tasks'
     tags = ['marklogic', 'data hub']
 

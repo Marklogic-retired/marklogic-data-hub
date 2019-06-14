@@ -104,7 +104,9 @@ export default function(qaProjectDir) {
             await browser.sleep(5000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
+            await manageFlowPage.clickLastJobFinished("AdvantageFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -200,7 +202,9 @@ export default function(qaProjectDir) {
             await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
+            await manageFlowPage.clickLastJobFinished("AdvantageFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -262,7 +266,9 @@ export default function(qaProjectDir) {
             await browser.sleep(5000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("BedrockFlow")));
+            await manageFlowPage.clickLastJobFinished("BedrockFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -358,7 +364,9 @@ export default function(qaProjectDir) {
             await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("BedrockFlow")));
+            await manageFlowPage.clickLastJobFinished("BedrockFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -424,7 +432,9 @@ export default function(qaProjectDir) {
             await browser.sleep(5000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("CerrianFlow")));
+            await manageFlowPage.clickLastJobFinished("CerrianFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -520,7 +530,9 @@ export default function(qaProjectDir) {
             await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("CerrianFlow")));
+            await manageFlowPage.clickLastJobFinished("CerrianFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -555,149 +567,149 @@ export default function(qaProjectDir) {
 
         it('should create and run MasteringCustomer step', async function() {
             await appPage.flowsTab.click();
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
             await manageFlowPage.clickFlowname("MasteringFlow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickNewStepButton();
-            browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+            await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
             await stepsPage.clickStepTypeDropDown();
-            browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mastering")));
+            await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mastering")));
             await stepsPage.clickStepTypeOption("Mastering");
-            browser.wait(EC.visibilityOf(stepsPage.stepName));
+            await browser.wait(EC.visibilityOf(stepsPage.stepName));
             await stepsPage.setStepName("MasteringCustomer");
             await stepsPage.setStepDescription("Mastering Customer docs");
             await stepsPage.clickSourceTypeRadioButton("query");
-            browser.wait(EC.elementToBeClickable(stepsPage.stepSourceQuery));
+            await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceQuery));
             await stepsPage.setStepSourceQuery(`cts.collectionQuery(["MappingAdvantage", "MappingBedrock", "MappingCerrian"])`);
             await stepsPage.clickStepTargetEntityDropDown();
-            browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Customer")));
-            browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Customer")));
+            await browser.sleep(5000);
             await stepsPage.clickStepTargetEntityOption("Customer");
             await stepsPage.clickStepCancelSave("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             await expect(stepsPage.stepDetailsName.getText()).toEqual("MasteringCustomer");
             // Configure matching and merging
             // Add matching option for firstname
             await masteringStepPage.clickMatchOptionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
             await masteringStepPage.clickMatchOptionDialogPropertyMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("firstname")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("firstname")));
             await masteringStepPage.clickMatchOptionDialogPropertyOption("firstname");
             await masteringStepPage.setMatchOptionDialogWeight(5);
             await masteringStepPage.clickMatchOptionCancelSave("save");
-            browser.sleep(3000);
+            await browser.sleep(3000);
             // Add matching option for lastname
             await masteringStepPage.clickMatchOptionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
             await masteringStepPage.clickMatchOptionDialogPropertyMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("lastname")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("lastname")));
             await masteringStepPage.clickMatchOptionDialogPropertyOption("lastname");
             await masteringStepPage.setMatchOptionDialogWeight(10);
             await masteringStepPage.clickMatchOptionCancelSave("save");
-            browser.sleep(3000);
+            await browser.sleep(3000);
             // Add matching option for email
             await masteringStepPage.clickMatchOptionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
             await masteringStepPage.clickMatchOptionDialogPropertyMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("email")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("email")));
             await masteringStepPage.clickMatchOptionDialogPropertyOption("email");
             await masteringStepPage.setMatchOptionDialogWeight(20);
             await masteringStepPage.clickMatchOptionCancelSave("save");
-            browser.sleep(3000);
+            await browser.sleep(3000);
             // Add matching option for zip
             await masteringStepPage.clickMatchOptionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.matchOptionDialog));
             await masteringStepPage.clickMatchOptionDialogTypeMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogTypeOptions("Zip")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogTypeOptions("Zip")));
             await masteringStepPage.clickMatchOptionDialogTypeOption("Zip");
             await masteringStepPage.clickMatchOptionDialogPropertyMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("zip")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("zip")));
             await masteringStepPage.clickMatchOptionDialogPropertyOption("zip");
             await masteringStepPage.setMatchOptionDialogZip5Match9(20);
             await masteringStepPage.setMatchOptionDialogZip9Match5(20);
             await masteringStepPage.clickMatchOptionCancelSave("save");
-            browser.sleep(3000);
+            await browser.sleep(3000);
             // Add DefiniteMatch matching threshold
             await masteringStepPage.clickMatchThresholdsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.matchThresholdDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.matchThresholdDialog));
             await masteringStepPage.setMatchThresholdDialogName("DefiniteMatch");
             await masteringStepPage.setMatchThresholdDialogWeight(25);
             await masteringStepPage.clickMatchThresholdDialogActionMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchThresholdDialogActionOptions("Merge")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchThresholdDialogActionOptions("Merge")));
             await masteringStepPage.clickMatchThresholdDialogActionOptions("Merge");
             await masteringStepPage.clickMatchThresholdCancelSaveButton("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             // Add MaybeMatch matching threshold
             await masteringStepPage.clickMatchThresholdsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.matchThresholdDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.matchThresholdDialog));
             await masteringStepPage.setMatchThresholdDialogName("MaybeMatch");
             await masteringStepPage.setMatchThresholdDialogWeight(15);
             await masteringStepPage.clickMatchThresholdDialogActionMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.matchThresholdDialogActionOptions("Notify")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.matchThresholdDialogActionOptions("Notify")));
             await masteringStepPage.clickMatchThresholdDialogActionOptions("Notify");
             await masteringStepPage.clickMatchThresholdCancelSaveButton("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             // Add Merging Option for id
             await masteringStepPage.clickMasteringTab("Merging");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionsAddButton));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionsAddButton));
             await masteringStepPage.clickMergeOptionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
             await masteringStepPage.clickMergeOptionDialogPropertyMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("id")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("id")));
             await masteringStepPage.clickMergeOptionDialogPropertyOption("id");
             await masteringStepPage.setMergeOptionDialogMaxValues(1);
             await masteringStepPage.clickMergeOptionCancelSave("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             // Add Merging Option for zip
             await masteringStepPage.clickMergeOptionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.mergeOptionDialog));
             await masteringStepPage.clickMergeOptionDialogPropertyMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("zip")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeOptionDialogPropertyOptions("zip")));
             await masteringStepPage.clickMergeOptionDialogPropertyOption("zip");
             await masteringStepPage.setMergeOptionDialogMaxValues(1);
             await masteringStepPage.setMergeOptionDialogLength(10);
             await masteringStepPage.clickMergeOptionCancelSave("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             // Add onMerge Collection
             await masteringStepPage.clickMergeCollectionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
             await masteringStepPage.clickMergeCollectionDialogEventMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onMerge")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onMerge")));
             await masteringStepPage.clickMergeCollectionDialogEventOptions("onMerge")
             await masteringStepPage.setCollectionToSet(0, "customer-merge");
             await masteringStepPage.clickMergeCollectionCancelSaveButton("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             // Add onNotification Collection
             await masteringStepPage.clickMergeCollectionsAddButton();
-            browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
+            await browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
             await masteringStepPage.clickMergeCollectionDialogEventMenu();
-            browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onNotification")));
+            await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onNotification")));
             await masteringStepPage.clickMergeCollectionDialogEventOptions("onNotification")
             await masteringStepPage.setCollectionToSet(0, "customer-notify");
             await masteringStepPage.clickMergeCollectionCancelSaveButton("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             // Redeploy
             await appPage.flowsTab.click();
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
             await manageFlowPage.clickRedeployButton();
-            browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
+            await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
             await manageFlowPage.clickRedeployConfirmationButton("YES");
-            browser.sleep(15000);
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
+            await browser.sleep(15000);
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
             await manageFlowPage.clickFlowname("MasteringFlow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickRunFlowButton();
-            browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+            await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             // unselect run all
             await editFlowPage.selectRunAll();
             await editFlowPage.selectStepToRun("MasteringCustomer");
@@ -705,7 +717,9 @@ export default function(qaProjectDir) {
             await browser.sleep(10000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
             // Verify on Job Detail page
-            await editFlowPage.clickFinishedLatestJobStatus();
+            await appPage.flowsTab.click()
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
+            await manageFlowPage.clickLastJobFinished("MasteringFlow");
             await browser.sleep(5000);
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
             await browser.wait(EC.visibilityOf(jobDetailsPage.jobSummary));
@@ -717,32 +731,32 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.stepCommitted("MasteringCustomer").getText()).toEqual("2,505");   
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
-            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            browser.sleep(10000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2512');
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await browser.sleep(10000);
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2512');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
             await expect(browsePage.facetCount("MasteringCustomer").getText()).toEqual("2512");
             await expect(browsePage.facetCount("customer-merge").getText()).toEqual("3");
             await expect(browsePage.facetCount("customer-notify").getText()).toEqual("1");
             // Verify the merge results
             await browsePage.clickFacetName("customer-merge");
-            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 3 of 3');
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 3 of 3');
             // Verify the merge doc from exact match
             await browsePage.searchKeyword("dray");
-            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
             // Verify the merge doc from zip match
             await browsePage.searchKeyword("arya");
-            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
             // Verify the merge doc from xml mapping
             await browsePage.searchKeyword("gardner");
-            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));
             await expect(manageFlowPage.status("MasteringFlow").getText()).toEqual("Finished");
             await expect(manageFlowPage.docsCommitted("MasteringFlow").getText()).toEqual("2,505");
         });
