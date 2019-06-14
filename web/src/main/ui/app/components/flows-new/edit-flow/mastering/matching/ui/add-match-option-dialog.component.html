@@ -137,7 +137,7 @@
       matTooltipHideDelay="500" layout-fill>
       <mat-label>URI</mat-label>
       <input id="match-option-custom-uri" matInput formControlName="customUri" required [errorStateMatcher]="instantErrorMatcher"/>
-      <mat-error id="match-option-custom-uri-error" *ngIf="form.get('customUri').invalid">Custom URI is required</mat-error>
+      <mat-error id="match-option-custom-uri-error" *ngIf="form.get('customUri').invalid">URI is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.customFunc"
@@ -146,7 +146,7 @@
       matTooltipHideDelay="500" layout-fill>
       <mat-label>Function</mat-label>
       <input id="match-option-custom-function" matInput formControlName="customFunction" required [errorStateMatcher]="instantErrorMatcher"/>
-      <mat-error id="match-option-custom-function-error" *ngIf="form.get('customFunction').invalid">Custom Function is required</mat-error>
+      <mat-error id="match-option-custom-function-error" *ngIf="form.get('customFunction').invalid">Function is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.customNS"
