@@ -24,7 +24,12 @@
         "outputFormat": "json",
         "collections": [
           "default-ingestion"
-        ]
+        ],
+        "headers": {
+          "sources": [{"name":  "%%mlFlowName%%"}],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        }
       }
     },
     "2": {
