@@ -64,6 +64,35 @@ export class AddMatchOptionDialogComponent {
     const weightControl = this.form.get('weight');
     const zip5match9Control = this.form.get('zip5match9');
     const zip9match5Control = this.form.get('zip9match5');
+    const thesaurusControl = this.form.get('thesaurus');
+    const dictionaryControl = this.form.get('dictionary');
+    const distanceThresholdControl = this.form.get('distanceThreshold');
+    const customUriControl = this.form.get('customUri');
+    const customFunctionControl = this.form.get('customFunction');
+    if(this.selectedType === 'synonym'){
+      thesaurusControl.setValidators(Validators.required);
+    }else {
+      thesaurusControl.clearValidators();
+      thesaurusControl.reset();
+    }
+    if(this.selectedType === 'double metaphone'){
+      dictionaryControl.setValidators(Validators.required);
+      distanceThresholdControl.setValidators(Validators.required);
+    }else {
+      dictionaryControl.clearValidators();
+      dictionaryControl.reset();
+      distanceThresholdControl.clearValidators();
+      distanceThresholdControl.reset();
+    }
+    if(this.selectedType === 'custom'){
+      customUriControl.setValidators(Validators.required);
+      customFunctionControl.setValidators(Validators.required)
+    }else{
+      customUriControl.clearValidators();
+      customUriControl.reset();
+      distanceThresholdControl.clearValidators();
+      distanceThresholdControl.reset();
+    }
     if (this.selectedType === 'zip') {
       zip5match9Control.setValidators(this.weightValidators);
       zip9match5Control.setValidators(this.weightValidators);

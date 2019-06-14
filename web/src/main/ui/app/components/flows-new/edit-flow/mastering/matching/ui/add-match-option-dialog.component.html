@@ -67,7 +67,8 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>Thesaurus URI</mat-label>
-      <input id="match-option-synonym-thesaurus" matInput formControlName="thesaurus"/>
+      <input id="match-option-synonym-thesaurus" matInput formControlName="thesaurus" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-synonym-thesaurus-error" *ngIf="form.get('thesaurus').invalid">thesaurus URI is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.filter"
@@ -85,7 +86,8 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>Dictionary URI</mat-label>
-      <input id="match-option-metaphone-dictionary" matInput formControlName="dictionary"/>
+      <input id="match-option-metaphone-dictionary" matInput formControlName="dictionary" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-metaphone-dictionary-error" *ngIf="form.get('dictionary').invalid">Dictionary URI is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.distanceThresh"
@@ -93,7 +95,8 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>Distance Threshold</mat-label>
-      <input id="match-option-metaphone-distance-threshold" matInput formControlName="distanceThreshold"/>
+      <input id="match-option-metaphone-distance-threshold" matInput formControlName="distanceThreshold" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-metaphone-distance-threshold-error" *ngIf="form.get('distanceThreshold').invalid">Distance Threshold is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.collation"
@@ -133,7 +136,8 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>URI</mat-label>
-      <input id="match-option-custom-uri" matInput formControlName="customUri"/>
+      <input id="match-option-custom-uri" matInput formControlName="customUri" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-custom-uri-error" *ngIf="form.get('customUri').invalid">Custom URI is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.customFunc"
@@ -141,7 +145,8 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500" layout-fill>
       <mat-label>Function</mat-label>
-      <input id="match-option-custom-function" matInput formControlName="customFunction"/>
+      <input id="match-option-custom-function" matInput formControlName="customFunction" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-custom-function-error" *ngIf="form.get('customFunction').invalid">Custom Function is required</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.customNS"
@@ -152,7 +157,7 @@
       <input id="match-option-custom-namespace" matInput formControlName="customNs"/>
     </mat-form-field>
   </div>
-
+  <mat-hint>Fields with * are required</mat-hint>
 </div>
 
 <mat-dialog-actions align="end" class="bottom">
