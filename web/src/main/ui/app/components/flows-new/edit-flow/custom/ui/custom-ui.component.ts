@@ -17,5 +17,5 @@ export class CustomUiComponent {
 
   onChange() {
     this.updateCustom.emit(this.step);
-    this.snackBar.open("Change Saved.", "", {panelClass: ['snackbar'], duration: 1500});  }
+    this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});  }
 }
