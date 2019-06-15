@@ -16,3 +16,9 @@ div.label {
 /deep/ .csv-separator-field {
   padding: 8px 0 !important;
 }
+
+/deep/ .snackbar .mat-simple-snackbar {
+  max-width: 500px;
+  justify-content: center;
+  color: white;
+  }
