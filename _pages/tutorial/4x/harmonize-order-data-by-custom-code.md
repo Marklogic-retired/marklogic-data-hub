@@ -102,7 +102,7 @@ To customize the **Collector** plugin,
 
 1. Click the **COLLECTOR**{:.uilabel} tab.
 1. Replace the collector plugin code with the following:
-      <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/collector/collector.sjs"></div>
+      <div class="embed-git lang-js" href="https://github.com/marklogic/marklogic-data-hub/blob/master/examples/online-store/entities/harmonize/Harmonize%20Orders/collector/collector.sjs"></div>
 1. Click **SAVE**{:.inline-button}.
 {:.ol-steps}
 
