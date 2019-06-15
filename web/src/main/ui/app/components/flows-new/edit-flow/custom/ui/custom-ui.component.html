@@ -19,8 +19,7 @@
       id="custom-module-uri"
       matInput
       [(ngModel)]="step.modulePath"
-      (blur)="onChange()"
-      (keypress)="onKeyChange($event)"
+      (change)="onChange()"
     />
   </mat-form-field>
 </div>

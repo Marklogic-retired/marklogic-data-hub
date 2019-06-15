@@ -74,8 +74,7 @@
         matInput
         [(ngModel)]="this.step.options.permissions"
         name="permissions"
-        (blur)="onChange()"
-        (keypress)="onKeyChange($event)"
+        (change)="onChange()"
       />
     </mat-form-field>
 
@@ -92,8 +91,7 @@
         matInput
         [(ngModel)]="this.step.fileLocations.outputURIReplacement"
         name="permissions"
-        (blur)="onChange()"
-        (keypress)="onKeyChange($event)"
+        (change)="onChange()"
       />
     </mat-form-field>
 </div>
