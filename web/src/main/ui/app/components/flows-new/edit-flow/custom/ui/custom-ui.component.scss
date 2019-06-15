@@ -26,3 +26,9 @@ div.label {
   font-size: 20px;
   font-weight: normal;
 }
+
+/deep/ .snackbar .mat-simple-snackbar {
+  max-width: 500px;
+  justify-content: center;
+  color: white;
+  }
