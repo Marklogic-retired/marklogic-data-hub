@@ -1,10 +1,11 @@
 <div layout-padding layout="column" class="ingest-page">
 
     <div class="label" 
-    [matTooltip]="tooltips.sourcePath"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
+      [matTooltip]="tooltips.sourcePath"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+      matTooltipClass="source-path-tooltip"
     >{{config.inputFilePath.label}}</div>
     <app-folder-browser
       [startPath]="this.step.fileLocations.inputFilePath"
@@ -13,7 +14,13 @@
       [absoluteOnly]="true"
     ></app-folder-browser>
 
-    <div class="label">{{config.fileTypes.label}}</div>
+    <div class="label"
+      [matTooltip]="tooltips.sourceType"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+      matTooltipClass="source-file-type-tooltip"
+    >{{config.fileTypes.label}}</div>
     <mat-form-field layout-fill class="source-file-type">
       <mat-select
         id="source-file-type-select"
@@ -31,7 +38,13 @@
     </mat-form-field>
 
     <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
-      <div class="label">{{config.csvSeparator.label}}</div>
+      <div class="label"
+        [matTooltip]="tooltips.separator"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"
+        matTooltipClass="csv-separator-field-tooltip"
+      >{{config.csvSeparator.label}}</div>
       <mat-form-field layout-fill class="csv-separator-field">
         <mat-select
           id="csv-separator-select"
@@ -50,10 +63,11 @@
     </div>
 
     <div class="label"
-    [matTooltip]="tooltips.targetType"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
+      [matTooltip]="tooltips.targetType"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+      matTooltipClass="target-file-type-tooltip"
     >{{config.outputDocTypes.label}}</div>
     <mat-form-field layout-fill class="target-file-type">
       <mat-select
@@ -72,10 +86,10 @@
     </mat-form-field>
 
     <div class="label"
-    [matTooltip]="tooltips.targetPerms"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
+      [matTooltip]="tooltips.targetPerms"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
     >{{config.outputPermissions.label}}</div>
     <mat-form-field layout-fill class="target-permissions-field">
       <input
@@ -89,11 +103,11 @@
     </mat-form-field>
 
     <div class="label"
-    [matTooltip]="tooltips.targetURIReplace"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500"
-    matTooltipClass="target-uri-replace" 
+      [matTooltip]="tooltips.targetURIReplace"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+      matTooltipClass="target-uri-replace" 
     >{{config.outputURIReplacement.label}}</div>
     <mat-form-field layout-fill class="target-uri-replace-field">
       <mat-hint>Optional</mat-hint>
