@@ -29,9 +29,23 @@ div.label {
   max-width: 259px !important;
 }
 
+/deep/ .mat-tooltip.source-path-tooltip {
+  left: 320px !important;
+}
+
+/deep/ .mat-tooltip.source-file-type-tooltip,
+/deep/ .mat-tooltip.csv-separator-field-tooltip,
+/deep/ .mat-tooltip.target-file-type-tooltip {
+  left: 300px !important;
+}
+
 /deep/ .mat-form-field.source-file-type,
 /deep/ .mat-form-field.target-file-type {
   width: 200px !important;
+}
+
+/deep/ .mat-form-field.csv-separator-field {
+  width: 184px !important;
 }
 
 /deep/ .mat-form-field.target-permissions-field,
