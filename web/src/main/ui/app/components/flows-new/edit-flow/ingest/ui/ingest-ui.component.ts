@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const settings = {
   inputFilePath: {
@@ -98,19 +99,13 @@ export class IngestUiComponent {
   @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
-  constructor() {
+  constructor(private snackBar: MatSnackBar) {
   }
 
   config = settings;
   changeFolder(folder) {
     if (this.step.fileLocations.inputFilePath !== folder.absolutePath) {
       this.step.fileLocations.inputFilePath = folder.absolutePath;
-      this.onChange();
-    }
-  }
-
-  onKeyChange(event) {
-    if (event.key === 'Enter') {
       this.onChange();
     }
   }
@@ -128,6 +123,5 @@ export class IngestUiComponent {
 
   onChange() {
     this.saveStep.emit(this.step);
-  }
-
+    this.snackBar.open("Change Saved.", "", {panelClass: ['snackbar'], duration: 1500});  }
 }

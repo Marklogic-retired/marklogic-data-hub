@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Step} from '../../../models/step.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-custom-ui',
@@ -11,16 +12,10 @@ export class CustomUiComponent {
   @Input() module: string;
   @Output() updateCustom = new EventEmitter();
 
-  constructor() {
-  }
-
-  onKeyChange(event) {
-    if (event.key === 'Enter') {
-      this.onChange();
-    }
+  constructor(private snackBar: MatSnackBar) {
   }
 
   onChange() {
     this.updateCustom.emit(this.step);
-  }
+    this.snackBar.open("Change Saved.", "", {panelClass: ['snackbar'], duration: 1500});  }
 }
