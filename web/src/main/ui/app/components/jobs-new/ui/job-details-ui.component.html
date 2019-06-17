@@ -7,7 +7,7 @@
   </div>
 
   <!-- CENTER -->
-  <div class="center">
+  <div *ngIf = "!errorResponse.isError" class="center">
 
     <!-- HEADER -->
     <div class="header accent">
@@ -175,6 +175,6 @@
   </div>
   <http-error
     *ngIf="errorResponse.isError"
-    [message]="errorResponse.message"
+    [error]="errorResponse"
   ></http-error>
 </div>

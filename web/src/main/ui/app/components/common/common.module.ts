@@ -7,13 +7,15 @@ import {SpinnerComponent} from './spinner/spinner.component';
 import {HttpErrorComponent} from './http-error/http-error.component';
 import {MaterialModule} from "../theme/material.module";
 import {TooltipModule} from "ngx-bootstrap";
+import {RouterModule} from "@angular/router";
 
 
 @NgModule({
   imports: [
     CommonModule,
     MaterialModule,
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    RouterModule
   ],
   exports: [
     ConfirmationDialogComponent,
