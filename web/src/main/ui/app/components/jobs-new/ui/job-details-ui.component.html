@@ -17,7 +17,7 @@
     </div>
     <!-- / HEADER -->
 
-    <div class="content-card">
+    <div class="content-card" *ngIf="job" >
 
       <div id="job-summary" [ngClass]="{hidden: !job}">
         <section class="name">
@@ -173,11 +173,8 @@
 
     </div>
   </div>
-  <http-error></http-error>
+  <http-error
+    *ngIf="errorResponse.isError"
+    [message]="errorResponse.message"
+  ></http-error>
 </div>
-
-<!-- <mat-menu class="step-menu-dialog" #jobMenu="matMenu">
-  <ng-template matMenuContent let-step="step">
-    <div class="step-menu-output-btn" mat-menu-item (click)="openOutputDialog(getOutput(step))">Output</div>
-  </ng-template>
-</mat-menu> -->
