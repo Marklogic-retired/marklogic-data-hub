@@ -59,9 +59,11 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   stepType: typeof StepType = StepType;
   runFlowClicked: boolean = false;
   disableSelect: boolean = false;
+
   errorResponse: any = {
     isError: false,
-    message: ''
+    status: '',
+    statusTest: ''
   };
   navigationPopState: any;
 
@@ -115,7 +117,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
             this.flow = null;
             this.stepsArray = null;
             this.errorResponse.isError = true;
-            this.errorResponse.message = error.message;
+            this.errorResponse.status = error.status;
+            this.errorResponse.statusText = error.statusText;
           });
       }
     });

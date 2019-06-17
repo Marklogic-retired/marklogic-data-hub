@@ -25,7 +25,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   isLoading = true;
   errorResponse: any = {
     isError: false,
-    message: ''
+    status: '',
+    statusText: ''
   };
   navigationPopState: any;
   constructor(
@@ -78,7 +79,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
             console.log('job error', error);
             this.job = null;
             this.errorResponse.isError = true;
-            this.errorResponse.message = error.message;
+            this.errorResponse.status = error.status;
+            this.errorResponse.statusText = error.statusText;
           });
       }
     });
