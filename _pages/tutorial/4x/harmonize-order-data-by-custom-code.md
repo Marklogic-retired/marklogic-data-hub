@@ -102,7 +102,25 @@ To customize the **Collector** plugin,
 
 1. Click the **COLLECTOR**{:.uilabel} tab.
 1. Replace the collector plugin code with the following:
-      <div class="embed-git lang-js" href="https://github.com/marklogic/marklogic-data-hub/blob/master/examples/online-store/entities/harmonize/Harmonize%20Orders/collector/collector.sjs"></div>
+
+      ```
+/*
+ * Collect IDs plugin
+ * @param options - a map containing options. Options are sent from Java
+ * @return - an array of ids or uris
+ */
+function collect(options) {
+	const jsearch = require('/MarkLogic/jsearch.sjs');
+  return jsearch
+    .values('id')
+    .where(cts.collectionQuery(options.entity))
+    .slice(0, Number.MAX_SAFE_INTEGER)
+    .result();
+}
+module.exports = {
+  collect: collect
+};
+      ```
 1. Click **SAVE**{:.inline-button}.
 {:.ol-steps}
 
