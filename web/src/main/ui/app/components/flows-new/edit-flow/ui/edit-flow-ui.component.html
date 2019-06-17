@@ -35,6 +35,6 @@
   </app-stepper>
   <http-error
     *ngIf="errorResponse.isError"
-    [message]="errorResponse.message"
+    [error]="errorResponse"
   ></http-error>
 </div>

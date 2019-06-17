@@ -11,6 +11,7 @@ import * as _ from "lodash";
     <jobs-page-ui
       [jobs]="this.jobs"
       [isLoading]="this.isLoading"
+      [errorResponse]="errorResponse"
     >
     </jobs-page-ui>
   `
@@ -21,6 +22,11 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
   jobsPageUi: ManageJobsUiComponent;
   isLoading = true;
   jobs = [];
+  errorResponse: any = {
+    isError: false,
+    status: '',
+    statusText: ''
+  };
 
   constructor(
     private manageJobsService: ManageJobsService,
@@ -36,11 +42,12 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
   }
 
   getJobs() {
-    this.manageJobsService.getJobs().subscribe(resp => {
-      console.log('get jobs', resp);
-      _.remove(this.jobs, () => {
-        return true;
-      });
+    this.manageJobsService.getJobs().subscribe(
+      resp => {
+        console.log('get jobs', resp);
+        _.remove(this.jobs, () => {
+          return true;
+        });
       _.forEach(resp, job => {
         const jobObject = Job.fromJSON(job);
         this.jobs.push(jobObject);
@@ -48,10 +55,17 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
         if (isJobRunning) {
           this.pollJob(jobObject.id);
         }
+        });
+        this.isLoading = false;
+        this.jobsPageUi.renderRows();
+      },
+      error => {
+        console.log('jobs error', error);
+        this.jobs = null;
+        this.errorResponse.isError = true;
+        this.errorResponse.status = error.status;
+        this.errorResponse.statusText = error.statusText;
       });
-      this.isLoading = false;
-      this.jobsPageUi.renderRows();
-    });
   }
 
   pollJob(jobId: string) {
