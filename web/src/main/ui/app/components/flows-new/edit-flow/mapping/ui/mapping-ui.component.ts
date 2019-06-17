@@ -5,7 +5,6 @@ import { MdlDialogService } from '@angular-mdl/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../../mappings/mapping.model";
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-mapping-ui',
@@ -111,7 +110,6 @@ export class MappingUiComponent implements OnChanges {
 
   constructor(
     private dialogService: MdlDialogService,
-    private snackBar: MatSnackBar
   ) {}
 
   /**
@@ -137,7 +135,6 @@ export class MappingUiComponent implements OnChanges {
     this.conns[entityPropName] = srcPropName;
     if (!_.isEqual(this.conns, this.connsOrig)) {
       this.onSaveMap();
-      this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1500});
     }
   }
 
@@ -151,7 +148,6 @@ export class MappingUiComponent implements OnChanges {
       delete this.conns[entityPropName];
     if (!_.isEqual(this.conns, this.connsOrig)) {
       this.onSaveMap();
-      this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});
     }
     this.editingURI = false; // close edit box if open
     event.stopPropagation();

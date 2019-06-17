@@ -7,6 +7,7 @@ import {ProjectService} from '../../../services/projects';
 import {ManageFlowsService} from "../services/manage-flows.service";
 import {EntitiesService} from '../../../models/entities.service';
 import { RunningJobService } from '../../jobs-new/services/running-job-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {Entity} from '../../../models';
 import * as _ from "lodash";
 
@@ -33,7 +34,22 @@ import * as _ from "lodash";
     (stepUpdate)="updateStep($event)"
     (stepDelete)="deleteStep($event)"
   ></app-edit-flow-ui>
-`
+`,
+ styles: [`
+  /deep/ .snackbar .mat-simple-snackbar {
+    max-width: 500px;
+    justify-content: center;
+    color: white;
+  }
+  
+  /deep/ .mat-snack-bar-container {
+    background-color: rgba(0,0,0,.4);
+    min-width: 160px !important;
+    min-height: 35px !important;
+    padding: 8px 8px !important;
+    margin: 12px !important;
+  }
+  `]
 })
 export class EditFlowComponent implements OnInit, OnDestroy {
   flowId: string;
@@ -54,6 +70,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   runFlowClicked: boolean = false;
   disableSelect: boolean = false;
   constructor(
+   private snackBar: MatSnackBar,
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
    private entitiesService: EntitiesService,
@@ -175,6 +192,9 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     this.selectedStepId = this.stepsArray[index].id;
   }
   updateStep(step) {
+    if(step.stepDefinitionType !== this.stepType.MASTERING){
+      this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});
+    }
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
       this.stepsArray.forEach( step => {
         if (step.id === resp.id) {

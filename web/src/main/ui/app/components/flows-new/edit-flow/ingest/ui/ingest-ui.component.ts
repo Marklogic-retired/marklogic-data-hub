@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 const settings = {
   inputFilePath: {
@@ -99,7 +98,7 @@ export class IngestUiComponent {
   @Input() flow: any;
   @Output() saveStep = new EventEmitter();
 
-  constructor(private snackBar: MatSnackBar) {
+  constructor() {
   }
 
   config = settings;
@@ -123,5 +122,5 @@ export class IngestUiComponent {
 
   onChange() {
     this.saveStep.emit(this.step);
-    this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});  }
+  }
 }
