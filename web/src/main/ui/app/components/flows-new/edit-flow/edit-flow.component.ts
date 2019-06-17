@@ -76,26 +76,30 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.runningJobService.stopPolling(this.flow.id);
+    if (this.flow) {
+      this.runningJobService.stopPolling(this.flow.id);
+    }
   }
 
   getFlow() {
-    this.flowId = this.activatedRoute.snapshot.paramMap.get('flowId');
-
-    // GET Flow by ID
-    if (this.flowId) {
-      this.manageFlowsService.getFlowById(this.flowId).subscribe(
-        resp => {
-          console.log('flow by id response', resp);
-          this.flow = Flow.fromJSON(resp);
-          this.getSteps();
-          this.checkLatestJobStatus();
-        },
-        error => {
-          this.errorResponse.isError = true;
-          this.errorResponse.message = error.message;
-        });
-    }
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.flowId = params.get('flowId');
+      if (this.flowId) {
+        this.manageFlowsService.getFlowById(this.flowId).subscribe(
+          resp => {
+            console.log('flow by id response', resp);
+            this.flow = Flow.fromJSON(resp);
+            this.getSteps();
+            this.checkLatestJobStatus();
+          },
+          error => {
+            this.flow = null;
+            this.stepsArray = null;
+            this.errorResponse.isError = true;
+            this.errorResponse.message = error.message;
+          });
+      }
+    });
   }
   getAllFlowNames() {
     this.manageFlowsService.getFlows().subscribe((flows: Flow[]) => {
