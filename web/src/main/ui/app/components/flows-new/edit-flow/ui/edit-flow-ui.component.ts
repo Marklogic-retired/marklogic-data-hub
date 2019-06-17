@@ -27,6 +27,7 @@ export class EditFlowUiComponent implements OnChanges {
   @Input() flowEnded: any;
   @Input() runFlowClicked: boolean;
   @Input() disableSelect: boolean;
+  @Input() errorResponse: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();

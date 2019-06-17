@@ -40,19 +40,23 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
     // GET job by ID
     if (this.jobId) {
-      this.manageJobsService.getJobById(this.jobId).subscribe( resp => {
-        console.log('job by id response', resp);
-        // Job by ID is an array with single job object
-        // Update payload to be just an object?
-        this.isLoading = false;
-        this.job = Job.fromJSON(resp[0]);
-        const isJobRunning = this.runningJobService.checkJobObjectStatus(this.job);
-        if ( isJobRunning ) {
-          this.runningJobService.pollJobById(this.jobId).subscribe( poll => {
-            this.job = Job.fromJSON(poll);
-          });
-        }
-      });
+      this.manageJobsService.getJobById(this.jobId).subscribe(
+        resp => {
+          console.log('job by id response', resp);
+          // Job by ID is an array with single job object
+          // Update payload to be just an object?
+          this.isLoading = false;
+          this.job = Job.fromJSON(resp[0]);
+          const isJobRunning = this.runningJobService.checkJobObjectStatus(this.job);
+          if ( isJobRunning ) {
+            this.runningJobService.pollJobById(this.jobId).subscribe( poll => {
+              this.job = Job.fromJSON(poll);
+            });
+          }
+        },
+        error => {
+          console.log('error', error);
+        });
     }
   }
 }

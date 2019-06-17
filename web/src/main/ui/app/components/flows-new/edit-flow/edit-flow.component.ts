@@ -25,6 +25,7 @@ import * as _ from "lodash";
     [flowEnded]="flowEnded"
     [runFlowClicked]="runFlowClicked"
     [disableSelect]="disableSelect"
+    [errorResponse]="errorResponse"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -57,6 +58,11 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   stepType: typeof StepType = StepType;
   runFlowClicked: boolean = false;
   disableSelect: boolean = false;
+  errorResponse: any = {
+    isError: false,
+    message: ''
+  };
+
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -82,18 +88,23 @@ export class EditFlowComponent implements OnInit, OnDestroy {
 
     // GET Flow by ID
     if (this.flowId) {
-      this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
-        console.log('flow by id response', resp);
-        this.flow = Flow.fromJSON(resp);
-        this.getSteps();
-        this.checkLatestJobStatus();
-      });
+      this.manageFlowsService.getFlowById(this.flowId).subscribe(
+        resp => {
+          console.log('flow by id response', resp);
+          this.flow = Flow.fromJSON(resp);
+          this.getSteps();
+          this.checkLatestJobStatus();
+        },
+        error => {
+          this.errorResponse.isError = true;
+          this.errorResponse.message = error.message;
+        });
     }
   }
   getAllFlowNames() {
     this.manageFlowsService.getFlows().subscribe((flows: Flow[]) => {
       this.flowNames = _.map(flows, flow => flow.name);
-    })
+    });
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
