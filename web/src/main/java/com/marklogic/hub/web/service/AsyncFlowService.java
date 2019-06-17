@@ -41,9 +41,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
+@PropertySource({"classpath:dhf-defaults.properties"})
 public class AsyncFlowService {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -65,13 +68,16 @@ public class AsyncFlowService {
 
     ExecutorService executor;
 
+    @Value("${JaegerServiceName}")
+    private String jaegerServiceName;
+
     @PostConstruct
     public void init(){
         //we could turn on/off jaeger to trace performance of any call stacks by
         //injecting customized span code along with tags, e.g. try (Scope scope = JaegerConfig.activate(span))
-        //default tracing is off, in order to turn on, just add a VM option -DJaegerServiceName=data-hub
+        //default tracing is off. In order to turn it on, set JaegerServiceName with a value defined in the dhf-defaults.properties file
+        //or just add a VM option -DJaegerServiceName=data-hub as a system parameter
         //also see: https://www.jaegertracing.io/docs/1.12/getting-started/
-        String jaegerServiceName = System.getProperty("JaegerServiceName");
         if (StringUtils.isNotEmpty(jaegerServiceName)) {
             JaegerConfig.init(jaegerServiceName);
         }
