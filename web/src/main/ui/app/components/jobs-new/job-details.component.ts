@@ -1,5 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, Event as NavigationEvent, NavigationStart} from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ManageJobsService } from "./manage-jobs.service";
 import { RunningJobService } from './services/running-job-service';
 import { JobDetailsUiComponent } from "./ui/job-details-ui.component";
@@ -26,12 +27,24 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     isError: false,
     message: ''
   };
+  navigationPopState: any;
   constructor(
     private manageJobsService: ManageJobsService,
     private runningJobService: RunningJobService,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {
+    this.navigationPopState = router.events
+    .pipe(
+      filter(( event: NavigationEvent ) => {
+        return( event instanceof NavigationStart );
+      }
+    ))
+    .subscribe(( event: NavigationStart ) => {
+      if (event.navigationTrigger === 'popstate') {
+        this.errorResponse.isError = false;
+      }
+    });
   }
 
   ngOnInit() {
@@ -41,6 +54,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     if (this.job) {
       this.runningJobService.stopPolling(this.jobId);
     }
+    this.navigationPopState.unsubscribe();
   }
   getJob() {
     this.activatedRoute.paramMap.subscribe(params => {
