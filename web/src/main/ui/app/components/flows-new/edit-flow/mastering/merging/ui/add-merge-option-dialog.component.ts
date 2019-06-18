@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@ang
 import { WeightValidator } from '../../../../validators/weight.validator';
 import { SourceWeightValidator } from '../../../../validators/source-weight.validator';
 import { forOwn } from 'lodash';
+import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
 
 export interface DialogData {
   stepName: string;
@@ -17,7 +18,7 @@ export interface DialogData {
   styleUrls: ['./add-merge-option-dialog.component.scss'],
 })
 export class AddMergeOptionDialogComponent {
-
+  instantErrorMatcher: InstantErrorStateMatcher;
   form: FormGroup;
   props: FormArray;
   selectedType: string;
@@ -60,6 +61,8 @@ export class AddMergeOptionDialogComponent {
     }
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
+    this.sourceWeights.controls[this.sourceWeights.length - 1].get('weight').setValidators(WeightValidator);
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
   }
 
   createSourceWeights() {
@@ -83,6 +86,7 @@ export class AddMergeOptionDialogComponent {
   onAddSourceWeight() {
     const sourceWeights = this.form.get('sourceWeights') as FormArray;
     sourceWeights.push(this.createSourceWeight('', ''));
+    sourceWeights.controls[sourceWeights.length - 1].get('weight').setValidators(WeightValidator);
   }
 
   onRemoveSourceWeight(i) {

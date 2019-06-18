@@ -12,20 +12,20 @@
   <mat-form-field *ngIf="selectedDefault === 'false'" layout-fill>
     <mat-label>
       Name
-      <span class="name-req">*</span>
     </mat-label>
-    <input id="merge-strategy-name" matInput formControlName="name"/>
+    <input id="merge-strategy-name" matInput formControlName="name" required/>
+    <mat-error id="merge-strategy-name-error" *ngIf="form.get('name').invalid">Name is required</mat-error>
   </mat-form-field>
 
   <mat-form-field layout-fill>
     <mat-label>Max Values</mat-label>
-    <input id="merge-strategy-max-values" matInput formControlName="maxValues"/>
+    <input id="merge-strategy-max-values" matInput formControlName="maxValues" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="merge-strategy-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field layout-fill>
     <mat-label>Max Sources</mat-label>
-    <input id="merge-strategy-max-sources" matInput formControlName="maxSources"/>
+    <input id="merge-strategy-max-sources" matInput formControlName="maxSources" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="merge-strategy-max-sources-error" *ngIf="form.get('maxSources').invalid">Enter a number</mat-error>
   </mat-form-field>
 
@@ -45,9 +45,9 @@
         </mat-form-field>
         <mat-icon></mat-icon>
         <mat-form-field>
-          <!-- TODO validate weights in SourceWeight options -->
           <mat-label>Weight</mat-label>
-          <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
+          <input [class]="'source-weights-weight-' + i" matInput formControlName="weight" [errorStateMatcher]="instantErrorMatcher"/>
+          <mat-error id="'source-weights-weight-' + i + '-error" *ngIf="sourceWeights.controls[i].get('weight').invalid">Enter a number</mat-error>
         </mat-form-field>
         <button [id]="'remove-merge-strategy-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
           <mat-icon>remove_circle</mat-icon>
@@ -58,10 +58,10 @@
 
   <mat-form-field layout-fill>
     <mat-label>Length Weight</mat-label>
-    <input id="merge-strategy-length" matInput formControlName="length"/>
+    <input id="merge-strategy-length" matInput formControlName="length" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="merge-strategy-length-error" *ngIf="form.get('length').invalid">Enter a number</mat-error>
   </mat-form-field>
-
+  <mat-hint>Fields with * are required</mat-hint>
 </div>
 
 <mat-dialog-actions align="end" class="bottom">

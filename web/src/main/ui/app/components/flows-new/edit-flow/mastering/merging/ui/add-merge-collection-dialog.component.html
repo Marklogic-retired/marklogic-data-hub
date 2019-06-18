@@ -2,7 +2,7 @@
 <div id="merge-collection-dialog" mat-dialog-content [formGroup]="form" class="content">
 
   <mat-form-field layout-fill>
-    <mat-select id="merge-collection-event" placeholder="Event" formControlName="event" [(value)]="selectedEvent">
+    <mat-select id="merge-collection-event" placeholder="Event" formControlName="event" [(value)]="selectedEvent" required>
       <mat-option id="merge-collection-event-onmerge" value="onMerge">onMerge</mat-option>
       <mat-option id="merge-collection-event-onnomatch" value="onNoMatch">onNoMatch</mat-option>
       <mat-option id="merge-collection-event-onnotification" value="onNotification">onNotification</mat-option>
@@ -72,7 +72,7 @@
       </div>
     </div>
   </div>
-
+  <mat-hint>Fields with * are required</mat-hint>
 </div>
 <mat-dialog-actions align="end" class="bottom">
   <button mat-raised-button color="primary" id="merge-collection-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>

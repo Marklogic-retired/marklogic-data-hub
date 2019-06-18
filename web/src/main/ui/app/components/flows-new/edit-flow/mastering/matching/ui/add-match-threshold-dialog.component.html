@@ -19,17 +19,20 @@
   <div *ngIf="selectedAction === 'custom'">
     <mat-form-field layout-fill>
       <mat-label>URI</mat-label>
-      <input id="match-threshold-custom-uri" matInput formControlName="customUri"/>
+      <input id="match-threshold-custom-uri" matInput formControlName="customUri" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-custom-uri-error" *ngIf="form.get('customUri').invalid">URI is required</mat-error>
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>Function</mat-label>
-      <input id="match-threshold-custom-function" matInput formControlName="customFunction"/>
+      <input id="match-threshold-custom-function" matInput formControlName="customFunction" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-custom-function-error" *ngIf="form.get('customFunction').invalid">Function is required</mat-error>
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>Namespace</mat-label>
       <input id="match-threshold-custom-namespace" matInput formControlName="customNs"/>
     </mat-form-field>
   </div>
+  <mat-hint>Fields with * are required</mat-hint>
 </div>
 
 <mat-dialog-actions align="end" class="bottom">

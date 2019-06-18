@@ -17,13 +17,13 @@
 
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Values</mat-label>
-    <input id="merge-option-max-values" matInput formControlName="maxValues"/>
+    <input id="merge-option-max-values" matInput formControlName="maxValues" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="merge-option-max-values-error" *ngIf="form.get('maxValues').invalid">Enter a number</mat-error>
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Max Sources</mat-label>
-    <input id="merge-option-max-sources" matInput formControlName="maxSources"/>
+    <input id="merge-option-max-sources" matInput formControlName="maxSources" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="merge-option-max-sources-error" *ngIf="form.get('maxSources').invalid">Enter a number</mat-error>
   </mat-form-field>
 
@@ -44,8 +44,7 @@
         <mat-icon></mat-icon>
         <mat-form-field>
           <mat-label>Weight</mat-label>
-          <input [class]="'source-weights-weight-' + i" matInput formControlName="weight"/>
-          <!-- TODO validate weights in SourceWeight options -->
+          <input [class]="'source-weights-weight-' + i" matInput formControlName="weight" [errorStateMatcher]="instantErrorMatcher"/>
           <mat-error id="'source-weights-weight-' + i + '-error" *ngIf="sourceWeights.controls[i].get('weight').invalid">Enter a number</mat-error>
         </mat-form-field>
         <button [id]="'remove-merge-option-source-weight-btn-' + i" mat-icon-button (click)="onRemoveSourceWeight(i)">
@@ -57,7 +56,7 @@
 
   <mat-form-field *ngIf="selectedType !== 'strategy' && selectedType !== 'custom'" layout-fill>
     <mat-label>Length Weight</mat-label>
-    <input id="merge-option-length" matInput formControlName="length"/>
+    <input id="merge-option-length" matInput formControlName="length" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="merge-option-length-error" *ngIf="form.get('length').invalid">Enter a number</mat-error>
   </mat-form-field>
 
@@ -72,18 +71,20 @@
   <div *ngIf="selectedType === 'custom'">
     <mat-form-field layout-fill>
       <mat-label>URI</mat-label>
-      <input id="merge-option-custom-uri" matInput formControlName="customUri"/>
+      <input id="merge-option-custom-uri" matInput formControlName="customUri" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-custom-uri-error" *ngIf="form.get('customUri').invalid">URI is required</mat-error>
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>Function</mat-label>
-      <input id="merge-option-custom-function" matInput formControlName="customFunction"/>
+      <input id="merge-option-custom-function" matInput formControlName="customFunction" required [errorStateMatcher]="instantErrorMatcher"/>
+      <mat-error id="match-option-custom-function-error" *ngIf="form.get('customFunction').invalid">Function is required</mat-error>
     </mat-form-field>
     <mat-form-field layout-fill>
       <mat-label>Namespace</mat-label>
       <input id="merge-option-custom-namespace" matInput formControlName="customNs"/>
     </mat-form-field>
   </div>
-
+  <mat-hint>Fields with * are required</mat-hint>
 </div>
 
 <mat-dialog-actions align="end" class="bottom">

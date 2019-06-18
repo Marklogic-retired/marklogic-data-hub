@@ -61,6 +61,14 @@ export class AddMatchOptionDialogComponent {
     const weightControl = this.form.get('weight');
     const zip5match9Control = this.form.get('zip5match9');
     const zip9match5Control = this.form.get('zip9match5');
+    const distanceThresholdControl = this.form.get('distanceThreshold');
+
+    if(this.selectedType === 'double metaphone'){
+      distanceThresholdControl.setValidators(WeightValidator);
+    }else{
+      distanceThresholdControl.clearValidators();
+      distanceThresholdControl.reset();
+    }
     if (this.selectedType === 'zip') {
       zip5match9Control.setValidators(this.weightValidators);
       zip9match5Control.setValidators(this.weightValidators);
