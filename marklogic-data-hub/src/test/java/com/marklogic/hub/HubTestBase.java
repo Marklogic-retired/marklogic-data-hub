@@ -707,6 +707,10 @@ public class HubTestBase {
         return Integer.parseInt(versions.getMarkLogicVersion().substring(0, 1));
     }
 
+    protected void clearStagingFinalAndJobDatabases() {
+        clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
+    }
+
     public void clearDatabases(String... databases) {
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
@@ -948,6 +952,13 @@ public class HubTestBase {
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
+
+        // Provides some time for post-commit triggers to complete
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
+        }
     }
 
     public void clearUserModules() {
@@ -1101,7 +1112,17 @@ public class HubTestBase {
                 ReflectionUtils.makeAccessible(f);
                 ReflectionUtils.setField(f, adminHubConfig, null);                
             }
-            
+        }
+    }
+
+    protected void copyTestFlowIntoProject() {
+        try {
+            FileUtils.copyFileToDirectory(
+                getResourceFile("flow-manager-test/test-flow.flow.json"),
+                adminHubConfig.getFlowsDir().toFile()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

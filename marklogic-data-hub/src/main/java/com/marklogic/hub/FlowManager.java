@@ -107,6 +107,12 @@ public interface FlowManager {
      */
     void saveFlow(Flow flow);
 
+    /**
+     *
+     * @param flow
+     * @param stepKey the step map key corresponding to the step to delete
+     */
+    void deleteStep(Flow flow, String stepKey);
 
     /**
      * Check if a flow has existed
@@ -116,24 +122,30 @@ public interface FlowManager {
     boolean isFlowExisted(String flowName);
 
     /**
+     * Use flow.getSteps()
      *
      * @param flow a flow object
      * @return a map of steps
      */
+    @Deprecated
     Map<String, Step> getSteps(Flow flow);
 
     /**
+     * Use flow.setSteps(stepMap)
      *
      * @param flow a flow object
      * @param stepMap a map of steps
      */
+    @Deprecated
     void setSteps(Flow flow, Map<String, Step> stepMap);
 
     /**
+     * Use flow.getStep(stepNum)
      *
      * @param flow a flow object
      * @param stepNum step key
      * @return a step
      */
+    @Deprecated
     Step getStep(Flow flow, String stepNum);
 }

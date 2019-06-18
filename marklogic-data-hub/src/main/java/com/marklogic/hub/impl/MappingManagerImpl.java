@@ -30,7 +30,6 @@ import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,9 +41,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Component
@@ -87,7 +84,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         return mapper.treeToValue(node, MappingImpl.class);
     }
 
-    @Override public Mapping createMappingFromJSON(JsonNode json) throws IOException {
+    @Override public Mapping createMappingFromJSON(JsonNode json) {
         Mapping newMap = Mapping.create("default");
         newMap.deserialize(json);
         return newMap;
@@ -97,9 +94,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Path dir = getMappingDirPath(mappingName);
         if (dir.toFile().exists()) {
             try {
+                logger.info(format("Deleting mapping with name '%s' in directory: %s", mappingName, dir.toFile()));
                 FileUtils.deleteDirectory(dir.toFile());
             } catch (IOException e){
-                throw new DataHubProjectException("Could not delete mapping for project.");
+                throw new DataHubProjectException(format("Could not delete mapping with name '%s'", mappingName), e);
             }
         }
     }
@@ -113,7 +111,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
         try {
             if(autoIncrement){
-                mapping.incrementVersion();;
+                mapping.incrementVersion();
             }
             String mappingString = mapping.serialize();
             Path dir = getMappingDirPath(mapping.getName());
@@ -241,53 +239,5 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     private Path getMappingDirPath(String mappingName){
         return Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
-    }
-
-
-    private HubModuleManager getPropsMgr() {
-        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
-        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
-        return propertiesModuleManager;
-    }
-
-    private List<JsonNode> getModifiedRawMappings(long minimumFileTimestampToLoad) {
-        logger.debug("min modified: " + minimumFileTimestampToLoad);
-        HubModuleManager propsManager = getPropsMgr();
-        propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
-
-        List<JsonNode> mappings = new ArrayList<>();
-        List<JsonNode> tempMappings = new ArrayList<>();
-        Path mappingsPath = hubConfig.getHubMappingsDir();
-        File[] mappingFiles = mappingsPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
-        List<String> mappingNames;
-        if (mappingFiles != null) {
-            mappingNames = Arrays.stream(mappingFiles)
-                .map(file -> file.getName())
-                .collect(Collectors.toList());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                boolean hasOneChanged = false;
-                for (String mappingName : mappingNames) {
-                    File[] mappingDefs = mappingsPath.resolve(mappingName).toFile().listFiles((dir, name) -> name.endsWith(MAPPING_FILE_EXTENSION));
-                    for (File mappingDef : mappingDefs) {
-                        if (propsManager.hasFileBeenModifiedSinceLastLoaded(mappingDef)) {
-                            hasOneChanged = true;
-                        }
-                        FileInputStream fileInputStream = new FileInputStream(mappingDef);
-                        tempMappings.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
-                    }
-                }
-                // all or nothing
-                if (hasOneChanged) {
-                    mappings.addAll(tempMappings);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        return mappings;
     }
 }
