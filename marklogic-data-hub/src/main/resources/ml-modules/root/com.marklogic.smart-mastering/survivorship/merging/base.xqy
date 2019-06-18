@@ -294,13 +294,13 @@ declare function merge-impl:rollback-merge(
  : @param $block-future-merges   if true, then the future matches between documents
  :                               will be blocked; otherwise, the documents could match
  :                               on next process-match-and-merge
- : @return ()
+ : @return restored URIs
  :)
 declare function merge-impl:rollback-merge(
   $merged-doc-uri as xs:string,
   $retain-rollback-info as xs:boolean,
   $block-future-merges as xs:boolean
-) as empty-sequence()
+) as xs:string*
 {
   let $latest-auditing-receipt-for-doc :=
     fn:head(
@@ -309,52 +309,36 @@ declare function merge-impl:rollback-merge(
       return $auditing-doc
     )
   let $merge-doc-headers := fn:doc($merged-doc-uri)/*:envelope/*:headers
+  let $merge-options-ref := $merge-doc-headers/*:merge-options/*:value ! fn:string(.)
+  let $castable-as-hex := $merge-options-ref castable as xs:hexBinary
+  let $merge-options :=
+            if ($castable-as-hex) then
+              xdmp:zip-get(binary { $merge-options-ref }, "merge-options.xml")/*
+            else
+              fn:doc($merge-options-ref)/*
   let $all-contributing-uris := $merge-doc-headers/*:merges/*:document-uri
-  let $previous-uris := $all-contributing-uris[(@last-merge|../last-merge) = fn:true()] ! fn:string(.)
+  let $last-merge-dateTime := fn:max($all-contributing-uris/(@last-merge|../last-merge) ! xs:dateTime(.))
+  let $previous-uris := if (fn:empty($last-merge-dateTime) and fn:exists($latest-auditing-receipt-for-doc)) then
+      $latest-auditing-receipt-for-doc/auditing:previous-uri ! fn:string(.)
+    else
+      $all-contributing-uris[(@last-merge|../last-merge) = $last-merge-dateTime] ! fn:string(.)
   where fn:exists($latest-auditing-receipt-for-doc)
   return (
     let $prevent-auto-match :=
       if ($block-future-merges) then
         matcher:block-matches($previous-uris)
       else ()
+    let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
     for $previous-doc-uri in $previous-uris
-    let $new-collections := (
-      xdmp:document-get-collections($previous-doc-uri)[fn:not(. = $const:ARCHIVED-COLL)],
-      $const:CONTENT-COLL
-    )
+    let $new-collections := coll-impl:on-merge(
+            map:entry($previous-doc-uri, xdmp:document-get-collections($previous-doc-uri)[fn:not(. = $const:ARCHIVED-COLL)])
+          ,$on-merge-options)
     where fn:not(merge-impl:source-of-other-merged-doc($previous-doc-uri, $merged-doc-uri))
     return (
       xdmp:document-set-collections($previous-doc-uri, $new-collections)
     ),
-    if ((some $uri in $all-contributing-uris satisfies fn:not($uri = $previous-uris))) then
-      let $merge-options-ref := $merge-doc-headers/*:merge-options/*:value ! fn:string(.)
-      let $castable-as-hex := $merge-options-ref castable as xs:hexBinary
-      let $doc-available := fn:doc-available($merge-options-ref)
-      where $castable-as-hex or $doc-available
-      return
-        let $rollback-uris := $all-contributing-uris[fn:not(. = $previous-uris)]
-        let $rollback-uris-merged :=
-          for $uri in $rollback-uris[fn:starts-with(., $MERGED-DIR)]
-          return
-            fn:doc($uri)/*:envelope/*:headers/*:merges/*:document-uri
-        let $uris-for-save := $rollback-uris[fn:not(. = $rollback-uris-merged)]
-        let $_save :=
-          merge-impl:save-merge-models-by-uri(
-            $uris-for-save,
-            if ($castable-as-hex) then
-              xdmp:zip-get(binary { $merge-options-ref }, "merge-options.xml")/*
-            else
-              fn:doc($merge-options-ref)/*
-          )
-        return ()
-    else (),
     if ($retain-rollback-info) then (
-      xdmp:document-set-collections($merged-doc-uri,
-        (
-          xdmp:document-get-collections($merged-doc-uri)[fn:not(. = $const:CONTENT-COLL)],
-          $const:ARCHIVED-COLL
-        )
-      ),
+      merge-impl:archive-document($merged-doc-uri, $merge-options),
       $latest-auditing-receipt-for-doc ! auditing:audit-trace-rollback(.)
     ) else (
       xdmp:document-delete($merged-doc-uri),
@@ -581,10 +565,12 @@ declare function merge-impl:build-headers(
   if ($format = ($const:FORMAT-XML, $const:FORMAT-JSON)) then
     ()
   else fn:error(xs:QName("SM-INVALID-FORMAT"), "merge-impl:build-headers called with invalid format " || $format),
-  let $all-uris := fn:distinct-values((
-    $docs ! xdmp:node-uri(.),
-    $uris
-  ))
+  let $current-dateTime := fn:current-dateTime()
+  let $all-uris :=
+      for $uri in fn:distinct-values(($docs ! xdmp:node-uri(.), $uris))
+      order by $uri
+      return $uri
+  let $all-merged-docs := $all-uris[fn:starts-with(., $MERGED-DIR)] ! fn:doc(.)
   let $is-xml := $format = $const:FORMAT-XML
   (: remove "/*:envelope/*:headers" from the paths; already accounted for :)
   let $configured-paths := $final-headers ! map:get(., "path") ! fn:replace(., "/.*headers(/.*)", "$1")
@@ -634,7 +620,12 @@ declare function merge-impl:build-headers(
           for $uri in $all-uris
           return
             element sm:document-uri {
-              attribute last-merge {$uri = $uris},
+              attribute last-merge {
+                if ($uri = $uris) then
+                  $current-dateTime
+                else
+                  fn:max($all-merged-docs/es:envelope/es:headers/sm:merges/sm:document-uri[. eq $uri]/@last-merge ! xs:dateTime(.))
+              },
               $uri
             }
         }</sm:merges>
@@ -665,7 +656,12 @@ declare function merge-impl:build-headers(
           map:entry("merges", array-node {
             for $uri in $all-uris
             return
-              object-node { "document-uri": $uri, "last-merge": $uri = $uris }
+              object-node { "document-uri": $uri, "last-merge":
+                if ($uri = $uris) then
+                  $current-dateTime
+                else
+                  fn:max($all-merged-docs/envelope/headers/merges/document-uri[. eq $uri]/../last-merge ! xs:dateTime(.))
+              }
           }),
           map:entry("sources", array-node {
             merge-impl:distinct-node-values($docs/envelope/headers/sources)
