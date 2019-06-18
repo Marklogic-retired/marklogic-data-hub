@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import {ActivatedRoute, Router, Event as NavigationEvent, NavigationStart} from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { Flow } from "../models/flow.model";
 import { Step } from '../models/step.model';
 import { StepType } from '../models/step.model';
@@ -62,6 +63,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     isError: false,
     message: ''
   };
+  navigationPopState: any;
 
   constructor(
    private manageFlowsService: ManageFlowsService,
@@ -70,7 +72,19 @@ export class EditFlowComponent implements OnInit, OnDestroy {
    private runningJobService: RunningJobService,
    private activatedRoute: ActivatedRoute,
    private router: Router
-  ) { }
+  ) {
+    this.navigationPopState = router.events
+    .pipe(
+      filter(( event: NavigationEvent ) => {
+        return( event instanceof NavigationStart );
+      }
+    ))
+    .subscribe(( event: NavigationStart ) => {
+      if (event.navigationTrigger === 'popstate') {
+        this.errorResponse.isError = false;
+      }
+    });
+  }
 
   ngOnInit() {
     this.getFlow();
@@ -83,6 +97,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     if (this.flow) {
       this.runningJobService.stopPolling(this.flow.id);
     }
+    this.navigationPopState.unsubscribe();
   }
 
   getFlow() {
