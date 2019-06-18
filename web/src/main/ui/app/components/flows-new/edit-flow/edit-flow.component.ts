@@ -1,14 +1,14 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Flow} from "../models/flow.model";
-import {Step} from '../models/step.model';
-import {StepType} from '../models/step.model';
-import {ProjectService} from '../../../services/projects';
-import {ManageFlowsService} from "../services/manage-flows.service";
-import {EntitiesService} from '../../../models/entities.service';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Flow } from "../models/flow.model";
+import { Step } from '../models/step.model';
+import { StepType } from '../models/step.model';
+import { ProjectService } from '../../../services/projects';
+import { ManageFlowsService } from "../services/manage-flows.service";
+import { EntitiesService } from '../../../models/entities.service';
 import { RunningJobService } from '../../jobs-new/services/running-job-service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import {Entity} from '../../../models';
+import { EditFlowUiComponent } from './ui/edit-flow-ui.component';
+import { Entity } from '../../../models';
 import * as _ from "lodash";
 
 @Component({
@@ -34,24 +34,12 @@ import * as _ from "lodash";
     (stepUpdate)="updateStep($event)"
     (stepDelete)="deleteStep($event)"
   ></app-edit-flow-ui>
-`,
- styles: [`
-  /deep/ .snackbar .mat-simple-snackbar {
-    max-width: 500px;
-    justify-content: center;
-    color: white;
-  }
-  
-  /deep/ .mat-snack-bar-container {
-    background-color: rgba(0,0,0,.4);
-    min-width: 160px !important;
-    min-height: 35px !important;
-    padding: 8px 8px !important;
-    margin: 12px !important;
-  }
-  `]
+`
 })
 export class EditFlowComponent implements OnInit, OnDestroy {
+
+  @ViewChild(EditFlowUiComponent) editFlowUi: EditFlowUiComponent;
+
   flowId: string;
   flow: Flow;
   flowNames: string[];
@@ -70,7 +58,6 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   runFlowClicked: boolean = false;
   disableSelect: boolean = false;
   constructor(
-   private snackBar: MatSnackBar,
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
    private entitiesService: EntitiesService,
@@ -193,9 +180,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   updateStep(step) {
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
-      if(step.stepDefinitionType !== this.stepType.MASTERING){
-        this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});
-      }
+      this.editFlowUi.stepUpdated(step);
       this.stepsArray.forEach( step => {
         if (step.id === resp.id) {
           step = resp;

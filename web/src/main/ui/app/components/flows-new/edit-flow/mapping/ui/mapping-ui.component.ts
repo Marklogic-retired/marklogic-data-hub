@@ -109,7 +109,7 @@ export class MappingUiComponent implements OnChanges {
   }
 
   constructor(
-    private dialogService: MdlDialogService,
+    private dialogService: MdlDialogService
   ) {}
 
   /**
