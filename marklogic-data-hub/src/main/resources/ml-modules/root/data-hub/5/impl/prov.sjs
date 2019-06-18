@@ -483,11 +483,17 @@ class Provenance {
   createStepPropertyAlterationRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, propertyName, docURIs, propertyProvIds, info) {
     let resp = [];
     let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURIs, info);
+    let activity = 'altered';
+    if (stepDefinitionType === 'mapping') {
+      activity = 'mapped';
+    } else if (stepDefinitionType === 'mastering') {
+      activity = 'merged';
+    }
     if (!(isValid instanceof Error)) {
       if (docURIs && docURIs.length > 0 &&
         propertyProvIds && propertyProvIds.length > 0) {
         let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
-        let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_merged`;
+        let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_${activity}`;
         let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntityProperty',`dhf:${capitalizedStepType}AlteredEntityProperty`, propertyName];
         let recordOpts = {
           provTypes,
