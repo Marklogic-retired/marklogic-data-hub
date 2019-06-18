@@ -25,6 +25,12 @@ function transform(context, params, content) {
   let jobId = params["job-id"];
   let options = params.options ? JSON.parse(params.options) : {};
 
+  if(options.inputFileType && options.inputFileType.toLowerCase() === "csv") {
+    content = JSON.parse(content);
+    options.file = content.file;
+    content = content.content;
+  }
+
   options.noWrite = true;
   options.fullOutput = true;
   options.noBatchWrite=true;
