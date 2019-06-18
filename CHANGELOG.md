@@ -2,80 +2,151 @@
 
 ## [v5.0.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/5.0.1) (2019-06-14)
 
-Improvements
+**Improvements**
 
-    [DHFPROD-2517] - Handle temporal docs natively in data hub
-    [DHFPROD-2544] - Ingest doesn't set source information for use with mastering
-    [DHFPROD-2648] - UI support for specifying delimiter (separator) for CSV ingestion
-    [DHFPROD-2340] - Add outputFormat option to all steps (backend and Quickstart)
-    [DHFPROD-2561] - Add Collections field to all steps (Quickstart)
-    [DHFPROD-2149] - Add tooltips for 'New flow' dialog
-    [DHFPROD-2610] - Deploy DHF using ml-gradle and ml-app-deployer version 3.15.0
-    [DHFPROD-2611] - Deploy DHF bootstrap project via ml-gradle 3.15.0
+<ul>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2544'>DHFPROD-2544</a>] -         Ingest doesn&#39;t set source information for use with mastering
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2149'>DHFPROD-2149</a>] -         Add tooltips for &#39;New flow&#39; dialog
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2321'>DHFPROD-2321</a>] -         Update doc with DHS new ports
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2340'>DHFPROD-2340</a>] -         Add outputFormat option to all steps (backend and Quickstart)
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2517'>DHFPROD-2517</a>] -         Handle temporal docs natively in data hub
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2561'>DHFPROD-2561</a>] -         Add Collections field to all steps (Quickstart)
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2610'>DHFPROD-2610</a>] -         Deploy DHF using ml-gradle and ml-app-deployer version 3.15.0
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2611'>DHFPROD-2611</a>] -         Deploy DHF bootstrap project via ml-gradle 3.15.0
+</li>
+</ul>
 
-Bug
-
-    [DHFPROD-1878] - Long text allows facet numbers to exceed their container
-    [DHFPROD-2027] - Steps number are limited to nine on Manage Flows page
-    [DHFPROD-2172] - Entity box content structure breaks if resize Chrome page on Windows
-    [DHFPROD-2179] - DMSDK Ingestion Performance is one order of magnitute worse than mlcp
-    [DHFPROD-2207] - mlDeploy on DataHub fails with no group named "Default" on Marklogic server
-    [DHFPROD-2271] - Some lags on loading flows and jobs if you have a lot of them
-    [DHFPROD-2290] - On reduce type match options, able to create empty 2nd to nth property names
-    [DHFPROD-2295] - Entity box element doesn't resize to accommodate content on Windows(Chrome). 
-    [DHFPROD-2297] - Entity box content is not visible using Chrome if apply Windows scale and layout. 
-    [DHFPROD-2324] - Fix mapping to work with XML on quickstart UI
-    [DHFPROD-2341] - Mapping source doc uri is not updated with changing to different collection
-    [DHFPROD-2343] - Deleting an entity via "x" icon on QuickStart UI doesn't remove the entity definition on database
-    [DHFPROD-2348] - BUG: Stopped flow is missing latest job status and timestamp.
-    [DHFPROD-2365] - The jobs tab doesn't show the jobs
-    [DHFPROD-2399] - Browse data results page is not retained if you click back on browser from doc viewer page
-    [DHFPROD-2446] - optionsFile command line argument ignored
-    [DHFPROD-2449] - Bad Json documents  on harmonizing XML documents with outputFormat json 
-    [DHFPROD-2451] - Extra header and triple elements in XML harmonization
-    [DHFPROD-2452] - BUG: Text document failed to ingest. 
-    [DHFPROD-2488] - UI: The Delete button in the entity card is an X, instead of a trash icon
-    [DHFPROD-2493] - No error on incorrect -PinputFileType option provided
-    [DHFPROD-2496] - Duplicate entries in database index settings if entities contain the same fields
-    [DHFPROD-2499] - hubCreateMapping gradle command with -PentityName creates targetEntityType without that entity
-    [DHFPROD-2500] - Mapping doesnt work for attributes in the xml input document
-    [DHFPROD-2503] - Mapping collection on browse data page disappeared after running mastering step
-    [DHFPROD-2514] - A long string on step name will goes beyond the step container
-    [DHFPROD-2516] - How to do temporal ?
-    [DHFPROD-2522] - Change the label "Source File Path" to "Source Folder/Directory Path" on Ingestion as it creates confusion
-    [DHFPROD-2523] - Clicking Running link while running the flows produces 500 internal error
-    [DHFPROD-2526] - A flow keeps running status when the Data-hub app server is down during the running period 
-    [DHFPROD-2527] - Need to put a space in front of Jobs label on the tab (between the icon and the label)
-    [DHFPROD-2528] - Disable merge strategy dropdown if there is no strategy
-    [DHFPROD-2529] - PII defined in Entity, protected paths not created
-    [DHFPROD-2532] - Mapping drop down flowing off the screen
-    [DHFPROD-2538] - Improve job query by flowName
-    [DHFPROD-2539] - A Mastering step with zip or double-metaphone matching fails with "no namespace" error
-    [DHFPROD-2545] - protected-prov collection file is ignored when hub is initialized
-    [DHFPROD-2547] - Default final database has an empty array of range indexes
-    [DHFPROD-2548] - Entity artifacts are overridden when creating with an existing entity name
-    [DHFPROD-2555] - Mapping Step Should Put Docs in Collection for Entity
-    [DHFPROD-2556] - Mastering Step, Synonym Match Option with Thesaurus Issue
-    [DHFPROD-2567] - To run a custom step, user can't leave the source collection empty
-    [DHFPROD-2570] - Ingestion/mapping of json as xml and xml as json are having issues with objects and arrays
-    [DHFPROD-2572] - Adding options to flow does not work
-    [DHFPROD-2581] - Can't add a new step after deleting a step between 2 steps
-    [DHFPROD-2585] - Error while creating a new entity from datahub UI
-    [DHFPROD-2588] - DHF 5.0.0: REST API transform broken - impacting Nifi Flows
-    [DHFPROD-2589] - BUG: The status of the cancelled flow doesn't update. 
-    [DHFPROD-2601] - Ingested source information not maintained through mapping
-    [DHFPROD-2615] - Generate indexes fails when no range indexes are set
-    [DHFPROD-2616] - BUG: Cannot modify the entity.
-    [DHFPROD-2625] - Update DH preInstall check to consider ML-10.0-1 server
-    [DHFPROD-2627] - UX fix: Add appropriate UI feedback after starting a flow run
-    [DHFPROD-2634] - Cannot deploy datahub using 9.0-7 & 9.0-8 server versions
-    [DHFPROD-2635] - Users should be able to set delimiter (other than comma) for ingestion
-    [DHFPROD-2656] - Running a custom hook with user param is running into privilege issue
-    [DHFPROD-2660] - Custom hook missing database parameter
-    [DHFPROD-2662] - REGRESSION: Unable to edit an entity to update the indexes from QS
-    [DHFPROD-2667] - Getting "buildInvokeOptions is not defined" while running a custom hook with database parameter
-    [DHFPROD-2668] - Mapping and Mastering is failing with temporal documents
-
+**Fixed bugs:**
+<ul>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1878'>DHFPROD-1878</a>] -         Long text allows facet numbers to exceed their container
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2027'>DHFPROD-2027</a>] -         Steps number are limited to nine on Manage Flows page
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2172'>DHFPROD-2172</a>] -         Entity box content structure breaks if resize Chrome page on Windows
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2179'>DHFPROD-2179</a>] -         DMSDK Ingestion Performance is one order of magnitute worse than mlcp
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2207'>DHFPROD-2207</a>] -         mlDeploy on DataHub fails with no group named &quot;Default&quot; on Marklogic server
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2271'>DHFPROD-2271</a>] -         Some lags on loading flows and jobs if you have a lot of them
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2290'>DHFPROD-2290</a>] -         On reduce type match options, able to create empty 2nd to nth property names
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2295'>DHFPROD-2295</a>] -         Entity box element doesn&#39;t resize to accommodate content on Windows(Chrome). 
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2297'>DHFPROD-2297</a>] -         Entity box content is not visible using Chrome if apply Windows scale and layout. 
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2324'>DHFPROD-2324</a>] -         Fix mapping to work with XML on quickstart UI
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2341'>DHFPROD-2341</a>] -         Mapping source doc uri is not updated with changing to different collection
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2343'>DHFPROD-2343</a>] -         Deleting an entity via &quot;x&quot; icon on QuickStart UI doesn&#39;t remove the entity definition on database
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2348'>DHFPROD-2348</a>] -         BUG: Stopped flow is missing latest job status and timestamp.
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2365'>DHFPROD-2365</a>] -         The jobs tab doesn&#39;t show the jobs
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2399'>DHFPROD-2399</a>] -         Browse data results page is not retained if you click back on browser from doc viewer page
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2446'>DHFPROD-2446</a>] -         optionsFile command line argument ignored
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2449'>DHFPROD-2449</a>] -         Bad Json documents  on harmonizing XML documents with outputFormat json 
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2451'>DHFPROD-2451</a>] -         Extra header and triple elements in XML harmonization
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2452'>DHFPROD-2452</a>] -         BUG: Text document failed to ingest. 
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2488'>DHFPROD-2488</a>] -         UI: The Delete button in the entity card is an X, instead of a trash icon
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2493'>DHFPROD-2493</a>] -         No error on incorrect -PinputFileType option provided
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2496'>DHFPROD-2496</a>] -         Duplicate entries in database index settings if entities contain the same fields
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2499'>DHFPROD-2499</a>] -         hubCreateMapping gradle command with -PentityName creates targetEntityType without that entity
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2500'>DHFPROD-2500</a>] -         Mapping doesnt work for attributes in the xml input document
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2503'>DHFPROD-2503</a>] -         Mapping collection on browse data page disappeared after running mastering step
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2514'>DHFPROD-2514</a>] -         A long string on step name will goes beyond the step container
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2516'>DHFPROD-2516</a>] -         How to do temporal ?
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2522'>DHFPROD-2522</a>] -         Change the label &quot;Source File Path&quot; to &quot;Source Folder/Directory Path&quot; on Ingestion as it creates confusion
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2523'>DHFPROD-2523</a>] -         Clicking Running link while running the flows produces 500 internal error
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2526'>DHFPROD-2526</a>] -         A flow keeps running status when the Data-hub app server is down during the running period 
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2527'>DHFPROD-2527</a>] -         Need to put a space in front of Jobs label on the tab (between the icon and the label)
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2528'>DHFPROD-2528</a>] -         Disable merge strategy dropdown if there is no strategy
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2529'>DHFPROD-2529</a>] -         PII defined in Entity, protected paths not created
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2532'>DHFPROD-2532</a>] -         Mapping drop down flowing off the screen
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2538'>DHFPROD-2538</a>] -         Improve job query by flowName
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2539'>DHFPROD-2539</a>] -         A Mastering step with zip or double-metaphone matching fails with &quot;no namespace&quot; error
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2545'>DHFPROD-2545</a>] -         protected-prov collection file is ignored when hub is initialized
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2547'>DHFPROD-2547</a>] -         Default final database has an empty array of range indexes
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2548'>DHFPROD-2548</a>] -         Entity artifacts are overridden when creating with an existing entity name
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2555'>DHFPROD-2555</a>] -         Mapping Step Should Put Docs in Collection for Entity
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2556'>DHFPROD-2556</a>] -         Mastering Step, Synonym Match Option with Thesaurus Issue
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2567'>DHFPROD-2567</a>] -         To run a custom step, user can&#39;t leave the source collection empty
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2570'>DHFPROD-2570</a>] -         Ingestion/mapping of json as xml and xml as json are having issues with objects and arrays
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2572'>DHFPROD-2572</a>] -         Adding options to flow does not work
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2581'>DHFPROD-2581</a>] -         Can&#39;t add a new step after deleting a step between 2 steps
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2585'>DHFPROD-2585</a>] -         Error while creating a new entity from datahub UI
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2588'>DHFPROD-2588</a>] -         DHF 5.0.0: REST API transform broken - impacting Nifi Flows
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2589'>DHFPROD-2589</a>] -         BUG: The status of the cancelled flow doesn&#39;t update. 
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2601'>DHFPROD-2601</a>] -         Ingested source information not maintained through mapping
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2615'>DHFPROD-2615</a>] -         Generate indexes fails when no range indexes are set
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2616'>DHFPROD-2616</a>] -         BUG: Cannot modify the entity.
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2625'>DHFPROD-2625</a>] -         Update DH preInstall check to consider ML-10.0-1 server
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2627'>DHFPROD-2627</a>] -         UX fix: Add appropriate UI feedback after starting a flow run
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2634'>DHFPROD-2634</a>] -         Cannot deploy datahub using 9.0-7 &amp; 9.0-8 server versions
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2635'>DHFPROD-2635</a>] -         Users should be able to set delimiter (other than comma) for ingestion
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2656'>DHFPROD-2656</a>] -         Running a custom hook with user param is running into privilege issue
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2660'>DHFPROD-2660</a>] -         Custom hook missing database parameter
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2662'>DHFPROD-2662</a>] -         REGRESSION: Unable to edit an entity to update the indexes from QS
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2667'>DHFPROD-2667</a>] -         Getting &quot;buildInvokeOptions is not defined&quot; while running a custom hook with database parameter
+</li>
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2668'>DHFPROD-2668</a>] -         Mapping and Mastering is failing with temporal documents
+</li>
+</ul>
+       
 
 # [v5.0.0](https://github.com/marklogic/marklogic-data-hub/tree/v5.0.0) (2019-05-09)
 **Epic:**
