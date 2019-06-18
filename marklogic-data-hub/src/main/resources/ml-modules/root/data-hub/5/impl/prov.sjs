@@ -418,9 +418,13 @@ class Provenance {
         let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
         for (let i=0; i<properties.length; i++) {
           let property = properties[i];
+          let encodedPropertyName = property;
+          if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
+            encodedPropertyName = xdmp.encodeForNCName(encodedPropertyName);
+          }
           let docPropProvId = `${jobId + flowId + stepDefinitionType + docURI}_${property}`
           let docPropProvOptions = {
-            provTypes: [ 'ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', property ],
+            provTypes: [ 'ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', encodedPropertyName ],
             relations: {
               associatedWith: [flowId, stepName, stepDefinitionName],
               generatedBy: jobId,
@@ -494,7 +498,11 @@ class Provenance {
         propertyProvIds && propertyProvIds.length > 0) {
         let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
         let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_${activity}`;
-        let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntityProperty',`dhf:${capitalizedStepType}AlteredEntityProperty`, propertyName];
+        let encodedPropertyName = propertyName;
+        if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
+          encodedPropertyName = xdmp.encodeForNCName(encodedPropertyName);
+        }
+        let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntityProperty',`dhf:${capitalizedStepType}AlteredEntityProperty`, encodedPropertyName];
         let recordOpts = {
           provTypes,
           relations: {
