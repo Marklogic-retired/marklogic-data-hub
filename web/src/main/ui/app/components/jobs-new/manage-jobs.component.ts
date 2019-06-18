@@ -11,7 +11,6 @@ import * as _ from "lodash";
     <jobs-page-ui
       [jobs]="this.jobs"
       [isLoading]="this.isLoading"
-      [errorResponse]="errorResponse"
     >
     </jobs-page-ui>
   `
@@ -22,11 +21,6 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
   jobsPageUi: ManageJobsUiComponent;
   isLoading = true;
   jobs = [];
-  errorResponse: any = {
-    isError: false,
-    status: '',
-    statusText: ''
-  };
 
   constructor(
     private manageJobsService: ManageJobsService,
@@ -58,13 +52,6 @@ export class ManageJobsComponent implements OnInit, OnDestroy {
         });
         this.isLoading = false;
         this.jobsPageUi.renderRows();
-      },
-      error => {
-        console.log('jobs error', error);
-        this.jobs = null;
-        this.errorResponse.isError = true;
-        this.errorResponse.status = error.status;
-        this.errorResponse.statusText = error.statusText;
       });
   }
 
