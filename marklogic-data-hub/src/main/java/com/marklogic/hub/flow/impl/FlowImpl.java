@@ -18,7 +18,6 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -123,8 +122,8 @@ public class FlowImpl implements Flow {
     }
 
     @Override
-    public Step getStep(String stepNum) {
-        return steps.get(stepNum);
+    public Step getStep(String stepKey) {
+        return steps.get(stepKey);
     }
 
     @Override
@@ -173,11 +172,11 @@ public class FlowImpl implements Flow {
     }
 
     @Override
-    public Step getStepById(String stepId) {
-        if (StringUtils.isEmpty(stepId)) {
+    @Deprecated
+    public Step getStepById(String stepKey) {
+        if (StringUtils.isEmpty(stepKey)) {
             return null;
         }
-
-        return steps.get(stepId);
+        return steps.get(stepKey);
     }
 }

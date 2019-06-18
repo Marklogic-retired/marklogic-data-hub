@@ -94,8 +94,7 @@ public class MappingTest extends HubTestBase {
 
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
-        // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
-        Thread.sleep(1000);
+
         Flow flow = flowManager.getFlow("CustomerXML");
         if (flow == null) {
             throw new Exception("CustomerXML Not Found");
