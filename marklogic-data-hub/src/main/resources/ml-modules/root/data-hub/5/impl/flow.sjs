@@ -389,15 +389,15 @@ class Flow {
     let docProvDocumentIDsByProperty = {};
     for (let prevUri of previousUris) {
       let docProvenance = content.provenance[prevUri];
-      let docProperties = Object.keys(docProvenance).map((prop) => xdmp.encodeForNCName(prop));
+      let docProperties = Object.keys(docProvenance);
       let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
       let docProvID = docPropRecords[0];
       docProvIDs.push(docProvID);
       let docProvPropertyIDKeyVals = docPropRecords[1];
       // accumulating changes here, since merges can have multiple docs with input per property.
       for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
-        let propDetails = docProvenance[xdmp.decodeFromNCName(origProp)];
-        let prop = xdmp.encodeForNCName(propDetails.destination);
+        let propDetails = docProvenance[origProp];
+        let prop = propDetails.destination;
 
         docProvPropertyValuesByProperty[prop] = docProvPropertyValuesByProperty[prop] || [];
         docProvPropertyValuesByProperty[prop].push(propDetails.value);
