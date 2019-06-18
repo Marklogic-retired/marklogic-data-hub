@@ -192,10 +192,10 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     this.selectedStepId = this.stepsArray[index].id;
   }
   updateStep(step) {
-    if(step.stepDefinitionType !== this.stepType.MASTERING){
-      this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});
-    }
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
+      if(step.stepDefinitionType !== this.stepType.MASTERING){
+        this.snackBar.open("Change Saved", "", {panelClass: ['snackbar'], duration: 1200});
+      }
       this.stepsArray.forEach( step => {
         if (step.id === resp.id) {
           step = resp;
