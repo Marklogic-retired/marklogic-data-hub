@@ -29,7 +29,6 @@ import com.marklogic.client.io.*;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -113,8 +112,6 @@ public class EndToEndFlowTests extends HubTestBase {
     private static final int BATCH_SIZE = 10;
     @Autowired
     private LegacyFlowManager flowManager;
-    @Autowired
-    private Versions versions;
     private DataMovementManager flowRunnerDataMovementManager;
 
     private boolean installDocsFinished = false;
@@ -420,7 +417,6 @@ public class EndToEndFlowTests extends HubTestBase {
         List<DynamicTest> tests = new ArrayList<>();
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
 
-        String major = versions.getMarkLogicVersion().replaceAll("([^.]+)\\..*", "$1");
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-no-errors";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
@@ -459,10 +455,9 @@ public class EndToEndFlowTests extends HubTestBase {
                 JsonNode actual = validateUserModules();
 
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                    String expected9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.sjs\",\"line\":18,\"column\":0}}}}}";
-                    String expected10 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/"+ flowType.toString() + "/" + flowName + "/main.sjs\",\"line\":7,\"column\":22}}}}}";
+                    String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.sjs\",\"line\":18,\"column\":0}}}}}";
                     String actualStr = toJsonString(actual);
-                    assertJsonEqual(major.equals("9")?expected9:expected10, actualStr, true);
+                    assertJsonEqual(expected, actualStr, true);
                 } else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"content\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/content.xqy\",\"line\":8,\"column\":0}}}}}";
                     JSONAssert.assertEquals(expected, toJsonString(actual), true);
@@ -480,7 +475,7 @@ public class EndToEndFlowTests extends HubTestBase {
     public List<DynamicTest> generateValidationHeadersErrorsTests() {
         List<DynamicTest> tests = new ArrayList<>();
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
-        String major = versions.getMarkLogicVersion().replaceAll("([^.]+)\\..*", "$1");
+
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-headers-errors";
             String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
@@ -496,10 +491,9 @@ public class EndToEndFlowTests extends HubTestBase {
                 installUserModules(getDataHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                    String expected9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
-                    String expected10 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.sjs\",\"line\":8,\"column\":22}}}}}";
+                    String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
                     String actualStr = toJsonString(actual);
-                    assertJsonEqual(major.equals("9")?expected9:expected10, actualStr, true);
+                    assertJsonEqual(expected, actualStr, true);
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.xqy\",\"line\":30,\"column\":0}}}}}";
@@ -526,10 +520,9 @@ public class EndToEndFlowTests extends HubTestBase {
                 installUserModules(getDataHubAdminConfig(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                    String expected9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
-                    String expected10 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.sjs\",\"line\":9,\"column\":22}}}}}";
+                    String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
                     String actualStr = toJsonString(actual);
-                    assertJsonEqual(major.equals("9")?expected9:expected10, actualStr, true);
+                    assertJsonEqual(expected, actualStr, true);
                 }
                 else {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.xqy\",\"line\":36,\"column\":0}}}}}";
@@ -557,8 +550,7 @@ public class EndToEndFlowTests extends HubTestBase {
                 JsonNode actual = validateUserModules();
                 String expected;
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                    expected = major.equals("9")?"{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.sjs\",\"line\":43,\"column\":2}}}}}"
-                        : "{\"errors\":{\"e2eentity\":{\""+ flowName +"\":{\"=-00=--\\\\8\\\\sthifalkj;;\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":1,\"column\":8}}}}}";
+                    expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.sjs\",\"line\":43,\"column\":2}}}}}";
                 }
                 else {
                     expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/main.xqy\",\"line\":69,\"column\":0}}}}}";
@@ -587,10 +579,9 @@ public class EndToEndFlowTests extends HubTestBase {
                     installUserModules(getDataHubAdminConfig(), true);
                     JsonNode actual = validateUserModules();
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                        String expected9 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
-                        String expected10 = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"[anonymous]\",\"line\":1,\"column\":8}}}}}";
+                        String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
                         String actualStr = toJsonString(actual);
-                        JSONCompareResult result = JSONCompare.compareJSON(major.equals("9")?expected9:expected10, actualStr, JSONCompareMode.STRICT);
+                        JSONCompareResult result = JSONCompare.compareJSON(expected, actualStr, JSONCompareMode.STRICT);
                         if (result.failed()) {
                             throw new AssertionError(result.getMessage());
                         }
@@ -623,8 +614,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     JsonNode actual = validateUserModules();
                     String expected;
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                        expected = major.equals("9")?"{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"writer\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/harmonize/" + flowName + "/writer.sjs\",\"line\":15,\"column\":2}}}}}"
-                            :"{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"main\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/harmonize/" + flowName + "/main.sjs\",\"line\":10,\"column\":21}}}}}";
+                        expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"writer\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/harmonize/" + flowName + "/writer.sjs\",\"line\":15,\"column\":2}}}}}";
                     } else {
                         expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"writer\":{\"msg\":\"XDMP-UNEXPECTED: (err:XPST0003) Unexpected token syntax error, unexpected Function_, expecting $end\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/writer.xqy\",\"line\":39,\"column\":0}}}}}";
                     }

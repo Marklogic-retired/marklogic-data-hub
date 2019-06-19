@@ -14,6 +14,14 @@
   justify-content: flex-end !important;
 }
 
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 470px;
+  top: -8px;
+  max-width: 230px !important;
+}
+
 div.source-weights-group input {
   border: 0;
 }

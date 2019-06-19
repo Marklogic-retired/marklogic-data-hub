@@ -61,6 +61,13 @@
         "separator": "\\t"
       },
       "options": {
+        "headers" : {
+          "sources" : [ {
+            "name" : "testFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
         "outputFormat": "json",
         "collections": ["csv-tab-coll"]
       }

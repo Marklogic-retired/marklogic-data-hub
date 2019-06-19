@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@ang
 import { AddMergeStrategyValidator } from '../../../../validators/add-merge-strategy.validator';
 import { WeightValidator } from '../../../../validators/weight.validator';
 import { SourceWeightValidator } from '../../../../validators/source-weight.validator';
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -23,6 +24,7 @@ export class AddMergeStrategyDialogComponent {
   props: FormArray;
   sourceWeights: FormArray;
   selectedDefault: string;
+  tooltips: any;
 
   constructor(
     private fb: FormBuilder,
@@ -32,6 +34,7 @@ export class AddMergeStrategyDialogComponent {
 
   ngOnInit() {
     console.log('this.data.strategy', this.data.strategy);
+    this.tooltips = FlowsTooltips.mastering;
     this.form = this.fb.group({
       // Clear name if default strategy
       name: [this.data.strategy && !this.data.strategy.default ? this.data.strategy.name : ''],
