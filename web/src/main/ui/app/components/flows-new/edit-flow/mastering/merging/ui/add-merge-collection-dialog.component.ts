@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeCollection } from "../merge-collections.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 import { WeightValidator } from '../../../../validators/weight.validator';
 import { forOwn } from 'lodash';
 
@@ -23,6 +24,7 @@ export class AddMergeCollectionDialogComponent {
   add: FormArray;
   remove: FormArray;
   set: FormArray;
+  tooltips: any;
 
   constructor(
     private fb: FormBuilder,
@@ -31,6 +33,7 @@ export class AddMergeCollectionDialogComponent {
   }
 
   ngOnInit() {
+    this.tooltips = FlowsTooltips.mastering;
     this.form = this.fb.group({
       event: [this.data.collection ? this.data.collection.event : 'onMerge'],
       add: [this.data.collection ? this.data.collection.add : ''],

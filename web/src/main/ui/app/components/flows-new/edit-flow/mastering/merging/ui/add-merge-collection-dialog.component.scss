@@ -18,6 +18,13 @@ button {
   justify-content: flex-end !important;
 }
 
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 450px;
+  top: -8px;
+}
+
 div.add-group input,
 div.remove-group input,
 div.set-group input {

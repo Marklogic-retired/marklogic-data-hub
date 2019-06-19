@@ -4,6 +4,7 @@ import { MergeStrategy } from "../merge-strategies.model";
 import { AddMergeStrategyDialogComponent } from './add-merge-strategy-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
 import * as _ from 'lodash';
+import { FlowsTooltips } from "../../../../tooltips/flows.tooltips";
 
 @Component({
   selector: 'app-merge-strategies-ui',
@@ -30,6 +31,7 @@ export class MergeStrategiesUiComponent {
 
   public timestampOrig: string;
   public mergeStrategyMod: MergeStrategy;
+  public tooltips: any;
 
   constructor(
     public dialog: MatDialog
@@ -39,6 +41,7 @@ export class MergeStrategiesUiComponent {
     console.log('ngOnInit this.mergeStrategies', this.mergeStrategies);
     this.dataSource = new MatTableDataSource<MergeStrategy>(this.mergeStrategies.strategies);
     this.timestampOrig = this.timestamp;
+    this.tooltips = FlowsTooltips.mastering;
   }
 
   ngAfterViewInit() {

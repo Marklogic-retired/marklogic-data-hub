@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, OnInit} from '@angular/core';
 import {Step} from '../../../models/step.model';
+import {FlowsTooltips} from "../../../tooltips/flows.tooltips";
 
 @Component({
   selector: 'app-custom-ui',
@@ -10,8 +11,13 @@ export class CustomUiComponent {
   @Input() step: Step;
   @Input() module: string;
   @Output() updateCustom = new EventEmitter();
+  tooltips: any;
 
   constructor() {
+  }
+
+  ngOnInit(){
+    this.tooltips = FlowsTooltips.custom;
   }
 
   onChange() {

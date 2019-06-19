@@ -7,5 +7,5 @@ plugins {
     // it includes ml-gradle. This plugin is what lets you
     // run DHF (Data Hub Framework) tasks from the
     // command line
-    id 'com.marklogic.ml-data-hub' version '4.0.3'
+    id 'com.marklogic.ml-data-hub' version '5.0.1'
 }
