@@ -92,6 +92,9 @@ export default function(qaProjectDir) {
             browser.wait(EC.visibilityOf(stepsPage.stepName));
             await stepsPage.setStepName("IngestAdvantage");
             await stepsPage.setStepDescription("Ingest Advantage docs");
+            await stepsPage.clickAdvSettingsExpandCollapse();
+            await browser.wait(EC.visibilityOf(stepsPage.additionalCollectionToAdd(0)));
+            await stepsPage.setAdditionalCollection(0, "LoadAdvantage");
             await stepsPage.clickStepCancelSave("save");
             browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
             browser.sleep(3000);
@@ -122,6 +125,7 @@ export default function(qaProjectDir) {
             browser.sleep(5000);
             expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1003');
             await expect(browsePage.facetName("IngestAdvantage").getText()).toEqual("IngestAdvantage");
+            await expect(browsePage.facetName("LoadAdvantage").getText()).toEqual("LoadAdvantage");
             // Verify on Manage Flows page
             await appPage.flowsTab.click()
             browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
