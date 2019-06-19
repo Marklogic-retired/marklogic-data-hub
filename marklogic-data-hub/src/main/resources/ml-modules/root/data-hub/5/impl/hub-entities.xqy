@@ -132,7 +132,11 @@ declare %private function hent:fix-options($nodes as node()*)
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-options(($n/@*, $n/node()))
+          hent:fix-options(($n/@*, $n/node())),
+
+          let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
+          where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
+          return <search:facet-option>limit=25</search:facet-option>
         }
       case text() return
         fn:replace($n, "es:", "*:")
