@@ -228,6 +228,9 @@ publishing {
                 asNode().append(pomCustomizations.licenses)
             }
         }
+	bootJava(MavenPublication) {
+			artifact bootJar
+		}
     }
     repositories {
         maven {
