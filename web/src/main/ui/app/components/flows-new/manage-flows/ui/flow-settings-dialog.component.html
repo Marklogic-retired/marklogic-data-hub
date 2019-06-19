@@ -21,8 +21,9 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500">
       <mat-label>Batch Size</mat-label>
-      <input id="flow-batch-size" matInput formControlName="batchSize"
+      <input id="flow-batch-size" matInput formControlName="batchSize" [errorStateMatcher]="instantErrorMatcher"
       />
+      <mat-error id="flow-batch-size-error" *ngIf="form.get('batchSize').invalid">Enter a number</mat-error>
     </mat-form-field>
     <mat-form-field
       [matTooltip]="tooltips.threadCount"
@@ -30,8 +31,9 @@
       matTooltipShowDelay="500"
       matTooltipHideDelay="500">
       <mat-label>Thread Count</mat-label>
-      <input id="flow-thread-count" matInput formControlName="threadCount"
+      <input id="flow-thread-count" matInput formControlName="threadCount" [errorStateMatcher]="instantErrorMatcher"
       />
+      <mat-error id="flow-thread-count-error" *ngIf="form.get('threadCount').invalid">Enter a number</mat-error>
     </mat-form-field>
     <mat-label>
       <span
