@@ -10,6 +10,10 @@ $line-color: unquote("rgb(#{$palette-datahub-100})");
   flex: none; // IE fix
 }
 
+#search-btn{
+  width: 100px;
+}
+
 pagination {
   margin: 1rem 0px;
 }
