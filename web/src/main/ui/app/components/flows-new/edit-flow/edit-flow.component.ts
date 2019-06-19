@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, Event as NavigationEvent, NavigationStart} from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Flow } from "../models/flow.model";
