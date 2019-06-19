@@ -180,6 +180,34 @@ export class Steps extends AppPage {
     return await stepTargetDatabaseOption.click();
   }
 
+  additionalCollectionToAdd(collectionNumber: number) {
+    return element(by.css(`.add-target-collecions-${collectionNumber}`));
+  }
+
+  get addAddtionalCollectionButton() {
+    return element(by.id("add-additional-collection-btn"));
+  }
+
+  async clickAddAddtionalCollectionButton() {
+    let button = this.addAddtionalCollectionButton;
+    return await button.click();
+  }
+
+  async setAdditionalCollection(collectionNumber: number, collectionName: string) {
+    let inputField = this.additionalCollectionToAdd(collectionNumber);
+    await inputField.clear();
+    return await inputField.sendKeys(collectionName);
+  }
+
+  removeAdditionalCollectionButton(collectionNumber: number) {
+    return element(by.css(`#remove-target-collection-${collectionNumber}`));
+  }
+
+  async clickRemoveAdditionalCollectionButton(collectionNumber: number) {
+    let button = this.removeAdditionalCollectionButton(collectionNumber);
+    return await button.click();
+  }
+
   /**
    * @param option = [cancel/save]
    */
