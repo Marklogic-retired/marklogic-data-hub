@@ -731,7 +731,7 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.stepCommitted("MasteringCustomer").getText()).toEqual("2,505");   
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
-            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            /*await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             await browser.sleep(10000);
             await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2512');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
@@ -753,7 +753,7 @@ export default function(qaProjectDir) {
             // Verify the merge doc from xml mapping
             await browsePage.searchKeyword("gardner");
             await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');*/
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
             await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));

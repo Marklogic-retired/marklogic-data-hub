@@ -18,10 +18,10 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
-import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
@@ -321,6 +321,10 @@ public class WriteStepRunner implements StepRunner {
 
         if (inputFilePath == null || inputFileType == null) {
             throw new RuntimeException("File path and type cannot be empty");
+        }
+
+        if("csv".equalsIgnoreCase(inputFileType)){
+            options.put("inputFileType", "csv");
         }
         options.put("flow", this.flow.getName());
 
@@ -624,6 +628,30 @@ public class WriteStepRunner implements StepRunner {
         return runStepResponse;
     }
 
+    private void processCsv(JacksonHandle jacksonHandle, File file) {
+        String uri = file.getParent();
+        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+            uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+        }
+        try {
+            uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        ObjectMapper mapper = jacksonHandle.getMapper();
+        JsonNode originalContent = jacksonHandle.get();
+        ObjectNode node = mapper.createObjectNode();
+        node.set("content",originalContent);
+        node.put("file", file.getAbsolutePath());
+        jacksonHandle.set(node);
+        try {
+            writeBatcher.add(String.format(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID()), jacksonHandle);
+        }
+        catch (IllegalStateException e) {
+            logger.error("WriteBatcher has been stopped");
+        }
+    }
+
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
         //note these ORs are for forward compatibility if we swap out the filecollector for another lib
@@ -635,19 +663,7 @@ public class WriteStepRunner implements StepRunner {
             try {
                 if(! writeBatcher.isStopped()) {
                     Stream<JacksonHandle> contentStream = splitter.split(docStream);
-                    String uri = file.getParent();
-                    if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
-                        uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
-                    }
-                    uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
-                    Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
-                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json")));
-                    try {
-                        writeBatcher.addAll(documentStream);
-                    }
-                    catch (IllegalStateException e) {
-                        logger.error("WriteBatcher has been stopped");
-                    }
+                    contentStream.forEach(jacksonHandle -> this.processCsv(jacksonHandle, file));
                 }
             } catch (Exception e) {
                throw new RuntimeException(e);

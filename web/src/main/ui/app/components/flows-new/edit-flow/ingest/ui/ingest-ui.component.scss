@@ -2,6 +2,10 @@
   padding: 20px 40px 150px 40px;
 }
 
+mat-form-field {
+  width: 50%;
+}
+
 app-folder-browser {
   max-width: 700px;
 }
@@ -15,4 +19,36 @@ div.label {
 
 /deep/ .csv-separator-field {
   padding: 8px 0 !important;
+}
+
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 418px;
+  top: 5px;
+  max-width: 259px !important;
+}
+
+/deep/ .mat-tooltip.source-path-tooltip {
+  left: 320px !important;
+}
+
+/deep/ .mat-tooltip.source-file-type-tooltip,
+/deep/ .mat-tooltip.csv-separator-field-tooltip,
+/deep/ .mat-tooltip.target-file-type-tooltip {
+  left: 300px !important;
+}
+
+/deep/ .mat-form-field.source-file-type,
+/deep/ .mat-form-field.target-file-type {
+  width: 200px !important;
+}
+
+/deep/ .mat-form-field.csv-separator-field {
+  width: 184px !important;
+}
+
+/deep/ .mat-form-field.target-permissions-field,
+/deep/ .mat-form-field.target-uri-replace-field {
+  width: 600px !important;
 }

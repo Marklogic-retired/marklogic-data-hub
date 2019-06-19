@@ -1,12 +1,12 @@
 <div layout-padding layout="column" class="ingest-page">
 
-    <!-- TODO reconsider adding tooltips for inputs
-    <info-label
-      [labelText]="config.inputFilePath.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.inputFilePath.description"
-    ></info-label> -->
-    <div class="label">{{config.inputFilePath.label}}</div>
+    <div class="label" 
+      [matTooltip]="tooltips.sourcePath"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+      matTooltipClass="source-path-tooltip"
+    >{{config.inputFilePath.label}}</div>
     <app-folder-browser
       [startPath]="this.step.fileLocations.inputFilePath"
       (folderChosen)="changeFolder($event)"
@@ -14,8 +14,14 @@
       [absoluteOnly]="true"
     ></app-folder-browser>
 
-    <div class="label">{{config.fileTypes.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <div class="label"
+      [matTooltip]="tooltips.sourceType"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+      matTooltipClass="source-file-type-tooltip"
+    >{{config.fileTypes.label}}</div>
+    <mat-form-field layout-fill class="source-file-type">
       <mat-select
         id="source-file-type-select"
         [(ngModel)]="this.step.fileLocations.inputFileType"
@@ -32,8 +38,14 @@
     </mat-form-field>
 
     <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
-      <div class="label">{{config.csvSeparator.label}}</div>
-      <mat-form-field layout-fill appearance="outline" class="csv-separator-field">
+      <div class="label"
+        [matTooltip]="tooltips.separator"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"
+        matTooltipClass="csv-separator-field-tooltip"
+      >{{config.csvSeparator.label}}</div>
+      <mat-form-field layout-fill class="csv-separator-field">
         <mat-select
           id="csv-separator-select"
           [(ngModel)]="this.step.fileLocations.separator"
@@ -50,8 +62,14 @@
       </mat-form-field>
     </div>
 
-    <div class="label">{{config.outputDocTypes.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <div class="label"
+      [matTooltip]="tooltips.targetType"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+      matTooltipClass="target-file-type-tooltip"
+    >{{config.outputDocTypes.label}}</div>
+    <mat-form-field layout-fill class="target-file-type">
       <mat-select
         id="target-file-type-select"
         [(ngModel)]="this.step.options.outputFormat"
@@ -67,33 +85,37 @@
       </mat-select>
     </mat-form-field>
 
-    <div class="label">{{config.outputPermissions.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <div class="label"
+      [matTooltip]="tooltips.targetPerms"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+    >{{config.outputPermissions.label}}</div>
+    <mat-form-field layout-fill class="target-permissions-field">
       <input
         id="target-permissions"
         matInput
         [(ngModel)]="this.step.options.permissions"
         name="permissions"
-        (blur)="onChange()"
-        (keypress)="onKeyChange($event)"
+        (change)="onChange()"
       />
     </mat-form-field>
 
-    <!-- <info-label
-      [labelText]="config.outputURIReplacement.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.outputURIReplacement.description"
-    ></info-label> -->
-    <div class="label">{{config.outputURIReplacement.label}}</div>
-    <mat-form-field layout-fill appearance="outline">
+    <div class="label"
+      [matTooltip]="tooltips.targetURIReplace"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+      matTooltipClass="target-uri-replace" 
+    >{{config.outputURIReplacement.label}}</div>
+    <mat-form-field layout-fill class="target-uri-replace-field">
       <mat-hint>Optional</mat-hint>
       <input
         id="target-uri-replace"
         matInput
         [(ngModel)]="this.step.fileLocations.outputURIReplacement"
         name="permissions"
-        (blur)="onChange()"
-        (keypress)="onKeyChange($event)"
+        (change)="onChange()"
       />
     </mat-form-field>
 </div>

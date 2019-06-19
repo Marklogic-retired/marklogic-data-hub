@@ -1,14 +1,15 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Event as NavigationEvent, NavigationStart} from '@angular/router';
 import { filter } from 'rxjs/operators';
-import {Flow} from "../models/flow.model";
-import {Step} from '../models/step.model';
-import {StepType} from '../models/step.model';
-import {ProjectService} from '../../../services/projects';
-import {ManageFlowsService} from "../services/manage-flows.service";
-import {EntitiesService} from '../../../models/entities.service';
+import { Flow } from "../models/flow.model";
+import { Step } from '../models/step.model';
+import { StepType } from '../models/step.model';
+import { ProjectService } from '../../../services/projects';
+import { ManageFlowsService } from "../services/manage-flows.service";
+import { EntitiesService } from '../../../models/entities.service';
 import { RunningJobService } from '../../jobs-new/services/running-job-service';
-import {Entity} from '../../../models';
+import { EditFlowUiComponent } from './ui/edit-flow-ui.component';
+import { Entity } from '../../../models';
 import * as _ from "lodash";
 
 @Component({
@@ -38,6 +39,9 @@ import * as _ from "lodash";
 `
 })
 export class EditFlowComponent implements OnInit, OnDestroy {
+
+  @ViewChild(EditFlowUiComponent) editFlowUi: EditFlowUiComponent;
+
   flowId: string;
   flow: Flow;
   flowNames: string[];
@@ -209,6 +213,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   updateStep(step) {
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
+      this.editFlowUi.stepUpdated(step);
       this.stepsArray.forEach( step => {
         if (step.id === resp.id) {
           step = resp;

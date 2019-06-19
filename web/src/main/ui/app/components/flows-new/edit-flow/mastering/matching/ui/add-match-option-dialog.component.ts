@@ -6,6 +6,7 @@ import { WeightValidator } from '../../../../validators/weight.validator';
 import { AddMatchOptionValidator } from '../../../../validators/add-match-option.validator';
 import { forOwn } from 'lodash';
 import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 
 export interface DialogData {
   stepName: string;
@@ -19,6 +20,7 @@ export interface DialogData {
 })
 export class AddMatchOptionDialogComponent {
   instantErrorMatcher: InstantErrorStateMatcher;
+  tooltips: any;
   form: FormGroup;
   props: FormArray;
   selectedType: string;
@@ -32,6 +34,7 @@ export class AddMatchOptionDialogComponent {
   }
 
   ngOnInit() {
+    this.tooltips = FlowsTooltips.mastering.matching;
     this.form = this.fb.group({
       propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
