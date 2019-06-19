@@ -542,20 +542,15 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
-        // Turning off CMA for resources that have bugs in ML 9.0-7/8
         AppConfig appConfig = hubConfig.getAppConfig();
-        appConfig.getCmaConfig().setCombineRequests(false);
-        appConfig.getCmaConfig().setDeployDatabases(false);
-        appConfig.getCmaConfig().setDeployRoles(false);
-        appConfig.getCmaConfig().setDeployUsers(false);
+        disableSomeCmaUsage(appConfig);
 
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
-            AppConfig roleConfig = hubConfig.getAppConfig();
             SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
             roleDeployer.setCommands(getSecurityCommandList());
-            roleDeployer.deploy(roleConfig);
+            roleDeployer.deploy(appConfig);
         } catch (HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
                 logger.warn("No manage client for security installs.  Assuming DHS provisioning already there");
@@ -567,6 +562,40 @@ public class DataHubImpl implements DataHub {
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
         finalDeployer.deploy(appConfig);
+    }
+
+    /**
+     * Turns off CMA for some resources that have bbugs in ML 9.0-7/8.
+     *
+     * @param appConfig
+     */
+    protected void disableSomeCmaUsage(AppConfig appConfig) {
+        appConfig.getCmaConfig().setCombineRequests(false);
+        appConfig.getCmaConfig().setDeployDatabases(false);
+        appConfig.getCmaConfig().setDeployRoles(false);
+        appConfig.getCmaConfig().setDeployUsers(false);
+    }
+
+    public void dhsInstall(HubDeployStatusListener listener) {
+        prepareAppConfigForInstallingIntoDhs(hubConfig.getAppConfig());
+
+        HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        dhsDeployer.setCommands(buildCommandListForInstallingIntoDhs());
+        dhsDeployer.deploy(hubConfig.getAppConfig());
+    }
+
+    protected void prepareAppConfigForInstallingIntoDhs(AppConfig appConfig) {
+        appConfig.setCreateForests(false);
+        appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
+        disableSomeCmaUsage(appConfig);
+    }
+
+    protected List<Command> buildCommandListForInstallingIntoDhs() {
+        List<Command> commands = new ArrayList<>();
+        commands.addAll(buildCommandMap().get("mlDatabaseCommands"));
+        commands.add(loadUserArtifactsCommand);
+        commands.add(loadUserModulesCommand);
+        return commands;
     }
 
     /**
