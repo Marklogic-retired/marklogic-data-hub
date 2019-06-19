@@ -116,12 +116,6 @@ export class IngestUiComponent implements OnInit{
     }
   }
 
-  onKeyChange(event) {
-    if (event.key === 'Enter') {
-      this.onChange();
-    }
-  }
-
   onKeyDown(event: KeyboardEvent) {
     // allow the user to type a tab
     if (event.keyCode === 9) {
@@ -136,5 +130,4 @@ export class IngestUiComponent implements OnInit{
   onChange() {
     this.saveStep.emit(this.step);
   }
-
 }

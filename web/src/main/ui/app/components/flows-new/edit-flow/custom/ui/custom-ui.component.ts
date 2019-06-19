@@ -20,12 +20,6 @@ export class CustomUiComponent {
     this.tooltips = FlowsTooltips.custom;
   }
 
-  onKeyChange(event) {
-    if (event.key === 'Enter') {
-      this.onChange();
-    }
-  }
-
   onChange() {
     this.updateCustom.emit(this.step);
   }
