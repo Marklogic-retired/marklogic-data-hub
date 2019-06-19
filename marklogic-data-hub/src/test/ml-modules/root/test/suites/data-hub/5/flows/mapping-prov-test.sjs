@@ -1,6 +1,9 @@
 const test = require("/test/test-helper.xqy");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const Provenance = require("/data-hub/5/impl/prov.sjs");
+const myProv = new Provenance();
 
 function describe(item) {
   return xdmp.describe(item, emptySequence, emptySequence);
@@ -14,16 +17,20 @@ function fineProvOnMapping() {
       context: {}
     }
   ], { provenanceGranularityLevel: 'fine'}, 1);
-  let provCount = fn.head(
+  let assertions = fn.head(
     xdmp.invokeFunction(function() {
-      return cts.estimate(cts.collectionQuery([
-        'http://marklogic.com/provenance-services/record'
-      ]));
-    }, { database: xdmp.database('data-hub-JOBS')})
+      let provCount = cts.estimate(cts.collectionQuery(['http://marklogic.com/provenance-services/record']));
+      let docURI = '/customer1.json';
+      let resp = myProv.queryDocRecordsNoEval(docURI, {}) || [];
+      let provForCustomerID = resp.filter((provInfo) => provInfo && /CustomerID$/.test(provInfo.provID));
+      return [
+        test.assertTrue(provCount > 1, `Provenance document count should be greater than 1 (was: ${provCount})`),
+        test.assertTrue(resp.length > 1, `Provenance documents for '/customer1.json' are returned and greater than 1 (was: ${resp.length})`),
+        test.assertTrue(provForCustomerID.length > 0, `Provenance info for CustomerID in '/customer1.json' exists`)
+      ];
+    }, { database: xdmp.database(config.JOBDATABASE)})
   );
-  return [
-    test.assertTrue(provCount > 1, `Provenance document count should be greater than 1 (was: ${provCount})`)
-  ];
+  return assertions;
 }
 
 []
