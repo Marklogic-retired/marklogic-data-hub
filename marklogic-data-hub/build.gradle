@@ -85,6 +85,7 @@ configurations.all {
 
 // The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
 bootJar {
+    classifier = "installer"
     mainClassName = "com.marklogic.hub.cli.Installer"
 }
 
