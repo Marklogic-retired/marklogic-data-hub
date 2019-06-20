@@ -217,6 +217,7 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
+	    artifact bootJar
 
             pom.withXml {
                 asNode().appendNode('description', pomCustomizations.textdescription.text())
@@ -228,9 +229,6 @@ publishing {
                 asNode().append(pomCustomizations.licenses)
             }
         }
-	bootJava(MavenPublication) {
-			artifact bootJar
-		}
     }
     repositories {
         maven {
