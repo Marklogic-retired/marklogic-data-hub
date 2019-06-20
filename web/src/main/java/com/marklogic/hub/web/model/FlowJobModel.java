@@ -1,11 +1,11 @@
 package com.marklogic.hub.web.model;
 
+import static java.util.Optional.ofNullable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Optional.ofNullable;
 
 public class FlowJobModel {
     public static class LatestJob {
@@ -22,7 +22,7 @@ public class FlowJobModel {
 
         public String toString() {
             List<String> lstOutput = new ArrayList<>();
-            if (output != null && !output.get("output").isNull() && output.get("output").isArray()) {
+            if (output != null && output.get("output") != null && output.get("output").isArray()) {
                 output.get("output").forEach(e -> lstOutput.add(e.asText()));
             }
             return String.format("{jobId: %s, stepId: %s, status: %s, startTime: %s, endTime: %s, " +

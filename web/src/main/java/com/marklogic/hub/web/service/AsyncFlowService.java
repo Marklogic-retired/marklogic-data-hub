@@ -27,6 +27,7 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -48,14 +49,15 @@ import org.springframework.stereotype.Service;
 @Service
 @PropertySource({"classpath:dhf-defaults.properties"})
 public class AsyncFlowService {
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     //core/maximum pool size, can be configurable if required
-    private static final int NTHREADS = 6;
+    private static final int NTHREADS = 4;
 
     //a thread processes 10 flows, can be configurable if required
-    //if the flow number is not more than 10, we do not use any thread in the pool
-    private static final int FLOW_COUNT_PER_THREAD = 10;
+    //if the flow number is not more than 30, we do not use any thread in the pool
+    private static final int FLOW_COUNT_PER_THREAD = 30;
 
     @Autowired
     private FlowManager flowManager;
@@ -72,7 +74,7 @@ public class AsyncFlowService {
     private String jaegerServiceName;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         //we could turn on/off jaeger to trace performance of any call stacks by
         //injecting customized span code along with tags, e.g. try (Scope scope = JaegerConfig.activate(span))
         //default tracing is off. In order to turn it on, set JaegerServiceName with a value defined in the dhf-defaults.properties file
@@ -81,7 +83,6 @@ public class AsyncFlowService {
         if (StringUtils.isNotEmpty(jaegerServiceName)) {
             JaegerConfig.init(jaegerServiceName);
         }
-
         executor = Executors.newFixedThreadPool(NTHREADS);
         logger.info(String.format("Initialized a fixed thread pool with pool size: %d", NTHREADS));
     }
@@ -100,7 +101,6 @@ public class AsyncFlowService {
     class FlowStepsWithThreadInfo {
         int groupId;
         long threadId;
-
         List<FlowStepModel> flowSteps;
 
         public FlowStepsWithThreadInfo(List<FlowStepModel> flowSteps, int groupId, long threadId) {
@@ -114,6 +114,7 @@ public class AsyncFlowService {
         List<Flow> flows;
         int start;
         Span parentSpan;
+
         public FlowStepsCallable(List<Flow> flows, int start, Span parentSpan) {
             this.flows = flows;
             this.start = start;
@@ -121,23 +122,31 @@ public class AsyncFlowService {
         }
 
         @Override
-        public FlowStepsWithThreadInfo call()  {
+        public FlowStepsWithThreadInfo call() {
             FlowStepsWithThreadInfo flowStepsWithThreadInfo;
-            Span span = JaegerConfig.buildSpanFromMethod(new Object() {}, parentSpan)
+            Span span = JaegerConfig.buildSpanFromMethod(new Object() {
+            }, parentSpan)
                 .withTag("currThread", Thread.currentThread().getId()).start();
 
             try (Scope ignored = JaegerConfig.activate(span)) {
                 List<FlowStepModel> flowSteps = new ArrayList<>();
                 int startIdx = start * FLOW_COUNT_PER_THREAD;
+                List<Flow> flowGroup = new ArrayList<>();
+                IntStream.range(startIdx, Math.min(flows.size(), startIdx + FLOW_COUNT_PER_THREAD))
+                    .forEach(i -> {
+                        flowGroup.add(flows.get(i));
+                    });
+                Map<String, FlowJobs> jobMap = flowJobService.getFlowJobs(flowGroup, span);
                 IntStream.range(startIdx, Math.min(flows.size(), startIdx + FLOW_COUNT_PER_THREAD))
                     .forEach(i -> {
                         logger.debug(String
                             .format("thread id: %d, flowName: %s", Thread.currentThread().getId(),
                                 flows.get(i).getName()));
-                        FlowStepModel fsm = getFlowStepModel(flows.get(i),false, span);
+                        FlowStepModel fsm = getFlowStepModel(flows.get(i), false, jobMap);
                         flowSteps.add(fsm);
                     });
-                flowStepsWithThreadInfo = new FlowStepsWithThreadInfo(flowSteps, start, Thread.currentThread().getId());
+                flowStepsWithThreadInfo = new FlowStepsWithThreadInfo(flowSteps, start,
+                    Thread.currentThread().getId());
             } finally {
                 span.finish();
             }
@@ -152,20 +161,24 @@ public class AsyncFlowService {
         if (flows.isEmpty()) {
             return flowSteps;
         }
+
         int threadCnt = flows.size() / FLOW_COUNT_PER_THREAD;
 
-        Span span = JaegerConfig.buildSpanFromMethod(new Object() {})
+        Span span = JaegerConfig.buildSpanFromMethod(new Object() {
+        })
             .withTag("mainThread", Thread.currentThread().getId()).start();
 
         try (Scope ignored = JaegerConfig.activate(span)) {
             if (useThread && threadCnt > 0) {
                 asyncGetFlowSteps(flows, threadCnt, flowSteps);
             } else {
+                Map<String, FlowJobs> jobMap = flowJobService.getFlowJobs(flows, span);
                 for (Flow flow : flows) {
-                    FlowStepModel fsm = getFlowStepModel(flow,false, span);
+                    FlowStepModel fsm = getFlowStepModel(flow, false, jobMap);
                     flowSteps.add(fsm);
                 }
             }
+            flowJobService.firstTimeRun = false;
         } finally {
             span.finish();
         }
@@ -173,12 +186,39 @@ public class AsyncFlowService {
         return flowSteps;
     }
 
+    public FlowStepModel getFlowStepModel(Flow flow, boolean fromRunFlow,
+        Map<String, FlowJobs> jobMap) {
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+        if (fromRunFlow) {
+            FlowRunnerChecker.getInstance(flowRunner).resetLatestJob(flow);
+        }
+        FlowJobs flowJobs;
+        if (flowRunner.getRunningFlow() != null && flow.getName()
+            .equalsIgnoreCase(flowRunner.getRunningFlow().getName())) {
+            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob(flow));
+        }
+
+        if (jobMap != null) {
+            flowJobs = jobMap.get(flow.getName());
+        } else {
+            if (fsm.latestJob != null && (JobStatus.isJobDone(fsm.latestJob.status) || JobStatus
+                .isStepDone(fsm.latestJob.status))) {
+                flowJobs = flowJobService.getJobsByFlow(flow, true);
+            } else {
+                flowJobs = flowJobService.getJobsByFlow(flow, false);
+            }
+        }
+        fsm.setJobs(flowJobs, fromRunFlow);
+        return fsm;
+    }
+
     private void asyncGetFlowSteps(List<Flow> flows, int threadCnt, List<FlowStepModel> flowSteps) {
         if (flows.size() % FLOW_COUNT_PER_THREAD != 0) {
             threadCnt++;
         }
 
-        ExecutorCompletionService<FlowStepsWithThreadInfo> ecs = new ExecutorCompletionService(executor);
+        ExecutorCompletionService<FlowStepsWithThreadInfo> ecs = new ExecutorCompletionService(
+            executor);
         Future[] futures = IntStream.range(0, threadCnt)
             .mapToObj(i -> ecs.submit(new FlowStepsCallable(flows, i, JaegerConfig.activeSpan())))
             .toArray(Future[]::new);
@@ -204,23 +244,5 @@ public class AsyncFlowService {
                 span.finish();
             }
         });
-    }
-
-    public FlowStepModel getFlowStepModel(Flow flow, boolean fromRunFlow, Span parentSpan) {
-        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
-        if (fromRunFlow) {
-            FlowRunnerChecker.getInstance(flowRunner).resetLatestJob(flow);
-        }
-        FlowJobs flowJobs;
-        if (flowRunner.getRunningFlow() != null && flow.getName().equalsIgnoreCase(flowRunner.getRunningFlow().getName())) {
-            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob(flow));
-        }
-        if (fsm.latestJob != null  && (JobStatus.isJobDone(fsm.latestJob.status) || JobStatus.isStepDone(fsm.latestJob.status))) {
-            flowJobs = flowJobService.getJobs(flow,true, parentSpan);
-        } else {
-            flowJobs = flowJobService.getJobs(flow,false, parentSpan);
-        }
-        fsm.setJobs(flowJobs, fromRunFlow);
-        return fsm;
     }
 }
