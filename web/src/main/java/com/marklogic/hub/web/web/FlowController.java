@@ -47,7 +47,7 @@ public class FlowController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Callable<ResponseEntity<?>>  getFlows() {
+    public Callable<ResponseEntity<?>> getFlows() {
         List<FlowStepModel> flowSteps;
         Span span = JaegerConfig.buildSpan("getFlows").start();
         try (Scope scope = JaegerConfig.activate(span)) {

@@ -21,18 +21,22 @@ function get(context, params) {
   let jobId = params["jobid"];
   let status = params["status"];
   let flow = params["flow-name"];
+  let flowNames = params["flowNames"];
   let latest = params["latest"];
 
   let resp = null;
 
   if(fn.exists(jobId) && fn.exists(status)) {
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request"]));
+    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request"]));
   }
   else if(fn.exists(jobId)) {
     resp = datahub.jobs.getJobDocWithId(jobId);
   }
   else if(fn.exists(status)) {
     resp = datahub.jobs.getJobDocs(status);
+  }
+  else if (fn.exists(flowNames)) {
+    resp = datahub.jobs.getJobDocsForFlows(flowNames);
   }
   else if (fn.exists(flow)) {
     resp = datahub.jobs.getJobDocsByFlow(flow);
