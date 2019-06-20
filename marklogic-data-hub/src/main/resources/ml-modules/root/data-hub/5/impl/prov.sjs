@@ -151,42 +151,69 @@ class Provenance {
    * attributes, dateTime & namespaces info each record requires.
    * @param {string} id - the identifier of this provenance information
    * @param {Object} options - provenance record options (see individual type requirements below)
+   * @param {Object} metadata - provenance record metadata
    */
   _createRecord(id, options, metadata) {
-    metadata = metadata || null;
+    this._createRecords([{id, options, metadata}]);
+    return id;
+  }
+
+  /**
+   * General create provenance record function that adds the same relations,
+   * attributes, dateTime & namespaces info each record requires.
+   * @param {Array} recordsQueue - array of objects with identifier of this provenance information, options, and metadata
+   */
+  _createRecords(recordsQueue) {
     xdmp.eval(`
       const ps = require('/MarkLogic/provenance');
       xdmp.securityAssert("http://marklogic.com/xdmp/privileges/ps-user", "execute");
+      
+      for (let recordDetails of recordsQueue) {
+        let options = recordDetails.options || {};
+        options.dateTime = String(fn.currentDateTime());
+        options.namespaces = { "dhf":"http://marklogic.com/dhf" }; // for user defined provenance types
 
-      options = options || {};
-      options.dateTime = String(fn.currentDateTime());
-      options.namespaces = { "dhf":"http://marklogic.com/dhf" }; // for user defined provenance types
+        // relations
+        options.relations = options.relations || {};
+        options.relations.attributedTo = xdmp.getCurrentUser();
 
-      // relations
-      options.relations = options.relations || {};
-      options.relations.attributedTo = xdmp.getCurrentUser();
+        // attributes
+        options.attributes = options.attributes || {};
+        options.attributes.roles = xdmp.getCurrentRoles().toArray().join(',');
+        options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r)).join(',');
 
-      // attributes
-      options.attributes = options.attributes || {};
-      options.attributes.roles = xdmp.getCurrentRoles().toArray().join(',');
-      options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r)).join(',');
+        let metadata = recordDetails.metadata || {};
+        if (metadata)
+            Object.assign(options.attributes, metadata)
 
-      metadata = metadata || {};
-      if (metadata)
-        Object.assign(options.attributes, metadata)
-
-      var record = ps.provenanceRecord(id, options);
-      ps.provenanceRecordInsert(record);
+        let record = ps.provenanceRecord(recordDetails.id, options);
+        ps.provenanceRecordInsert(record);
+       }
       `,
-      { id, options, metadata },
+      { recordsQueue },
       {
         database: xdmp.database(this.config.JOBDATABASE),
         commit: 'auto',
         update: 'true',
         ignoreAmps: true
-    })
-    return id;
-  }
+      });
+    return recordsQueue.map((recordDetails) => recordDetails.id);
+  };
+
+  /**
+   * General function for adding to the commit queue
+   * @param {string} id - the identifier of this provenance information
+   * @param {Object} options - provenance record options (see individual type requirements below)
+   * @param {Object} metadata - provenance record metadata
+   */
+  _queueForCommit(id, options, metadata) {
+    let existingForId = this.config.commitQueue.find((recordDetails) => recordDetails.id === id);
+    if (existingForId) {
+      Object.assign(existingForId, {id, options, metadata});
+    } else {
+      this.config.commitQueue.push({id, options, metadata});
+    }
+  };
 
   /**
    * @desc Create a provenance record when a document is run through an ingestion step
@@ -228,7 +255,7 @@ class Provenance {
 
     return (this.config.autoCommit) ? 
       this._createRecord(provId, recordOpts, info.metadata) : 
-      this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+      this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -273,7 +300,7 @@ class Provenance {
 
     return (this.config.autoCommit) ? 
       this._createRecord(provId, recordOpts, info.metadata) : 
-      this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+      this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -318,7 +345,7 @@ class Provenance {
 
     return (this.config.autoCommit) ? 
       this._createRecord(provId, recordOpts, info.metadata) : 
-      this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+      this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -362,7 +389,7 @@ class Provenance {
 
     return (this.config.autoCommit) ? 
       this._createRecord(provId, recordOpts, info.metadata) : 
-      this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+      this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -437,7 +464,7 @@ class Provenance {
           docPropertyProvIdsArray.push(docPropProvId);
           (this.config.autoCommit) ? 
             this._createRecord(docPropProvId, docPropProvOptions, info.metadata) : 
-            this.config.commitQueue.push([docPropProvId, docPropProvOptions, info.metadata]);
+            this._queueForCommit(docPropProvId, docPropProvOptions, info.metadata);
         }
 
         // create document record
@@ -456,7 +483,7 @@ class Provenance {
 
         (this.config.autoCommit) ? 
           this._createRecord(docProvId, recordOpts, info.metadata) : 
-          this.config.commitQueue.push([docProvId, recordOpts, info.metadata]);
+          this._queueForCommit(docProvId, recordOpts, info.metadata);
 
         // construct response
         resp = [docProvId, docPropertyProvIds];
@@ -514,7 +541,7 @@ class Provenance {
         };
         (this.config.autoCommit) ? 
           this._createRecord(provId, recordOpts, info.metadata) : 
-          this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+          this._queueForCommit(provId, recordOpts, info.metadata);
 
         resp = provId;
       } else {
@@ -562,7 +589,7 @@ class Provenance {
         };
         (this.config.autoCommit) ? 
           this._createRecord(provId, recordOpts, info.metadata) : 
-          this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+          this._queueForCommit(provId, recordOpts, info.metadata);
         resp = provId;
       } else {
         resp = new Error(`Function requires param 'documentProvIds' & 'alteredPropertyProvIds' to be defined.`);
@@ -579,9 +606,8 @@ class Provenance {
    */
   commit() { 
     if (this.config.autoCommit === false && this.config.commitQueue.length > 0) {
-      while (this.config.commitQueue.length) {
-        this._createRecord( ...(this.config.commitQueue.shift()) );
-      }
+      this._createRecords(this.config.commitQueue);
+      this.config.commitQueue = [];
     }
   }
 
@@ -625,7 +651,7 @@ class Provenance {
   //     if (this.config.autoCommit)
   //       resp = this._createRecord(provId, recordOpts, info.metadata);
   //     else {
-  //       this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+  //       this._queueForCommit(provId, recordOpts, info.metadata);
   //       resp = provId; // will commit later, _createRecord just returns provId
   //     }
   //   } else {
@@ -660,7 +686,7 @@ class Provenance {
   //     if (this.config.autoCommit)
   //       resp = this._createRecord(provId, recordOpts, info.metadata);
   //     else {
-  //       this.config.commitQueue.push([provId, recordOpts, info.metadata]);
+  //       this._queueForCommit(provId, recordOpts, info.metadata);
   //       resp = provId; // will commit later, _createRecord just returns provId
   //     }
   //   } else {
