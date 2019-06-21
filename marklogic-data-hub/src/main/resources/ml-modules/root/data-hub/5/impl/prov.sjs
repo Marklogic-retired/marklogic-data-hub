@@ -165,6 +165,7 @@ class Provenance {
    */
   _createRecords(recordsQueue) {
     xdmp.eval(`
+      declareUpdate();
       const ps = require('/MarkLogic/provenance');
       xdmp.securityAssert("http://marklogic.com/xdmp/privileges/ps-user", "execute");
       
@@ -188,7 +189,7 @@ class Provenance {
 
         let record = ps.provenanceRecord(recordDetails.id, options);
         ps.provenanceRecordInsert(record);
-       }
+      }
       `,
       { recordsQueue },
       {
