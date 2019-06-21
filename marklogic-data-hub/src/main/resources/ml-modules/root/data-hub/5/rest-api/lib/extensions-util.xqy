@@ -1000,9 +1000,17 @@ declare private function extut:transform-all-js(
             xs:QName("applyList"), "../lib/extensions-util.sjs"
             ),
         $extension-name,
-        extut:make-source-uri(
+        let $source-uri := extut:make-source-uri(
             extut:make-base-uri("transform",$extension-name), "transform", "javascript"
-            ),
+            )
+
+        (: Not sure how to use get-extension-function here, so manually mapping :)
+        let $source-uri :=
+          if ($source-uri = "/marklogic.rest.transform/ml:runIngest/assets/transform.sjs")
+          then "/data-hub/5/transforms/dmsdk-ingest.xqy"
+          else $source-uri
+
+      return $source-uri,
         "transform",
         map:get($context,"requests"),
         $params
