@@ -518,7 +518,7 @@ class FlowUtils {
     metaData[this.consts.CREATED_ON] = fn.string(this.evalSubstituteVal(this.consts.CREATED_ON));
     metaData[this.consts.CREATED_BY] = fn.string(this.evalSubstituteVal(this.consts.CREATED_BY));
     metaData[this.consts.CREATED_IN_FLOW] = flowName;
-    metaData[this.consts.CREATED_BY_STEP] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[this.consts.CREATED_BY_STEP],"\\s+"),stepName])), " ");
+    metaData[this.consts.CREATED_BY_STEP] = stepName;
     metaData[this.consts.CREATED_BY_JOB] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[this.consts.CREATED_BY_JOB],"\\s+"),jobId])), " ");
 
     return metaData;
