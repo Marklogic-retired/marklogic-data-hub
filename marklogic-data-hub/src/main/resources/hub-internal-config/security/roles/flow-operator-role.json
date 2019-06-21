@@ -4,7 +4,8 @@
   "role": [
     "rest-reader",
     "rest-extension-user",
-    "rest-writer"
+    "rest-writer",
+    "ps-user"
   ],
   "privilege": [
     {

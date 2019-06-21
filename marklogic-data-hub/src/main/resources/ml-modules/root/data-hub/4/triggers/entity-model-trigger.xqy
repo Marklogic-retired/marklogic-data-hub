@@ -122,7 +122,7 @@ return (
         ("ml-data-hub-tde")
       )
     } catch * {
-      xdmp:log("Unable to generate valid TDE for entity: " || $trgr:uri)
+      xdmp:log("Unable to generate valid TDE for entity: " || $trgr:uri || " (error: " || $err:description || ")")
     }
   else ()
   )

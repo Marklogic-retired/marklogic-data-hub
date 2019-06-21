@@ -10,5 +10,8 @@ import module namespace lib = "http://marklogic.com/datahub/test" at "lib/lib.xq
 ) ! xdmp:document-delete(.),
 
 xdmp:invoke-function(function() {
-  xdmp:collection-delete("http://marklogic.com/provenance-services/record")
+  try {
+    xdmp:collection-delete("http://marklogic.com/provenance-services/record")
+  } catch * {()},
+  xdmp:collection-delete("Jobs")
 }, map:entry("database", xdmp:database("data-hub-JOBS")));
