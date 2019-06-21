@@ -222,7 +222,7 @@ export class IngestUiComponent implements OnInit{
   }
 
   outputUriReplaceValue() {
-    return `${this.step.fileLocations.outputURIReplacement.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')},''`;
+    return `${this.step.fileLocations.outputURIReplacement.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')}`;
   }
 
   onChange() {
