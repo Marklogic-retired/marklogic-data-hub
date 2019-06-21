@@ -7,7 +7,7 @@
   </div>
 
   <!-- CENTER -->
-  <div class="center">
+  <div *ngIf="!errorResponse.isError" class="center">
 
     <!-- HEADER -->
     <div class="header accent">
@@ -17,7 +17,7 @@
     </div>
     <!-- / HEADER -->
 
-    <div class="content-card">
+    <div class="content-card" *ngIf="job">
 
       <div id="job-summary" [ngClass]="{hidden: !job}">
         <section class="name">
@@ -173,6 +173,10 @@
 
     </div>
   </div>
+  <http-error
+    *ngIf="errorResponse.isError"
+    [error]="errorResponse"
+  ></http-error>
 </div>
 
 <!-- <mat-menu class="step-menu-dialog" #jobMenu="matMenu">

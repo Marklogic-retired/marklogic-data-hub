@@ -18,6 +18,7 @@ export class JobDetailsUiComponent implements OnChanges, AfterViewInit, OnInit {
   targetDatabase = 'STAGING';
   @Input() job: Job;
   @Input() isLoading: boolean;
+  @Input() errorResponse: any;
 
   dataSource: MatTableDataSource<any>;
 
