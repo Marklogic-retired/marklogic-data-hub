@@ -198,8 +198,18 @@ declare function merge-impl:save-merge-models-by-uri(
     let $merge-write-object :=  merge-impl:build-merge-models-by-uri($uris, $merge-options, $id)
     let $merged-document := $merge-write-object => map:get("value")
     let $merge-uri := $merge-write-object => map:get("uri")
+    let $audit-trace := $merge-write-object => map:get("audit-trace")
     return (
       $merged-document,
+      xdmp:document-insert(
+        $audit-trace => map:get("uri"),
+        $audit-trace => map:get("value"),
+        (
+          xdmp:default-permissions()
+        ),
+        ($audit-trace => map:get("context"))
+        => map:get("collections")
+      ),
       let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
       let $distinct-uris := fn:distinct-values(($uris, $uris))[fn:doc-available(.)][fn:not(. = $merge-uri)]
       let $_archive := $distinct-uris ! merge-impl:archive-document(., $merge-options)
@@ -235,6 +245,74 @@ declare function merge-impl:construct-type($name as xs:QName, $path as xs:string
 };
 
 (:
+ : Generate attachments for the audit document.
+ : @param $merge-uri  the URI of the new merged document
+ : @param $final-properties  the merged properties, with their source info
+ : @return
+ :)
+declare function merge-impl:generate-audit-attachments(
+  $merge-uri as xs:string,
+  $final-properties
+) as item()*
+{
+  let $generated-entity-id := $auditing:sm-prefix ||$merge-uri
+  let $property-related-prov :=
+    for $prop in $final-properties,
+      $value in map:get($prop, "values")
+    (: Due to how JSON is constructed, we can't rely on the node having a node name.
+        Pull the node name from the name entry of the property map.
+    :)
+    let $type := merge-impl:construct-type(map:get($prop, "name"), map:get($prop, "path"), map:get($prop, "nsMap"))
+    let $value-text := history:normalize-value-for-tracing($value)
+    let $hash := xdmp:sha512($value-text)
+    let $algorithm-info := map:get($prop, "algorithm")
+    let $algorithm-agent := "algorithm:"||$algorithm-info/name||";options:"||$algorithm-info/optionsReference
+    for $source in map:get($prop, "sources")
+    let $used-entity-id := $auditing:sm-prefix || $source/documentUri || $type || $hash
+    return (
+      element prov:entity {
+        attribute prov:id {$used-entity-id},
+        element prov:type {$type},
+        element prov:label {$source/name || ":" || $type},
+        element prov:location {fn:string($source/documentUri)},
+        element prov:value { $value-text }
+      },
+      element prov:wasDerivedFrom {
+        element prov:generatedEntity {
+          attribute prov:ref { $generated-entity-id }
+        },
+        element prov:usedEntity {
+          attribute prov:ref { $used-entity-id }
+        }
+      },
+      element prov:wasInfluencedBy {
+        element prov:influencee { attribute prov:ref { $used-entity-id }},
+        element prov:influencer { attribute prov:ref { $algorithm-agent }}
+      }
+    )
+  let $prop-prov-entities := $property-related-prov[. instance of element(prov:entity)]
+  let $other-prop-prov := $property-related-prov except $prop-prov-entities
+  return (
+    element prov:hadMember {
+      element prov:collection { attribute prov:ref { $generated-entity-id } },
+      $prop-prov-entities
+    },
+    $other-prop-prov,
+    for $agent-id in
+      fn:distinct-values(
+        $other-prop-prov[. instance of element(prov:wasInfluencedBy)]/
+          prov:influencer/
+          @prov:ref ! fn:string(.)
+      )
+    return element prov:softwareAgent {
+      attribute prov:id {$agent-id},
+      element prov:label {fn:substring-before(fn:substring-after($agent-id,"algorithm:"), ";")},
+      element prov:location {fn:substring-after($agent-id,"options:")}
+    }
+  )
+};
+
+(:
  : Generate property details for the provenance document.
  : @param $final-properties  the merged properties, with their source info
  : @return
@@ -243,31 +321,33 @@ declare function merge-impl:generate-provenance-details(
   $final-properties
 ) as item()*
 {
-  for $source in fn:distinct-values(($final-properties ! map:get(., "sources")/documentUri))
-  return
-    map:entry(
-      $source,
-      map:new(
-        for $prop in $final-properties[map:get(., "sources")/documentUri = $source]
-        (: Due to how JSON is constructed, we can't rely on the node having a node name.
-            Pull the node name from the name entry of the property map.
-        :)
-        let $type := merge-impl:construct-type(map:get($prop, "name"), map:get($prop, "path"), map:get($prop, "nsMap"))
-        return map:entry($type,
-          map:new((
-            map:entry(
-              "value",
-              json:to-array(
-                for $value in map:get($prop, "values")
-                let $value-text := history:normalize-value-for-tracing($value)
-                return $value-text
-              )
-            ),
-            map:entry("destination", $type)
-        ))
+  map:new((
+    for $source in fn:distinct-values(($final-properties ! map:get(., "sources")/documentUri))
+    return
+      map:entry(
+        $source,
+        map:new(
+          for $prop in $final-properties[map:get(., "sources")/documentUri = $source]
+          (: Due to how JSON is constructed, we can't rely on the node having a node name.
+              Pull the node name from the name entry of the property map.
+          :)
+          let $type := merge-impl:construct-type(map:get($prop, "name"), map:get($prop, "path"), map:get($prop, "nsMap"))
+          return map:entry($type,
+            map:new((
+              map:entry(
+                "value",
+                json:to-array(
+                  for $value in map:get($prop, "values")
+                  let $value-text := history:normalize-value-for-tracing($value)
+                  return $value-text
+                )
+              ),
+              map:entry("destination", $type)
+          ))
+        )
       )
     )
-  )
+  ))
 };
 
 (:
@@ -431,6 +511,17 @@ declare function merge-impl:build-merge-models-by-uri(
     map:map()
       => map:with("previousUri", $uris)
       => map:with("uri", $merge-uri)
+      => map:with("audit-trace",
+        auditing:build-audit-trace(
+          $const:MERGE-ACTION,
+          $uris,
+          $merge-uri,
+          merge-impl:generate-audit-attachments(
+            $merge-uri,
+            $final-properties
+          )
+        )
+      )
       => map:with("provenance",
           merge-impl:generate-provenance-details(
             $final-properties

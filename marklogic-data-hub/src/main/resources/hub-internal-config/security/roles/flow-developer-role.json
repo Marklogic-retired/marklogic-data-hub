@@ -2,7 +2,7 @@
   "role-name": "%%mlFlowDeveloperRole%%",
   "description": "A role can deploy modules to a data hub instance.",
   "role": [
-    "rest-admin","manage-admin","tde-admin","ps-user"
+    "rest-admin","manage-admin","tde-admin"
   ],
   "privilege": [
     {
