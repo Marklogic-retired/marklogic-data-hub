@@ -202,12 +202,22 @@ class Jobs {
 
     // For each flow name, return its job IDs and latest job
     const response = {};
-    flowNames.forEach(flowName => {
-      response[flowName] = {
-        jobIds: jobIdMap[flowName],
-        latestJob: latestJobMap[flowName]
+    if (flowNames != null && flowNames != undefined) {
+      if (Array.isArray(flowNames)) {
+        flowNames.forEach(flowName => {
+          response[flowName] = {
+            jobIds: jobIdMap[flowName],
+            latestJob: latestJobMap[flowName]
+          };
+        });
       }
-    });
+      else {
+        response[flowNames] = {
+          jobIds: jobIdMap[flowNames],
+          latestJob: latestJobMap[flowNames]
+        };
+      }
+    }
 
     return response;
   }
