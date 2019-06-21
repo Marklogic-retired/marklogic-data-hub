@@ -103,8 +103,8 @@ interface MlcpOptions {
 })
 export class IngestUiComponent implements OnInit{
 
-  @Input() step: any;
-  @Input() flow: any;
+  @Input() step: Step;
+  @Input() flow: Flow;
   @Output() saveStep = new EventEmitter();
   @Output() clipboardSuccess = new EventEmitter();
   tooltips: any;
@@ -166,7 +166,7 @@ export class IngestUiComponent implements OnInit{
     let document_type = this.step.options.outputFormat.toLowerCase();
     let delimiter = this.step.fileLocations.separator;
     let output_permissions = this.step.options.permissions;
-    let step_number = this.flow.steps.findIndex(i => i.id === this.step.id).toString();
+    let step_number = String(this.flow.steps.findIndex(i => i.id === this.step.id)+1);
     let transform_param = `flow-name=${encodeURIComponent(this.flow.name)},step=${encodeURIComponent(step_number)}`
     let collections = this.flow.name.replace(new RegExp(' ', 'g'), '') + ',input';
     let output_uri_replace = this.outputUriReplaceValue();
