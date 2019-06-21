@@ -13,7 +13,8 @@ export class FlowsTooltips {
     separator: 'The character separating fields in your source data.',
     targetType: 'The format of your stored data. Default is JSON.',
     targetPerms: 'The comma-separated roles required to access the ingested data.',
-    targetURIReplace: "A comma-separated list of regular expression patterns and their replacement strings to customize the URIs of the ingested records. Example: /foo/bar,'/mydir'"
+    targetURIReplace: "A comma-separated list of regular expression patterns and their replacement strings to customize the URIs of the ingested records. Example: /foo/bar,'/mydir'",
+    mlcp: 'Paste this command into the terminal to ingest files using MLCP. Note that the URIs created by MLCP and Quickstart are different for delimited files.'
   }
 
   static mapping: any = {

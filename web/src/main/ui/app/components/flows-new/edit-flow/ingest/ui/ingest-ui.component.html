@@ -118,4 +118,25 @@
         (change)="onChange()"
       />
     </mat-form-field>
+
+    <span 
+       class="mlcp-label"
+       [matTooltip]="tooltips.mlcp"
+       matTooltipPosition="left"
+       matTooltipShowDelay="500"
+       matTooltipHideDelay="500">
+          MLCP Command
+      
+      <button
+            class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
+            [appClipboard]="mlcpcmd"
+            (onSuccess)="clipboardSuccess.emit()">
+            <i class="fa fa-copy" aria-hidden="true">
+            </i>
+      </button>
+    </span>
+        <div class="mlcp-cmd"> 
+          <p #mlcpcmd>{{mlcpCommand}}</p>
+        </div>
+        
 </div>
