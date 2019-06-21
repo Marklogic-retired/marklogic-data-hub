@@ -231,14 +231,17 @@ class Flow {
         status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
         metadata: {}
       };
-      let provResult;
-      if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
-        provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
-      } else {
-        provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
-      }
-      if (provResult instanceof Error) {
-        flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+      // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
+      if (content.provenance !== false) {
+        let provResult;
+        if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
+          provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
+        } else {
+          provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+        }
+        if (provResult instanceof Error) {
+          flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+        }
       }
     }
     if (!combinedOptions.noBatchWrite) {

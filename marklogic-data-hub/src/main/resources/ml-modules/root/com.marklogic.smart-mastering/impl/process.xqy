@@ -230,23 +230,15 @@ declare function proc-impl:process-match-and-merge-with-options(
       map:put($merges-in-transaction, $new-uri, fn:true()),
       let $distinct-uris := fn:distinct-values(map:get($consolidated-merges, $new-uri))
       let $merged-doc-def := merge-impl:build-merge-models-by-uri($distinct-uris, $merge-options, $new-uri)
-      let $merged-doc := $merged-doc-def => map:get("value")
-      let $merge-uri := merge-impl:build-merge-uri(
-        $new-uri,
-        if ($merged-doc instance of element() or
-          $merged-doc instance of document-node(element())) then
-          $const:FORMAT-XML
-        else
-          $const:FORMAT-JSON
-      )
+      let $merge-uri := $merged-doc-def => map:get("uri")
       return (
         $distinct-uris ! map:put($merged-into, ., $merge-uri),
+        $merged-doc-def
+          => map:get("audit-trace")
+          => map:with("hidden", fn:true())
+          => map:with("provenance", fn:false()),
         map:new((
-          map:entry("previousUri", $distinct-uris),
-          map:entry("uri", $merge-uri),
-          map:entry("value",
-            $merged-doc
-          ),
+          $merged-doc-def,
           map:entry("context",
             map:new((
               map:entry("collections",
