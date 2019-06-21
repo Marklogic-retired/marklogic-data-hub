@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router,  Event as NavigationEvent, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Flow } from "../models/flow.model";
@@ -35,6 +35,7 @@ import * as _ from "lodash";
     (stepSelected)="stepSelected($event)"
     (stepUpdate)="updateStep($event)"
     (stepDelete)="deleteStep($event)"
+    (clipboardSuccess)="clipboardSuccess.emit($event)"
   ></app-edit-flow-ui>
 `
 })
@@ -65,6 +66,9 @@ export class EditFlowComponent implements OnInit, OnDestroy {
     statusText: ''
   };
   navigationPopState: any;
+
+  @Output() clipboardSuccess = new EventEmitter();
+  
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,

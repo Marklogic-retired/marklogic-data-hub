@@ -1,6 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {FlowsTooltips} from "../../../tooltips/flows.tooltips";
-
+import { EntitiesService } from '../../../../../models/entities.service';
+import { Flow } from '../../../models/flow.model';
+import * as _ from 'lodash';
+import { EnvironmentService } from '../../../../../services/environment';
+import { Step } from '../../../models/step.model';
 
 const settings = {
   inputFilePath: {
@@ -88,6 +92,9 @@ const settings = {
     description: 'Specify a prefix to prepend to the default URI. Used to construct output document URIs. For details, see Controlling Database URIs During Ingestion.'
   }
 };
+interface MlcpOptions {
+  [key: string]: any;
+}
 
 @Component({
   selector: 'app-ingest-ui',
@@ -99,15 +106,32 @@ export class IngestUiComponent implements OnInit{
   @Input() step: any;
   @Input() flow: any;
   @Output() saveStep = new EventEmitter();
+  @Output() clipboardSuccess = new EventEmitter();
   tooltips: any;
-  config = settings;
+  groups: Array<any>;
+  mlcp = <MlcpOptions>{};
+ 
+  inputFilePath: string;
+  startPath: string;
+  @Output() finishedEvent: EventEmitter<boolean>;
+  _isVisible: boolean;
+  mlcpCommand: string;
+  
 
-  constructor() {
+  constructor(
+    private entitiesService: EntitiesService,
+    private envService: EnvironmentService
+  ) {
   }
 
-  ngOnInit(){
+  ngOnInit(): void {
     this.tooltips = FlowsTooltips.ingest;
+    this.updateMlcpCommand();
   }
+
+  
+
+  config = settings;
 
   changeFolder(folder) {
     if (this.step.fileLocations.inputFilePath !== folder.absolutePath) {
@@ -127,7 +151,82 @@ export class IngestUiComponent implements OnInit{
     }
   }
 
+  buildMlcpOptions(): Array<any> {
+    const options: Array<any> = [];
+
+    this.mlcp = {};
+    this.addMlcpOption(options, 'import', null, false, false);
+    this.addMlcpOption(options, 'mode', 'local', false, true);
+
+    const host = this.envService.settings.host;
+    const port = this.envService.settings.stagingPort;
+    const username = this.envService.settings.mlUsername;
+    let input_file_path = this.step.fileLocations.inputFilePath;
+    let input_file_type = this.step.fileLocations.inputFileType;
+    let document_type = this.step.options.outputFormat.toLowerCase();
+    let delimiter = this.step.fileLocations.separator;
+    let output_permissions = this.step.options.permissions;
+    let step_number = this.flow.steps.findIndex(i => i.id === this.step.id).toString();
+    let transform_param = `flow-name=${encodeURIComponent(this.flow.name)},step=${encodeURIComponent(step_number)}`
+    let collections = this.flow.name.replace(new RegExp(' ', 'g'), '') + ',input';
+    let output_uri_replace = this.outputUriReplaceValue();
+    this.addMlcpOption(options, 'host', host, false, true);
+    this.addMlcpOption(options, 'port', port, false, true);
+    this.addMlcpOption(options, 'username', username, false, true);
+    this.addMlcpOption(options, 'password', '*****', false, true);
+    this.addMlcpOption(options, 'input_file_path', input_file_path, false, true);
+    this.addMlcpOption(options, 'input_file_type', input_file_type, false, true);
+    (input_file_type === 'csv')? (this.addMlcpOption(options, 'generate_uri', 'true', false, true)):'';
+    (input_file_type === 'csv' && delimiter !== ',')? (this.addMlcpOption(options, 'delimiter', delimiter, false, true)):'';
+    this.addMlcpOption(options, 'output_collections', collections, false, true);
+    this.addMlcpOption(options, 'output_permissions', output_permissions, false, true);
+    this.addMlcpOption(options, 'output_uri_replace', output_uri_replace, false, true);
+    this.addMlcpOption(options, 'document_type', document_type, false, true);
+    this.addMlcpOption(options, 'transform_module', '/data-hub/5/transforms/mlcp-flow-transform.sjs', false, true);
+    this.addMlcpOption(options, 'transform_namespace', 'http://marklogic.com/data-hub/mlcp-flow-transform', false, true);
+    this.addMlcpOption(options, 'transform_param', transform_param, false, true);
+
+    return options;
+  }
+  isGroupVisible(category: any) {
+    throw new Error("Method not implemented.");
+  }
+
+  addMlcpOption(options: any, key: string, value: any, isOtherOption: boolean, appendDash: boolean): void {
+    if (appendDash) {
+      options.push('-' + key);
+    } else {
+      options.push(key);
+    }
+
+    if (value) {
+      if (isOtherOption) {
+        this.mlcp[key] = value;
+      }
+      if (value.type !== 'boolean' && value.type !== 'number') {
+        value = '"' + value + '"';
+      }
+      options.push(value);
+    }
+  }
+
+  updateMlcpCommand(): string {
+    
+    let mlcpCommand = 'mlcp';
+    mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
+    mlcpCommand += ' ' + this.buildMlcpOptions().join(' ');
+
+    this.mlcpCommand = mlcpCommand;
+
+    return mlcpCommand;
+  }
+
+  outputUriReplaceValue() {
+    return `${this.step.fileLocations.outputURIReplacement.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')},''`;
+  }
+
   onChange() {
     this.saveStep.emit(this.step);
+    this.updateMlcpCommand();
   }
 }

@@ -52,3 +52,24 @@ div.label {
 /deep/ .mat-form-field.target-uri-replace-field {
   width: 600px !important;
 }
+
+.mlcp-label {
+  padding-top: 15px;
+  padding-bottom: 0px;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.mlcp-cmd {
+  background-color: #e9eef4;
+  border: 1px solid #b1c7d9;
+  padding: 5px 10px;
+  font-family: monospace;
+
+  pre {
+    white-space: pre-wrap;
+    font-size: 10px;
+    word-wrap: normal;
+    max-width: 550px;
+  }
+}

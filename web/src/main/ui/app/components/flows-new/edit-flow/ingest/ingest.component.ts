@@ -1,4 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Flow } from '../../models/flow.model';
+import { Step } from '../../models/step.model';
 
 @Component({
   selector: 'app-ingest',
@@ -7,16 +10,18 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
       [step]="step"
       [flow]="flow"
       (saveStep)="saveStep.emit($event)"
+      (clipboardSuccess)="cmdCopied()"
     >
     </app-ingest-ui>
   `
 })
 export class IngestComponent implements OnInit {
-  @Input() step: any;
-  @Input() flow: any;
+  @Input() step: Step;
+  @Input() flow: Flow;
   @Input() projectDirectory: string;
   @Output() saveStep = new EventEmitter();
   constructor(
+    private snackbar: MatSnackBar
   ) {
   }
 
@@ -69,5 +74,11 @@ export class IngestComponent implements OnInit {
 
     this.step.fileLocations = fileLocations;
     this.step.options = options;
+  }
+  cmdCopied(): void {
+    this.snackbar.open('MLCP command copied to the clipboard.', "", {
+        panelClass: ['snackbar'], 
+        duration: 1200
+      });
   }
 }
