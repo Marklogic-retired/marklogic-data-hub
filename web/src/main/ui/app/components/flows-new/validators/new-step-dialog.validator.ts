@@ -6,6 +6,10 @@ export function NewStepDialogValidator(group: FormGroup) {
   let errors = {};
 
   switch (group.value.stepDefinitionType) {
+    case StepType.CUSTOM:
+    case StepType.INGESTION:
+      group.controls['targetEntity'].setErrors(null);
+      break;
     case StepType.MAPPING:
     case StepType.MASTERING:
       if (!group.value.targetEntity) {
