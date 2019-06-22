@@ -84,18 +84,24 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
             props.put(key, System.getProperties().getProperty(key));
         }
 
-        // Properties required for DHS
+        applyDhsSpecificProperties(props);
+        return props;
+    }
+
+    /**
+     * Public so that it can be reused by DHF Gradle plugin.
+     *
+     * @param props
+     */
+    public void applyDhsSpecificProperties(Properties props) {
         props.setProperty("mlIsHostLoadBalancer", "true");
         props.setProperty("mlIsProvisionedEnvironment", "true");
 
-        // Overrides for DHS
         props.setProperty("mlFlowDeveloperRole", "flowDeveloper");
         props.setProperty("mlFlowOperatorRole", "flowOperator");
         // Mapping this to flowDeveloper for now,
         props.setProperty("mlDataHubAdminRole", "flowDeveloper");
         props.setProperty("mlModulePermissions",
             "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert");
-
-        return props;
     }
 }

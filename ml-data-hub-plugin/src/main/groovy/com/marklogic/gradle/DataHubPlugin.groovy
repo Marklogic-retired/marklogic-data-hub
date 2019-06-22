@@ -20,7 +20,9 @@ package com.marklogic.gradle
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
+import com.marklogic.gradle.task.dhs.DhsDeployTask
 import com.marklogic.hub.ApplicationConfig
+import com.marklogic.hub.cli.command.InstallIntoDhsCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
@@ -162,6 +164,11 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
+        String dhsGroup = "DHS"
+        project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
+            description: "Deploy project resources and modules into a DHS instance"
+        )
+
         logger.info("Finished initializing ml-data-hub\n")
     }
 
@@ -194,8 +201,8 @@ class DataHubPlugin implements Plugin<Project> {
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
-        boolean calledHubInit = this.userCalledHubInit(project)
-        boolean calledHubUpdate = this.userCalledHubUpdate(project)
+        boolean calledHubInit = this.userCalledTask(project, "hubinit")
+        boolean calledHubUpdate = this.userCalledTask(project, "hubupdate")
         boolean calledHubInitOrUpdate = calledHubInit || calledHubUpdate
 
         if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {
@@ -210,9 +217,13 @@ class DataHubPlugin implements Plugin<Project> {
                 hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
             }
              else {
-                // If the user called hubUpdate, it should be fine to do this because they have a gradle.properties file
-                // with the properties necessary to construct a DatabaseClient
-                hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
+                Properties props = new ProjectPropertySource(project).getProperties()
+
+                if (userCalledTask(project, "dhsdeploy")) {
+                    new InstallIntoDhsCommand().applyDhsSpecificProperties(props)
+                }
+
+                hubConfig.refreshProject(props, false)
             }
 
             // By default, DHF uses gradle-local.properties for your local environment.
@@ -250,18 +261,9 @@ class DataHubPlugin implements Plugin<Project> {
         }
     }
 
-    boolean userCalledHubInit(Project project) {
+    boolean userCalledTask(Project project, String lowerCaseTaskName) {
         for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
-            if (taskName.toLowerCase().equals("hubinit")) {
-                return true
-            }
-        }
-        return false
-    }
-
-    boolean userCalledHubUpdate(Project project) {
-        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
-            if (taskName.toLowerCase().equals("hubupdate")) {
+            if (taskName.toLowerCase().equals(lowerCaseTaskName)) {
                 return true
             }
         }

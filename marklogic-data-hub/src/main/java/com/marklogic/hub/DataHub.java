@@ -92,6 +92,14 @@ public interface DataHub {
     void install(HubDeployStatusListener listener);
 
     /**
+     * Install user project files into a DHS instance. Does not install any DHF resources or modules, as those
+     * are assumed to be installed by DHS.
+     *
+     * @param listener
+     */
+    void dhsInstall(HubDeployStatusListener listener);
+
+    /**
      * Updates the indexes in the database based on the project
      * Must be run as a user with flow-developer-role or equivalent
      */
