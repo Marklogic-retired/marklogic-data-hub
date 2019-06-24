@@ -87,6 +87,7 @@ pipeline{
                    }
                    unsuccessful {
                       println("Unit Tests Failed")
+                      archiveArtifacts artifacts: '/var/opt/MarkLogic'
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
@@ -252,6 +253,7 @@ pipeline{
                    }
                    unsuccessful {
                       println("End-End Tests Failed")
+                      archiveArtifacts artifacts: '/var/opt/MarkLogic'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7-singlenode Tests for  $BRANCH_NAME Failed'
                   }
                   }
@@ -372,6 +374,7 @@ pipeline{
                    }
                    unsuccessful {
                       println("rh7_cluster_9.0-7 Failed")
+                      archiveArtifacts artifacts: '/var/opt/MarkLogic'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-7 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-7 Tests for $BRANCH_NAME Failed'
                   }
                   }
@@ -406,6 +409,7 @@ pipeline{
                    }
                    unsuccessful {
                       println("rh7_cluster_9.0-8 Tests Failed")
+                      archiveArtifacts artifacts: '/var/opt/MarkLogic'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-8 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-8 Tests for $BRANCH_NAME Failed'
                   }
                   }
@@ -617,6 +621,7 @@ pipeline{
                    }
                    unsuccessful {
                       println("Sanity Tests Failed")
+                      archiveArtifacts artifacts: '/var/opt/MarkLogic'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the Sanity tests of the branch $BRANCH_NAME on  failed. Please fix the tests and create a PR or create a bug for the failures.',false,'Sanity Tests for $BRANCH_NAME Failed'
                   }
                   }
