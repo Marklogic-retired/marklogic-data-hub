@@ -2,7 +2,8 @@
 <div id="match-threshold-dialog" mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field layout-fill>
     <mat-label>Name</mat-label>
-    <input id="match-threshold-name" matInput formControlName="label" required />
+    <input id="match-threshold-name" matInput formControlName="label" required [errorStateMatcher]="instantErrorMatcher" />
+    <mat-error id="match-threshold-name-error" *ngIf="form.get('label').invalid">Name is required</mat-error>
   </mat-form-field>
   <mat-form-field layout-fill>
     <mat-label>Weight</mat-label>
