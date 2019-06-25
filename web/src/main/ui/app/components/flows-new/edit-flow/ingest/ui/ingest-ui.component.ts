@@ -120,8 +120,13 @@ export class IngestUiComponent implements OnInit{
 
   constructor(
     private entitiesService: EntitiesService,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
   ) {
+  }
+
+  ngOnChanges(){
+    this.updateMlcpCommand();
+
   }
 
   ngOnInit(): void {
@@ -162,7 +167,8 @@ export class IngestUiComponent implements OnInit{
     const port = this.envService.settings.stagingPort;
     const username = this.envService.settings.mlUsername;
     let input_file_path = this.step.fileLocations.inputFilePath;
-    let input_file_type = this.step.fileLocations.inputFileType;
+    let in_file_tp = this.step.fileLocations.inputFileType;
+    let input_file_type = (in_file_tp !== 'csv' ) ? 'documents':'delimited_text';
     let document_type = this.step.options.outputFormat.toLowerCase();
     let delimiter = this.step.fileLocations.separator;
     let output_permissions = this.step.options.permissions;
@@ -176,11 +182,11 @@ export class IngestUiComponent implements OnInit{
     this.addMlcpOption(options, 'password', '*****', false, true);
     this.addMlcpOption(options, 'input_file_path', input_file_path, false, true);
     this.addMlcpOption(options, 'input_file_type', input_file_type, false, true);
-    (input_file_type === 'csv')? (this.addMlcpOption(options, 'generate_uri', 'true', false, true)):'';
-    (input_file_type === 'csv' && delimiter !== ',')? (this.addMlcpOption(options, 'delimiter', delimiter, false, true)):'';
+    (input_file_type === 'delimited_text')? (this.addMlcpOption(options, 'generate_uri', 'true', false, true)):'';
+    (input_file_type === 'delimited_text' && delimiter !== ',')? (this.addMlcpOption(options, 'delimiter', delimiter, false, true)):'';
     this.addMlcpOption(options, 'output_collections', collections, false, true);
-    this.addMlcpOption(options, 'output_permissions', output_permissions, false, true);
-    this.addMlcpOption(options, 'output_uri_replace', output_uri_replace, false, true);
+    (output_permissions)? this.addMlcpOption(options, 'output_permissions', output_permissions, false, true):'';
+    (output_uri_replace)? this.addMlcpOption(options, 'output_uri_replace', output_uri_replace, false, true):'';
     this.addMlcpOption(options, 'document_type', document_type, false, true);
     this.addMlcpOption(options, 'transform_module', '/data-hub/5/transforms/mlcp-flow-transform.sjs', false, true);
     this.addMlcpOption(options, 'transform_namespace', 'http://marklogic.com/data-hub/mlcp-flow-transform', false, true);
