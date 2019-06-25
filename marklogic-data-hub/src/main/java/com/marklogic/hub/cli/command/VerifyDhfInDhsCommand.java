@@ -102,15 +102,18 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
                 "/Evaluator/data-hub-JOBS/rest-api/options/jobs.xml",
                 "/Evaluator/data-hub-JOBS/rest-api/options/traces.xml",
                 "/Evaluator/data-hub-STAGING/rest-api/options/default.xml",
-                "/Evaluator/data-hub-FINAL/rest-api/options/default.xml"
+                "/Evaluator/data-hub-FINAL/rest-api/options/default.xml",
+                "/Curator/data-hub-FINAL/rest-api/options/default.xml",
+                "/Curator/data-hub-JOBS/rest-api/options/jobs.xml",
+                "/Curator/data-hub-JOBS/rest-api/options/traces.xml",
+                "/Curator/data-hub-STAGING/rest-api/options/default.xml",
+                "/Analyzer/data-hub-ANALYTICS/rest-api/options/default.xml",
+                "/Analyzer/data-hub-ANALYTICS-REST/rest-api/options/default.xml",
+                "/Operator/data-hub-OPERATION/rest-api/options/default.xml",
+                "/Operator/data-hub-OPERATION-REST/rest-api/options/default.xml",
+                "/Evaluator/data-hub-ANALYTICS/rest-api/options/default.xml",
+                "/Evaluator/data-hub-OPERATION/rest-api/options/default.xml"
             );
-
-            // Not verifying these for now as the current DHS setup doesn't install them
-//            verifyOptionsExist(documentManager,
-//                "/Curator/data-hub-JOBS/rest-api/options/jobs.xml",
-//                "/Curator/data-hub-JOBS/rest-api/options/traces.xml",
-//                "/Curator/data-hub-STAGING/rest-api/options/default.xml"
-//            );
         } finally {
             hubConfig.setPort(DatabaseKind.FINAL, finalPort);
             client.release();
