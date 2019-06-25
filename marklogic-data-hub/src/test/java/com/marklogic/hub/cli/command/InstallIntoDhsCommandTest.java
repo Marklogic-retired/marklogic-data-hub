@@ -8,17 +8,17 @@ import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -63,15 +63,19 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         command.dataHub = super.dataHub;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(9, commands.size());
+        assertEquals(11, commands.size());
+        Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
+
         assertTrue(commands.get(0) instanceof DeployPrivilegesCommand);
-        assertTrue(commands.get(1) instanceof DeployAmpsCommand);
-        assertTrue(commands.get(2) instanceof DeployOtherDatabasesCommand);
+        assertTrue(commands.get(1) instanceof DeployOtherDatabasesCommand);
+        assertTrue(commands.get(2) instanceof DeployDatabaseFieldCommand);
         assertTrue(commands.get(3) instanceof DhsDeployServersCommand);
-        assertTrue(commands.get(4) instanceof DeployTriggersCommand);
-        assertTrue(commands.get(5) instanceof DeployDatabaseFieldCommand);
-        assertTrue(commands.get(6) instanceof LoadHubModulesCommand);
-        assertTrue(commands.get(7) instanceof LoadUserModulesCommand);
-        assertTrue(commands.get(8) instanceof LoadHubArtifactsCommand);
+        assertTrue(commands.get(4) instanceof LoadHubModulesCommand);
+        assertTrue(commands.get(5) instanceof DeployAmpsCommand);
+        assertTrue(commands.get(6) instanceof LoadUserModulesCommand);
+        assertTrue(commands.get(7) instanceof CopyQueryOptionsCommand);
+        assertTrue(commands.get(8) instanceof DeployTriggersCommand);
+        assertTrue(commands.get(9) instanceof DeployHubTriggersCommand);
+        assertTrue(commands.get(10) instanceof LoadHubArtifactsCommand);
     }
 }

@@ -117,9 +117,11 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     }
 
     protected void verifyTriggers() {
-        ResourcesFragment triggers = new TriggerManager(hubConfig.getManageClient(), hubConfig.getAppConfig().getTriggersDatabaseName()).getAsXml();
-        for (String trigger : new String[]{"ml-dh-entity-create", "ml-dh-entity-delete", "ml-dh-entity-modify"}) {
-            verify(triggers.resourceExists(trigger), "Trigger was not created: " + trigger);
+        for (String triggersDatabaseName : new String[]{"data-hub-final-TRIGGERS", "data-hub-staging-TRIGGERS"}) {
+            ResourcesFragment triggers = new TriggerManager(hubConfig.getManageClient(), triggersDatabaseName).getAsXml();
+            for (String trigger : new String[]{"ml-dh-entity-create", "ml-dh-entity-delete", "ml-dh-entity-modify"}) {
+                verify(triggers.resourceExists(trigger), "Trigger was not created: " + trigger);
+            }
         }
     }
 

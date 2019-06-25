@@ -5,17 +5,14 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
-import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.cli.Options;
+import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Parameters(commandDescription = "Install or upgrade DHF into a DHS environment")
 public class InstallIntoDhsCommand extends AbstractInstallerCommand {
@@ -54,10 +51,14 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         commands.add(new DeployAmpsCommand());
         commands.add(dbCommand);
         commands.add(new DhsDeployServersCommand());
-        commands.add(new DeployTriggersCommand());
         commands.add(new DeployDatabaseFieldCommand());
 
-        for (Command c : dataHub.buildCommandMap().get("mlModuleCommands")) {
+        Map<String, List<Command>> commandMap = dataHub.buildCommandMap();
+
+        // Gets the DHF-specific command for loading triggers into the staging triggers database
+        commands.addAll(commandMap.get("mlTriggerCommands"));
+
+        for (Command c : commandMap.get("mlModuleCommands")) {
             if (c instanceof LoadHubModulesCommand || c instanceof LoadHubArtifactsCommand) {
                 commands.add(c);
             }
@@ -67,6 +68,8 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
                 commands.add(c);
             }
         }
+
+        commands.add(new CopyQueryOptionsCommand(hubConfig));
 
         return commands;
     }
