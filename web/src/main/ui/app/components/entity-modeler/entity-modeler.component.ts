@@ -384,6 +384,7 @@ export class EntityModelerComponent implements AfterViewChecked {
     () => {
       console.log('cancel');
     });
+    this.toolsVisible = !this.toolsVisible;
   }
 
   /**
