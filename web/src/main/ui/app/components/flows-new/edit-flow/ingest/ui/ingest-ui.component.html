@@ -118,15 +118,33 @@
         (change)="onChange()"
       />
     </mat-form-field>
+    <div class="label"
+      [matTooltip]="tooltips.targetURIPreview"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+    >{{config.outputURIPreview.label}}
+    </div>
+  <mat-form-field layout-fill class="target-uri-replace-field">
+    <input
+      id="uri-preview"
+      matInput
+      value = {{uri}}
+      name="uri-preview"
+      readonly
+    />
+  </mat-form-field>
 
-    <span 
+
+
+    <span
        class="mlcp-label"
        [matTooltip]="tooltips.mlcp"
        matTooltipPosition="left"
        matTooltipShowDelay="500"
        matTooltipHideDelay="500">
           MLCP Command
-      
+
       <button
             class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
             [appClipboard]="mlcpcmd"
@@ -135,8 +153,8 @@
             </i>
       </button>
     </span>
-        <div class="mlcp-cmd"> 
+        <div class="mlcp-cmd">
           <p #mlcpcmd>{{mlcpCommand}}</p>
         </div>
-        
+
 </div>
