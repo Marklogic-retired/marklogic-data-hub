@@ -31,7 +31,7 @@ dependencies {
 
     if ("true".equalsIgnoreCase(project.findProperty("isDeployUnitTestFramework"))) {
         // Needed to execute tests written using marklogic-unit-test
-        mlRestApi "com.marklogic:marklogic-unit-test-modules:0.13.develop"
+        mlRestApi "com.marklogic:marklogic-unit-test-modules:1.0.beta"
     }
 
     
