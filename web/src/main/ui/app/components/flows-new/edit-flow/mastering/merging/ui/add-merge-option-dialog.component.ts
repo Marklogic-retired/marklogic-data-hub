@@ -2,6 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MergeOption } from "../merge-options.model";
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
+import { WeightValidator } from '../../../../validators/weight.validator';
+import { SourceWeightValidator } from '../../../../validators/source-weight.validator';
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 import { forOwn } from 'lodash';
 
 export interface DialogData {
@@ -21,7 +24,8 @@ export class AddMergeOptionDialogComponent {
   selectedType: string;
   propertyName: string;
   sourceWeights: FormArray;
-  strategies: any;
+  strategies: any = [];
+  tooltips: any;
 
   constructor(
     private fb: FormBuilder,
@@ -31,13 +35,18 @@ export class AddMergeOptionDialogComponent {
 
   ngOnInit() {
     console.log('this.data.option', this.data.option);
+    this.tooltips = FlowsTooltips.mastering;
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName : ''],
-      mergeType: [this.data.option ? this.data.option.mergeType : 'exact'],
+      propertyName: [this.data.option ? this.data.option.propertyName : '',
+        [Validators.required]],
+      mergeType: [this.data.option ? this.data.option.mergeType : 'standard'],
       algorithmRef: [this.data.option ? this.data.option.algorithmRef : ''],
-      maxValues: [this.data.option ? this.data.option.maxValues : ''],
-      maxSources: [this.data.option ? this.data.option.maxSources : ''],
-      length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : ''],
+      maxValues: [this.data.option ? this.data.option.maxValues : '',
+        [WeightValidator]],
+      maxSources: [this.data.option ? this.data.option.maxSources : '',
+        [WeightValidator]],
+      length: [(this.data.option && this.data.option.length) ? this.data.option.length.weight : '',
+        [WeightValidator]],
       strategy: [this.data.option ? this.data.option.strategy : ''],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
@@ -47,10 +56,11 @@ export class AddMergeOptionDialogComponent {
     })
     this.selectedType = (this.data.option && this.data.option.mergeType) ?
       this.data.option.mergeType : 'standard';
-    this.strategies = (this.data.strategies && this.data.strategies.strategies) ?
-      this.data.strategies.strategies.map(s => {
-        if (!s.default) return s.name;
-      }) : [];
+    if (this.data.strategies && this.data.strategies.strategies) {
+      this.data.strategies.strategies.forEach(s => {
+        if (!s.default) this.strategies.push(s.name);
+      });
+    }
     this.form.setControl('sourceWeights', this.createSourceWeights());
     this.sourceWeights = this.form.get('sourceWeights') as FormArray;
   }
@@ -70,7 +80,7 @@ export class AddMergeOptionDialogComponent {
     return this.fb.group({
       source: source,
       weight: weight
-    });
+    }, { validators: SourceWeightValidator });
   }
 
   onAddSourceWeight() {

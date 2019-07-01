@@ -39,7 +39,7 @@ public class UnInstaller extends HubTestBase {
         dataHub.initProject();
         dataHub.uninstall();
         if (isCertAuth() || isSslRun()) {
-        	ManageClient manageClient = ((HubConfigImpl)getFlowDeveloperConfig()).getManageClient();
+        	ManageClient manageClient = ((HubConfigImpl)getDataHubAdminConfig()).getManageClient();
         	File finalServerFile = getResourceFile("ml-config/servers");
     		File hubServerFile = getResourceFile("hub-internal-config/servers");
     		try {

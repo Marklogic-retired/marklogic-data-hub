@@ -14,33 +14,40 @@
  limitations under the License.
  */
 'use strict';
-const DataHub = require("/data-hub/5/datahub.sjs");
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 
-//todo flush this out
 function get(context, params) {
   return post(context, params, null);
 }
 
 function post(context, params, input) {
   let flowName = params["flow-name"];
-
+  let stepNumber = params.step;
   if (!fn.exists(flowName)) {
     fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
   } else {
     let options = params["options"] ? JSON.parse(params["options"]) : {};
-    const datahub = new DataHub({ performanceMetrics: !!options.performanceMetrics });
+    const datahub = DataHubSingleton.instance({
+      performanceMetrics: !!options.performanceMetrics
+    });
     let jobId = params["job-id"];
     let flow = datahub.flow.getFlow(flowName);
-    let targetDatabase = params["target-database"] ? xdmp.database(params["target-database"]) : xdmp.database(datahub.config.FINALDATABASE);
-
+    let stepRef = flow.steps[stepNumber];
+    let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+    let flowOptions = flow.options || {};
+    let stepRefOptions = stepRef.options || {};
+    let stepDetailsOptions = stepDetails.options || {};
+    // build combined options
+    let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, options);
+    let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
     let query = null;
     let uris = null;
     if (params.uri || options.uris) {
       uris = datahub.hubUtils.normalizeToArray(params.uri || options.uris);
       query = cts.documentQuery(uris);
     } else {
-      let identifier = options.identifier || flow.identifier;
-      query = identifier ? cts.query(identifier) : null;
+      let sourceQuery = combinedOptions.sourceQuery || flow.sourceQuery;
+      query = sourceQuery ? cts.query(sourceQuery) : null;
     }
     let content = [];
     if (!query && input && fn.count(input) === uris.length) {
@@ -53,15 +60,14 @@ function post(context, params, input) {
             uri: xdmp.nodeUri(doc),
             value: doc,
             context: {
-              collections: xdmp.nodeCollections(doc),
-              permissions: xdmp.nodePermissions(doc),
+              permissions: combinedOptions.permissions ? datahub.hubUtils.parsePermissions(combinedOptions.permissions) : xdmp.nodePermissions(doc),
               metadata: xdmp.nodeMetadata(doc)
             }
           });
         }
-      }, flow.sourceDb || datahub.flow.globalContext.sourceDb);
+      }, sourceDatabase);
     }
-    return datahub.flow.runFlow(flowName, jobId, content, options, params.step);
+    return datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
   }
 }
 

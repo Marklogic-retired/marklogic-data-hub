@@ -416,6 +416,7 @@ export class FlowPage extends AppPage {
     browser.wait(EC.stalenessOf(this.newFlowDialog));
     expect(this.newFlowDialog.isPresent()).toBe(false);
   }
+
 }
 
 var flowPage = new FlowPage();

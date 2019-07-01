@@ -214,7 +214,7 @@ export default function(tmpDir) {
       expect(appPage.jobsTab.isDisplayed()).toBe(true);
     });
 
-    it ('should logout', async function() {
+    xit ('should logout', async function() {
       await appPage.logout();
       loginPage.isLoaded();
     });

@@ -83,7 +83,7 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    StepManager getStepManager() {
+    StepDefinitionManager getStepDefinitionManager() {
         getProject().property("stepManager")
     }
     

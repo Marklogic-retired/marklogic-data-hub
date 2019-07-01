@@ -1,0 +1,21 @@
+{
+  "language": "zxx",
+  "name": "json-ingestion",
+  "type": "INGESTION",
+  "version": 1,
+  "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs",
+  "customHook": {},
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "fileLocations": {
+    "inputFilePath": "input",
+    "inputFileType": "json",
+    "outputURIReplacement": ".*/input,''"
+  },
+  "options": {
+    "sourceQuery": null,
+    "outputFormat": "json",
+    "collections": ["json-coll"]
+  }
+}

@@ -1,8 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchOption } from "../match-options.model";
-import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from "@angular/forms";
-import {forOwn} from 'lodash';
+import {FormBuilder, FormGroup, FormArray, FormControl, Validators, ValidatorFn} from "@angular/forms";
+import { WeightValidator } from '../../../../validators/weight.validator';
+import { AddMatchOptionValidator } from '../../../../validators/add-match-option.validator';
+import { forOwn } from 'lodash';
+import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 
 export interface DialogData {
   stepName: string;
@@ -15,11 +19,13 @@ export interface DialogData {
   styleUrls: ['./add-match-option-dialog.component.scss'],
 })
 export class AddMatchOptionDialogComponent {
-
+  instantErrorMatcher: InstantErrorStateMatcher;
+  tooltips: any;
   form: FormGroup;
   props: FormArray;
   selectedType: string;
   propertiesReduce: FormArray;
+  weightValidators: Array<ValidatorFn> = [Validators.required, WeightValidator];
 
   constructor(
     private fb: FormBuilder,
@@ -28,6 +34,7 @@ export class AddMatchOptionDialogComponent {
   }
 
   ngOnInit() {
+    this.tooltips = FlowsTooltips.mastering.matching;
     this.form = this.fb.group({
       propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
@@ -44,11 +51,31 @@ export class AddMatchOptionDialogComponent {
       customNs: [this.data.option ? this.data.option.customNs : ''],
       index: this.data.index,
       entityProps:  [this.data.entityProps ? this.data.entityProps : []]
-    })
+    }, { validators: AddMatchOptionValidator })
     this.selectedType = (this.data.option && this.data.option.matchType) ?
       this.data.option.matchType : 'exact';
     this.form.setControl('propertiesReduce', this.createProps());
     this.propertiesReduce = this.form.get('propertiesReduce') as FormArray;
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
+    this.selectedTypeChanged();
+  }
+
+  selectedTypeChanged() {
+    const weightControl = this.form.get('weight');
+    const zip5match9Control = this.form.get('zip5match9');
+    const zip9match5Control = this.form.get('zip9match5');
+    if (this.selectedType === 'zip') {
+      zip5match9Control.setValidators(this.weightValidators);
+      zip9match5Control.setValidators(this.weightValidators);
+      weightControl.clearValidators();
+      weightControl.reset();
+    } else {
+      weightControl.setValidators(this.weightValidators);
+      zip5match9Control.clearValidators();
+      zip5match9Control.reset();
+      zip9match5Control.clearValidators();
+      zip9match5Control.reset();
+    }
   }
 
   createProps() {

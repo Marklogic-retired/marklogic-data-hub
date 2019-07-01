@@ -8,8 +8,9 @@
   </div>
   <div class="mdl-dialog__content" #dialogContent>
     <div>
-      <mdl-textfield type="text" autofocus label="Title" required [(ngModel)]="entity.info.title" floating-label></mdl-textfield>
-      <span *ngIf="!validTitle" class="alert-text">Only Alphanumeric characters are allowed in the Title</span>
+      <mdl-textfield [disabled]="editing" type="text" autofocus label="Title" required [(ngModel)]="entity.info.title" floating-label></mdl-textfield>
+      <span *ngIf="!validTitle" class="alert-text">Only alphanumeric characters are allowed in the Title</span>
+      <span *ngIf="isTitleDuplicate" class="alert-text">Entity title already exists</span>
     </div>
     <div>
       <mdl-textfield type="text" label="Version" required [(ngModel)]="entity.info.version" floating-label></mdl-textfield>

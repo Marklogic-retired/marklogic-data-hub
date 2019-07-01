@@ -26,13 +26,23 @@ header {
 
 .steps-header {
   display: flex;
+  width: 90%;
   > button:last-child {
     margin-left: 8px;
   }
+  h2 {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.steps-header-buttons {
+  padding-right: 5px;
 }
 
 header > .steps-header:last-child {
-  width: 40%;
+  width: 8%;
+  margin-top: 5px;
   justify-content: flex-end;
 }
 
@@ -66,7 +76,7 @@ button {
   background: $color-mastering;
 }
 .ingestion {
-  background: $color-ingestion;
+  background: $color-ingest;
 }
 .custom {
   background: $color-custom;

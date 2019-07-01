@@ -18,10 +18,10 @@
     <!-- / HEADER -->
 
     <div *ngIf="!targetEntity">
-      Configuring match options requires a target entity. The target entity "{{targetEntityName}}" is not defined. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
+      Configuring match options requires a target entity. Define it in the <a [routerLink]="['/entities']">Entities</a> view.
     </div>
 
-    <div *ngIf="targetEntity" class="content-card">
+    <div [ngClass]="{ hidden: !targetEntity}" class="content-card">
 
       <mat-table id="match-options-table"
                  class="matching-table"
@@ -156,7 +156,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row class="{{ 'match-option-' + mOpt.propertyName.join('-').toLowerCase().split(' ').join('-') }}"
+        <mat-row class="{{ 'match-option-' + (mOpt.propertyName || '').join('-').toLowerCase().split(' ').join('-') }}"
                  *matRowDef="let mOpt; columns: displayedColumns;">
         </mat-row>
 
@@ -166,8 +166,8 @@
                      #paginator
                      [length]="matchOptions.length"
                      [pageIndex]="0"
-                     [pageSize]="15"
-                     [pageSizeOptions]="[3, 5, 15, 30]">
+                     [pageSize]="10"
+                     [pageSizeOptions]="[5, 10, 25, 50]">
       </mat-paginator>
 
     </div>

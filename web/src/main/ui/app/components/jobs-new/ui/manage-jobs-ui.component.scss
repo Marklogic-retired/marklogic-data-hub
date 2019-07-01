@@ -1,0 +1,280 @@
+$header-height: 70px !default;
+
+button {
+  outline: none;
+}
+
+#jobs-page {
+  padding: 10px 3% 20px 3%;
+  font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  .center .header .mat-toolbar-single-row {
+    padding: 0 !important;
+  }
+
+}
+
+/* HEADER ROW HEIGHT */
+.jobs-table .mat-header-row {
+  min-height: 48px !important;
+  /deep/ button.mat-sort-header-button {
+    outline: none !important;
+  }
+}
+
+/* BODY ROW HEIGHT */
+.jobs-table .mat-row {
+  min-height: 42px !important;
+  button {
+    height: 32px !important;
+    line-height: 32px !important;
+  }
+}
+
+/* PAGINATOR ROW HEIGHT */
+/deep/ .mat-paginator-container {
+  min-height: 48px !important;
+  .mat-paginator-page-size-select {
+    margin: 2px 4px -4px 4px !important;
+  }
+}
+
+.name-container {
+  line-height: 16px;
+  .job-id {
+    font-size: 12px;
+    /* color: #666; */
+  }
+  .flow-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.job-status a {
+  cursor: pointer;
+}
+
+#filters {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -30px;
+  .filter-label {
+    display: inline-block;
+    margin: 8px 4px 0 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .reset-filters-btn {
+    display: inline-block;
+    margin: 14px 0 0 0;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .mat-form-field {
+    font-size: 14px;
+    width: 240px;
+    margin-left: 20px;
+  }
+}
+
+.page-layout {
+  position: relative;
+  overflow: hidden;
+
+  // Carded layout
+  &.carded {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    width: 100%;
+    min-width: 100%;
+
+    // Top bg
+    > .top-bg {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      left: 0;
+    }
+
+    // Fullwidth
+    &.fullwidth {
+
+      // Center
+      > .center {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 auto;
+        position: relative;
+        z-index: 2;
+        padding: 0 32px;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+
+        > .header {
+          height: $header-height !important;
+          min-height: $header-height !important;
+          max-height: $header-height!important;
+        }
+
+        > .content-card {
+          display: flex;
+          flex-direction: column;
+          flex: 1 0 auto;
+          overflow: hidden;
+
+          > .content {
+            flex: 1 0 auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+.jobs-table {
+  flex: 1 1 auto;
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  a:hover {
+    text-decoration: none;
+    color: #6d8ba5;
+  }
+
+  a {
+    color: #2a4356;
+  }
+
+  .mat-header-row {
+    min-height: 64px;
+  }
+
+  .mat-cell {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .mat-column-name {
+    flex: 0 1 340px;
+  }
+
+  /* .mat-column-status {
+    flex: 0 1 120px;
+  }
+
+  .mat-column-ended {
+    flex: 0 1 100px;
+  }
+
+  .mat-column-duration {
+    flex: 0 1 220px;
+  } */
+
+  .mat-column-committed {
+    flex: 0 1 100px;
+  }
+
+  .mat-column-errors {
+    flex: 0 1 100px;
+  }
+
+  .mat-column-actions {
+    flex: 0 1 80px;
+  }
+
+  .mat-header-cell .mat-icon {
+    cursor: pointer;
+  }
+
+  .actions-menu-icon {
+    margin-left: 10px;
+  }
+
+  .quantity-indicator {
+    display: inline-block;
+    vertical-align: middle;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+
+    & + span {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .active-icon {
+    border-radius: 50%;
+  }
+}
+
+.fill-space {
+  flex: 1 1 auto;
+}
+
+.name-container {
+  position: relative;
+  width: 240px;
+}
+
+.header h1 {
+  padding-right: 30px;
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.mat-column-actions .mat-icon {
+  cursor: pointer;
+}
+
+.capitalize:first-letter {
+   text-transform: capitalize;
+}
+
+/deep/ .status-option .mat-option-text:first-letter,
+/deep/ #filter-status .mat-select-value:first-letter {
+   text-transform: capitalize !important;
+}
+
+/deep/ #job-committed-sort-btn.mat-header-cell,
+/deep/ #job-errors-sort-btn.mat-header-cell {
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+/deep/ .mat-cell.job-committed,
+/deep/ .mat-cell.job-errors {
+  display:flex !important;
+  justify-content:flex-end !important;
+  padding-right: 20px;
+}
+
+/deep/ .mat-column-actions.mat-header-cell {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/deep/ .mat-cell.job-actions {
+  display:flex !important;
+  justify-content: center !important;
+  padding-right: 24px;
+}
+
+mat-icon.view-output {
+  font-size: 20px;
+  position: relative;
+  top: 4px;
+  color: #c00;
+  padding-left: 2px;
+  cursor: pointer;
+}

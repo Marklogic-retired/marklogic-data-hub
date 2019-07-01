@@ -1,0 +1,132 @@
+{
+  "name": "mastering",
+  "type": "MASTERING",
+  "version": 1,
+  "options": {
+    "targetEntity": "person",
+    "acceptsBatch": true,
+    "stepUpdate": true,
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "collections": [
+      "master"
+    ],
+    "sourceQuery": "cts.collectionQuery('mapping')",
+    "mergeOptions": {
+      "propertyDefs": {
+        "properties": [
+          {
+            "namespace": "",
+            "localname": "firstName",
+            "name": "firstName"
+          },
+          {
+            "namespace": "",
+            "localname": "lastName",
+            "name": "lastName"
+          },
+          {
+            "namespace": "",
+            "localname": "Address",
+            "name": "address"
+          }
+        ]
+      },
+      "algorithms": {
+        "stdAlgorithm": {
+          "timestamp": {
+            "path": "/envelope/headers/ingestDateTime"
+          }
+        }
+      },
+      "merging": [
+        {
+          "default": "true",
+          "maxSources": "1",
+          "sourceWeights": {
+            "source": {
+              "name": "A",
+              "weight": "10"
+            }
+          }
+        }
+      ]
+    },
+    "matchOptions": {
+      "dataFormat": "json",
+      "propertyDefs": {
+        "property": [
+          {
+            "namespace": "",
+            "localname": "firstName",
+            "name": "firstName"
+          },
+          {
+            "namespace": "",
+            "localname": "lastName",
+            "name": "lastName"
+          },
+          {
+            "namespace": "",
+            "localname": "email",
+            "name": "email"
+          },
+          {
+            "namespace": "",
+            "localname": "gender",
+            "name": "gender"
+          }
+        ]
+      },
+      "algorithms": {
+        "algorithm": []
+      },
+      "scoring": {
+        "add": [
+          {
+            "propertyName": "email",
+            "weight": "50"
+          },
+          {
+            "propertyName": "lastName",
+            "weight": "12"
+          },
+          {
+            "propertyName": "firstName",
+            "weight": "6"
+          },
+          {
+            "propertyName": "gender",
+            "weight": "3"
+          }
+        ],
+        "expand": [],
+        "reduce": []
+      },
+      "thresholds": {
+        "threshold": [
+          {
+            "above": "30",
+            "label": "Possible Match"
+          },
+          {
+            "above": "50",
+            "label": "Likely Match",
+            "action": "notify"
+          },
+          {
+            "above": "68",
+            "label": "Definitive Match",
+            "action": "merge"
+          }
+        ]
+      },
+      "tuning": {
+        "maxScan": "200"
+      }
+    }
+  },
+  "customHook": {},
+  "language": "zxx",
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.sjs"
+}

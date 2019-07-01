@@ -22,10 +22,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
-import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
-import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
-import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -42,9 +39,9 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -64,12 +61,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -104,7 +100,13 @@ public class DataHubImpl implements DataHub {
     private Versions versions;
     
     @Autowired
-    private LegacyFlowManagerImpl flowManager;
+    private LegacyFlowManagerImpl legacyFlowManager;
+
+    @Autowired
+    private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunner flowRunner;
 
     private AdminManager _adminManager;
 
@@ -115,7 +117,21 @@ public class DataHubImpl implements DataHub {
         this._manageClient = hubConfig.getManageClient();
         this._adminManager = hubConfig.getAdminManager();
         this._databaseManager = new DatabaseManager(_manageClient);
-        this._serverManager = new ServerManager(_manageClient);
+        this._serverManager = constructServerManager(_manageClient, hubConfig);
+    }
+
+    /**
+     * Need to account for the group name in case the user has overridden the name of the "Default" group.
+     *
+     * @param manageClient manageClient object
+     * @param hubConfig hubConfig object
+     * @return constructed ServerManager object
+     */
+    protected ServerManager constructServerManager(ManageClient manageClient, HubConfig hubConfig) {
+        AppConfig appConfig = hubConfig.getAppConfig();
+        return appConfig != null ?
+            new ServerManager(manageClient, appConfig.getGroupName()) :
+            new ServerManager(manageClient);
     }
 
     @Override
@@ -149,7 +165,12 @@ public class DataHubImpl implements DataHub {
     }
 
     @Override
-    public InstallInfo isInstalled() {
+    public FlowRunner getFlowRunner() {
+        return  this.flowRunner;
+    }
+
+    @Override
+    public InstallInfo isInstalled() throws ResourceAccessException {
 
         InstallInfo installInfo = InstallInfo.create();
 
@@ -238,26 +259,57 @@ public class DataHubImpl implements DataHub {
                 versionString = versions.getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 9) {
+            if (!(major == 9 || major == 10)) {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            //Support any 9.0 version > 9.0-7 and all 10.0 versions.
             if (major == 9) {
-                String alteredString = versionString.replaceAll("[^\\d]+", "");
-                if (alteredString.length() < 4) {
-                    alteredString = StringUtils.rightPad(alteredString, 4, "0");
+                int minor = 0;
+
+                //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
+                if(versionString.matches("^.*-(.+)\\..*")) {
+                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
                 }
-                int ver = Integer.parseInt(alteredString.substring(0, 4));
-                if (!isNightly && ver < 9050) {
+                else if(versionString.matches("^.*-(.+)$")){
+                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
+                }
+                //left pad minor version with 0 if it is < 10
+                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
+
+                int hotFixNum = 0;
+
+                //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
+                if(versionString.matches("^.*-(.+)\\.(.*)")) {
+                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
+                }
+                //left pad minor version with 0 if it is < 10
+                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
+                String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
+                int ver = Integer.parseInt(alteredString);
+
+                //ver >= 700 => 9.0-7 and above is supported
+                if (!isNightly && ver < 700) {
                     return false;
                 }
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                Date minDate = new GregorianCalendar(2018, 4, 5).getTime();
-                Date date = new SimpleDateFormat("y-M-d").parse(dateString);
-                if (date.before(minDate)) {
-                    return false;
+                //Support all 9.0-nightly on or after 11/5/2018
+                if(major == 9) {
+                    Date minDate = new GregorianCalendar(2018, Calendar.NOVEMBER, 5).getTime();
+                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                    if (date.before(minDate)) {
+                        return false;
+                    }
+                }
+                //Support all 10.0-nightly on or after 6/11/2019
+                if(major == 10) {
+                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 1).getTime();
+                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                    if (date.before(minDate)) {
+                        return false;
+                    }
                 }
             }
 
@@ -366,6 +418,12 @@ public class DataHubImpl implements DataHub {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteDocument(String uri, DatabaseKind databaseKind) {
+        String query = "xdmp:document-delete(\"" + uri + "\")";
+        logger.info("Deleting URI " + uri + " from " + databaseKind + " database.");
+        runInDatabase(query, hubConfig.getDbName(databaseKind));
     }
 
     public List<Command> buildListOfCommands() {
@@ -484,26 +542,60 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
+        AppConfig appConfig = hubConfig.getAppConfig();
+        disableSomeCmaUsage(appConfig);
+
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
-            AppConfig roleConfig = hubConfig.getAppConfig();
             SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
             roleDeployer.setCommands(getSecurityCommandList());
-            roleDeployer.deploy(roleConfig);
+            roleDeployer.deploy(appConfig);
         } catch (HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
-                logger.warn("No manage client for security installs.  Assuming DHS provisioning already threre");
+                logger.warn("No manage client for security installs.  Assuming DHS provisioning already there");
             } else {
                 throw new DataHubConfigurationException(e);
             }
         }
-        AppConfig appConfig = hubConfig.getAppConfig();
-        CMASettings.getInstance().setCmaSettings(appConfig);
 
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
         finalDeployer.deploy(appConfig);
+    }
+
+    /**
+     * Turns off CMA for some resources that have bbugs in ML 9.0-7/8.
+     *
+     * @param appConfig
+     */
+    protected void disableSomeCmaUsage(AppConfig appConfig) {
+        appConfig.getCmaConfig().setCombineRequests(false);
+        appConfig.getCmaConfig().setDeployDatabases(false);
+        appConfig.getCmaConfig().setDeployRoles(false);
+        appConfig.getCmaConfig().setDeployUsers(false);
+    }
+
+    public void dhsInstall(HubDeployStatusListener listener) {
+        prepareAppConfigForInstallingIntoDhs(hubConfig.getAppConfig());
+
+        HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        dhsDeployer.setCommands(buildCommandListForInstallingIntoDhs());
+        dhsDeployer.deploy(hubConfig.getAppConfig());
+    }
+
+    protected void prepareAppConfigForInstallingIntoDhs(AppConfig appConfig) {
+        appConfig.setCreateForests(false);
+        appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
+        disableSomeCmaUsage(appConfig);
+    }
+
+    protected List<Command> buildCommandListForInstallingIntoDhs() {
+        List<Command> commands = new ArrayList<>();
+        commands.addAll(buildCommandMap().get("mlDatabaseCommands"));
+        commands.add(loadUserArtifactsCommand);
+        commands.add(loadUserModulesCommand);
+        return commands;
     }
 
     /**
@@ -515,10 +607,13 @@ public class DataHubImpl implements DataHub {
      */
     @Override
     public void updateIndexes() {
+        // First deploy protected paths (can add more resources here in the future)
+        AppConfig appConfig = hubConfig.getAppConfig();
+        new SimpleAppDeployer(getManageClient(), getAdminManager(), new DeployProtectedPathsCommand()).deploy(appConfig);
+
+        // Then deploy databases, utilizing a pattern for filenames when in a provisioned environment
         SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
-
-        AppConfig appConfig = hubConfig.getAppConfig();
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
@@ -526,7 +621,7 @@ public class DataHubImpl implements DataHub {
             if (hubConfig.getIsProvisionedEnvironment()) {
                 appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
             }
-            deployer.deploy(hubConfig.getAppConfig());
+            deployer.deploy(appConfig);
         } finally {
             appConfig.setCreateForests(originalCreateForests);
             appConfig.setResourceFilenamesIncludePattern(originalIncludePattern);
@@ -536,7 +631,7 @@ public class DataHubImpl implements DataHub {
     /**
      * In a provisioned environment, only the databases defined by this pattern can be updated.
      *
-     * @return
+     * @return database name pattern
      */
     protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
         return Pattern.compile("(staging|final|job)-database.json");
@@ -563,12 +658,9 @@ public class DataHubImpl implements DataHub {
         // Removing this command as databases are deleted by other DatabaseCommands
         commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
 
-        AppConfig appConfig = hubConfig.getAppConfig();
-        CMASettings.getInstance().setCmaSettings(appConfig);
-
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(commandMap);
-        finalDeployer.undeploy(appConfig);
+        finalDeployer.undeploy(hubConfig.getAppConfig());
     }
 
     private void runInDatabase(String query, String databaseName) {
@@ -618,11 +710,9 @@ public class DataHubImpl implements DataHub {
     private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
         List<Command> dbCommands = new ArrayList<>();
         for (Command c : commandMap.get("mlDatabaseCommands")) {
-            if (!(c instanceof DeployContentDatabasesCommand || c instanceof DeployTriggersDatabaseCommand || c instanceof DeploySchemasDatabaseCommand)) {
-                dbCommands.add(c);
-                if (c instanceof DeployOtherDatabasesCommand) {
-                    ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
-                }
+            dbCommands.add(c);
+            if (c instanceof DeployOtherDatabasesCommand) {
+                ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
             }
         }
         commandMap.put("mlDatabaseCommands", dbCommands);
@@ -825,7 +915,7 @@ public class DataHubImpl implements DataHub {
     }
 
     //DataHubUpgrader stuff
-    public static String MIN_UPGRADE_VERSION = "2.0.0";
+    public static String MIN_UPGRADE_VERSION = "4.3.0";
 
     @Override
     public boolean upgradeHub() throws CantUpgradeException {
@@ -834,16 +924,31 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
-        boolean isHubInstalled = this.isInstalled().isInstalled();
-        String currentVersion = versions.getHubVersion();
-
+        boolean isHubInstalled;
+        try {
+            isHubInstalled = this.isInstalled().isInstalled();
+        } catch (ResourceAccessException e) {
+            isHubInstalled = false;
+        }
+        String currentVersion;
+        if (isHubInstalled) {
+            currentVersion = versions.getHubVersion();
+        } else {
+            currentVersion = versions.getDHFVersion();
+        }
         int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
         if (compare == -1) {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }
+        // make a second check against local version, if we checked the server
+        if (isHubInstalled) {
+            compare = Versions.compare(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
+            if (compare == -1) {
+                throw new CantUpgradeException(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
+            }
+        }
         boolean result = false;
         boolean alreadyInitialized = project.isInitialized();
-        String gradleVersion = versions.getDHFVersion();
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
              * But since it requires 'hubConfig' and 'versions', for now 
@@ -851,19 +956,20 @@ public class DataHubImpl implements DataHub {
              */
             if(alreadyInitialized) {
                 // The version provided in "mlDHFVersion" property in gradle.properties.
-
+                String gradleVersion = versions.getDHFVersion();
                 File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
-                
+
                 // Back up the hub-internal-config and user-config directories in versions > 4.0
                 FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
                 FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
-                  
-                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin. 
+
+                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin.
                 System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
                 System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
                 System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
-                        + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
-                        + HubProject.USER_CONFIG_DIR);
+                    + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
+                    + HubProject.USER_CONFIG_DIR);
+
                 // replace the hub version in build.gradle
                 String text = FileUtils.readFileToString(buildGradle);
                 String version = hubConfig.getJarVersion();
@@ -872,42 +978,11 @@ public class DataHubImpl implements DataHub {
                 FileUtils.writeStringToFile(buildGradle, text);
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
-            
+
             hubConfig.initHubProject();
 
-            /*  DHFPROD- 1694
-                Copy contents from hub-internal-config-version/schemas to ml-config/databases/<staging_schemas_db_name>/schemas
-                This has to be done in DataHubImpl as we require HubConfigImpl for getting the staging schemas db name
-             */
-            if(alreadyInitialized) {
-                Path sourceSchemasDir = project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR + "-" + gradleVersion).resolve("schemas");
-                Path destSchemasDir = project.getUserDatabaseDir().resolve(hubConfig.getStagingSchemasDbName()).resolve("schemas");
-                if (sourceSchemasDir.toFile().exists()) {
-                    Files.walk(Paths.get(sourceSchemasDir.toUri()))
-                        .filter(f -> !Files.isDirectory(f))
-                        .forEach(f -> {
-                            try {
-                                FileUtils.copyInputStreamToFile(Files.newInputStream(f), destSchemasDir.resolve(sourceSchemasDir.relativize(f)).toFile());
-                            } catch (IOException e) {
-                                logger.error("Unable to copy file " + f.getFileName());
-                                throw new RuntimeException(e);
-                            }
-                        });
-
-                }
-            }
-            
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
-            List<String> flows = flowManager.updateLegacyFlows(currentVersion);
-            if (updatedFlows != null) {
-                updatedFlows.addAll(flows);
-            }
-            if (isHubInstalled) {
-                runInDatabase("cts:uris(\"\", (), cts:and-not-query(cts:collection-query(\"hub-core-module\"), cts:document-query((\"/com.marklogic.hub/config.sjs\", \"/com.marklogic.hub/config.xqy\")))) ! xdmp:document-delete(.)", hubConfig.getDbName(DatabaseKind.MODULES));
-                this.hubInstallModules();
-                this.loadUserModules();
-            }
 
             //if none of this has thrown an exception, we're clear and can set the result to true
             result = true;

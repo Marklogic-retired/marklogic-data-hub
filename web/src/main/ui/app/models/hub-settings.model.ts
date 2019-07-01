@@ -2,6 +2,11 @@ export class HubSettings {
   host: string = null;
   name: string = 'data-hub';
 
+  projectDir: string = null;
+  dhfversion: string = null;
+  marklogicVersion: string = null;
+  installedVersion: string = null;
+
   stagingDbName: string = null;
   stagingTriggersDbName: string = null;
   stagingSchemasDbName: string = null;
@@ -32,7 +37,7 @@ export class HubSettings {
 
   modulesDbName: string = null;
 
-  username: string = null;
+  mlUsername: string = null;
 
   constructor() {};
 }

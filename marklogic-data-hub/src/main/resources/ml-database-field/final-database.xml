@@ -16,6 +16,50 @@
       <excluded-elements/>
       <tokenizer-overrides/>
     </field>
+    <field>
+      <field-name>datahubCreatedByJob</field-name>
+      <metadata/>
+      <stemmed-searches>off</stemmed-searches>
+      <word-searches>true</word-searches>
+      <field-value-searches>true</field-value-searches>
+      <field-value-positions>false</field-value-positions>
+      <fast-phrase-searches>false</fast-phrase-searches>
+      <fast-case-sensitive-searches>false</fast-case-sensitive-searches>
+      <fast-diacritic-sensitive-searches>false</fast-diacritic-sensitive-searches>
+      <word-lexicons/>
+      <included-elements/>
+      <excluded-elements/>
+      <tokenizer-overrides>
+        <tokenizer-override>
+          <character>-</character>
+          <tokenizer-class>remove</tokenizer-class>
+        </tokenizer-override>
+      </tokenizer-overrides>
+    </field>
+    <field>
+      <field-name>datahubCreatedByStep</field-name>
+      <metadata/>
+      <stemmed-searches>off</stemmed-searches>
+      <word-searches>true</word-searches>
+      <field-value-searches>true</field-value-searches>
+      <field-value-positions>false</field-value-positions>
+      <fast-phrase-searches>false</fast-phrase-searches>
+      <fast-case-sensitive-searches>false</fast-case-sensitive-searches>
+      <fast-diacritic-sensitive-searches>false</fast-diacritic-sensitive-searches>
+      <word-lexicons/>
+      <included-elements/>
+      <excluded-elements/>
+      <tokenizer-overrides>
+        <tokenizer-override>
+          <character>_</character>
+          <tokenizer-class>remove</tokenizer-class>
+        </tokenizer-override>
+        <tokenizer-override>
+          <character>-</character>
+          <tokenizer-class>remove</tokenizer-class>
+        </tokenizer-override>
+      </tokenizer-overrides>
+    </field>
   </fields>
   <range-field-indexes>
     <range-field-index>

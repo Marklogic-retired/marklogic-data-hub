@@ -20,7 +20,9 @@ package com.marklogic.gradle
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
+import com.marklogic.gradle.task.dhs.DhsDeployTask
 import com.marklogic.hub.ApplicationConfig
+import com.marklogic.hub.cli.command.InstallIntoDhsCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
@@ -48,7 +50,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
-    private StepManagerImpl stepManager
+    private StepDefinitionManagerImpl stepManager
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
@@ -91,7 +93,7 @@ class DataHubPlugin implements Plugin<Project> {
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
-        project.task("hubCreateStep", group: scaffoldGroup, type: CreateStepTask)
+        project.task("hubCreateStepDefinition", group: scaffoldGroup, type: CreateStepDefinitionTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
@@ -162,6 +164,11 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
+        String dhsGroup = "DHS"
+        project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
+            description: "Deploy project resources and modules into a DHS instance"
+        )
+
         logger.info("Finished initializing ml-data-hub\n")
     }
 
@@ -179,7 +186,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
-        stepManager = ctx.getBean(StepManagerImpl.class)
+        stepManager = ctx.getBean(StepDefinitionManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
@@ -194,8 +201,8 @@ class DataHubPlugin implements Plugin<Project> {
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
-        boolean calledHubInit = this.userCalledHubInit(project)
-        boolean calledHubUpdate = this.userCalledHubUpdate(project)
+        boolean calledHubInit = this.userCalledTask(project, "hubinit")
+        boolean calledHubUpdate = this.userCalledTask(project, "hubupdate")
         boolean calledHubInitOrUpdate = calledHubInit || calledHubUpdate
 
         if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {
@@ -210,9 +217,13 @@ class DataHubPlugin implements Plugin<Project> {
                 hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
             }
              else {
-                // If the user called hubUpdate, it should be fine to do this because they have a gradle.properties file
-                // with the properties necessary to construct a DatabaseClient
-                hubConfig.refreshProject(new ProjectPropertySource(project).getProperties(), false)
+                Properties props = new ProjectPropertySource(project).getProperties()
+
+                if (userCalledTask(project, "dhsdeploy")) {
+                    new InstallIntoDhsCommand().applyDhsSpecificProperties(props)
+                }
+
+                hubConfig.refreshProject(props, false)
             }
 
             // By default, DHF uses gradle-local.properties for your local environment.
@@ -224,6 +235,12 @@ class DataHubPlugin implements Plugin<Project> {
             hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
             hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
             hubConfig.setManageClient(extensions.getByName("mlManageClient"))
+
+            // Turning off CMA for resources that have bugs in ML 9.0-7/8
+            hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
+            hubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
 
             project.extensions.add("hubConfig", hubConfig)
             project.extensions.add("hubProject", hubProject)
@@ -244,18 +261,9 @@ class DataHubPlugin implements Plugin<Project> {
         }
     }
 
-    boolean userCalledHubInit(Project project) {
+    boolean userCalledTask(Project project, String lowerCaseTaskName) {
         for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
-            if (taskName.toLowerCase().equals("hubinit")) {
-                return true
-            }
-        }
-        return false
-    }
-
-    boolean userCalledHubUpdate(Project project) {
-        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
-            if (taskName.toLowerCase().equals("hubupdate")) {
+            if (taskName.toLowerCase().equals(lowerCaseTaskName)) {
                 return true
             }
         }

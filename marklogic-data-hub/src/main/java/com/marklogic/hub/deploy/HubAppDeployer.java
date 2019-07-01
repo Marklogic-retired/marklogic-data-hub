@@ -23,7 +23,6 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.hub.deploy.util.CMASettings;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;

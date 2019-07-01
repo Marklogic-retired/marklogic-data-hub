@@ -70,30 +70,14 @@ public class MappingManagerService {
         return mappings;
     }
 
-    public MappingModel createMapping(MappingModel newMapping) throws IOException {
-        scaffolding.createMappingDir(newMapping.getName());
-        Path dir = hubConfig.getHubMappingsDir().resolve(newMapping.getName());
-        Mapping mapping = mappingManager.createMappingFromJSON(newMapping.toJson());
-        mappingManager.saveMapping(mapping);
-        if (dir.toFile().exists()) {
-            watcherService.watch(dir.toString());
-        }
-        return getMapping(mapping.getName());
-    }
-
     public MappingModel saveMapping(String mapName, JsonNode jsonMapping) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
-        MappingModel existingMapping = null;
-        existingMapping = getMapping(mapName);
-        if (existingMapping != null) {
-            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), true);
+        MappingModel existingMapping= getMapping(mapName, false);
+        if (existingMapping == null || existingMapping != null && !existingMapping.isEqual(mapping)) {
+            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()),  existingMapping == null ? false : true);
+            dataHubService.reinstallUserModules(hubConfig, null, null);
         }
-        else {
-            createMapping(mapping);
-        }
-        //let's push this out
-        dataHubService.reinstallUserModules(hubConfig, null, null);
         return mapping;
     }
 
@@ -105,10 +89,10 @@ public class MappingManagerService {
         }
     }
 
-    public MappingModel getMapping(String mappingName) throws IOException {
+    public MappingModel getMapping(String mappingName, boolean createIfNotExisted) throws IOException {
         try{
-           ObjectMapper objectMapper = new ObjectMapper();
-            return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1)));
+            ObjectMapper objectMapper = new ObjectMapper();
+            return MappingModel.fromJson(objectMapper.readTree(mappingManager.getMappingAsJSON(mappingName, -1, createIfNotExisted)));
         }catch(DataHubProjectException e) {
             logger.error("Mapping not found in project: " + mappingName);
             return null;

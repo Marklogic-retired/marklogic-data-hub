@@ -1,0 +1,40 @@
+{
+  "name" : "LoadOrders",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "IngestOrders",
+      "description" : "",
+      "options" : {
+        "sourceQuery" : "",
+        "collections" : [ "IngestOrders" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "/custom-modules/ingestion/IngestOrders/archive-hook.sjs",
+        "parameters" : {
+          "archiveCollection" : "Archive"
+        },
+        "user" : "flow-operator",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input/orders",
+        "inputFileType" : "csv",
+        "outputURIReplacement" : ".*/input,''"
+      }
+    }
+  }
+}

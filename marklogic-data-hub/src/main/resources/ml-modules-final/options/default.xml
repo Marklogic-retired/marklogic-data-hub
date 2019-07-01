@@ -2,4 +2,14 @@
   <constraint name="Collection">
     <collection/>
   </constraint>
+  <constraint name="createdByJob">
+    <word>
+      <field name="datahubCreatedByJob"/>
+    </word>
+  </constraint>
+  <constraint name="createdByStep">
+    <word>
+      <field name="datahubCreatedByStep"/>
+    </word>
+  </constraint>
 </options>

@@ -19,6 +19,7 @@ package com.marklogic.hub;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.flow.FlowRunner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,13 @@ public interface DataHub {
     void clearUserModules();
 
     /**
+     * Deletes document based on supplied doc uri in supplied database
+     * @param uri - document uri
+     * @param databaseKind - database type
+     */
+    void deleteDocument(String uri, DatabaseKind databaseKind);
+
+    /**
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.
@@ -82,6 +90,14 @@ public interface DataHub {
      * @param listener - the callback method to receive status updates
      */
     void install(HubDeployStatusListener listener);
+
+    /**
+     * Install user project files into a DHS instance. Does not install any DHF resources or modules, as those
+     * are assumed to be installed by DHS.
+     *
+     * @param listener
+     */
+    void dhsInstall(HubDeployStatusListener listener);
 
     /**
      * Updates the indexes in the database based on the project
@@ -172,4 +188,10 @@ public interface DataHub {
      */
     boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException;
 
+    /**
+     * Creates and returns the FlowRunner object using the datahub's autowired hubconfig
+     *
+     * @return FlowRunner object with current hubconfig already set
+     */
+    FlowRunner getFlowRunner();
 }

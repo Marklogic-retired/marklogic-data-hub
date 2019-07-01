@@ -19,61 +19,108 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
-import org.apache.commons.io.FileUtils;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import com.marklogic.rest.util.Fragment;
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Per DHFPROD-2554, this command ensures that when it adds DHF-specific fields and range field indexes to the
+ * staging, final, and jobs databases, it will not drop any existing fields or range field indexes.
+ * <p>
+ * The reason that these fields are applied via an XML file is to avoid a bug specific to JSON files and the Manage
+ * API that is not yet fixed in ML 9.0-9.
+ */
 public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
 
+    private final static Namespace MANAGE_NS = Namespace.getNamespace("http://marklogic.com/manage");
+
     public DeployDatabaseFieldCommand() {
-        setExecuteSortOrder(SortOrderConstants.DEPLOY_CONTENT_DATABASES + 1);
+        setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_DATABASES + 1);
     }
 
     @Override
     public void execute(CommandContext context) {
-        List<DeployDatabaseCommand> databaseCommandList = buildDatabaseCommands();
-        for (DeployDatabaseCommand deployDatabaseCommand : databaseCommandList) {
-            deployDatabaseCommand.execute(context);
+        DatabaseManager dbManager = new DatabaseManager(context.getManageClient());
+        for (Resource r : getDatabaseFieldFilesFromClasspath()) {
+            String payload;
+            try {
+                payload = new String(FileCopyUtils.copyToByteArray(r.getInputStream()));
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to read database field file from classpath, cause: " + e.getMessage(), e);
+            }
+
+            payload = payloadTokenReplacer.replaceTokens(payload, context.getAppConfig(), false);
+            payload = addExistingFieldsAndRangeFieldIndexes(payload, dbManager);
+            dbManager.save(payload);
         }
     }
 
-    private List<DeployDatabaseCommand> buildDatabaseCommands() {
-        List<DeployDatabaseCommand> dbCommands = new ArrayList<>();
-
-        InputStream inputStream = null;
+    protected Resource[] getDatabaseFieldFilesFromClasspath() {
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DeployDatabaseFieldCommand.class.getClassLoader());
         try {
-            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DeployDatabaseFieldCommand.class.getClassLoader());
-            Resource[] resources = resolver.getResources("classpath*:/ml-database-field/*.xml");
-            for (Resource r : resources) {
-                inputStream = r.getInputStream();
-                File databaseFile = File.createTempFile("db-field-", ".xml");
-                databaseFile.deleteOnExit();
-                FileUtils.copyInputStreamToFile(inputStream, databaseFile);
+            return resolver.getResources("classpath*:/ml-database-field/*.xml");
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to find ml-database-field files on the classpath, cause: " + e.getMessage(), e);
+        }
+    }
 
-                logger.info("Will process file: " + databaseFile);
-                dbCommands.add(new DeployDatabaseCommand(databaseFile));
+    protected String addExistingFieldsAndRangeFieldIndexes(String payload, DatabaseManager dbManager) {
+        Fragment newProps = new Fragment(payload);
+        Fragment existingProps = dbManager.getPropertiesAsXml(newProps.getElementValue("/node()/m:database-name"));
+
+        addExistingFields(newProps, existingProps);
+        addExistingRangeFieldIndexes(newProps, existingProps);
+
+        return newProps.getPrettyXml();
+    }
+
+    protected void addExistingFields(Fragment newProps, Fragment existingProps) {
+        Element newFields = newProps.getInternalDoc().getRootElement().getChild("fields", MANAGE_NS);
+        if (newFields != null) {
+            List<String> newFieldNames = new ArrayList<>();
+            newProps.getElements("/m:database-properties/m:fields/m:field").forEach(field -> {
+                String name = field.getChildText("field-name", MANAGE_NS);
+                if (StringUtils.isNotBlank(name)) {
+                    newFieldNames.add(name);
+                }
+            });
+
+            for (Element field : existingProps.getElements("/m:database-properties/m:fields/m:field")) {
+                String name = field.getChildText("field-name", MANAGE_NS);
+                if (StringUtils.isNotBlank(name) && !newFieldNames.contains(name)) {
+                    newFields.addContent(field.detach());
+                }
             }
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
+    }
+
+    protected void addExistingRangeFieldIndexes(Fragment newProps, Fragment existingProps) {
+        Element newRangeFieldIndexes = newProps.getInternalDoc().getRootElement().getChild("range-field-indexes", MANAGE_NS);
+        if (newRangeFieldIndexes != null) {
+            List<String> newIndexFieldNames = new ArrayList<>();
+            newProps.getElements("/m:database-properties/m:range-field-indexes/m:range-field-index").forEach(index -> {
+                String name = index.getChildText("field-name", MANAGE_NS);
+                if (StringUtils.isNotBlank(name)) {
+                    newIndexFieldNames.add(name);
                 }
-                catch (IOException e) {
+            });
+
+            for (Element index : existingProps.getElements("/m:database-properties/m:range-field-indexes/m:range-field-index")) {
+                String name = index.getChildText("field-name", MANAGE_NS);
+                if (StringUtils.isNotBlank(name) && !newIndexFieldNames.contains(name)) {
+                    newRangeFieldIndexes.addContent(index.detach());
                 }
             }
         }
-
-        return dbCommands;
     }
 }

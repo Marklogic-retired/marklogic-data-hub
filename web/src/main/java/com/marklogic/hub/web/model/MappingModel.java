@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.web.model.entity_services.JsonPojo;
+import org.apache.commons.lang3.StringUtils;
 
 public class MappingModel extends JsonPojo {
 
@@ -144,5 +145,37 @@ public class MappingModel extends JsonPojo {
             node.put("sourceURI", getSourceURI());
         }
         return node;
+    }
+
+    public boolean isEqual(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+        MappingModel that = (MappingModel) o;
+        if (!name.equalsIgnoreCase(that.name)) return false;
+        if (StringUtils.isNotEmpty(language) ? !language.equals(that.language) : StringUtils.isNotEmpty(that.language)) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(sourceContext) ? !sourceContext.equals(that.sourceContext) : StringUtils.isNotEmpty(that.sourceContext)) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(targetEntityType) ? !targetEntityType.equals(that.targetEntityType) : StringUtils.isNotEmpty(that.targetEntityType)) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(sourceURI) ? !sourceURI.equals(that.sourceURI) : StringUtils.isNotEmpty(that.sourceURI)) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(description) ? !description.equals(that.description) : StringUtils.isNotEmpty(that.description)) {
+            return false;
+        }
+
+        if (properties == null && that.properties != null || properties != null && that.properties == null ||
+            !properties.equals(that.properties)) {
+            return false;
+        }
+        return true;
     }
 }

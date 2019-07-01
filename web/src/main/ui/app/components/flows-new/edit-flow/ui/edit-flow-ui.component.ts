@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { NewStepDialogComponent } from './new-step-dialog.component';
@@ -7,31 +7,48 @@ import { ConfirmationDialogComponent } from '../../../common';
 import { FlowSettingsDialogComponent } from '../../manage-flows/ui/flow-settings-dialog.component';
 import { Flow } from '../../models/flow.model';
 import { Step } from '../../models/step.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-edit-flow-ui',
   templateUrl: './edit-flow-ui.component.html',
   styleUrls: ['./edit-flow-ui.component.scss'],
 })
-export class EditFlowUiComponent {
+export class EditFlowUiComponent implements OnChanges {
 
   @Input() flow: Flow;
+  @Input() flowNames: string[];
   @Input() stepsArray: any;
   @Input() databases: any;
   @Input() entities: any;
   @Input() collections: any;
+  @Input() selectedStepId: any;
+  @Input() projectDirectory: any;
+  @Input() flowEnded: any;
+  @Input() runFlowClicked: boolean;
+  @Input() disableSelect: boolean;
+  @Input() errorResponse: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
   @Output() deleteFlow = new EventEmitter();
+  @Output() stepSelected = new EventEmitter();
   @Output() stepCreate = new EventEmitter();
   @Output() stepUpdate = new EventEmitter();
   @Output() stepDelete = new EventEmitter();
 
+
   constructor(
     public dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router
   ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes && changes.flowEnded) {
+      this.flowEnded = changes.flowEnded.currentValue;
+    }
+  }
 
   openStepDialog(index): void {
     const dialogRef = this.dialog.open(NewStepDialogComponent, {
@@ -40,8 +57,9 @@ export class EditFlowUiComponent {
         title: 'New Step',
         databases: this.databases,
         entities: this.entities,
-        collections: this.collections,
-        step: null
+        step: null,
+        flow: this.flow,
+        projectDirectory: this.projectDirectory
       }
     });
 
@@ -55,6 +73,7 @@ export class EditFlowUiComponent {
       }
     });
   }
+
   openRunDialog(): void {
     const dialogRef = this.dialog.open(RunFlowDialogComponent, {
       width: '600px',
@@ -62,13 +81,28 @@ export class EditFlowUiComponent {
     });
 
     dialogRef.afterClosed().subscribe(response => {
-      // TODO add ability to run individual steps
-      console.log('The run dialog was closed', response);
       if ( response ) {
-        this.runFlow.emit(this.flow.id);
+        const runObject = {
+          id: this.flow.id,
+          runArray: response
+        };
+        this.runFlow.emit(runObject);
       }
     });
   }
+  openStopDialog(flow: Flow): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: {title: `${flow.name} is running a job`, confirmationMessage: `Stop the job for "${flow.name}"?`}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        this.stopFlow.emit(flow.id);
+      }
+    });
+  }
+
   deleteStepDialog(step: Step): void {
     console.log('delete step', step);
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -85,7 +119,7 @@ export class EditFlowUiComponent {
   openFlowSettingsDialog(): void {
     const dialogRef = this.dialog.open(FlowSettingsDialogComponent, {
       width: '500px',
-      data: {flow: this.flow}
+      data: {flow: this.flow, flowNames: this.flowNames, isUpdate: true}
     });
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
@@ -93,6 +127,7 @@ export class EditFlowUiComponent {
         this.flow.description = response.description;
         this.flow.batchSize = response.batchSize;
         this.flow.threadCount = response.threadCount;
+        this.flow.options = response.options;
         this.saveFlow.emit(this.flow);
       }
     });
@@ -115,4 +150,12 @@ export class EditFlowUiComponent {
   updateStep(step): void {
     this.stepUpdate.emit(step);
   }
+
+  stepUpdated(step): void {
+    this.snackBar.open("Step Saved", "", {
+      panelClass: ['snackbar'], 
+      duration: 1200
+    });
+  }
+
 }

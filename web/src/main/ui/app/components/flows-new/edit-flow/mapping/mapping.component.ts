@@ -1,47 +1,46 @@
-import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { Entity } from '../../../../models';
 import { EntitiesService } from '../../../../models/entities.service';
 import { SearchService } from '../../../search/search.service';
 import { MapService } from '../../../mappings/map.service';
+import { ManageFlowsService } from '../../services/manage-flows.service';
+import { EnvironmentService } from '../../../../services/environment';
 import { MappingUiComponent } from './ui/mapping-ui.component';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../mappings/mapping.model";
 import { Step } from "../../models/step.model";
+import { Flow } from "../../models/flow.model";
 
 @Component({
   selector: 'app-mapping',
   template: `
     <app-mapping-ui
       [mapping]="this.mapping"
-      [chosenEntity]="this.chosenEntity"
+      [targetEntity]="this.targetEntity"
       [conns]="this.conns"
       [sampleDocSrcProps]="this.sampleDocSrcProps"
       [editURIVal]="this.editURIVal"
-      (updateDesc)="this.updateDesc($event)"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
-      (resetMap)="this.resetMap()"
     ></app-mapping-ui>
   `
 })
 export class MappingComponent implements OnInit {
   @ViewChild(MappingUiComponent) private mappingUI: MappingUiComponent;
 
+  @Input() flow: Flow;
   @Input() step: Step;
   @Output() saveStep = new EventEmitter();
 
   // Entity Model
-  public chosenEntity: Entity;
-  private entityPrimaryKey: string = '';
+  public targetEntity: Entity;
 
   // Source Document
-  private currentDatabase: string = 'STAGING';
+  private sourceDbType: string = 'STAGING';
   private entitiesOnly: boolean = false;
   private searchText: string = null;
-  private activeFacets: any = {};
   private currentPage: number = 1;
   private pageLength: number = 1;
   public sampleDocURI: string = null;
@@ -61,121 +60,9 @@ export class MappingComponent implements OnInit {
 
   public editURIVal: string;
 
-  /**
-   * Load chosen entity to use as harmonized model.
-   */
-  loadEntity(): void {
-    let self = this;
-    this.entitiesService.entitiesChange.subscribe(entities => {
-      this.chosenEntity = _.find(entities, (e: Entity) => {
-        return e.name === this.entityName;
-      });
-      this.entityPrimaryKey = this.chosenEntity.definition.primaryKey;
-      console.log('entity in mapping');
-      console.log(this.chosenEntity);
-    });
-    this.entitiesService.getEntities();
-  }
-
   updateURI(event) {
     this.conns = event.conns;
     this.loadSampleDocByURI(event.uri, event.uriOrig, event.connsOrig, event.save);
-  }
-
-  /**
-   * Search for a sample document by entity name and load that document by its URI.
-   * @param entityName An entity name
-   */
-  loadSampleDoc(entityName): void {
-    this.activeFacets = {
-      Collection: {
-        values: [entityName]
-      }
-    };
-    this.searchService.getResults(
-      this.currentDatabase,
-      this.entitiesOnly,
-      this.searchText,
-      this.activeFacets,
-      this.currentPage,
-      this.pageLength
-    ).subscribe(response => {
-      this.sampleDocURI = response.results[0].uri;
-      this.editURIVal = this.sampleDocURI;
-      this.loadSampleDocByURI(this.sampleDocURI, '', {}, true)
-    },
-      () => {},
-      () => {}
-    );
-  }
-
-  /**
-   * Load a sample document by its URI.
-   * @param uri A document URI
-   * @param uriOrig Original URI in case none is found
-   * @param connsOrig A connections object in case rollback is required
-   * @param save {boolean} Save map after successful load.
-   */
-  loadSampleDocByURI(uri: string, uriOrig: string, connsOrig: Object, save: boolean): void {
-    let self = this;
-    this.editURIVal = uri;
-    this.searchService.getDoc(this.currentDatabase, uri).subscribe(doc => {
-      this.sampleDocSrcProps = [];
-      this.sampleDocSrc = doc;
-      _.forEach(this.sampleDocSrc['envelope']['instance'], function(val, key) {
-        let prop = {
-          key: key,
-          val: String(val),
-          type: self.getType(val)
-        };
-        self.sampleDocSrcProps.push(prop);
-      });
-      this.sampleDocURI = uri;
-      if (save) {
-        this.saveMap();
-        console.log('map saved');
-      }
-    },
-      (err) => {
-        this.conns = connsOrig;
-        self.mappingUI.uriNotFound(uri);
-        }
-      );
-  }
-
-  /**
-   * Update the sample document based on a URI.
-   */
-  /*
-  updateSampleDoc() {
-    if (this.sampleDocURI === this.editURIVal) {
-      this.editingURI = false;
-    } else if (Object.keys(this.conns).length > 0) {
-      let result = this.dialogService.confirm(
-          'Changing your source document will remove<br/>existing property selections. Proceed?',
-          'Cancel', 'OK');
-      result.subscribe( () => {
-          let connsOrig = _.cloneDeep(this.conns);
-          this.conns = {};
-          // provide connsOrig for rollback purposes if needed
-          this.loadSampleDocByURI(this.editURIVal, connsOrig, true);
-        },(err: any) => {
-          console.log('source change aborted');
-          this.editingURI = false;
-        },
-        () => {}
-      );
-    } else {
-     this.loadSampleDocByURI(this.editURIVal, {}, true);
-    }
-  }
- */
-  /**
-   * Update the mapping description by saving the mapping.
-   */
-  updateDesc(mapping) {
-    this.mapping = mapping;
-    this.saveMap();
   }
 
   /**
@@ -189,72 +76,204 @@ export class MappingComponent implements OnInit {
   constructor(
     private searchService: SearchService,
     private mapService: MapService,
+    private manageFlowsService: ManageFlowsService,
     private entitiesService: EntitiesService,
-    //private router: Router,
-    //private activatedRoute: ActivatedRoute
+    private envService: EnvironmentService
   ) {}
 
-  /**
-   * Initialize the UI.
-   */
+  getMapName(): string {
+    return this.flow.name + '-' + this.step.name;
+  }
+
   ngOnInit() {
-    let self = this;
     if (this.step) {
-      this.entityName = this.step.config['targetEntity'];
-      this.mapping = this.step.config;
+      this.entityName = this.step.options['targetEntity'];
+      this.mapName = this.getMapName() || null;
+      if (this.step.options.sourceDatabase === this.envService.settings.stagingDbName) {
+        this.sourceDbType = 'STAGING';
+      } else if (this.step.options.sourceDatabase === this.envService.settings.finalDbName) {
+        this.sourceDbType = 'FINAL';
+      }
+      if (!this.step.options.collections || this.step.options.collections.length === 0) {
+        this.step.options.collections = [`${this.step.name}`, 'mdm-content', this.entityName];
+      }
       this.loadEntity();
       this.loadMap();
     }
   }
 
+  loadEntity(): void {
+    this.entitiesService.entitiesChange.subscribe(entities => {
+      this.targetEntity = _.find(entities, (e: Entity) => {
+        return e.name === this.entityName;
+      });
+    });
+    this.entitiesService.getEntities();
+  }
+
+  loadMap() {
+    let self = this;
+    this.manageFlowsService.getMap(this.mapName).subscribe((map: any) => {
+      if(map) {
+        this.mapping = map;
+        this.sampleDocURI = map.sourceURI;
+        this.editURIVal = this.sampleDocURI;
+      }
+      this.loadSampleDoc()
+      if (map && map.properties) {
+        self.conns = {};
+        _.forEach(map.properties, function(srcObj, entityPropName) {
+          self.conns[entityPropName] = srcObj.sourcedFrom;
+        });
+        self.connsOrig = _.clone(self.conns);
+      }
+    },
+    () => {},
+    () => {});
+  }
+
+  loadSampleDoc() {
+    let self = this;
+    this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 1).subscribe(response => {
+        if (self.targetEntity) {
+          self.targetEntity.hasDocs = (response.length > 0);
+          // Can only load sample doc if docs exist
+          if (self.targetEntity.hasDocs) {
+            if (!this.mapping.sourceURI) {
+              this.sampleDocURI = response[0].uri;
+            } else {
+              this.sampleDocURI = this.mapping.sourceURI;
+            }
+            this.editURIVal = this.sampleDocURI;
+            this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
+
+          }
+        }
+      },
+      () => {},
+      () => {});
+
+  }
+
   /**
-   * Save the mapping artifact and then show a confirmation popup
-   * and navigate to the view for that mapping.
+   * Load a sample document by its URI.
+   * @param uri A document URI
+   * @param uriOrig Original URI in case none is found
+   * @param connsOrig A connections object in case rollback is required
+   * @param save {boolean} Save map after successful load.
    */
+  loadSampleDocByURI(uri: string, uriOrig: string, connsOrig: Object, save: boolean): void {
+    let self = this;
+    this.editURIVal = uri;
+    this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
+      this.sampleDocSrcProps = [];
+      this.sampleDocSrc = this.normalizeToJSON(doc);
+      let startRoot = this.sampleDocSrc['envelope'] ? this.sampleDocSrc['envelope']['instance'] : this.sampleDocSrc;
+      const rootKeys = Object.keys(startRoot);
+      if (rootKeys.length === 1 && startRoot[rootKeys[0]] instanceof Object) {
+        startRoot = startRoot[rootKeys[0]];
+      }
+      _.forEach(startRoot, function (val, key) {
+          let prop = {
+            key: key,
+            val: String(val),
+            type: self.getType(val)
+          };
+          self.sampleDocSrcProps.push(prop);
+        });
+      this.sampleDocURI = uri;
+      this.mapping.sourceURI = uri;
+      if (save) {
+        this.saveMap();
+        console.log('map saved');
+      }
+    },
+      (err) => {
+        this.conns = connsOrig;
+        self.mappingUI.uriNotFound(uri);
+        }
+      );
+  }
+
+  normalizeToJSON(input: any): any {
+    if (typeof input === 'string') {
+      const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
+      const object = {};
+      const nodeToJSON = function (obj, node) {
+        node.childNodes.forEach((childNode) => {
+          if (childNode.childNodes.length === 0 ||  (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+            if (childNode.nodeName !== '#text') {
+              obj[childNode.nodeName] = childNode.textContent;
+            }
+          } else {
+            obj[childNode.nodeName] = {};
+            nodeToJSON(obj[childNode.nodeName], childNode);
+          }
+        });
+      };
+      nodeToJSON(object, parsedXML);
+      return object;
+    }
+    return input;
+  }
+
   saveMap(): void {
     let formattedConns = {};
     _.forEach(this.conns, function(srcPropName, entityPropName) {
       if (srcPropName)
         formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
     });
-    this.step.config['properties'] = formattedConns;
-    this.saveStep.emit(this.step);
-  }
-
-  /**
-   * Handle reset button event
-   */
-  resetMap(): void {
-    this.loadMap();
-  }
-
-  /**
-   * Retrieve the mapping artifact and then get the sample document
-   * and build the connection object.
-   */
-  loadMap() {
-    let self = this;
-
-    // TODO currently mock data doesn't refer to existing
-    // docs so ignore and load based on entity
-    // this.sampleDocURI = map.sourceURI;
-    // this.editURIVal = this.sampleDocURI;
-
-    // if source URI unset in mapping, load sample source doc based on entity
-    // if (this.mapping && !this.mapping.sourceURI) {
-      this.loadSampleDoc(this.entityName)
-    // }
-    // else load source doc based on source URI in mapping
-    // else {
-    //   this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
-    // }
-
-    self.conns = {};
-    _.forEach(this.mapping.properties, function(srcObj, entityPropName) {
-      self.conns[entityPropName] = srcObj.sourcedFrom;
+    let baseUri = (this.targetEntity.info.baseUri) ? this.targetEntity.info.baseUri : '',
+        targetEntityType =  baseUri + this.targetEntity.name + '-' +
+          this.targetEntity.info.version + '/' + this.targetEntity.name,
+        mapObj = {
+          language:         this.mapping.language || 'zxx',
+          name:             this.mapName,
+          description:      this.mapping.description || '',
+          version:          this.mapping.version || '0',
+          targetEntityType: targetEntityType,
+          sourceContext:    this.mapping.sourceContext || '//',
+          sourceURI:        this.sampleDocURI || '',
+          properties:       formattedConns
+        };
+    console.log('save mapping', mapObj);
+    this.manageFlowsService.saveMap(this.mapName, JSON.stringify(mapObj)).subscribe(resp => {
+      this.manageFlowsService.getMap(this.mapName).subscribe(resp => {
+        this.step.options['mapping'] = {
+          name: resp['name'],
+          version: resp['version']
+        };
+        this.saveStep.emit(this.step);
+      });
     });
-    self.connsOrig = _.clone(self.conns);
+  }
 
+  // TODO delete map when corresponding step is deleted
+  deleteMap(): void {
+    this.manageFlowsService.deleteMap(this.mapName).subscribe(resp => {
+      console.log('mapping deleted', this.mapName);
+    });
+  }
+
+  // Parent component can trigger reload after external step update
+  stepEdited(step): void {
+    if (step.id === this.step.id) {
+      this.entityName = step.options['targetEntity'];
+      if (step.sourceDatabase === this.envService.settings.stagingDbName) {
+        this.sourceDbType = 'STAGING';
+      } else if (step.sourceDatabase === this.envService.settings.finalDbName) {
+        this.sourceDbType = 'FINAL';
+      }
+      this.loadEntity();
+      this.loadMap();
+    }
+  }
+
+  // Parent component can trigger mapping reset if source changes
+  sourceChanged(): void {
+    this.sampleDocURI = '';
+    this.conns = {};
+    this.saveMap();
   }
 
   /**

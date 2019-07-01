@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Step } from '../../../models/step.model';
-import * as _ from 'lodash';
+import {Component, EventEmitter, Input, Output, OnInit} from '@angular/core';
+import {Step} from '../../../models/step.model';
+import {FlowsTooltips} from "../../../tooltips/flows.tooltips";
 
 @Component({
   selector: 'app-custom-ui',
@@ -11,18 +11,16 @@ export class CustomUiComponent {
   @Input() step: Step;
   @Input() module: string;
   @Output() updateCustom = new EventEmitter();
+  tooltips: any;
 
-  private uriOrig: string = '';
-
-  constructor(
-
-  ) {}
-  onSave() {
-    console.log(this.step.customModuleUri, this.uriOrig);
-    this.uriOrig = _.cloneDeep(this.step.customModuleUri);
-    this.updateCustom.emit(this.step);
+  constructor() {
   }
-  uriChanged() {
-    return !_.isEqual(this.step.customModuleUri, this.uriOrig);
+
+  ngOnInit(){
+    this.tooltips = FlowsTooltips.custom;
+  }
+
+  onChange() {
+    this.updateCustom.emit(this.step);
   }
 }

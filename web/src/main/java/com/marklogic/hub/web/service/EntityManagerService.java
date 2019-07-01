@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.entity.HubEntity;
@@ -66,10 +67,7 @@ public class EntityManagerService {
     Scaffolding scaffolding;
 
     @Autowired
-    private FlowManagerService flowManagerService;
-
-    @Autowired
-    private FileSystemWatcherService watcherService;
+    private LegacyFlowManagerService legacyFlowManagerService;
 
     @Autowired
     private DataHubService dataHubService;
@@ -79,15 +77,15 @@ public class EntityManagerService {
 
     public List<EntityModel> getLegacyEntities() throws IOException {
         List<EntityModel> entities = new ArrayList<>();
-        Path entitiesDir = hubConfig.getHubEntitiesDir();
+        Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         List<String> entityNames = FileUtil.listDirectFolders(entitiesDir.toFile());
         for (String entityName : entityNames) {
             EntityModel entityModel = new EntityModel();
             InfoType infoType = new InfoType();
             infoType.setTitle(entityName);
             entityModel.setInfo(infoType);
-            entityModel.inputFlows = flowManagerService.getFlows(entityName, FlowType.INPUT);
-            entityModel.harmonizeFlows = flowManagerService.getFlows(entityName, FlowType.HARMONIZE);
+            entityModel.inputFlows = legacyFlowManagerService.getFlows(entityName, FlowType.INPUT);
+            entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entityName, FlowType.HARMONIZE);
             entities.add(entityModel);
         }
         return entities;
@@ -107,8 +105,8 @@ public class EntityManagerService {
                     data = new HubUIData();
                 }
                 entityModel.setHubUi(data);
-                entityModel.inputFlows = flowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
-                entityModel.harmonizeFlows = flowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
+                entityModel.inputFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
+                entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
 
                 entities.add(entityModel);
             }
@@ -119,19 +117,6 @@ public class EntityManagerService {
 
     public EntityModel createEntity(EntityModel newEntity) throws IOException {
         scaffolding.createEntity(newEntity.getName());
-
-        if (newEntity.inputFlows != null) {
-            for (FlowModel flow : newEntity.inputFlows) {
-                scaffolding.createFlow(newEntity.getName(), flow.flowName, FlowType.INPUT, flow.codeFormat, flow.dataFormat);
-            }
-        }
-
-        if (newEntity.harmonizeFlows != null) {
-            for (FlowModel flow : newEntity.harmonizeFlows) {
-                scaffolding.createFlow(newEntity.getName(), flow.flowName, FlowType.HARMONIZE, flow.codeFormat, flow.dataFormat);
-            }
-        }
-
         return getEntity(newEntity.getName());
     }
 
@@ -143,6 +128,16 @@ public class EntityManagerService {
 
 
         if (fullpath == null) {
+            String entityFileName = entity.getName() + ENTITY_FILE_EXTENSION;
+
+            File entityFile = hubConfig.getHubEntitiesDir().resolve(entityFileName).toFile();
+            String canonicalFileName = Paths.get(entityFile.getCanonicalPath()).getFileName().toString();
+
+            if (entityFile.exists() && !entityFileName.equals(canonicalFileName)) {
+                // Possibly a case insensitive file-system
+                throw new DataHubProjectException("An entity with this name already exists.");
+            }
+
             em.saveEntity(hubEntity, false);
         }
         else {
@@ -158,10 +153,12 @@ public class EntityManagerService {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
-        if (dir.toFile().exists()) {
-            watcherService.unwatch(dir.getParent().toString());
+        String entityFileName = entity + ENTITY_FILE_EXTENSION;
+        File entitiesFile = hubConfig.getHubEntitiesDir().resolve(entityFileName).toFile();
+        if (entitiesFile.exists()) {
             em.deleteEntity(entity);
+            dataHubService.deleteDocument("/entities/" + entityFileName, DatabaseKind.STAGING);
+            dataHubService.deleteDocument("/entities/" + entityFileName, DatabaseKind.FINAL);
         }
     }
 
@@ -268,18 +265,18 @@ public class EntityManagerService {
         newFlow.entityName = entityName;
         if(newFlow.mappingName != null) {
             try {
-                String mappingName = mappingManagerService.getMapping(newFlow.mappingName).getVersionedName();
+                String mappingName = mappingManagerService.getMapping(newFlow.mappingName, false).getVersionedName();
                 newFlow.mappingName = mappingName;
             } catch (DataHubProjectException e) {
                 throw new DataHubProjectException("Mapping not found in project: " + newFlow.mappingName);
             }
         }
-        scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
+        scaffolding.createLegacyFlow(entityName, newFlow.flowName, flowType, newFlow.codeFormat, newFlow.dataFormat, newFlow.useEsModel, newFlow.mappingName);
         return getFlow(entityName, flowType, newFlow.flowName);
     }
 
     public void deleteFlow(String entityName, String flowName, FlowType flowType) throws IOException {
-        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        Path flowDir = scaffolding.getLegacyFlowDir(entityName, flowName, flowType);
         FileUtils.deleteDirectory(flowDir.toFile());
     }
 

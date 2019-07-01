@@ -15,29 +15,71 @@ function getMappingWithVersion(mappingName, version) {
   return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
 }
 
-function processInstance(model, mapping, content) {
-  let instance = {};
+function getSourceContext(sourceContext) {
+  let connector = "/*:";
+  let srcCtxArr;
 
-  instance = extractInstanceFromModel(model, model.info.title, mapping, content);
+  sourceContext = sourceContext.startsWith("/") ? sourceContext.substring(1,sourceContext.length) : sourceContext;
+  srcCtxArr = sourceContext.split("/");
+  sourceContext = "";
 
-  return instance;
+  srcCtxArr.forEach(function(element) {
+    if(element.indexOf(':') === -1) {
+      sourceContext += connector + element;
+    } else {
+      sourceContext += "/" + element;
+    }
+  });
+  return sourceContext;
 }
 
-function extractInstanceFromModel(model, modelName, mapping, content) {
+function getPath(sourceContext, connector, propertyName) {
+  let path;
+  // validExtractPath will recognize complex XPath, like attributes and filtered steps
+  // if not a validExtractPath, likely a JSON property with XPath incompatible name
+  if (cts.validExtractPath(propertyName)) {
+    path = `${sourceContext}${connector}${propertyName}`;
+    if (connector.includes("*:") && !cts.validExtractPath(path)) {
+      connector = connector.replace("*:", "");
+      path = `${sourceContext}${connector}${propertyName}`;
+    }
+  } else {
+    if (connector.includes("*:")) {
+      connector = connector.replace("*:", "");
+    }
+    path = `${sourceContext}${connector}node('${propertyName}')[fn:not(. instance of array-node())]`;
+  }
+  return path;
+}
+
+function processInstance(model, mapping, content, provenance = {}) {
+ return extractInstanceFromModel(model, model.info.title, mapping, content, provenance);
+}
+
+function extractInstanceFromModel(model, modelName, mapping, content, provenance = {}) {
   let sourceContext = mapping.sourceContext;
+  if (content instanceof XMLDocument && sourceContext !== '/' && sourceContext !== '//')  {
+    sourceContext = getSourceContext(sourceContext);
+  }
   let mappingProperties = mapping.properties;
   let instance = {};
-  if (model.info && model.info.title === modelName) {
-    instance['$type'] = model.info.title;
+  instance['$type'] = model.info.title;
+  if (model.info.version) {
     instance['$version'] = model.info.version;
-    instance['$attachments'] = content;
   } else {
-    instance['$type'] = modelName;
     instance['$version'] = '0.0.1';
   }
 
-
-  //grab the model definition
+  if (!(content.nodeName === 'envelope' || (content.nodeKind === 'document'))) {
+    content = new NodeBuilder().addNode(fn.head(content)).toNode();
+  }
+  if(fn.head(content.xpath('/*:envelope'))) {
+    let leadingXPath = '/*:envelope/*:instance';
+    if (fn.count(content.xpath('/*:envelope/*:instance/(element() except *:info)')) === 1 && sourceContext === '/') {
+      leadingXPath = leadingXPath + "/*";
+    }
+    sourceContext = leadingXPath + sourceContext;
+  }
   let definition = model.definitions[modelName];
   //first let's get our required props and PK
   let required = definition.required;
@@ -46,25 +88,41 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
   }
   let properties = definition.properties;
   for (let property in properties) {
+    if (properties.hasOwnProperty(property)) {
     let prop = properties[property];
     let dataType = prop["datatype"];
     let valueSource = null;
-    if (model.info && model.info.title === modelName && mappingProperties && mappingProperties.hasOwnProperty(property)) {
-      valueSource = content.xpath(sourceContext + mappingProperties[property].sourcedFrom);
-    } else{
-      valueSource = content.xpath('/' + property);
+    let connector = "";
+    let xpathToSource;
+    if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
+      if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')){
+        connector += '/';
+      }
+      if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
+        connector += '*:';
+      }
+      xpathToSource = getPath(sourceContext, connector, mappingProperties[property].sourcedFrom);
+    } else {
+      if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
+        connector += '/';
+      }
+      if (property.indexOf(':') === -1) {
+        connector += '*:';
+      }
+      xpathToSource = getPath(sourceContext, connector, property);
     }
+    valueSource = content.xpath(xpathToSource);
     if (dataType !== 'array') {
-        valueSource = fn.head(valueSource);
+      valueSource = fn.head(valueSource);
     }
     let value = null;
     if (!dataType && prop['$ref']) {
       let refArr = prop['$ref'].split('/');
       let refModelName = refArr[refArr.length - 1];
-      if(valueSource) {
+      if (valueSource) {
         let itemSource = new NodeBuilder();
         itemSource.addNode(valueSource);
-        value = { refModelName : extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
+        value = {refModelName: extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
       } else {
         value = null;
       }
@@ -72,7 +130,7 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
       let items = prop['items'];
       let itemsDatatype = items['datatype'];
       let valueArray = [];
-      if(!itemsDatatype && items['$ref']) {
+      if (!itemsDatatype && items['$ref']) {
         let refArr = items['$ref'].split('/');
         let refModelName = refArr[refArr.length - 1];
         for (const item of Sequence.from(valueSource)) {
@@ -82,19 +140,27 @@ function extractInstanceFromModel(model, modelName, mapping, content) {
           valueArray.push(extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode()));
         }
       } else {
-        for(const val of Sequence.from(valueSource)){
+        for (const val of Sequence.from(valueSource)) {
           valueArray.push(castDataType(dataType, val.valueOf()));
         }
       }
       value = valueArray;
-      //Todo implement arrays so it employs recursion
 
     } else {
-      if(valueSource) {
-        value = castDataType(dataType, valueSource)
+      if (valueSource) {
+        try {
+          value = castDataType(dataType, valueSource);
+        } catch (e) {
+          value = null;
+        }
       }
     }
+    if (required.indexOf(property) > -1 && !value) {
+      throw Error('The property: ' + property + ' is required property on the model: ' + modelName + ' and must have a valid value. Value was: ' + valueSource + '.');
+    }
+    provenance[xpathToSource] = { destination: property, value: xdmp.quote(value)};
     instance[property] = value;
+  }
   }
 
   return instance;
@@ -173,27 +239,9 @@ function castDataType(dataType, value) {
   return convertedValue;
 }
 
-function getInstance(doc) {
-  let instance = doc;
-
-  if (instance instanceof Element || instance instanceof ObjectNode) {
-    let instancePath = '/';
-    if (instance instanceof Element) {
-      //make sure we grab content root only
-      instancePath = '/node()[not(. instance of processing-instruction() or . instance of comment())]';
-    }
-    instance = new NodeBuilder().addNode(fn.head(instance.xpath(instancePath))).toNode();
-  } else {
-    instance = new NodeBuilder().addNode(fn.head(instance)).toNode();
-  }
-
-  return instance;
-}
-
 module.exports = {
   castDataType: castDataType,
   extractInstanceFromModel: extractInstanceFromModel,
-  getInstance: getInstance,
   getMapping: getMapping,
   getMappingWithVersion: getMappingWithVersion,
   processInstance: processInstance,

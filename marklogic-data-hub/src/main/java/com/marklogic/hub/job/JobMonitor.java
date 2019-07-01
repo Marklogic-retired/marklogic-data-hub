@@ -23,6 +23,7 @@ public interface JobMonitor {
 
     /**
      * Sets the flow to be used with the flow runner
+     * @param jobId the id of the job
      * @param batchId the id of the batch
      * @return string denoting status of the batch
      *
@@ -50,11 +51,4 @@ public interface JobMonitor {
 
     List<String> getBatchResponse(String jobId, String batchId);
 
-    /**
-     * The next step to be executed
-     * @param jobId the id of the job
-     * @return string denoting the next step of the job
-     */
-
-    String getNextStep(String jobId);
 }

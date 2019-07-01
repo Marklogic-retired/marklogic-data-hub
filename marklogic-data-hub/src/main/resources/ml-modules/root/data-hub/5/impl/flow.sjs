@@ -19,6 +19,16 @@ const Step = require("/data-hub/5/impl/step.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
+const defaultGlobalContext = {
+  flow : {},
+  jobId: '',
+  attemptStep: 1,
+  lastCompletedStep: 0,
+  lastAttemptedStep: 0,
+  batchErrors: [],
+  failedItems: [],
+  completedItems: []
+};
 
 class Flow {
 
@@ -37,19 +47,25 @@ class Flow {
     this.flowUtils = new FlowUtils(config);
     this.consts = datahub.consts;
     this.writeQueue = [];
-    if (!globalContext) {
-      globalContext = {
-        flow : {},
-        jobId: '',
-        attemptStep: 1,
-        lastCompletedStep: 0,
-        lastAttemptedStep: 0,
-        targetDb: config.FINALDATABASE,
-        sourceDb: config.STAGINGDATABASE,
-        batchErrors: []
-      };
+    if (globalContext) {
+      this.globalContext = globalContext;
+    } else {
+      this.resetGlobalContext();
     }
-    this.globalContext = globalContext;
+  }
+
+  resetGlobalContext() {
+    this.globalContext = Object.assign({
+      targetDatabase: this.config.FINALDATABASE,
+      sourceDatabase: this.config.STAGINGDATABASE
+    }, defaultGlobalContext);
+    for (let key of Object.getOwnPropertyNames(this.globalContext)) {
+      if (Array.isArray(this.globalContext[key])) {
+        this.globalContext[key] = [];
+      } else if (this.globalContext[key] instanceof Object) {
+        this.globalContext[key] = Object.create(this.globalContext[key]);
+      }
+    }
   }
 
   getFlowNames() {
@@ -89,8 +105,9 @@ class Flow {
   }
 
   //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
+  //TODO: make this a flat fn.doc call in the future and figure out how to normalize the uri so we don't need this loop at all
   getFlow(name) {
-    let uriMatches = cts.uriMatch('/flows/'+name+'.flow.json', ['case-insensitive']);
+    let uriMatches = cts.uriMatch('/flows/'+name+'.flow.json', ['case-insensitive'], cts.directoryQuery("/flows/"));
     // cache flow to prevent repeated calls.
     if (cachedFlows[name] === undefined) {
       if (fn.count(uriMatches) === 1) {
@@ -127,16 +144,17 @@ class Flow {
     //set the flow in the context
     this.globalContext.flow = flow;
 
-
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
-    if(!jobDoc){
+    if(!(jobDoc || options.disableJobOutput)) {
       jobDoc = this.datahub.jobs.createJob(flowName, jobId);
     }
-    if (jobDoc && jobDoc.job) {
-      jobDoc = jobDoc.job;
+    if (jobDoc) {
+      if (jobDoc.job) {
+        jobDoc = jobDoc.job;
+      }
+      //set the jobid in the context based on the jobdoc response
+      this.globalContext.jobId = jobDoc.jobId;
     }
-    //set the jobid in the context based on the jobdoc response
-    this.globalContext.jobId = jobDoc.jobId;
     this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
     this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
 
@@ -148,75 +166,107 @@ class Flow {
     //set the context for the attempted step
     this.globalContext.attemptStep = stepNumber;
 
-    let step = this.globalContext.flow.steps[stepNumber];
-    if(!step) {
+    let stepRef = this.globalContext.flow.steps[stepNumber];
+    if(!stepRef) {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
-    let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, step, stepNumber);
-    this.globalContext.batchId = batchDoc.batch.batchId;
+    let stepDetails = this.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
 
-    if(step.targetDb) {
-      this.globalContext.targetDb = step.targetDb;
-    }
-    if(step.sourceDb) {
-      this.globalContext.sourceDb = step.sourceDb;
-    }
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, step.options, options);
+    let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
+    // set provenance granularity based off of combined options
+    this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
+    // combine all collections
+    let collections = [
+      options.collections,
+      ((stepRef.options || {}).collections || (stepDetails.options || {}).collections),
+      (flow.options || {}).collections
+    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
+      // filter out any null/empty collections that may exist
+      .filter((col) => !!col);
+    this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
+    this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
-    //let stepResult = this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
+      let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
+      this.globalContext.batchId = batchDoc.batch.batchId;
+    }
+
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
       this.datahub = this.datahub.hubUtils.cloneInstance(this.datahub);
       delete this.datahub.flow;
     }
     let flowInstance = this;
-    let stepResult = null;
 
-
-    if (this.isContextDB(combinedOptions.sourceDb) && !options.stepUpdate) {
-      this.runStep(uris, content, combinedOptions, flowName, stepNumber, step);
+    if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
+      this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
     } else {
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step, stepNumber},
+        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
         {
-          database: this.globalContext.sourceDb ? xdmp.database(this.globalContext.sourceDb) : xdmp.database(),
-          update: !options.stepUpdate,
+          database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
+          update: combinedOptions.stepUpdate ? 'true': 'false',
+          commit: 'auto',
           ignoreAmps: true
         }
       );
     }
 
+    let writeTransactionInfo = {};
     //let's update our jobdoc now
-    if (!this.globalContext.batchErrors.length) {
-      if (!combinedOptions.noWrite) {
-        this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', combinedOptions.collections, this.globalContext.targetDb);
-      }
-      for (let content of this.writeQueue) {
-        let info = {
-            derivedFrom: content.uri,
-            influencedBy: step.name,
-            status: (flow.type === 'ingest') ? 'created' : 'updated',
-            metadata: {}
-          }
-        ;
-        this.datahub.prov.createStepRecord(jobId, flowName, step.type, content.uri, info);
-      }
-//      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished");
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "finished", uris);
-    } else {
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, "failed", uris);
-//      this.jobs.updateJob(this.globalContext.jobId, stepNumber, stepNumber, "finished_with_errors");
+    if (!combinedOptions.noWrite) {
+      writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
     }
+    let stepDefTypeLowerCase = (stepDetails.type) ? stepDetails.type.toLowerCase(): stepDetails.type;
+    let stepName = stepRef.name || stepRef.stepDefinitionName;
+    let prov = this.datahub.prov;
+    for (let content of this.writeQueue) {
+      let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
+      let info = {
+        derivedFrom: previousUris,
+        influencedBy: stepName,
+        status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
+        metadata: {}
+      };
+      // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
+      if (content.provenance !== false) {
+        let provResult;
+        if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
+          provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
+        } else {
+          provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+        }
+        if (provResult instanceof Error) {
+          flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+        }
+      }
+    }
+    if (!combinedOptions.noBatchWrite) {
+      let batchStatus = "finished";
+      if (this.globalContext.failedItems.length) {
+        if (this.globalContext.completedItems.length) {
+          batchStatus = "finished_with_errors";
+        } else {
+          batchStatus = "failed";
+        }
+      }
+      if (!combinedOptions.disableJobOutput) {
+        this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
+      }
+      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+        this.datahub.prov.commit();
+      }
+    }
+
     let resp = {
       "jobId": this.globalContext.jobId,
       "totalCount": uris.length,
-      // TODO should error counts, completedItems, etc. be all or nothing?
-      "errorCount": this.globalContext.batchErrors.length ? uris.length: 0,
-      "completedItems": this.globalContext.batchErrors.length ? []: uris,
-      "failedItems": this.globalContext.batchErrors.length ? uris: [],
+      "errorCount": this.globalContext.failedItems.length,
+      "completedItems": this.globalContext.completedItems,
+      "failedItems": this.globalContext.failedItems,
       "errors": this.globalContext.batchErrors
     };
     if (combinedOptions.fullOutput) {
@@ -225,70 +275,153 @@ class Flow {
     if (this.datahub.performance.performanceMetricsOn()) {
       resp.performanceMetrics = this.datahub.performance.stepMetrics;
     }
-
+    this.resetGlobalContext();
     return resp;
   }
-
 
   runStep(uris, content, options, flowName, stepNumber, step) {
     // declareUpdate({explicitCommit: true});
     let flowInstance = this;
-    let processor = flowInstance.step.getStepProcessor(flowInstance, step.name, step.type);
-    if(!(processor && processor.run)) {
-      let errorMsq = `Could not find main() function for process ${step.type}/${step.name} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
+    let processor = flowInstance.step.getStepProcessor(flowInstance, step.stepDefinitionName, step.stepDefinitionType);
+    if (!(processor && processor.run)) {
+      let errorMsq = `Could not find main() function for process ${step.stepDefinitionType}/${step.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
       flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});
       throw Error(errorMsq);
     }
 
-    let combinedOptions = Object.assign({}, processor.options, step.options, options);
-
-    try {
-      let hookOperation = function() {};
-      let hook = processor.customHook;
-      if (hook && hook.module) {
-        let parameters = Object.assign({uris}, processor.customHook.parameters);
-        hookOperation = function () {
-          flowInstance.datahub.hubUtils.invoke(
-            hook.module,
-            parameters,
-            hook.user || xdmp.getCurrentUser(),
-            hook.runBefore ? flowInstance.globalContext.sourceDb : this.globalContext.targetDb
-          );
-        }
+    let hookOperation = function () {};
+    let hook = step.customHook;
+    if (!hook || !hook.module) {
+      hook = processor.customHook;
+    }
+    if (hook && hook.module) {
+      // Include all of the step context in the parameters for the custom hook to make use of
+      let parameters = Object.assign({uris, content, options, flowName, stepNumber, step}, hook.parameters);
+      hookOperation = function () {
+        flowInstance.datahub.hubUtils.invoke(
+          hook.module,
+          parameters,
+          hook.user || xdmp.getCurrentUser(),
+          hook.database || (hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase)
+        );
       }
-      if (hook && hook.runBefore) {
-        hookOperation();
+    }
+    if (hook && hook.runBefore) {
+      hookOperation();
+    }
+    let normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
+    if (options.acceptsBatch) {
+      try {
+        let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), options, processor.run));
+        flowInstance.processResults(results, options, flowName, step);
+        flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
+      } catch (e) {
+        flowInstance.globalContext.batchErrors.push({
+          "stack": e.stack,
+          "code": e.code,
+          "data": e.data,
+          "message": e.message,
+          "name": e.name,
+          "retryable": e.retryable,
+          "stackFrames": e.stackFrames
+        });
+        flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
+        flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
       }
-      let self = this;
+    } else {
       for (let contentItem of content) {
         flowInstance.globalContext.uri = contentItem.uri;
-        let result = flowInstance.runMain(contentItem, combinedOptions, processor.run);
-        //add our metadata to this
-        if(result && result.context) {
-          result.context.metadata = self.flowUtils.createMetadata( result.context.metadata ? result.context.metadata : {}, flowName, step.name);
+        try {
+          let results = normalizeToSequence(flowInstance.runMain(contentItem, options, processor.run));
+          flowInstance.processResults(results, options, flowName, step);
+          flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
+        } catch (e) {
+          flowInstance.globalContext.batchErrors.push({
+            "stack": e.stack,
+            "code": e.code,
+            "data": e.data,
+            "message": e.message,
+            "name": e.name,
+            "retryable": e.retryable,
+            "stackFrames": e.stackFrames
+          });
+          flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
+          flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
         }
-        flowInstance.addToWriteQueue(result, flowInstance.globalContext);
       }
-      flowInstance.globalContext.uri = null;
-      if (hook && !hook.runBefore) {
-        hookOperation();
-      }
-//      xdmp.commit();
-      return flowInstance.writeQueue;
-    } catch (e) {
-      flowInstance.globalContext.batchErrors.push({
-        "stack": e.stack,
-        "code": e.code,
-        "data": e.data,
-        "message": e.message,
-        "name": e.name,
-        "retryable": e.retryable,
-        "stackFrames": e.stackFrames
-      });
-      flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
- //     xdmp.rollback();
-      return flowInstance.globalContext.batchErrors;
     }
+    flowInstance.globalContext.uri = null;
+    if (hook && !hook.runBefore) {
+      hookOperation();
+    }
+  }
+
+  processResults(results, combinedOptions, flowName, step) {
+    let self = this;
+    let normalizeToArray = self.datahub.hubUtils.normalizeToArray;
+    for (let result of results) {
+      if (result) {
+        if (!combinedOptions.acceptsBatch) {
+          result.previousUri = self.globalContext.uri;
+        }
+        //add our metadata to this
+        result.context = result.context || {};
+        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.stepDefinitionName, this.globalContext.jobId);
+        // normalize context values to arrays
+        if (result.context.collections) {
+          result.context.collections = normalizeToArray(result.context.collections);
+        }
+        if (result.context.permissions) {
+          // normalize permissions to array of JSON permissions
+          result.context.permissions = normalizeToArray(result.context.permissions)
+            .map((perm) => (perm instanceof Element) ? xdmp.permission(xdmp.roleName(fn.string(perm.xpath('*:role-id'))), fn.string(perm.xpath('*:capability')), "object") : perm);
+        }
+        self.addToWriteQueue(result, self.globalContext);
+      }
+    }
+  }
+
+  buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
+    let previousUris = info.derivedFrom;
+    let prov = this.datahub.prov;
+    let newDocURI = content.uri;
+    let docProvIDs = [];
+    // setup variables to group prov info by properties
+    let docProvPropertyIDsByProperty = {};
+    let docProvPropertyValuesByProperty = {};
+    let docProvDocumentIDsByProperty = {};
+    for (let prevUri of previousUris) {
+      let docProvenance = content.provenance[prevUri];
+      let docProperties = Object.keys(docProvenance);
+      let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
+      let docProvID = docPropRecords[0];
+      docProvIDs.push(docProvID);
+      let docProvPropertyIDKeyVals = docPropRecords[1];
+      // accumulating changes here, since merges can have multiple docs with input per property.
+      for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
+        let propDetails = docProvenance[origProp];
+        let prop = propDetails.destination;
+
+        docProvPropertyValuesByProperty[prop] = docProvPropertyValuesByProperty[prop] || [];
+        docProvPropertyValuesByProperty[prop].push(propDetails.value);
+        docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
+        docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
+        docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
+        docProvDocumentIDsByProperty[prop].push(docProvID);
+      }
+    }
+
+    let newPropertyProvIDs = [];
+    for (let prop of Object.keys(docProvPropertyIDsByProperty)) {
+      let docProvDocumentIDs = docProvDocumentIDsByProperty[prop];
+      let docProvPropertyIDs = docProvPropertyIDsByProperty[prop];
+      let docProvPropertyValues = docProvPropertyValuesByProperty[prop];
+      let propInfo = Object.assign({}, info, { metadata: { value: docProvPropertyValues.join(',') } });
+      let newPropertyProvID = prov.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
+      newPropertyProvIDs.push(newPropertyProvID);
+    }
+    // Now create the merged document record from both the original document records & the merged property records
+    return prov.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
   }
 
   isContextDB(databaseName) {
@@ -298,9 +431,6 @@ class Flow {
   runMain(content, options, func) {
     let resp;
     resp = func(content, options);
-    if (resp instanceof Sequence) {
-      resp = fn.head(resp);
-    }
     return resp;
   };
 }

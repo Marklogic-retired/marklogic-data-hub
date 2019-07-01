@@ -1,6 +1,8 @@
 {
   "name": "flowName",
   "description": "flow description",
-  "identifier": "",
-  "steps": []
+  "options": {
+    "identifier": ""
+  },
+  "steps": {}
 }

@@ -1,0 +1,113 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div id="step-dialog" mat-dialog-content class="content" [formGroup]="newStepForm">
+
+  <mat-form-field class="ng-invalid">
+    <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()"
+                formControlName="stepDefinitionType" required>
+      <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div *ngIf="newStepForm.value.stepDefinitionType || isUpdate">
+    <mat-form-field class="">
+      <input id="step-name" matInput formControlName="name" placeholder="Name" required [errorStateMatcher]="instantErrorMatcher">
+      <mat-error id="step-name-error" *ngIf="newStepForm.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="">
+      <input id="step-description" matInput formControlName="description" placeholder="Description">
+    </mat-form-field>
+    <div *ngIf="!isIngestion">
+      <label>Source Type: <span *ngIf="sourceRequired" class="source-req">*</span></label>
+      <mat-radio-group id="step-source-type" formControlName="selectedSource" (change)="stepSourceChange($event)">
+        <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
+        <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <mat-form-field *ngIf="hasSelectedCollection && !isIngestion">
+      <mat-select
+        [matTooltip]="tooltips.sourceCollection"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"  
+        id="step-source-collection" 
+        class="type-select" 
+        [placeholder]="'Source Collection' + (sourceRequired ? '*' : '')" 
+        formControlName="sourceCollection">
+          <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field id="step-source-query" *ngIf="hasSelectedQuery && !isIngestion" >
+      <textarea
+        [matTooltip]="tooltips.sourceQuery"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"  
+        matInput [placeholder]="'Source Query' + (sourceRequired ? '*' : '')" 
+        formControlName="sourceQuery">
+      </textarea>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!isIngestion"
+      [matTooltip]="tooltips.targetEntity"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
+      <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="entityRequired">
+        <mat-option *ngIf="isCustom"></mat-option>
+        <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
+      </mat-select>
+      <mat-error id="step-entity-error" *ngIf="newStepForm.get('targetEntity').invalid">Target Entity is required.</mat-error>
+    </mat-form-field>
+
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Advanced Settings
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-form-field *ngIf="!isIngestion">  
+          <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
+            <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select id="step-target-database" placeholder="Target Database" formControlName="targetDatabase">
+            <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="!isIngestion">
+          <mat-select id="step-output-format" class="type-select" placeholder="Target Format" formControlName="outputFormat">
+            <mat-option class="type-option" *ngFor="let outputFormat of outputFormatOptions" [value]="outputFormat.value">{{outputFormat.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      <mat-label>Additional Target Collections</mat-label>
+      <button id="add-additional-collection-btn" mat-icon-button (click)="onAddTargetCollection()">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+      <div
+        id="additional-collections-wrapper"
+        formArrayName="additionalCollections"
+        *ngFor="let collection of this.additionalCollections.controls; let i=index" >
+        <div [formGroupName]="i" class="additional-collections-group">
+          <mat-form-field>
+            <mat-label>Collection Name</mat-label>
+            <input [class]="'add-target-collecions-' + i" matInput formControlName="addCollection"/>
+            <mat-error id="'add-target-collections-' + i + '-error">Enter a string</mat-error>
+          </mat-form-field>
+          <button [id]="'remove-target-collection-btn-' + i" mat-icon-button (click)="onAddRemoveCollection(i)">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+<div mat-dialog-actions class="bottom">
+  <button id="step-cancel-btn" mat-raised-button color="primary" (click)="onNoClick()">CANCEL</button>
+  <button id="step-save-btn" [disabled]="!newStepForm.valid" mat-raised-button color="primary" (click)="onSave()">SAVE
+  </button>
+</div>

@@ -46,9 +46,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
      * user config directory. That will then cause the ordering of database commands to be incorrect, which will
      * likely cause an error when databases are deployed and they don't yet exist.
      *
-     * @param hubConfig
-     * @param databaseFile
-     * @param databaseFilename
+     * @param hubConfig a hubConfig object
+     * @param databaseFile database file object
+     * @param databaseFilename name of the database file
      */
     public DeployHubDatabaseCommand(HubConfig hubConfig, File databaseFile, String databaseFilename) {
         super(databaseFilename);

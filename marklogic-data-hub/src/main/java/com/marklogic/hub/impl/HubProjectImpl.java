@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.rest.util.JsonNodeUtil;
 import org.apache.commons.io.FileUtils;
@@ -60,7 +60,7 @@ public class HubProjectImpl implements HubProject {
     private String projectDirString;
     private Path projectDir;
     private Path pluginsDir;
-    private Path stepsDir;
+    private Path stepDefinitionsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -76,7 +76,7 @@ public class HubProjectImpl implements HubProject {
         this.projectDirString = projectDirString;
         this.projectDir = Paths.get(projectDirString).toAbsolutePath();
         this.pluginsDir = this.projectDir.resolve("plugins");
-        this.stepsDir = this.projectDir.resolve("steps");
+        this.stepDefinitionsDir = this.projectDir.resolve("step-definitions");
     }
 
     @Override public Path getHubPluginsDir() {
@@ -84,12 +84,12 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getStepsDir() {
-        return this.stepsDir;
+    public Path getStepDefinitionsDir() {
+        return this.stepDefinitionsDir;
     }
 
     @Override
-    public Path getStepsDirByType(Step.StepType type) {
+    public Path getStepsDirByType(StepDefinition.StepDefinitionType type) {
         Path path;
 
         if (type == null) {
@@ -98,13 +98,16 @@ public class HubProjectImpl implements HubProject {
         else {
             switch (type) {
                 case CUSTOM:
-                    path = this.stepsDir.resolve("custom");
+                    path = this.stepDefinitionsDir.resolve("custom");
                     break;
-                case INGEST:
-                    path = this.stepsDir.resolve("ingest");
+                case INGESTION:
+                    path = this.stepDefinitionsDir.resolve("ingestion");
                     break;
                 case MAPPING:
-                    path = this.stepsDir.resolve("mapping");
+                    path = this.stepDefinitionsDir.resolve("mapping");
+                    break;
+                case MASTERING:
+                    path = this.stepDefinitionsDir.resolve("mastering");
                     break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
@@ -114,11 +117,17 @@ public class HubProjectImpl implements HubProject {
         return path;
     }
 
-    @Override public Path getHubEntitiesDir() {
+    @Override public Path getHubEntitiesDir() { return this.projectDir.resolve("entities"); }
+
+    @Override public Path getHubMappingsDir() {
+        return this.projectDir.resolve("mappings");
+    }
+
+    @Override public Path getLegacyHubEntitiesDir() {
         return this.pluginsDir.resolve("entities");
     }
 
-    @Override public Path getHubMappingsDir() {
+    @Override public Path getLegacyHubMappingsDir() {
         return this.pluginsDir.resolve("mappings");
     }
 
@@ -188,6 +197,11 @@ public class HubProjectImpl implements HubProject {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
+    @Override
+    public Path getCustomModulesDir() {
+        return getModulesDir().resolve("root").resolve("custom-modules");
+    }
+
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
         File gradleProperties = this.projectDir.resolve("gradle.properties").toFile();
@@ -216,11 +230,19 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public void init(Map<String, String> customTokens) {
-        this.pluginsDir.toFile().mkdirs();
-        this.stepsDir.toFile().mkdirs();
+        this.stepDefinitionsDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();
+
+        Path customModulesDir = getCustomModulesDir();
+        customModulesDir.toFile().mkdirs();
+
+        Path entitiesDir = getHubEntitiesDir();
+        entitiesDir.toFile().mkdirs();
+
+        Path mappingsDir = getHubMappingsDir();
+        mappingsDir.toFile().mkdirs();
 
         Path hubServersDir = getHubServersDir();
         hubServersDir.toFile().mkdirs();
@@ -285,6 +307,7 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
         writeResourceFile("hub-internal-config/security/roles/flow-developer-role.json", rolesDir.resolve("flow-developer-role.json"), true);
         writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
+        writeResourceFile("hub-internal-config/security/roles/data-hub-admin-role.json", rolesDir.resolve("data-hub-admin-role.json"), true);
 
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
@@ -382,38 +405,49 @@ public class HubProjectImpl implements HubProject {
 
     @Override
     public void upgradeProject() throws IOException {
-
-        //let's check if we have legacy config directories, then we copy them to their new places, and rename the previous ones as .old
-        Path entityConfigDir = this.projectDir.resolve("entity-config");
-        Path hubInternalConfigDir = this.projectDir.resolve("hub-internal-config");
-        Path userConfigDir = this.projectDir.resolve("user-config");
-
-        //and now what we want to name the old directories so they're not copied over again in another update
-        Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
-        Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
-        Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
-        
-        //obsolete database/server/role names in hub-internal-config from 3.0
-        Set<String> obsoleteFiles = Stream.of("trace-database.json", "triggers-database.json", 
-                "schemas-database.json", "trace-server.json", "flow-operator-role.json").collect(Collectors.toSet());
-                
-        //if the entity-config directory exists, we'll copy it to the src/main/entity-config
-        upgradeProjectDir(entityConfigDir, getEntityConfigDir(), oldEntityConfigDir);
-        
-        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles );
-        
-        upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
-       
-        /*If the upgrade path is 3.0 -> 4.0.x -> 4.1.0 or 4.0.0 -> 4.1.0, the obsolete files have to be removed, 
-         * else, they will cause deployment to fail
-         */
-        deleteObsoleteDatabaseFilesFromHubInternalConfig();
-        deleteObsoleteServerFilesFromHubInternalConfig();
-        deleteObsoleteDatabaseFilesFromMlConfig();
-
-        //remove hub-internal-config/schemas dir
-        deleteObsoleteDirsFromHubInternalConfig();
-
+        Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
+        Path oldMappingsDir = this.getLegacyHubMappingsDir();
+        Path newEntitiesDirPath = this.getHubEntitiesDir();
+        Path newMappingsDirPath = this.getHubMappingsDir();
+        File newEntitiesDirFile = newEntitiesDirPath.toFile();
+        File newMappingsDirFile = newMappingsDirPath.toFile();
+        if (!newEntitiesDirFile.exists()) {
+            newEntitiesDirFile.mkdir();
+        }
+        if (!newMappingsDirFile.exists()) {
+            newMappingsDirFile.mkdir();
+        }
+        File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles();
+        if (oldEntityDirectories != null) {
+            for (File legacyEntityDir : oldEntityDirectories) {
+                if (legacyEntityDir.isDirectory()) {
+                    File[] entityFiles = legacyEntityDir.listFiles((File file, String name) -> name.endsWith(".entity.json"));
+                    if (entityFiles != null) {
+                        for (File entityFile : entityFiles) {
+                            logger.info("Moving plugins/entities/" + legacyEntityDir.getName()+"/"+entityFile.getName() + " to entities/" + entityFile.getName());
+                            Files.move(entityFile.toPath(), newEntitiesDirPath.resolve(entityFile.getName()));
+                        }
+                    }
+                }
+            }
+        }
+        File[] oldMappingsDirectories = oldMappingsDir.toFile().listFiles();
+        if (oldMappingsDirectories != null) {
+            for (File legacyMappingsDir : oldMappingsDirectories) {
+                if (legacyMappingsDir.isDirectory()) {
+                    if(!newMappingsDirPath.resolve(legacyMappingsDir.getName()).toFile().exists()){
+                        newMappingsDirPath.resolve(legacyMappingsDir.getName()).toFile().mkdir();
+                    }
+                    File[] mappingsFiles = legacyMappingsDir.listFiles((File file, String name) -> name.endsWith(".mapping.json"));
+                    if (mappingsFiles != null) {
+                        for (File mappingsFile : mappingsFiles) {
+                            logger.info("Moving plugins/mappings/" + legacyMappingsDir.getName()+"/"+mappingsFile.getName() + " to mappings/" + legacyMappingsDir.getName()+"/"+mappingsFile.getName());
+                            Files.move(mappingsFile.toPath(), newMappingsDirPath.resolve(legacyMappingsDir.getName()).resolve(mappingsFile.getName()));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {
@@ -745,13 +779,24 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
+    @Deprecated
     public Path getEntityDir(String entityName) {
-        return getHubEntitiesDir().resolve(entityName);
+        return getLegacyHubEntitiesDir().resolve(entityName);
     }
 
     @Override
     public Path getMappingDir(String mappingName) {
         return getHubMappingsDir().resolve(mappingName);
+    }
+
+    @Override
+    public Path getLegacyMappingDir(String mappingName) {
+        return getLegacyHubMappingsDir().resolve(mappingName);
+    }
+
+    @Override
+    public Path getCustomModuleDir(String stepName, String stepType) {
+        return getCustomModulesDir().resolve(stepType).resolve(stepName);
     }
 
     @Override

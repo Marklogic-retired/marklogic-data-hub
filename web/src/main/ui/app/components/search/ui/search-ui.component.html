@@ -19,7 +19,7 @@
         [(ngModel)]="searchText" 
         (ngModelChange)="searchTextChanged.emit($event)"
         placeholder="Enter you search query here...">
-      <button type="submit" mdl-colored="primary" mdl-button mdl-button-type="raised">Search</button>
+      <button type="submit" id="search-btn" mdl-colored="primary" mdl-button mdl-button-type="raised">Search</button>
     </form>
   </div>
   <div *ngIf="!loadingTraces" layout="column" flex layout-align="center center" class="full-width">
@@ -30,13 +30,13 @@
       (pageChanged)="pageChanged.emit($event)"></app-pagination>
     <div *ngIf="!loadingTraces && (!searchResponse || searchResponse.total === 0)">No Data</div>
     <div class="mdl-grid results">
-      <div class="mdl-cell mdl-cell--2-col">
+      <div class="mdl-cell mdl-cell--3-col">
         <app-facets
           [facets]="searchResponse.facets"
           [(activeFacets)]="activeFacets"
           (activeFacetsChange)="onActiveFacetsChange.emit($event)"></app-facets>
       </div>
-      <div class="mdl-cell mdl-cell--10-col">
+      <div class="mdl-cell mdl-cell--9-col">
         <div *ngIf="searchResponse && searchResponse.total > 0">
           <div *ngFor="let result of searchResponse.results" class="result">
             <div class="link">

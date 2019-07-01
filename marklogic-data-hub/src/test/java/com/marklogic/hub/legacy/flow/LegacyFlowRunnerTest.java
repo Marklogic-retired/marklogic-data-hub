@@ -72,7 +72,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
 
     @Test
     public void testPassOptions() throws IOException, ParserConfigurationException, SAXException {
-        scaffolding.createFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.XML, false);
         Files.copy(getResourceStream("flow-runner-test/collector.xqy"),
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy"),
@@ -81,7 +81,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getFlowDeveloperConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
@@ -129,7 +129,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     // bug DHFPROD-500, attachments showing up in two places
     @Test
     public void testEnvelopeSJS() throws IOException {
-        scaffolding.createFlow(ENTITY, "testharmonize-sjs-json", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize-sjs-json", FlowType.HARMONIZE,
                 CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
         //testing sjs JSON canonical instance
         Files.copy(getResourceStream("flow-runner-test/collector.sjs"),
@@ -139,7 +139,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getFlowDeveloperConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
@@ -166,7 +166,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     public void testEnvelopeXQY() throws IOException {
 
         //testing xqy JSON canonical instance
-        scaffolding.createFlow(ENTITY, "testharmonize-xqy-json", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize-xqy-json", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/collector.xqy"),
@@ -175,7 +175,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getFlowDeveloperConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
                 FlowType.HARMONIZE);
@@ -200,7 +200,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     // bug DHFPROD-500, attachments showing up in two places
     @Test
     public void testEnvelopeSJSXML() throws IOException, SAXException {
-        scaffolding.createFlow(ENTITY, "testharmonize-sjs-xml", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "testharmonize-sjs-xml", FlowType.HARMONIZE,
                 CodeFormat.JAVASCRIPT, DataFormat.XML, false);
 
         Files.copy(getResourceStream("flow-runner-test/collector2.sjs"),
@@ -210,7 +210,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getFlowDeveloperConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
 
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
@@ -250,9 +250,9 @@ public class LegacyFlowRunnerTest extends HubTestBase {
 
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
-        Assumptions.assumeFalse(getFlowDeveloperConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
 
-        scaffolding.createFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
+        scaffolding.createLegacyFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
         Files.copy(getResourceStream("flow-runner-test/collector2.xqy"),
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/collector.xqy"),
@@ -277,10 +277,10 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
         }
-        getFlowDeveloperConfig();
+        getDataHubAdminConfig();
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
         //deploys the entity to final db
-        installUserModules(getFlowDeveloperConfig(), false);
+        installUserModules(getDataHubAdminConfig(), false);
 
         ObjectMapper mapper = new ObjectMapper();
         Mapping testMap = Mapping.create("test");
@@ -302,9 +302,9 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         // Mapping should not be deployed
         assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
 
-        scaffolding.createFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
+        scaffolding.createLegacyFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
         try {
             installUserModules(getHubFlowRunnerConfig(), false);
         }

@@ -21,6 +21,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.entity.DefinitionType;
+import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
+import com.marklogic.hub.entity.PropertyType;
 import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
@@ -42,11 +46,30 @@ public class MappingImpl implements Mapping {
         this.language = "zxx";
         this.version = 1;
         this.description = "Default description";
-        this.sourceContext = "./";
+        this.sourceContext = "/";
         this.sourceURI = "";
         this.properties = new HashMap<>();
         properties.put("id", createProperty("sourcedFrom", "id"));
         this.targetEntityType = "http://example.org/modelName-version/entityType";
+    }
+
+    public MappingImpl(String name, HubEntity entity) {
+        this(name);
+        if (entity != null) {
+            InfoType info = entity.getInfo();
+            if (info != null) {
+                String prefix = info.getBaseUri() != null ? info.getBaseUri(): "";
+                this.targetEntityType = prefix + info.getTitle() + "-" + info.getVersion() + "/" + info.getTitle();
+                DefinitionType definition = entity.getDefinitions().getDefinitions().get(info.getTitle());
+                if (definition != null) {
+                    this.properties.clear();
+                    for (PropertyType property: definition.getProperties()) {
+                        String propertyName = property.getName();
+                        properties.put(propertyName, createProperty("sourcedFrom", propertyName));
+                    }
+                }
+            }
+        }
     }
 
     @Override

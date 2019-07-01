@@ -18,33 +18,18 @@ class GenerateTDETemplateFromEntityTaskTest extends BaseTest {
 
     def "GenerateTDETEmplates"() {
         given:
-        def pluginDir = Paths.get(hubConfig().hubProject.projectDirString).resolve("plugins")
-
         //DHF style nested entities (references in separate file)
-        def entitiesDir1 = pluginDir.resolve("entities").resolve("Order")
-        def entitiesDir2 = pluginDir.resolve("entities").resolve("Item")
-        def entitiesDir3 = pluginDir.resolve("entities").resolve("Customer")
+        def entitiesDir = Paths.get(hubConfig().hubProject.projectDirString).resolve("entities")
+        if (!entitiesDir.toFile().exists()) {
+            entitiesDir.toFile().mkdirs()
+        }
 
-        entitiesDir1.toFile().mkdirs()
-        entitiesDir2.toFile().mkdirs()
-        entitiesDir3.toFile().mkdirs()
+        FileUtils.copyFile(new File("src/test/resources/tde-template/Order.entity.json"), entitiesDir.resolve('Order.entity.json').toFile())
+        FileUtils.copyFile(new File("src/test/resources/tde-template/Item.entity.json"), entitiesDir.resolve('Item.entity.json').toFile())
+        FileUtils.copyFile(new File("src/test/resources/tde-template/Customer.entity.json"), entitiesDir.resolve('Customer.entity.json').toFile())
 
-        //ES style nested entities(references in the same file)
-
-        def entitiesDir4 = pluginDir.resolve("entities").resolve("Entity1")
-        entitiesDir4.toFile().mkdirs()
-
-        //DHF style without references
-
-        def entitiesDir5 = pluginDir.resolve("entities").resolve("e2eentity")
-        entitiesDir5.toFile().mkdirs()
-
-        FileUtils.copyFile(new File("src/test/resources/tde-template/Order.entity.json"), entitiesDir1.resolve('Order.entity.json').toFile())
-        FileUtils.copyFile(new File("src/test/resources/tde-template/Item.entity.json"), entitiesDir2.resolve('Item.entity.json').toFile())
-        FileUtils.copyFile(new File("src/test/resources/tde-template/Customer.entity.json"), entitiesDir3.resolve('Customer.entity.json').toFile())
-
-        FileUtils.copyFile(new File("src/test/resources/tde-template/Order1.entity.json"), entitiesDir4.resolve('Order1.entity.json').toFile())
-        FileUtils.copyFile(new File("src/test/resources/tde-template/e2eentity.entity.json"), entitiesDir5.resolve('e2eentity.entity.json').toFile())
+        FileUtils.copyFile(new File("src/test/resources/tde-template/Order1.entity.json"), entitiesDir.resolve('Order1.entity.json').toFile())
+        FileUtils.copyFile(new File("src/test/resources/tde-template/e2eentity.entity.json"), entitiesDir.resolve('e2eentity.entity.json').toFile())
 
         runTask("hubDeployUserArtifacts")
 

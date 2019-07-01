@@ -1,11 +1,22 @@
 {
   "name" : "LoadOrders",
   "description" : "flow description",
-  "identifier" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : null,
+  "version" : 0,
   "steps" : {
-    "1": {
-      "name": "IngestOrders",
-      "type": "CUSTOM"
+    "1" : {
+      "name" : "IngestOrders",
+      "description" : "null",
+      "options" : { },
+      "customHook" : null,
+      "retryLimit" : 0,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "IngestOrders",
+      "stepDefinitionType" : "CUSTOM"
     }
   }
 }

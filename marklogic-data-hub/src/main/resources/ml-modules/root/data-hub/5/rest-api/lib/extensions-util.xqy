@@ -36,7 +36,8 @@ declare private variable $system-transforms-40 := map:map()
     =>map:with("ml:prettifyXML",          "prettify");
 
 declare private variable $system-transforms-50 := map:map()
-    =>map:with("ml:runFlow",              "run-flow");
+    =>map:with("ml:runFlow",              "run-flow")
+    =>map:with("ml:runIngest",            "dmsdk-ingest");
 
 declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:dbConfigs",              "db-configs")
@@ -57,6 +58,7 @@ declare private variable $system-resource-extensions-50 := map:map()
     =>map:with("ml:runFlow",    "runFlow")
     =>map:with("ml:flows",      "flows")
     =>map:with("ml:jobs",       "jobs")
+    =>map:with("ml:collections","collections")
     =>map:with("ml:batches",    "batches")
     =>map:with("ml:hubstats",   "hubstats")
     =>map:with("ml:hubversion", "hubversion");
@@ -482,7 +484,7 @@ declare function extut:get-extension-function(
         )
 };
 
-declare private function extut:get-extension-function(
+declare function extut:get-extension-function(
     $extension-type as xs:string,
     $extension-name as xs:string,
     $function-name  as xs:string,
@@ -512,7 +514,7 @@ declare private function extut:get-extension-function(
                       ("5" , map:get($system-resource-extensions-50,$extension-name))
                     else ("4", $_)
             let $function    :=
-                if (empty($system-module))
+                if (fn:count($system-module) < 2)
                 then xdmp:function(
                     if ($source-format eq "xquery")
                         then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)

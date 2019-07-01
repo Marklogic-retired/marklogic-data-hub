@@ -26,3 +26,9 @@ h1.mat-dialog-title {
 /deep/ #run-flow-dialog .mat-divider {
   margin-bottom: 10px;
 }
+
+/deep/ #run-flow-dialog .mat-checkbox-layout > .mat-checkbox-label {
+  width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

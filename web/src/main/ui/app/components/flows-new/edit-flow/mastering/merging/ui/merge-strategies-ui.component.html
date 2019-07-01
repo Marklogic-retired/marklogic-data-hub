@@ -26,8 +26,8 @@
         <!-- Property to Merge Column -->
         <ng-container matColumnDef="strategyName">
           <mat-header-cell id="merge-strategy-property-sort-btn" *matHeaderCellDef mat-sort-header>Strategy</mat-header-cell>
-          <mat-cell class="merge-strategy-property" *matCellDef="let mStr">
-            <span [class.default-name]="mStr.default">
+          <mat-cell *matCellDef="let mStr">
+            <span class="merge-strategy-property" [class.default-name]="mStr.default">
               {{mStr.name}}
             </span>
           </mat-cell>
@@ -102,7 +102,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row class="{{ 'merge-option-' + mStr.name.toLowerCase().split(' ').join('-') }}"
+        <mat-row class="{{ 'merge-strategy-' + mStr.name.toLowerCase().split(' ').join('-') }}"
                  *matRowDef="let mStr; columns: displayedColumns;">
         </mat-row>
 
@@ -112,8 +112,8 @@
                      #paginator
                      [length]="mergeStrategies.length"
                      [pageIndex]="0"
-                     [pageSize]="15"
-                     [pageSizeOptions]="[3, 5, 15, 30]">
+                     [pageSize]="10"
+                     [pageSizeOptions]="[5, 10, 25, 50]">
       </mat-paginator>
 
     </div>
@@ -128,8 +128,12 @@
 </mat-menu>
 
 <div class="timestamp-container">
-  <div class="h2">Timestamp Path</div>
-  <mat-form-field appearance="standard">
+  <div class="h2"
+    [matTooltip]="tooltips.merging.timestamp"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="50000">Timestamp Path</div>
+  <mat-form-field class="editing-field" appearance="standard">
     <input matInput [(ngModel)]="timestamp" />
   </mat-form-field>
   <button id="save-timestamp" mat-raised-button color="primary" [disabled]="!timestampChanged()" (click)="onSaveTimestamp()">SAVE</button>

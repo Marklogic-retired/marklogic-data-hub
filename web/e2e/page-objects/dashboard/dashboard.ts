@@ -21,6 +21,50 @@ export class DashboardPage extends AppPage {
     return element(by.buttonText('Clear!'));
   }
 
+  async clearAllDatabases() {
+    await this.clearDatabases.click();
+    await browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
+    await dashboardPage.clearButton.click();
+    await browser.wait(EC.textToBePresentInElement(this.jobCount(), '0'));
+    await browser.sleep(1000);
+  }
+
+  async clearJobDatabase() {
+    await browser.sleep(1000);
+    await browser.wait(EC.visibilityOf(dashboardPage.clearJobButton()));
+    await browser.sleep(1000);
+    await this.clearJobButton().click();
+    await browser.sleep(5000);
+    await browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
+    await browser.sleep(500);
+    await dashboardPage.clearButton.click();
+    await browser.sleep(500);
+    await browser.wait(EC.textToBePresentInElement(this.jobCount(), '0'));
+    await browser.sleep(2000);
+  }
+
+  async clearStagingDatabase() {
+    await browser.wait(EC.visibilityOf(this.clearStagingButton()));
+    await this.clearStagingButton().click();
+    await browser.sleep(500);
+    await browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
+    await browser.sleep(500);
+    await dashboardPage.clearButton.click();
+    await browser.sleep(500);
+    await browser.wait(EC.textToBePresentInElement(this.stagingCount(), '0'));
+  }
+
+  async clearFinalDatabase() {
+    await browser.wait(EC.visibilityOf(this.clearFinalButton()));
+    await this.clearFinalButton().click();
+    await browser.sleep(500);
+    await browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
+    await browser.sleep(500);
+    await dashboardPage.clearButton.click();
+    await browser.sleep(500);
+    await browser.wait(EC.textToBePresentInElement(this.finalCount(), '0'));
+  }
+
   get cancelButton() {
     return element(by.buttonText('Cancel'));
   }

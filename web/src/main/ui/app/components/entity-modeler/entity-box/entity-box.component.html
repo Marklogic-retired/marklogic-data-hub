@@ -8,7 +8,7 @@
       <span>{{entity.info.title}}</span>
       <span class="version">v{{entity.info.version}}</span>
       <span class="help-icon">
-        <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+        <a href="https://docs.marklogic.com/datahub/entities/index-settings.html" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
       </span>
       <span class="edit-area">
         <span *ngIf="entity.inputFlowCount > 0">
@@ -24,7 +24,7 @@
           <i class="fa fa-pencil"></i>
         </span>
         <span class="delete-entity" (click)="deleteEntity()">
-          <i class="fa fa-remove"></i>
+          <i class="fa fa-trash"></i>
         </span>
       </span>
     </div>

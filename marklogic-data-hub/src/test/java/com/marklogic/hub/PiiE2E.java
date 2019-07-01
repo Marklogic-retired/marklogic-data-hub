@@ -108,10 +108,10 @@ public class PiiE2E extends HubTestBase
     @BeforeEach
     public void setup()
     {
-        Assumptions.assumeTrue(!(isCertAuth() || isSslRun() || getFlowDeveloperConfig().getIsProvisionedEnvironment()));
+        Assumptions.assumeTrue(!(isCertAuth() || isSslRun() || getDataHubAdminConfig().getIsProvisionedEnvironment()));
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         installHubModules();
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
         // Hardcoding to "digest" auth for now
         // needs to be final db
         clerkClient = DatabaseClientFactory.newClient(finalClient.getHost(), finalPort, HubConfig.DEFAULT_FINAL_NAME,
@@ -127,7 +127,7 @@ public class PiiE2E extends HubTestBase
         }
 
         // command list for deploying/undeploying security
-        HubConfigImpl hubConfig = (HubConfigImpl) getFlowDeveloperConfig();
+        HubConfigImpl hubConfig = (HubConfigImpl) getDataHubAdminConfig();
         // Security
         List<Command> securityCommands = new ArrayList<Command>();
         // these two should already be there... we don't want to remove them
@@ -211,7 +211,7 @@ public class PiiE2E extends HubTestBase
             });
 
         // save pii, install user modules and deploy security
-        installUserModules(getFlowDeveloperConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
         entityManager.savePii();
 
         try {
@@ -250,7 +250,7 @@ public class PiiE2E extends HubTestBase
         installEntities();
         entityManager.savePii();
 
-        verifyResults(getFlowDeveloperConfig().getUserSecurityDir());
+        verifyResults(getDataHubAdminConfig().getUserSecurityDir());
 
     }
 
@@ -305,10 +305,10 @@ public class PiiE2E extends HubTestBase
 
     private void installEntities()
     {
-        Path employeeDir = project.getEntityDir("EmployeePii");
-        employeeDir.toFile().mkdirs();
-        Assertions.assertTrue(employeeDir.toFile().exists());
-        FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), employeeDir.resolve("EmployeePii.entity.json").toFile());
+        Path hubEntitiesDir = project.getHubEntitiesDir();
+        hubEntitiesDir.toFile().mkdirs();
+        Assertions.assertTrue(hubEntitiesDir.toFile().exists());
+        FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), hubEntitiesDir.resolve("EmployeePii.entity.json").toFile());
     }
 
     private void runInputFLow() throws URISyntaxException

@@ -34,7 +34,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.job.impl.JobMonitorImpl;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -156,6 +156,8 @@ public class HubConfigImpl implements HubConfig
 
     private String flowDeveloperRoleName;
     private String flowDeveloperUserName;
+
+    private String dataHubAdminRoleName;
 
     private String DHFVersion;
 
@@ -796,15 +798,32 @@ public class HubConfigImpl implements HubConfig
     }
 
     // roles and users
-    @Override public String getflowOperatorRoleName() {
+    @Override public String getFlowOperatorRoleName() {
         return flowOperatorRoleName;
     }
-    @Override public void setflowOperatorRoleName(String flowOperatorRoleName) {
+    @Override public void setFlowOperatorRoleName(String flowOperatorRoleName) {
         this.flowOperatorRoleName = flowOperatorRoleName;
     }
 
     @Override public String getFlowOperatorUserName() {
         return flowOperatorUserName;
+    }
+    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
+        this.flowOperatorUserName = flowOperatorUserName;
+    }
+
+    @Override public String getFlowDeveloperRoleName() {
+        return flowDeveloperRoleName;
+    }
+    @Override public void setFlowDeveloperRoleName(String flowDeveloperRoleName) {
+        this.flowDeveloperRoleName = flowDeveloperRoleName;
+    }
+
+    @Override public String getFlowDeveloperUserName() {
+        return flowDeveloperUserName;
+    }
+    @Override  public void setFlowDeveloperUserName(String flowDeveloperUserName) {
+        this.flowDeveloperUserName = flowDeveloperUserName;
     }
 
     // impl only pending refactor to Flow Component
@@ -825,9 +844,7 @@ public class HubConfigImpl implements HubConfig
     public void setMlPassword(String mlPassword) {
         this.mlPassword = mlPassword;
     }
-    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
-        this.flowOperatorUserName = flowOperatorUserName;
-    }
+
 
 
     @JsonIgnore
@@ -1308,6 +1325,13 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlFlowDeveloperUserName", flowDeveloperUserName);
         }
 
+        if (dataHubAdminRoleName == null) {
+            dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
+        }
+        else {
+            projectProperties.setProperty("mlDataHubAdminRole", dataHubAdminRoleName);
+        }
+
         if (modulePermissions == null) {
             modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));
         }
@@ -1449,7 +1473,7 @@ public class HubConfigImpl implements HubConfig
         return newStagingClient(stagingDbName);
     }
 
-    private DatabaseClient newStagingClient(String dbName) {
+    public DatabaseClient newStagingClient(String dbName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
         config.setDatabase(dbName);
@@ -1552,7 +1576,7 @@ public class HubConfigImpl implements HubConfig
 
     @JsonIgnore
     @Override
-    public Path getStepsDirByType(Step.StepType type) {
+    public Path getStepsDirByType(StepDefinition.StepDefinitionType type) {
         return hubProject.getStepsDirByType(type);
     }
 
@@ -1600,7 +1624,14 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override
-    public Path getFlowsDir() { return hubProject.getFlowsDir();   }
+    public Path getFlowsDir() {
+        return hubProject.getFlowsDir();
+    }
+
+    @Override
+    public Path getStepDefinitionsDir() {
+        return hubProject.getStepDefinitionsDir();
+    }
 
     @JsonIgnore
     @Override public Path getUserServersDir() {
@@ -1665,20 +1696,20 @@ public class HubConfigImpl implements HubConfig
     private Map<String, String> getCustomTokens(AppConfig appConfig, Map<String, String> customTokens) {
         customTokens.put("%%mlHost%%", appConfig == null ? environment.getProperty("mlHost") : appConfig.getHost());
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName == null ? environment.getProperty("mlStagingAppserverName") : stagingHttpName);
-        customTokens.put("\"%%mlStagingPort%%\"", stagingPort == null ? environment.getProperty("mlStagingPort") : stagingPort.toString());
+        customTokens.put("%%mlStagingPort%%", stagingPort == null ? environment.getProperty("mlStagingPort") : stagingPort.toString());
         customTokens.put("%%mlStagingDbName%%", stagingDbName == null ? environment.getProperty("mlStagingDbName") : stagingDbName);
         customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost == null ? environment.getProperty("mlStagingForestsPerHost") : stagingForestsPerHost.toString());
         customTokens.put("%%mlStagingAuth%%", stagingAuthMethod == null ? environment.getProperty("mlStagingAuth") : stagingAuthMethod);
 
         customTokens.put("%%mlFinalAppserverName%%", finalHttpName == null ? environment.getProperty("mlFinalAppserverName") : finalHttpName);
-        customTokens.put("\"%%mlFinalPort%%\"", finalPort == null ? environment.getProperty("mlFinalPort") : finalPort.toString());
+        customTokens.put("%%mlFinalPort%%", finalPort == null ? environment.getProperty("mlFinalPort") : finalPort.toString());
         customTokens.put("%%mlFinalDbName%%", finalDbName == null ? environment.getProperty("mlFinalDbName") : finalDbName);
         customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost == null ? environment.getProperty("mlFinalForestsPerHost") : finalForestsPerHost.toString());
         customTokens.put("%%mlFinalAuth%%", finalAuthMethod == null ? environment.getProperty("mlFinalAuth") : finalAuthMethod);
 
 
         customTokens.put("%%mlJobAppserverName%%", jobHttpName == null ? environment.getProperty("mlJobAppserverName") : jobHttpName);
-        customTokens.put("\"%%mlJobPort%%\"", jobPort == null ? environment.getProperty("mlJobPort") : jobPort.toString());
+        customTokens.put("%%mlJobPort%%", jobPort == null ? environment.getProperty("mlJobPort") : jobPort.toString());
         customTokens.put("%%mlJobDbName%%", jobDbName == null ? environment.getProperty("mlJobDbName") : jobDbName);
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost == null ? environment.getProperty("mlJobForestsPerHost") : jobForestsPerHost.toString());
         customTokens.put("%%mlJobAuth%%", jobAuthMethod == null ? environment.getProperty("mlJobAuth") : jobAuthMethod);
@@ -1704,11 +1735,13 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlFlowDeveloperRole%%", flowDeveloperRoleName == null ? environment.getProperty("mlFlowDeveloperRole") : flowDeveloperRoleName);
         customTokens.put("%%mlFlowDeveloperUserName%%", flowDeveloperUserName == null ? environment.getProperty("mlFlowDeveloperUserName") : flowDeveloperUserName);
 
+        customTokens.put("%%mlDataHubAdminRole%%", dataHubAdminRoleName == null ? environment.getProperty("mlDataHubAdminRole") : dataHubAdminRoleName);
+
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
-        customTokens.put("%%mlFlowOperatorUserPassword%%", randomStringGenerator.generate(20));
+        customTokens.put("%%mlFlowOperatorPassword%%", randomStringGenerator.generate(20));
         // and another random password for hub Admin User
-        customTokens.put("%%mlFlowDeveloperUserPassword%%", randomStringGenerator.generate(20));
+        customTokens.put("%%mlFlowDeveloperPassword%%", randomStringGenerator.generate(20));
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath == null ? environment.getProperty("mlCustomForestPath") : customForestPath);
 
@@ -1719,11 +1752,11 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlHubLogLevel%%", hubLogLevel == null ? environment.getProperty("mlHubLogLevel") : hubLogLevel);
 
         // in a load-from-properties situation we don't want a random string...
-        if (projectProperties.containsKey("mlFlowOperatorUserPassword")) {
-            customTokens.put("%%mlFlowOperatorUserPassword%%", projectProperties.getProperty("mlFlowOperatorUserPassword"));
+        if (projectProperties.containsKey("mlFlowOperatorPassword")) {
+            customTokens.put("%%mlFlowOperatorPassword%%", projectProperties.getProperty("mlFlowOperatorPassword"));
         }
-        if (projectProperties.containsKey("mlFlowDeveloperUserPassword")) {
-            customTokens.put("%%mlFlowDeveloperUserPassword%%", projectProperties.getProperty("mlFlowDeveloperUserPassword"));
+        if (projectProperties.containsKey("mlFlowDeveloperPassword")) {
+            customTokens.put("%%mlFlowDeveloperPassword%%", projectProperties.getProperty("mlFlowDeveloperPassword"));
         }
         /* can't iterate through env properties, so rely on custom tokens itself?
         if (environment != null) {
@@ -1804,7 +1837,7 @@ public class HubConfigImpl implements HubConfig
      * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
      * method just ensures that they're relative to the DHF project directory.
      *
-     * @param config
+     * @param config an AppConfig object
      */
     protected void initializeConfigDirs(AppConfig config) {
         final String defaultConfigPath = String.join(File.separator, "src", "main", "ml-config");
@@ -1835,7 +1868,7 @@ public class HubConfigImpl implements HubConfig
     /**
      * Need to initialize every module path as being relative to the current project directory.
      *
-     * @param config
+     * @param config an AppConfig object
      */
     protected void initializeModulePaths(AppConfig config) {
         List<String> modulePaths = new ArrayList<>();
@@ -1937,8 +1970,8 @@ public class HubConfigImpl implements HubConfig
      * properties plugin does. But it is being preserved for backwards compatibility in case any clients prior to
      * 4.1 were using HubConfigBuilder.withPropertiesFromEnvironment.
      *
-     * @param environment
-     * @return
+     * @param environment a string name for environment
+     * @return a hubconfig object
      */
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
@@ -1981,6 +2014,77 @@ public class HubConfigImpl implements HubConfig
         adminManager = null;
         manageConfig = null;
         manageClient = null;
+    }
+
+    public void resetHubConfigs() {
+        stagingDbName = null;
+        stagingHttpName = null;
+        stagingForestsPerHost = null;
+        stagingPort = null;
+        stagingAuthMethod = null;
+        stagingScheme = null;
+        stagingSimpleSsl = null;
+
+        stagingSslContext = null;
+        stagingSslHostnameVerifier = null;
+        stagingCertFile = null;
+        stagingCertPassword = null;
+        stagingExternalName = null;
+        stagingTrustManager = null;
+
+        finalDbName = null;
+        finalHttpName = null;
+        finalForestsPerHost = null;
+        finalPort = null;
+        finalAuthMethod = null;
+        finalScheme = null;
+
+        finalSimpleSsl = null;
+        finalSslContext = null;
+        finalSslHostnameVerifier = null;
+        finalCertFile = null;
+        finalCertPassword = null;
+        finalExternalName = null;
+        finalTrustManager = null;
+
+        jobDbName = null;
+        jobHttpName = null;
+        jobForestsPerHost = null;
+        jobPort = null;
+        jobAuthMethod = null;
+        jobScheme = null;
+
+        jobSimpleSsl = null;
+        jobSslContext = null;
+        jobSslHostnameVerifier = null;
+        jobCertFile = null;
+        jobCertPassword = null;
+        jobExternalName = null;
+        jobTrustManager = null;
+
+        modulesDbName = null;
+        modulesForestsPerHost = null;
+        stagingTriggersDbName = null;
+        stagingTriggersForestsPerHost = null;
+        finalTriggersDbName = null;
+        finalTriggersForestsPerHost = null;
+        stagingSchemasDbName = null;
+        stagingSchemasForestsPerHost = null;
+        finalSchemasDbName = null;
+        finalSchemasForestsPerHost = null;
+
+        flowOperatorRoleName = null;
+        flowOperatorUserName = null;
+
+        flowDeveloperRoleName = null;
+        flowDeveloperUserName = null;
+
+        dataHubAdminRoleName = null;
+        customForestPath = null;
+        modulePermissions = null;
+        hubLogLevel = null;
+        loadBalancerHost = null;
+        isHostLoadBalancer = null;
     }
 
 }

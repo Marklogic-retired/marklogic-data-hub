@@ -1,0 +1,19 @@
+{
+  "name" : "mapping",
+  "type" : "MAPPING",
+  "version" : 1,
+  "options" : {
+    "collections" : [ "mapping", "mdm-content" ],
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "mapping" : {
+      "name" : "CustomerJSON-CustomerJSONMapping",
+      "version" : 0
+    },
+    "targetEntity" : "Customer",
+    "sourceQuery" : "cts.collectionQuery('default-ingestion')"
+  },
+  "customHook" : { },
+  "language" : "zxx",
+  "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+}

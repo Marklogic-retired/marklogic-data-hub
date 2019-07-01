@@ -1,0 +1,115 @@
+{
+  "name": "%%mlFlowName%%",
+  "description": "This is the default flow containing all of the default steps",
+  "batchSize": 100,
+  "threadCount": 4,
+  "options": {
+    "sourceQuery": null
+  },
+  "steps": {
+    "1": {
+      "name": "ingestion-step",
+      "description": "This is the default ingestion step",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "customHook": {},
+      "fileLocations": {
+        "inputFilePath": "path/to/folder",
+        "outputURIReplacement": "output/URI,'substitute/URI'",
+        "inputFileType": "json"
+      },
+      "options": {
+        "targetDatabase": "%%mlStagingDbName%%",
+        "sourceQuery": null,
+        "outputFormat": "json",
+        "collections": [
+          "default-ingestion"
+        ],
+        "headers": {
+          "sources": [{"name":  "%%mlFlowName%%"}],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        }
+      }
+    },
+    "2": {
+      "name": "mapping-step",
+      "description": "This is the default mapping step",
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "%%mlStagingDbName%%",
+        "targetDatabase": "%%mlFinalDbName%%",
+        "sourceQuery": "cts.collectionQuery('default-ingestion')",
+        "outputFormat": "json",
+        "collections": [
+          "default-mapping",
+          "mdm-content"
+        ],
+        "targetEntity": "entity-name",
+        "mapping": {
+          "name": "mapping-name",
+          "version": 1
+        }
+      }
+    },
+    "3": {
+      "name": "mastering-step",
+      "description": "This is the default mastering step",
+      "stepDefinitionName": "default-mastering",
+      "stepDefinitionType": "MASTERING",
+      "options": {
+        "sourceDatabase": "%%mlFinalDbName%%",
+        "targetDatabase": "%%mlFinalDbName%%",
+        "targetEntity": "entity-name",
+        "sourceQuery": "cts.andQuery([cts.collectionQuery('default-mapping'),cts.collectionQuery('mdm-content')])",
+        "outputFormat": "json",
+        "collections": [
+          "default-mastering, mastered"
+        ],
+        "mergeOptions" : {
+          "matchOptions" : "",
+          "propertyDefs" : {
+            "properties" : [ ],
+            "namespaces" : { }
+          },
+          "algorithms" : {
+            "stdAlgorithm" : {
+              "timestamp" : { }
+            },
+            "custom" : [ ],
+            "collections" : { }
+          },
+          "mergeStrategies" : [ ],
+          "merging" : [ ]
+        },
+        "matchOptions" : {
+          "dataFormat": "json",
+          "propertyDefs": {
+            "property": []
+          },
+          "algorithms": {
+            "algorithm": []
+          },
+          "collections": {
+            "content": []
+          },
+          "scoring": {
+            "add": [],
+            "expand": [],
+            "reduce": []
+          },
+          "actions": {
+            "action": []
+          },
+          "thresholds": {
+            "threshold": []
+          },
+          "tuning": {
+            "maxScan": 200
+          }
+        }
+      }
+    }
+  }
+}

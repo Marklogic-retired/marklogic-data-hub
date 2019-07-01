@@ -59,5 +59,5 @@ public interface Collector {
      * @param options - options Map for running the step
      * @return a list of uris as strings in a diskqueue object
      */
-    DiskQueue<String> run(String flow, String step, String jobId, Map<String, Object> options);
+    DiskQueue<String> run(String flow, String step, Map<String, Object> options);
 }

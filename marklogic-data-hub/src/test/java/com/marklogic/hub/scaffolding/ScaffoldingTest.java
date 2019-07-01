@@ -16,16 +16,13 @@
 
 package com.marklogic.hub.scaffolding;
 
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.CodeFormat;
-import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,12 +33,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,13 +72,10 @@ public class ScaffoldingTest extends HubTestBase {
         scaffolding.createEntity("my-fun-test");
         assertTrue(projectDir.exists());
 
-        Path entityDir = project.getEntityDir("my-fun-test");
-        assertTrue(entityDir.toFile().exists());
-        assertEquals(
-                Paths.get(pluginDir.toString(), "entities", "my-fun-test"),
-                entityDir);
+        Path entityPath = projectDir.toPath().resolve("entities").resolve("my-fun-test.entity.json");
+        assertTrue(entityPath.toFile().exists());
 
-        Path flowDir = scaffolding.getFlowDir("my-fun-test", "blah", FlowType.INPUT);
+        Path flowDir = scaffolding.getLegacyFlowDir("my-fun-test", "blah", FlowType.INPUT);
         assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "blah"),
                 flowDir);
         assertFalse(flowDir.toFile().exists());
@@ -97,7 +89,7 @@ public class ScaffoldingTest extends HubTestBase {
         Path mappingDir = project.getMappingDir("my-fun-test");
         assertTrue(mappingDir.toFile().exists());
         assertEquals(
-            Paths.get(pluginDir.toString(), "mappings", "my-fun-test"),
+            Paths.get(projectDir.toPath().toString(), "mappings", "my-fun-test"),
             mappingDir);
     }
 
@@ -185,79 +177,6 @@ public class ScaffoldingTest extends HubTestBase {
         Path restTransformFile = restTransformDir.resolve(transformName + "." + pluginCodeFormat);
         assertTrue(restTransformFile.toFile().exists());
     }
-
-    private void updateLegacyFlow(String fromVersion, String entityName, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType) {
-        try {
-            String flowName = "legacy-" + codeFormat.toString() + "-" + dataFormat.toString() + "-" + flowType.toString() + "-flow";
-
-            assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, entityName).size());
-
-            Path flowParentDir = projectPath.resolve("plugins").resolve("entities").resolve(entityName).resolve(flowType.toString());
-            FileUtils.copyDirectory(getResourceFile("scaffolding-test/" + flowName), flowParentDir.resolve(flowName).toFile());
-
-            assertEquals(1, scaffolding.updateLegacyFlows(fromVersion, entityName).size());
-
-            FileInputStream fis = new FileInputStream(flowParentDir.resolve(flowName).resolve(flowName + ".properties").toFile());
-            Properties properties = new Properties();
-            properties.load(fis);
-            fis.close();
-
-            assertEquals(flowType.equals(FlowType.INPUT) ? 4 : 6, properties.keySet().size());
-            assertEquals(codeFormat.toString(), properties.get("codeFormat"));
-            assertEquals(dataFormat.toString(), properties.get("dataFormat"));
-            assertEquals(codeFormat.toString(), properties.get("mainCodeFormat"));
-            assertEquals("main." + codeFormat.toString(), properties.get("mainModule"));
-            FileInputStream inputStream = new FileInputStream(flowParentDir.resolve(flowName).resolve("main." + codeFormat.toString()).toFile());
-            String actual = IOUtils.toString(inputStream);
-            inputStream.close();
-
-            if (fromVersion.startsWith("1")) {
-                assertEquals(getResource("scaffolding/" + flowType.toString() + "/" + codeFormat.toString() + "/main-legacy-1x." + codeFormat.toString()), actual);
-            } else {
-                assertEquals(getResource("scaffolding/" + flowType.toString() + "/" + codeFormat.toString() + "/main-legacy." + codeFormat.toString()), actual);
-            }
-
-
-            if (flowType.equals(FlowType.HARMONIZE)) {
-                assertEquals("collector/collector." + codeFormat.toString(), properties.get("collectorModule"));
-
-                if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                    inputStream = new FileInputStream(flowParentDir.resolve(flowName).resolve("writer").resolve("writer." + codeFormat.toString()).toFile());
-                    actual = IOUtils.toString(inputStream);
-                    inputStream.close();
-                    assertEquals(getResource("scaffolding-test/updated-writer." + codeFormat.toString()), actual);
-                }
-            }
-
-            assertEquals(0, scaffolding.updateLegacyFlows(fromVersion, entityName).size());
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
-    public void updateLegacyFlowsFrom1x() {
-        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
-            try {
-                FileUtils.deleteDirectory(projectDir);
-                updateLegacyFlow("1.1.5", "my-fun-test", codeFormat, dataFormat, flowType);
-            }
-            catch(IOException e) {
-                throw new RuntimeException(e);
-            }
-        }));
-    }
-
-    @Test
-    public void updateLegacyFlowsFrom2x() {
-        allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
-            if (!useEs) {
-                updateLegacyFlow("2.0.0-rc.1", "my-fun-test", codeFormat, dataFormat, flowType);
-            }
-        }));
-    }
-
 
 }
 

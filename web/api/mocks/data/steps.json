@@ -1,0 +1,1220 @@
+[
+  {
+    "id": "step-1-flow-1",
+    "name": "Flow01IngestStep",
+    "description": "My Step 1 description",
+    "stepDefinitionName":"default-ingestion",
+    "stepDefinitionType": "INGESTION",
+    "isValid": true,
+    "fileLocations": { 
+      "inputFilePath":"",
+      "outputURIReplacement":"",
+      "inputFileType":""
+    },
+    "options": {
+      "sourceQuery":null,
+      "collections":[ 
+         "default-ingest",
+         "Flow04IngestStep"
+      ],
+      "outputFormat": "json",
+      "permissions": "rest-reader,read,rest-writer,update",
+      "targetDatabase":"data-hub-STAGING"
+    }
+  },
+  {
+    "id": "step-2-flow-1",
+    "name": "Flow01MappingStep",
+    "description": "My Step 2 description",
+    "stepDefinitionName": "default-mapping",
+    "stepDefinitionType": "MAPPING",
+    "isValid": true,
+    "options": { 
+      "sourceQuery": "cts.collectionQuery('default-ingest')",
+      "sourceDatabase": "staging",
+      "targetDatabase": "final",
+      "mapping": { 
+        "name":"OrderMapping1",
+        "version":1
+      }
+    }
+  },
+  {
+    "id": "step-3-flow-1",
+    "name": "Flow01MasteringStep",
+    "description": "My Step 3 description",
+    "stepDefinitionName": "default-mastering",
+    "stepDefinitionType": "MASTERING",
+    "isValid":true,
+    "options":{ 
+       "sourceQuery": "",
+       "targetEntity": "Order",
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "matchOptions": { 
+        "dataFormat": "json",
+        "propertyDefs": {
+          "property": [
+            {
+              "namespace": "",
+              "localname": "ssn",
+              "name": "ssn"
+            },
+            {
+              "namespace": "",
+              "localname": "firstName",
+              "name": "firstName"
+            },
+            {
+              "namespace": "",
+              "localname": "lastName",
+              "name": "lastName"
+            },
+            {
+              "namespace": "",
+              "localname": "addr",
+              "name": "addr"
+            },
+            {
+              "namespace": "",
+              "localname": "city",
+              "name": "city"
+            },
+            {
+              "namespace": "",
+              "localname": "state",
+              "name": "state"
+            },
+            {
+              "namespace": "",
+              "localname": "postal",
+              "name": "postal"
+            }
+          ]
+        },
+        "algorithms": {
+          "algorithm": [
+            {
+              "name": "standard-reduction",
+              "function": "standard-reduction"
+            },
+            {
+              "name": "double-metaphone",
+              "at": "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy",
+              "function": "double-metaphone"
+            },
+            {
+              "name": "thesaurus",
+              "at": "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy",
+              "function": "thesaurus"
+            },
+            {
+              "name": "zip-match",
+              "at": "/com.marklogic.smart-mastering/algorithms/zip.xqy",
+              "function": "zip-match"
+            },
+            {
+              "name": "customOption",
+              "at": "/directory/customOption.sjs",
+              "namespace": "",
+              "function": "customOption"
+            }
+          ]
+        },
+        "collections": {
+          "content": [
+            "mdm-content"
+          ]
+        },
+        "scoring": {
+          "add": [
+            {
+              "propertyName": "ssn",
+              "weight": 10
+            },
+            {
+              "propertyName": "postal",
+              "weight": 5
+            }
+          ],
+          "expand": [
+            {
+              "propertyName": "firstName",
+              "algorithmRef": "thesaurus",
+              "weight": 5,
+              "thesaurus": "/directory/thesaurus.xml",
+              "filter": ""
+            },
+            {
+              "propertyName": "lastName",
+              "algorithmRef": "double-metaphone",
+              "weight": 2,
+              "dictionary": "/directory/dictionary.xml",
+              "distanceThreshold": "30",
+              "collation": "http://marklogic.com/collation/codepoint"
+            },
+            {
+              "propertyName": "state",
+              "algorithmRef": "customOption",
+              "weight": 1
+            },
+            {
+              "propertyName": "postal",
+              "algorithmRef": "zip-match",
+              "zip": [
+                {
+                  "origin": 5,
+                  "weight": 3
+                },
+                {
+                  "origin": 9,
+                  "weight": 2
+                }
+              ]
+            }
+          ],
+          "reduce": [
+            {
+              "algorithmRef": "standard-reduction",
+              "weight": 4,
+              "allMatch": {
+                "property": [
+                  "lastName",
+                  "addr"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "action": [
+            {
+              "name": "customAction",
+              "at": "/directory/customAction.sjs",
+              "namespace": "",
+              "function": "customAction"
+            }
+          ]
+        },
+        "thresholds": {
+          "threshold": [
+            {
+              "above": "20",
+              "label": "Definite Match",
+              "action": "merge"
+            },
+            {
+              "above": "10",
+              "label": "Likely Match",
+              "action": "notify"
+            },
+            {
+              "above": "7",
+              "label": "Custom Match",
+              "action": "customAction"
+            }
+          ]
+        },
+        "tuning": {
+          "maxScan": "200"
+        }
+      },
+      "mergeOptions": {
+        "matchOptions": "matchOptions",
+        "propertyDefs": {
+          "properties": [
+            {
+              "namespace": "",
+              "localname": "ssn",
+              "name": "ssn"
+            },
+            {
+              "namespace": "",
+              "localname": "firstName",
+              "name": "firstName"
+            },
+            {
+              "namespace": "",
+              "localname": "lastName",
+              "name": "lastName"
+            },
+            {
+              "namespace": "",
+              "localname": "addr",
+              "name": "addr"
+            },
+            {
+              "namespace": "",
+              "localname": "city",
+              "name": "city"
+            },
+            {
+              "namespace": "",
+              "localname": "state",
+              "name": "state"
+            },
+            {
+              "namespace": "",
+              "localname": "postal",
+              "name": "postal"
+            }
+          ],
+          "namespaces": {}
+        },
+        "algorithms": {
+          "stdAlgorithm": {
+            "namespaces": {},
+            "timestamp": {
+              "path": "/path/to/timestamp"
+            }
+          },
+          "custom": [
+            {
+              "name": "customMerge",
+              "at": "/smart-mastering/merge/customMerge.sjs",
+              "namespace": "",
+              "function": "customMerge"
+            }
+          ],
+          "collections": {
+            "onMerge": {
+              "remove": {
+                "collection": [
+                  "coll-to-add"
+                ]
+              },
+              "add": {
+                "collection": [
+                  "coll-to-remove"
+                ]
+              }
+            },
+            "onNoMatch": {
+              "set": {
+                "collection": [
+                  "coll-to-set"
+                ]
+              }
+            },
+            "onNotification": {
+              "add": {
+                "collection": [
+                  "coll3",
+                  "coll4"
+                ]
+              }
+            },
+            "onArchive": {
+              "remove": {
+                "collection": [
+                  "arch-coll"
+                ]
+              }
+            }
+          }
+        },
+        "mergeStrategies": [
+          {
+            "name": "CRM Source",
+            "algorithmRef": "standard",
+            "sourceWeights": [
+              {
+                "source": {
+                  "name": "CRM",
+                  "weight": 3
+                }
+              },
+              {
+                "source": {
+                  "name": "ERP",
+                  "weight": 1
+                }
+              }
+            ]
+          },
+          {
+            "name": "Length-Weight",
+            "algorithmRef": "standard",
+            "length": {
+              "weight": 12
+            }
+          }
+        ],
+        "merging": [
+          {
+            "propertyName": "ssn",
+            "maxValues": 1,
+            "length": {
+              "weight": 5
+            }
+          },
+          {
+            "propertyName": "firstName",
+            "maxValues": 2,
+            "sourceWeights": [
+              {
+                "source": {
+                  "name": "Oracle",
+                  "weight": 20
+                }
+              }
+            ]
+          },
+          {
+            "propertyName": "state",
+            "strategy": "CRM Source"
+          },
+          {
+            "propertyName": "postal",
+            "strategy": "Length-Weight"
+          },
+          {
+            "default": true,
+            "maxValues": 10,
+            "maxSources": 5
+          },
+          {
+            "propertyName": "id",
+            "algorithmRef": "customMerge"
+          }
+        ],
+        "tripleMerge": {}
+      }
+    },
+    "version": "1"
+  },
+  {
+    "id": "step-4-flow-1",
+    "name": "Flow01CustomStep",
+    "description": "My Step 4 description",
+    "stepDefinitionName": "Flow-01-Custom-Step",
+    "stepDefinitionType": "CUSTOM",
+    "isValid": true,
+    "options": { 
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "sourceQuery": ""
+    },
+    "modulePath":"/path/to/main.sjs"
+  },
+  {
+    "id": "step-1-flow-2",
+    "name": "Flow02IngestStep",
+    "description": "My Step 1 description",
+    "stepDefinitionName":"default-ingestion",
+    "stepDefinitionType": "INGESTION",
+    "isValid": true,
+    "fileLocations":{ 
+      "inputFilePath":"",
+      "outputURIReplacement":"",
+      "inputFileType":""
+    },
+    "options": {
+      "sourceQuery":null,
+      "collections":[ 
+         "default-ingest",
+         "Flow02IngestStep"
+      ],
+      "outputFormat": "json",
+      "permissions": "rest-reader,read,rest-writer,update",
+      "targetDatabase":"data-hub-STAGING"
+    }
+  },
+  {
+    "id": "step-2-flow-2",
+    "name": "Flow02MappingStep",
+    "description": "My Step 2 description",
+    "stepDefinitionName": "default-mapping",
+    "stepDefinitionType": "MAPPING",
+    "isValid": true,
+    "options": { 
+      "sourceQuery": "cts.collectionQuery('default-ingest')",
+      "sourceDatabase": "staging",
+      "targetDatabase": "final",
+      "mapping": { 
+        "name":"OrderMapping2",
+        "version":1
+      }
+    }
+  },
+  {
+    "id": "step-3-flow-2",
+    "name": "Flow02MasteringStep",
+    "description": "My Step 3 description",
+    "stepDefinitionName": "default-mastering",
+    "stepDefinitionType": "MASTERING",
+    "isValid":true,
+    "options":{ 
+       "sourceQuery": "",
+       "targetEntity": "Order",
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "matchOptions": { 
+        "dataFormat": "json",
+        "propertyDefs": {
+          "property": [
+            {
+              "namespace": "",
+              "localname": "ssn",
+              "name": "ssn"
+            },
+            {
+              "namespace": "",
+              "localname": "firstName",
+              "name": "firstName"
+            },
+            {
+              "namespace": "",
+              "localname": "lastName",
+              "name": "lastName"
+            },
+            {
+              "namespace": "",
+              "localname": "addr",
+              "name": "addr"
+            },
+            {
+              "namespace": "",
+              "localname": "city",
+              "name": "city"
+            },
+            {
+              "namespace": "",
+              "localname": "state",
+              "name": "state"
+            },
+            {
+              "namespace": "",
+              "localname": "postal",
+              "name": "postal"
+            }
+          ]
+        },
+        "algorithms": {
+          "algorithm": [
+            {
+              "name": "standard-reduction",
+              "function": "standard-reduction"
+            },
+            {
+              "name": "double-metaphone",
+              "at": "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy",
+              "function": "double-metaphone"
+            },
+            {
+              "name": "thesaurus",
+              "at": "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy",
+              "function": "thesaurus"
+            },
+            {
+              "name": "zip-match",
+              "at": "/com.marklogic.smart-mastering/algorithms/zip.xqy",
+              "function": "zip-match"
+            },
+            {
+              "name": "customOption",
+              "at": "/directory/customOption.sjs",
+              "namespace": "",
+              "function": "customOption"
+            }
+          ]
+        },
+        "collections": {
+          "content": [
+            "mdm-content"
+          ]
+        },
+        "scoring": {
+          "add": [
+            {
+              "propertyName": "ssn",
+              "weight": 10
+            },
+            {
+              "propertyName": "postal",
+              "weight": 5
+            }
+          ],
+          "expand": [
+            {
+              "propertyName": "firstName",
+              "algorithmRef": "thesaurus",
+              "weight": 5,
+              "thesaurus": "/directory/thesaurus.xml",
+              "filter": ""
+            },
+            {
+              "propertyName": "lastName",
+              "algorithmRef": "double-metaphone",
+              "weight": 2,
+              "dictionary": "/directory/dictionary.xml",
+              "distanceThreshold": "30",
+              "collation": "http://marklogic.com/collation/codepoint"
+            },
+            {
+              "propertyName": "state",
+              "algorithmRef": "customOption",
+              "weight": 1
+            },
+            {
+              "propertyName": "postal",
+              "algorithmRef": "zip-match",
+              "zip": [
+                {
+                  "origin": 5,
+                  "weight": 3
+                },
+                {
+                  "origin": 9,
+                  "weight": 2
+                }
+              ]
+            }
+          ],
+          "reduce": [
+            {
+              "algorithmRef": "standard-reduction",
+              "weight": 4,
+              "allMatch": {
+                "property": [
+                  "lastName",
+                  "addr"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "action": [
+            {
+              "name": "customAction",
+              "at": "/directory/customAction.sjs",
+              "namespace": "",
+              "function": "customAction"
+            }
+          ]
+        },
+        "thresholds": {
+          "threshold": [
+            {
+              "above": "20",
+              "label": "Definite Match",
+              "action": "merge"
+            },
+            {
+              "above": "10",
+              "label": "Likely Match",
+              "action": "notify"
+            },
+            {
+              "above": "7",
+              "label": "Custom Match",
+              "action": "customAction"
+            }
+          ]
+        },
+        "tuning": {
+          "maxScan": "200"
+        }
+      },
+      "mergeOptions": {
+        "matchOptions": "matchOptions",
+        "propertyDefs": {
+          "properties": [
+            {
+              "namespace": "",
+              "localname": "ssn",
+              "name": "ssn"
+            },
+            {
+              "namespace": "",
+              "localname": "firstName",
+              "name": "firstName"
+            },
+            {
+              "namespace": "",
+              "localname": "lastName",
+              "name": "lastName"
+            },
+            {
+              "namespace": "",
+              "localname": "addr",
+              "name": "addr"
+            },
+            {
+              "namespace": "",
+              "localname": "city",
+              "name": "city"
+            },
+            {
+              "namespace": "",
+              "localname": "state",
+              "name": "state"
+            },
+            {
+              "namespace": "",
+              "localname": "postal",
+              "name": "postal"
+            }
+          ],
+          "namespaces": {}
+        },
+        "algorithms": {
+          "stdAlgorithm": {
+            "namespaces": {},
+            "timestamp": {
+              "path": "/path/to/timestamp"
+            }
+          },
+          "custom": [
+            {
+              "name": "customMerge",
+              "at": "/smart-mastering/merge/customMerge.sjs",
+              "namespace": "",
+              "function": "customMerge"
+            }
+          ],
+          "collections": {
+            "onMerge": {
+              "remove": {
+                "collection": [
+                  "coll-to-add"
+                ]
+              },
+              "add": {
+                "collection": [
+                  "coll-to-remove"
+                ]
+              }
+            },
+            "onNoMatch": {
+              "set": {
+                "collection": [
+                  "coll-to-set"
+                ]
+              }
+            },
+            "onNotification": {
+              "add": {
+                "collection": [
+                  "coll3",
+                  "coll4"
+                ]
+              }
+            },
+            "onArchive": {
+              "remove": {
+                "collection": [
+                  "arch-coll"
+                ]
+              }
+            }
+          }
+        },
+        "mergeStrategies": [
+          {
+            "name": "CRM Source",
+            "algorithmRef": "standard",
+            "sourceWeights": [
+              {
+                "source": {
+                  "name": "CRM",
+                  "weight": 3
+                }
+              },
+              {
+                "source": {
+                  "name": "ERP",
+                  "weight": 1
+                }
+              }
+            ]
+          },
+          {
+            "name": "Length-Weight",
+            "algorithmRef": "standard",
+            "length": {
+              "weight": 12
+            }
+          }
+        ],
+        "merging": [
+          {
+            "propertyName": "ssn",
+            "maxValues": 1,
+            "length": {
+              "weight": 5
+            }
+          },
+          {
+            "propertyName": "firstName",
+            "maxValues": 2,
+            "sourceWeights": [
+              {
+                "source": {
+                  "name": "Oracle",
+                  "weight": 20
+                }
+              }
+            ]
+          },
+          {
+            "propertyName": "state",
+            "strategy": "CRM Source"
+          },
+          {
+            "propertyName": "postal",
+            "strategy": "Length-Weight"
+          },
+          {
+            "default": true,
+            "maxValues": 10,
+            "maxSources": 5
+          },
+          {
+            "propertyName": "id",
+            "algorithmRef": "customMerge"
+          }
+        ],
+        "tripleMerge": {}
+      }
+    },
+    "version": "1"
+  },
+  {
+    "id": "step-4-flow-2",
+    "name": "Flow02CustomStep",
+    "description": "My Step 4 description",
+    "stepDefinitionName": "Flow-02-Custom-Step",
+    "stepDefinitionType": "CUSTOM",
+    "isValid": true,
+    "options": { 
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "sourceQuery": ""
+    },
+    "modulePath":"/path/to/main.sjs"
+  },
+  {
+    "id": "step-1-flow-3",
+    "name": "Flow3IngestStep",
+    "description": "My Step 1 description",
+    "stepDefinitionName":"default-ingestion",
+    "stepDefinitionType": "INGESTION",
+    "isValid": true,
+    "fileLocations":{ 
+      "inputFilePath":"",
+      "outputURIReplacement":"",
+      "inputFileType":""
+    },
+    "options": {
+      "sourceQuery":null,
+      "collections":[ 
+         "default-ingest",
+         "Flow03IngestStep"
+      ],
+      "outputFormat": "json",
+      "permissions": "rest-reader,read,rest-writer,update",
+      "targetDatabase":"data-hub-STAGING"
+    }
+  },
+  {
+    "id": "step-2-flow-3",
+    "name": "Flow3MappingStep",
+    "description": "My Step 2 description",
+    "stepDefinitionName": "default-mapping",
+    "stepDefinitionType": "MAPPING",
+    "isValid": true,
+    "options": { 
+      "sourceQuery": "cts.collectionQuery('default-ingest')",
+      "sourceDatabase": "staging",
+      "targetDatabase": "final",
+      "mapping": { 
+        "name":"OrderMapping3",
+        "version":1
+      }
+    }
+  },
+  {
+    "id": "step-3-flow-3",
+    "name": "Flow 3 Mastering Step",
+    "description": "My Step 3 description",
+    "stepDefinitionName": "default-mastering",
+    "stepDefinitionType": "MASTERING",
+    "isValid": true,
+    "options":{ 
+       "sourceQuery": "",
+       "targetEntity": "Order",
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "matchOptions": { 
+        "dataFormat": "json",
+        "propertyDefs": {
+          "property": [
+            {
+              "namespace": "",
+              "localname": "ssn",
+              "name": "ssn"
+            },
+            {
+              "namespace": "",
+              "localname": "firstName",
+              "name": "firstName"
+            },
+            {
+              "namespace": "",
+              "localname": "lastName",
+              "name": "lastName"
+            },
+            {
+              "namespace": "",
+              "localname": "addr",
+              "name": "addr"
+            },
+            {
+              "namespace": "",
+              "localname": "city",
+              "name": "city"
+            },
+            {
+              "namespace": "",
+              "localname": "state",
+              "name": "state"
+            },
+            {
+              "namespace": "",
+              "localname": "postal",
+              "name": "postal"
+            }
+          ]
+        },
+        "algorithms": {
+          "algorithm": [
+            {
+              "name": "standard-reduction",
+              "function": "standard-reduction"
+            },
+            {
+              "name": "double-metaphone",
+              "at": "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy",
+              "function": "double-metaphone"
+            },
+            {
+              "name": "thesaurus",
+              "at": "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy",
+              "function": "thesaurus"
+            },
+            {
+              "name": "zip-match",
+              "at": "/com.marklogic.smart-mastering/algorithms/zip.xqy",
+              "function": "zip-match"
+            },
+            {
+              "name": "customOption",
+              "at": "/directory/customOption.sjs",
+              "namespace": "",
+              "function": "customOption"
+            }
+          ]
+        },
+        "collections": {
+          "content": [
+            "mdm-content"
+          ]
+        },
+        "scoring": {
+          "add": [
+            {
+              "propertyName": "ssn",
+              "weight": 10
+            },
+            {
+              "propertyName": "postal",
+              "weight": 5
+            }
+          ],
+          "expand": [
+            {
+              "propertyName": "firstName",
+              "algorithmRef": "thesaurus",
+              "weight": 5,
+              "thesaurus": "/directory/thesaurus.xml",
+              "filter": ""
+            },
+            {
+              "propertyName": "lastName",
+              "algorithmRef": "double-metaphone",
+              "weight": 2,
+              "dictionary": "/directory/dictionary.xml",
+              "distanceThreshold": "30",
+              "collation": "http://marklogic.com/collation/codepoint"
+            },
+            {
+              "propertyName": "state",
+              "algorithmRef": "customOption",
+              "weight": 1
+            },
+            {
+              "propertyName": "postal",
+              "algorithmRef": "zip-match",
+              "zip": [
+                {
+                  "origin": 5,
+                  "weight": 3
+                },
+                {
+                  "origin": 9,
+                  "weight": 2
+                }
+              ]
+            }
+          ],
+          "reduce": [
+            {
+              "algorithmRef": "standard-reduction",
+              "weight": 4,
+              "allMatch": {
+                "property": [
+                  "lastName",
+                  "addr"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "action": [
+            {
+              "name": "customAction",
+              "at": "/directory/customAction.sjs",
+              "namespace": "",
+              "function": "customAction"
+            }
+          ]
+        },
+        "thresholds": {
+          "threshold": [
+            {
+              "above": "20",
+              "label": "Definite Match",
+              "action": "merge"
+            },
+            {
+              "above": "10",
+              "label": "Likely Match",
+              "action": "notify"
+            },
+            {
+              "above": "7",
+              "label": "Custom Match",
+              "action": "customAction"
+            }
+          ]
+        },
+        "tuning": {
+          "maxScan": "200"
+        }
+      },
+      "mergeOptions": {
+        "matchOptions": "matchOptions",
+        "propertyDefs": {
+          "properties": [
+            {
+              "namespace": "",
+              "localname": "ssn",
+              "name": "ssn"
+            },
+            {
+              "namespace": "",
+              "localname": "firstName",
+              "name": "firstName"
+            },
+            {
+              "namespace": "",
+              "localname": "lastName",
+              "name": "lastName"
+            },
+            {
+              "namespace": "",
+              "localname": "addr",
+              "name": "addr"
+            },
+            {
+              "namespace": "",
+              "localname": "city",
+              "name": "city"
+            },
+            {
+              "namespace": "",
+              "localname": "state",
+              "name": "state"
+            },
+            {
+              "namespace": "",
+              "localname": "postal",
+              "name": "postal"
+            }
+          ],
+          "namespaces": {}
+        },
+        "algorithms": {
+          "stdAlgorithm": {
+            "namespaces": {},
+            "timestamp": {
+              "path": "/path/to/timestamp"
+            }
+          },
+          "custom": [
+            {
+              "name": "customMerge",
+              "at": "/smart-mastering/merge/customMerge.sjs",
+              "namespace": "",
+              "function": "customMerge"
+            }
+          ],
+          "collections": {
+            "onMerge": {
+              "remove": {
+                "collection": [
+                  "coll-to-add"
+                ]
+              },
+              "add": {
+                "collection": [
+                  "coll-to-remove"
+                ]
+              }
+            },
+            "onNoMatch": {
+              "set": {
+                "collection": [
+                  "coll-to-set"
+                ]
+              }
+            },
+            "onNotification": {
+              "add": {
+                "collection": [
+                  "coll3",
+                  "coll4"
+                ]
+              }
+            },
+            "onArchive": {
+              "remove": {
+                "collection": [
+                  "arch-coll"
+                ]
+              }
+            }
+          }
+        },
+        "mergeStrategies": [
+          {
+            "name": "CRM Source",
+            "algorithmRef": "standard",
+            "sourceWeights": [
+              {
+                "source": {
+                  "name": "CRM",
+                  "weight": 3
+                }
+              },
+              {
+                "source": {
+                  "name": "ERP",
+                  "weight": 1
+                }
+              }
+            ]
+          },
+          {
+            "name": "Length-Weight",
+            "algorithmRef": "standard",
+            "length": {
+              "weight": 12
+            }
+          }
+        ],
+        "merging": [
+          {
+            "propertyName": "ssn",
+            "maxValues": 1,
+            "length": {
+              "weight": 5
+            }
+          },
+          {
+            "propertyName": "firstName",
+            "maxValues": 2,
+            "sourceWeights": [
+              {
+                "source": {
+                  "name": "Oracle",
+                  "weight": 20
+                }
+              }
+            ]
+          },
+          {
+            "propertyName": "state",
+            "strategy": "CRM Source"
+          },
+          {
+            "propertyName": "postal",
+            "strategy": "Length-Weight"
+          },
+          {
+            "default": true,
+            "maxValues": 10,
+            "maxSources": 5
+          },
+          {
+            "propertyName": "id",
+            "algorithmRef": "customMerge"
+          }
+        ],
+        "tripleMerge": {}
+      }
+    },
+    "version": "1"
+  },
+  {
+    "id": "step-4-flow-3",
+    "name": "Flow3CustomStep",
+    "description": "My Step 4 description",
+    "stepDefinitionName": "Flow-01-Custom-Step",
+    "stepDefinitionType": "CUSTOM",
+    "isValid": true,
+    "options": { 
+       "sourceDatabase": "staging",
+       "targetDatabase": "final",
+       "sourceQuery": ""
+    },
+    "modulePath":"/path/to/main.sjs"
+
+  },
+  {
+    "id": "step-1-flow-4",
+    "name": "Flow4IngestStep",
+    "description": "My Step 1 description",
+    "stepDefinitionName":"default-ingestion",
+    "stepDefinitionType": "INGESTION",
+    "isValid": true,
+    "fileLocations":{ 
+      "inputFilePath":"",
+      "outputURIReplacement":"",
+      "inputFileType":""
+    },
+    "options": {
+      "sourceQuery":null,
+      "collections":[ 
+         "default-ingest",
+         "Flow04IngestStep"
+      ],
+      "outputFormat": "json",
+      "permissions": "rest-reader,read,rest-writer,update",
+      "targetDatabase":"data-hub-STAGING"
+    }
+  }
+]

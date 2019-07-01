@@ -1,0 +1,19 @@
+{
+  "name": "default-ingestion",
+  "description": "This is the default flow for ingesting into data hub",
+  "options": {
+  },
+  "steps": {
+    "1": {
+      "stepDefinitionType": "ingestion",
+      "stepDefinitionName": "default-ingestion",
+      "retryLimit": 0,
+      "options": {
+        "outputFormat": "json",
+        "collections": [
+          "default-ingestion"
+        ]
+      }
+    }
+  }
+}

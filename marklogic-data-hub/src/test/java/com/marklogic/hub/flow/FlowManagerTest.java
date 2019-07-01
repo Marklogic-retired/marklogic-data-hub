@@ -44,24 +44,23 @@ class FlowManagerTest extends HubTestBase {
 
     private String flowString = "{\n" +
         "  \"name\": \"test-flow\",\n" +
-        "  \"Description\": \"this is an example\",\n" +
-        "  \"Identifier\": \"(some identifier or search)\",\n" +
-        "  \"Steps\": [{\n" +
-        "    \"0\": {\n" +
-        "      \"type\": \"mapping\",\n" +
+        "  \"description\": \"this is an example\",\n" +
+        "  \"options\": {\"sourceQuery\": \"(some sourceQuery or search)\"},\n" +
+        "  \"steps\": {\n" +
+        "    \"1\": {\n" +
+        "      \"stepDefinitionType\": \"MAPPING\",\n" +
         "      \"name\": \"person-mapping1.json\",\n" +
-        "      \"identifier\": \"null\",\n" +
         "      \"retryLimit\": 0,\n" +
-        "      \"options\": {}\n" +
+        "      \"options\": {\"sourceQuery\": \"null\"}\n" +
         "    }\n" +
-        "  }]\n" +
+        "  }\n" +
         "}\n";
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         basicSetup();
-        getFlowDeveloperConfig();
-        FileUtils.copyFileToDirectory(getResourceFile("flow-manager-test/test-flow.flow.json"), adminHubConfig.getFlowsDir().toFile());
+        getDataHubAdminConfig();
+        copyTestFlowIntoProject();
     }
 
     @AfterAll
@@ -85,15 +84,15 @@ class FlowManagerTest extends HubTestBase {
     @Test
     void getFlows() {
         List<Flow> flows = fm.getFlows();
-        Assertions.assertEquals(flows.size() ,  1);
+        Assertions.assertEquals(flows.size(), 1);
         Assertions.assertEquals(flows.get(0).getName(), fm.getFlow("test-flow").getName());
     }
 
     @Test
     void getFlowNames() {
         List<String> flows = fm.getFlowNames();
-        Assertions.assertEquals(flows.size() ,  1);
-        Assertions.assertEquals(flows.get(0) ,  "test-flow");
+        Assertions.assertEquals(flows.size(), 1);
+        Assertions.assertEquals(flows.get(0), "test-flow");
     }
 
     @Test

@@ -1,188 +1,379 @@
 /*
  * Copyright 2012-2019 MarkLogic Corporation
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.legacy.flow.LegacyFlow;
-import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
-import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
-import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.web.model.FlowModel;
-import com.marklogic.hub.web.model.PluginModel;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.impl.Step;
+import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.hub.util.json.JSONUtils;
+import com.marklogic.hub.web.exception.BadRequestException;
+import com.marklogic.hub.web.exception.DataHubException;
+import com.marklogic.hub.web.exception.NotFoundException;
+import com.marklogic.hub.web.model.FlowStepModel;
+import com.marklogic.hub.web.model.StepModel;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Service
 public class FlowManagerService {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final String PROJECT_TMP_FOLDER = ".tmp";
-
-    @Autowired
-    private LegacyFlowManager flowManager;
+    public static final String FLOW_FILE_EXTENSION = ".flow.json";
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    private FlowManager flowManager;
 
+    @Autowired
+    private FlowRunnerImpl flowRunner;
 
-    public List<FlowModel> getFlows(String entityName, FlowType flowType) {
-        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entityName);
-        return flowManager.getLocalFlowsForEntity(entityName, flowType).stream().map(flow -> {
-            FlowModel flowModel = new FlowModel(entityName, flow.getName());
-            flowModel.codeFormat = flow.getCodeFormat();
-            flowModel.dataFormat = flow.getDataFormat();
-            flowModel.flowType = flow.getType();
+    @Autowired
+    private StepDefinitionManagerService stepDefinitionManagerService;
 
-            Path flowPath = entityPath.resolve(flowType.toString()).resolve(flow.getName());
-            List<String> pluginNames = FileUtil.listDirectFolders(flowPath.toFile());
-            for (String pluginName : pluginNames) {
-                Path pluginPath = flowPath.resolve(pluginName);
-                List<String> pluginFiles = FileUtil.listDirectFiles(pluginPath.toString());
-                PluginModel pm = new PluginModel();
-                pm.pluginType = pluginName;
-                for (String pluginFile : pluginFiles) {
-                    pm.pluginPath = pluginPath.resolve(pluginFile).toString();
-                    try {
-                        pm.fileContents = new String(Files.readAllBytes(pluginPath.resolve(pluginFile)));
-                    } catch (IOException e) {}
+    @Autowired
+    HubConfigImpl hubConfig;
+
+    @Autowired
+    private FileSystemWatcherService watcherService;
+
+    @Autowired
+    private DataHubService dataHubService;
+
+    @Autowired
+    private Scaffolding scaffolding;
+
+    @Autowired
+    private AsyncFlowService asyncFlowService;
+
+    public List<FlowStepModel> getFlows() {
+        return asyncFlowService.getFlows(true);
+    }
+
+    public FlowStepModel createFlow(String flowJson, boolean checkExists) throws IOException {
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(flowJson);
+
+            JSONUtils.trimText(jsonObject, "separator");
+        }
+        catch (IOException e) {
+            throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
+        }
+
+        if (!jsonObject.isExist("name") || StringUtils.isEmpty(jsonObject.getString("name"))) {
+            throw new BadRequestException("Flow Name not provided. Flow Name is required.");
+        }
+
+        String flowName = jsonObject.getString("name");
+        Flow flow = null;
+        if (checkExists) {
+            if (flowManager.isFlowExisted(flowName)) {
+                throw new DataHubException("A Flow with " + flowName + " already exists.");
+            }
+            flow = new FlowImpl();
+            flow.setName(flowName);
+        }
+        else {
+            //for PUT updating
+            flow = flowManager.getFlow(flowName);
+            if (flow == null) {
+                throw new DataHubException("Changing flow name not supported.");
+            }
+        }
+        FlowStepModel.createFlowSteps(flow, jsonObject);
+        flowManager.saveFlow(flow);
+
+        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
+
+        Path dir = hubConfig.getFlowsDir();
+        if (dir.toFile().exists()) {
+            watcherService.watch(dir.toString());
+        }
+        if (checkExists) { //a new flow
+            dataHubService.reinstallUserModules(hubConfig, null, null);
+        }
+
+        return fsm;
+    }
+
+    public FlowStepModel getFlow(String flowName, boolean fromRunFlow) {
+        Flow flow = flowManager.getFlow(flowName);
+        if (flow == null) {
+            throw new NotFoundException(flowName + " not found!");
+        }
+        FlowStepModel fsm = asyncFlowService.getFlowStepModel(flow, fromRunFlow, null);
+        return fsm;
+    }
+
+    public List<String> getFlowNames() {
+        return flowManager.getFlowNames();
+    }
+
+    public void deleteFlow(String flowName) {
+        flowManager.deleteFlow(flowName);
+        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.STAGING);
+        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.FINAL);
+    }
+
+    public List<StepModel> getSteps(String flowName) {
+        Flow flow = flowManager.getFlow(flowName);
+        Map<String, Step> stepMap = flow.getSteps();
+
+        List<StepModel> stepModelList = new ArrayList<>();
+        for (String key : stepMap.keySet()) {
+            Step step = stepMap.get(key);
+            StepModel stepModel = StepModel.transformToWebStepModel(step);
+            stepModelList.add(stepModel);
+        }
+
+        return stepModelList;
+    }
+
+    public StepModel getStep(String flowName, String stepId) {
+        Flow flow = flowManager.getFlow(flowName);
+        if (flow == null) {
+            throw new NotFoundException(flowName + " not found.");
+        }
+
+        Step step = flow.getStep(getStepKeyInStepMap(flow, stepId));
+        if (step == null) {
+            throw new NotFoundException(stepId + " not found.");
+        }
+
+        return StepModel.transformToWebStepModel(step);
+    }
+
+    public StepModel createStep(String flowName, Integer stepOrder, String stepId, String stringStep) {
+        StepModel stepModel;
+        JsonNode stepJson;
+        Flow flow = flowManager.getFlow(flowName);
+        Step existingStep = flow.getStep(getStepKeyInStepMap(flow, stepId));
+
+        if (existingStep == null && !StringUtils.isEmpty(stepId)) {
+            throw new NotFoundException("Step " + stepId + " Not Found");
+        }
+
+        try {
+            stepJson = JSONObject.readInput(stringStep);
+
+            JSONUtils.trimText(stepJson, "separator");
+
+            stepModel = StepModel.fromJson(stepJson);
+        }
+        catch (IOException e) {
+            throw new BadRequestException("Error parsing JSON");
+        }
+
+        if (stepModel == null) {
+            throw new BadRequestException();
+        }
+
+        Step step = StepModel.transformToCoreStepModel(stepModel, stepJson);
+
+        if (step.getStepDefinitionType() == null) {
+            throw new BadRequestException("Invalid Step Definition Type");
+        }
+
+        if (step.getStepDefinitionName() == null) {
+            throw new BadRequestException("Invalid Step Definition Name");
+        }
+
+        if (stepId != null) {
+            if (!stepId.equals(step.getName() + "-" + step.getStepDefinitionType())) {
+                throw new BadRequestException("Changing step name or step type not supported.");
+            }
+        }
+
+        // Only save step if step is of Custom type, for rest use the default steps.
+        switch (step.getStepDefinitionType()) {
+            case INGESTION:
+                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/ingestion/marklogic/default-ingestion.step.json", StepDefinition.StepDefinitionType.INGESTION);
+                Step defaultIngest = defaultIngestDefinition.transformToStep(step.getName(), defaultIngestDefinition, new Step());
+                step = StepModel.mergeFields(stepModel, defaultIngest, step);
+                break;
+            case MAPPING:
+                StepDefinition defaultMappingDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/mapping/marklogic/default-mapping.step.json", StepDefinition.StepDefinitionType.MAPPING);
+                Step defaultMapping = defaultMappingDefinition.transformToStep(step.getName(), defaultMappingDefinition, new Step());
+                step = StepModel.mergeFields(stepModel, defaultMapping, step);
+                break;
+            case MASTERING:
+                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/mastering/marklogic/default-mastering.step.json", StepDefinition.StepDefinitionType.MASTERING);
+                Step defaultMaster = defaultMasterDefinition.transformToStep(step.getName(), defaultMasterDefinition, new Step());
+                step = StepModel.mergeFields(stepModel, defaultMaster, step);
+                break;
+            case CUSTOM:
+                if (stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType()) != null) {
+                    StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
+                    StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
+                    stepDefinitionManagerService.saveStepDefinition(stepDefinition);
                 }
+                else {
+                    String stepDefName = step.getStepDefinitionName();
+                    StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.CUSTOM;
+                    String modulePath = "/custom-modules/" + stepDefType.toString().toLowerCase() + "/" + stepDefName + "/main.sjs";
 
-                flowModel.plugins.add(pm);
+                    StepDefinition stepDefinition = StepDefinition.create(stepDefName, stepDefType);
+                    stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
+
+                    scaffolding.createCustomModule(stepDefName, stepDefType.toString());
+                    stepDefinition.setModulePath(modulePath);
+                    step.setModulePath(modulePath);
+
+                    stepDefinitionManagerService.createStepDefinition(stepDefinition);
+                }
+                break;
+            default:
+                throw new BadRequestException("Invalid Step Type");
+        }
+
+        Map<String, Step> currSteps = flow.getSteps();
+        if (stepId != null) {
+            String key = getStepKeyInStepMap(flow, stepId);
+            if (StringUtils.isNotEmpty(key)) {
+                currSteps.put(key, step);
             }
-
-            File[] pluginFiles = flowPath.toFile().listFiles(pathname -> pathname.isFile() && !pathname.getName().endsWith("properties"));
-            for (File pluginFile : pluginFiles) {
-                PluginModel pm = new PluginModel();
-                pm.pluginType = FilenameUtils.getBaseName(pluginFile.getName());
-                pm.pluginPath = pluginFile.getAbsolutePath();
-                try {
-                    pm.fileContents = new String(Files.readAllBytes(pluginFile.toPath()));
-                } catch (IOException e) {}
-                flowModel.plugins.add(pm);
+            flow.setSteps(currSteps);
+        }
+        else {
+            if (stepOrder == null || stepOrder > currSteps.size()) {
+                currSteps.put(String.valueOf(currSteps.size() + 1), step);
             }
-
-            flowModel.plugins.sort(Comparator.comparing(o -> o.pluginType));
-
-            return flowModel;
-        }).collect(Collectors.toList());
-    }
-
-    public LegacyFlow getServerFlow(String entityName, String flowName, FlowType flowType) {
-        return flowManager.getFlow(entityName, flowName, flowType);
-    }
-
-    public JobTicket runFlow(LegacyFlow flow, int batchSize, int threadCount, Map<String, Object> options, LegacyFlowStatusListener statusListener) {
-
-        LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
-            .withFlow(flow)
-            .withOptions(options)
-            .withBatchSize(batchSize)
-            .withThreadCount(threadCount)
-            .onStatusChanged(statusListener);
-        return flowRunner.run();
-    }
-
-    private Path getHarmonizeOptionsFilePath(Path destFolder, String entityName, String flowName) {
-        return destFolder.resolve(entityName + "-harmonize-" + flowName + ".txt");
-    }
-
-    public Map<String, Object> getHarmonizeFlowOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
-        File file = filePath.toFile();
-        if(file.exists()) {
-            return new ObjectMapper().readValue(file, Map.class);
+            else {
+                Map<String, Step> newSteps = new LinkedHashMap<>();
+                final Integer[] count = {1};
+                Step finalStep = step;
+                currSteps.values().forEach(s -> {
+                    if (count[0].equals(stepOrder)) {
+                        newSteps.put(String.valueOf(count[0]++), finalStep);
+                    }
+                    newSteps.put(String.valueOf(count[0]), s);
+                    ++count[0];
+                });
+                flow.setSteps(newSteps);
+            }
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("harmonize_file_path", hubConfig.getHubConfigDir());
-        return result;
-    }
-
-    public void saveOrUpdateHarmonizeFlowOptionsToFile(String entityName, String flowName, String harmonizeOptionsFileContent) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        File destFolderFile = destFolder.toFile();
-        if (!destFolderFile.exists()) {
-            FileUtils.forceMkdir(destFolderFile);
-        }
-        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
-        FileWriter fw = new FileWriter(filePath.toString());
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(harmonizeOptionsFileContent);
-        bw.close();
-    }
-
-
-    private Path getMlcpOptionsFilePath(Path destFolder, String entityName, String flowName) {
-        return destFolder.resolve(entityName + "-" + flowName + ".txt");
-    }
-
-    public void saveOrUpdateFlowMlcpOptionsToFile(String entityName, String flowName, String mlcpOptionsFileContent) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        File destFolderFile = destFolder.toFile();
-        if (!destFolderFile.exists()) {
-            FileUtils.forceMkdir(destFolderFile);
-        }
-        Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
-        FileWriter fw = new FileWriter(filePath.toString());
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(mlcpOptionsFileContent);
-        bw.close();
-    }
-
-    public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
-        File file = filePath.toFile();
-        if(file.exists()) {
-            return new ObjectMapper().readValue(file, Map.class);
+        if (existingStep != null && existingStep.isEqual(step)) {
+            return StepModel.transformToWebStepModel(existingStep);
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("input_file_path", hubConfig.getHubProject().getProjectDirString());
-        return result;
+        flowManager.saveFlow(flow);
+        return StepModel.transformToWebStepModel(step);
     }
 
-    public void runMlcp(LegacyFlow flow, JsonNode json, LegacyFlowStatusListener statusListener) {
-        String mlcpPath = json.get("mlcpPath").textValue();
-        MlcpRunner runner = new MlcpRunner(mlcpPath, "com.marklogic.contentpump.ContentPump", hubConfig, flow, hubConfig.newStagingClient(), json.get("mlcpOptions"), statusListener);
-        runner.start();
+    public void deleteStep(String flowName, String stepId) {
+        Flow flow = flowManager.getFlow(flowName);
+        String key = getStepKeyInStepMap(flow, stepId);
+
+        if (StringUtils.isEmpty(key)) {
+            throw new BadRequestException("Invalid Step Id");
+        }
+
+        try {
+            flowManager.deleteStep(flow, key);
+        }
+        catch (DataHubProjectException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
-    public LegacyFlowManager getFlowManager() {
-        return flowManager;
+    public FlowStepModel runFlow(String flowName, List<String> steps) {
+        RunFlowResponse resp = null;
+        if (steps == null || steps.size() == 0) {
+            resp = flowRunner.runFlow(flowName);
+        }
+        else {
+            Flow flow = flowManager.getFlow(flowName);
+            List<String> restrictedSteps = new ArrayList<>();
+            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
+            resp = flowRunner.runFlow(flowName, restrictedSteps);
+        }
+        return getFlow(flowName, true);
+    }
+
+    public FlowStepModel stop(String flowName) {
+        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
+        Iterator<String> itr = jobIds.iterator();
+        if (!itr.hasNext()) {
+            throw new BadRequestException("Flow not running.");
+        }
+        while (itr.hasNext()) {
+            flowRunner.stopJob(itr.next());
+        }
+        return getFlow(flowName, false);
+    }
+
+
+    private String getStepKeyInStepMap(Flow flow, String stepId) {
+        if (flow == null || StringUtils.isEmpty(stepId)) {
+            return null;
+        }
+
+        // Split on the last occurrence of "-"
+        String[] stepStr = stepId.split("-(?!.*-)");
+
+        if (stepStr.length == 2) {
+            String name = stepStr[0];
+            String type = stepStr[1];
+            String[] key = new String[1];
+
+            flow.getSteps().forEach((k, v) -> {
+                if (name.equals(v.getName()) && type.equalsIgnoreCase(v.getStepDefinitionType().toString())) {
+                    key[0] = k;
+                }
+            });
+
+            return key[0];
+        }
+
+        return null;
+    }
+
+    private StepDefinition getDefaultStepDefinitionFromResources(String resourcePath, StepDefinition.StepDefinitionType stepDefinitionType) {
+        try {
+            InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream(resourcePath);
+            JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
+            StepDefinition defaultStep = StepDefinition.create(stepDefinitionType.toString(), stepDefinitionType);
+            defaultStep.deserialize(jsonObject.jsonNode());
+
+            return defaultStep;
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

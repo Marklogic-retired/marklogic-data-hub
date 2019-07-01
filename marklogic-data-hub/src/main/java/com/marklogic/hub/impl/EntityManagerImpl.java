@@ -34,8 +34,8 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
 import com.marklogic.hub.error.EntityServicesGenerationException;
-import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,17 +151,23 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             List<JsonNode> entities = getAllEntities();
 
             if (entities.size() > 0) {
-                DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
-                String indexes = generator.getIndexes(entities);
+                DatabaseClient databaseClient = hubConfig.newReverseFlowClient();
+                try {
+                    DbConfigsManager generator = new DbConfigsManager(databaseClient);
+                    ObjectNode indexNode = generator.generateIndexes(entities);
 
-                // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
-                // ml-app-deployer removes these keys upon sending to marklogic.
-                ObjectNode indexNode = (ObjectNode) mapper.readTree(indexes);
-                indexNode.put("database-name", "%%mlFinalDbName%%");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
-                indexNode.put("database-name", "%%mlStagingDbName%%");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
-                return true;
+                    // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
+                    // ml-app-deployer removes these keys upon sending to marklogic.
+                    indexNode.put("database-name", "%%mlFinalDbName%%");
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
+                    indexNode.put("database-name", "%%mlStagingDbName%%");
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(stagingFile, indexNode);
+                    return true;
+                } finally {
+                    if (databaseClient != null) {
+                        databaseClient.release();
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,8 +183,28 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private List<JsonNode> getAllEntities() {
-        List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> entities = new ArrayList<>(getAllLegacyEntities());
         Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        if (entityDefs != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                for (File entityDef : entityDefs) {
+                    FileInputStream fileInputStream = new FileInputStream(entityDef);
+                    entities.add(objectMapper.readTree(fileInputStream));
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
+    private List<JsonNode> getAllLegacyEntities() {
+        List<JsonNode> entities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
         List<String> entityNames;
         if (entityFiles != null) {
@@ -209,9 +235,41 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         HubModuleManager propsManager = getPropsMgr();
         propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
 
-        List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> entities = new ArrayList<>(getModifiedRawLegacyEntities(minimumFileTimestampToLoad));
         List<JsonNode> tempEntities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
+        File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        if (entityDefs != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                boolean hasOneChanged = false;
+                for (File entityDef : entityDefs) {
+                    if (propsManager.hasFileBeenModifiedSinceLastLoaded(entityDef)) {
+                        hasOneChanged = true;
+                    }
+                    FileInputStream fileInputStream = new FileInputStream(entityDef);
+                    tempEntities.add(objectMapper.readTree(fileInputStream));
+                    fileInputStream.close();
+                }
+                // all or nothing
+                if (hasOneChanged) {
+                    entities.addAll(tempEntities);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return entities;
+    }
+
+    private List<JsonNode> getModifiedRawLegacyEntities(long minimumFileTimestampToLoad) {
+        HubModuleManager propsManager = getPropsMgr();
+        propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
+
+        List<JsonNode> entities = new ArrayList<>();
+        List<JsonNode> tempEntities = new ArrayList<>();
+        Path entitiesPath = hubConfig.getHubProject().getLegacyHubEntitiesDir();
         File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
         List<String> entityNames;
         if (entityFiles != null) {
@@ -245,21 +303,35 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
+    public HubEntity getEntityFromProject(String entityName) {
+        return getEntityFromProject(entityName, null);
+    }
+
+    public HubEntity getEntityFromProject(String entityName, String version) {
+        HubEntity entity = null;
+        for (HubEntity e: getEntities()) {
+            InfoType info = e.getInfo();
+            if (info.getTitle().equals(entityName) && (version == null || info.getVersion().equals(version))) {
+                entity = e;
+                break;
+            }
+        }
+        return entity;
+    }
+
     public List<HubEntity> getEntities() {
         List<HubEntity> entities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
-        List<String> entityNames = FileUtil.listDirectFolders(entitiesPath.toFile());
         ObjectMapper objectMapper = new ObjectMapper();
-        for (String entityName : entityNames) {
-            File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+        File[] entityDefs = entitiesPath.toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+        if (entityDefs != null) {
             for (File entityDef : entityDefs) {
                 try {
                     FileInputStream fileInputStream = new FileInputStream(entityDef);
                     JsonNode node = objectMapper.readTree(fileInputStream);
                     entities.add(HubEntity.fromJson(entityDef.getAbsolutePath(), node));
                     fileInputStream.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -277,7 +349,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         if (rename) {
             String filename = new File(fullpath).getName();
             String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
-            if (!entityFromFilename.equals(entity.getInfo().getTitle())) {
+            if (!entityFromFilename.equals(title)) {
                 // The entity name was changed since the files were created. Update
                 // the path.
 
@@ -288,22 +360,17 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                     throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
                         newFile.getAbsolutePath());
                 }
-                ;
-
-                // Update the directory name
-                File origDirectory = new File(origFile.getParent());
-                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
-                if (!origDirectory.renameTo(newDirectory)) {
-                    throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
-                        newDirectory.getAbsolutePath());
-                }
-
-                fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
+                fullpath = newFile.getAbsolutePath();
                 entity.setFilename(fullpath);
+                // if legacy plugins dir exists, rename it as well
+                Path origLegacyEntityDir = hubProject.getLegacyHubEntitiesDir().resolve(entityFromFilename);
+                if (origLegacyEntityDir.toFile().exists()) {
+                    Path newLegacyEntityDir = hubProject.getLegacyHubEntitiesDir().resolve(title);
+                    FileUtils.moveDirectory(origLegacyEntityDir.toFile(), newLegacyEntityDir.toFile());
+                }
             }
-        }
-        else {
-            Path dir = hubConfig.getHubEntitiesDir().resolve(title);
+        } else {
+            Path dir = hubConfig.getHubEntitiesDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -318,9 +385,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public void deleteEntity(String entity) throws IOException {
-        Path dir = hubConfig.getHubEntitiesDir().resolve(entity);
-        if (dir.toFile().exists()) {
-            FileUtils.deleteDirectory(dir.toFile());
+        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION);
+        if (entityPath.toFile().exists()) {
+            entityPath.toFile().delete();
         }
     }
 
@@ -363,33 +430,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
                 if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate query options");
-                }
-                ResourceServices.ServiceResult res = resultItr.next();
-                return res.getContent(new StringHandle()).get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "{}";
-        }
-    }
-
-    private class DbIndexGenerator extends ResourceManager {
-        private static final String NAME = "ml:dbConfigs";
-
-        private RequestParameters params = new RequestParameters();
-
-        DbIndexGenerator(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        public String getIndexes(List<JsonNode> entities) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode node = objectMapper.valueToTree(entities);
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || !resultItr.hasNext()) {
-                    throw new IOException("Unable to generate database indexes");
                 }
                 ResourceServices.ServiceResult res = resultItr.next();
                 return res.getContent(new StringHandle()).get();

@@ -1,149 +1,65 @@
-/*
- * Copyright 2012-2019 MarkLogic Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.marklogic.hub.flow.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.*;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.collector.impl.CollectorImpl;
-import com.marklogic.hub.flow.*;
-import com.marklogic.hub.job.Job;
-import com.marklogic.hub.flow.FlowItemFailureListener;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.hub.step.StepRunner;
+import com.marklogic.hub.step.StepRunnerFactory;
+import com.marklogic.hub.step.impl.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.concurrent.TimeoutException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class FlowRunnerImpl implements FlowRunner {
+@Component
+public class FlowRunnerImpl implements FlowRunner{
 
-    private static final int DEFAULT_BATCH_SIZE = 100;
-    private static final int DEFAULT_THREAD_COUNT = 4;
-    private static final int MAX_ERROR_MESSAGES = 10;
-    private Flow flow;
-    private int batchSize = DEFAULT_BATCH_SIZE;
-    private int threadCount = DEFAULT_THREAD_COUNT;
-    private DatabaseClient stagingClient;
-    private String destinationDatabase;
-    private Map<String, Object> options;
-    private int previousPercentComplete;
-    private boolean stopOnFailure = false;
-    private String jobId;
-    private boolean isFullOutput = false;
+    @Autowired
+    private HubConfigImpl hubConfig;
 
+    @Autowired
+    private FlowManager flowManager;
 
-    private int step = 1;
+    @Autowired
+    private StepRunnerFactory stepRunnerFactory;
 
-    private List<FlowItemCompleteListener> flowItemCompleteListeners = new ArrayList<>();
-    private List<FlowItemFailureListener> flowItemFailureListeners = new ArrayList<>();
+    private AtomicBoolean isRunning = new AtomicBoolean(false);
+    private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
+    private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
+    private AtomicBoolean jobStoppedOnError = new AtomicBoolean(false);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private String runningJobId;
+    private Step runningStep;
+    private Flow runningFlow;
+
+    private StepRunner stepRunner;
+
+    private Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
+    private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
+    private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
+    private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
+
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
-    private List<FlowFinishedListener> flowFinishedListeners = new ArrayList<>();
 
-    private HubConfig hubConfig;
-    private Thread runningThread = null;
-    private DataMovementManager dataMovementManager = null;
-    private QueryBatcher queryBatcher = null;
-    private JobUpdate jobUpdate = new JobUpdate(hubConfig.newJobDbClient());
-
-    public FlowRunnerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-        this.stagingClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
-    }
-
-    public FlowRunner withFlow(Flow flow) {
-        this.flow = flow;
-        return this;
-    }
-
-    public FlowRunner withStep(int step) {
-        this.step = step;
-        return this;
-    }
-
-    public FlowRunner withJobId(String jobId) {
-        this.jobId = jobId;
-        return this;
-    }
-
-    @Override
-    public FlowRunner withBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-        return this;
-    }
-
-    @Override
-    public FlowRunner withThreadCount(int threadCount) {
-        this.threadCount = threadCount;
-        return this;
-    }
-
-    @Override
-    public FlowRunner withSourceClient(DatabaseClient stagingClient) {
-        this.stagingClient = stagingClient;
-        return this;
-    }
-
-    @Override
-    public FlowRunner withDestinationDatabase(String destinationDatabase) {
-        this.destinationDatabase = destinationDatabase;
-        return this;
-    }
-
-    @Override
-    public FlowRunner withStopOnFailure(boolean stopOnFailure) {
-        this.stopOnFailure = stopOnFailure;
-        return this;
-    }
-
-    @Override
-    public FlowRunner withOptions(Map<String, Object> options) {
-        this.options = options;
-        return this;
-    }
-
-    @Override
-    public FlowRunner onItemComplete(FlowItemCompleteListener listener) {
-        this.flowItemCompleteListeners.add(listener);
-        return this;
-    }
-
-    @Override
-    public FlowRunner onItemFailed(FlowItemFailureListener listener) {
-        this.flowItemFailureListeners.add(listener);
-        return this;
-    }
+    private ThreadPoolExecutor threadPool;
+    private JobDocManager jobDocManager;
 
     @Override
     public FlowRunner onStatusChanged(FlowStatusListener listener) {
@@ -151,327 +67,420 @@ public class FlowRunnerImpl implements FlowRunner {
         return this;
     }
 
-    @Override
-    public FlowRunner onFinished(FlowFinishedListener listener) {
-        this.flowFinishedListeners.add(listener);
-        return this;
+    public RunFlowResponse runFlow(String flowName) {
+        return runFlow(flowName, null, null, new HashMap<>(), new HashMap<>());
     }
 
-    @Override
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
+        return runFlow(flowName, stepNums, null, new HashMap<>(), new HashMap<>());
+    }
+
+    public RunFlowResponse runFlow(String flowName, String jobId) {
+        return runFlow(flowName, null, jobId, new HashMap<>(), new HashMap<>());
+    }
+
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId) {
+        return runFlow(flowName, stepNums, jobId, new HashMap<>(), new HashMap<>());
+    }
+
+    public RunFlowResponse runFlow(String flowName, String jobId, Map<String, Object> options) {
+        return runFlow(flowName, null, jobId, options, new HashMap<>());
+    }
+
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums,  String jobId, Map<String, Object> options) {
+        return runFlow(flowName, stepNums, jobId, options, new HashMap<>());
+    }
+
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
+
+        Flow flow = flowManager.getFlow(flowName);
+
+        //Validation of flow, provided steps
+        if (flow == null){
+            throw new RuntimeException("Flow " + flowName + " not found");
+        }
+
+        if(stepNums == null) {
+            stepNums = new ArrayList<String>(flow.getSteps().keySet());
+        }
+
+        if(stepConfig != null && !stepConfig.isEmpty()) {
+            flow.setOverrideStepConfig(stepConfig);
+        }
+
+        flow.setOverrideOptions(options);
+
+        Iterator<String> stepItr = stepNums.iterator();
+        Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
+        while(stepItr.hasNext()) {
+            String stepNum = stepItr.next();
+            Step tmpStep = flow.getStep(stepNum);
+            if(tmpStep == null){
+                throw new RuntimeException("Step " + stepNum + " not found in the flow");
+            }
+            stepsQueue.add(stepNum);
+        }
+
+        if(jobId == null) {
+            jobId = UUID.randomUUID().toString();
+        }
+        RunFlowResponse response = new RunFlowResponse(jobId);
+
+        //Put response, steps and flow in maps with jobId as key
+        flowResp.put(jobId, response);
+        stepsMap.put(jobId, stepsQueue);
+        flowMap.put(jobId, flow);
+
+        //add jobId to a queue
+        jobQueue.add(jobId);
+        if(!isRunning.get()){
+            initializeFlow(jobId);
+        }
+        return response;
+    }
+
+    private void initializeFlow(String jobId) {
+        //Reset the states to initial values before starting a flow run
+        isRunning.set(true);
+        isJobSuccess.set(true);
+        isJobCancelled.set(false);
+        jobStoppedOnError.set(false);
+        runningJobId = jobId;
+        runningFlow = flowMap.get(runningJobId);
+        if(jobDocManager == null) {
+            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
+        }
+        if(threadPool == null || threadPool.isTerminated()) {
+            threadPool = new CustomPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS
+                , new LinkedBlockingQueue<Runnable>());
+        }
+        threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId));
+    }
+
+    public void stopJob(String jobId) {
+        if(stepsMap.get(jobId) != null){
+            stepsMap.get(jobId).clear();
+            stepsMap.remove(jobId);
+            isJobCancelled.set(true);
+        }
+        else {
+            throw new RuntimeException("Job not running");
+        }
+        if (jobId.equals(runningJobId)) {
+            if(stepRunner != null){
+                stepRunner.stop();
+            }
+        }
+    }
+
+    private class FlowRunnerTask implements Runnable {
+        private String jobId;
+        private Flow flow;
+        private Queue<String> stepQueue;
+
+        public Queue<String> getStepQueue() {
+            return stepQueue;
+        }
+
+        FlowRunnerTask(Flow flow, String jobId) {
+            this.jobId = jobId;
+            this.flow = flow;
+        }
+
+        FlowRunnerTask(Flow flow, String jobId, Queue<String> stepQueue) {
+            this.jobId = jobId;
+            this.flow = flow;
+            this.stepQueue = stepQueue;
+        }
+
+        @Override
+        public void run() {
+            RunFlowResponse resp = flowResp.get(runningJobId);
+            resp.setFlowName(runningFlow.getName());
+            stepQueue = stepsMap.get(jobId);
+
+            Map<String, RunStepResponse> stepOutputs = new HashMap<>();
+            String stepNum = null;
+
+            final long[] currSuccessfulEvents = {0};
+            final long[] currFailedEvents = {0};
+            final int[] currPercentComplete = {0};
+            while (! stepQueue.isEmpty()) {
+                stepNum = stepQueue.poll();
+                runningStep = runningFlow.getSteps().get(stepNum);
+                Map<String, Object> optsMap ;
+                if(flow.getOverrideOptions() != null) {
+                    optsMap = new HashMap<>(flow.getOverrideOptions());
+                }
+                else {
+                    optsMap = new HashMap<>();
+                }
+
+                AtomicLong errorCount = new AtomicLong();
+                AtomicLong successCount = new AtomicLong();
+                /*  If an exception occurs in step execution, we don't want the thread to die and affect other step execution.
+                    If an exception occurs, the exception message is written to job output
+                 */
+                RunStepResponse stepResp = null;
+                //Initializing stepBatchSize to default flow batch size
+
+                try {
+                    stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
+                        .withJobId(jobId)
+                        .withOptions(optsMap)
+                        .onItemComplete((jobID, itemID) -> {
+                            successCount.incrementAndGet();
+                        })
+                        .onItemFailed((jobId, itemId)-> {
+                            errorCount.incrementAndGet();
+                            if(flow.isStopOnError()){
+                                jobStoppedOnError.set(true);
+                                stopJob(jobId);
+                            }
+                        })
+                        .onStatusChanged((jobId, percentComplete, jobStatus, successfulEvents, failedEvents, message) ->{
+                            flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                                currSuccessfulEvents[0] = successfulEvents;
+                                currFailedEvents[0] = failedEvents;
+                                currPercentComplete[0] = percentComplete;
+                                listener.onStatusChanged(jobId, runningStep, jobStatus, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
+                            });
+                        });
+                    //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
+                    Map<String,Step> steps = runningFlow.getSteps();
+                    Step step = steps.get(stepNum);
+
+                    //If property values are overriden in UI, use those values over any other.
+                    if(flow.getOverrideStepConfig() != null) {
+                        stepRunner.withStepConfig(flow.getOverrideStepConfig());
+                    }
+
+                    stepResp = stepRunner.run();
+                    stepRunner.awaitCompletion();
+                }
+                catch (Exception e) {
+                    stepResp = RunStepResponse.withFlow(flow).withStep(stepNum);
+                    stepResp.withJobId(runningJobId);
+                    if(stepRunner != null){
+                        stepResp.setCounts(successCount.get() + errorCount.get(), successCount.get(), errorCount.get(), (long) Math.ceil((double) successCount.get() / stepRunner.getBatchSize()), (long) Math.ceil((double) errorCount.get() / stepRunner.getBatchSize()));
+                    }
+                    else {
+                        stepResp.setCounts(0, 0, 0, 0, 0);
+                    }
+
+                    StringWriter errors = new StringWriter();
+                    e.printStackTrace(new PrintWriter(errors));
+                    stepResp.withStepOutput(errors.toString());
+                    stepResp.withSuccess(false);
+                    if(successCount.get() > 0) {
+                        stepResp.withStatus(JobStatus.COMPLETED_WITH_ERRORS_PREFIX + stepNum);
+                    }
+                    else{
+                        stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
+                    }
+                    try {
+                        jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
+                    }
+                    catch (Exception ex) {
+                        logger.error(ex.getMessage());
+                    }
+                    RunStepResponse finalStepResp = stepResp;
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0],
+                                runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
+                        });
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage());
+                    }
+                    if(runningFlow.isStopOnError()) {
+                        jobStoppedOnError.set(true);
+                        stopJob(runningJobId);
+                    }
+                }
+                finally {
+                    stepOutputs.put(stepNum, stepResp);
+                    if(! stepResp.isSuccess()) {
+                        isJobSuccess.set(false);
+                    }
+                }
+            }
+
+            resp.setStepResponses(stepOutputs);
+
+            final String jobStatus;
+            //Update status of job
+            if (isJobCancelled.get()) {
+                if(runningFlow.isStopOnError() && jobStoppedOnError.get()){
+                    jobStatus = JobStatus.STOP_ON_ERROR.toString();
+                }
+                else {
+                    jobStatus = JobStatus.CANCELED.toString();
+                }
+            }
+            else if (!isJobSuccess.get()) {
+                    Collection<RunStepResponse> stepResps = stepOutputs.values();
+                    long failedStepCount = stepResps.stream().filter((stepResp)-> stepResp.getStatus()
+                        .contains(JobStatus.FAILED_PREFIX)).collect(Collectors.counting());
+                    if(failedStepCount == stepResps.size()){
+                        jobStatus = JobStatus.FAILED.toString();
+                    }
+                    else {
+                        jobStatus = JobStatus.FINISHED_WITH_ERRORS.toString();
+                    }
+            }
+            else {
+                jobStatus = JobStatus.FINISHED.toString();
+            }
+            resp.setJobStatus(jobStatus);
+            try {
+                jobDocManager.postJobs(jobId, jobStatus);
+            }
+            catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+            finally {
+                JsonNode jobNode = null;
+                try {
+                    jobNode = jobDocManager.getJobs(jobId);
+                }
+                catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
+                if(jobNode != null) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        RunFlowResponse jobDoc = objectMapper.treeToValue(jobNode.get("job"), RunFlowResponse.class);
+                        resp.setStartTime(jobDoc.getStartTime());
+                        resp.setEndTime(jobDoc.getEndTime());
+                        resp.setUser(jobDoc.getUser());
+                        resp.setLastAttemptedStep(jobDoc.getLastAttemptedStep());
+                        resp.setLastCompletedStep(jobDoc.getLastCompletedStep());
+                    }
+                    catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+
+                if (!isJobSuccess.get()) {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                        });
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage());
+                    }
+                } else {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                        });
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage());
+                    }
+                }
+
+                jobQueue.remove();
+                stepsMap.remove(jobId);
+                flowMap.remove(jobId);
+                flowResp.remove(runningJobId);
+                if (!jobQueue.isEmpty()) {
+                    initializeFlow((String) jobQueue.peek());
+                } else {
+                    isRunning.set(false);
+                    threadPool.shutdownNow();
+                }
+            }
+        }
+    }
+
     public void awaitCompletion() {
         try {
             awaitCompletion(Long.MAX_VALUE, TimeUnit.DAYS);
-        } catch (InterruptedException| TimeoutException e) {
         }
-    }
-
-    @Override
-    public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException,TimeoutException {
-        if (runningThread != null) {
-            runningThread.join(unit.convert(timeout, unit));
-            if (runningThread.getState() != Thread.State.TERMINATED) {
-                if ( dataMovementManager != null && queryBatcher != null ) {
-                    dataMovementManager.stopJob(queryBatcher);
-                }
-                runningThread.interrupt();
-                throw new TimeoutException("Timeout occurred after "+timeout+" "+unit.toString());
-            }
-        }
-    }
-
-    @Override
-    public Job run() {
-        runningThread = null;
-        Job job = createJob();
-
-        if (options == null) {
-            options = new HashMap<>();
-        } else {
-            if (options.get("fullOutput") != null) {
-                isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
-            }
-        }
-        options.put("flow", this.flow.getName());
-        Collection<String> uris = null;
-        try {
-            uris = runCollector();
-        } catch (Exception e) {
-            job.setCounts(0,0, 0, 0, 0)
-                .withStatus(JobStatus.FAILED.toString());
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
-            job.withJobOutput(errors.toString());
-            jobUpdate.postJobs(jobId, JobStatus.FAILED.toString(), step);
-            return job;
-        }
-        this.runHarmonizer(job,uris);
-        return job;
-    }
-
-    @Override
-    public Job run(Collection uris) {
-        runningThread = null;
-        Job job = createJob();
-        return this.runHarmonizer(job,uris);
-    }
-
-    private Collection<String> runCollector() throws Exception {
-        Collector c = new CollectorImpl(this.flow, jobId);
-        c.setHubConfig(hubConfig);
-        c.setClient(stagingClient);
-
-        flowStatusListeners.forEach((FlowStatusListener listener) -> {
-            listener.onStatusChange(this.jobId, 0, "running collector");
-        });
-
-        final DiskQueue<String> uris;
-        uris = c.run(this.flow.getName(), String.valueOf(step), this.jobId, options);
-        return uris;
-    }
-
-    private Job runHarmonizer(Job job,Collection uris) {
-        AtomicLong successfulEvents = new AtomicLong(0);
-        AtomicLong failedEvents = new AtomicLong(0);
-        AtomicLong successfulBatches = new AtomicLong(0);
-        AtomicLong failedBatches = new AtomicLong(0);
-
-        flowStatusListeners.forEach((FlowStatusListener listener) -> {
-            listener.onStatusChange(job.getJobId(), 0, "starting step execution");
-        });
-
-        if ( uris == null || uris.size() == 0 ) {
-            flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, "collector returned 0 items");
-            });
-            flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
-            job.setCounts(0,0,0,0,0);
-            job.withStatus(JobStatus.COMPLETED_PREFIX + step);
-            jobUpdate.postJobs(jobId, JobStatus.COMPLETED_PREFIX + step, step);
-            return job;
-        }
-
-        Vector<String> errorMessages = new Vector<>();
-
-        dataMovementManager = stagingClient.newDataMovementManager();
-
-        double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
-
-        HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
-
-        ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
-        Map<String,Object> fullResponse = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
-            .withBatchSize(batchSize)
-            .withThreadCount(threadCount)
-            .withJobId(job.getJobId())
-            .onUrisReady((QueryBatch batch) -> {
-                try {
-                    FlowResource flowResource;
-
-                    if (databaseClientMap.containsKey(batch.getClient())) {
-                        flowResource = databaseClientMap.get(batch.getClient());
-                    } else {
-                        flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
-                        databaseClientMap.put(batch.getClient(), flowResource);
-                    }
-                    options.put("uris", batch.getItems());
-
-                    RunFlowResponse response = flowResource.run(job.getJobId(), step, options);
-                    failedEvents.addAndGet(response.errorCount);
-                    successfulEvents.addAndGet(response.totalCount - response.errorCount);
-                    if (response.errors != null) {
-                        if (errorMessages.size() < MAX_ERROR_MESSAGES) {
-                            errorMessages.addAll(response.errors.stream().map(jsonNode -> jsonToString(jsonNode)).collect(Collectors.toList()));
-                        }
-                    }
-                    if(isFullOutput) {
-                        fullResponse.putAll(mapper.convertValue(response.documents, Map.class));
-                    }
-
-                    if (response.errorCount < response.totalCount) {
-                        successfulBatches.addAndGet(1);
-                    } else {
-                        failedBatches.addAndGet(1);
-                    }
-
-                    int percentComplete = (int) (((double) successfulBatches.get() / batchCount) * 100.0);
-
-                    if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
-                        previousPercentComplete = percentComplete;
-                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChange(job.getJobId(), percentComplete, "");
-                        });
-                    }
-
-                    if (flowItemCompleteListeners.size() > 0) {
-                        response.completedItems.forEach((String item) -> {
-                            flowItemCompleteListeners.forEach((FlowItemCompleteListener listener) -> {
-                                listener.processCompletion(job.getJobId(), item);
-                            });
-                        });
-                    }
-
-                    if (flowItemFailureListeners.size() > 0) {
-                        response.failedItems.forEach((String item) -> {
-                            flowItemFailureListeners.forEach((FlowItemFailureListener listener) -> {
-                                listener.processFailure(job.getJobId(), item);
-                            });
-                        });
-                    }
-
-                    if (stopOnFailure && response.errorCount > 0) {
-                        JobTicket jobTicket = ticketWrapper.get("jobTicket");
-                        if (jobTicket != null) {
-                            dataMovementManager.stopJob(jobTicket);
-                        }
-                    }
-
-                } catch (Exception e) {
-                    if (errorMessages.size() < MAX_ERROR_MESSAGES) {
-                        errorMessages.add(e.toString());
-                    }
-                }
-            })
-            .onQueryFailure((QueryBatchException failure) -> {
-                failedBatches.addAndGet(1);
-                failedEvents.addAndGet(batchSize);
-            });
-
-        JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
-        ticketWrapper.put("jobTicket", jobTicket);
-
-        runningThread = new Thread(() -> {
-            queryBatcher.awaitCompletion();
-
-            flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                listener.onStatusChange(job.getJobId(), 100, "");
-            });
-
-            flowFinishedListeners.forEach((FlowFinishedListener::onFlowFinished));
-
-            dataMovementManager.stopJob(queryBatcher);
-
-            String status;
-
-
-            if (failedEvents.get() > 0 && stopOnFailure) {
-                status = JobStatus.STOP_ON_ERROR.toString();
-            } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                status = JobStatus.FINISHED_WITH_ERRORS.toString();
-            } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
-                status = JobStatus.COMPLETED_PREFIX + step ;
-            } else {
-                status = JobStatus.FAILED.toString();
-            }
-            job.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
-            job.withStatus(status);
-            jobUpdate.postJobs(jobId, status, step);
-            if (errorMessages.size() > 0) {
-                job.withJobOutput(errorMessages);
-            }
-            if(isFullOutput) {
-                job.withFullOutput(fullResponse);
-            }
-        });
-
-        runningThread.start();
-        return job;
-    }
-
-    private Job createJob() {
-        Job job = Job.withFlow(flow);
-        if (this.jobId == null) {
-            jobId = UUID.randomUUID().toString();
-        }
-        job.withJobId(jobId);
-        return job;
-    }
-
-    private String jsonToString(JsonNode node) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(node);
-        } catch (JsonProcessingException e) {
+        catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    class FlowResource extends ResourceManager {
+    public void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException {
+        if (threadPool != null) {
+            threadPool.awaitTermination(timeout, unit);
+        }
+    }
 
-        private DatabaseClient srcClient;
-        private String targetDatabase;
-        private Flow flow;
-
-        public FlowResource(DatabaseClient srcClient, String targetDatabase, Flow flow) {
-            super();
-            this.flow = flow;
-            this.srcClient = srcClient;
-            this.targetDatabase = targetDatabase;
-            this.srcClient.init("ml:runFlow" , this);
+    class CustomPoolExecutor extends ThreadPoolExecutor {
+        public CustomPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                    TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
         }
 
-
-        public RunFlowResponse run(String jobId, int step, Map<String, Object> options) {
-            RunFlowResponse resp;
-            try {
-                RequestParameters params = new RequestParameters();
-                params.add("flow-name", flow.getName());
-                params.put("step", String.valueOf(step));
-                params.put("job-id", jobId);
-                params.put("identifiers", (String) null);
-                params.put("target-database", targetDatabase);
-                if (options != null) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    params.put("options", objectMapper.writeValueAsString(options));
-                }
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
+        @Override
+        public void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
+            // If submit() method is called instead of execute()
+            if (t == null && r instanceof Future<?>) {
                 try {
-                    if (resultItr == null || !resultItr.hasNext()) {
-                        resp = new RunFlowResponse();
+                    Object result = ((Future<?>) r).get();
+                } catch (CancellationException e) {
+                    t = e;
+                } catch (ExecutionException e) {
+                    t = e.getCause();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            if (t != null) {
+                logger.error(t.getMessage());
+                //Run the next queued flow if stop-on-error is set or if the step queue is empty
+                if(((FlowRunnerTask)r).getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
+                    jobQueue.remove();
+                    if (!jobQueue.isEmpty()) {
+                        initializeFlow((String) jobQueue.peek());
                     } else {
-                        ResourceServices.ServiceResult res = resultItr.next();
-                        StringHandle handle = new StringHandle();
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
-                    }
-                } finally {
-                    if (resultItr != null) {
-                        resultItr.close();
+                        isRunning.set(false);
+                        threadPool.shutdownNow();
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+                //Run the next step
+                else {
+                    if(!(threadPool != null && threadPool.isTerminating())) {
+                        threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
+                    }
+                }
             }
-            return resp;
         }
+    }
+
+    //These methods are used by UI.
+
+    public List<String> getQueuedJobIdsFromFlow(String flowName) {
+        return flowMap
+            .entrySet()
+            .stream()
+            .filter(entry -> flowName.equals(entry.getValue().getName()))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+    }
+
+    public RunFlowResponse getJobResponseById(String jobId) {
+        return flowResp.get(jobId);
+    }
+
+    public boolean isJobRunning() {
+        return isRunning.get();
+    }
+
+    public String getRunningStepKey() {
+        return runningFlow.getSteps().entrySet()
+            .stream()
+            .filter(entry -> Objects.equals(entry.getValue(), runningStep))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.joining());
 
     }
 
-    class JobUpdate extends ResourceManager {
-        private static final String NAME = "ml:jobs";
-
-        private RequestParameters params;
-
-        public JobUpdate(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        private void postJobs(String jobId, String status, int step) {
-            params = new RequestParameters();
-            params.put("jobid", jobId);
-            params.put("status", status);
-            params.put("step", String.valueOf(step));
-            try {
-                this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-            }
-            catch (Exception e) {
-                throw new RuntimeException("Unable to update the job document");
-            }
-
-        }
-
+    public Flow getRunningFlow() {
+        return this.runningFlow;
     }
 }

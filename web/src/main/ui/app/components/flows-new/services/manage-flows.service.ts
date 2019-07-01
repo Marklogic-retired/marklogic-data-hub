@@ -49,8 +49,12 @@ export class ManageFlowsService {
     return this.http.get<Array<Step>>(`api/flows/${flowId}/steps`);
   }
   createStep(flowId: string, stepIndex: number, step: Step) {
-    console.log(`POST api/flows/${flowId}/steps`);
-    return this.http.post<Step>(`api/flows/${flowId}/stepIndex/${stepIndex}`, step);
+    console.log(`POST api/flows/${flowId}/steps?stepOrder=${stepIndex}`);
+    if (stepIndex === null) {
+      return this.http.post<Step>(`api/flows/${flowId}/steps`, step);
+    } else {
+      return this.http.post<Step>(`api/flows/${flowId}/steps?stepOrder=${stepIndex}`, step);
+    }
   }
   updateStep(flowId: string, stepId: string, step: Step) {
     console.log(`PUT api/flows/${flowId}/steps/${stepId}`);
@@ -65,12 +69,24 @@ export class ManageFlowsService {
     console.log('GET api/collections/' + database);
     return this.http.get<Array<string>>('api/collections/' + database);
   }
-  runFlow(flowId: string) {
-    console.log(`POST api/flows/${flowId}/run`);
-    return this.http.post(`api/flows/${flowId}/run`, {});
+  runFlow(runObject: any) {
+    console.log(`POST api/flows/${runObject.id}/run`);
+    return this.http.post(`api/flows/${runObject.id}/run`, runObject.runArray);
   }
   stopFlow(flowId: string) {
     console.log(`POST api/flows/${flowId}/stop`);
     return this.http.post(`api/flows/${flowId}/stop`, {});
+  }
+
+  saveMap(mapName, map) {
+    let parsedMap = JSON.parse(map);
+    return this.http.post('api/current-project/mappings/' + mapName, parsedMap);
+  }
+
+  getMap(mapName) {
+    return this.http.get('api/current-project/mappings/' + mapName + "?createIfNotExisted=true");
+  }
+  deleteMap(mapName) {
+    return this.http.delete('api/current-project/mappings/' + mapName);
   }
 }

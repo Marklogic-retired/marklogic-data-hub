@@ -2,6 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MatchThreshold } from "../match-thresholds.model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { WeightValidator } from '../../../../validators/weight.validator';
+import {InstantErrorStateMatcher} from "../../../../validators/instant-error-match.validator";
+import {FlowsTooltips} from "../../../../tooltips/flows.tooltips";
 
 export interface DialogData {
   stepName: string;
@@ -15,6 +18,8 @@ export interface DialogData {
 })
 export class AddMatchThresholdDialogComponent {
 
+  instantErrorMatcher: InstantErrorStateMatcher;
+  tooltips: any;
   form: FormGroup;
   selectedAction: string;
 
@@ -25,10 +30,15 @@ export class AddMatchThresholdDialogComponent {
   }
 
   ngOnInit() {
+    console.log("threshold")
+    this.tooltips = FlowsTooltips.mastering.matching;
     this.form = this.fb.group({
-      label: [this.data.option ? this.data.option.label : ''],
-      above: [this.data.option ? this.data.option.above : ''],
-      action: [this.data.option ? this.data.option.action : ''],
+      label: [this.data.option ? this.data.option.label : '',
+        [Validators.required]],
+      above: [this.data.option ? this.data.option.above : '',
+        [Validators.required, WeightValidator]],
+      action: [this.data.option ? this.data.option.action : '',
+        [Validators.required]],
       customUri: [this.data.option ? this.data.option.customUri : ''],
       customFunction: [this.data.option ? this.data.option.customFunction : ''],
       customNs: [this.data.option ? this.data.option.customNs : ''],
@@ -36,6 +46,7 @@ export class AddMatchThresholdDialogComponent {
     })
     this.selectedAction = (this.data.option && this.data.option.action) ?
       this.data.option.action : 'merge';
+    this.instantErrorMatcher = new InstantErrorStateMatcher();
   }
 
   onNoClick(): void {

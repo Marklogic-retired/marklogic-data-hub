@@ -20,11 +20,10 @@ package com.marklogic.gradle.task
 import com.marklogic.client.io.DOMHandle
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.HubConfig
-import org.apache.commons.io.FileUtils
+import com.marklogic.hub.legacy.LegacyDebugging
+import com.marklogic.hub.legacy.LegacyTracing
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
-import com.marklogic.hub.legacy.LegacyTracing;
-import com.marklogic.hub.legacy.LegacyDebugging;
 
 import java.nio.file.Paths
 
@@ -170,22 +169,6 @@ class InstalledTests extends BaseTest {
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
-    def "install Legacy Modules should fail"() {
-        given:
-        def entityDir = BaseTest.testProjectDir.root.toPath().resolve("plugins").resolve("entities").resolve("legacy-test")
-        def inputDir = entityDir.resolve("input")
-        inputDir.toFile().mkdirs()
-        FileUtils.copyDirectory(new File("src/test/resources/legacy-input-flow"), inputDir.resolve("legacy-input-flow").toFile())
-
-        when:
-        def result = runFailTask('hubDeployUserModules', '-i')
-
-        then:
-        notThrown(UnexpectedBuildSuccess)
-        result.getOutput().contains('The following Flows are legacy flows:')
-        result.getOutput().contains('legacy-test => legacy-input-flow')
-    }
-
     def "createHarmonizeFlow with useES flag"() {
         given:
         propertiesFile << """
@@ -199,7 +182,7 @@ class InstalledTests extends BaseTest {
         when:
         runTask('hubUpdate')
         runTask('hubCreateEntity')
-        copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "Employee.entity.json").toFile())
+        copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.root.toString(),"entities", "Employee.entity.json").toFile())
         runTask('mlLoadModules')
         def result = runTask('hubCreateHarmonizeFlow')
 

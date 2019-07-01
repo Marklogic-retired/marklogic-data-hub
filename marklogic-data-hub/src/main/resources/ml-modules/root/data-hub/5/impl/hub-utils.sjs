@@ -30,7 +30,12 @@ class HubUtils {
   }
 
   writeDocument(docUri, content, permissions, collections, database) {
-    xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections })`,
+    return fn.head(xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections }); 
+     let writeInfo = {
+      transaction: xdmp.transaction(),
+      dateTime: fn.currentDateTime()
+     };
+     writeInfo;`,
     {
     content: content,
     docUri:docUri,
@@ -42,19 +47,45 @@ class HubUtils {
      commit: 'auto',
      update: 'true',
      ignoreAmps: true
-    })
+    }));
   }
 
   writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
-    xdmp.eval(`
+    return fn.head(xdmp.eval(`
+    const temporal = require("/MarkLogic/temporal.xqy");
+
+    const temporalCollections = temporal.collections().toArray().reduce((acc, col) => {
+      acc[col] = true;
+      return acc;
+    }, {});
     let basePermissions = ${permissions};
     for (let content of writeQueue) {
       let context = (content.context||{});
       let permissions = (basePermissions || []).concat((context.permissions||[]));
-      let collections = baseCollections.concat((context.collections||[]));
+      let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
       let metadata = context.metadata;
-      xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
-    }`,
+      let temporalCollection = collections.find((col) => temporalCollections[col]);
+      if (temporalCollection) {
+        // temporalDocURI is managed by the temporal package and must not be carried forward.
+        if (metadata) {
+          delete metadata.temporalDocURI;
+        }
+        temporal.documentInsert(temporalCollection, content.uri, content.value, 
+          {
+            permissions, 
+            collections: collections.filter((col) => !temporalCollections[col]), 
+            metadata
+          }
+         );
+      } else {
+        xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+      }
+    }
+    let writeInfo = {
+      transaction: xdmp.transaction(),
+      dateTime: fn.currentDateTime()
+     };
+     writeInfo;`,
       {
         writeQueue,
         permissions,
@@ -65,7 +96,7 @@ class HubUtils {
         commit: 'auto',
         update: 'true',
         ignoreAmps: true
-      })
+      }));
   }
 
   deleteDocument(docUri, database){
@@ -85,13 +116,27 @@ class HubUtils {
     return xdmp.invokeFunction(queryFunction, { commit: 'auto', update: 'false', ignoreAmps: true, database: database ? xdmp.database(database): xdmp.database()})
   }
 
-  invoke(moduleUri, parameters, user = xdmp.getCurrentUser(), database) {
-    xdmp.invoke(moduleUri, parameters, {
-      ignoreAmps: true,
-      database: database ? xdmp.database(database): xdmp.database(),
-      user: xdmp.user(user)
-    })
+  invoke(moduleUri, parameters, user = null, database) {
+    let options = this.buildInvokeOptions(user, database);
+    xdmp.invoke(moduleUri, parameters, options)
   }
+
+  buildInvokeOptions(user = null, database) {
+    let options = {
+      ignoreAmps: true
+    };
+
+    if (user && user !== xdmp.getCurrentUser()) {
+      options.userId = xdmp.user(user);
+    }
+
+    if (database) {
+      options.database = xdmp.database(database);
+    }
+
+    return options;
+  }
+
   /**
   * Generate and return a UUID
   */
@@ -125,7 +170,7 @@ class HubUtils {
   normalizeToSequence(value) {
    if (value instanceof Sequence) {
      return value;
-   } else if (Array.isArray(value)) {
+   } else if (value.constructor === Array) {
      return Sequence.from(value);
    } else {
      return Sequence.from([value]);
@@ -150,6 +195,17 @@ class HubUtils {
        newInstance[key] = instance[key];
      }
      return newInstance;
+  }
+
+  parsePermissions(permissionsTest = "") {
+    let permissionParts = permissionsTest.split(",").filter((val) => val);
+    let permissions = [];
+    let permissionRoles = permissionParts.filter((val, index) => !(index % 2));
+    let permissionCapabilities = permissionParts.filter((val, index) => index % 2);
+    for (let i = 0; i < permissionRoles.length; i++) {
+      permissions.push(xdmp.permission(permissionRoles[i], permissionCapabilities[i]));
+    }
+    return permissions;
   }
 
 }

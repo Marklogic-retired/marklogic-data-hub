@@ -31,6 +31,15 @@ export class SearchService {
     return this.post(`/api/search`, data);
   }
 
+  getResultsByQuery(database: string, ctsQuery: string, count: number) {
+    let data = {
+      database: database,
+      sourceQuery: ctsQuery,
+      count: 1
+    }
+    return this.post(`/api/search/sjsSearch`, data);
+  }
+
   getDoc(database: string, docUri: string) {
     return this.get(`/api/search/doc?database=${database}&docUri=${encodeURIComponent(docUri)}`);
   }

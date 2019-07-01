@@ -495,7 +495,7 @@ export class MlcpComponent implements OnChanges {
 
     const host = this.envService.settings.host;
     const port = this.envService.settings.stagingPort;
-    const username = this.envService.settings.username;
+    const username = this.envService.settings.mlUsername;
 
 
     this.addMlcpOption(options, 'host', host, false, true);

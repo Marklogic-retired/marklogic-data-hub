@@ -15,9 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class JSONObject {
     private static Logger logger = LoggerFactory.getLogger(JSONObject.class);
@@ -60,20 +58,7 @@ public class JSONObject {
     }
 
     /**
-     * @param jsonInString
-     * @throws IOException
-     */
-    public JSONObject(String jsonInString) throws IOException {
-        try {
-            mapper = new ObjectMapper();
-            json = mapper.readValue(jsonInString, JsonNode.class);
-        } catch (JsonParseException e) {
-            throw new IOException(e);
-        }
-    }
-
-    /**
-     * @param json
+     * @param json json node object
      */
     public JSONObject(JsonNode json) {
         if (json == null) {
@@ -84,9 +69,21 @@ public class JSONObject {
     }
 
     /**
-     * @param istream
-     * @return
-     * @throws IOException
+     * Returns a Json node instance from a json String
+     * @param jsonString json string
+     * @return a json node
+     * @throws IOException if I/O error occurs
+     */
+    public static JsonNode readInput(String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonString, JsonNode.class);
+    }
+
+    /**
+     * Returns a Json node instance from an input stream
+     * @param istream input stream object
+     * @return a json node
+     * @throws IOException if I/O error occurs
      */
     public static JsonNode readInput(InputStream istream) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -94,9 +91,10 @@ public class JSONObject {
     }
 
     /**
-     * @param reader
-     * @return
-     * @throws IOException
+     * Returns a Json node instance from an input reader
+     * @param reader reader object
+     * @return a json node
+     * @throws IOException if I/O error occurs
      */
     public static JsonNode readInput(Reader reader) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -104,19 +102,21 @@ public class JSONObject {
     }
 
     /**
-     * @param obj
-     * @return
-     * @throws JsonProcessingException
+     * Returns a json string from an Object with pretty print
+     * @param obj object to be serialized
+     * @return a string object
+     * @throws JsonProcessingException if problem with processing json
      */
     public static String writeValueAsString(Object obj) throws JsonProcessingException {
         return writeValueAsString(obj, true);
     }
 
     /**
-     * @param obj
-     * @param hasPrettyPrint
-     * @return
-     * @throws JsonProcessingException
+     * Returns a json string from an Object with pretty print as a flag
+     * @param obj object to be serialized
+     * @param hasPrettyPrint boolean flag to pretty print
+     * @return a string object
+     * @throws JsonProcessingException if problem with processing json
      */
     public static String writeValueAsString(Object obj, boolean hasPrettyPrint) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -126,10 +126,18 @@ public class JSONObject {
         return mapper.writeValueAsString(obj);
     }
 
+    /**
+     * Returns the json instance
+     * @return a json node
+     */
     public JsonNode jsonNode() {
         return this.json;
     }
 
+    /**
+     * Returns the mapper
+     * @return an object mapper
+     */
     public ObjectMapper getMapper() {
         return mapper;
     }
@@ -140,16 +148,18 @@ public class JSONObject {
     }
 
     /**
-     * @param key
-     * @return
+     * Checks if the key is existed or not
+     * @param key json key
+     * @return boolean flag indicating existence
      */
     public boolean isExist(String key) {
         return json.has(key);
     }
 
     /**
-     * @param key
-     * @return
+     * Gets json size if it is an array
+     * @param key json key
+     * @return size of array
      */
     public int getJsonArraySize(String key) {
         if (json.get(key).isArray()) {
@@ -158,14 +168,20 @@ public class JSONObject {
         return 0;
     }
 
+    /**
+     * Gets a JsonNode value by key
+     * @param key json key
+     * @return a json node
+     */
     public JsonNode getNode(Object key) {
         return getNode(key, null);
     }
 
     /**
-     * @param key
-     * @param defaultVal
-     * @return
+     * Gets a JsonNode value by key with a default value
+     * @param key a json key
+     * @param defaultVal default json value to return of key not found
+     * @return a json node
      */
     public JsonNode getNode(Object key, JsonNode defaultVal) {
         if (key == null) return null;
@@ -181,17 +197,19 @@ public class JSONObject {
     }
 
     /**
-     * @param key
-     * @return
+     * Gets a String value by key
+     * @param key a json key
+     * @return a string value
      */
     public String getString(Object key) {
         return getString(key, null);
     }
 
     /**
-     * @param key
-     * @param defaultVal
-     * @return
+     *  Gets a String value by key with a default value
+     * @param key a json key
+     * @param defaultVal default string value to return of key not found
+     * @return string value
      */
     public String getString(Object key, String defaultVal) {
         if (key instanceof String) {
@@ -204,34 +222,57 @@ public class JSONObject {
     }
 
     /**
-     * @param key
-     * @return
+     * Gets a int value by key with 0 as default value
+     * @param key a json key
+     * @return an integer value
      */
     public int getInt(String key) {
         return getInt(key, 0);
     }
 
     /**
-     * @param key
-     * @param defaultVal
-     * @return
+     * Gets a int value by key with a default value
+     * @param key a json key
+     * @param defaultVal default integer value to return of key not found
+     * @return an integer value
      */
     public int getInt(Object key, int defaultVal) {
         return json.get((String) key) == null ? defaultVal : json.get((String) key).asInt();
     }
 
     /**
-     * @param key
-     * @return
+     * Gets a Boolean value by key
+     * @param key a json key
+     * @return a boolean value
+     */
+    public Boolean getBoolean(String key) {
+        return getBoolean(key, false);
+    }
+
+    /**
+     * Gets a Boolean value by key with a default value
+     * @param key a json key
+     * @param defaultVal default boolean value to return of key not found
+     * @return a boolean value
+     */
+    public Boolean getBoolean(Object key, Boolean defaultVal) {
+        return json.get((String) key) == null ? defaultVal : json.get((String) key).asBoolean();
+    }
+
+    /**
+     * Gets a Long value by key
+     * @param key a json key
+     * @return a long value
      */
     public long getLong(String key) {
         return getLong(key, 0L);
     }
 
     /**
-     * @param key
-     * @param defaultVal
-     * @return
+     * Gets a Long value by key with a default value
+     * @param key a json key
+     * @param defaultVal default long value to return of key not found
+     * @return a long value
      */
     public long getLong(Object key, long defaultVal) {
         JsonNode obj = json.get((String) key);
@@ -252,8 +293,9 @@ public class JSONObject {
     }
 
     /**
-     * @param key
-     * @return
+     * Gets a list of Objects by key
+     * @param key a json key
+     * @return a list of objects
      */
     public List<Object> getArray(String key) {
         List<Object> listObj = new ArrayList<>();
@@ -264,20 +306,77 @@ public class JSONObject {
     }
 
     /**
-     * @param key
-     * @return
+     * Gets a Map (String, Object) by key
+     * @param key a json key
+     * @return a map of (String, Object)
      */
-    public List<String> getArrayString(String key) {
+    public Map<String, Object> getMap(String key) {
+        Map<String, Object> mapObj = new HashMap<>();
+        if (json.get(key) == null) {
+            return mapObj;
+        }
+        Iterator<Map.Entry<String, JsonNode>> entryIterator =  json.get(key).fields();
+        while (entryIterator.hasNext()) {
+            Map.Entry<String, JsonNode> entry = entryIterator.next();
+            mapObj.put(entry.getKey(), entry.getValue());
+        }
+
+        return mapObj;
+    }
+
+    /**
+     * Converts a Map (String, Object) to a Json String
+     * @param map a map of (String, Object)
+     * @return a string
+     * @throws JsonProcessingException if problem with processing json
+     */
+    public String convertMapToJsonString(Map<String, Object> map) throws JsonProcessingException {
+        putMap(map);
+        if (map == null) {
+            mapper = new ObjectMapper();
+        }
+        return mapper.writeValueAsString(json);
+    }
+
+    /**
+     * Puts map entries to the json instance
+     * @param map a map of (String, Object)
+     */
+    public void putMap(Map<String, Object> map) {
+        for (String key : map.keySet()) {
+            put(key, map.get(key));
+        }
+    }
+
+    /**
+     * Gets a list of String by key with/without null values
+     * @param key a json key
+     * @param allowNull boolean flag to allow for null values
+     * @return list of string values
+     */
+    public List<String> getArrayString(String key, boolean allowNull) {
         List<String> listString = new ArrayList<>();
         for (JsonNode s : json.get(key)) {
-            listString.add(s.asText());
+            if (allowNull || !s.isNull()) {
+                listString.add(s.asText());
+            }
         }
         return listString;
     }
 
     /**
-     * @param key
-     * @param val
+     * Gets a list of String by key
+     * @param key a json key
+     * @return list of string values
+     */
+    public List<String> getArrayString(String key) {
+        return getArrayString(key, true);
+    }
+
+    /**
+     * Puts (key, value) pairs to the json instance
+     * @param key a json key
+     * @param val a json value
      */
     public void put(String key, Object val) {
         if (val instanceof String) {
@@ -302,10 +401,10 @@ public class JSONObject {
     }
 
     /**
-     * single key array node
+     * Puts a number of Objects into Json Array of the json instance
      *
-     * @param key
-     * @param vals
+     * @param key a json key
+     * @param vals a varargs for object/s
      */
     public void putArray(String key, Object... vals) {
         List<Object> lstVal = new ArrayList<>();
@@ -314,10 +413,10 @@ public class JSONObject {
     }
 
     /**
-     * single key array node
+     * Puts a list of Objects into Json Array of the json instance
      *
-     * @param key
-     * @param valList
+     * @param key a json key
+     * @param valList a list object of values
      */
     public void putArray(String key, List<?> valList) {
         ArrayNode array = ((ObjectNode) json).putArray(key);
@@ -341,6 +440,9 @@ public class JSONObject {
         }
     }
 
+    /**
+     * Makes pretty print for the json instance
+     */
     public void prettyPrint() {
         try {
             logger.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));

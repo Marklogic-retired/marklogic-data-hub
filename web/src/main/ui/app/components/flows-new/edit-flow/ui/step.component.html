@@ -1,31 +1,32 @@
 <div *ngIf="step" class="steps-container step-details">
-  <div class="bar {{step.type}}"></div>
+  <div class="bar {{step.stepDefinitionType.toLowerCase()}}"></div>
     <header>
       <div class="steps-header">
-        <h2 id="step-details-name">{{step.name}}</h2>
-        <button id="save-step-btn" *ngIf="step.type === 'ingestion'" (click)=saveStep(); mat-raised-button color="primary">Save</button>
-        <!-- <button id="reset-step-btn" mat-raised-button color="primary">Reset</button> -->
+        <h2 id="step-details-name" title={{step?.description}}>{{step.name}}</h2>
       </div>
-      <div class="steps-header">
+      <div class="steps-header steps-header-buttons">
         <mat-icon id="step-menu" class="flow-menu-icon" [matMenuTriggerFor]="flowSubMenu">more_vert</mat-icon>
-        <mat-icon id="step-expand-collapse-btn" class="flow-menu-icon" (click)="this.toggleBody()">arrow_drop_down</mat-icon>
+        <mat-icon id="step-expand-collapse-btn" class="flow-menu-icon" (click)="this.toggleBody()">{{ this.showBody ? 'expand_less' : 'expand_more' }}</mat-icon>
       </div>
     </header>
     <div *ngIf="showBody" class="steps-body">
-      <div id="step-type-ingestion-container" *ngIf="step.type === 'ingestion'">
+      <div id="step-type-ingestion-container" *ngIf="step.stepDefinitionType === stepType.INGESTION">
         <app-ingest
           [step]="step"
+          [flow]="flow"
+          [projectDirectory]="projectDirectory"
           (saveStep)="saveStep($event)"
         ></app-ingest>
       </div>
-      <div id="step-type-mapping-container" *ngIf="step.type === 'mapping'">
+      <div id="step-type-mapping-container" *ngIf="step.stepDefinitionType === stepType.MAPPING">
         <app-mapping
           [step]="step"
+          [flow]="flow"
           (saveStep)="saveStep($event)"
         ></app-mapping>
       </div>
-      <div id="step-type-mastering-container" *ngIf="step.type === 'mastering'">
-        <mat-tab-group>
+      <div id="step-type-mastering-container" *ngIf="step.stepDefinitionType === stepType.MASTERING">
+        <mat-tab-group #masteringTabGroup [selectedIndex]="masteringTabIndex">
           <mat-tab label="Matching">
             <app-matching
               [step]="step"
@@ -40,7 +41,7 @@
           </mat-tab>
         </mat-tab-group>
       </div>
-      <div id="step-type-custom-container" *ngIf="step.type === 'custom'">
+      <div id="step-type-custom-container" *ngIf="step.stepDefinitionType === stepType.CUSTOM">
         <app-custom
           [step]="step"
           (saveStep)="saveStep($event)"

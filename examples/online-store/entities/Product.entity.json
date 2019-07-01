@@ -1,0 +1,29 @@
+{
+  "info" : {
+    "title" : "Product",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org"
+  },
+  "definitions" : {
+    "Product" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "sku" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "title" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "price" : {
+          "datatype" : "decimal"
+        }
+      }
+    }
+  }
+}

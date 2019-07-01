@@ -19,22 +19,18 @@ package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcraft.jsch.IO;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
+import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.IOException;
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -74,6 +70,20 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void testCreateDefaultMapping() throws IOException {
+        String mappingName = "testDefaultMapping";
+
+        // create if not existed
+        MappingModel mappingModel = mappingManagerService.getMapping(mappingName, true);
+        assertEquals(1, mappingModel.getVersion());
+
+        // Second save
+        mappingManagerService.saveMapping(mappingName, mappingModel.toJson());
+        mappingModel = mappingManagerService.getMapping(mappingName, false);
+        assertEquals(1, mappingModel.getVersion());
+    }
+
+    @Test
     public void testMappingVersion() throws IOException {
         String mappingName = "testMapping";
         String jsonString = "{" +
@@ -92,12 +102,17 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
 
         // First Save
         mappingManagerService.saveMapping(mappingName, jsonNode);
-        MappingModel mappingModel = mappingManagerService.getMapping(mappingName);
+        MappingModel mappingModel = mappingManagerService.getMapping(mappingName, false);
         assertEquals(0, mappingModel.getVersion());
 
         // Second save
         mappingManagerService.saveMapping(mappingName, jsonNode);
-        mappingModel = mappingManagerService.getMapping(mappingName);
+        mappingModel = mappingManagerService.getMapping(mappingName, false);
+        assertEquals(0, mappingModel.getVersion());
+
+        ((ObjectNode) jsonNode).put("description", "someinfo");
+        mappingManagerService.saveMapping(mappingName, jsonNode);
+        mappingModel = mappingManagerService.getMapping(mappingName, false);
         assertEquals(1, mappingModel.getVersion());
     }
 

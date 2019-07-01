@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -124,7 +123,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     //Method to obtain es-style model
     private String generateModel(File f) {
         String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
-            "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
+            "at \"/data-hub/5/impl/hub-entities.xqy\";\n" +
             String.format("hent:get-model(\"%s\")", extractEntityNameFromFilename(f.getName()).get());
         EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
         if (resp.hasNext()) {
@@ -172,18 +171,9 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     protected List<File> findEntityFiles() {
         List<File> entities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
-        File[] entityDirectories = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
-        List<String> entityNames;
-        if (entityDirectories != null) {
-            entityNames = Arrays.stream(entityDirectories)
-                .map(file -> file.getName())
-                .collect(Collectors.toList());
-            for (String entityName : entityNames) {
-                File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
-                if (entityDefs!=null) {
-                    entities.addAll(Arrays.asList(entityDefs));
-                }
-            }
+        File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        if (entityDefs != null) {
+            entities.addAll(Arrays.asList(entityDefs));
         }
         return entities;
     }

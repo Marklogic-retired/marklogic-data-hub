@@ -2,11 +2,11 @@ const path = require('path');
 const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 
-module.exports = (baseConfig, env, defaultConfig) => {
-  baseConfig.plugins.push( new webpack.ProvidePlugin({
+module.exports = async ({config, mode}) => {
+  config.plugins.push( new webpack.ProvidePlugin({
     CodeMirror: 'codemirror'
   }));
-  baseConfig.module.rules.push(
+  config.module.rules.push(
     {
       test: [/\.stories\.ts?$/, /index\.ts$/],
       loaders: [
@@ -27,5 +27,5 @@ module.exports = (baseConfig, env, defaultConfig) => {
     }
   );
 
-  return baseConfig;
+  return config;
 };

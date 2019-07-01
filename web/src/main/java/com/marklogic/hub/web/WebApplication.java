@@ -16,8 +16,6 @@
  */
 package com.marklogic.hub.web;
 
-import com.marklogic.contentpump.ContentPump;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -38,12 +36,6 @@ public class WebApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length > 0 && args[0].equals("mlcp")) {
-            String[] newArgs = (String[]) ArrayUtils.subarray(args, 1, args.length);
-            ContentPump.main(newArgs);
-        }
-        else {
             SpringApplication.run(WebApplication.class, args);
-        }
     }
 }

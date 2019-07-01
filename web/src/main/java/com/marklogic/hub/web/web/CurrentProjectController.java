@@ -230,9 +230,15 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     }
 
     private void startProjectWatcher() throws IOException {
-        String pluginDir = hubConfig.getHubPluginsDir().toString();
+        String flowsDir = hubConfig.getFlowsDir().toString();
+        String stepDefinitionsDir = hubConfig.getStepDefinitionsDir().toString();
+        String entitiesDir = hubConfig.getHubEntitiesDir().toString();
+        String mappingsDir = hubConfig.getHubMappingsDir().toString();
         if (!watcherService.hasListener(this)) {
-            watcherService.watch(pluginDir);
+            watcherService.watch(flowsDir);
+            watcherService.watch(stepDefinitionsDir);
+            watcherService.watch(entitiesDir);
+            watcherService.watch(mappingsDir);
             watcherService.addListener(this);
         }
     }
@@ -294,8 +300,12 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         request.getSession().invalidate();
-        String pluginDir = hubConfig.getHubPluginsDir().toString();
-        watcherService.removeListener(this);
-        watcherService.unwatch(pluginDir);
+        if (watcherService.hasListener(this)) {
+            watcherService.unwatch(hubConfig.getStepDefinitionsDir().toString());
+            watcherService.unwatch(hubConfig.getHubEntitiesDir().toString());
+            watcherService.unwatch(hubConfig.getHubMappingsDir().toString());
+            watcherService.unwatch(hubConfig.getFlowsDir().toString());
+            watcherService.removeListener(this);
+        }
     }
 }

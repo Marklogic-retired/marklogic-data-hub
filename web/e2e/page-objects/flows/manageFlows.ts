@@ -1,9 +1,8 @@
-import {AppPage} from "../appPage";
-import { pages } from '../page';
-import {by, element} from "protractor";
+import appPage, {AppPage} from "../appPage";
+import {pages} from '../page';
+import {browser, by, ExpectedConditions as EC, element, $$} from "protractor";
 
 export class ManageFlows extends AppPage {
-
 
 
   //to get the login box locator
@@ -24,6 +23,10 @@ export class ManageFlows extends AppPage {
     return await button.click();
   }
 
+  get flowDialogBox() {
+    return element(by.css(".mat-dialog-container"));
+  }
+
   /**
    * flowDialogBoxHeader
    * @param boxType = ["New Flow"/"Flow Settings"]
@@ -36,12 +39,14 @@ export class ManageFlows extends AppPage {
    * flowForm
    * @param formID = [name/desc/batch-size/thread-count]
    */
-  flowForm(formID: string){
+  flowForm(formID: string) {
     return element(by.id(`flow-${formID}`));
   }
 
   async setFlowForm(formID: string, input: string) {
+    await browser.sleep(500);
     let inputField = this.flowForm(formID);
+    await browser.wait(EC.elementToBeClickable(inputField));
     return await inputField.sendKeys(input);
   };
 
@@ -50,9 +55,19 @@ export class ManageFlows extends AppPage {
     return await inputField.getAttribute("value");
   };
 
+  async isFlowFormEnabled(formID: string) {
+    let inputField = this.flowForm(formID);
+    return await inputField.isEnabled();
+  };
+
+  get advSettingsExpandCollapse() {
+    return element(by.css("new-flow-dialog .mat-expansion-indicator"));
+  }
+
   async clickAdvSettingsExpandCollapse() {
-    console.log("CLicking advance settings");
-    return await element(by.css("new-flow-dialog .mat-expansion-indicator")).click();
+    await browser.sleep(1000);
+    await console.log("CLicking advance settings");
+    return await this.advSettingsExpandCollapse.click();
   }
 
   get addOptions() {
@@ -65,7 +80,7 @@ export class ManageFlows extends AppPage {
   }
 
   async getFlowOptionsText(rowNum: number, column: string) {
-    let flowOption = this.flowOptions(rowNum,column);
+    let flowOption = this.flowOptions(rowNum, column);
     return await flowOption.getAttribute("value");
   }
 
@@ -75,7 +90,8 @@ export class ManageFlows extends AppPage {
    * @param column = [key/value]
    */
   async setFlowOptions(rowNum: number, column: string, input: string) {
-    let flowOption = this.flowOptions(rowNum,column);
+    let flowOption = this.flowOptions(rowNum, column);
+    await flowOption.clear();
     return await flowOption.sendKeys(input);
   }
 
@@ -93,7 +109,7 @@ export class ManageFlows extends AppPage {
    * @param option = [cancel/save]
    */
   async clickFlowCancelSave(option: string) {
-    let button = this.flowCancelSaveButton(option)
+    let button = this.flowCancelSaveButton(option);
     return await button.click();
   }
 
@@ -101,9 +117,20 @@ export class ManageFlows extends AppPage {
     return await element(by.id("flows-redeploy-btn")).click();
   }
 
-  async clickRedeployConfirmation(option: string) {
-    let choice = element(by.buttonText(option));
-    return await choice.click();
+  get redeployDialog() {
+    return element(by.cssContainingText("confirmation-dialog h1", "Redeploy"));
+  }
+
+  redeployConfirmationButton(option: string) {
+    return element(by.cssContainingText("button span", option));
+  }
+
+  /**
+   * @param option = [CANCEL/YES]
+   */
+  async clickRedeployConfirmationButton(option: string) {
+    let button = this.redeployConfirmationButton(option);
+    return await button.click();
   }
 
   /**
@@ -118,45 +145,70 @@ export class ManageFlows extends AppPage {
 
 
   flowName(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-name`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-name a`));
+  }
+
+  async clickFlowname(flowname: string) {
+    let link = this.flowName(flowname);
+    return await link.click();
+  }
+
+  async clickFlowName(flowname: string) {
+    let link = this.flowName(flowname);
+    return await browser.executeScript("arguments[0].click();", link);
   }
 
   targetEntity(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-entity`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-entity`));
   }
 
   status(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-status`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-status`));
   }
 
   jobs(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-jobs`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-jobs`));
   }
 
   lastJobFinished(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-last-job-finished`))
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-last-job-finished a`))
+  }
+
+  async clickLastJobFinished(flowName: string) {
+    let link = this.lastJobFinished(flowName);
+    return await link.click();
   }
 
   docsCommitted(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-docs-committed`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-docs-committed`));
   }
 
   docsFailed(flowName: string) {
-    return element(by.css(`.flow-${flowName} .flow-docs-failed`));
+    return element(by.css(`.flow-${flowName.toLowerCase()} .flow-docs-failed`));
   }
 
   async clickRunFlowButton(flowName: string) {
-    let run = element(by.css(`.flow-${flowName} .run-flow-button`))
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`))
     return await run.click();
   }
 
   async clickFlowMenu(flowName: string) {
-    let menu = element(by.css(`.flow-${flowName} .flow-menu`));
-    return await menu.click();
+    await browser.sleep(1000);
+    let menu = element(by.css(`.flow-${flowName.toLowerCase()} .flow-menu`));
+    return await browser.executeScript("arguments[0].click();", menu);
+  }
+
+  get flowMenuPanel() {
+    return element(by.css(".mat-menu-panel .mat-menu-content"));
+  }
+
+  async isRunFlowButtonEnabled(flowName: string) {
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`));
+    return await run.isEnabled();
   }
 
   flowMenuOptions(option: string) {
-    return element(by.css(`.flow-menu-${option}-btn`));
+    return element(by.css(`.mat-menu-panel .mat-menu-content .flow-menu-${option}-btn`));
   }
 
   /**
@@ -164,8 +216,9 @@ export class ManageFlows extends AppPage {
    * @param option = [edit/delete]
    */
   async clickFlowMenuOption(option: string) {
+    await browser.sleep(1000);
     let menuOption = this.flowMenuOptions(option);
-    return await menuOption.click();
+    return await browser.executeScript("arguments[0].click();", menuOption);
   }
 
   // Delete Flow confirmation box
@@ -178,17 +231,24 @@ export class ManageFlows extends AppPage {
     return element(by.css("confirmation-dialog .content p"));
   }
 
-  /**
-   * clickDeleteConfirmationButton
-   * @param option = [Cancel/Yes]
-   */
-  async clickDeleteConfirmationButton(option: string) {
-    return await element(by.cssContainingText("confirmation-dialog button", option)).click();
+  deleteConfirmationButton(option: string) {
+    return element(by.cssContainingText("confirmation-dialog button span", option));
   }
 
-
+  /**
+   * clickDeleteConfirmationButton
+   * @param option = [CANCEL/YES]
+   */
+  async clickDeleteConfirmationButton(option: string) {
+    let button = this.deleteConfirmationButton(option);
+    return await button.click();
+  }
 
   // Run flow dialog box
+
+  get runFlowDialog() {
+    return element(by.css("app-run-flow-dialog"));
+  }
 
   get runFlowHeader() {
     return element(by.css("app-run-flow-dialog h1"));
@@ -214,9 +274,10 @@ export class ManageFlows extends AppPage {
   /**
    * Pagination
    */
-
   async clickPaginationDropDown() {
-    return await element(by.id("mat-select-0")).click();
+    await browser.sleep(1000);
+    let dropDownButton = element(by.css(".mat-select"));
+    return await dropDownButton.click();
   }
 
   itemsPerPage(value: number) {
@@ -240,6 +301,81 @@ export class ManageFlows extends AppPage {
     return element(by.css("div[class='mat-paginator-range-label']"));
   }
 
+  getNumberOfOptions() {
+    return $$('.key-value-group').count();
+  }
+
+  async createFlow(flow) {
+    await appPage.clickFlowTab();
+    await browser.sleep(3000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
+    await manageFlowPage.clickNewFlowButton();
+    await browser.sleep(2000);
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader('New Flow')));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.flowForm('name')), 5000);
+    await manageFlowPage.setFlowForm("name", flow.flowName);
+    if (flow.flowDesc != null) {
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.flowForm('desc')), 5000);
+      await manageFlowPage.setFlowForm("desc", flow.flowDesc);
+    }
+    if (flow.batchSize != null || flow.threadCount != null || (flow.options != null && flow.options.size > 0)) {
+      await browser.wait(EC.elementToBeClickable(manageFlowPage.advSettingsExpandCollapse), 5000);
+      await manageFlowPage.clickAdvSettingsExpandCollapse();
+    }
+    if (flow.batchSize != null) {
+      await manageFlowPage.setFlowForm("batch-size", flow.batchSize);
+    }
+    if (flow.threadCount != null) {
+      await manageFlowPage.setFlowForm("thread-count", flow.threadCount);
+    }
+    if (flow.options != null) {
+      for (let n of flow.options) {
+        await manageFlowPage.addOptions.click();
+        await manageFlowPage.setFlowOptions(n, "key", flow.options.n[0]);
+        await manageFlowPage.setFlowOptions(n, "value", flow.options.n[1]);
+      }
+    }
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.flowCancelSaveButton('save')));
+    await manageFlowPage.clickFlowCancelSave("save");
+    await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBox));
+    await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader));
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await expect(manageFlowPage.flowName(flow.flowName).getText()).toEqual(flow.flowName);
+    await browser.sleep(3000);
+  }
+
+  async removeFlow(flow) {
+    await appPage.clickFlowTab();
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await manageFlowPage.clickFlowMenu(flow.flowName);
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowMenuPanel));
+    await browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("delete")));
+    await manageFlowPage.clickFlowMenuOption("delete");
+    await browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
+    await manageFlowPage.clickDeleteConfirmationButton("YES");
+    await browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
+    await browser.wait(EC.invisibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await browser.sleep(3000);
+  }
+
+  async verifyFlow(flow, status, jobsCount, docsCommitted, docsFailed) {
+    await appPage.flowsTab.click();
+    await browser.wait(EC.visibilityOf(manageFlowPage.flowName(flow.flowName)));
+    await expect(manageFlowPage.status(flow.flowName).getText()).toEqual(status);
+    await expect(manageFlowPage.jobs(flow.flowName).getText()).toEqual(jobsCount.toString());
+    await expect(manageFlowPage.lastJobFinished(flow.flowName).isDisplayed).toBeTruthy();
+    await expect(manageFlowPage.docsCommitted(flow.flowName).getText()).toEqual(docsCommitted.toString());
+    await expect(manageFlowPage.docsFailed(flow.flowName).getText()).toEqual(docsFailed.toString());
+  }
+
+  async redeploy() {
+    await manageFlowPage.clickRedeployButton();
+    await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
+    await browser.sleep(1000);
+    await manageFlowPage.clickRedeployConfirmationButton('YES');
+    await browser.sleep(20000);
+  }
 }
 
 let manageFlowPage = new ManageFlows();

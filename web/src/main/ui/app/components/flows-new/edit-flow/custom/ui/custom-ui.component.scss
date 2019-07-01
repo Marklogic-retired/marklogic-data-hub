@@ -1,5 +1,6 @@
-.custom-container {
-  padding: 10px 30px 20px 30px;
+
+.custom-page {
+  padding: 20px 40px 150px 40px;
 }
 
 span.h4 {
@@ -8,7 +9,6 @@ span.h4 {
 
 mat-form-field {
   width: 50%;
-  margin-top: 10px;
 }
 
 #save-custom {
@@ -18,4 +18,24 @@ mat-form-field {
   .mat-raised-button {
     margin-right: 5px;
   }
+}
+
+div.label {
+  padding-top: 15px;
+  padding-bottom: 0px;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 418px;
+  top: 5px;
+  max-width: 259px !important;
+}
+
+/deep/ .mat-form-field.modules-database-field,
+/deep/ .mat-form-field.custom-module-uri-field {
+  width: 600px !important;
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<es:envelope xmlns:es="http://marklogic.com/entity-services">
+  <es:headers>
+  </es:headers>
+  <es:instance>
+    <Customer CustomerID="Customer-1234">
+      <property name="name" value="Bob" />
+      <property name="interest" value="baseball" />
+      <property name="interest" value="astronomy" />
+      <property name="interest" value="programming" />
+    </Customer>
+  </es:instance>
+</es:envelope>

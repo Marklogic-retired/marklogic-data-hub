@@ -1,0 +1,19 @@
+{
+  "language": "zxx",
+  "name": "json-mapping",
+  "type": "MAPPING",
+  "version": 1,
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "options": {
+    "outputFormat": "json",
+    "collections": ["json-map"],
+    "mapping": {
+      "name": "e2e-mapping",
+      "version": 1
+    },
+    "sourceQuery": "cts.collectionQuery('json-coll')"
+  },
+  "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+}

@@ -101,6 +101,26 @@ export class MatchOption {
         return prop.name;
       })
     }
+    // Set algorithmRef based on matchType
+    if (!mOpt.algorithmRef) {
+      switch(mOpt.matchType) {
+        case "synonym":
+          this.algorithmRef = "thesaurus";
+          break;
+        case "double metaphone":
+          this.algorithmRef = "double-metaphone";
+          break;
+        case "zip":
+          this.algorithmRef = "zip-match";
+          break;
+        case "reduce":
+          this.algorithmRef = "standard-reduction";
+          break;
+        case "custom":
+          this.algorithmRef = mOpt.customFunction;
+          break;
+      }
+    }
   }
 
   /**

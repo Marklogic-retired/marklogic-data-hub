@@ -20,17 +20,29 @@ const datahub = new DataHub();
 function get(context, params) {
   let jobId = params["jobid"];
   let status = params["status"];
+  let flow = params["flow-name"];
+  let flowNames = params["flowNames"];
+  let latest = params["latest"];
 
   let resp = null;
 
   if(fn.exists(jobId) && fn.exists(status)) {
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request"]));
+    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request"]));
   }
   else if(fn.exists(jobId)) {
     resp = datahub.jobs.getJobDocWithId(jobId);
   }
   else if(fn.exists(status)) {
     resp = datahub.jobs.getJobDocs(status);
+  }
+  else if (fn.exists(flowNames)) {
+    resp = datahub.jobs.getJobDocsForFlows(flowNames);
+  }
+  else if (fn.exists(flow)) {
+    resp = datahub.jobs.getJobDocsByFlow(flow);
+  }
+  else if (fn.exists(latest)) {
+    resp = datahub.jobs.getLastestJobDocPerFlow();
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
@@ -47,22 +59,39 @@ function post(context, params, input) {
   let status = params["status"];
   let flow = params["flow-name"];
   let step = params["step"];
+  let lastCompleted = params["lastCompleted"];
+  let stepResponse = params["stepResponse"];
 
   let resp = null;
   let jobDoc = datahub.jobs.getJobDocWithId(jobId);
   if(jobDoc) {
-    jobDoc.job.lastAttemptedStep = step;
     jobDoc.job.jobStatus = status;
-    if(status === "finished") {
-      jobDoc.job.lastCompletedStep = step;
+    //update job status at the end of flow run
+    if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "canceled"|| status === "stop-on-error") {
+      jobDoc.job.timeEnded = fn.currentDateTime();
     }
+    //update job doc before and after step run
     else {
-      if(status === "finished_with_errors" || status === "failed" ) {
-        jobDoc.job.timeEnded = fn.currentDateTime();
-      }
+        jobDoc.job.lastAttemptedStep = step;
+        if(lastCompleted) {
+          jobDoc.job.lastCompletedStep = lastCompleted;
+        }
+        if(! jobDoc.job.stepResponses[step]){
+          jobDoc.job.stepResponses[step] = {};
+          jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
+          jobDoc.job.stepResponses[step].status = "running step " + step;
+        }
+        else {
+          let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
+          jobDoc.job.stepResponses[step]  = JSON.parse(stepResponse);
+          jobDoc.job.stepResponses[step].stepStartTime = tempTime;
+          jobDoc.job.stepResponses[step].stepEndTime = fn.currentDateTime();
+        }
     }
+
     //Update the job doc
     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, "xdmp.defaultPermissions()", ['Jobs','Job'], datahub.config.JOBDATABASE);
+    resp = jobDoc;
   }
   else {
     if(fn.exists(jobId) && fn.exists(flow)) {
@@ -71,12 +100,8 @@ function post(context, params, input) {
     else {
       fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
     }
-
   }
-
-
-
-
+  return resp;
 };
 
 function put(context, params, input) {};

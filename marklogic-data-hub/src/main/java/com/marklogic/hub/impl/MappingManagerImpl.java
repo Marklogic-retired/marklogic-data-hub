@@ -20,15 +20,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,32 +41,40 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Component
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
+    @Autowired
+    protected HubConfig hubConfig;
 
     @Autowired
-    private HubConfig hubConfig;
-
-    @Autowired
-    private HubProject hubProject;
+    protected HubProject hubProject;
 
     @Autowired
     private Scaffolding scaffolding;
 
+    @Autowired
+    private EntityManager entityManager;
 
     @Override public Mapping createMapping(String mappingName) {
+        return createMapping(mappingName, null);
+    }
+
+    @Override public Mapping createMapping(String mappingName, String entityName) {
         try {
             getMapping(mappingName);
             throw new DataHubProjectException("Mapping with that name already exists");
         }
         catch (DataHubProjectException e) {
-           return Mapping.create(mappingName);
+            if (entityName != null) {
+                HubEntity entity = entityManager.getEntityFromProject(entityName);
+                return Mapping.create(mappingName, entity);
+            } else {
+                return Mapping.create(mappingName);
+            }
         }
     }
 
@@ -75,7 +84,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         return mapper.treeToValue(node, MappingImpl.class);
     }
 
-    @Override public Mapping createMappingFromJSON(JsonNode json) throws IOException {
+    @Override public Mapping createMappingFromJSON(JsonNode json) {
         Mapping newMap = Mapping.create("default");
         newMap.deserialize(json);
         return newMap;
@@ -85,9 +94,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Path dir = getMappingDirPath(mappingName);
         if (dir.toFile().exists()) {
             try {
+                logger.info(format("Deleting mapping with name '%s' in directory: %s", mappingName, dir.toFile()));
                 FileUtils.deleteDirectory(dir.toFile());
             } catch (IOException e){
-                throw new DataHubProjectException("Could not delete mapping for project.");
+                throw new DataHubProjectException(format("Could not delete mapping with name '%s'", mappingName), e);
             }
         }
     }
@@ -101,7 +111,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
         try {
             if(autoIncrement){
-                mapping.incrementVersion();;
+                mapping.incrementVersion();
             }
             String mappingString = mapping.serialize();
             Path dir = getMappingDirPath(mapping.getName());
@@ -189,7 +199,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public Mapping getMapping(String mappingName) {
-
         Mapping foundMap = getMappingVersion(mappingName);
         if(foundMap != null){
             return foundMap;
@@ -198,11 +207,12 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         }
     }
 
-    @Override public Mapping getMapping(String mappingName, int version) {
-
+    @Override public Mapping getMapping(String mappingName, int version, boolean createIfNotExisted) {
         Mapping foundMap = getMappingVersion(mappingName, version);
         if(foundMap != null){
             return foundMap;
+        } else if (createIfNotExisted) {
+            return Mapping.create(mappingName);
         } else {
             throw new DataHubProjectException("Mapping not found in project: " + mappingName);
         }
@@ -213,13 +223,13 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         Mapping mapping = getMapping(mappingName);
         String jsonMap = null;
         if(mapping != null){
-                jsonMap = mapping.serialize();
+            jsonMap = mapping.serialize();
         }
         return jsonMap;
     }
 
-    @Override public String getMappingAsJSON(String mappingName, int version) {
-        Mapping mapping = getMapping(mappingName, version);
+    @Override public String getMappingAsJSON(String mappingName, int version, boolean createIfNotExisted) {
+        Mapping mapping = getMapping(mappingName, version, createIfNotExisted);
         String jsonMap = null;
         if(mapping != null){
             jsonMap = mapping.serialize();
@@ -229,53 +239,5 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     private Path getMappingDirPath(String mappingName){
         return Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
-    }
-
-
-    private HubModuleManager getPropsMgr() {
-        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
-        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
-        return propertiesModuleManager;
-    }
-
-    private List<JsonNode> getModifiedRawMappings(long minimumFileTimestampToLoad) {
-        logger.debug("min modified: " + minimumFileTimestampToLoad);
-        HubModuleManager propsManager = getPropsMgr();
-        propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
-
-        List<JsonNode> mappings = new ArrayList<>();
-        List<JsonNode> tempMappings = new ArrayList<>();
-        Path mappingsPath = hubConfig.getHubMappingsDir();
-        File[] mappingFiles = mappingsPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
-        List<String> mappingNames;
-        if (mappingFiles != null) {
-            mappingNames = Arrays.stream(mappingFiles)
-                .map(file -> file.getName())
-                .collect(Collectors.toList());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                boolean hasOneChanged = false;
-                for (String mappingName : mappingNames) {
-                    File[] mappingDefs = mappingsPath.resolve(mappingName).toFile().listFiles((dir, name) -> name.endsWith(MAPPING_FILE_EXTENSION));
-                    for (File mappingDef : mappingDefs) {
-                        if (propsManager.hasFileBeenModifiedSinceLastLoaded(mappingDef)) {
-                            hasOneChanged = true;
-                        }
-                        FileInputStream fileInputStream = new FileInputStream(mappingDef);
-                        tempMappings.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
-                    }
-                }
-                // all or nothing
-                if (hasOneChanged) {
-                    mappings.addAll(tempMappings);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        return mappings;
     }
 }

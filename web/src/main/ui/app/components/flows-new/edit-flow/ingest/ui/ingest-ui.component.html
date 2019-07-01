@@ -1,59 +1,160 @@
 <div layout-padding layout="column" class="ingest-page">
-    <info-label
-      [labelText]="config.inputFilePath.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.inputFilePath.description"
-    ></info-label>
+
+    <div class="label" 
+      [matTooltip]="tooltips.sourcePath"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+      matTooltipClass="source-path-tooltip"
+    >{{config.inputFilePath.label}}</div>
     <app-folder-browser
-      [startPath]="step.config.inputFilePath"
+      [startPath]="this.step.fileLocations.inputFilePath"
       (folderChosen)="changeFolder($event)"
       showFiles="true"
+      [absoluteOnly]="true"
     ></app-folder-browser>
 
-    <info-label
-      [labelText]="config.fileTypes.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.fileTypes.description"
-    ></info-label>
-    <mat-form-field layout-fill appearance="outline">
+    <div class="label"
+      [matTooltip]="tooltips.sourceType"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+      matTooltipClass="source-file-type-tooltip"
+    >{{config.fileTypes.label}}</div>
+    <mat-form-field layout-fill class="source-file-type">
       <mat-select
-        id="file_type_select"
-        [(ngModel)]="step.config.inputFileType"
+        id="source-file-type-select"
+        [(ngModel)]="this.step.fileLocations.inputFileType"
         name="filetype"
+        (selectionChange)="onChange()"
       >
         <mat-option
           *ngFor="let option of config.fileTypes.options"
           [value]="option.value"
+          [id]="'source-file-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <info-label
-      [labelText]="config.outputDocTypes.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.outputDocTypes.description"
-    ></info-label>
-    <mat-form-field layout-fill appearance="outline">
+    <div *ngIf="this.step.fileLocations.inputFileType === 'csv'">
+      <div class="label"
+        [matTooltip]="tooltips.separator"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"
+        matTooltipClass="csv-separator-field-tooltip"
+      >{{config.csvSeparator.label}}</div>
+      <mat-form-field layout-fill class="csv-separator-field">
+        <mat-select
+          id="csv-separator-select"
+          [(ngModel)]="this.step.fileLocations.separator"
+          name="separator"
+          (selectionChange)="onChange()"
+        >
+          <mat-option
+            *ngFor="let option of config.csvSeparator.options"
+            [value]="option.value"
+            [id]="'csv-separator-option-' + option.value"
+          >{{option.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="label"
+      [matTooltip]="tooltips.targetType"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+      matTooltipClass="target-file-type-tooltip"
+    >{{config.outputDocTypes.label}}</div>
+    <mat-form-field layout-fill class="target-file-type">
       <mat-select
-        [(ngModel)]="step.config.documentType"
+        id="target-file-type-select"
+        [(ngModel)]="this.step.options.outputFormat"
         name="doctype"
+        (selectionChange)="onChange()"
       >
         <mat-option
           *ngFor="let option of config.outputDocTypes.options"
           [value]="option.value"
+          [id]="'target-file-type-option-' + option.value"
         >{{option.label}}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <info-label
-      [labelText]="config.outputPermissions.label"
-      tooltipPlacement="right"
-      [tooltipText]="config.outputPermissions.description"
-    ></info-label>
-    <mat-form-field layout-fill appearance="outline">
-      <input matInput [(ngModel)]="this.step.config.outputPermissions" name="permissions"
+    <div class="label"
+      [matTooltip]="tooltips.targetPerms"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500" 
+    >{{config.outputPermissions.label}}</div>
+    <mat-form-field layout-fill class="target-permissions-field">
+      <input
+        id="target-permissions"
+        matInput
+        [(ngModel)]="this.step.options.permissions"
+        name="permissions"
+        (change)="onChange()"
       />
     </mat-form-field>
+
+    <div class="label"
+      [matTooltip]="tooltips.targetURIReplace"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+      matTooltipClass="target-uri-replace" 
+    >{{config.outputURIReplacement.label}}</div>
+    <mat-form-field layout-fill class="target-uri-replace-field">
+      <mat-hint>Optional</mat-hint>
+      <input
+        id="target-uri-replace"
+        matInput
+        [(ngModel)]="this.step.fileLocations.outputURIReplacement"
+        name="permissions"
+        (change)="onChange()"
+      />
+    </mat-form-field>
+    <div class="label"
+      [matTooltip]="tooltips.targetURIPreview"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+    >{{config.outputURIPreview.label}}
+    </div>
+  <mat-form-field layout-fill class="target-uri-replace-field">
+    <input
+      id="uri-preview"
+      matInput
+      value = {{uri}}
+      name="uri-preview"
+      readonly
+    />
+  </mat-form-field>
+
+
+
+    <span
+       class="mlcp-label"
+       [matTooltip]="tooltips.mlcp"
+       matTooltipPosition="left"
+       matTooltipShowDelay="500"
+       matTooltipHideDelay="500">
+          MLCP Command
+
+      <button
+            class="mdl-button mdl-js-button mdl-button&#45;&#45;icon"
+            [appClipboard]="mlcpcmd"
+            (onSuccess)="clipboardSuccess.emit()">
+            <i class="fa fa-copy" aria-hidden="true">
+            </i>
+      </button>
+    </span>
+        <div class="mlcp-cmd">
+          <p #mlcpcmd>{{mlcpCommand}}</p>
+        </div>
+
 </div>

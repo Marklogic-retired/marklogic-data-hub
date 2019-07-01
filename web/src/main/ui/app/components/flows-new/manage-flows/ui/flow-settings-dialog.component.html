@@ -2,33 +2,49 @@
 <div id="flow-dialog" mat-dialog-content [formGroup]="form" class="content">
   <mat-form-field layout-fill>
     <mat-label>Flow name</mat-label>
-    <input id="flow-name" matInput formControlName="name"/>
+    <input id="flow-name" matInput formControlName="name" required [errorStateMatcher]="instantErrorMatcher" />
+    <mat-error id="step-name-error" *ngIf="form.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
   </mat-form-field>
   <mat-form-field layout-fill>
-    <mat-label>Description (optional)</mat-label>
+    <mat-label>Description</mat-label>
     <input id="flow-desc" matInput formControlName="description"/>
   </mat-form-field>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Advanced Settings (optional)
+        Advanced Settings
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.batchSize"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       <mat-label>Batch Size</mat-label>
       <input id="flow-batch-size" matInput formControlName="batchSize"
       />
     </mat-form-field>
-    <mat-form-field layout-fill>
+    <mat-form-field
+      [matTooltip]="tooltips.threadCount"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       <mat-label>Thread Count</mat-label>
       <input id="flow-thread-count" matInput formControlName="threadCount"
       />
     </mat-form-field>
     <mat-label>
-      Options
+      <span
+        [matTooltip]="tooltips.options"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"
+        matTooltipClass="options-tooltip">
+        Options
+      </span>
     </mat-label>
     <button class="flow-add-option-btn" mat-icon-button (click)="onAddOption()">
-      <mat-icon>add</mat-icon>
+      <mat-icon>add_circle</mat-icon>
     </button>
     <div
       id="flow-dialog"
@@ -45,7 +61,7 @@
           <input [class]="'flow-option-value-' + i" matInput formControlName="value"/>
         </mat-form-field>
         <button class="flow-remove-option-btn" mat-icon-button (click)="onRemoveOption(i)">
-          <mat-icon>remove</mat-icon>
+          <mat-icon>remove_circle</mat-icon>
         </button>
       </div>
     </div>
@@ -53,5 +69,5 @@
 </div>
 <mat-dialog-actions class="bottom">
   <button id="flow-cancel-btn" color="primary" mat-raised-button (click)="onCancel()">CANCEL</button>
-  <button id="flow-save-btn" color="primary" mat-raised-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button id="flow-save-btn" [disabled]="!form.valid" color="primary" mat-raised-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
 </mat-dialog-actions>

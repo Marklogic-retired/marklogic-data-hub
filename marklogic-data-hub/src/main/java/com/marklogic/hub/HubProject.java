@@ -16,7 +16,7 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.step.Step;
+import com.marklogic.hub.step.StepDefinition;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -48,11 +48,11 @@ public interface HubProject {
     Path getHubPluginsDir();
 
     /**
-     * Gets the path for the hub step directory
+     * Gets the path for the hub step-definitions directory
      *
-     * @return the path for the hub steps directory
+     * @return the path for the hub step-definitions directory
      */
-    Path getStepsDir();
+    Path getStepDefinitionsDir();
 
     /**
      * Gets the path for the hub entities directory
@@ -62,6 +62,13 @@ public interface HubProject {
     Path getHubEntitiesDir();
 
     /**
+     * Gets the legacy path for the hub entities directory
+     *
+     * @return the legacy path for the hub entities directory
+     */
+    Path getLegacyHubEntitiesDir();
+
+    /**
      * Gets the path for the hub mappings directory
      *
      * @return the path for the hub mappings directory
@@ -69,12 +76,19 @@ public interface HubProject {
     Path getHubMappingsDir();
 
     /**
+     * Gets the legacy path for the hub mappings directory
+     *
+     * @return the legacy path for the hub mappings directory
+     */
+    Path getLegacyHubMappingsDir();
+
+    /**
      * Gets the path for the hub step directory by step type
      *
      * @param type - a Step type
      * @return the path for the hub steps directory
      */
-    Path getStepsDirByType(Step.StepType type);
+    Path getStepsDirByType(StepDefinition.StepDefinitionType type);
 
     /**
      * Gets the path for the hub's config directory
@@ -199,6 +213,13 @@ public interface HubProject {
     Path getUserFinalModulesDir();
 
     /**
+     * Gets the path for the custom modules directory
+     *
+     * @return the path for the custom modules directory
+     */
+    Path getCustomModulesDir();
+
+    /**
      * Checks if the project has been initialized or not
      *
      * @return true if initialized, false if not
@@ -230,6 +251,10 @@ public interface HubProject {
     Path getEntityDir(String entityName);
 
     Path getMappingDir(String mappingName);
+
+    Path getLegacyMappingDir(String mappingName);
+
+    Path getCustomModuleDir(String stepName, String stepType);
 
     /**
      * Returns the base directory for this project

@@ -19,3 +19,25 @@ div.prop-group input {
 #properties-reduce {
   margin-bottom: 10px;
 }
+
+.mat-icon {
+  color: #2a4356;
+}
+
+.add-property-btn .mat-icon {
+  position: relative;
+  top: -2px;
+}
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 448px;
+  top: -8px;
+}
+/deep/ .mat-tooltip.properties-reduce-tooltip {
+  top: 0;
+  left: 380px;
+}
+/deep/ .mat-tooltip.weight-tooltip {
+  max-width: 260px !important;
+}

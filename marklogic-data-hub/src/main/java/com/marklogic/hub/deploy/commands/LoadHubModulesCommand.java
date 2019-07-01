@@ -20,18 +20,10 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ext.file.CollectionsDocumentFileProcessor;
-import com.marklogic.client.ext.file.JarDocumentFileReader;
-import com.marklogic.client.ext.file.PermissionsDocumentFileProcessor;
-import com.marklogic.client.ext.file.TokenReplacerDocumentFileProcessor;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.file.*;
+import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
-import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
-import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.hub.HubConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,20 +52,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES - 1);
     }
 
-    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
-        DefaultTokenReplacer r = new DefaultTokenReplacer();
-        final Map<String, String> customTokens = appConfig.getCustomTokens();
-        if (customTokens != null && !customTokens.isEmpty()) {
-            r.addPropertiesSource(() -> {
-                Properties p = new Properties();
-                p.putAll(customTokens);
-                return p;
-            });
-        }
-
-        return r;
-    }
-
     @Override
     public void execute(CommandContext context) {
         String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
@@ -82,17 +60,11 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
         DatabaseClient modulesClient = hubConfig.newModulesDbClient();
 
-        AppConfig appConfig = context.getAppConfig();
         AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
-        JarDocumentFileReader jarDocumentFileReader = new JarDocumentFileReader();
-        jarDocumentFileReader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
-        jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));
-        jarDocumentFileReader.addDocumentFileProcessor(new CollectionsDocumentFileProcessor("hub-core-module"));
-        jarDocumentFileReader.addDocumentFileProcessor(new PermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
-        assetFileLoader.setDocumentFileReader(jarDocumentFileReader);
+        prepareAssetFileLoader(assetFileLoader, context);
 
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
-        modulesLoader.addFailureListener( (throwable, client) -> {
+        modulesLoader.addFailureListener((throwable, client) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
                 caughtException = throwable;
@@ -114,6 +86,36 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (caughtException != null) {
             throw new RuntimeException(caughtException);
         }
+    }
+
+    protected void prepareAssetFileLoader(AssetFileLoader loader, CommandContext context) {
+        AppConfig appConfig = context.getAppConfig();
+
+        Integer batchSize = appConfig.getModulesLoaderBatchSize();
+        if (batchSize != null) {
+            loader.setBatchSize(batchSize);
+        }
+        
+        JarDocumentFileReader jarDocumentFileReader = new JarDocumentFileReader();
+        jarDocumentFileReader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
+        jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));
+        jarDocumentFileReader.addDocumentFileProcessor(new CollectionsDocumentFileProcessor("hub-core-module"));
+        jarDocumentFileReader.addDocumentFileProcessor(new PermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
+        loader.setDocumentFileReader(jarDocumentFileReader);
+    }
+
+    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
+        DefaultTokenReplacer r = new DefaultTokenReplacer();
+        final Map<String, String> customTokens = appConfig.getCustomTokens();
+        if (customTokens != null && !customTokens.isEmpty()) {
+            r.addPropertiesSource(() -> {
+                Properties p = new Properties();
+                p.putAll(customTokens);
+                return p;
+            });
+        }
+
+        return r;
     }
 
     public void setHubConfig(HubConfig hubConfig) {

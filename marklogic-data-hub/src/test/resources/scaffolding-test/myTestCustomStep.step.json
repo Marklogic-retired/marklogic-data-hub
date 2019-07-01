@@ -3,10 +3,10 @@
   "type": "CUSTOM",
   "version": 1,
   "options": {
+    "sourceQuery" : "cts.collectionQuery('default-ingestion')",
     "collections" : [ "myTestCustomStep" ]
   },
   "customHook" : { },
   "language" : "zxx",
-  "modulePath" : "/path/to/your/step/module/main.sjs",
-  "identifier" : "cts.uris(null, null, cts.collectionQuery('default-ingest'))"
+  "modulePath" : "/path/to/your/step/module/main.sjs"
 }

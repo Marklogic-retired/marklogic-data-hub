@@ -29,6 +29,8 @@ public class HubFileFilter implements FileFilter {
             !f.getName().startsWith(".") &&
             !f.getName().endsWith("entity.json") &&
             !f.getName().endsWith("mapping.json") &&
+            !f.getName().endsWith("flow.json") &&
+            !f.getName().endsWith("step.json") &&
             !f.getName().equals(f.getParentFile().getName() + ".properties") &&
             !f.toString().matches(".*[/\\\\]REST[/\\\\].*") &&
 

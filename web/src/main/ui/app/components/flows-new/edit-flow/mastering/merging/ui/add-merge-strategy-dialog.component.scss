@@ -1,11 +1,25 @@
-.mat-dialog-title {
-  margin: -6px 0 20px;
-  font-size: 24px;
+/deep/ h1.mat-dialog-title {
+  margin-top: -12px !important;
+  margin-left: -4px !important;
+  margin-bottom: 11px !important;
 }
 
-.mat-dialog-actions {
-  padding: 12px 0;
-  margin-bottom: -20px;
+/deep/ .mat-dialog-content {
+  background: #f3f3f3 !important;
+  padding: 20px !important;
+}
+
+/deep/ .mat-dialog-actions {
+  margin-right: -4px !important;
+  justify-content: flex-end !important;
+}
+
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 470px;
+  top: -8px;
+  max-width: 230px !important;
 }
 
 div.source-weights-group input {
@@ -41,3 +55,14 @@ mat-radio-group {
 mat-radio-button {
     margin-left: 10px;
 }
+
+.name-req {
+  font-size: 11px;
+  position: relative;
+  top: -2px;
+}
+
+div.source-weights-group input {
+  background-color: #f3f3f3;
+}
+

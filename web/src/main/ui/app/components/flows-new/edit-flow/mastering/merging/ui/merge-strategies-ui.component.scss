@@ -61,6 +61,13 @@
   cursor: pointer!important;
 }
 
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: -250px;
+  max-width: 230px !important;
+}
+
 $header-height: 70px !default;
 
 button {
@@ -267,4 +274,12 @@ button {
   color: white !important;
   background-color: #2a4356 !important;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+}
+
+/deep/ #merge-strategy-default .mat-radio-button.mat-accent.mat-radio-checked div.mat-radio-outer-circle {
+  border-color: #6d8ba5 !important;
+}
+
+/deep/ #merge-strategy-default .mat-radio-button.mat-accent div.mat-radio-inner-circle {
+  background-color: #6d8ba5 !important;
 }

@@ -117,11 +117,6 @@ public class JobMonitorImpl extends ResourceManager implements JobMonitor {
         return null;
     }
 
-    //TODO Implement this after flow artifact can be created
-    public String getNextStep(String jobId) {
-        return null;
-    }
-
     public class Jobs extends ResourceManager {
         private static final String NAME = "ml:jobs";
 

@@ -1,32 +1,30 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder } from 'protractor'
-import {pages} from '../page-objects/page';
+import {browser, $} from 'protractor';
 import auth from './auth';
+import entity from './entities';
 import flows from './flows';
-import create from './create';
-import runFlows from './run';
+import browseData from './browse';
+import dashboard from './dashboard';
 import jobs from './jobs';
 import runTraces from './traces';
 import mappings from './mappings';
 import uninstall from './uninstall';
+import scenarios from './scenarios';
 
 import CUSTOM_MATCHERS from '../matchers'
-import loginPage from '../page-objects/auth/login';
-const request = require('request').defaults({ strictSSL: false })
+
+const request = require('request').defaults({strictSSL: false})
 const tmp = require('tmp');
 const fs = require('fs-extra');
 const path = require('path');
-let tmpobj = tmp.dirSync({ unsafeCleanup: true });
-fs.copySync('e2e/qa-data/data/input', path.join(tmpobj.name, 'input'));
-console.log('DIR: ' + tmpobj.name);
+let currentDirectory = process.cwd();
+console.log('Current Directory: ' + currentDirectory);
+let qaProjectDirectory = path.join(currentDirectory, 'e2e/qa-project');
+console.log('QA Project Directory: ' + qaProjectDirectory);
 
 describe('DataHub', function () {
   beforeAll(function (done) {
     //apply custom matchers
     jasmine.addMatchers(CUSTOM_MATCHERS)
-
-    /*let yargs = require('yargs').argv
-    let width = typeof yargs.width === 'number' ? yargs.width : 1920
-    let height = typeof yargs.height === 'number' ? yargs.height : 1080*/
 
     request({
       url: `http://localhost:8080/api/projects/reset`
@@ -35,40 +33,31 @@ describe('DataHub', function () {
       browser.driver.get(browser.baseUrl)
         .then(() => browser.driver.manage().deleteAllCookies())
         .then(() => $('body').isPresent())
-        .then(() => {}, () => {})
+        .then(() => {
+        }, () => {
+        })
         .then(() => browser.driver.getCapabilities())
         .then(caps => {
           console.log('browserName:' + caps.get('browserName'));
-          console.log('baseUrl:'+browser.baseUrl);
+          console.log('baseUrl:' + browser.baseUrl);
         })
         .then(() => done())
-
-      //.then(() => browser.driver.getCapabilities())
-      //.then(caps => {
-      //  console.log('browserName:' + caps.get('browserName'));
-      //  pages.browserName =yargs.browserName
-      //  pages.baseUrl =yargs.baseUrl
-      //  console.log(`pages.baseUrl: ${pages.baseUrl}`);
-      //})
-      // our Jenkins machine runs with a pretty low resolution, and we also
-      // have an app that's misbehaving in smaller windows, so this is a delicate
-      // setting
-      //.then(() => browser.driver.manage().window().maximize())
-      //.then(() => done())
     });
   });
 
-  afterAll(function(done) {
-    tmpobj.removeCallback();
+  afterAll(function (done) {
     done();
   });
 
-  auth(tmpobj.name);
-  flows(tmpobj.name);
-  //create(tmpobj.name);
-  //runFlows(tmpobj.name);
+  auth(qaProjectDirectory);
+  entity(qaProjectDirectory);
+  flows(qaProjectDirectory);
+  //runFlows(qaProjectDirectory);
+  scenarios(qaProjectDirectory);
   //jobs();
+  browseData(qaProjectDirectory);
   //runTraces();
   //mappings();
-  uninstall(tmpobj.name);
+  dashboard(qaProjectDirectory);
+  uninstall(qaProjectDirectory);
 });

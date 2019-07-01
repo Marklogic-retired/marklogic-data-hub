@@ -55,7 +55,7 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
     .edit-area {
       float: right;
 
-      .fa-remove {
+      .fa-trash {
         color: $red-color;
       }
 
@@ -189,10 +189,6 @@ $red-color: unquote("rgb(#{$palette-datahub-red})");
       color: #a94442;
     }
   }
-}
-
-/deep/ app-resizable {
-  min-width: $entity-model-min-width;
 }
 
 /* Fix bug showing double tooltip arrows */

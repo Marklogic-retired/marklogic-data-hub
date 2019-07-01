@@ -1,112 +1,106 @@
-/*
- * Copyright 2012-2019 MarkLogic Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.marklogic.hub.flow;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.job.Job;
 
-
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * Executes a flow with options
- */
 public interface FlowRunner {
 
-    /**
-     * Sets the flow to be used with the flow runner
-     * @param flow the flow object to be used
-     * @return the flow runner object
-     */
-    FlowRunner withFlow(Flow flow);
 
     /**
-     * Sets the batch size for the flow runner
-     * @param batchSize - the size of the batch in integer form
-     * @return the flow runner object
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @return a response object
      */
-    FlowRunner withBatchSize(int batchSize);
+    RunFlowResponse runFlow(String flow, String jobId);
 
     /**
-     * Sets the batch size for the flow runner
-     * @param step - the step to be run in the flow
-     * @return the flow runner object
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @return a response object
      */
-
-    FlowRunner withStep(int step) ;
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId);
 
     /**
-     * Sets the batch size for the flow runner
-     * @param jobId - the id of the job
-     * @return the flow runner object
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     * @return a response object
      */
-
-    FlowRunner withJobId(String jobId) ;
-
-    /**
-     * Sets the thread count for the flowrunner
-     * @param threadCount - the number of threads for the flow runner to use
-     * @return the flow runner object
-     */
-    FlowRunner withThreadCount(int threadCount);
+    RunFlowResponse runFlow(String flow, String jobId, Map<String, Object> options);
 
     /**
-     * Sets the source client on the flow runner. The source client determines which database to run against for building the envelope.
-     * @param sourceClient - the client that will be used
-     * @return  the flow runner object
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     * @return a response object
      */
-    FlowRunner withSourceClient(DatabaseClient sourceClient);
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options);
 
     /**
-     * Sets the database where flow output data will be persisted to
-     * @param destinationDatabase - the name of the destination database
-     * @return the flow runner object
+     * Runs the flow, with a specific set of steps, with all custom settings
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @param jobId the jobid to be used for the flow
+     * @param options the key/value options to be passed
+     * @param stepConfig the key/value config to override the running of the step
+     * @return a response object
      */
-    FlowRunner withDestinationDatabase(String destinationDatabase);
+    RunFlowResponse runFlow(String flow, List<String> steps, String jobId, Map<String, Object> options, Map<String, Object> stepConfig);
 
     /**
-     * Sets the options to be passed into the xqy or sjs flow in the $options or options variables of main.
-     * @param options - the object map of options as string/object pair
-     * @return the flow runner object
+     * Runs the flow, with a specific set of steps, with all defaults from step
+     *
+     * @param flow the flow to run
+     * @param steps the steps in the flow to run
+     * @return a response object
      */
-    FlowRunner withOptions(Map<String, Object> options);
+    RunFlowResponse runFlow(String flow, List<String> steps);
 
     /**
-     * Sets if this will stop the job on a failure, or if it will continue on
-     * @param stopOnFailure - true to stop the job if a failure happens
-     * @return the flow runner object
+     * Runs the entire flow, with full defaults
+     *
+     * @param flow the flow to run
+     * @return a response object
      */
-    FlowRunner withStopOnFailure(boolean stopOnFailure);
+    RunFlowResponse runFlow(String flow);
 
     /**
-     * Sets a listener on each item completing
-     * @param listener the listen object to set
-     * @return the flow runner object
+     * Runs the flow.
+     *
+     * @param jobId the id of the running flow
+     *
      */
-    FlowRunner onItemComplete(FlowItemCompleteListener listener);
+    void stopJob(String jobId);
 
     /**
-     * Sets the failure listener for each item in the flow
-     * @param listener the listener for the failures in the flow
-     * @return the flow runner object
+     * Blocks until the flow execution is complete.
      */
-    FlowRunner onItemFailed(FlowItemFailureListener listener);
+    void awaitCompletion();
+
+    /**
+     * Blocks until the flow execution is complete.
+     *
+     * @param timeout the maximum time to wait
+     * @param unit the time unit of the timeout argument
+     *
+     * @throws InterruptedException if interrupted while waiting
+     * @throws TimeoutException if times out
+     */
+    void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException;
 
     /**
      * Sets the status change listener on the flowrunner object
@@ -115,41 +109,4 @@ public interface FlowRunner {
      */
     FlowRunner onStatusChanged(FlowStatusListener listener);
 
-    /**
-     * Sets the finished listener for when the item has processed (similar to a finally)
-     * @param listener - the listener for the flow item when it finishes
-     * @return the flow runner object
-     */
-    FlowRunner onFinished(FlowFinishedListener listener);
-
-    /**
-     * Blocks until the job is complete.
-     */
-    void awaitCompletion();
-
-    /**
-     * Blocks until the job is complete.
-     *
-     * @param timeout the maximum time to wait
-     * @param unit the time unit of the timeout argument
-     *
-     * @throws InterruptedException if interrupted while waiting
-     * @throws TimeoutException if an timeout occurred.
-     */
-    void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException;
-
-    /**
-     * Runs the flow and creates the job
-     * @return Job object for the flow that is run
-     */
-    Job run();
-
-    /**
-     * Runs the flow and creates the job. This bypasses the collector
-     *
-     * @param uris the ids to pass to the harmonization flow
-     *
-     * @return Job object for the flow that is run
-     */
-    Job run(Collection<String> uris);
 }

@@ -17,7 +17,9 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.web.model.SJSSearchQuery;
 import com.marklogic.hub.web.model.SearchQuery;
 import com.marklogic.hub.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(value="/api/search")
+@RequestMapping(value = "/api/search")
 public class SearchController {
 
     @Autowired
@@ -42,7 +44,7 @@ public class SearchController {
     private HubConfigImpl hubConfig;
 
     @Bean
-    @Scope(proxyMode= ScopedProxyMode.TARGET_CLASS, value="request")
+    @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
     SearchService searchService() {
         return new SearchService(hubConfig);
     }
@@ -53,6 +55,12 @@ public class SearchController {
         return searchService.search(searchQuery).get();
     }
 
+    @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonNode sjsSearch(@RequestBody SJSSearchQuery SJSSearchQuery) {
+        return searchService.sjsSearch(SJSSearchQuery);
+    }
+
     @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getDoc(@RequestParam String database, @RequestParam String docUri) {
@@ -60,7 +68,8 @@ public class SearchController {
         String body = searchService.getDoc(database, docUri);
         if (body.startsWith("<")) {
             headers.setContentType(MediaType.APPLICATION_XML);
-        } else {
+        }
+        else {
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         }
         return new ResponseEntity<>(body, headers, HttpStatus.OK);

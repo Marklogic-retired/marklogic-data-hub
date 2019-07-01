@@ -115,19 +115,19 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
             }
 
 
-            // lets do steps
-            resources = resolver.getResources("classpath*:/hub-internal-artifacts/steps/**/*.step.json");
+            // lets do step-definitions
+            resources = resolver.getResources("classpath*:/hub-internal-artifacts/step-definitions/**/*.step.json");
             for (Resource r : resources) {
-                File flowFile = new File("hub-internal-artifacts/steps/" + r.getURL().getPath().substring(r.getURL().getPath().indexOf("hub-internal-artifacts/steps/")));
+                File flowFile = new File("hub-internal-artifacts/step-definitions/" + r.getURL().getPath().substring(r.getURL().getPath().indexOf("hub-internal-artifacts/step-definitions/")));
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
                 DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                meta.getCollections().add("http://marklogic.com/data-hub/step");
+                meta.getCollections().add("http://marklogic.com/data-hub/step-definition");
 
                 if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
-                    stagingStepDocumentWriteSet.add("/steps/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
-                    finalStepDocumentWriteSet.add("/steps/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
+                    stagingStepDocumentWriteSet.add("/step-definitions/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
+                    finalStepDocumentWriteSet.add("/step-definitions/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
                     propertiesModuleManager.saveLastLoadedTimestamp(flowFile, new Date());
                 }
             }

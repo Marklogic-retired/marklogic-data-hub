@@ -35,3 +35,35 @@ h1.mat-dialog-title {
   flex-direction: row;
   justify-content: space-around;
 }
+
+.mat-icon {
+  color: #2a4356;
+}
+
+.flow-add-option-btn .mat-icon {
+  position: relative;
+  top: -1px;
+}
+
+div.key-value-group {
+  /deep/ div.mat-form-field-infix {
+    width: 170px !important;
+  }
+  input {
+    border: 0;
+  }
+}
+
+/deep/ .mat-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: -8px;
+}
+
+/deep/ .mat-tooltip.options-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: 0;
+}

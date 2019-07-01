@@ -1,0 +1,15 @@
+{
+  "path-namespace" : [ {
+    "prefix" : "es",
+    "namespace-uri" : "http://marklogic.com/entity-services"
+  } ],
+  "range-element-index" : [ {
+    "invalid-values" : "reject",
+    "collation": "",
+    "localname" : "updated",
+    "namespace-uri" : null,
+    "range-value-positions" : false,
+    "scalar-type" : "dateTime"
+  } ],
+  "database-name" : "%%mlFinalDbName%%"
+}

@@ -92,15 +92,9 @@ dependencies {
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-
-
-    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
-
-    // If you also want to support JUnit 3 and JUnit 4 tests
-    testCompile "junit:junit:${junit4Version}"
-    testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
   
-    testCompile("io.rest-assured:rest-assured:3.0.3")
+    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+    testCompile "io.rest-assured:rest-assured:3.0.3"
     testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
@@ -156,7 +150,12 @@ task copyIndexHtml(type: Copy) {
 }
 
 task runUI(type: NpmTask) {
-  args = ['start']
+  args = ['run', 'start']
+  dependsOn tasks.npmInstallUI
+}
+
+task runUIMocks(type: NpmTask) {
+  args = ['run', 'startmocks']
   dependsOn tasks.npmInstallUI
 }
 

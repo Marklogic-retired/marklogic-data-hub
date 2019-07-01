@@ -31,7 +31,7 @@ class Step {
       this.hubUtils = datahub.hubUtils;
       this.performance = datahub.performance;
     }
-    this.stepTypes = ['ingest', 'mapping', 'custom'];
+    this.stepTypes = ['ingestion', 'mapping', 'custom', 'mastering'];
   }
 
   getStepTypes() {
@@ -41,7 +41,7 @@ class Step {
   getStepNames(){
     let names = {};
     for(let type of this.getStepTypes()){
-      let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/step')];
+      let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/step-definition')];
       let docs = cts.search(cts.andQuery(query));
       names[type] = [];
       if(docs) {
@@ -57,13 +57,13 @@ class Step {
   }
 
   getSteps() {
-    let query = [cts.directoryQuery('/steps/', 'infinity'),  cts.collectionQuery('http://marklogic.com/data-hub/step')];
+    let query = [cts.directoryQuery('/step-definitions/', 'infinity'),  cts.collectionQuery('http://marklogic.com/data-hub/step-definition')];
     return cts.search(cts.andQuery(query)).toArray();
   }
 
   getStepNamesByType(type = 'custom') {
     let names = [];
-    let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/step')];
+    let query = [cts.jsonPropertyValueQuery('type', type),  cts.collectionQuery('http://marklogic.com/data-hub/step-definition')];
     let docs = cts.search(cts.andQuery(query));
     if(docs) {
       for(let doc of docs) {
@@ -77,12 +77,12 @@ class Step {
   }
 
   getStepsByType(type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('type', type)];
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
     return cts.search(cts.andQuery(query)).toArray();
   }
 
   getStepByNameAndType(name, type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, 'case-insensitive'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
     let doc = fn.head(cts.search(cts.andQuery(query)));
     if(doc) {
       return doc.toObject();
@@ -90,7 +90,7 @@ class Step {
   }
 
   getStepProcessor(flow, name, type = 'custom') {
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step'), cts.jsonPropertyValueQuery('name', name), cts.jsonPropertyValueQuery('type', type)];
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, 'case-insensitive'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
     let doc = fn.head(cts.search(cts.andQuery(query)));
     if(doc){
       doc = doc.toObject();
@@ -100,7 +100,7 @@ class Step {
   }
 
   deleteSteps(name, type) {
-    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/steps/"),cts.collectionQuery('http://marklogic.com/data-hub/step'),
+    let uris = cts.uris("", null ,cts.andQuery([cts.directoryQuery("/step-definitions/"),cts.collectionQuery('http://marklogic.com/data-hub/step-definition'),
       cts.jsonPropertyValueQuery("name", name), cts.jsonPropertyValueQuery("type", type)]));
     for (let doc of uris) {
       if (fn.docAvailable(doc)){

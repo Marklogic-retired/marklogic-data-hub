@@ -96,6 +96,12 @@ export class EntityModelerComponent implements AfterViewChecked {
       this.draggingEntity.lastX = event.clientX;
       this.draggingEntity.lastY = event.clientY;
 
+      // this code forces a redraw of the foreign object
+      const fo = this.draggingBox.closest('.foreign') as HTMLElement;
+      const disp = fo.style.display;
+      fo.style.display = 'none';
+      const oh = fo.offsetHeight;
+      fo.style.display = disp;
     } else if (this.draggingVertex) {
       let p = this.pointToSvg(event.clientX, event.clientY);
       this.draggingVertex.x = p.x;
@@ -117,9 +123,11 @@ export class EntityModelerComponent implements AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    if (!this.svgRect && this.svgRoot && this.svgRoot.nativeElement) {
-      const svg = this.svgRoot.nativeElement;
-      this.svgRect = new Rect(svg.getBoundingClientRect());
+    if (!this.svgRect && this.svgRoot && this.svgRoot.nativeElement && this.entitiesLoaded) {
+      setTimeout(() => {
+        const svg = this.svgRoot.nativeElement;
+        this.svgRect = new Rect(svg.getBoundingClientRect());
+      }, 100);
     }
   }
 
@@ -290,7 +298,7 @@ export class EntityModelerComponent implements AfterViewChecked {
   }
 
   deleteEntity(entity: Entity) {
-    let result = this.dialogService.confirm(`Delete the ${entity.name} entity?\n\nAny flows associated with the entity will also be deleted.`, 'No', 'Yes');
+    let result = this.dialogService.confirm(`Delete the ${entity.name} entity?`, 'No', 'Yes');
     result.subscribe(() => {
       this.entitiesService.deleteEntity(entity);
     }, () => {});
@@ -376,6 +384,7 @@ export class EntityModelerComponent implements AfterViewChecked {
     () => {
       console.log('cancel');
     });
+    this.toolsVisible = !this.toolsVisible;
   }
 
   /**

@@ -1,0 +1,30 @@
+{
+  "info" : {
+    "title" : "e2eentity",
+    "baseUri": "http://example.com/",
+    "version" : "0.0.1",
+    "description": "An e2e entity"
+  },
+  "definitions" : {
+    "e2eentity" : {
+      "description": "An e2e entity",
+      "required" : [ ],
+      "rangeIndex" : [ "name" ],
+      "elementRangeIndex": ["salary"],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id": {
+          "datatype": "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "salary": {
+          "datatype": "decimal"
+        }
+      }
+    }
+  }
+}

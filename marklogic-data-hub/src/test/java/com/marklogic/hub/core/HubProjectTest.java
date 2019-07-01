@@ -4,9 +4,10 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -65,7 +66,7 @@ public class HubProjectTest extends HubTestBase {
 
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
 
-        config.setflowOperatorRoleName("myrole");
+        config.setFlowOperatorRoleName("myrole");
         config.setFlowOperatorUserName("myuser");
 
         config.initHubProject();
@@ -142,7 +143,7 @@ public class HubProjectTest extends HubTestBase {
         assertEquals(config.getDbName(DatabaseKind.STAGING_SCHEMAS), props.getProperty("mlStagingSchemasDbName"));
         assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_SCHEMAS).toString(), props.getProperty("mlStagingSchemasForestsPerHost"));
 
-        assertEquals(config.getflowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
+        assertEquals(config.getFlowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
         assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
@@ -159,30 +160,5 @@ public class HubProjectTest extends HubTestBase {
         String expectedPath = Paths.get(PROJECT_PATH, ".tmp", envName + "-" + adminHubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
 
         assertEquals(expectedPath, adminHubConfig.getHubProject().getUserModulesDeployTimestampFile());
-    }
-    
-    @Test
-    public void upgrade300To403ToCurrentVersion() throws Exception {
-        Assumptions.assumeFalse((isCertAuth() || isSslRun() || getFlowDeveloperConfig().getIsProvisionedEnvironment()));
-        final String projectPath = "build/tmp/upgrade-projects/dhf403from300";
-        final File projectDir = Paths.get(projectPath).toFile();
-
-        FileUtils.deleteDirectory(projectDir);
-        FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf403from300").toFile(), projectDir);
-        resetProperties();
-        adminHubConfig.createProject(projectDir.getAbsolutePath());
-        adminHubConfig.refreshProject();
-
-        dataHub.upgradeHub();
-
-        // Confirm that the directories have been backed up
-        Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
-                .resolve("src/main/hub-internal-config-4.0.3").toFile().exists());
-        //This file should be present in backed up location
-        Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
-                .resolve("src/main/hub-internal-config-4.0.3/databases/final-database.json").toFile().exists());
-        Assertions.assertTrue(adminHubConfig.getHubProject().getProjectDir()
-                .resolve("src/main/ml-config-4.0.3").toFile().exists());
-
     }
 }
