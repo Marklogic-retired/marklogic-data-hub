@@ -14,6 +14,7 @@ export class FlowsTooltips {
     targetType: 'The format of your stored data. Default is JSON.',
     targetPerms: 'The comma-separated roles required to access the ingested data.',
     targetURIReplace: "A comma-separated list of regular expression patterns and their replacement strings to customize the URIs of the ingested records. Example: /foo/bar,'/mydir'",
+    targetURIPreview: 'An example of a URI of an ingested document based on the specified options. The actual URI will vary for each document.',
     mlcp: 'Paste this command into the terminal to ingest files using MLCP. Note that the URIs created by MLCP and Quickstart are different for delimited files.'
   }
 
