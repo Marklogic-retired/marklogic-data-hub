@@ -19,7 +19,8 @@
       <mdl-textfield type="text" label="Description" [(ngModel)]="entity.info.description" floating-label></mdl-textfield>
     </div>
     <div>
-      <mdl-textfield type="text" label="Base URI" [(ngModel)]="entity.info.baseUri" floating-label></mdl-textfield>
+      <mdl-textfield type="text" label="Base URI" required [(ngModel)]="entity.info.baseUri" floating-label></mdl-textfield>
+      <span *ngIf="!validBaseUri" class="alert-text">A valid base uri is required, eg http://example.org/</span>
     </div>
     <div class="properties-heading">
       <div class="properties-title">Properties</div>
