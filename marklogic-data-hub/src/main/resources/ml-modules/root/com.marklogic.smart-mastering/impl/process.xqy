@@ -24,7 +24,8 @@ import module namespace match-opt-impl = "http://marklogic.com/smart-mastering/o
 import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-  at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
+  at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
+    "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace coll-impl = "http://marklogic.com/smart-mastering/survivorship/collections"
   at "/com.marklogic.smart-mastering/survivorship/merging/collections.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
@@ -159,9 +160,20 @@ declare function proc-impl:process-match-and-merge-with-options(
   (: increment usage count :)
   tel:increment(),
   let $start-elapsed := xdmp:elapsed-time()
+  let $matching-options :=
+      if ($match-options instance of object-node()) then
+        match-opt-impl:options-from-json($match-options)
+      else
+        $match-options
+  let $merge-options :=
+      if ($merge-options instance of object-node()) then
+        merge-impl:options-from-json($merge-options)
+      else
+        $merge-options
+  let $archived-collection := coll-impl:on-archive(map:map(), $merge-options)
   let $normalized-input :=
     if ($input instance of xs:string*) then
-      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($const:ARCHIVED-COLL)), "unfiltered")
+      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), "unfiltered")
       return
         proc-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then
@@ -177,16 +189,6 @@ declare function proc-impl:process-match-and-merge-with-options(
   let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "processing: " || fn:string-join($uris, ", "))
       else ()
-  let $matching-options :=
-      if ($match-options instance of object-node()) then
-        match-opt-impl:options-from-json($match-options)
-      else
-        $match-options
-  let $merge-options :=
-      if ($merge-options instance of object-node()) then
-        merge-impl:options-from-json($merge-options)
-      else
-        $merge-options
   let $target-entity := $matching-options/matcher:target-entity ! fn:string(.)
   let $actions := fn:distinct-values(($matching-options/matcher:actions/matcher:action/@name ! fn:string(.), $const:MERGE-ACTION, $const:NOTIFY-ACTION))
   let $thresholds := $matching-options/matcher:thresholds/matcher:threshold[(@action|matcher:action) = $actions]
@@ -204,7 +206,7 @@ declare function proc-impl:process-match-and-merge-with-options(
             if (fn:empty($minimum-threshold)) then
               fn:error($const:NO-THRESHOLD-ACTION-FOUND, "No threshold actions to act on.", ($matching-options/matcher:thresholds))
             else ()
-  let $lock-on-query := fn:true()
+  let $lock-on-query := fn:false()
   let $all-matches :=
     let $start-elapsed := xdmp:elapsed-time()
     let $matches :=

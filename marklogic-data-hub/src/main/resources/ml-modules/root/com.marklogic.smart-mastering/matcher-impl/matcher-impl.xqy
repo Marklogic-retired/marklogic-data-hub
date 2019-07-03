@@ -46,6 +46,18 @@ declare namespace es = "http://marklogic.com/entity-services";
 
 declare option xdmp:mapping "false";
 
+declare variable $QUERIES_WITH_WEIGHT := (
+    xs:QName("cts:element-attribute-pair-geospatial-query"),xs:QName("cts:element-attribute-range-query"),
+    xs:QName("cts:element-attribute-value-query"),xs:QName("cts:element-attribute-word-query"),xs:QName("cts:element-child-geospatial-query"),
+    xs:QName("cts:element-geospatial-query"),xs:QName("cts:element-pair-geospatial-query"),xs:QName("cts:element-range-query"),
+    xs:QName("cts:element-value-query"),xs:QName("cts:element-word-query"),xs:QName("cts:field-range-query"),
+    xs:QName("cts:field-value-query"),xs:QName("cts:field-word-query"),xs:QName("cts:geospatial-region-query"),
+    xs:QName("cts:json-property-child-geospatial-query"),xs:QName("cts:json-property-geospatial-query"),
+    xs:QName("cts:json-property-pair-geospatial-query"),xs:QName("cts:json-property-range-query"),xs:QName("cts:json-property-value-query"),
+    xs:QName("cts:json-property-word-query"),xs:QName("cts:lsqt-query"),xs:QName("cts:near-query"),xs:QName("cts:not-query"),
+    xs:QName("cts:path-geospatial-query"),xs:QName("cts:path-range-query"),xs:QName("cts:range-query"),xs:QName("cts:registered-query"),
+    xs:QName("cts:reverse-query"),xs:QName("cts:similar-query"),xs:QName("cts:triple-range-query"),xs:QName("cts:word-query"));
+
 declare variable $_cached-compiled-match-options as map:map := map:map();
 
 (:
@@ -456,21 +468,27 @@ declare function match-impl:search(
   )[fn:position() = $range]
   let $uri := xdmp:node-uri($result)
   let $matching-queries := cts:or-query-queries($boosting-query)[cts:contains($result, .)]
+  let $matching-weights-map := map:entry("values", ())
+  let $_accumulate-scores :=
+    cts:element-walk(document{$matching-queries}, $QUERIES_WITH_WEIGHT,
+      $matching-weights-map => map:put("values",
+        ($matching-weights-map => map:get("values"), fn:head(($cts:node/@weight, 1))))
+    )
   let $score :=
       fn:sum(
-        for $query in $matching-queries
-        return
-          document{$query}//schema-element(cts:query)
-            [fn:empty(self::element(cts:and-query)|self::element(cts:or-query)|self::element(cts:and-not-query)|self::element(cts:boost-query)|self::element(cts:not-in-query)|
-                self::element(cts:before-query)|self::element(cts:after-query)|self::element(cts:true-query)|self::element(cts:false-query)|self::element(cts:period-range-query)|
-                self::element(cts:period-compare-query)|self::element(cts:element-query)|self::element(cts:json-property-scope-query)|self::element(cts:document-fragment-query)|
-                self::element(cts:properties-fragment-query)|self::element(cts:locks-fragment-query)|self::element(cts:document-query)|self::element(cts:collection-query)|
-                self::element(cts:directory-query))] ! fn:number(fn:head((./@weight,1)))
+        $matching-weights-map => map:get("values")
       )
-  let $result-stub :=
+  where $score ge $min-threshold
+  return
     element result {
       attribute uri {$uri},
       attribute index {$range[fn:position() = $pos]},
+      attribute score {$score},
+      let $selected-threshold := fn:head($thresholds[$score ge @above])
+      return (
+        attribute threshold { fn:string($selected-threshold/@label) },
+        attribute action { fn:string($selected-threshold/(matcher:action|@action)) }
+      ),
       if ($include-matches) then
         element matches {
           (: rather than store the entire node and risk mixing
@@ -483,18 +501,6 @@ declare function match-impl:search(
           )
         }
       else ()
-    }
-  where $score ge $min-threshold or $score eq 0
-  return
-    element result {
-      $result-stub/@*,
-      attribute score {$score},
-      let $selected-threshold := fn:head($thresholds[$score ge @above])
-      return (
-        attribute threshold { fn:string($selected-threshold/@label) },
-        attribute action { fn:string($selected-threshold/(matcher:action|@action)) }
-      ),
-      $result-stub/*
     }
 };
 

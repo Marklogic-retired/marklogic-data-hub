@@ -30,20 +30,18 @@ declare variable $_entity-descriptors as array-node() := array-node {
     let $entity-version := map:get($entity, "entityVersion")
     let $entity-title := map:get($entity, "entityTitle")
     let $nc-name := xdmp:encode-for-NCName($entity-title)
-    let $namespace-uri := fn:string(
-        fn:head(
+    let $raw-def :=
           fn:collection("http://marklogic.com/entity-services/models")
             /(object-node()|es:model)[(es:info/es:version|info/version) = $entity-version]
             /(es:definitions|definitions)/*[fn:string(fn:node-name(.)) eq $nc-name]
-            /(es:namespace-uri|namespaceUri)
-        )
-      )
+    let $namespace-uri := fn:string(fn:head($raw-def/(es:namespace-uri|namespaceUri)))
+    let $primary-key := fn:head((map:get($entity, "primaryKey"), $raw-def/(es:primary-key|primaryKey) ! fn:string(.),null-node{}))
     return object-node {
       "entityIRI": map:get($entity, "entityIRI"),
       "entityTitle": $entity-title,
       "entityVersion": $entity-version,
       "namespaceUri": $namespace-uri,
-      "primaryKey": fn:head((map:get($entity, "primaryKey"),null-node{})),
+      "primaryKey": $primary-key,
       "properties": array-node {
         let $properties :=
           sem:sparql("SELECT ?propertyIRI ?primaryKey ?ref ?datatype ?collation ?items ?title ?itemsDatatype ?itemsRef
