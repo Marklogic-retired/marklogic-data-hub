@@ -1,7 +1,8 @@
 {
   "info" : {
     "title" : "Employee",
-    "version" : "0.0.1"
+    "version" : "0.0.1",
+    "baseUri": "http://www.marklogic.com/"
   },
   "definitions" : {
     "Employee" : {

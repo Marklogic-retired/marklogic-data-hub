@@ -2,7 +2,8 @@
   "info" : {
     "title" : "Customer",
     "version" : "0.0.1",
-    "description" : "A customer"
+    "description" : "A customer",
+    "baseUri": "http://www.marklogic.com/"
   },
   "definitions" : {
     "Customer" : {
