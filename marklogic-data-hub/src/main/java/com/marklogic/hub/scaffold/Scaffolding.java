@@ -78,6 +78,14 @@ public interface Scaffolding {
     void createCustomModule(String stepName, String stepType);
 
     /**
+     * Creates a custom module given a string stepName
+     * @param stepName - the name of the step as string
+     * @param stepType - the type of the step as string
+     * @param format - the format of the custom module (allowed values are xqy, sjs)
+     */
+    void createCustomModule(String stepName, String stepType, String format);
+
+    /**
      * Create default flow with all the default steps
      * @param flowName - the name of the flow
      */

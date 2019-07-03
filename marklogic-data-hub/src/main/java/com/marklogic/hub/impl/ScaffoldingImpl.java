@@ -105,16 +105,38 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Override
     public void createCustomModule(String stepName, String stepType) {
+        createCustomModule(stepName, stepType, "sjs");
+    }
+
+    @Override
+    public void createCustomModule(String stepName, String stepType, String format) {
         Path customModuleDir = project.getCustomModuleDir(stepName, stepType.toLowerCase());
         customModuleDir.toFile().mkdirs();
 
         if (customModuleDir.toFile().exists()) {
-            String moduleScaffoldingSrcFile = "scaffolding/custom-module/main.sjs";
+            String moduleScaffoldingSrcFile;
+            File moduleFile;
+            File libFile;
+            String libScaffoldingSrcFile = null;
+            if("sjs".equalsIgnoreCase(format)) {
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main.sjs";
+            }
+            else if("xqy".equalsIgnoreCase(format)) {
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main.sjs";
+                libScaffoldingSrcFile = "scaffolding/custom-module/xqy/lib.xqy";
+            }
+            else {
+                throw new RuntimeException("Invalid code format. The allowed formats are 'xqy' or 'sjs'");
+            }
+            moduleFile = customModuleDir.resolve("main.sjs").toFile();
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(moduleScaffoldingSrcFile);
-            File moduleFile = customModuleDir.resolve("main.sjs").toFile();
-
             try {
                 FileUtils.copyInputStreamToFile(inputStream, moduleFile);
+                libFile = customModuleDir.resolve("lib.xqy").toFile();
+                if(libScaffoldingSrcFile != null) {
+                    InputStream libInputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(libScaffoldingSrcFile);
+                    FileUtils.copyInputStreamToFile(libInputStream, libFile);
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
