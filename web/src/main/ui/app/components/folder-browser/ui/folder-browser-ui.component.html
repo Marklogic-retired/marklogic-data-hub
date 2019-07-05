@@ -6,7 +6,7 @@
     <div *ngIf="isLoading" layout="row" layout-sm="column" class="ajax-progress" layout-align="center start">
       <mdl-spinner single-color active></mdl-spinner>
     </div>
-    <ul class="foldertree folder-browser">
+    <ul #scrl class="foldertree folder-browser">
       <li *ngFor="let folder of folders" [class]="'folder-item-' + (folder.name || '')">
         <div class="entry" (click)="onEntryClicked(folder)">
           <i class="fa fa-folder-o"></i>

@@ -1,10 +1,13 @@
-import {Component, Input, Output, ViewChild, EventEmitter, OnInit} from '@angular/core';
+import {Component, Input, Output, ViewChild, EventEmitter, OnInit, ElementRef} from '@angular/core';
 import { MdlTextFieldComponent } from '@angular-mdl/core';
 
 @Component({
   selector: 'app-folder-browser-ui',
   templateUrl: './folder-browser-ui.component.html',
-  styleUrls: ['./folder-browser-ui.component.scss']
+  styleUrls: ['./folder-browser-ui.component.scss'],
+  queries: {
+    "scrl": new ViewChild( "scrl" )
+}
 })
 export class FolderBrowserUiComponent implements OnInit {
 
@@ -24,6 +27,8 @@ export class FolderBrowserUiComponent implements OnInit {
 
   @ViewChild(MdlTextFieldComponent) inputPath: MdlTextFieldComponent;
 
+  public scrl!: ElementRef;
+
   constructor() {}
 
   ngOnInit() {
@@ -38,9 +43,14 @@ export class FolderBrowserUiComponent implements OnInit {
 
   onEntryClicked(event) {
     this.entryClicked.emit(event);
+    this.scrollToTop();
   }
 
   onFileClicked(event) {
     this.fileClicked.emit(event);
   }
+
+  private scrollToTop(): void {
+    this.scrl.nativeElement.scrollTo(0,0);
+   }
 }
