@@ -13,6 +13,7 @@
 1. [DHS-e2e](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/DHS-e2e) - an end-to-end example demonstrating ingestion, harmonization, and retrieval of data in DHS environment
 1. [barebones](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/barebones) - an example of the minimum configuration necessary to run a Gradle-based Data Hub
 1. [custom-tokens](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/custom-tokens) - an example where gradle environment properties are used in substitutions of configuration files that is based off of the barebones example
+1. [dhf-with-tests-xquery](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf-with-tests-xquery) - an example of a DHF4 application with unit tests in xquery. Features an example of a search and uses higher order functions to compare expected values to the search results. Flows are invoked via REST with XQuery clients.  
 1. [gradle-tasks-demo](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/gradle-tasks-demo) - a demonstration of gradle commands in the DHS environment
 1. [healthcare](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/healthcare) - an example of a Healthcare 360 Data Hub
 1. [hr-hub](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/hr-hub) - an example used for our 1.x tutorial. This example harmonizes data from various HR systems
