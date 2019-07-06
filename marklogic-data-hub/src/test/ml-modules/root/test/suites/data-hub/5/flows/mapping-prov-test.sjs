@@ -5,10 +5,6 @@ const config = require("/com.marklogic.hub/config.sjs");
 const Provenance = require("/data-hub/5/impl/prov.sjs");
 const myProv = new Provenance();
 
-function describe(item) {
-  return xdmp.describe(item, emptySequence, emptySequence);
-}
-
 function fineProvOnMapping() {
   datahub.flow.runFlow('CustomerMapping', 'prov-test-job', [
     {
