@@ -61,7 +61,9 @@ function post(context, params, input) {
             value: doc,
             context: {
               permissions: combinedOptions.permissions ? datahub.hubUtils.parsePermissions(combinedOptions.permissions) : xdmp.nodePermissions(doc),
-              metadata: xdmp.nodeMetadata(doc)
+              metadata: xdmp.nodeMetadata(doc),
+              // provide original collections, should a step like to read them
+              originalCollections: xdmp.nodeCollections(doc)
             }
           });
         }

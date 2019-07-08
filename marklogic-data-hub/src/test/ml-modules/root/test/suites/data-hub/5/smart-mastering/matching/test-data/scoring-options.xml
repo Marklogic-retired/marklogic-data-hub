@@ -1,0 +1,28 @@
+<options xmlns="http://marklogic.com/smart-mastering/matcher">
+  <property-defs>
+    <property namespace="" localname="IdentificationID" name="ssn"/>
+    <property namespace="" localname="PersonGivenName" name="first-name"/>
+    <property namespace="" localname="PersonSurName" name="last-name"/>
+    <property namespace="" localname="AddressPrivateMailboxText" name="addr1"/>
+    <property namespace="" localname="LocationCity" name="city"/>
+    <property namespace="" localname="LocationState" name="state"/>
+    <property namespace="" localname="LocationPostalCode" name="zip"/>
+    <property namespace="" localname="Revenue" name="revenue"/>
+  </property-defs>
+  <algorithms>
+    <algorithm name="std-reduce" function="standard-reduction"/>
+    <algorithm name="std-reduce-query" function="standard-reduction-query"/>
+    <algorithm name="dbl-metaphone" function="double-metaphone"/>
+  </algorithms>
+  <scoring>
+    <add property-name="state" weight="1"/>
+  </scoring>
+  <thresholds>
+    <threshold above="1" label="Possible Match"/>
+    <threshold above="50" label="Likely Match" action="notify"/>
+    <threshold above="75" label="Definitive Match" action="merge"/>
+  </thresholds>
+  <tuning>
+    <max-scan>200</max-scan>  <!-- never look at more than 200 -->
+  </tuning>
+</options>

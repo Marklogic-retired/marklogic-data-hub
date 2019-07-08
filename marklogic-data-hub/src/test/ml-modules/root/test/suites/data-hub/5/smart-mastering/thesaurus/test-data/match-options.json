@@ -1,0 +1,31 @@
+{
+  "options": {
+    "propertyDefs": {
+      "properties": [
+        { "namespace": "", "localname": "LocationPostalCode", "name": "first-name" }
+      ]
+    },
+    "algorithms": [
+      { "name": "thesaurus", "function": "thesaurus" }
+    ],
+    "actions": [],
+    "scoring": {
+      "add": [
+        { "propertyName": "first-name", "weight": "8" }
+      ],
+      "expand": [
+        {
+          "propertyName": "first-name",
+          "algorithmRef": "thesaurus"
+        }
+      ]
+    },
+    "thresholds": [
+      { "above": "30", "label": "Possible Match" },
+      { "above": "50", "label": "Likely Match", "action": "notify" },
+      { "above": "68", "label": "Definitive Match", "action": "merge" }
+    ],
+    "tuning": { "maxScan": "200" }
+  }
+}
+

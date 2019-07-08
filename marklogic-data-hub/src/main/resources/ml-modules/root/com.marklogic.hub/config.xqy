@@ -11,3 +11,5 @@ declare variable $JOB-DATABASE := "%%mlJobDbName%%";
 declare variable $MODULES-DATABASE := "%%mlModulesDbName%%";
 declare variable $HUB-VERSION := "%%mlHubVersion%%";
 declare variable $HUB-LOG-LEVEL := "%%mlHubLogLevel%%";
+declare variable $FLOW-OPERATOR-ROLE := "%%mlFlowOperatorRole%%";
+declare variable $FLOW-DEVELOPER-ROLE := "%%mlFlowDeveloperRole%%";

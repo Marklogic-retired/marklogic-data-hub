@@ -1,0 +1,23 @@
+{
+  "database-name": "%%mlFinalDbName%%",
+  "schema-database": "%%mlFinalSchemasDbName%%",
+  "triggers-database": "%%mlFinalTriggersDbName%%",
+  "range-element-index" : [
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "PersonGivenName",
+      "collation" : "http://marklogic.com/collation//S1",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "PersonSurName",
+      "collation" : "http://marklogic.com/collation//S1",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }
+  ]
+}

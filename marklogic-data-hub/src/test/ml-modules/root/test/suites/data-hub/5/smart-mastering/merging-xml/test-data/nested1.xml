@@ -1,0 +1,34 @@
+<es:envelope xmlns:es="http://marklogic.com/entity-services">
+  <es:headers>
+    <sm:id xmlns:sm="http://marklogic.com/smart-mastering">c14eebe0-1b7c-4c1a-96d9-65790d57cb1b</sm:id>
+    <sm:sources xmlns:sm="http://marklogic.com/smart-mastering">
+      <sm:source>
+        <sm:name>sample1</sm:name>
+        <sm:import-id></sm:import-id>
+        <sm:user>mdm-rest-admin</sm:user>
+        <sm:dateTime>2018-08-21T10:08:06.330137-04:00</sm:dateTime>
+      </sm:source>
+    </sm:sources>
+  </es:headers>
+  <es:triples></es:triples>
+  <es:instance>
+    <es:info>
+      <es:title>Nested</es:title>
+      <es:version>1.0</es:version>
+    </es:info>
+    <TopProperty>
+      <nested:LowerProperty1 xmlns:nested="nested">
+        <EvenLowerProperty>
+          <LowestProperty1>some string</LowestProperty1>
+          <LowestProperty2>some string</LowestProperty2>
+          <LowestProperty3>some string</LowestProperty3>
+        </EvenLowerProperty>
+      </nested:LowerProperty1>
+      <EntityReference>
+        <PropValue>123</PropValue>
+      </EntityReference>
+    </TopProperty>
+  </es:instance>
+  <es:attachments>
+  </es:attachments>
+</es:envelope>

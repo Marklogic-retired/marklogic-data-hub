@@ -1,0 +1,34 @@
+<options xmlns="http://marklogic.com/smart-mastering/merging">
+  <match-options>basic</match-options>
+  <property-defs>
+    <property namespace="" localname="IdentificationID" name="ssn"/>
+    <property namespace="" localname="PersonName" name="name"/>
+    <property namespace="" localname="Address" name="address"/>
+    <property namespace="" localname="OnlyOne" name="onlyone"/>
+  </property-defs>
+  <algorithms>
+    <!-- config for standard algorithm -->
+    <std-algorithm xmlns:es="http://marklogic.com/entity-services" xmlns:sm="http://marklogic.com/smart-mastering">
+      <timestamp path="/es:envelope/es:headers/sm:sources/sm:source/sm:two-first" />
+    </std-algorithm>
+  </algorithms>
+  <merging>
+    <merge property-name="ssn">
+      <source-ref document-uri="docA" />
+    </merge>
+    <merge property-name="name"  max-values="1">
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+      <synonyms-support>true</synonyms-support>
+      <thesaurus>/mdm/config/thesauri/first-name-synonyms.xml</thesaurus>
+      <length weight="8" />
+    </merge>
+    <merge property-name="address" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="SOURCE2" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="onlyone" algorithm-ref="standard" max-values="1"/>
+  </merging>
+</options>
