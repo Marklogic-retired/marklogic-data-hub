@@ -19,6 +19,7 @@ import {map} from 'rxjs/operators';
       (entryClicked)="this.entryClicked($event)"
       (fileClicked)="this.fileClicked($event)"
       (folderChanged)="this.onFolderChange($event)"
+      (blurFolderChanged)="this.onBlur($event)"
     ></app-folder-browser-ui>
   `
 })
@@ -59,6 +60,9 @@ export class FolderBrowserComponent implements OnInit, OnChanges {
     if (event.keyCode === 13) {
       this.getFolders(this.currentPath);
     }
+  }
+  onBlur(event: Event){
+    this.getFolders(this.currentPath);
   }
 
   getFolders(path: string): void {
