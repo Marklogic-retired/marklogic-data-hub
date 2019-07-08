@@ -61,17 +61,18 @@ declare
       helper-impl:property-name-to-query($options-xml, $property-name)($expanded-values, $expand-xml/@weight)
 };
 
+declare variable $dictionaries-inserted-in-transaction as map:map := map:map();
+
 declare function algorithms:setup-double-metaphone($expand-xml, $options-xml, $options)
 {
   let $property-name := $expand-xml/@property-name
   let $property-def := $options-xml/*:property-defs/*:property[@name = $property-name]
   let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
   for $dictionary in $expand-xml/*:dictionary ! fn:string(.)
-  where fn:not(fn:doc-available($dictionary))
-  return
-    xdmp:spawn-function(
-      function() {
-        fn:function-lookup(xs:QName("xdmp:document-insert"), 4)(
+  where fn:not(fn:doc-available($dictionary) or map:contains($dictionaries-inserted-in-transaction, $dictionary))
+  return (
+    map:put($dictionaries-inserted-in-transaction, $dictionary, fn:true()),
+    xdmp:document-insert(
           $dictionary,
           spell:make-dictionary(
             try {
@@ -96,10 +97,6 @@ declare function algorithms:setup-double-metaphone($expand-xml, $options-xml, $o
           xdmp:default-permissions(),
           ($const:OPTIONS-COLL, $const:DICTIONARY-COLL)
         )
-      },
-      <options xmlns="xdmp:eval">
-        <transaction-mode>update-auto-commit</transaction-mode>
-      </options>
-    )
+  )
 };
 

@@ -76,7 +76,11 @@ declare variable $STRING-TOKEN := "##";
  : Given a map with keys that are URIs and values that are the result elements from running the match function against
  : that URI's document, produce a map where the key is a generated unique ID and the values are sequences of URIs to be
  : merged. We want to eliminate redundant cases, such as merge(docA, docB) and merge(docB, docA).
- : @param $matches
+ : @param $matches - map:map stores search results by URI
+ : @param $match-options - the match options for the query
+ : @param $max-scan - max number of search results to return
+ : @param $merge-threshold - max score needed for a merge
+ : @param $filter-query - cts:query that restricts the search
  : @return  map(unique ID -> sequence of URIs)
  :)
 declare function proc-impl:consolidate-merges(
@@ -95,32 +99,19 @@ declare function proc-impl:consolidate-merges(
         where fn:exists($merge-uris)
         return
           let $additional-uris :=
-            for $merge-uri in $merge-uris
-            return
-              if (map:contains($matches,$merge-uri)) then
-                map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
-              else
-                match-impl:find-document-matches-by-options(
-                  fn:doc($merge-uri),
-                  $matching-options,
-                  1,
-                  $max-scan,
-                  $merge-threshold,
-                  (: don't lock for update :)
-                  fn:false(),
-                  (: don't include detailed match information :)
-                  fn:false(),
-                  if ($filter-query instance of cts:true-query) then
-                    cts:not-query(cts:document-query($merge-uris))
-                  else
-                    cts:and-not-query($filter-query, cts:document-query($merge-uris)),
-                  (: return results :)
-                  fn:true()
-                )/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+            proc-impl:expand-uris-for-merge(
+              $merge-uris,
+              $merge-uris,
+              $matches,
+              $matching-options,
+              $max-scan,
+              $merge-threshold,
+              $filter-query
+            )
           return
             fn:string-join(
               for $uri in fn:distinct-values(($key, $merge-uris, $additional-uris))
-              let $_lock-on-uri := if (fn:not(map:contains($matches,$uri))) then xdmp:lock-for-update($uri) else ()
+              let $_lock-on-uri := if (fn:not(map:contains($matches,$uri))) then merge-impl:lock-for-update($uri) else ()
               order by $uri
               return $uri,
               $STRING-TOKEN
@@ -135,6 +126,73 @@ declare function proc-impl:consolidate-merges(
     return
       map:entry($merge-id, $uris)
   ))
+};
+
+(:
+ : This expands out searches to find any documents that may exist
+ : @param $current-uris - xs:string* URIs that we just discovered with the last search
+ : @param accumlated-uris - xs:string* URIs that we've discovered so far
+ : @param $matches - map:map stores search results by URI
+ : @param $match-options - the match options for the query
+ : @param $max-scan - max number of search results to return
+ : @param $merge-threshold - max score needed for a merge
+ : @param $filter-query - cts:query that restricts the search
+ : @return  xs:string* URIs found for the merge
+ :)
+declare function proc-impl:expand-uris-for-merge(
+  $current-uris as xs:string*,
+  $accumlated-uris as xs:string*,
+  $matches as map:map,
+  $matching-options,
+  $max-scan,
+  $merge-threshold,
+  $filter-query
+) (: as xs:string* ~leaving off for tail recursion~ :)
+{
+  let $additional-uris :=
+    for $merge-uri in $current-uris
+    return
+      if (map:contains($matches,$merge-uri)) then
+        map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+      else
+        let $_lock-for-update := merge-impl:lock-for-update($merge-uri)
+        let $results :=
+          match-impl:find-document-matches-by-options(
+            fn:doc($merge-uri),
+            $matching-options,
+            1,
+            $max-scan,
+            $merge-threshold,
+            (: don't lock for update :)
+            fn:false(),
+            (: don't include detailed match information :)
+            fn:false(),
+            if ($filter-query instance of cts:true-query) then
+              cts:not-query(cts:document-query($accumlated-uris))
+            else
+              cts:and-not-query($filter-query, cts:document-query($accumlated-uris)),
+            (: return results :)
+            fn:true()
+          )[result/@action = $const:MERGE-ACTION]
+        where fn:exists($results)
+        return (
+          map:put($matches, $merge-uri, $results),
+          $results/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+        )
+  let $new-uris := $additional-uris[fn:not(. = $accumlated-uris)]
+  return
+    if (fn:empty($new-uris)) then
+      $accumlated-uris
+    else
+      proc-impl:expand-uris-for-merge(
+        $new-uris,
+        fn:distinct-values(($new-uris,$accumlated-uris)),
+        $matches,
+        $matching-options,
+        $max-scan,
+        $merge-threshold,
+        $filter-query
+      )
 };
 
 declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged-into as map:map)
@@ -153,7 +211,7 @@ declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged
     let $updated-notification-uris :=
       for $key-notification in $key-notifications[@threshold = $key-threshold]
       let $key-uri as xs:string := $key-notification/@uri
-      let $_lock-on-uri := if (fn:not(map:contains($all-matches, $key))) then xdmp:lock-for-update($key-uri) else ()
+      let $_lock-on-uri := if (fn:not(map:contains($all-matches, $key))) then merge-impl:lock-for-update($key-uri) else ()
       let $updated-uri :=
         if (map:contains($merged-into, $key-uri)) then
           map:get($merged-into, $key-uri)
@@ -380,7 +438,6 @@ declare function proc-impl:process-match-and-merge-with-options(
       let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
       let $doc := $write-object
         => map:get("value")
-
       let $has-merges :=
         fn:number(
           match-impl:find-document-matches-by-options(
@@ -437,7 +494,7 @@ declare function proc-impl:process-match-and-merge-with-options(
       let $uris := fn:tail($parts)
       let $match-write-object := matcher:build-match-notification($threshold, $uris, $merge-options)
       return
-        $match-write-object ! (., xdmp:lock-for-update(map:get(., "uri")))
+        $match-write-object
     return (
       $notifications,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
@@ -522,17 +579,19 @@ declare function proc-impl:process-match-and-merge-with-options-save(
   for $action in $actions
   return
     if ($action instance of map:map) then
+      let $uri as xs:string := $action => map:get("uri")
       let $context as map:map? := $action => map:get("context")
+      let $permissions := $context => map:get("permissions")
       return (
         if (fn:not(($action => map:get("hidden")))) then
           ($action => map:get("value"))[fn:empty(xdmp:node-uri(.))]
         else (),
         xdmp:document-insert(
-          $action => map:get("uri"),
+          $uri,
           $action => map:get("value"),
           map:new((
             map:entry("collections", $context => map:get("collections")),
-            map:entry("permissions", $context => map:get("permissions")),
+            map:entry("permissions", if (fn:exists($permissions)) then $permissions else xdmp:default-permissions($uri, "objects")),
             map:entry("metadata", $context => map:get("metadata"))
           ))
         )

@@ -11,20 +11,20 @@ let source2 = xdmp.toJSON({ "documentUri": "doc2.json", "dateTime": xs.dateTime(
 
 let doc1 = xdmp.toJSON({
   "myprop": [{
-    "code": "ABC",
-    "startDate": "2018-01-01"
-  },
-    {
+      "code": "ABC",
+      "startDate": "2018-01-01"
+      },
+      {
       "code": "AB",
       "startDate": "--"
     }]
-});
+  });
 let doc2 = xdmp.toJSON({
   "myprop": [{
-    "code": "ABC",
-    "startDate": "2018-01-01"
-  }]
-});
+      "code": "ABC",
+      "startDate": "2018-01-01"
+      }]
+  });
 let propName = xs.QName('myprop');
 let doc1Props = [];
 for (let prop of doc1.root.myprop.xpath('./object-node()')) {

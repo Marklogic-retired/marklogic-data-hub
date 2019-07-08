@@ -1,0 +1,46 @@
+<options xmlns="http://marklogic.com/smart-mastering/merging">
+  <match-options>match-options</match-options>
+  <property-defs>
+    <property namespace="" localname="IdentificationID" name="ssn"/>
+    <property namespace="" localname="PersonName" name="name"/>
+    <property namespace="" localname="Address" name="address"/>
+    <property namespace="" localname="PersonBirthDate" name="dob"/>
+    <property namespace="" localname="CaseStartDate" name="caseStartDate"/>
+    <property namespace="" localname="IncidentCategoryCodeDate" name="incidentDate"/>
+    <property namespace="" localname="PersonSex" name="sex"/>
+  </property-defs>
+  <merging>
+    <merge property-name="ssn">
+      <source-ref document-uri="docA" />
+    </merge>
+    <merge property-name="name"  max-values="1">
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+      <synonyms-support>true</synonyms-support>
+      <thesaurus>/mdm/config/thesauri/first-name-synonyms.xml</thesaurus>
+      <length weight="8" />
+    </merge>
+    <merge property-name="address" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="CRM" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="dob" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="Oracle" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="caseStartDate" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="CRM" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="incidentDate" algorithm-ref="standard" max-values="1">
+      <length weight="10"/>
+    </merge>
+    <merge property-name="sex" algorithm-ref="standard" max-values="1">
+      <length weight="10"/>
+    </merge>
+  </merging>
+</options>
