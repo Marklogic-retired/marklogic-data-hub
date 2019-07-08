@@ -1,0 +1,40 @@
+<options xmlns="http://marklogic.com/smart-mastering/merging">
+  <match-options>basic</match-options>
+  <m:property-defs
+    xmlns:m="http://marklogic.com/smart-mastering/merging"
+    xmlns="">
+    <m:property namespace="" localname="IdentificationID" name="ssn"/>
+    <m:property namespace="" localname="PersonName" name="name"/>
+    <m:property namespace="" localname="Address" name="address"/>
+    <m:property path="/envelope/headers/shallow" name="shallow"/>
+    <m:property path="/envelope/headers/custom/this/has/a/deep/path" name="deep"/>
+  </m:property-defs>
+  <algorithms>
+    <algorithm name="combine" function="combine" namespace="http://marklogic.com/smart-mastering/merging" at="/combine-json.xqy" />
+  </algorithms>
+  <merging>
+    <merge property-name="ssn">
+      <source-ref document-uri="docA" />
+    </merge>
+    <merge property-name="name"  max-values="1">
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+      <synonyms-support>true</synonyms-support>
+      <thesaurus>/mdm/config/thesauri/first-name-synonyms.xml</thesaurus>
+      <length weight="8" />
+    </merge>
+    <merge property-name="address" max-values="1">
+      <source-weights>
+        <source name="SOURCE2" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="shallow" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="SOURCE1" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="deep" algorithm-ref="combine" max-values="1">
+    </merge>
+  </merging>
+</options>

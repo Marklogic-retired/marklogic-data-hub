@@ -1,0 +1,87 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers>
+    <smart-mastering:id xmlns:smart-mastering="http://marklogic.com/smart-mastering">bbc806e4-ff00-4585-9d46-877edbc3248e</smart-mastering:id>
+    <smart-mastering:id xmlns:smart-mastering="http://marklogic.com/smart-mastering">66cbe731-7b56-4c91-9257-18a973008277</smart-mastering:id>
+    <smart-mastering:sources xmlns:smart-mastering="http://marklogic.com/smart-mastering">
+      <smart-mastering:source>
+        <smart-mastering:name>SOURCE1</smart-mastering:name>
+        <smart-mastering:import-id>mdm-import-8cf89514-fb1d-45f1-b95f-8b69f3126f04</smart-mastering:import-id>
+        <smart-mastering:user>admin</smart-mastering:user>
+        <smart-mastering:dateTime>2018-04-26T16:40:02.1386Z</smart-mastering:dateTime>
+        <smart-mastering:one-first>2018-04-26T16:40:02.1386Z</smart-mastering:one-first>
+        <smart-mastering:one-first>2018-04-26T16:40:02.1386Z</smart-mastering:one-first>
+        <smart-mastering:two-first>2017-04-26T16:40:02.1386Z</smart-mastering:two-first>
+      </smart-mastering:source>
+    </smart-mastering:sources>
+    <unconfigured>unconfigured value 1a</unconfigured>
+    <shallow xmlns="">shallow value 1</shallow>
+    <custom xmlns="" xmlns:has="has" xmlns:endswith="endswith">
+      <this><has:a><deep><path>deep value 1</path></deep></has:a></this>
+      <this><has:a><deep><endswith:ns>endswith value 1</endswith:ns></deep></has:a></this>
+      <unconfigured>unconfigured value 1b</unconfigured>
+    </custom>
+  </headers>
+  <triples xmlns:sem="http://marklogic.com/semantics">
+    <sem:triple>
+      <sem:subject>http://marklogic.com/sm-core/lindsey-jones</sem:subject>
+      <sem:predicate>http://marklogic.com/sm-core/lives-in</sem:predicate>
+      <sem:object>http://dbpedia.org/resource/Springfield,_Ohio</sem:object>
+    </sem:triple>
+    <sem:triple>
+      <sem:subject>http://marklogic.com/sm-core/lindsey-jones</sem:subject>
+      <sem:predicate>http://marklogic.com/sm-core/ssn</sem:predicate>
+      <sem:object datatype="http://www.w3.org/2001/XMLSchema#string">393225353</sem:object>
+    </sem:triple>
+    <sem:triple>
+      <sem:subject>http://marklogic.com/sm-core/springfield</sem:subject>
+      <sem:predicate>http://marklogic.com/sm-core/is-in</sem:predicate>
+      <sem:object datatype="http://www.w3.org/2001/XMLSchema#string">Ohio</sem:object>
+    </sem:triple>
+  </triples>
+  <instance>
+    <info>
+      <title>MDM</title>
+      <version>1.0.0</version>
+    </info>
+    <MDM xmlns="">
+      <Person>
+        <PersonType>
+          <PersonName>
+            <PersonNameType>
+              <PersonSurName>JONES</PersonSurName>
+              <PersonGivenName>LINDSEY</PersonGivenName>
+            </PersonNameType>
+          </PersonName>
+          <Address>
+            <AddressType>
+              <LocationState>OH</LocationState>
+              <AddressPrivateMailboxText>72980</AddressPrivateMailboxText>
+              <AddressSecondaryUnitText>LONDONDERRY</AddressSecondaryUnitText>
+              <LocationPostalCode>45505</LocationPostalCode>
+              <LocationCityName>SPRINGFIELD</LocationCityName>
+            </AddressType>
+          </Address>
+          <IncidentCategoryCodeDate/>
+          <id>6986792174</id>
+          <PersonBirthDate>19801001</PersonBirthDate>
+          <PersonSex>F</PersonSex>
+          <CaseAmount>1287.9</CaseAmount>
+          <CustomThing>1</CustomThing>
+          <OnlyOne>1</OnlyOne>
+          <PersonSSNIdentification>
+            <PersonSSNIdentificationType>
+              <IdentificationID>393225353</IdentificationID>
+            </PersonSSNIdentificationType>
+          </PersonSSNIdentification>
+          <Revenues>
+            <RevenuesType>
+              <Revenue/>
+            </RevenuesType>
+          </Revenues>
+          <CaseStartDate>20110406</CaseStartDate>
+        </PersonType>
+      </Person>
+    </MDM>
+  </instance>
+  <attachments/>
+</envelope>

@@ -1816,11 +1816,11 @@ declare function merge-impl:build-final-properties(
         $instance-properties
       )
     let $prop-qname := fn:head($instance-props)
-    let $instance-props := fn:tail($instance-props)
     let $wrapped-properties :=
       for $doc at $pos in $docs
       let $generate-id := fn:generate-id($doc)
-      for $prop-value in map:get($instance-props-by-root-id, $generate-id)
+      let $prop-qname := fn:head(map:get($instance-props-by-root-id, $generate-id))
+      for $prop-value in fn:tail(map:get($instance-props-by-root-id, $generate-id))
       let $lineage-uris := merge-impl:node-uri($doc)
       let $prop-sources := $lineage-uris ! map:get($sources-by-document-uri, .)
       return
@@ -2241,7 +2241,7 @@ declare function merge-impl:normalize-json-to-nodes(
 declare variable $documents-archived-in-transaction := map:map();
 declare function merge-impl:archive-document($uri as xs:string, $merge-options as element(merging:options)?)
 {
-  xdmp:lock-for-update($uri),
+  merge-impl:lock-for-update($uri),
   if (map:contains($documents-archived-in-transaction, $uri)) then ()
   else
     map:put(
@@ -2280,4 +2280,53 @@ declare function merge-impl:NCName-compatible-reverse($value as xs:string)
       map:put($_to-decoded-NCName, $value, $decoded-value),
       $decoded-value
     )
+};
+
+(: Prefix for locking to identify the task being done on the URI :)
+declare variable $lock-task-prefix as xs:string := "sm-merging:";
+
+declare function merge-impl:filter-out-locked-uris($uris) {
+  $uris
+(: Below is experimental code for identifying if a $URI is locked by another process. :)
+(:  try {
+    let $spawn-options := map:new((
+      map:entry('update', 'true'),
+      map:entry('result', fn:true()),
+      map:entry('priority', 'higher'),
+      map:entry('timeLimit', 2)
+    ))
+    for $uri in $uris
+    let $task-uri := $lock-task-prefix || $uri
+    return xdmp:spawn-function(function() {
+      if (fn:not(merge-impl:is-uri-locked($uri))) then
+        $uri
+      else
+        ()
+    },$spawn-options)
+  } catch * {
+    $uris
+  }
+:)
+};
+
+declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
+  try {
+    xdmp:invoke-function(
+      function() {
+        xdmp:set-transaction-time-limit(1),
+        merge-impl:lock-for-update($uri),
+        fn:false()
+      },
+      map:entry('update','true')
+    )
+  } catch * {
+    fn:contains(fn:lower-case($err:description), "time limit")
+  }
+};
+
+declare function merge-impl:lock-for-update($uri as xs:string) {
+  xdmp:lock-for-update($uri)
+  (: Below is to identify locks specific to mastering  :)
+  (:,
+  xdmp:lock-for-update($lock-task-prefix || $uri):)
 };

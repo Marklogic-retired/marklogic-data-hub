@@ -1,0 +1,60 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+<headers>
+<sm:id xmlns:sm="http://marklogic.com/smart-mastering">a7ad87dc-94da-4c30-8e39-e9088d3fcc8d</sm:id>
+<sm:id xmlns:sm="http://marklogic.com/smart-mastering">67d07a07-331e-4ba7-9997-0f12f7b2c8f2</sm:id>
+<sm:sources xmlns:sm="http://marklogic.com/smart-mastering">
+<sm:source>
+<sm:name>CRM</sm:name>
+<sm:import-id>
+</sm:import-id>
+<sm:user>admin</sm:user>
+<sm:dateTime>2018-06-27T12:39:03.122025-04:00</sm:dateTime>
+</sm:source>
+</sm:sources>
+</headers>
+<triples>
+</triples>
+<instance>
+<MDM xmlns="">
+<Person>
+<PersonType>
+<PersonName>
+<PersonNameType>
+<PersonSurName>JONES</PersonSurName>
+<PersonGivenName>LINDSEY</PersonGivenName>
+</PersonNameType>
+</PersonName>
+<Address>
+<AddressType>
+<LocationState>OH</LocationState>
+<AddressPrivateMailboxText>72980</AddressPrivateMailboxText>
+<AddressSecondaryUnitText>LONDONDERRY</AddressSecondaryUnitText>
+<LocationPostalCode>45505</LocationPostalCode>
+<LocationCityName>SPRINGFIELD</LocationCityName>
+</AddressType>
+</Address>
+<IncidentCategoryCodeDate>
+</IncidentCategoryCodeDate>
+<id>6986792174</id>
+<PersonBirthDate>19801001</PersonBirthDate>
+<PersonSex>F</PersonSex>
+<CaseAmount>4364.83</CaseAmount>
+<PersonSSNIdentification>
+<PersonSSNIdentificationType>
+<IdentificationID>393225353</IdentificationID>
+</PersonSSNIdentificationType>
+</PersonSSNIdentification>
+<Revenues>
+<RevenuesType>
+<Revenue>
+</Revenue>
+</RevenuesType>
+</Revenues>
+<CaseStartDate>20110406</CaseStartDate>
+</PersonType>
+</Person>
+</MDM>
+</instance>
+<attachments>
+</attachments>
+</envelope>
