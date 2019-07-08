@@ -22,6 +22,7 @@ export class FolderBrowserUiComponent implements OnInit {
   @Output() entryClicked = new EventEmitter();
   @Output() fileClicked = new EventEmitter();
   @Output() folderChanged = new EventEmitter();
+  @Output() blurFolderChanged = new EventEmitter();
   @Output() inputPathChanged = new EventEmitter();
 
 
@@ -40,7 +41,10 @@ export class FolderBrowserUiComponent implements OnInit {
   onFolderChange(event) {
     this.folderChanged.emit(event);
   }
-
+  
+  onBlur(event){
+    this.blurFolderChanged.emit(event)
+  }
   onEntryClicked(event) {
     this.entryClicked.emit(event);
     this.scrollToTop();
