@@ -1,0 +1,44 @@
+<options xmlns="http://marklogic.com/smart-mastering/merging">
+  <match-options>basic</match-options>
+  <m:property-defs
+    xmlns:es="http://marklogic.com/entity-services"
+    xmlns:m="http://marklogic.com/smart-mastering/merging"
+    xmlns:has="has"
+    xmlns:endswith="endswith">
+    <m:property namespace="" localname="IdentificationID" name="ssn"/>
+    <m:property namespace="" localname="PersonName" name="name"/>
+    <m:property namespace="" localname="Address" name="address"/>
+    <m:property path="/es:envelope/es:headers/shallow" name="shallow"/>
+    <m:property path="/es:envelope/es:headers/custom/this/has:a/deep/path" name="deep"/>
+    <m:property path="/es:envelope/es:headers/custom/this/has:a/deep/endswith:ns" name="endswithns"/>
+  </m:property-defs>
+  <algorithms>
+    <algorithm name="combine" function="combine" namespace="http://marklogic.com/smart-mastering/merging" at="/combine.xqy" />
+  </algorithms>
+  <merging>
+    <merge property-name="ssn">
+      <source-ref document-uri="docA" />
+    </merge>
+    <merge property-name="name"  max-values="1">
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+      <synonyms-support>true</synonyms-support>
+      <thesaurus>/mdm/config/thesauri/first-name-synonyms.xml</thesaurus>
+      <length weight="8" />
+    </merge>
+    <merge property-name="address" max-values="1">
+      <length weight="8" />
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+    </merge>
+    <merge property-name="shallow" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="SOURCE1" weight="10"></source>
+      </source-weights>
+    </merge>
+    <merge property-name="deep" algorithm-ref="combine" max-values="1">
+    </merge>
+  </merging>
+</options>

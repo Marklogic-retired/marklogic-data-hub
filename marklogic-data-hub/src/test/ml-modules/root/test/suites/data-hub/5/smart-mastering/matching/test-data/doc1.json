@@ -1,0 +1,63 @@
+{
+  "envelope": {
+    "headers": {
+      "id": [
+        "bbc806e4-ff00-4585-9d46-877edbc3248e",
+        "66cbe731-7b56-4c91-9257-18a973008277"
+      ],
+      "sources": [
+        {
+          "name": "SOURCE1",
+          "import-id": "mdm-import-8cf89514-fb1d-45f1-b95f-8b69f3126f04",
+          "user": "admin",
+          "dateTime": "2018-04-26T16:40:02.1386Z"
+        }
+      ],
+      "meta": {
+        "PersonSurName": "JONES"
+      }
+    },
+    "triples": [],
+    "instance": {
+      "MDM": {
+        "Person": {
+          "PersonType": {
+            "PersonName": {
+              "PersonNameType": {
+                "PersonSurName": "JONES",
+                "PersonGivenName": "LINDSEY"
+              }
+            },
+            "Address": {
+              "AddressType": {
+                "LocationState": "OH",
+                "AddressPrivateMailboxText": "72980",
+                "AddressSecondaryUnitText": "LONDONDERRY",
+                "LocationPostalCode": "45505",
+                "LocationCityName": "SPRINGFIELD"
+              }
+            },
+            "IncidentCategoryCodeDate": null,
+            "id": "6986792174",
+            "PersonBirthDate": "19801001",
+            "PersonSex": "F",
+            "CaseAmount": 1287.9,
+            "CustomThing": "1",
+            "PersonSSNIdentification": {
+              "PersonSSNIdentificationType": {
+                "IdentificationID": "393225353"
+              }
+            },
+            "Revenues": {
+              "RevenuesType": {
+                "Revenue": null
+              }
+            },
+            "CaseStartDate": "20110406"
+          }
+        }
+      }
+    },
+    "attachments": []
+  }
+}

@@ -101,6 +101,7 @@ declare function notify-impl:build-match-notification(
     else
       "/com.marklogic.smart-mastering/matcher/notifications/" || xdmp:md5(fn:string-join(($threshold-label, $doc-uris ! fn:string(.)), "|")) || ".xml"
   let $notification-operated-on := $_notifications-inserted => map:contains($notification-uri)
+  let $_lock-for-update := xdmp:lock-for-update($notification-uri)
   return (
     $_notifications-inserted => map:put($notification-uri, fn:true()),
     map:new((
