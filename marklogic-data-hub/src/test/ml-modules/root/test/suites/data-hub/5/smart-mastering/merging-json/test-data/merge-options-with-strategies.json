@@ -1,0 +1,72 @@
+{
+    "options":
+    {
+        "matchOptions": "basic",
+        "merging": [
+        {
+            "propertyName": "ssn",
+            "algorithmRef": "user-defined",
+            "sourceRef":
+            {
+                "documentUri": "docA"
+            }
+        },
+        {
+            "propertyName": "name",
+            "maxValues": "1",
+            "doubleMetaphone":
+            {
+                "distanceThreshold": "50"
+            },
+            "synonymsSupport": "true",
+            "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+            "length":
+            {
+                "weight": "8"
+            }
+        },
+        {
+            "default": "true",
+            "strategy": "default-standard"
+        }],
+        "propertyDefs":
+        {
+            "properties": [
+            {
+                "namespace": "",
+                "localname": "IdentificationID",
+                "name": "ssn"
+            },
+            {
+                "namespace": "",
+                "localname": "PersonName",
+                "name": "name"
+            },
+            {
+                "namespace": "",
+                "localname": "Address",
+                "name": "address"
+            }]
+        },
+        "mergeStrategies": [
+        {
+            "name": "default-standard",
+            "algorithmRef": "standard",
+            "maxValues": "1",
+            "sourceWeights":[
+            {
+                "source":
+                {
+                    "name": "SOURCE1",
+                    "weight": "10"
+                }
+            }
+          ]
+        }],
+        "algorithms":
+        {
+            "stdAlgorithm":{"namespaces":{}, "timestamp":{"path": null}},
+            "custom": []
+        }
+    }
+}

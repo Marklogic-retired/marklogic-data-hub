@@ -1,0 +1,99 @@
+{
+  "options": {
+    "matchOptions": "basic",
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "IdentificationID",
+          "name": "ssn"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonName",
+          "name": "name"
+        },
+        {
+          "namespace": "",
+          "localname": "Address",
+          "name": "address"
+        },
+        {
+          "path": "/es:envelope/es:headers/custom/this/has:a/deep/path",
+          "name": "deep"
+        }
+      ],
+      "namespaces": {
+        "es": "http://marklogic.com/entity-services",
+        "sm": "http://marklogic.com/smart-mastering",
+        "has": "has"
+      }
+    },
+    "algorithms": {
+      "custom": [
+        {
+          "name": "name",
+          "function": "name",
+          "at": ""
+        },
+        {
+          "name": "customThing",
+          "function": "customThing",
+          "at": "/custom-merge-xqy.xqy"
+        }
+      ],
+      "stdAlgorithm": {
+        "namespaces": {
+          "es": "http://marklogic.com/entity-services",
+          "sm": "http://marklogic.com/smart-mastering"
+        },
+        "timestamp": {
+          "path": "/es:envelope/es:headers/sm:sources/sm:source/sm:dateTime"
+        }
+      }
+    },
+    "merging": [
+      {
+        "propertyName": "ssn",
+        "algorithmRef": "user-defined",
+        "sourceRef": {
+          "documentUri": "docA"
+        }
+      },
+      {
+        "propertyName": "name",
+        "maxValues": "1",
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        },
+        "synonymsSupport": "true",
+        "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+        "length": {
+          "weight": "8"
+        }
+      },
+      {
+        "propertyName": "address",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "sourceWeights": [{
+          "source": {
+            "name": "SOURCE2",
+            "weight": "10"
+          }
+        },{
+          "source": {
+            "name": "SOURCE1",
+            "weight": "5"
+          }
+        }]
+      }
+    ],
+    "tripleMerge": {
+      "function": "custom-trips",
+      "namespace": "http://marklogic.com/smart-mastering/merging",
+      "at": "/custom-triple-merge-xqy.xqy",
+      "someParam": "3"
+    }
+  }
+}

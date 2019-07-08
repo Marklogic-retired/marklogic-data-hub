@@ -1,0 +1,40 @@
+{
+  "envelope": {
+    "headers": {
+      "id": [
+        "c14eebe0-1b7c-4c1a-96d9-65790d57cb1b"
+      ],
+      "sources": [
+        {
+          "name": "sample1",
+          "import-id": "",
+          "user": "mdm-rest-admin",
+          "dateTime": "2018-08-21T10:08:06.330137-04:00"
+        }
+      ]
+    },
+    "triple": [],
+    "instance": {
+      "info": {
+        "title": "Nested",
+        "version": "1.0.0"
+      },
+      "TopProperty": {
+        "LowerProperty1": {
+          "EvenLowerProperty": {
+            "LowestProperty1": "some string",
+            "LowestProperty2": "some string",
+            "LowestProperty3": [
+              "some string 1",
+              "some string 2"
+            ]
+          }
+        },
+        "EntityReference": {
+          "PropValue": 123
+        }
+      }
+    },
+    "attachments": []
+  }
+}

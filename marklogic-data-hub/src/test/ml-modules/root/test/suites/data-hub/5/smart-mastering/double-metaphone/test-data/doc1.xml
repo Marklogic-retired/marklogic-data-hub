@@ -1,0 +1,30 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers>
+    <smart-mastering:id xmlns:smart-mastering="http://marklogic.com/smart-mastering">bbc806e4-ff00-4585-9d46-877edbc3248e</smart-mastering:id>
+    <smart-mastering:sources xmlns:smart-mastering="http://marklogic.com/smart-mastering">
+      <smart-mastering:source>
+        <smart-mastering:name>SOURCE1</smart-mastering:name>
+      </smart-mastering:source>
+    </smart-mastering:sources>
+  </headers>
+  <triples/>
+  <instance>
+    <info>
+      <title>MDM</title>
+      <version>1.0.0</version>
+    </info>
+    <MDM xmlns="">
+      <Person>
+        <PersonType>
+          <PersonName>
+            <PersonNameType>
+              <PersonSurName>Smyth</PersonSurName>
+              <PersonGivenName>David</PersonGivenName>
+            </PersonNameType>
+          </PersonName>
+        </PersonType>
+      </Person>
+    </MDM>
+  </instance>
+  <attachments/>
+</envelope>
