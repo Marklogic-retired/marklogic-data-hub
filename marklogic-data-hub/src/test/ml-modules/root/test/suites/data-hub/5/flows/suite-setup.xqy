@@ -8,7 +8,9 @@ declare option xdmp:mapping "false";
 xdmp:invoke-function(function() {
   xdmp:document-insert(
     "/test/custom-null-step/main.sjs",
-    test:get-test-file("nullStep.sjs")
+    test:get-test-file("nullStep.sjs"),
+    (xdmp:default-permissions(),xdmp:permission("flow-operator","execute"),xdmp:permission("flow-developer","execute")),
+    ()
   )
 },
 map:entry("database", xdmp:modules-database())
