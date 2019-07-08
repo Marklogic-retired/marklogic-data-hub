@@ -1,0 +1,40 @@
+<options xmlns="http://marklogic.com/smart-mastering/merging">
+  <match-options>merge-options-with-array-limit</match-options>
+  <property-defs
+    xmlns:es="http://marklogic.com/entity-services"
+    xmlns:sm="http://marklogic.com/smart-mastering"
+    xmlns:has="has">
+    <property namespace="" localname="IdentificationID" name="ssn"/>
+    <property namespace="" localname="PersonName" name="name"/>
+    <property namespace="" localname="ArrayOfVariousThings" name="array"/>
+  </property-defs>
+  <algorithms>
+    <algorithm name="name" function="name" namespace="" at="" />
+    <algorithm name="customThing" function="customThing" namespace="http://marklogic.com/smart-mastering/merging" at="/custom-merge-xqy.xqy" />
+    <std-algorithm xmlns:es="http://marklogic.com/entity-services" xmlns:sm="http://marklogic.com/smart-mastering">
+      <!-- provide the path to the timestamp element to use for sorting -->
+      <!-- when merging the values are sorted in recency order from newest
+           to oldest based on this timestamp. If the timestamp is not
+           provided then there is no recency sort -->
+      <timestamp path="/es:envelope/es:headers/sm:sources/sm:source/sm:dateTime" />
+    </std-algorithm>
+  </algorithms>
+  <merging>
+    <merge property-name="ssn" algorithm-ref="user-defined">
+      <source-ref document-uri="docA" />
+    </merge>
+    <merge property-name="name"  max-values="1">
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+      <synonyms-support>true</synonyms-support>
+      <thesaurus>/mdm/config/thesauri/first-name-synonyms.xml</thesaurus>
+      <length weight="8" />
+    </merge>
+    <merge property-name="array" algorithm-ref="standard" max-values="1">
+      <source-weights>
+        <source name="SOURCE2" weight="10"></source>
+      </source-weights>
+    </merge>
+  </merging>
+</options>

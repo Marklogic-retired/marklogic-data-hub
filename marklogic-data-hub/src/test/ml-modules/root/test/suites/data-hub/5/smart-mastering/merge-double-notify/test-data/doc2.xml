@@ -1,0 +1,60 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+<headers>
+<sm:id xmlns:sm="http://marklogic.com/smart-mastering">5eb2bff9-78bf-44fa-9574-c6afdba1dad0</sm:id>
+<sm:id xmlns:sm="http://marklogic.com/smart-mastering">e01605e4-973b-4423-a052-2f93d1bb1b16</sm:id>
+<sm:sources xmlns:sm="http://marklogic.com/smart-mastering">
+<sm:source>
+<sm:name>Oracle</sm:name>
+<sm:import-id>
+</sm:import-id>
+<sm:user>admin</sm:user>
+<sm:dateTime>2018-06-27T12:39:05.898464-04:00</sm:dateTime>
+</sm:source>
+</sm:sources>
+</headers>
+<triples>
+</triples>
+<instance>
+<MDM xmlns="">
+<Person>
+<PersonType>
+<PersonName>
+<PersonNameType>
+<PersonSurName>JONES</PersonSurName>
+<PersonGivenName>LINDSEY</PersonGivenName>
+</PersonNameType>
+</PersonName>
+<Address>
+<AddressType>
+<LocationState>PA</LocationState>
+<AddressPrivateMailboxText>45</AddressPrivateMailboxText>
+<AddressSecondaryUnitText>JANA</AddressSecondaryUnitText>
+<LocationPostalCode>18505</LocationPostalCode>
+<LocationCityName>SCRANTON</LocationCityName>
+</AddressType>
+</Address>
+<IncidentCategoryCodeDate>
+</IncidentCategoryCodeDate>
+<PersonSex>F</PersonSex>
+<id>6270654339</id>
+<PersonBirthDate>19801001</PersonBirthDate>
+<CaseAmount>1287.9</CaseAmount>
+<PersonSSNIdentification>
+<PersonSSNIdentificationType>
+<IdentificationID>393225353</IdentificationID>
+</PersonSSNIdentificationType>
+</PersonSSNIdentification>
+<Revenues>
+<RevenuesType>
+<Revenue>
+</Revenue>
+</RevenuesType>
+</Revenues>
+<CaseStartDate>20110406</CaseStartDate>
+</PersonType>
+</Person>
+</MDM>
+</instance>
+<attachments>
+</attachments>
+</envelope>

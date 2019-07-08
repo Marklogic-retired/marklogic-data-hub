@@ -1,0 +1,51 @@
+<options xmlns="http://marklogic.com/smart-mastering/matcher">
+  <property-defs>
+    <property namespace="" localname="IdentificationID" name="ssn"/>
+    <property namespace="" localname="PersonGivenName" name="first-name"/>
+    <property namespace="" localname="PersonSurName" name="last-name"/>
+    <property namespace="" localname="AddressPrivateMailboxText" name="addr1"/>
+    <property namespace="" localname="LocationCity" name="city"/>
+    <property namespace="" localname="LocationState" name="state"/>
+    <property namespace="" localname="LocationPostalCode" name="zip"/>
+  </property-defs>
+  <algorithms>
+    <algorithm name="std-reduce" function="standard-reduction"/>
+    <algorithm name="dbl-metaphone" function="double-metaphone"/>
+  </algorithms>
+  <scoring>
+    <add property-name="ssn" weight="50"/>
+    <add property-name="last-name" weight="8"/>
+    <add property-name="first-name" weight="12"/>
+    <add property-name="addr1" weight="5"/>
+    <add property-name="city" weight="3"/>
+    <add property-name="state" weight="1"/>
+    <add property-name="zip" weight="3"/>
+    <expand property-name="first-name" algorithm-ref="dbl-metaphone" weight="6">
+      <dictionary>name-dictionary.xml</dictionary>
+      <distance-threshold>10</distance-threshold>
+    </expand>
+    <expand property-name="last-name" algorithm-ref="dbl-metaphone" weight="8">
+      <dictionary>name-dictionary.xml</dictionary>
+      <!--defaults to 100 distance -->
+    </expand>
+    <reduce algorithm-ref="std-reduce" weight="4">
+      <all-match>
+        <property>last-name</property>
+        <property>addr1</property>
+      </all-match>
+    </reduce>
+  </scoring>
+  <thresholds>
+    <threshold above="30" label="Possible Match"/>
+    <threshold above="55" label="Kinda Match" action="custom-action"/>
+    <threshold above="71" label="Likely Match" action="notify"/>
+    <threshold above="75" label="Definitive Match" action="merge"/>
+    <!-- below 25 will be NOT-A-MATCH or no category -->
+  </thresholds>
+  <actions>
+    <action name="custom-action" function="customAction" namespace="" at="/custom-action.sjs" />
+  </actions>
+  <tuning>
+    <max-scan>200</max-scan>  <!-- never look at more than 200 -->
+  </tuning>
+</options>

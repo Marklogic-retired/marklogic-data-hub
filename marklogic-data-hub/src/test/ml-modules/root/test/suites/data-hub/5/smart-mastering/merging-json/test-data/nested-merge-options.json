@@ -1,0 +1,74 @@
+{
+  "options": {
+    "matchOptions": "basic",
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "LowerProperty1",
+          "name": "main"
+        },
+        {
+          "namespace": "",
+          "localname": "EntityReference",
+          "name": "entity"
+        },
+        {
+          "path": "/envelope/instance/TopProperty/LowerProperty1/EvenLowerProperty/LowestProperty1",
+          "name": "low1"
+        },
+        {
+          "path": "/envelope/instance/TopProperty/LowerProperty1/EvenLowerProperty/LowestProperty3",
+          "name": "low3"
+        }
+      ],
+      "namespaces": {
+      }
+    },
+    "algorithms": {
+      "stdAlgorithm": {}
+    },
+    "merging": [
+      {
+        "propertyName": "main",
+        "maxValues": "1",
+        "sourceWeights": [{
+          "source": {
+            "name": "sample1",
+            "weight": "10"
+          }
+        }]
+      },
+      {
+        "propertyName": "entity",
+        "maxValues": "1",
+        "sourceWeights": [{
+          "source": {
+            "name": "sample1",
+            "weight": "10"
+          }
+        }]
+      },
+      {
+        "propertyName": "low1",
+        "maxValues": "1",
+        "sourceWeights": [{
+          "source": {
+            "name": "sample2",
+            "weight": "10"
+          }
+        }]
+      },
+      {
+        "propertyName": "low3",
+        "maxValues": "1",
+        "sourceWeights": [{
+          "source": {
+            "name": "sample2",
+            "weight": "10"
+          }
+        }]
+      }
+    ]
+  }
+}
