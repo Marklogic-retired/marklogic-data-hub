@@ -1,0 +1,15 @@
+{
+  "name" : "null",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "options" : {
+    "collections" : [ "nothing-should-be-in-this-collection" ],
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "targetEntity" : "Customer",
+    "sourceQuery" : "cts.collectionQuery('default-ingestion')"
+  },
+  "customHook" : { },
+  "language" : "zxx",
+  "modulePath" : "/test/custom-null-step/main.sjs"
+}

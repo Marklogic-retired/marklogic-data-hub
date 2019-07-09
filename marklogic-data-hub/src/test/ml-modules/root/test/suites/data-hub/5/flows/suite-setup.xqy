@@ -5,6 +5,16 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 
 declare option xdmp:mapping "false";
 
+xdmp:invoke-function(function() {
+  xdmp:document-insert(
+    "/test/custom-null-step/main.sjs",
+    test:get-test-file("nullStep.sjs"),
+    (xdmp:default-permissions(),xdmp:permission("flow-operator-role","execute"),xdmp:permission("flow-developer-role","execute")),
+    ()
+  )
+},
+map:entry("database", xdmp:modules-database())
+),
 for $uri in map:keys($lib:TEST-DATA)
 let $doc := test:get-test-file(map:get($lib:TEST-DATA, $uri))
 return
@@ -32,6 +42,20 @@ xdmp:document-insert(
 xdmp:document-insert(
   "/step-definitions/CustomerMapping.step.json",
   test:get-test-file("CustomerMapping.step.json"),
+  xdmp:default-permissions(),
+  "http://marklogic.com/data-hub/step-definition"
+),
+
+xdmp:document-insert(
+  "/flows/CustomerNull.flow.json",
+  test:get-test-file("CustomerNull.flow.json"),
+  xdmp:default-permissions(),
+  "http://marklogic.com/data-hub/flow"
+),
+
+xdmp:document-insert(
+  "/step-definitions/CustomerNull.step.json",
+  test:get-test-file("CustomerNull.step.json"),
   xdmp:default-permissions(),
   "http://marklogic.com/data-hub/step-definition"
 ),
