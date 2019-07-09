@@ -76,7 +76,8 @@ export class IngestStep extends AppPage {
   async setTargetPermissions(permissions: string) {
     let inputField = this.targetPermissions;
     await inputField.clear();
-    return await inputField.sendKeys(permissions);  
+    await inputField.sendKeys(permissions);
+    await inputField.sendKeys(protractor.Key.ENTER);  
   }
   
   get targetUriReplace() {
@@ -86,7 +87,8 @@ export class IngestStep extends AppPage {
   async setTargetUriReplace(uriReplace: string) {
     let inputField = this.targetUriReplace;
     await inputField.clear();
-    return await inputField.sendKeys(uriReplace);  
+    await inputField.sendKeys(uriReplace);
+    await inputField.sendKeys(protractor.Key.ENTER);  
   }
 
   get targetUriPreview() {
