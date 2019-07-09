@@ -24,6 +24,15 @@ export class IngestStep extends AppPage {
     let dropDown = this.sourceFileTypeDropDown;
     return await dropDown.click();
   }
+
+  get csvSeparatorDropDown() {
+    return element(by.id("csv-separator-select"));
+  }
+
+  async clickCsvSeparatorDropDown() {
+    let dropDown = this.csvSeparatorDropDown;
+    return await dropDown.click();
+  }
   
   /**
    * @param option = [JSON|XML|Binary|CSV|Text]

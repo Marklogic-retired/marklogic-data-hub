@@ -40,6 +40,21 @@ export class FlowConfig {
     flowDesc: 'Description Flow 8'
   };
 
+  flow9 = {
+    flowName: 'TestFlow9',
+    flowDesc: 'Description Flow 9'
+  };
+
+  flow10 = {
+    flowName: 'TestFlow10',
+    flowDesc: 'Description Flow 10'
+  };
+
+  flow11 = {
+    flowName: 'TestFlow11',
+    flowDesc: 'Description Flow 11'
+  };
+
 
   flowWithOptions = {
     flowName: 'TestFlow1',

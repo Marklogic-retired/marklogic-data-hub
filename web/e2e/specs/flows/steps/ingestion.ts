@@ -1,6 +1,5 @@
 import {browser, by, ExpectedConditions as EC, Ptor} from 'protractor';
 import loginPage from '../../../page-objects/auth/login';
-import dashboardPage from '../../../page-objects/dashboard/dashboard';
 import appPage from '../../../page-objects/appPage';
 import manageFlowPage from "../../../page-objects/flows/manageFlows";
 import editFlowPage from "../../../page-objects/flows/editFlow";
@@ -8,6 +7,7 @@ import stepsPage from "../../../page-objects/steps/steps";
 import ingestStepPage from "../../../page-objects/steps/ingestStep";
 import stepsData from "../../../test-objects/stepConfig";
 import flowData from "../../../test-objects/flowConfig";
+import stepConfig from "../../../test-objects/stepConfig";
 
 export default function (qaProjectDir) {
   describe('Verify ingestion step test', () => {
@@ -16,11 +16,6 @@ export default function (qaProjectDir) {
     });
 
     editFlowPage.setQaProjectDir(qaProjectDir);
-    let flow1 = flowData.flow1;
-    let flow2 = flowData.flow2;
-    let flow3 = flowData.flow3;
-    let flow4 = flowData.flow4;
-    let flow5 = flowData.flow5;
     let json = stepsData.json;
     let xml = stepsData.xml;
     let csv = stepsData.csv;
@@ -43,8 +38,8 @@ export default function (qaProjectDir) {
       await browser.waitForAngular();
       await appPage.flowsTab.click();
       //add a flow
-      await manageFlowPage.createFlow(flow1);
-      await manageFlowPage.clickFlowname(flow1.flowName);
+      await manageFlowPage.createFlow(flowData.flow1);
+      await manageFlowPage.clickFlowname(flowData.flow1.flowName);
       await browser.sleep(1000);
       await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
       await editFlowPage.clickNewStepButton();
@@ -91,7 +86,7 @@ export default function (qaProjectDir) {
       await browser.refresh();
       await browser.waitForAngular();
       await appPage.flowsTab.click();
-      await manageFlowPage.removeFlow(flow1);
+      await manageFlowPage.removeFlow(flowData.flow1);
     });
 
     xit('Verify ingestion to target database', async function () {
@@ -109,8 +104,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should ingest JSON', async function () {
-      await manageFlowPage.createFlow(flow1);
-      await editFlowPage.addStep(flow1, json);
+      await manageFlowPage.createFlow(flowData.flow1);
+      await editFlowPage.addStep(flowData.flow1, json);
       await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.sleep(3000);
@@ -123,14 +118,14 @@ export default function (qaProjectDir) {
       await editFlowPage.verifyFlow();
       //verify on manage flows view
       await console.log('verify flow');
-      await manageFlowPage.verifyFlow(flow1, "Finished", 1, 6, 0);
+      await manageFlowPage.verifyFlow(flowData.flow1, "Finished", 1, 6, 0);
       await console.log('remove flow');
-      await manageFlowPage.removeFlow(flow1);
+      await manageFlowPage.removeFlow(flowData.flow1);
     });
 
     it('Should ingest XML', async function () {
-      await manageFlowPage.createFlow(flow2);
-      await editFlowPage.addStep(flow2, xml);
+      await manageFlowPage.createFlow(flowData.flow2);
+      await editFlowPage.addStep(flowData.flow2, xml);
       await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -141,15 +136,16 @@ export default function (qaProjectDir) {
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
       await console.log('verify flow');
-      await manageFlowPage.verifyFlow(flow2, "Finished", 1, 1, 0);
+      await manageFlowPage.verifyFlow(flowData.flow2, "Finished", 1, 1, 0);
       await console.log('remove flow');
-      await manageFlowPage.removeFlow(flow2);
+      await manageFlowPage.removeFlow(flowData.flow2);
     });
 
-    it('Should ingest CSV', async function () {
-      await manageFlowPage.createFlow(flow3);
+    //CSV separator types
+    it('Should ingest comma separated CSV', async function () {
+      await manageFlowPage.createFlow(flowData.flow3);
       await browser.sleep(5000);
-      await editFlowPage.addStep(flow3, csv);
+      await editFlowPage.addStep(flowData.flow3, csv);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -159,14 +155,68 @@ export default function (qaProjectDir) {
       await editFlowPage.verifyFlow();
       //verify on manage flows view
       await console.log('verify flow');
-      await manageFlowPage.verifyFlow(flow3, "Finished", 1, '1,884', 0);
+      await manageFlowPage.verifyFlow(flowData.flow3, "Finished", 1, '1,884', 0);
       await console.log('remove flow');
-      await manageFlowPage.removeFlow(flow3);
+      await manageFlowPage.removeFlow(flowData.flow3);
+    });
+
+    it('Should ingest pipe separated CSV', async function () {
+      await manageFlowPage.createFlow(flowData.flow9);
+      await browser.sleep(5000);
+      await editFlowPage.addStep(flowData.flow9, stepConfig.csv_pipe);
+      await editFlowPage.clickRunFlowButton();
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await editFlowPage.clickButtonRunCancel("flow");
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
+      //verify on edit flow view
+      await editFlowPage.verifyFlow();
+      //verify on manage flows view
+      await console.log('verify flow');
+      await manageFlowPage.verifyFlow(flowData.flow9, "Finished", 1, '2', 0);
+      await console.log('remove flow');
+      await manageFlowPage.removeFlow(flowData.flow9);
+    });
+
+    it('Should ingest semicolon separated CSV', async function () {
+      await manageFlowPage.createFlow(flowData.flow10);
+      await browser.sleep(5000);
+      await editFlowPage.addStep(flowData.flow10, stepConfig.csv_semicolon);
+      await editFlowPage.clickRunFlowButton();
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await editFlowPage.clickButtonRunCancel("flow");
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
+      //verify on edit flow view
+      await editFlowPage.verifyFlow();
+      //verify on manage flows view
+      await console.log('verify flow');
+      await manageFlowPage.verifyFlow(flowData.flow10, "Finished", 1, '2', 0);
+      await console.log('remove flow');
+      await manageFlowPage.removeFlow(flowData.flow10);
+    });
+
+    it('Should ingest tab separated CSV', async function () {
+      await manageFlowPage.createFlow(flowData.flow11);
+      await browser.sleep(5000);
+      await editFlowPage.addStep(flowData.flow11, stepConfig.csv_tab);
+      await editFlowPage.clickRunFlowButton();
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await editFlowPage.clickButtonRunCancel("flow");
+      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      await browser.sleep(2000);
+      //verify on edit flow view
+      await editFlowPage.verifyFlow();
+      //verify on manage flows view
+      await console.log('verify flow');
+      await manageFlowPage.verifyFlow(flowData.flow11, "Finished", 1, '2', 0);
+      await console.log('remove flow');
+      await manageFlowPage.removeFlow(flowData.flow11);
     });
 
     it('Should ingest Text', async function () {
-      await manageFlowPage.createFlow(flow4);
-      await editFlowPage.addStep(flow4, text);
+      await manageFlowPage.createFlow(flowData.flow4);
+      await editFlowPage.addStep(flowData.flow4, text);
       await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -174,14 +224,14 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
       await browser.sleep(2000);
       await console.log('verify flow');
-      await manageFlowPage.verifyFlow(flow4, "Finished", 1, 1, 0);
+      await manageFlowPage.verifyFlow(flowData.flow4, "Finished", 1, 1, 0);
       await console.log('remove flow');
-      await manageFlowPage.removeFlow(flow4);
+      await manageFlowPage.removeFlow(flowData.flow4);
     });
 
     it('Should ingest Binary', async function () {
-      await manageFlowPage.createFlow(flow5);
-      await editFlowPage.addStep(flow5, binary);
+      await manageFlowPage.createFlow(flowData.flow5);
+      await editFlowPage.addStep(flowData.flow5, binary);
       await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -192,9 +242,9 @@ export default function (qaProjectDir) {
       await editFlowPage.verifyFlow();
       //verify on manage flows view
       await console.log('verify flow');
-      await manageFlowPage.verifyFlow(flow5, "Finished", 1, 1, 0);
+      await manageFlowPage.verifyFlow(flowData.flow5, "Finished", 1, 1, 0);
       await console.log('remove flow');
-      await manageFlowPage.removeFlow(flow5);
+      await manageFlowPage.removeFlow(flowData.flow5);
     });
 
     xit('Should logout', async function () {

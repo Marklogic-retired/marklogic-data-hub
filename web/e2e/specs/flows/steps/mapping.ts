@@ -6,9 +6,7 @@ import manageFlowPage from "../../../page-objects/flows/manageFlows";
 import editFlowPage from "../../../page-objects/flows/editFlow";
 import stepsPage from "../../../page-objects/steps/steps";
 import mappingStepPage from '../../../page-objects/steps/mappingStep';
-import flowPage from "../../../page-objects/flows/flows";
 import manageJobsPage from "../../../page-objects/jobs/manageJobs";
-import entityPage from "../../../page-objects/entities/entities";
 import flowData from "../../../test-objects/flowConfig";
 import stepsData from "../../../test-objects/stepConfig";
 
@@ -194,6 +192,68 @@ export default function (qaProjectDir) {
       await appPage.clickFlowTab();
       await manageFlowPage.createFlow(flow2);
       await editFlowPage.addStep(flow2, mapping2);
+    });
+
+    it('should select target format of the step', async function () {
+      await appPage.clickFlowTab();
+      await manageFlowPage.clickFlowname(flow2.flowName);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await editFlowPage.clickNewStepButton();
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await stepsPage.clickStepTypeDropDown();
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mapping")));
+      await stepsPage.clickStepTypeOption("Mapping");
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await stepsPage.setStepName("Mapping");
+      await stepsPage.clickSourceTypeRadioButton("collection");
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await stepsPage.clickStepSourceCollectionDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions("json-ingestion")));
+      await stepsPage.clickStepSourceCollectionOption("json-ingestion");
+      await stepsPage.clickStepTargetEntityDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Person")));
+      await stepsPage.clickStepTargetEntityOption("Person");
+      await stepsPage.clickAdvSettingsExpandCollapse();
+      await stepsPage.clickTargetFormatDropDown();
+      await stepsPage.clickTargetFormatOption("XML");
+      await stepsPage.clickTargetFormatDropDown();
+      await stepsPage.clickTargetFormatOption("JSON");
+      await stepsPage.clickStepCancelSave("cancel");
+    });
+
+    it('should add additional target collections', async function () {
+      await appPage.clickFlowTab();
+      await manageFlowPage.clickFlowname(flow2.flowName);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await editFlowPage.clickNewStepButton();
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await stepsPage.clickStepTypeDropDown();
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mapping")));
+      await stepsPage.clickStepTypeOption("Mapping");
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await stepsPage.setStepName("Mapping");
+      await stepsPage.clickSourceTypeRadioButton("collection");
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await stepsPage.clickStepSourceCollectionDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions("json-ingestion")));
+      await stepsPage.clickStepSourceCollectionOption("json-ingestion");
+      await stepsPage.clickStepTargetEntityDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Person")));
+      await stepsPage.clickStepTargetEntityOption("Person");
+      await stepsPage.clickAdvSettingsExpandCollapse();
+      await browser.sleep(1000);
+      await stepsPage.clickAddAdditionalCollectionButton();
+      await browser.sleep(500);
+      await stepsPage.setAdditionalCollection(0, "MyCollection1");
+      await stepsPage.setAdditionalCollection(1, "MyCollection2");
+      await stepsPage.clickRemoveAdditionalCollectionButton(0);
+      await stepsPage.clickStepCancelSave("cancel");
     });
 
     it('should remove flow with steps', async function () {
