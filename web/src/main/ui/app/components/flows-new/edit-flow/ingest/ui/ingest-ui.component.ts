@@ -132,6 +132,10 @@ export class IngestUiComponent implements OnInit{
 
   }
 
+  ngDoCheck() {
+    this.updateMlcpCommand();
+  }
+
   ngOnInit(): void {
     this.tooltips = FlowsTooltips.ingest;
     this.buildURIPreview();
@@ -176,7 +180,7 @@ export class IngestUiComponent implements OnInit{
     let output_permissions = this.step.options.permissions;
     let step_number = String(this.flow.steps.findIndex(i => i.id === this.step.id)+1);
     let transform_param = `flow-name=${encodeURIComponent(this.flow.name)},step=${encodeURIComponent(step_number)}`
-    let collections = this.flow.name.replace(new RegExp(' ', 'g'), '') + ',input';
+    let collections = this.step.options.collections;
     let output_uri_replace = this.outputUriReplaceValue();
     this.addMlcpOption(options, 'host', host, false, true);
     this.addMlcpOption(options, 'port', port, false, true);
