@@ -179,15 +179,22 @@ export class EditFlow extends AppPage {
       await browser.wait(EC.visibilityOf(stepsPage.stepName));
       await stepsPage.setStepName(step.stepName);
       await stepsPage.setStepDescription(step.stepDesc);
-      browser.sleep(2000);
+      await browser.sleep(2000);
       await stepsPage.clickStepCancelSave("save");
-      browser.sleep(2000);
+      await browser.sleep(2000);
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
       await ingestStepPage.setInputFilePath(this.qaProjectDir + step.path);
       await browser.sleep(1000);
       await ingestStepPage.sourceFileTypeDropDown.click();
       await ingestStepPage.clickSourceFileTypeOption(step.sourceFileType);
       await browser.sleep(1000);
+      if (step.sourceFileType === 'CSV') {
+        if (step.separator) {
+          await ingestStepPage.clickCsvSeparatorDropDown();
+          await ingestStepPage.clickSourceFileTypeOption(step.separator);
+          await browser.sleep(1000);
+        }
+      }
       await ingestStepPage.targetFileTypeDropDown.click();
       await ingestStepPage.clickSourceFileTypeOption(step.targetFileType);
     } else {
@@ -221,7 +228,6 @@ export class EditFlow extends AppPage {
     await expect(editFlowPage.jobStartedTimestamp.isDisplayed).toBeTruthy();
     await expect(editFlowPage.viewJobsButton.isEnabled).toBeTruthy();
   }
-
 
 }
 

@@ -141,7 +141,7 @@ export class Steps extends AppPage {
 
   async clickAdvSettingsExpandCollapse() {
     let panel = this.advSettingsExpandCollapse;
-    return await this.advSettingsExpandCollapse.click();
+    return await panel.click();
   }
 
   get stepSourceDatabaseDropDown() {
@@ -180,16 +180,34 @@ export class Steps extends AppPage {
     return await stepTargetDatabaseOption.click();
   }
 
+  get targetFormatDropDown() {
+    return element(by.id("step-output-format"));
+  }
+
+  stepTargetFormatOptions(option: string) {
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
+  }
+
+  async clickTargetFormatDropDown(){
+    let dropDown = this.targetFormatDropDown;
+    return await dropDown.click();
+  }
+
+  async clickTargetFormatOption(option: string) {
+    let stepTargetFormatOptions = this.stepTargetFormatOptions(option);
+    return await stepTargetFormatOptions.click();
+  }
+
   additionalCollectionToAdd(collectionNumber: number) {
     return element(by.css(`.add-target-collecions-${collectionNumber}`));
   }
 
-  get addAddtionalCollectionButton() {
+  get addAdditionalCollectionButton() {
     return element(by.id("add-additional-collection-btn"));
   }
 
-  async clickAddAddtionalCollectionButton() {
-    let button = this.addAddtionalCollectionButton;
+  async clickAddAdditionalCollectionButton() {
+    let button = this.addAdditionalCollectionButton;
     return await button.click();
   }
 
@@ -200,7 +218,7 @@ export class Steps extends AppPage {
   }
 
   removeAdditionalCollectionButton(collectionNumber: number) {
-    return element(by.css(`#remove-target-collection-${collectionNumber}`));
+    return element(by.css(`#remove-target-collection-btn-${collectionNumber}`));
   }
 
   async clickRemoveAdditionalCollectionButton(collectionNumber: number) {

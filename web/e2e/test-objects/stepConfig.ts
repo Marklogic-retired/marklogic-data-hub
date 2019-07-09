@@ -70,9 +70,42 @@ export class StepConfig {
     targetDatabase: 'data-hub-qa-STAGING',
     path: '/input/flow-test/csv',
     sourceFileType: 'CSV',
+    separator: ',',
     targetFileType: 'JSON',
   };
 
+  csv_pipe = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/sep-types/pipe-data',
+    sourceFileType: 'CSV',
+    separator: '|',
+    targetFileType: 'JSON',
+  };
+
+  csv_semicolon = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/sep-types/semicolon-data',
+    sourceFileType: 'CSV',
+    separator: ';',
+    targetFileType: 'JSON',
+  };
+
+  csv_tab = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/sep-types/tab-data',
+    sourceFileType: 'CSV',
+    separator: 'Tab',
+    targetFileType: 'JSON',
+  };
   text = {
     stepType: 'Ingestion',
     stepName: 'text-ingestion',
