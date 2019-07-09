@@ -130,6 +130,10 @@ export default function(qaProjectDir) {
             await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1003');
             await expect(browsePage.facetName("IngestAdvantage").getText()).toEqual("IngestAdvantage");
             await expect(browsePage.facetName("LoadAdvantage").getText()).toEqual("LoadAdvantage");
+            // Verify target URI replacement
+            await browsePage.searchKeyword("dray");
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await expect(browsePage.resultsUri().getText()).toEqual("/advantage/cust1001.json");
             // Verify on Manage Flows page
             await appPage.flowsTab.click()
             await browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
