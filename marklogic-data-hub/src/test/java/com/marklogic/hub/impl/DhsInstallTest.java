@@ -5,9 +5,12 @@ import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,14 +24,32 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class DhsInstallTest extends HubTestBase {
 
+    private AppConfig originalAppConfig;
+
+    @BeforeEach
+    public void setup() {
+        originalAppConfig = adminHubConfig.getAppConfig();
+    }
+
+    @AfterEach
+    public void teardown() {
+        adminHubConfig.setAppConfig(originalAppConfig);
+    }
+
     @Test
     public void prepareAppConfig() {
         AppConfig appConfig = new AppConfig();
         assertTrue(appConfig.isCreateForests(), "AppConfig should default to creating forests");
         assertNull(appConfig.getResourceFilenamesIncludePattern());
 
-        new DataHubImpl().prepareAppConfigForInstallingIntoDhs(appConfig);
+        adminHubConfig.setAppConfig(appConfig);
 
+        new DataHubImpl().prepareAppConfigForInstallingIntoDhs(adminHubConfig);
+
+        assertEquals(adminHubConfig.getPort(DatabaseKind.FINAL), appConfig.getAppServicesPort(),
+            "DHS does not allow access to the default App-Services port - 8000 - so it's set to the final port instead so " +
+                "that user modules can be loaded into the DHF modules database");
+        
         assertFalse(appConfig.isCreateForests(), "DHS handles forest creation");
         assertEquals("(staging|final|job)-database.json", appConfig.getResourceFilenamesIncludePattern().pattern(),
             "As DHS is only updating databases, we can get away with specifying a global include pattern, as " +
