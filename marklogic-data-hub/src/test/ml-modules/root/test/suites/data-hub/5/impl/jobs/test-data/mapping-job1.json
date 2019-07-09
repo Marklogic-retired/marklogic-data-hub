@@ -1,0 +1,82 @@
+{
+  "job": {
+    "jobId": "293c638e-21e9-45b6-98cc-223d834f9222",
+    "flow": "ingestion_mapping-flow",
+    "user": "admin",
+    "lastAttemptedStep": "4",
+    "lastCompletedStep": "4",
+    "jobStatus": "finished",
+    "timeStarted": "2019-06-26T23:11:22.802106Z",
+    "timeEnded": "2019-06-26T23:11:41.026434Z",
+    "stepResponses": {
+      "1": {
+        "flowName": "ingestion_mapping-flow",
+        "stepName": "ingest-step-json",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 829,
+        "successfulEvents": 829,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:11:22.836606Z",
+        "stepEndTime": "2019-06-26T23:11:27.462273Z"
+      },
+      "2": {
+        "flowName": "ingestion_mapping-flow",
+        "stepName": "mapping-step-json",
+        "stepDefinitionName": "default-mapping",
+        "stepDefinitionType": "mapping",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 2",
+        "totalEvents": 829,
+        "successfulEvents": 829,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:11:27.510711Z",
+        "stepEndTime": "2019-06-26T23:11:31.219158Z"
+      },
+      "3": {
+        "flowName": "ingestion_mapping-flow",
+        "stepName": "ingest-step-xml",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 3",
+        "totalEvents": 830,
+        "successfulEvents": 830,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:11:31.324564Z",
+        "stepEndTime": "2019-06-26T23:11:36.674167Z"
+      },
+      "4": {
+        "flowName": "ingestion_mapping-flow",
+        "stepName": "mapping-step-xml",
+        "stepDefinitionName": "default-mapping",
+        "stepDefinitionType": "mapping",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 4",
+        "totalEvents": 830,
+        "successfulEvents": 830,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:11:36.718498Z",
+        "stepEndTime": "2019-06-26T23:11:40.998009Z"
+      }
+    }
+  }
+}
