@@ -88,6 +88,14 @@ export class IngestStep extends AppPage {
     await inputField.clear();
     return await inputField.sendKeys(uriReplace);  
   }
+
+  get targetUriPreview() {
+    return element(by.id("uri-preview"));  
+  }
+
+  get mlcpCommand() {
+    return element(by.css(".mlcp-cmd p"));  
+  }
 }
 
 let ingestStepPage = new IngestStep();
