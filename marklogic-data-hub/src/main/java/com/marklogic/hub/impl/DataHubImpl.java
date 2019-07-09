@@ -577,17 +577,23 @@ public class DataHubImpl implements DataHub {
     }
 
     public void dhsInstall(HubDeployStatusListener listener) {
-        prepareAppConfigForInstallingIntoDhs(hubConfig.getAppConfig());
+        prepareAppConfigForInstallingIntoDhs(hubConfig);
 
         HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         dhsDeployer.setCommands(buildCommandListForInstallingIntoDhs());
         dhsDeployer.deploy(hubConfig.getAppConfig());
     }
 
-    protected void prepareAppConfigForInstallingIntoDhs(AppConfig appConfig) {
+    protected void prepareAppConfigForInstallingIntoDhs(HubConfig hubConfig) {
+        AppConfig appConfig = hubConfig.getAppConfig();
+
+        appConfig.setModuleTimestampsPath(null);
         appConfig.setCreateForests(false);
         appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
         disableSomeCmaUsage(appConfig);
+
+        // 8000 is not available in DHS
+        appConfig.setAppServicesPort(hubConfig.getPort(DatabaseKind.FINAL));
     }
 
     protected List<Command> buildCommandListForInstallingIntoDhs() {
