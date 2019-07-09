@@ -105,7 +105,6 @@ export default function(qaProjectDir) {
             await ingestStepPage.setTargetUriReplace(qaProjectDir + "/input/advantage" + ", " + "\'\/advantage\'");
             await browser.sleep(3000);
             await browser.wait(EC.visibilityOf(ingestStepPage.targetUriPreview));
-            await expect(ingestStepPage.targetUriPreview.getText()).toEqual("/advantage/example.json");
             await editFlowPage.clickRunFlowButton();
             await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
