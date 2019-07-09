@@ -4,6 +4,8 @@ module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms";
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace thsr = "http://marklogic.com/xdmp/thesaurus"
   at "/MarkLogic/thesaurus.xqy";
 
@@ -27,8 +29,6 @@ declare function algorithms:thesaurus(
 )
 {
   let $property-name := $expand-xml/@property-name
-  let $property-def := $options-xml/*:property-defs/*:property[@name = $property-name]
-  let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
   let $thesaurus := $expand-xml/*:thesaurus
   where fn:exists($thesaurus)
   return
@@ -37,20 +37,7 @@ declare function algorithms:thesaurus(
     where fn:exists($entries)
     return
       thsr:expand(
-        if ($options-xml/match:data-format = $const:FORMAT-JSON) then
-          cts:json-property-value-query(
-            fn:string($qname),
-            fn:lower-case($value),
-            "case-insensitive",
-            $expand-xml/@weight
-          )
-        else
-          cts:element-value-query(
-            $qname,
-            fn:lower-case($value),
-            "case-insensitive",
-            $expand-xml/@weight
-          ),
+        helper-impl:property-name-to-query($options-xml, $property-name)($value, $expand-xml/@weight),
         $entries,
         $expand-xml/@weight,
         (),

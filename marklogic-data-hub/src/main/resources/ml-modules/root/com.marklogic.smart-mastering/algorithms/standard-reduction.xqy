@@ -4,6 +4,8 @@ module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms";
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 
 declare option xdmp:mapping "false";
 
@@ -20,28 +22,12 @@ declare function algorithms:standard-reduction-query(
       else
         0
     return
-      let $property-def := $options-xml/*:property-defs/*:property[@name = $property-name]
-      where fn:exists($property-def)
+      let $base-query := helper-impl:property-name-to-query($options-xml, $property-name)
+      where fn:exists($base-query)
       return
-        let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
+        let $qname := helper-impl:property-name-to-qname($options-xml, $property-name)
         let $value := $document//*[fn:node-name(.) eq $qname]
         return
-            if ($options-xml/*:data-format = $const:FORMAT-JSON) then
-              cts:json-property-value-query(
-                fn:string($qname),
-                $value,
-                "case-insensitive",
-                $weight
-              )
-            else if ($options-xml/*:data-format = $const:FORMAT-XML) then
-              cts:element-value-query(
-                $qname,
-                $value,
-                "case-insensitive",
-                $weight
-              )
-            else
-              fn:error(xs:QName("SM-INVALID-FORMAT"), "invalid format in match options")
-
+            helper-impl:property-name-to-query($options-xml, $property-name)($value, $weight)
   ))
 };

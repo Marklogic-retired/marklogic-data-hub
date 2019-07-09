@@ -135,18 +135,91 @@ declare function opt-impl:save-options(
 (: Convert JSON match options to XML :)
 declare function opt-impl:options-from-json($options-json)
 {
-  (: TODO consider more explicit translation, like merge options :)
-  let $xml := json:transform-from-json($options-json, $opt-impl:options-json-config)
+  let $options-root := $options-json/options
   return
-    if (fn:exists($options-json/options/collections/content[. instance of null-node()])) then
-      element matcher:options {
-        $xml/* except $xml/matcher:collections,
-        element matcher:collections {
+    element matcher:options {
+      if (fn:exists($options-root/targetEntity)) then
+        element matcher:target-entity {fn:string($options-root/targetEntity)}
+      else (),
+      if (fn:exists($options-root/dataFormat)) then
+        element matcher:data-format {fn:string($options-root/dataFormat)}
+      else (),
+      element matcher:property-defs {
+        for $property in $options-root/propertyDefs/(properties|property)
+        return
+          element matcher:property {
+            attribute namespace {fn:string($property/namespace)},
+            attribute localname {fn:string($property/localname)},
+            attribute name {fn:string($property/name)},
+            $property/indexReferences ! cts:reference-parse(.)
+          }
+      },
+      element matcher:collections {
+        if (fn:exists($options-root/collections/content[. instance of null-node()])) then
           element matcher:content {attribute none {"true"}}
+        else
+          for $content in $options-root/collections/content
+          return
+            element matcher:content {fn:string($content)}
+      },
+      element matcher:algorithms {
+        for $algorithm in $options-root/(array-node("algorithms")/object-node()|algorithms/algorithm)
+        return
+          element matcher:algorithm {
+            attribute name { fn:string($algorithm/name) },
+            if (fn:exists($algorithm/function)) then
+              attribute function {fn:string($algorithm/function) }
+            else (),
+            if (fn:exists($algorithm/namespace)) then
+              attribute namespace { fn:string($algorithm/namespace) }
+            else (),
+            if (fn:exists($algorithm/at)) then
+              attribute at { fn:string($algorithm/at) }
+            else ()
+          }
+      },
+      element matcher:scoring {
+        json:transform-from-json(object-node { "scoring": $options-root/scoring }, $opt-impl:options-json-config)/*
+      },
+      element matcher:actions {
+        for $action in $options-root/(array-node("actions")/object-node()|actions/action)
+        return
+          element matcher:action {
+            attribute name { fn:string($action/name) },
+            if (fn:exists($action/function)) then
+              attribute function {fn:string($action/function) }
+            else (),
+            if (fn:exists($action/namespace)) then
+              attribute namespace { fn:string($action/namespace) }
+            else (),
+            if (fn:exists($action/at)) then
+              attribute at { fn:string($action/at) }
+            else (),
+            for $node in ($action/* except $action/(name|function|namespace|at))
+            return
+              json:transform-from-json(object-node { fn:node-name($node): $node }, $opt-impl:options-json-config)
+          }
+      },
+      element matcher:thresholds {
+        for $threshold in $options-root/(array-node("thresholds")/object-node()|thresholds/threshold)
+        return
+          element matcher:threshold {
+            attribute label { fn:string($threshold/label) },
+            attribute above {fn:string($threshold/above) },
+            if (fn:exists($threshold/action)) then
+              attribute action { fn:string($threshold/action) }
+            else (),
+            for $node in ($threshold/* except $threshold/(label|above|action))
+            return
+              json:transform-from-json(object-node { fn:node-name($node): $node }, $opt-impl:options-json-config)
+          }
+      },
+      if (fn:exists($options-root/tuning/maxScan)) then
+        element matcher:tuning {
+          element matcher:max-scan {fn:string($options-root/tuning/maxScan)}
         }
-      }
-    else
-      $xml
+      else ()
+    }
 };
 
 declare function opt-impl:options-to-json($options-xml as element(matcher:options)?)
@@ -154,7 +227,97 @@ declare function opt-impl:options-to-json($options-xml as element(matcher:option
 {
   if (fn:exists($options-xml)) then
     xdmp:to-json(
-      json:transform-to-json-object($options-xml, $opt-impl:options-json-config)
+      map:entry(
+      "options", map:new((
+        if (fn:exists($options-xml/matcher:target-entity)) then
+          map:entry("targetEntity", fn:string($options-xml/matcher:target-entity))
+        else (),
+        if (fn:exists($options-xml/matcher:data-format)) then
+          map:entry("dataFormat", fn:string($options-xml/matcher:data-format))
+        else (),
+        map:entry(
+          "propertyDefs",
+          map:entry("properties",
+            array-node {
+              for $property in $options-xml/matcher:property-defs/matcher:property
+              return
+                xdmp:to-json(map:new((
+                  map:entry("namespace", fn:string($property/@namespace)),
+                  map:entry("localname", fn:string($property/@localname)),
+                  map:entry("name", fn:string($property/@name)),
+                  if (fn:exists($property/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference))) then
+                    map:entry("indexReferences",
+                      array-node {
+                        $property/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference) ! cts:reference-parse(.)
+                      }
+                    )
+                  else ()
+                )))/object-node()
+            }
+          )
+        ),
+        map:entry("algorithms",
+          array-node {
+            for $algorithm in $options-xml/matcher:algorithms/matcher:algorithm
+            return
+              xdmp:to-json(map:new((
+                map:entry("name", fn:string($algorithm/@name)),
+                if (fn:exists($algorithm/@function)) then
+                  map:entry("function", fn:string($algorithm/@function))
+                else (),
+                if (fn:exists($algorithm/@namespace)) then
+                  map:entry("namespace", fn:string($algorithm/@namespace))
+                else (),
+                if (fn:exists($algorithm/@at)) then
+                  map:entry("at", fn:string($algorithm/@at))
+                else ()
+              )))/object-node()
+          }
+        ),
+        if (fn:exists($options-xml/matcher:collections/matcher:content)) then
+          map:entry("collections",
+            map:entry("content",
+              if ($options-xml/matcher:collections/matcher:content/@none = "true") then
+                null-node {}
+              else
+                array-node {
+                  $options-xml/matcher:collections/matcher:content ! fn:string(.)
+                }
+            )
+          )
+        else (),
+        map:entry("scoring",
+          xdmp:to-json(
+              json:transform-to-json-object($options-xml/matcher:scoring, $opt-impl:options-json-config)
+          )/scoring
+        ),
+        map:entry("actions",
+          array-node {
+            if (fn:exists($options-xml/matcher:actions)) then
+              xdmp:to-json(
+                json:transform-to-json-object($options-xml/matcher:actions, $opt-impl:options-json-config)
+              )/actions/action
+            else ()
+          }
+        ),
+        map:entry("thresholds",
+          array-node {
+            if (fn:exists($options-xml/matcher:thresholds)) then
+              xdmp:to-json(
+                json:transform-to-json-object($options-xml/matcher:thresholds, $opt-impl:options-json-config)
+              )/thresholds/threshold
+            else ()
+          }
+        ),
+        if (fn:exists($options-xml/matcher:tuning)) then
+          map:entry("tuning",
+            xdmp:to-json(
+                json:transform-to-json-object($options-xml/matcher:tuning, $opt-impl:options-json-config)
+            )/tuning
+          )
+        else ()
+      ))
+      )
     )/object-node()
   else ()
 };

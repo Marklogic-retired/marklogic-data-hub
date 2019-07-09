@@ -15,7 +15,8 @@ import module namespace fun-ext = "http://marklogic.com/smart-mastering/function
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-  at "base.xqy";
+  at "base.xqy",
+    "options.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 
@@ -151,18 +152,19 @@ declare function collection-impl:default-collection-handler(
   $collections-by-uri as map:map,
   $event-options as element()?
 ) {
-  if (fn:exists($event-options/merging:set)) then
+  if (fn:exists($event-options/merging:set/merging:collection[. ne ''])) then
     $event-options/merging:set/merging:collection ! fn:string(.)
   else (
     let $merge-options := collection-impl:get-options-root($event-options)
     let $match-options := matcher:get-options($merge-options/merging:match-options, $const:FORMAT-XML)
+    let $content-collection-options := fn:head(($match-options,$merge-options))
     let $all-collections := fn:distinct-values((
           map:keys(-$collections-by-uri),
           switch ($event-name)
             case $const:ON-MERGE-EVENT return
-              (coll:merged-collections($merge-options),coll:content-collections($match-options))
+              (coll:merged-collections($merge-options),coll:content-collections($content-collection-options))
             case $const:ON-NO-MATCH return
-              coll:content-collections($match-options)
+              coll:content-collections($content-collection-options)
             case $const:ON-ARCHIVE-EVENT return
               coll:archived-collections($merge-options)
             case $const:ON-NOTIFICATION-EVENT return
@@ -182,7 +184,7 @@ declare function collection-impl:default-collection-handler(
       (
         $all-collections[fn:not(. = $remove-collections)],
         $event-options/merging:add/merging:collection ! fn:string(.)
-      )
+      )[. ne '']
   )
 };
 

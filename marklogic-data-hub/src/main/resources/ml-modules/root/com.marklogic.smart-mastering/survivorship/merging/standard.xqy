@@ -114,7 +114,7 @@ declare function merging:standard(
         ))
       let $weight := fn:max(($length-score, $source-score))
       where fn:exists($sources[fn:exists(. intersect $selected-sources)])
-      stable order by $weight descending, $source-dateTime descending
+      stable order by $weight descending, $source-score descending, $source-dateTime descending
       return
         $property
     ),

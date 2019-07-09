@@ -250,6 +250,7 @@ declare function auditing:audit-trace-rollback($prov-xml)
     fn:string(
       $entity/*:label
     )
+  where fn:not($merged-uri = $orig-uri)
   return
     auditing:audit-trace(
       $auditing:ROLLBACK-ACTION,

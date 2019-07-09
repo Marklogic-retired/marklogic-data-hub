@@ -11,7 +11,7 @@ declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 declare function coll:get-collections($spec as element()*, $default as xs:string?)
   as xs:string*
 {
-  let $coll-names := $spec/fn:string()
+  let $coll-names := $spec ! fn:string()[. ne '']
   return
     if (fn:exists($spec/@none)) then
       ()
@@ -21,10 +21,10 @@ declare function coll:get-collections($spec as element()*, $default as xs:string
       $default
 };
 
-declare function coll:content-collections($options as element(matcher:options)?)
+declare function coll:content-collections($options as element()?)
   as xs:string*
 {
-  coll:get-collections($options/matcher:collections/matcher:content, $const:CONTENT-COLL)
+  coll:get-collections($options/*:collections/*:content, $const:CONTENT-COLL)
 };
 
 declare function coll:merged-collections($options as element(merging:options)?)

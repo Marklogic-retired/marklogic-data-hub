@@ -5,6 +5,9 @@ xquery version "1.0-ml";
  :)
 module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms";
 
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
+
 declare namespace matcher = "http://marklogic.com/smart-mastering/matcher";
 
 declare option xdmp:mapping "false";
@@ -27,15 +30,13 @@ declare function algorithms:zip-match(
   as cts:query*
 {
   let $property-name := $expand-xml/@property-name
-  let $property-def := $options-xml/matcher:property-defs/matcher:property[@name = $property-name]
-  let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
   let $sep := "-"
   let $origin-5-weight := $expand-xml/matcher:zip[@origin = "5"]/@weight/fn:data()
   let $origin-9-weight := $expand-xml/matcher:zip[@origin = "9"]/@weight/fn:data()
   for $value in $expand-values
   return
     if (fn:string-length($value) = 5) then
-      cts:element-value-query($qname, $value || $sep || "*", (), $origin-5-weight)
+      helper-impl:property-name-to-query($options-xml, $property-name)($value || $sep || "*", $origin-5-weight)
     else
-      cts:element-value-query($qname, fn:substring($value, 1, 5), (), $origin-9-weight)
+      helper-impl:property-name-to-query($options-xml, $property-name)(fn:substring($value, 1, 5), $origin-9-weight)
 };
