@@ -93,7 +93,7 @@
         <div [formGroupName]="i" class="additional-collections-group">
           <mat-form-field>
             <mat-label>Collection Name</mat-label>
-            <input [class]="'add-target-collecions-' + i" matInput formControlName="addCollection"/>
+            <input [class]="'add-target-collections-' + i" matInput formControlName="addCollection"/>
             <mat-error id="'add-target-collections-' + i + '-error">Enter a string</mat-error>
           </mat-form-field>
           <button [id]="'remove-target-collection-btn-' + i" mat-icon-button (click)="onAddRemoveCollection(i)">
