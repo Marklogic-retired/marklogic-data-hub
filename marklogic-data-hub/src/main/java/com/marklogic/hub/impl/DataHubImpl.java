@@ -593,7 +593,7 @@ public class DataHubImpl implements DataHub {
         disableSomeCmaUsage(appConfig);
 
         // 8000 is not available in DHS
-        appConfig.setAppServicesPort(hubConfig.getPort(DatabaseKind.FINAL));
+        appConfig.setAppServicesPort(hubConfig.getPort(DatabaseKind.STAGING));
     }
 
     protected List<Command> buildCommandListForInstallingIntoDhs() {
