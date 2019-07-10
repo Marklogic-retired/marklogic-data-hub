@@ -244,7 +244,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
           description:      '',
           version:          '0',
           targetEntityType: targetEntityType,
-          sourceContext:    '//',
+          sourceContext:    '/',
           sourceURI:        '',
           properties:       {}
         }

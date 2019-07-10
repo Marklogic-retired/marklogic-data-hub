@@ -218,7 +218,7 @@ export class MapComponent implements OnInit {
         "description" : this.mapping.description || "",  // TODO
         "version" : this.mapping.version || "0",
         "targetEntityType" : this.chosenEntity.info.baseUri + this.chosenEntity.name +'-' + this.chosenEntity.info.version + '/' + this.chosenEntity.name,  // TODO
-        "sourceContext": this.mapping.sourceContext || "//",  // TODO
+        "sourceContext": this.mapping.sourceContext || "/",  // TODO
         "sourceURI": this.sampleDocURI || '',
         "properties": formattedConns
     }

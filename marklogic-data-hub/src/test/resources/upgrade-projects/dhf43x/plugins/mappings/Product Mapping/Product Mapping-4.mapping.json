@@ -4,7 +4,7 @@
   "description" : "",
   "version" : 4,
   "targetEntityType" : "http://example.org/Product-0.0.1/Product",
-  "sourceContext" : "//",
+  "sourceContext" : "/",
   "sourceURI" : "/board_games.csv-0-10",
   "properties" : {
     "price" : {

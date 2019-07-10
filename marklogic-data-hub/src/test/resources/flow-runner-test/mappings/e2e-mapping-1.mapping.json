@@ -4,7 +4,7 @@
   "description": "Default description",
   "version": 1,
   "targetEntityType": "http://example.org/e2eentity-0.0.1/e2eentity",
-  "sourceContext": "//",
+  "sourceContext": "/",
   "sourceURI": "",
   "properties": {
     "id": {

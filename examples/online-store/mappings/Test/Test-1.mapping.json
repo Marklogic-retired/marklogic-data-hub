@@ -4,7 +4,7 @@
   "description" : "This is a test mapping",
   "version" : 1,
   "targetEntityType" : "http://example.org/Product-0.0.1/Product",
-  "sourceContext" : "//",
+  "sourceContext" : "/",
   "sourceURI" : "1000200",
   "properties" : { }
 }
