@@ -199,7 +199,7 @@ export class Steps extends AppPage {
   }
 
   additionalCollectionToAdd(collectionNumber: number) {
-    return element(by.css(`.add-target-collecions-${collectionNumber}`));
+    return element(by.css(`.add-target-collections-${collectionNumber}`));
   }
 
   get addAdditionalCollectionButton() {
