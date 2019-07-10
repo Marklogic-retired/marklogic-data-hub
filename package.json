@@ -9,6 +9,7 @@
     "apollo-link": "^1.2.12",
     "apollo-link-error": "^1.1.11",
     "apollo-link-http": "^1.5.15",
+    "axios": "^0.19.0",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "graphql.macro": "^1.4.2",
@@ -24,6 +25,9 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
+    "server": "npm run start --prefix ./.mock-api",
+    "client": "react-app-rewired start",
+    "mocks": "concurrently \"npm run server\" \"npm run client\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -49,6 +53,7 @@
     "@types/react-router": "^5.0.3",
     "@types/react-router-dom": "^4.3.4",
     "babel-plugin-import": "^1.12.0",
+    "concurrently": "^4.1.1",
     "customize-cra": "^0.2.14",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
