@@ -2,8 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './index.scss';
-//TODO setup webpack for Ant Design
-import "antd/dist/antd.css";
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 

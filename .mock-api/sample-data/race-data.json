@@ -1,0 +1,96 @@
+{
+  "info": {
+    "title": "Race",
+    "version": "0.0.2",
+    "baseUri": "http://grechaw.github.io/entity-types",
+    "description":"This schema represents a Runner who runs Runs and has the potential of winning Races..It fixes datatypes and keys from version 0.0.1 and also incorporates a link to an external hierarchy (LDBC sports ontology)"
+  },
+  "definitions": {
+    "Race": {
+        "properties": {
+            "raceIri": {
+                "datatype": "iri",
+                "description":"A unique identifier for a race."
+            },
+            "name": {
+                "datatype": "string",
+                "description":"The name of the race."
+            },
+            "raceCategory" : {
+                "$ref":"http://example.org/ontologies/Running",
+                "description":"A reference to an external taxonomy of race types."
+            },
+            "comprisedOfRuns": {
+                "datatype": "array",
+                "description":"An array of Runs that comprise the race.",
+                "items":{
+                    "$ref": "#/definitions/Run"
+                }
+            },
+            "wonByRunner": {
+                "$ref":"#/definitions/Runner",
+                "description":"The (single) winner of the race.  (rule) Should match the run of shortest duration."
+            },
+            "courseLength": {
+                "datatype":"decimal",
+                "description":"Length of the course in a scalar unit (decimal miles)"
+            }
+        },
+        "primaryKey":"raceIri",
+        "required": ["name", "courseLength"]
+    },
+    "Run": {
+        "properties": {
+            "id": {
+                "datatype": "iri",
+                "description":"A unique iri for the run."
+            },
+            "date": {
+                "datatype": "date",
+                "description":"The date on which the run occurred."
+            },
+            "distance": {
+                "datatype": "decimal",
+                "description":"The distance covered, in a scalar value."
+            },
+            "distanceLabel": {
+                "datatype": "string",
+                "description":"The distance covered, in a conventional notation."
+            },
+            "duration": {
+                "datatype": "dayTimeDuration",
+                "description":"The duration of the run.  Optional because in some circumstances a run is not 'finished'"
+            },
+            "runByRunner": {
+                "$ref": "#/definitions/Runner"
+            }
+        },
+        "primaryKey":"id",
+        "required":["date","distance","runByRunner"],
+        "rangeIndex":["date", "distance", "duration", "runByRunner"]
+    },
+    "Runner": {
+        "properties": {
+            "id": {
+                "datatype":"iri",
+                "description":"A unique IRI for a runner. Can be used to dedupe instances of runners."
+            },
+            "name": {
+                "datatype": "string",
+                "description":"The name of the runner.  In this early model, unique and a PK."
+            },
+            "age": {
+                "datatype": "decimal",
+                "description":"age, in decimal years."
+            },
+            "gender" : {
+                "datatype" : "string",
+                "description": "The gender of the runner (for the purposes of race categories.)"
+            }
+        },
+        "primaryKey": "name",
+        "wordLexicon": ["name"],
+        "required": ["name", "age"]
+    }
+  }
+}
