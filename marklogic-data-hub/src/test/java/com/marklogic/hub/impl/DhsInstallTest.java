@@ -46,8 +46,8 @@ public class DhsInstallTest extends HubTestBase {
 
         new DataHubImpl().prepareAppConfigForInstallingIntoDhs(adminHubConfig);
 
-        assertEquals(adminHubConfig.getPort(DatabaseKind.FINAL), appConfig.getAppServicesPort(),
-            "DHS does not allow access to the default App-Services port - 8000 - so it's set to the final port instead so " +
+        assertEquals(adminHubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
+            "DHS does not allow access to the default App-Services port - 8000 - so it's set to the staging port instead so " +
                 "that user modules can be loaded into the DHF modules database");
         
         assertFalse(appConfig.isCreateForests(), "DHS handles forest creation");
