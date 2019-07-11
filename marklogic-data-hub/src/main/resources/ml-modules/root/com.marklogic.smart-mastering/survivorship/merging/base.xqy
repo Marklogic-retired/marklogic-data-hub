@@ -1925,6 +1925,7 @@ declare function merge-impl:build-final-properties(
             if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
               xdmp:trace($const:TRACE-MERGE-RESULTS, xdmp:describe(('Property Entity Definition Found: ' || $prop-entity-title, 'Property Entity Instances Found: ', $prop-entity-instances),(),()))
             else ()
+        where fn:exists($prop-entity-instances)
         return
           if (fn:exists($distinct-primary-key-values)) then
             for $primary-key-value in $distinct-primary-key-values

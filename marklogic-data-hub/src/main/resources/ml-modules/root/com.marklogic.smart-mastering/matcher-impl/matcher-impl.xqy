@@ -31,8 +31,6 @@ import module namespace helper-impl = "http://marklogic.com/smart-mastering/help
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
-import module namespace notify-impl = "http://marklogic.com/smart-mastering/notification-impl"
-  at "/com.marklogic.smart-mastering/matcher-impl/notification-impl.xqy";
 import module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
