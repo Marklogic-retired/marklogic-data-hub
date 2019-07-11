@@ -97,6 +97,13 @@ declare function es-impl:get-entity-def($target-entity as item()?) as object-nod
       map:get($_cached-entities, $target-entity)
     else
       let $entity-def := fn:head(es-impl:get-entity-descriptors()/object-node()[(entityIRI,entityTitle) = $target-entity])
+      (: try a second time with title, if not with IRI found since external entities give different IRIs :)
+      let $entity-def := if (fn:empty($entity-def) and fn:matches($target-entity, "/[^/]+$")) then
+          let $title := fn:tokenize($target-entity, "/")[fn:last()]
+          return
+            fn:head(es-impl:get-entity-descriptors()/object-node()[entityTitle = $title])
+        else
+          $entity-def
       return
         if (fn:exists($entity-def)) then (
           map:put($_cached-entities, $target-entity, $entity-def),
