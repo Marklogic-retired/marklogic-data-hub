@@ -389,6 +389,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 } else {
                     isRunning.set(false);
                     threadPool.shutdownNow();
+                    runningFlow = null;
                 }
             }
         }

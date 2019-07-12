@@ -25,19 +25,6 @@ import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowStepModel;
 import io.opentracing.Scope;
 import io.opentracing.Span;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
 @Service
 @PropertySource({"classpath:dhf-defaults.properties"})
@@ -193,11 +188,6 @@ public class AsyncFlowService {
             FlowRunnerChecker.getInstance(flowRunner).resetLatestJob(flow);
         }
         FlowJobs flowJobs;
-        if (flowRunner.getRunningFlow() != null && flow.getName()
-            .equalsIgnoreCase(flowRunner.getRunningFlow().getName())) {
-            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob(flow));
-        }
-
         if (jobMap != null) {
             flowJobs = jobMap.get(flow.getName());
         } else {
@@ -209,6 +199,15 @@ public class AsyncFlowService {
             }
         }
         fsm.setJobs(flowJobs, fromRunFlow);
+
+        //If flow is running, update FlowStepModel at the end
+        //check if status in fsm is running, if so call setLatestJob()
+        if ((fsm.latestJob != null && fsm.latestJob.status != null && fsm.latestJob.status.contains(JobStatus.RUNNING_PREFIX))
+            || (flowRunner.getRunningFlow() != null && flow.getName()
+            .equalsIgnoreCase(flowRunner.getRunningFlow().getName()))) {
+            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob(flow));
+        }
+
         return fsm;
     }
 

@@ -454,7 +454,7 @@ public class WriteStepRunner implements StepRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-
+        double uriSize = uris.size();
         Map<String,Object> fullResponse = new HashMap<>();
 
         ServerTransform serverTransform = new ServerTransform("ml:runIngest");
@@ -474,7 +474,7 @@ public class WriteStepRunner implements StepRunner {
                 stepMetrics.getSuccessfulEvents().addAndGet(batch.getItems().length-1);
                 stepMetrics.getSuccessfulBatches().addAndGet(1);
                 logger.debug(String.format("Current SuccessfulEvents: %d - FailedEvents: %d", stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount()));
-                runStatusListener(uris, stepMetrics);
+                runStatusListener(uriSize, stepMetrics);
                 if (stepItemCompleteListeners.size() > 0) {
                     Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
                         stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
@@ -486,7 +486,7 @@ public class WriteStepRunner implements StepRunner {
             .onBatchFailure((batch, ex) -> {
                 stepMetrics.getFailedEvents().addAndGet(batch.getItems().length-1);
                 stepMetrics.getFailedBatches().addAndGet(1);
-                runStatusListener(uris, stepMetrics);
+                runStatusListener(uriSize, stepMetrics);
                 if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                     errorMessages.add(ex.getLocalizedMessage());
                 }
@@ -755,12 +755,13 @@ public class WriteStepRunner implements StepRunner {
 
     //percentComplete for csv files is (csvFilesProcessed/ urisCount) * 100.0
     //The number of csv files would probably be less than that of regular files, so the step status listeners are updated more frequently
-    protected void runStatusListener(Collection<String> uris, StepMetrics stepMetrics) {
-        double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
+    //'uris' is backed by DiskQueue whose size changes as the Collection is iterated, so size is calculated before iteration
+    protected void runStatusListener(double uriSize, StepMetrics stepMetrics) {
+        double batchCount = Math.ceil(uriSize / (double) batchSize);
         long totalRunBatches = stepMetrics.getSuccessfulBatchesCount() + stepMetrics.getFailedBatchesCount();
         int percentComplete;
         if("csv".equalsIgnoreCase(inputFileType)) {
-            percentComplete = (int) (((double) csvFilesProcessed/ uris.size()) * 100.0);
+            percentComplete = (int) (((double) csvFilesProcessed/ uriSize) * 100.0);
             if (percentComplete != previousPercentComplete && (percentComplete % 2 == 0)) {
                 previousPercentComplete = percentComplete;
                 stepStatusListeners.forEach((StepStatusListener listener) -> {
