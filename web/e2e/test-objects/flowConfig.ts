@@ -55,7 +55,6 @@ export class FlowConfig {
     flowDesc: 'Description Flow 11'
   };
 
-
   flowWithOptions = {
     flowName: 'TestFlow1',
     flowDesc: 'Test flow1 description',
@@ -65,6 +64,14 @@ export class FlowConfig {
       0: ['key1', 'value1'],
       1: ['key2', 'value2']
     }
+  };
+
+  simpleFlow = {
+    flowName: 'SimpleFlow'
+  };
+
+  xmlFlow = {
+    flowName: 'xmlFlow'
   };
 }
 

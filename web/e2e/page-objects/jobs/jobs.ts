@@ -22,7 +22,11 @@ export class JobsPage extends AppPage {
   }
 
   allJobs() {
-    return element.all(by.css('table > tbody > tr'));
+    return element.all(by.css("#jobs-table .flow-name"));
+  }
+
+  allJobsByName(name: string) {
+    return element.all(by.css('.job-'+name.toLowerCase()));
   }
 
   get lastFinishedJob() {
@@ -31,6 +35,10 @@ export class JobsPage extends AppPage {
 
   jobsCount() {
     return this.allJobs().count();
+  }
+
+  jobsCountByName(name: string) {
+    return this.allJobsByName(name).count();
   }
 
   getJobByID(id: string) {
@@ -147,6 +155,64 @@ export class JobsPage extends AppPage {
 
   jobOutputCloseButton() {
     return element(by.css('app-job-output mdl-button'));
+  }
+
+
+  resetFiltersButton() {
+    return element(by.css(".reset-filters-btn"));
+  }
+
+  async clickResetFilterButton() {
+    this.resetFiltersButton().click();
+  }
+
+  filterByFlowNameDropDown() {
+    return element(by.id("filter-flow-name"));
+  }
+
+  async filterByFlowName(option: string) {
+    await this.filterByFlowNameDropDown().click();
+    return await this.clickDropDownOption(option);
+  }
+
+  filterByStatusDropDown() {
+    return element(by.id("filter-status"));
+  }
+
+  async filterByFlowStatus(option: string) {
+    await this.filterByStatusDropDown().click();
+    return await this.clickDropDownOption(option);
+  }
+
+  filterByTextInputField() {
+    return element(by.id("filter-by-text"));
+  }
+
+  async filterByText(text: string) {
+    await this.filterByTextInputField().sendKeys(text);
+  }
+
+  dropDownOptions(option: string) {
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
+  }
+
+  async clickDropDownOption(option: string) {
+    let dropDownOptions = this.dropDownOptions(option);
+    return await browser.executeScript("arguments[0].click();", dropDownOptions);
+  }
+
+  jobMenuButton(name: string) {
+    return element(by.css('.job-'+name.toLowerCase()+' .job-menu'));
+  }
+
+  viewFlowButton() {
+    return element(by.css(".job-menu-view-flow-btn"));
+  }
+
+  async clickViewFlowButton(name: string) {
+    await this.jobMenuButton(name).click();
+    await browser.sleep(1000);
+    await this.viewFlowButton().click();
   }
 }
 

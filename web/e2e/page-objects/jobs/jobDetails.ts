@@ -39,7 +39,7 @@ export class JobDetails extends AppPage {
   }
 
   get jobSummaryStatus() {
-    return element(by.css("#job-summary .status .ng-star-inserted"));
+    return element(by.css("#job-summary .status span:last-child"));
   }
 
   get jobSummaryTargetEntity() {
@@ -47,7 +47,7 @@ export class JobDetails extends AppPage {
   }
 
   get jobSummaryEnded() {
-    return element(by.css("#job-summary .ended"));
+    return element(by.css("#job-summary .endTime span:last-child"));
   }
 
   get jobSummaryDuration() {
@@ -59,7 +59,7 @@ export class JobDetails extends AppPage {
   }
 
   get jobSummaryErrors() {
-    return element(by.css("#job-summary .errors a"));
+    return element(by.css("#job-summary .errors span:last-child"));
   }
   
   // Job Details table
@@ -70,6 +70,10 @@ export class JobDetails extends AppPage {
 
   stepName(stepName: string) {
     return element(by.css(`.step-${stepName.toLowerCase()} .step-name`)); 
+  }
+
+  stepType(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-type`));
   }
 
   stepEntity(stepName: string) {
@@ -99,6 +103,10 @@ export class JobDetails extends AppPage {
 
   stepErrors(stepName: string) {
     return element(by.css(`.step-${stepName.toLowerCase()} .step-errors a`)); 
+  }
+
+  stepFailed(stepName: string) {
+    return element(by.css(`.step-${stepName.toLowerCase()} .step-errors span`));
   }
 
   stepActions(stepName: string) {

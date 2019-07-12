@@ -9,6 +9,18 @@ export class SettingsPage extends AppPage {
     return by.css('.settings-page');
   }
 
+  get mlcpPath() {
+    return $("input[name='mlcpPath']");
+  }
+
+  async addMlcpPath(path: string) {
+    this.mlcpPath.sendKeys(path);
+  }
+
+  async clearMlcpPath() {
+    $(".settings-page .fa-close").click();
+  }
+
   get uninstallButton() {
     return element(by.buttonText('Uninstall Hub'));
   }
