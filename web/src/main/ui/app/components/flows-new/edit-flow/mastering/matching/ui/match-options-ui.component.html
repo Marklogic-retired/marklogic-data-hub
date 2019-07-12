@@ -31,7 +31,7 @@
         <ng-container matColumnDef="propertyName">
           <mat-header-cell id="match-option-property-sort-btn" *matHeaderCellDef mat-sort-header>Property to Match</mat-header-cell>
           <mat-cell class="match-option-property" *matCellDef="let mOpt">
-            {{mOpt.propertyName.join(', ')}}
+            {{mOpt.propertyName}}
           </mat-cell>
         </ng-container>
 
@@ -156,7 +156,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row class="{{ 'match-option-' + (mOpt.propertyName || '').join('-').toLowerCase().split(' ').join('-') }}"
+        <mat-row class="{{ 'match-option-' + (mOpt.propertyName || '').toString().toLowerCase().split(' ').join('-') }}"
                  *matRowDef="let mOpt; columns: displayedColumns;">
         </mat-row>
 
