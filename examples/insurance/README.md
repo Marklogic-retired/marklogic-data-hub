@@ -41,10 +41,12 @@ You can finish configuring the flows and run the steps to complete the integrati
 
 ## How to enrich Customer Data using custom step
 
-1. Start the Data Hub and select the project folder: examples/insurance
-2. View the `customEnrichment` flow. Configure the `ingestAdvantage` step by setting the Source Directory Path to the `datasets/advantage` directory (exact path will depend on your filesystem).
-3. The scaffolded custom main.sjs has been edited(line 90-94) to insert code that manipulates the instance to insert geo-spatial information corresponding to the postal code
-4. The uri has also been manipulated(line 103) and is appended with "/enriched" in the FINAL database  
+1. Using QuickStart select and install the example project folder on a clean MarkLogic server: examples/insurance
+2. View the `customEnrichment` flow. It has 2 steps:
+   - one for ingestion called `ingestAdvantage`. You have to configure this step to set the Source Directory Path to the `datasets/advantage` directory (exact path will depend on your filesystem).
+   - and a custom step called `enrichAdvantage`. This custom step was created by selecting the type as "Custom" when creating a new step. Once a custom step is created a custom main.sjs is generated as well in the location `src/main/ml-modules/root/custom-modules/custom/STEPNAME/main.sjs`
+3. The scaffolded custom main.sjs(`examples/insurance/src/main/ml-modules/root/custom-modules/custom/enrichAdvantage/main.sjs`) has been edited to insert code that manipulates the instance to insert geo-spatial information corresponding to the postal code
+4. The uri has also been manipulated and is appended with "/enriched" in the FINAL database  
 5. You can now click on **Run** button to run the flow and verify enriched data in FINAL database
 
 ## Example Customer Data
