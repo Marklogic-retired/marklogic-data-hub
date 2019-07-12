@@ -64,7 +64,7 @@ export class MatchOptions {
  */
 export class MatchOption {
   public matchType: string;
-  public propertyName: Array<string>;
+  public propertyName: string;
   public propertiesReduce: Array<any>;
   public weight: number;
   public algorithmRef: string;
@@ -82,7 +82,7 @@ export class MatchOption {
 
   constructor (mOpt: any = {}) {
     if (mOpt.matchType) this.matchType = mOpt.matchType;
-    if (mOpt.propertyName) this.propertyName = [mOpt.propertyName];
+    if (mOpt.propertyName) this.propertyName = mOpt.propertyName;
     if (mOpt.weight) this.weight = mOpt.weight;
     if (mOpt.algorithmRef) this.algorithmRef = mOpt.algorithmRef;
     if (mOpt.thesaurus) this.thesaurus = mOpt.thesaurus;
