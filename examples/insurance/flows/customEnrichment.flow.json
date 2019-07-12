@@ -1,0 +1,69 @@
+{
+  "name" : "customEnrichment",
+  "description" : "custom code example to enrich data",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "ingestAdvantage",
+      "description" : "ingesting Advantage insurance customers",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "customEnrichment"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "ingestAdvantage" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "insurance-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "/Users/sbalasub/Desktop/ML/DHF/QA/insurance/datasets/advantage",
+        "inputFileType" : "json",
+        "outputURIReplacement" : ".*datasets,''",
+        "separator" : ","
+      },
+      "mappingStep" : false,
+      "customStep" : false,
+      "mappingName" : null
+    },
+    "2" : {
+      "name" : "enrichAdvantage",
+      "description" : "custom step to enrich Advantage customer data",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"ingestAdvantage\"])",
+        "targetEntity" : "Customer",
+        "collections" : [ "enrichAdvantage", "Customer" ],
+        "sourceDatabase" : "insurance-STAGING",
+        "sourceCollection" : "ingestAdvantage",
+        "outputFormat" : "json",
+        "targetDatabase" : "insurance-FINAL"
+      },
+      "customHook" : null,
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "enrichAdvantage",
+      "stepDefinitionType" : "CUSTOM",
+      "modulePath" : "/custom-modules/custom/enrichAdvantage/main.sjs",
+      "mappingStep" : false,
+      "customStep" : true,
+      "mappingName" : null
+    }
+  }
+}

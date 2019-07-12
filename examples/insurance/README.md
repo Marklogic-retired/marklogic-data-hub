@@ -5,6 +5,11 @@
 - Sunrise Insurance has bought two other insurance companies, Advantage Insurance and Bedrock Insurance.
 - Each company has a database of customers; in each database, customers are represented differently.
 - Sunrise Insurance wants to integrate the customers from Advantage and Bedrock with its own.
+- Sunrise Insurance wants to enrich Advantage Insurance data via a custom step called enrichAdvantage that
+    - Takes the U.S. five-digit zip code from a customer document
+    - Looks up the corresponding latitude and longitude coordinates
+      - This is achieved by calling a library(zipcodeData.sjs) invoked within the custom step 
+    - Writes those coordinates as new document properties
 
 ## Predefined Flows
 
@@ -13,6 +18,10 @@ The project has flows predefined for integrating the customer data.
 - **AdvantageFlow**: Has steps for ingesting and mapping Advantage customer data.
 - **BedrockFlow**: Has steps for ingesting and mapping Bedrock customer data.
 - **CustomerMastering**: Has a mastering step for matching and merging duplicate customers across the Advantage and Bedrock datasets.
+
+There is also a flow to enrich data
+
+- **customEnrichment**: Has steps for ingestion and a custom step to enrich customer data
 
 You can finish configuring the flows and run the steps to complete the integration.
 
@@ -29,6 +38,14 @@ You can finish configuring the flows and run the steps to complete the integrati
 9. Run the `BedrockMap` step in the `BedrockFlow` flow. This harmonizes the 100 Bedrock customer documents into the final database. You can view the documents in the Browse Data view.
 10. Run the `CustomerMaster` flow to master the Advantage and Bedrock customer data. This merges documents for two matching customers in the final database. You can view the results in the Browse Data view.
 
+
+## How to enrich Customer Data using custom step
+
+1. Start the Data Hub and select the project folder: examples/insurance
+2. View the `customEnrichment` flow. Configure the `ingestAdvantage` step by setting the Source Directory Path to the `datasets/advantage` directory (exact path will depend on your filesystem).
+3. The scaffolded custom main.sjs has been edited(line 90-94) to insert code that manipulates the instance to insert geo-spatial information corresponding to the postal code
+4. The uri has also been manipulated(line 103) and is appended with "/enriched" in the FINAL database  
+5. You can now click on **Run** button to run the flow and verify enriched data in FINAL database
 
 ## Example Customer Data
 
@@ -47,6 +64,26 @@ You can finish configuring the flows and run the steps to complete the integrati
   "Phone": "(870) 409-2724",
   "PIN": 6454,
   "Updated": "2015-05-17T08:24:16"
+}
+```
+
+### Snippet of enriched data
+
+```
+"instance": {
+  "ObjectID": {
+    "$oid": "5cd0da4d4162c033d57dc2f6"
+  },
+  "CustomerID": "bc0dd434-232b-4ff9-bef9-c0cd2fcb72be",
+  "FirstName": "Camille",
+  "LastName": "Case",
+  "Email": "camillecase@comvex.com",
+  "Postal": "45348-4317",
+  "Phone": "(935) 438-3459",
+  "PIN": 4019,
+  "Updated": "2018-02-12T03:33:41",
+  "latitude": "40.316833",
+  "longitude": "-84.633911"
 }
 ```
 
