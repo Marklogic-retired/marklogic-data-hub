@@ -23,7 +23,7 @@
         "collections" : [ "ingestAdvantage" ],
         "permissions" : "rest-reader,read,rest-writer,update",
         "outputFormat" : "json",
-        "targetDatabase" : "insurance-STAGING"
+        "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
       "retryLimit" : 0,
@@ -49,15 +49,15 @@
         "sourceQuery" : "cts.collectionQuery([\"ingestAdvantage\"])",
         "targetEntity" : "Customer",
         "collections" : [ "enrichAdvantage", "Customer" ],
-        "sourceDatabase" : "insurance-STAGING",
+        "sourceDatabase" : "data-hub-STAGING",
         "sourceCollection" : "ingestAdvantage",
         "outputFormat" : "json",
-        "targetDatabase" : "insurance-FINAL"
+        "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : null,
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
       "stepDefinitionName" : "enrichAdvantage",
       "stepDefinitionType" : "CUSTOM",
       "modulePath" : "/custom-modules/custom/enrichAdvantage/main.sjs",
