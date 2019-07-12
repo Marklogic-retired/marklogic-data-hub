@@ -285,7 +285,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         ObjectMapper mapper = new ObjectMapper();
         Mapping testMap = Mapping.create("test");
         testMap.setDescription("This is a test.");
-        testMap.setSourceContext("//");
+        testMap.setSourceContext("/");
         testMap.setTargetEntityType(ENTITY);
         HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
         mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "id"));
