@@ -21,7 +21,7 @@ let $validate-base-uri := try {
     xdmp:json-validate-node($entity-def/info, xdmp:unquote('{type: "object", properties: {"baseUri":{type:"string", format:"uri"}}, required: ["baseUri"]}'), "strict")
   } catch ($ex) {
     if(($ex/error:code eq "XDMP-JSVALIDATEINVFORMAT" or $ex/error:code eq "XDMP-JSVALIDATEMISSING") and fn:contains($ex/error:format-string/text(), "baseUri")) then (
-      fn:error(fn:QName("error","XDMP-JSVALIDATEINVFORMAT"),fn:concat("A valid baseUri is required (ex: http://www.example.org/) for entity: ", $entity-title, "."), fn:concat("Error Message: ", $ex/error:format-string/text()))
+      fn:error(fn:QName("error","XDMP-JSVALIDATEINVFORMAT"),fn:concat("A valid Base URI is required (e.g. http://example.org/) for entity: ", $entity-title, "."), fn:concat("Error Message: ", $ex/error:format-string/text()))
     )
     else xdmp:rethrow()
   }
