@@ -92,6 +92,15 @@ export class AppPage extends Page {
     await browser.waitForAngular();
   }
 
+  async clickJobsTab() {
+    await browser.executeScript("arguments[0].click();", this.jobsTab);
+    await browser.waitForAngular();
+  }
+
+  async clickSettingsTab() {
+    await browser.executeScript("arguments[0].click();", this.settingsTab);
+    await browser.waitForAngular();
+  }
 }
 
 var appPage = new AppPage();

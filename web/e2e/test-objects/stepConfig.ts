@@ -125,6 +125,39 @@ export class StepConfig {
     sourceFileType: 'Binary',
     targetFileType: 'JSON',
   };
+
+  simpleIngest = {
+    stepType: 'Ingestion',
+    stepName: 'SimpleJSONIngest',
+    stepDesc: 'json ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/json',
+    sourceFileType: 'JSON',
+    targetFileType: 'JSON',
+  };
+
+  simpleMapping = {
+    stepType: 'Mapping',
+    stepName: 'SimpleJSONMapping',
+    stepDesc: 'json mapping description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-ingestion',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-STAGING',
+    targetDatabase: 'data-hub-qa-FINAL',
+  };
+
+  simpleMastering = {
+    stepType: 'Mastering',
+    stepName: 'SimpleJSONMastering',
+    stepDesc: 'json mastering description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-mapping',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-FINAL',
+    targetDatabase: 'data-hub-qa-FINAL',
+  };
+
 }
 
 let stepConfig = new StepConfig();

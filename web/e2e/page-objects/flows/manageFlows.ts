@@ -188,7 +188,7 @@ export class ManageFlows extends AppPage {
   }
 
   async clickRunFlowButton(flowName: string) {
-    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`))
+    let run = element(by.css(`.flow-${flowName.toLowerCase()} .run-flow-button`));
     return await run.click();
   }
 

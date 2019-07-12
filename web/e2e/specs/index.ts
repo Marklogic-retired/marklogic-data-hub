@@ -54,10 +54,10 @@ describe('DataHub', function () {
   flows(qaProjectDirectory);
   //runFlows(qaProjectDirectory);
   scenarios(qaProjectDirectory);
-  //jobs();
   browseData(qaProjectDirectory);
   //runTraces();
   //mappings();
+  jobs(qaProjectDirectory);
   dashboard(qaProjectDirectory);
   uninstall(qaProjectDirectory);
 });
