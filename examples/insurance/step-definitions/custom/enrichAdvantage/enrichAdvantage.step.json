@@ -1,0 +1,22 @@
+{
+  "language" : "zxx",
+  "name" : "enrichAdvantage",
+  "description" : "custom step to enrich Advantage customer data",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery([\"ingestAdvantage\"])",
+    "targetEntity" : "Customer",
+    "collections" : [ "enrichAdvantage", "Customer" ],
+    "sourceDatabase" : "insurance-STAGING",
+    "sourceCollection" : "ingestAdvantage",
+    "outputFormat" : "json",
+    "targetDatabase" : "insurance-FINAL"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/custom/enrichAdvantage/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}
