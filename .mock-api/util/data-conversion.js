@@ -35,7 +35,10 @@ module.exports = {
     }
     return { ...info, entityDefinitions};
   },
-  convertJSONSchema: (data) => {
-    console.log('Schema Data', data);
+  convertRightNowJSON: (data) => {
+    // console.log('Right Now Data', data);
+  },
+  convertPureJSON: (data) => {
+    // console.log('Pure JSON Data', data);
   }
 }

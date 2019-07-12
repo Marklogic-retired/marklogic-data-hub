@@ -1,10 +1,12 @@
-const { convertJSON, convertJSONSchema } = require('../util/data-conversion');
+const { convertJSON, convertRightNowJSON, convertPureJSON } = require('../util/data-conversion');
 const raceData = require('../sample-data/race-data.json');
-const testData = require('../sample-data/test-data.json');
+const pureJSONData = require('../sample-data/pure-json-data.json');
+const rightNowData = require('../sample-data/right-now-data.json');
 
 const entities = [];
 entities.push(convertJSON(raceData));
-// convertJSONSchema(testData);
+convertRightNowJSON(rightNowData);
+convertPureJSON(pureJSONData);
 
 const resolvers = {
   Query: {
