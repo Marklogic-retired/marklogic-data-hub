@@ -93,7 +93,8 @@ export class AppPage extends Page {
   }
 
   async clickJobsTab() {
-    return await browser.executeScript("arguments[0].click();", this.jobsTab);
+    await browser.executeScript("arguments[0].click();", this.jobsTab);
+    await browser.waitForAngular();
   }
 
   async clickSettingsTab() {

@@ -1,6 +1,6 @@
 import {browser, by, ExpectedConditions as EC} from 'protractor';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
-import jobsPage from '../../page-objects/jobs/jobs';
+import jobsPage from '../../page-objects/jobs/manageJobs';
 import appPage from '../../page-objects/appPage';
 import manageFlowPage from "../../page-objects/flows/manageFlows";
 import editFlowPage from "../../page-objects/flows/editFlow";
@@ -437,32 +437,35 @@ export default function (qaProjectDir) {
       await appPage.clickJobsTab();
       await jobsPage.filterByFlowName(flowData.simpleFlow.flowName);
       await expect(jobsPage.jobsCountByName(flowData.simpleFlow.flowName)).toBe(3);
-      await jobsPage.clickResetFilterButton();
+      await jobsPage.clickResetFiltersButton();
       await jobsPage.filterByFlowName(flowData.xmlFlow.flowName);
       await expect(jobsPage.jobsCountByName(flowData.xmlFlow.flowName)).toBe(1);
-      await jobsPage.clickResetFilterButton();
+      await jobsPage.clickResetFiltersButton();
     });
 
     it('should filter jobs by status', async function () {
       await appPage.clickJobsTab();
       await jobsPage.filterByFlowStatus("Finished");
+      await browser.sleep(1000);
       await expect(jobsPage.jobsCount()).toBe(4);
-      await jobsPage.clickResetFilterButton();
+      await jobsPage.clickResetFiltersButton();
     });
 
     it('should filter jobs by text', async function () {
       await appPage.clickJobsTab();
       await jobsPage.filterByText("Simple");
+      await browser.sleep(1000);
       await expect(jobsPage.jobsCountByName(flowData.simpleFlow.flowName)).toBe(3);
-      await jobsPage.clickResetFilterButton();
+      await jobsPage.clickResetFiltersButton();
       await jobsPage.filterByText("xml");
+      await browser.sleep(1000);
       await expect(jobsPage.jobsCountByName(flowData.xmlFlow.flowName)).toBe(1);
-      await jobsPage.clickResetFilterButton();
+      await jobsPage.clickResetFiltersButton();
     });
 
     it('should reset filter', async function () {
       await appPage.clickJobsTab();
-      await jobsPage.clickResetFilterButton();
+      await jobsPage.clickResetFiltersButton();
       await expect(jobsPage.jobsCount()).toBe(4);
     });
 

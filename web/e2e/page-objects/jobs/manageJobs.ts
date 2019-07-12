@@ -1,6 +1,6 @@
 import {AppPage} from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import {browser, by, element} from "protractor";
 
 export class ManageJobs extends AppPage {
 
@@ -9,19 +9,18 @@ export class ManageJobs extends AppPage {
     return by.id('jobs-page');
   }
   
-  // Jobs page header 
-
+  // Jobs page header
   get jobsPageHeader() {
     return element(by.cssContainingText(".header h1", "Jobs"));
   }
 
   // Filters
-
   get resetFiltersButton() {
     return element(by.css("mat-icon.reset-filters-btn"));
   }
 
   async clickResetFiltersButton() {
+    await browser.sleep(1000);
     let button = this.resetFiltersButton;
     return await button.click();
   }
@@ -91,7 +90,6 @@ export class ManageJobs extends AppPage {
   }
   
   // Jobs table
-
   get jobsTable() {
     return element(by.id("jobs-table"));
   }
@@ -235,6 +233,76 @@ export class ManageJobs extends AppPage {
   async clickJobPaginationNavigation(direction: string) {
     let navigation = this.jobPaginationNavigation(direction);
     return await navigation.click();
+  }
+
+
+  allJobs() {
+    return element.all(by.css("#jobs-table .flow-name"));
+  }
+
+  allJobsByName(name: string) {
+    return element.all(by.css('.job-'+name.toLowerCase()));
+  }
+
+  get lastFinishedJob() {
+    return this.allJobs().first();
+  }
+
+  jobsCount() {
+    return this.allJobs().count();
+  }
+
+  jobsCountByName(name: string) {
+    return this.allJobsByName(name).count();
+  }
+
+  filterByFlowNameDropDown() {
+    return element(by.id("filter-flow-name"));
+  }
+
+  async filterByFlowName(option: string) {
+    await this.filterByFlowNameDropDown().click();
+    return await this.clickDropDownOption(option);
+  }
+
+  filterByStatusDropDown() {
+    return element(by.id("filter-status"));
+  }
+
+  async filterByFlowStatus(option: string) {
+    await this.filterByStatusDropDown().click();
+    return await this.clickDropDownOption(option);
+  }
+
+  filterByTextInputField() {
+    return element(by.id("filter-by-text"));
+  }
+
+  async filterByText(text: string) {
+    await this.filterByTextInputField().sendKeys(text);
+  }
+
+  dropDownOptions(option: string) {
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
+  }
+
+  async clickDropDownOption(option: string) {
+    let dropDownOptions = this.dropDownOptions(option);
+    return await browser.executeScript("arguments[0].click();", dropDownOptions);
+  }
+
+  jobMenuButton(name: string) {
+    return element(by.css('.job-'+name.toLowerCase()+' .job-menu'));
+  }
+
+  viewFlowButton() {
+    return element(by.css(".job-menu-view-flow-btn"));
+  }
+
+  async clickViewFlowButton(name: string) {
+    await this.jobMenuButton(name).click();
+    await browser.sleep(1000);
+    await this.viewFlowButton().click();
   }
 }
 
