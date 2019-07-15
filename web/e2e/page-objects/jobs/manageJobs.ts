@@ -1,6 +1,6 @@
-import {AppPage} from "../appPage";
+import { AppPage } from "../appPage";
 import { pages } from '../page';
-import {browser, by, element} from "protractor";
+import { browser, by, element } from "protractor";
 
 export class ManageJobs extends AppPage {
 

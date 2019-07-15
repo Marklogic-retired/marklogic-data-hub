@@ -1,4 +1,4 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC } from 'protractor'
+import { browser, element, by, ExpectedConditions as EC } from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 

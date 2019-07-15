@@ -1,5 +1,4 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import dashboardPage from './dashboard/dashboard';
+import { browser, element, by, ExpectedConditions as EC } from 'protractor';
 import { pages } from './page';
 import { Page } from './page';
 var request = require('request').defaults({ strictSSL: false });
@@ -34,16 +33,8 @@ export class AppPage extends Page {
     return element(by.css('#jobs-tab'));
   }
 
-  get tracesTab() {
-    return element(by.css('#traces-tab'));
-  }
-
   get flowsTab() {
     return element(by.css('#flows-tab'));
-  }
-
-  get mappingsTab() {
-    return element(by.css('#mappings-tab'))
   }
 
   get browseDataTab() {

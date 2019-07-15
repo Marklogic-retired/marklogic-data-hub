@@ -1,10 +1,6 @@
-import {
-  protractor, browser, element, by, By, $, $$, ExpectedConditions as EC, ElementFinder,
-  ElementArrayFinder
-} from 'protractor'
+import { element, by } from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
-import {Element} from "@angular/compiler";
 
 export class ViewerPage extends AppPage {
 

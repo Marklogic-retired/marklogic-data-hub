@@ -1,6 +1,6 @@
-import {AppPage} from "../appPage";
+import { AppPage } from "../appPage";
 import { pages } from '../page';
-import {by, element} from "protractor";
+import { by, element } from "protractor";
 
 export class CustomStep extends AppPage {
   

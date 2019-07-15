@@ -1,6 +1,6 @@
-import appPage, {AppPage} from "../appPage";
+import appPage, { AppPage } from "../appPage";
 import { pages } from '../page';
-import {browser, by, ExpectedConditions as EC, element} from "protractor";
+import { browser, by, ExpectedConditions as EC, element } from "protractor";
 import manageFlowPage from "./manageFlows";
 import stepsPage from "../steps/steps";
 import ingestStepPage from "../steps/ingestStep";

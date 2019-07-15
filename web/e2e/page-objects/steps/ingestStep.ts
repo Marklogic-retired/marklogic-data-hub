@@ -1,7 +1,7 @@
-import {browser, protractor} from "protractor";
-import {AppPage} from "../appPage";
-import {pages} from '../page';
-import {by, element} from "protractor";
+import { browser, protractor } from "protractor";
+import { AppPage } from "../appPage";
+import { pages } from '../page';
+import { by, element } from "protractor";
 
 export class IngestStep extends AppPage {
   
