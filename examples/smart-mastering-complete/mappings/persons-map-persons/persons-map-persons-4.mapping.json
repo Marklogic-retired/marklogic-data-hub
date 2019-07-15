@@ -1,0 +1,23 @@
+{
+  "language" : "zxx",
+  "name" : "persons-map-persons",
+  "description" : "Default description",
+  "version" : 4,
+  "targetEntityType" : "http://marklogic.com/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/persons/ssn-match1.json",
+  "properties" : {
+    "FirstName" : {
+      "sourcedFrom" : "FirstName"
+    },
+    "ZipCode" : {
+      "sourcedFrom" : "ZipCode"
+    },
+    "LastName" : {
+      "sourcedFrom" : "LastName"
+    },
+    "SSN" : {
+      "sourcedFrom" : "SSN"
+    }
+  }
+}

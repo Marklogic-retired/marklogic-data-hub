@@ -32,7 +32,7 @@ function get(context, params) {
     resp = datahub.jobs.getBatchDoc(jobId, batchId);
   }
   else{
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
+    //fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
   }
   if(fn.empty(resp) || resp.length === 0){
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "No batch document found"]));

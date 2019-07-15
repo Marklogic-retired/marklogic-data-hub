@@ -1,0 +1,23 @@
+{
+  "language" : "zxx",
+  "name" : "persons-map-persons",
+  "description" : "Default description",
+  "version" : 2,
+  "targetEntityType" : "http://marklogic.com/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/persons/jayne-smith.json",
+  "properties" : {
+    "FirstName" : {
+      "sourcedFrom" : "FirstName"
+    },
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "LastName" : {
+      "sourcedFrom" : "LastName"
+    },
+    "SSN" : {
+      "sourcedFrom" : "SSN"
+    }
+  }
+}

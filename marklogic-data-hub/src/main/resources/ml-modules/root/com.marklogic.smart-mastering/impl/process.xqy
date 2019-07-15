@@ -174,6 +174,7 @@ declare function proc-impl:process-match-and-merge-with-options(
   let $normalized-input :=
     if ($input instance of xs:string*) then
       for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), "unfiltered")
+      let $_ := xdmp:log(("Doc", xdmp:node-uri($doc), cts:score($doc)))
       return
         proc-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then
@@ -345,6 +346,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     let $start-elapsed := xdmp:elapsed-time()
     let $no-matches :=
       let $on-no-match := $merge-options/merging:algorithms/merging:collections/merging:on-no-match
+      let $_ := xdmp:log("Processing URIs that were not merged")
       for $uri in $uris[fn:not(. = $uris-that-were-merged)]
       let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
       let $doc := $write-object
@@ -420,9 +422,10 @@ declare function proc-impl:process-match-and-merge-with-options(
       $write-objects-by-uri => map:put(($processed-notification => map:get("uri")), $processed-notification)
   return json:to-array((
     if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then (
-      xdmp:trace($const:TRACE-MATCH-RESULTS, "All matches: " || xdmp:describe($all-matches, (),())),
+      (: xdmp:trace($const:TRACE-MATCH-RESULTS, "All matches: " || xdmp:describe($all-matches, (),())),
       xdmp:trace($const:TRACE-MATCH-RESULTS, "Matching options: " || xdmp:describe($matching-options, (),())),
       xdmp:trace($const:TRACE-MATCH-RESULTS, "Merge options: " || xdmp:describe($merge-options, (),())),
+      :)
       xdmp:trace($const:TRACE-MATCH-RESULTS, "Consolidated merges: " || xdmp:quote($consolidated-merges)),
       xdmp:trace($const:TRACE-MATCH-RESULTS, "Consolidated notifications: " || xdmp:quote($consolidated-notifies))
     )

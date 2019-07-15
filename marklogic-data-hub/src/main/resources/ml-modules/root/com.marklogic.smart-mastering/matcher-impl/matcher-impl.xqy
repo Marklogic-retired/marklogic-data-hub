@@ -102,7 +102,6 @@ declare function match-impl:compile-match-options(
         else
           (64 idiv $max-property-score)
     let $algorithms := algorithms:build-algorithms-map($options/matcher:algorithms)
-    let $target-entity-def := es-helper:get-entity-def($options/matcher:target-entity)
     let $queries := (
         for $score in $scoring/(matcher:add|matcher:expand)
         let $type := fn:local-name($score)
@@ -121,6 +120,7 @@ declare function match-impl:compile-match-options(
                 where fn:exists($algorithm)
                 return algorithms:execute-algorithm($algorithm, ?, $score, $options)
               else ()
+          let $_ := xdmp:log(("base values query", $base-values-query))
           return map:new((
             map:entry("queryID", sem:uuid-string()),
             map:entry("propertyName",$full-property-name),
@@ -153,8 +153,15 @@ declare function match-impl:compile-match-options(
             )
           ))
       )
+
+    let $_ := xdmp:log(("constructed queries", $queries))
+    let $_ := xdmp:log("mt: " || $minimum-threshold)
+
     let $minimum-threshold-combinations :=
         match-impl:minimum-threshold-combinations($queries[fn:not(. => map:get("type") = "reduce")], $minimum-threshold)
+
+    let $_ := xdmp:log(("mtc", $minimum-threshold-combinations))
+
     let $compiled-match-options := map:new((
         map:entry("options", $options),
         map:entry("scoreRatio", $score-ratio),
@@ -235,8 +242,12 @@ declare function match-impl:find-document-matches-by-options(
 {
   if (fn:exists($document)) then (
     let $start-elapsed := xdmp:elapsed-time()
+    let $_ := xdmp:log("
+
+    Matching URI: " || xdmp:node-uri($document))
     let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
     let $compiled-options := match-impl:compile-match-options($options, $is-json, $minimum-threshold)
+
     let $scoring := $compiled-options => map:get("scoring")
     let $values-by-qname := match-impl:values-by-qname($document, $compiled-options)
     let $cached-queries := map:map()
@@ -280,7 +291,10 @@ declare function match-impl:find-document-matches-by-options(
       if ($lock-on-search) then
         match-impl:lock-on-search($serialized-match-query/cts:or-query)
       else ()
+    let $rob := match-impl:instance-query-wrapper($match-query, $is-json)
+    let $_ := xdmp:log($rob)
     let $estimate := xdmp:estimate(cts:search(fn:collection(), match-impl:instance-query-wrapper($match-query, $is-json), "unfiltered"))
+    let $_ := xdmp:log("Estimate: " || $estimate)
     return (
       $_lock-on-search,
       element results {
@@ -452,6 +466,7 @@ declare function match-impl:search(
         $boost-query,
       $is-json
     )
+  let $_ := xdmp:log(("query", $query))
   let $cts-walk-query :=
     if ($include-matches) then
       match-impl:instance-query-wrapper(
@@ -467,6 +482,7 @@ declare function match-impl:search(
     0
   )[fn:position() = $range]
   let $uri := xdmp:node-uri($result)
+  let $_ := xdmp:log(text{"Result", $uri, "; Score", cts:score($result)})
   let $matching-queries := cts:or-query-queries($boosting-query)[cts:contains($result, .)]
   let $matching-weights-map := map:entry("values", ())
   let $_accumulate-scores :=
@@ -478,6 +494,7 @@ declare function match-impl:search(
       fn:sum(
         $matching-weights-map => map:get("values")
       )
+  let $_ := xdmp:log("Calculated score: " || $score)
   where $score ge $min-threshold
   return
     element result {

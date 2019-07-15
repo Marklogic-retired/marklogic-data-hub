@@ -1,0 +1,10 @@
+{
+  "language" : "zxx",
+  "name" : "persons-map-persons",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://marklogic.com/Person-0.0.1/Person",
+  "sourceContext" : "//",
+  "sourceURI" : "",
+  "properties" : { }
+}
