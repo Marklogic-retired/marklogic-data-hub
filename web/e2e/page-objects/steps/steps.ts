@@ -1,6 +1,6 @@
-import {AppPage} from "../appPage";
+import { AppPage } from "../appPage";
 import { pages } from '../page';
-import {browser, by, ExpectedConditions as EC, element} from "protractor";
+import { browser, by, ExpectedConditions as EC, element } from "protractor";
 import manageFlowPage from "../flows/manageFlows";
 
 export class Steps extends AppPage {
