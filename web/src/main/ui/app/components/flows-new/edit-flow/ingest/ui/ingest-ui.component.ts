@@ -292,7 +292,7 @@ export class IngestUiComponent implements OnInit{
       }
     }
     if(input_file_type.toLowerCase() === "csv") {
-      uri = uri + this.uuid() +  formatMap.get(document_type);
+      uri = uri + "/" + this.uuid() + formatMap.get(document_type);
     }
     this.uri = uri;
   }
