@@ -136,25 +136,21 @@ export class Matching {
    */
   addOption(mOpt: MatchOption) {
     let opt;
-    if (typeof mOpt.propertyName === 'string') {
-      mOpt.propertyName = [mOpt.propertyName];
-    }
+    
     if (mOpt.propertyName) {
-      mOpt.propertyName.forEach(p => {
-        this.addProperty(p);
-      })
+      this.addProperty(mOpt.propertyName);
     }
     switch(mOpt.matchType) {
       case "exact":
         opt = new Add({
-          propertyName: mOpt.propertyName[0],
+          propertyName: mOpt.propertyName,
           weight: mOpt.weight
         });
         this.scoring['add'].push(opt);
         break;
       case "synonym":
         opt = new Expand({
-          propertyName: mOpt.propertyName[0],
+          propertyName: mOpt.propertyName,
           algorithmRef: mOpt.algorithmRef,
           weight: mOpt.weight,
           thesaurus: mOpt.thesaurus,
@@ -164,7 +160,7 @@ export class Matching {
         break;
       case "double metaphone":
         opt = new Expand({
-          propertyName: mOpt.propertyName[0],
+          propertyName: mOpt.propertyName,
           algorithmRef: mOpt.algorithmRef,
           weight: mOpt.weight,
           dictionary: mOpt.dictionary,
@@ -175,7 +171,7 @@ export class Matching {
         break;
       case "zip":
         opt = new Expand({
-          propertyName: mOpt.propertyName[0],
+          propertyName: mOpt.propertyName,
           algorithmRef: mOpt.algorithmRef,
           zip: [
             { origin: 5, weight: mOpt.zip5match9 },
@@ -197,7 +193,7 @@ export class Matching {
       case "custom":
         this.addAlgorithm(mOpt.customFunction, mOpt.customUri, mOpt.customFunction, mOpt.customNs)
         opt = new Expand({
-          propertyName: mOpt.propertyName[0],
+          propertyName: mOpt.propertyName,
           algorithmRef: mOpt.customFunction,
           weight: mOpt.weight
         });
