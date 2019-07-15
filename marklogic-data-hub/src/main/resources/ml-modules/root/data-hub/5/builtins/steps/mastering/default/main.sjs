@@ -1,9 +1,24 @@
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
 const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
+const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
+const emptySequence = Sequence.from([]);
 
 function main(content, options) {
   const filteredContent = [];
+  checkOptions(content, options);
+  let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
+  let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
+  // Data Hub will persist the results for us.
+  let persistResults = false;
+  return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+}
+
+function checkOptions(content, options) {
+  let hasRequiredOptions = requiredOptionProperties.every((propName) => !!options[propName]);
+  if (!hasRequiredOptions) {
+    throw new Error(`Missing the following required mastering options: ${xdmp.describe(requiredOptionProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
+  }
   // set the target entity based off of the step options
   options.mergeOptions.targetEntity = options.targetEntity;
   options.matchOptions.targetEntity = options.targetEntity;
@@ -39,13 +54,11 @@ function main(content, options) {
       xdmp.log(`Expected collection "${contentCollection}" not found on content. You may need to review your match/merge options`, 'warning');
     }
   }
-  let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
-  let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
-  // Data Hub will persist the results for us.
-  let persistResults = false;
-  return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+  return { archivedCollection, contentCollection };
 }
 
 module.exports = {
-  main: main
+  main: main,
+  // export checkOptions for unit test
+  checkOptions: checkOptions
 };
