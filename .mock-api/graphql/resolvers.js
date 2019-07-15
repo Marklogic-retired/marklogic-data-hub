@@ -5,7 +5,7 @@ const rightNowData = require('../sample-data/right-now-data.json');
 
 const entities = [];
 entities.push(convertJSON(raceData));
-convertRightNowJSON(rightNowData);
+
 convertPureJSON(pureJSONData);
 
 const resolvers = {
@@ -25,6 +25,9 @@ const resolvers = {
         entityDefsArray.push(...entity.entityDefinitions);
       });
       return entityDefsArray;
+    },
+    getRightNowEntity() {
+      return convertRightNowJSON(rightNowData);
     }
   }
 }

@@ -43,11 +43,50 @@ const typeDefs = gql`
     predicate: String
     object: String
   }
+
+  type EntityRightNow {
+    version: String
+    title: String
+    baseUri: String
+    schema: String
+    language: String
+    properties: RightNowProperty
+    entityDefinitions: [EntityDefinitionRightNow]
+  }
+
+  type RightNowProperty {
+    name: String
+    ref: String
+  }
+  type EntityDefinitionRightNow {
+    name: String
+    primaryKey: String
+    pii: [String]
+    required: [String]
+    rangeIndex: [String]
+    elementRangeIndex: [String]
+    wordLexicon: [String]
+    properties: [PropertyRightNow]
+  }
+
+  type PropertyRightNow {
+    name: String
+    type: String
+    collation: String
+    refItem: RefItemRightNow
+  }
+
+  type RefItemRightNow {
+    name: String
+    type: String
+    refPath: String
+  }
   
   type Query {
     getAllEntities: [EntityModel],
     getEntityByTitle( title: String): EntityModel,
-    getAllEntityDefinitions: [EntityDefinition]
+    getAllEntityDefinitions: [EntityDefinition],
+    getRightNowEntity: EntityRightNow,
   }
 `;
 
