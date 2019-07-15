@@ -1,4 +1,4 @@
-import {  browser, ExpectedConditions as EC} from 'protractor';
+import { browser, ExpectedConditions as EC } from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import settingsPage from '../../page-objects/settings/settings';
 import appPage from '../../page-objects/appPage';

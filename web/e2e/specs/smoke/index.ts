@@ -1,4 +1,4 @@
-import {browser, $} from 'protractor';
+import { browser, $ } from 'protractor';
 import auth from '../auth';
 import uninstall from '../uninstall';
 import scenarios from '../scenarios';
@@ -6,8 +6,6 @@ import scenarios from '../scenarios';
 import CUSTOM_MATCHERS from '../../matchers'
 
 const request = require('request').defaults({strictSSL: false})
-const tmp = require('tmp');
-const fs = require('fs-extra');
 const path = require('path');
 let currentDirectory = process.cwd();
 console.log('Current Directory: ' + currentDirectory);

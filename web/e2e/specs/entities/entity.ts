@@ -1,9 +1,8 @@
-import {browser, by, ExpectedConditions as EC, Key} from 'protractor';
+import { browser, by, ExpectedConditions as EC } from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import entityPage from '../../page-objects/entities/entities';
 import appPage from '../../page-objects/appPage';
 import settingsPage from '../../page-objects/settings/settings'
-import dashboardPage from '../../page-objects/dashboard/dashboard';
 
 const fs = require('fs-extra');
 

@@ -1,4 +1,4 @@
-import {browser, ExpectedConditions as EC, Ptor} from 'protractor';
+import { browser, ExpectedConditions as EC } from 'protractor';
 import appPage from '../../page-objects/appPage';
 import manageFlowPage from "../../page-objects/flows/manageFlows";
 import editFlowPage from "../../page-objects/flows/editFlow";
