@@ -69,12 +69,12 @@ export class IngestStep extends AppPage {
 
   async clickTargetFileTypeOption(option: string) {
     let targetFileTypeOption = this.targetFileTypeOptions(option);
-    return await targetFileTypeOption.click();
+    return await browser.executeScript("arguments[0].click();", targetFileTypeOption);
   }
 
   async setTargetFileType(option: string) {
-    await this.clickTargetFileTypeDropDown;
-    browser.sleep(1000);
+    await this.targetFileTypeDropDown.click();
+    await browser.sleep(1000);
     return await this.clickTargetFileTypeOption(option);
   }
 

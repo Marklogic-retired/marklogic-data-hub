@@ -188,12 +188,11 @@ export class ManageJobs extends AppPage {
    * @param option = [output/view-flow]
    */
   async clickJobActionOutputMenuViewButton(option: string) {
-    let button = this.jobActionOutputMenuViewButton(option)
+    let button = this.jobActionOutputMenuViewButton(option);
     return await button.click();
   }
 
   // Pagination
-
   get jobPagination() {
     return element(by.id("jobs-pagination"));
   }
@@ -234,7 +233,6 @@ export class ManageJobs extends AppPage {
     let navigation = this.jobPaginationNavigation(direction);
     return await navigation.click();
   }
-
 
   allJobs() {
     return element.all(by.css("#jobs-table .flow-name"));
