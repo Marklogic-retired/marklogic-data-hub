@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as EC } from 'protractor';
+import { browser, ExpectedConditions as EC, protractor } from 'protractor';
 import loginPage from '../../../page-objects/auth/login';
 import appPage from '../../../page-objects/appPage';
 import manageFlowPage from "../../../page-objects/flows/manageFlows";
@@ -54,6 +54,12 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
       await expect(stepsPage.stepDetailsName.getText()).toEqual(json.stepName);
       await ingestStepPage.setInputFilePath(json.path);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_collections \"json-ingestion\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"rest-reader,read,rest-writer,update\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("document_type \"json\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-transform_param \"flow-name=TestFlow1,step=1\"");
     });
 
     it('Should not be able to modify name', async function () {
@@ -107,6 +113,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow1);
       await editFlowPage.addStep(flowData.flow1, json);
       await browser.sleep(5000);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.sleep(3000);
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -127,6 +135,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow2);
       await editFlowPage.addStep(flowData.flow2, xml);
       await browser.sleep(5000);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -146,6 +156,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow3);
       await browser.sleep(5000);
       await editFlowPage.addStep(flowData.flow3, csv);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"delimited_text\" -generate_uri \"true\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -164,6 +176,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow9);
       await browser.sleep(5000);
       await editFlowPage.addStep(flowData.flow9, stepConfig.csv_pipe);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"delimited_text\" -generate_uri \"true\" -delimiter \"|\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -182,6 +196,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow10);
       await browser.sleep(5000);
       await editFlowPage.addStep(flowData.flow10, stepConfig.csv_semicolon);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"delimited_text\" -generate_uri \"true\" -delimiter \";\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -200,6 +216,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow11);
       await browser.sleep(5000);
       await editFlowPage.addStep(flowData.flow11, stepConfig.csv_tab);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"delimited_text\" -generate_uri \"true\" -delimiter \"\\t\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -218,6 +236,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow4);
       await editFlowPage.addStep(flowData.flow4, text);
       await browser.sleep(5000);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("text");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -233,6 +253,8 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow5);
       await editFlowPage.addStep(flowData.flow5, binary);
       await browser.sleep(5000);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -245,6 +267,42 @@ export default function (qaProjectDir) {
       await manageFlowPage.verifyFlow(flowData.flow5, "Finished", 1, 1, 0);
       await console.log('remove flow');
       await manageFlowPage.removeFlow(flowData.flow5);
+    });
+
+    it('Should verify ingest target format', async function () {
+      await manageFlowPage.createFlow(flowData.flow1);
+      await editFlowPage.addStep(flowData.flow1, json);
+      await browser.sleep(5000);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-document_type \"json\"");
+      await ingestStepPage.setTargetFileType("XML");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-document_type \"xml\"");
+      await ingestStepPage.setTargetFileType("Text");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-document_type \"text\"");
+      await ingestStepPage.setTargetFileType("Binary");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-document_type \"binary\"");
+    });
+
+    it('Should verify target permissions', async function () {
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"rest-reader,read,rest-writer,update\"");
+      await ingestStepPage.targetPermissions.clear();
+      await ingestStepPage.targetPermissions.sendKeys("rest-reader,read,rest-writer,update,user1,execute");
+      await ingestStepPage.targetPermissions.sendKeys(protractor.Key.ENTER);
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"rest-reader,read,rest-writer,update,user1,execute\"");
+    });
+
+    it('Should target uri replacement', async function () {
+      await ingestStepPage.targetUriReplace.clear();
+      await ingestStepPage.targetUriReplace.sendKeys("/web/e2e/qa-project/");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_uri_replace \"/web/e2e/qa-project/\"");
+      await ingestStepPage.targetUriReplace.clear();
+    });
+
+    it('Should uri preview', async function () {
+      await ingestStepPage.targetUriReplace.clear();
+      await ingestStepPage.targetUriReplace.sendKeys("/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/flow-test/json/, '/web/e2e/qa-directory/'");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("qa-directory");
+      await ingestStepPage.targetUriReplace.clear();
+      await manageFlowPage.removeFlow(flowData.flow1);
     });
 
     xit('Should logout', async function () {

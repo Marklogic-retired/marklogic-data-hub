@@ -172,12 +172,18 @@ export default function (qaProjectDir) {
       await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("fname")));
       await masteringStepPage.clickMatchOptionDialogPropertyOption("fname");
       await masteringStepPage.setMatchOptionDialogWeight(5);
+      await masteringStepPage.matchOptionPropertyToMatchRemoveButton.click();
       await masteringStepPage.clickMatchOptionCancelSave("save");
       await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
       await browser.sleep(2000);
-      await expect(masteringStepPage.matchOptionProperty('lname-fname').getText()).toContain('lname, fname');
-      await expect(masteringStepPage.matchOptionType('lname-fname').getText()).toContain('Reduce');
-      await expect(masteringStepPage.matchOptionWeight("lname-fname").getText()).toContain('5');
+      await expect(masteringStepPage.matchOptionProperty('lname').getText()).toContain('lname');
+      await expect(masteringStepPage.matchOptionType('lname').getText()).toContain('Reduce');
+      await expect(masteringStepPage.matchOptionWeight('lname').getText()).toContain('5');
+      await masteringStepPage.clickMatchOptionMenu('lname');
+      await masteringStepPage.clickMatchOptionMenuOption('delete');
+      await browser.wait(EC.visibilityOf(masteringStepPage.optionDialogWindow));
+      await masteringStepPage.clickOptionCancelDeleteButton('YES');
+      await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
     });
 
     it('should add match option for custom match type', async function () {
@@ -222,7 +228,7 @@ export default function (qaProjectDir) {
     });
 
     it('should remove match options', async function () {
-      let options = ['eyecolor', 'synonym', 'fname', 'zip', 'lname', 'lname-fname'];
+      let options = ['eyecolor', 'synonym', 'fname', 'zip', 'lname'];
       for (let option of options) {
         await masteringStepPage.clickMatchOptionMenu(option);
         await masteringStepPage.clickMatchOptionMenuOption('delete');

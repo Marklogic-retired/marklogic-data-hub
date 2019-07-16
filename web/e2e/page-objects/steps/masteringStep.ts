@@ -40,12 +40,24 @@ export class MasteringStep extends AppPage {
     return element(by.css(`.match-option-${property} .match-option-property`));
   }
 
+  matchOptionPropertyByText(property: string) {
+    return element(by.cssContainingText(`.match-option-property`, property));
+  }
+
   matchOptionType(property: string) {
     return element(by.css(`.match-option-${property} .match-option-type`));
   }
 
+  matchOptionTypeByText(property: string) {
+    return element(by.cssContainingText(`.match-option-type`, property));
+  }
+
   matchOptionWeight(property: string) {
     return element(by.css(`.match-option-${property} .match-option-weight`));
+  }
+
+  matchOptionWeightByText(property: string) {
+    return element(by.cssContainingText(`.match-option-weight`, property));
   }
 
   matchOptionOtherThesaurus(property: string) {
@@ -99,8 +111,17 @@ export class MasteringStep extends AppPage {
     return element(by.css(`.match-option-${property} .match-option-menu`));
   }
 
+  matchOptionMenuByText(property: string) {
+    return element(by.css(`.match-option-${property} .match-option-menu`));
+  }
+
   async clickMatchOptionMenu(property: string) {
     let menu = this.matchOptionMenu(property);
+    return await menu.click();
+  }
+
+  async clickMatchOptionMenuByText(property: string) {
+    let menu = this.matchOptionMenuByText(property);
     return await menu.click();
   }
 
@@ -368,6 +389,10 @@ export class MasteringStep extends AppPage {
 
   get matchOptionPropertyToMatchAddButton() {
     return element(by.css(".add-property-btn"));
+  }
+
+  get matchOptionPropertyToMatchRemoveButton() {
+    return element(by.css(".remove-property-btn"));
   }
 
   async clickPropertyToMatchAddButton() {
