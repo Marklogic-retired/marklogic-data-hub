@@ -113,8 +113,6 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow1);
       await editFlowPage.addStep(flowData.flow1, json);
       await browser.sleep(5000);
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.sleep(3000);
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
@@ -135,8 +133,6 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow2);
       await editFlowPage.addStep(flowData.flow2, xml);
       await browser.sleep(5000);
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -253,8 +249,6 @@ export default function (qaProjectDir) {
       await manageFlowPage.createFlow(flowData.flow5);
       await editFlowPage.addStep(flowData.flow5, binary);
       await browser.sleep(5000);
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
@@ -290,14 +284,14 @@ export default function (qaProjectDir) {
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"rest-reader,read,rest-writer,update,user1,execute\"");
     });
 
-    it('Should target uri replacement', async function () {
+    it('Should verify target uri replacement', async function () {
       await ingestStepPage.targetUriReplace.clear();
       await ingestStepPage.targetUriReplace.sendKeys("/web/e2e/qa-project/");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_uri_replace \"/web/e2e/qa-project/\"");
       await ingestStepPage.targetUriReplace.clear();
     });
 
-    it('Should uri preview', async function () {
+    it('Should verify uri preview', async function () {
       await ingestStepPage.targetUriReplace.clear();
       await ingestStepPage.targetUriReplace.sendKeys("/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/flow-test/json/, '/web/e2e/qa-directory/'");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("qa-directory");
