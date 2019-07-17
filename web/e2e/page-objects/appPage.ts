@@ -49,10 +49,37 @@ export class AppPage extends Page {
     return element(by.css('#header-menu'));
   }
 
+  get aboutButton() {
+    return element(by.css('#about-button'));
+  }
+
   async logout() {
     await this.menuButton.click();
     browser.wait(EC.elementToBeClickable(element(by.css('#login-button'))));
     await element(by.css('#login-button')).click();
+  }
+
+  async clickAbout() {
+    await this.menuButton.click();
+    browser.wait(EC.elementToBeClickable(this.aboutButton));
+    await this.aboutButton.click();
+  }
+
+  //about menu
+  get dataHubVersion() {
+    return element(by.css(".about-item.data-hub-version > .value"));
+  }
+
+  get projectDirectory() {
+    return element(by.css(".about-item.project-directory > .value"));
+  }
+
+  get markLogicVersion() {
+    return element(by.css(".about-item.marklogic-version > .value"));
+  }
+
+  get fileBugLink() {
+    return element(by.css(".about-item.bug-link > a")).getAttribute("href");
   }
 
   //click on user link to get the logout button
