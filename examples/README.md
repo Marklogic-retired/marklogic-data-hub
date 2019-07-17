@@ -11,6 +11,8 @@ in an example project directory.
 
 1. [dh5-custom-hook](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dh5-custom-hook) - an example of a simple flow with one ingestion step that utilizes a custom hook
 
+1. [smart-mastering-complete](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/smart-mastering-complete) - demonstrates various features of the mastering step
+
 ## Data Hub 4
 
 1. [barebones](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/barebones) - an example of the minimum configuration necessary to run a Gradle-based Data Hub

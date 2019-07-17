@@ -1,0 +1,42 @@
+{
+  "info" : {
+    "title" : "Person",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/",
+    "description" : "A person entity"
+  },
+  "definitions" : {
+    "Person" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ "FirstName" ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "FirstName" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "LastName" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "SSN" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "ZipCode" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Address" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "DateOfBirth" : {
+          "datatype" : "date"
+        }
+      }
+    }
+  }
+}
