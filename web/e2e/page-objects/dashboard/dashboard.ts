@@ -103,6 +103,10 @@ export class DashboardPage extends AppPage {
     return element(by.xpath('//div[contains(text(),\' Jobs\')]/..//button'));
   }
 
+  get dataHubQSVersion() {
+    return element(by.css(".version-link")).getText();
+  }
+
 }
 
 var dashboardPage = new DashboardPage();
