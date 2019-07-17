@@ -18,7 +18,7 @@ const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 // Require module for mapping latitude and longitude from zip codes
 const zipcodeData = require("/custom-modules/utils/zipcodeData.sjs");
-   
+
 function main(content, options) {
 
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
@@ -32,36 +32,29 @@ function main(content, options) {
   let triples = datahub.flow.flowUtils.getTriples(doc) || [];
   let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
 
-  instance['$attachments'] = {
-    envelope: {
-      headers: headers,
-      triples: triples,
-      instance: instance
-    }
-  };
-   
-   
+  instance['$attachments'] = doc.toObject().envelope.instance;
+
   //adding code to enrich Customer data with geospatial properties
-     
+
   if (instance["Postal"]) {
     let zipcode =  instance["Postal"].substring(0, 5);
     instance["latitude"] = zipcodeData.getLatitude(zipcode);
     instance["longitude"] = zipcodeData.getLongitude(zipcode);
   }
-   
+
   //form our envelope here now, specifying our output format
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-   
+
   //assign our envelope value
   content.value = envelope;
-   
+
   //assign the uri we want
   content.uri = '/enriched'+content.uri;
-   
+
   //now let's return out our content to be written
   return content;
 }
-   
+
 module.exports = {
   main: main
 };
