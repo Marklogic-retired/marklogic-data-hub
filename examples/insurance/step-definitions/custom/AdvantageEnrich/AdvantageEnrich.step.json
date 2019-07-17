@@ -1,8 +1,8 @@
 {
   "language" : "zxx",
-  "name" : "enrichAdvantage",
+  "name" : "AdvantageEnrich",
   "description" : "custom step to enrich Advantage customer data",
   "type" : "CUSTOM",
   "version" : 1,
-  "modulePath" : "/custom-modules/custom/enrichAdvantage/main.sjs"
+  "modulePath" : "/custom-modules/custom/AdvantageEnrich/main.sjs"
 }

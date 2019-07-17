@@ -1,5 +1,5 @@
 {
-  "name" : "customEnrichment",
+  "name" : "AdvantageEnrichment",
   "description" : "custom code example to enrich data",
   "batchSize" : 100,
   "threadCount" : 4,
@@ -8,19 +8,19 @@
   "version" : 0,
   "steps" : {
     "1" : {
-      "name" : "ingestAdvantage",
+      "name" : "AdvantageIngest",
       "description" : "ingesting Advantage insurance customers",
       "options" : {
         "additionalCollections" : [ ],
         "headers" : {
           "sources" : [ {
-            "name" : "customEnrichment"
+            "name" : "AdvantageEnrichment"
           } ],
           "createdOn" : "currentDateTime",
           "createdBy" : "currentUser"
         },
         "sourceQuery" : "cts.collectionQuery([])",
-        "collections" : [ "ingestAdvantage" ],
+        "collections" : [ "AdvantageIngest" ],
         "permissions" : "rest-reader,read,rest-writer,update",
         "outputFormat" : "json",
         "targetDatabase" : "data-hub-STAGING"
@@ -32,7 +32,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/Users/sbalasub/Desktop/ML/DHF/QA/insurance/datasets/advantage",
+        "inputFilePath" : "/PATH/TO/datasets/advantage",
         "inputFileType" : "json",
         "outputURIReplacement" : ".*datasets,''",
         "separator" : ","
@@ -42,15 +42,15 @@
       "mappingName" : null
     },
     "2" : {
-      "name" : "enrichAdvantage",
+      "name" : "AdvantageEnrich",
       "description" : "custom step to enrich Advantage customer data",
       "options" : {
         "additionalCollections" : [ ],
-        "sourceQuery" : "cts.collectionQuery([\"ingestAdvantage\"])",
+        "sourceQuery" : "cts.collectionQuery([\"AdvantageIngest\"])",
         "targetEntity" : "Customer",
-        "collections" : [ "enrichAdvantage", "Customer" ],
+        "collections" : [ "AdvantageEnrich", "Customer" ],
         "sourceDatabase" : "data-hub-STAGING",
-        "sourceCollection" : "ingestAdvantage",
+        "sourceCollection" : "AdvantageIngest",
         "outputFormat" : "json",
         "targetDatabase" : "data-hub-FINAL"
       },
@@ -58,9 +58,9 @@
       "retryLimit" : 0,
       "batchSize" : 100,
       "threadCount" : 4,
-      "stepDefinitionName" : "enrichAdvantage",
+      "stepDefinitionName" : "AdvantageEnrich",
       "stepDefinitionType" : "CUSTOM",
-      "modulePath" : "/custom-modules/custom/enrichAdvantage/main.sjs",
+      "modulePath" : "/custom-modules/custom/AdvantageEnrich/main.sjs",
       "mappingStep" : false,
       "customStep" : true,
       "mappingName" : null
