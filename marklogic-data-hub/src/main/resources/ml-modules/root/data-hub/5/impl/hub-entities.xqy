@@ -277,9 +277,9 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     else
                       fn:string($n) || "/" || $primary-key
                 else
-                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
+                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
             else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
         }
       case element(tde:context) return
         element { fn:node-name($n) } {
