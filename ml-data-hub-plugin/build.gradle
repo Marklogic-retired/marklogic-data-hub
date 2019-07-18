@@ -56,10 +56,10 @@ dependencies {
     compile (project(':marklogic-data-hub')) {
         exclude group: 'ch.qos.logback'
     }
-    compile ('com.marklogic:ml-gradle:3.15.1') {
+    compile ('com.marklogic:ml-gradle:3.15.2') {
         exclude group: 'ch.qos.logback'
     }
-    compile group: 'org.jdom', name: 'jdom2', version: '2.0.6'
+
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'
