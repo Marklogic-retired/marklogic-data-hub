@@ -232,7 +232,8 @@ declare function hent:dump-tde($entities as json:array)
       $definition => map:get("properties") => map:put($generated-primary-key-column, map:entry("datatype", "string"))
     )
   let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
-  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions)
+  let $entity-name := map:get(map:get($uber-model, "info"), "title")
+  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions, $entity-name)
 };
 
 declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
@@ -240,14 +241,20 @@ declare variable $default-invalid-values as element(tde:invalid-values) := eleme
 (:
   this method doctors the TDE output from ES
 :)
+
 declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map)
+{
+  hent:fix-tde($nodes, $entity-model-contexts, $uber-definitions, ())
+};
+
+declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map, $entity-name as xs:string?)
 {
   for $n in $nodes
   return
     typeswitch($n)
       case document-node() return
         document {
-          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element(tde:nullable) return
         $default-nullable
@@ -272,17 +279,21 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     else
                       fn:string($n) || "/" || $primary-key
                 else
-                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
             else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element(tde:context) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
           if ($n = $entity-model-contexts) then
-            fn:replace(fn:string($n),"^\./", ".//")
+            fn:replace(fn:replace(fn:string($n),"^\.//", "./"), "(.)$", "$1[node()]")
           else
-            $n/node()
+            let $outer-context := fn:replace(fn:string($n),"//\*:instance", "/*:envelope/*:instance")
+            return if(fn:not(fn:empty($entity-name))) then
+              fn:concat($outer-context, "[*:", $entity-name, "]")
+            else
+              $outer-context
         }
       case element(tde:column) return
         element { fn:node-name($n) } {
@@ -339,7 +350,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                 }
               }
             ) else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element() return
         element { fn:node-name($n) } {
