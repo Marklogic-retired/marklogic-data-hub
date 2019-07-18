@@ -119,11 +119,11 @@ public class ScaffoldingImpl implements Scaffolding {
             File libFile;
             String libScaffoldingSrcFile = null;
             if("sjs".equalsIgnoreCase(format)) {
-                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main.sjs";
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + ".sjs";
             }
             else if("xqy".equalsIgnoreCase(format)) {
-                moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main.sjs";
-                libScaffoldingSrcFile = "scaffolding/custom-module/xqy/lib.xqy";
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main-" + stepType.toLowerCase() + ".sjs";
+                libScaffoldingSrcFile = "scaffolding/custom-module/xqy/lib-" + stepType.toLowerCase() + ".xqy";
             }
             else {
                 throw new RuntimeException("Invalid code format. The allowed formats are 'xqy' or 'sjs'");
@@ -268,7 +268,7 @@ public class ScaffoldingImpl implements Scaffolding {
         logger.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
-                    .getResourceAsStream(srcFile);
+                .getResourceAsStream(srcFile);
             FileUtil.copy(inputStream, dstFile.toFile());
         }
     }
@@ -282,7 +282,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
+                                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(extensionName);
 
         if(!validator.isUniqueRestServiceExtension(extensionName)) {
@@ -296,7 +296,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void createRestTransform(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
+                                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(transformName);
         if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
@@ -338,13 +338,13 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     private File createEmptyRestExtensionFile(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) {
+                                              FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "services", extensionName + "." + codeFormat);
     }
 
     private File createEmptyRestTransformFile(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) {
+                                              FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "transforms", transformName + "." + codeFormat);
     }
@@ -393,7 +393,7 @@ public class ScaffoldingImpl implements Scaffolding {
         BufferedReader rdr = null;
         try {
             inputStream = Scaffolding.class.getClassLoader()
-                    .getResourceAsStream(srcFile);
+                .getResourceAsStream(srcFile);
             rdr = new BufferedReader(new InputStreamReader(inputStream));
             String bufferedLine = null;
             while ((bufferedLine = rdr.readLine()) != null) {
