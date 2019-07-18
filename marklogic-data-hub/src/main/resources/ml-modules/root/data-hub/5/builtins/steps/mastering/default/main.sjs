@@ -6,7 +6,7 @@ const emptySequence = Sequence.from([]);
 
 function main(content, options) {
   const filteredContent = [];
-  checkOptions(content, options);
+  checkOptions(content, options, filteredContent);
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
   let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
   // Data Hub will persist the results for us.
@@ -14,7 +14,7 @@ function main(content, options) {
   return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
 }
 
-function checkOptions(content, options) {
+function checkOptions(content, options, filteredContent = []) {
   let hasRequiredOptions = requiredOptionProperties.every((propName) => !!options[propName]);
   if (!hasRequiredOptions) {
     throw new Error(`Missing the following required mastering options: ${xdmp.describe(requiredOptionProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
