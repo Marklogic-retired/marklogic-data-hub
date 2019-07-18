@@ -90,7 +90,7 @@ declare function proc-impl:consolidate-merges($matches as map:map) as map:map
         return
           fn:string-join(
             for $uri in fn:distinct-values(($key, $merge-uris))
-            let $_lock-on-uri := xdmp:lock-for-update($uri)
+            let $_lock-on-uri := if (fn:not(map:contains($matches,$uri))) then xdmp:lock-for-update($uri) else ()
             order by $uri
             return $uri,
             $STRING-TOKEN
@@ -112,7 +112,6 @@ declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged
 {
   fn:distinct-values(
     for $key in map:keys($all-matches)
-    let $_lock-on-uri := xdmp:lock-for-update($key)
     for $updated-key in
       (if (map:contains($merged-into, $key)) then
         map:get($merged-into, $key)
@@ -124,7 +123,7 @@ declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged
     let $updated-notification-uris :=
       for $key-notification in $key-notifications[@threshold = $key-threshold]
       let $key-uri as xs:string := $key-notification/@uri
-      let $_lock-on-uri := xdmp:lock-for-update($key-uri)
+      let $_lock-on-uri := if (fn:not(map:contains($all-matches, $key))) then xdmp:lock-for-update($key-uri) else ()
       let $updated-uri :=
         if (map:contains($merged-into, $key-uri)) then
           map:get($merged-into, $key-uri)
@@ -185,7 +184,6 @@ declare function proc-impl:process-match-and-merge-with-options(
     $normalized-input
   )
   let $uris := map:keys($write-objects-by-uri)
-  let $_lock-for-update-on-uris := xdmp:eager($uris ! xdmp:lock-for-update(.))
   let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "processing: " || fn:string-join($uris, ", "))
       else ()
@@ -329,10 +327,8 @@ declare function proc-impl:process-match-and-merge-with-options(
         map:entry($uri, $current-collections),
         $on-archive
       )
-      let $_update := $write-context
+      return $write-context
         => map:put("collections", $new-collections)
-      return
-        xdmp:lock-for-update($uri)
     return (
       $archived,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
@@ -385,7 +381,10 @@ declare function proc-impl:process-match-and-merge-with-options(
           )
           let $_update := $write-context
             => map:put("collections", $new-collections)
-          return xdmp:lock-for-update($uri)
+          return
+            if (fn:not(map:contains($all-matches, $uri))) then
+              xdmp:lock-for-update($uri)
+            else ()
       return (
         $no-matches,
         if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
@@ -428,7 +427,6 @@ declare function proc-impl:process-match-and-merge-with-options(
     )
     else (),
     for $uri in map:keys($write-objects-by-uri)
-    let $lock-for-update := xdmp:lock-for-update($uri)
     return
       $write-objects-by-uri => map:get($uri),
     (: Process custom actions :)
