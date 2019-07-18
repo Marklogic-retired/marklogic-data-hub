@@ -17,7 +17,7 @@ div.label {
   font-weight: normal;
 }
 
-/deep/ .csv-separator-field {
+/deep/ .delimited-text-separator-field {
   padding: 8px 0 !important;
 }
 
@@ -34,7 +34,7 @@ div.label {
 }
 
 /deep/ .mat-tooltip.source-file-type-tooltip,
-/deep/ .mat-tooltip.csv-separator-field-tooltip,
+/deep/ .mat-tooltip.delimited-text-separator-field-tooltip,
 /deep/ .mat-tooltip.target-file-type-tooltip {
   left: 300px !important;
 }
@@ -44,11 +44,11 @@ div.label {
   width: 200px !important;
 }
 
-/deep/ .mat-form-field.csv-separator-field {
+/deep/ .mat-form-field.delimited-text-separator-field {
   width: 184px !important;
 }
 
-/deep/ .mat-form-field.csv-separator-other-field {
+/deep/ .mat-form-field.delimited-text-separator-other-field {
   width: 80px !important;
   padding: 5px 10px;
 }
