@@ -33,14 +33,14 @@ const settings = {
         value: 'binary',
       },
       {
-        label: 'CSV',
+        label: 'Delimited Text',
         value: 'csv',
       }
     ]
   },
   csvSeparator: {
-    label: 'CSV Separator',
-    description: 'The csv file separator. Defaults to ,',
+    label: 'Field Separator',
+    description: 'The delimited text file separator. Defaults to ,',
     options: [
       {
         label: ',',
@@ -57,6 +57,10 @@ const settings = {
       {
         label: 'Tab',
         value: '\\t',
+      },
+      {
+        label: 'Other',
+        value: 'Other',
       }
     ]
   },
@@ -120,6 +124,8 @@ export class IngestUiComponent implements OnInit{
   _isVisible: boolean;
   mlcpCommand: string;
   uri:string;
+  OtherDelimiter: string = '';
+  csvSep: string = ',';
 
   constructor(
     private entitiesService: EntitiesService,
@@ -308,5 +314,15 @@ export class IngestUiComponent implements OnInit{
       uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
     }
     return uuid;
+  }
+
+  fieldSeparator() {
+    if(this.csvSep !== 'Other'){
+      this.step.fileLocations.separator = this.csvSep;
+    } else {
+      this.step.fileLocations.separator = this.OtherDelimiter;
+    }
+
+    this.onChange();
   }
 }

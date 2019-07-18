@@ -45,12 +45,14 @@
         matTooltipHideDelay="500"
         matTooltipClass="csv-separator-field-tooltip"
       >{{config.csvSeparator.label}}</div>
+      <span>
       <mat-form-field layout-fill class="csv-separator-field">
         <mat-select
           id="csv-separator-select"
-          [(ngModel)]="this.step.fileLocations.separator"
+          [(ngModel)]="this.csvSep"
           name="separator"
-          (selectionChange)="onChange()"
+          (selectionChange)="fieldSeparator()"
+          #Otherlabel
         >
           <mat-option
             *ngFor="let option of config.csvSeparator.options"
@@ -60,6 +62,19 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <!-- Other Field Separator -->
+      <mat-form-field layout-fill class="csv-separator-other-field" *ngIf="Otherlabel.value === 'Other'">
+          <input
+            id="csv-separator"
+            matInput
+            [(ngModel)]="this.OtherDelimiter"
+            name="csv-separator"
+            (change)="fieldSeparator()"
+          />
+        </mat-form-field>
+      </span>
+  
     </div>
 
     <div class="label"

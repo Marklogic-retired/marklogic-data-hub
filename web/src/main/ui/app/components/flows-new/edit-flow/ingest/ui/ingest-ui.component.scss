@@ -48,6 +48,11 @@ div.label {
   width: 184px !important;
 }
 
+/deep/ .mat-form-field.csv-separator-other-field {
+  width: 80px !important;
+  padding: 5px 10px;
+}
+
 /deep/ .mat-form-field.target-permissions-field,
 /deep/ .mat-form-field.target-uri-replace-field {
   width: 600px !important;
