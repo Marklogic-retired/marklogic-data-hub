@@ -26,7 +26,7 @@ function main(content, options) {
     doc = fn.head(doc.root);
   }
 
-  let instance = {"Admissions" : datahub.flow.flowUtils.getInstance(doc).toObject() } || {};
+  let instance = {"Admission" : datahub.flow.flowUtils.getInstance(doc).toObject() } || {};
   let triples = datahub.flow.flowUtils.getTriples(doc) || [];
   let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
 
@@ -34,41 +34,47 @@ function main(content, options) {
 
 
    //let's assemble our admissions here, first we grab the patient and admission ID
-  let patientID = instance.Admissions.PatientID;
-  let admissionID = instance.Admissions.AdmissionID;
+  let patientID = instance.Admission.PatientID;
+  let admissionID = instance.Admission.AdmissionID;
 
   //now, we search for the labs that match this patient ID and admission ID, then add those
   let diagnosesDocs = cts.search(cts.andQuery([cts.jsonPropertyRangeQuery('PatientID', '=', patientID), cts.jsonPropertyRangeQuery('AdmissionID', '=',admissionID),cts.collectionQuery(['DiagnosesCore'])]))
 
-  const diagnoses  = [];
+  const Diagnoses  = [];
                 for (const diagnosisDoc of diagnosesDocs) {
                   let diagnosis = {};
-                  diagnosis.primaryDiagnosisCode = diagnosisDoc.xpath('//PrimaryDiagnosisCode');
-                  diagnosis.primaryDiagnosisDescription = diagnosisDoc.xpath('//PrimaryDiagnosisDescription');
-                  diagnoses.push({'Diagnoses' : diagnosis});
+                  diagnosis.PrimaryDiagnosisCode = diagnosisDoc.xpath('//PrimaryDiagnosisCode');
+                  diagnosis.PrimaryDiagnosisDescription = diagnosisDoc.xpath('//PrimaryDiagnosisDescription');
+                  Diagnoses.push({'Diagnosis' : diagnosis});
                 };
 
-  instance.Admissions.diagnoses = diagnoses;
+  instance.Admission.Diagnoses = Diagnoses;
 
   //time to grab the labs and do the same thing
-  let labsDocs = cts.search(cts.andQuery([cts.jsonPropertyRangeQuery('PatientID', '=', patientID), cts.jsonPropertyRangeQuery('AdmissionID', '=',admissionID),cts.collectionQuery(['LabsCore'])]))
+  let labsDocs = cts.search(
+                  cts.andQuery([
+                    cts.jsonPropertyRangeQuery('PatientID', '=', patientID),
+                    cts.jsonPropertyRangeQuery('AdmissionID', '=',admissionID),
+                    cts.collectionQuery(['LabsCore'])
+                  ])
+                 )
 
-  const labs  = [];
+  const Labs  = [];
                 for (const labDoc of labsDocs) {
                   let lab = {};
-                  lab.name = labDoc.xpath('//LabName');
-                  lab.value = labDoc.xpath('//LabValue');
-                  lab.units = labDoc.xpath('//LabUnits');
-                  lab.datetime = labDoc.xpath('//LabDateTime')
-                  labs.push({'Labs' : lab });
+                  lab.Name = labDoc.xpath('//LabName');
+                  lab.Value = labDoc.xpath('//LabValue');
+                  lab.Units = labDoc.xpath('//LabUnits');
+                  lab.Datetime = labDoc.xpath('//LabDateTime')
+                  Labs.push({'Lab' : lab });
                 };
 
-  instance.Admissions.labs = labs;
+  instance.Admission.Labs = Labs;
 
   //delete PatientID, since we only want AdmissionID, startdate and enddate from Admissions entity
-  delete instance.Admissions.PatientID;
+  delete instance.Admission.PatientID;
   instance.info = {
-                "title": "Admissions",
+                "title": "Admission",
                 "version": "0.0.1"
                 };
 
@@ -79,7 +85,7 @@ function main(content, options) {
   content.value = envelope;
 
   //assign the uri we want
-  content.uri = '/admissionsComplete' + content.uri;
+  content.uri = '/admissionComplete' + content.uri;
 
   return content;
 }

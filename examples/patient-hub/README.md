@@ -21,11 +21,10 @@ The project has flows predefined for integrating the patients' data.
 ## How to Integrate the Patient Hub
 
 1. Using Data Hub QuickStart with a clean MarkLogic server, select and install the project folder: examples/patient-hub.
-2. View all the flows. Configure the ingestion step in all the flows to set the Source Directory Path to their corresponding `datasets/{entityName}-core` directory (exact path will depend on your filesystem). For eg. the dataset path for `Admissions` entity is `datasets/admissions-core`
-3. Run the `Diagnoses` flow. This ingests Diagnoses documents into the staging database. You can view the documents in Browse Data view for Staging.
-4. Run the `Labs` flow. This ingests Labs documents into the staging database. You can view the documents in Browse Data view for Staging.
-5. Run the `Admissions` flow. It will run two steps, one for ingesting Admissions documents and a custom step to harmonize them with `Diagnoses` and `Labs` entities, into the staging database. The custom step searches and harmonizes the Labs and Diagnoses instances that match a particular AdmissionID and PatientID. You can view the documents in Browse Data view for Staging. The harmonized `Admissions` entity instances start with the URI `/admissionsComplete`.
-6. Run the `Patients` flow. It will run two steps, one for ingesting Patients documents and a custom step to harmonize them with `Admissions` entity(harmonized in the previous step) into the staging database. The custom step searches and harmonizes the Admissions instances that match a particular PatientID. You can view the documents in Browse Data view for Final. The harmonized `Patients` entity instances start with the URI `/patients/admissions`.
+2. Run the `Diagnoses` flow. This ingests Diagnoses documents into the staging database. You can view the documents in Browse Data view for Staging.
+3. Run the `Labs` flow. This ingests Labs documents into the staging database. You can view the documents in Browse Data view for Staging.
+4. Run the `Admissions` flow. It will run two steps, one for ingesting Admissions documents and a custom step to harmonize them with `Diagnoses` and `Labs` entities, into the staging database. The custom step searches and harmonizes the Labs and Diagnoses instances that match a particular AdmissionID and PatientID. You can view the documents in Browse Data view for Staging. The harmonized `Admissions` entity instances start with the URI `/admissionsComplete`.
+5. Run the `Patients` flow. It will run two steps, one for ingesting Patients documents and a custom step to harmonize them with `Admissions` entity(harmonized in the previous step) into the staging database. The custom step searches and harmonizes the Admissions instances that match a particular PatientID. You can view the documents in Browse Data view for Final. The harmonized `Patients` entity instances start with the URI `/patients/admissions`.
 
 
 ### Admissions Entity Instance (JSON)
@@ -46,16 +45,16 @@ The project has flows predefined for integrating the patients' data.
 ```
 {
     "instance": {
-        "Admissions": {
+        "Admission": {
             "AdmissionID": "2",
             "AdmissionStartDate": "1994-07-22 07:12:50.407",
             "AdmissionEndDate": "1994-07-28 12:29:05.827",
-            "diagnoses": [{"Diagnoses": {...}}],
-            "labs": [{"Labs": {...}},
-                     {"Labs": {...}}]
+            "Diagnoses": [{"Diagnosis": {...}}],
+            "Labs": [{"Lab": {...}},
+                     {"Lab": {...}}]
         },
         "info": {
-            "title": "Admissions",
+            "title": "Admission",
             "version": "0.0.1"
         }
     }
@@ -83,32 +82,32 @@ The project has flows predefined for integrating the patients' data.
 ```
 {
     "instance": {
-        "Patients": {
-            "admissions": [
-                {   "Admissions": {
+        "Patient": {
+            "Admissions": [
+                {   "Admission": {
                         "AdmissionID": "1",
                         "AdmissionStartDate": "1967-06-02 08:43:45.987",
                         "AdmissionEndDate": "1967-06-14 09:59:12.247",
-                        "diagnoses": [{ "Diagnoses": {...} }],
-                        "labs": [{ "Labs": {...} },
-                                 { "Labs": {...} }]
+                        "Diagnoses": [{ "Diagnosis": {...} }],
+                        "Labs": [{ "Lab": {...} },
+                                 { "Lab": {...} }]
                     },
                     "info": {...}
                 },
-                {   "Admissions": {...}},
-                {   "Admissions": {...}},
-                {   "Admissions": {...}}
+                {   "Admission": {...}},
+                {   "Admission": {...}},
+                {   "Admission": {...}}
             ],
             "PatientID": "E250799D-F6DE-4914-ADB4-B08A6E5029B9",
-            "gender": "Female",
-            "dob": "1945-08-04 19:03:00.757",
-            "race": "White",
-            "marital-status": "Single",
-            "language": "Unknown",
-            "percentagebelowpoverty": 12.86
+            "Gender": "Female",
+            "DoB": "1945-08-04 19:03:00.757",
+            "Race": "White",
+            "Marital-status": "Single",
+            "Language": "Unknown",
+            "PercentageBelowPoverty": 12.86
         },
         "info": {
-            "title": "Patients",
+            "title": "Patient",
             "version": "0.0.1"
         }
     }
