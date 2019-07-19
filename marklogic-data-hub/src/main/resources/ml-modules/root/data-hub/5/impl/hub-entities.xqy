@@ -287,13 +287,16 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         element { fn:node-name($n) } {
           $n/namespace::node(),
           if ($n = $entity-model-contexts) then
-            fn:replace(fn:replace(fn:string($n),"^\.//", "./"), "(.)$", "$1[node()]")
+            fn:replace(fn:replace(fn:string($n),"^\./", ".//"), "(.)$", "$1[node()]")
           else
+          if(fn:count($n) = 1) then
             let $outer-context := fn:replace(fn:string($n),"//\*:instance", "/*:envelope/*:instance")
             return if(fn:not(fn:empty($entity-name))) then
               fn:concat($outer-context, "[*:", $entity-name, "]")
             else
               $outer-context
+          else
+          $n/node()
         }
       case element(tde:column) return
         element { fn:node-name($n) } {
