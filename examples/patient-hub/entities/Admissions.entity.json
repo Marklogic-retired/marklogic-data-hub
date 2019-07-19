@@ -1,0 +1,84 @@
+{
+  "info" : {
+    "title" : "Admissions",
+    "version" : "0.0.1",
+    "baseUri" : "http://www.example.org/"
+  },
+  "definitions" : {
+    "Labs" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "value" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "units" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "datetime" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "Admissions" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ "AdmissionID" ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "AdmissionID" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "startdate" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "enddate" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "labs" : {
+          "datatype" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Labs"
+          }
+        },
+        "diagnoses" : {
+          "datatype" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Diagnoses"
+          }
+        }
+      }
+    },
+    "Diagnoses" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "primaryDiagnosisCode" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "primaryDiagnosisDescription" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

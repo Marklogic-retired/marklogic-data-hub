@@ -1,0 +1,30 @@
+{
+  "Patients" : {
+    "x" : 193,
+    "y" : 83,
+    "width" : 625,
+    "height" : 278,
+    "vertices" : { }
+  },
+  "Labs" : {
+    "x" : 1116,
+    "y" : 390,
+    "width" : 608,
+    "height" : 202,
+    "vertices" : { }
+  },
+  "Admissions" : {
+    "x" : 875,
+    "y" : 39,
+    "width" : 597,
+    "height" : 212,
+    "vertices" : { }
+  },
+  "Diagnoses" : {
+    "x" : 528,
+    "y" : 440,
+    "width" : 512,
+    "height" : 152,
+    "vertices" : { }
+  }
+}
