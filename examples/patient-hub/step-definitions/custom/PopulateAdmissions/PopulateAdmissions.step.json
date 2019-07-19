@@ -1,0 +1,8 @@
+{
+  "language" : "zxx",
+  "name" : "PopulateAdmissions",
+  "description" : "",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "modulePath" : "/custom-modules/custom/PopulateAdmissions/main.sjs"
+}
