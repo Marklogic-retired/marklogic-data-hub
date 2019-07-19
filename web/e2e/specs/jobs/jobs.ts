@@ -430,7 +430,7 @@ export default function (qaProjectDir) {
       await editFlowPage.clickFinishedLatestJobStatus();
       await jobDetailsPage.jobSummaryCommitted.click();
       await expect(browsePage.resultsPagination().isDisplayed()).toBe(true);
-      await expect(await browsePage.resultsUriCount()).toBe(6);
+      await expect(await browsePage.resultsUriCount()).toBe(8);
     });
 
     it('should filter jobs by flow name', async function () {
