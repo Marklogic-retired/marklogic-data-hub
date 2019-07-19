@@ -26,6 +26,7 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobMonitor;
 import com.marklogic.hub.job.JobStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,27 +38,28 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class JobMonitorImpl extends ResourceManager implements JobMonitor {
+public class JobMonitorImpl implements JobMonitor {
 
     private DatabaseClient client;
+
     @Autowired
     private HubConfig hubConfig;
-    private Jobs jobs;
-    private Batches batches;
 
-    public JobMonitorImpl() {
-        super();
-    }
+    private JobDocManager jobDocManager;
+    private Batches batches;
 
     public void setupClient() {
         this.client = hubConfig.newJobDbClient();
-        jobs = new Jobs(client);
+        this.jobDocManager = new JobDocManager(client);
         batches = new Batches(client);
     }
 
     //obtain the currently running  jobs on the cluster
     public Map<String, String> getCurrentJobs() {
-        JsonNode runningJobs = jobs.getJobs(null, JobStatus.RUNNING);
+        JsonNode runningJobs = jobDocManager.getJobDocs(JobStatus.RUNNING);
+        if (runningJobs == null) {
+            throw new RuntimeException("Unable to get job document");
+        }
         Map<String, String> jobs = new HashMap<>();
         if (runningJobs.isArray()) {
             for (final JsonNode objNode : runningJobs) {
@@ -70,7 +72,10 @@ public class JobMonitorImpl extends ResourceManager implements JobMonitor {
 
     //obtain the status of any jobID
     public String getJobStatus(String jobId) {
-        JsonNode job = jobs.getJobs(jobId, null);
+        JsonNode job = jobDocManager.getJobDocument(jobId);
+        if (job == null) {
+            throw new RuntimeException("Unable to get job document");
+        }
         String status = null;
         if(job.get("job") != null){
             status = job.get("job").get("jobStatus").textValue();
@@ -117,39 +122,10 @@ public class JobMonitorImpl extends ResourceManager implements JobMonitor {
         return null;
     }
 
-    public class Jobs extends ResourceManager {
-        private static final String NAME = "ml:jobs";
-
-        private RequestParameters params;
-
-        public Jobs(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        private JsonNode getJobs(String jobId, JobStatus status) {
-            params = new RequestParameters();
-            if(jobId != null) {
-                params.add("jobid", jobId);
-            }
-            if(status != null) {
-                params.add("status", status.toString());
-            }
-
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
-            if (resultItr == null || ! resultItr.hasNext()) {
-                throw new RuntimeException("Unable to get job document");
-            }
-            ResourceServices.ServiceResult res = resultItr.next();
-            return res.getContent(new JacksonHandle()).get();
-        }
-
-    }
-
     public class Batches extends ResourceManager {
         private static final String NAME = "ml:batches";
 
-        private RequestParameters params ;
+        private RequestParameters params;
 
         public Batches(DatabaseClient client) {
             super();

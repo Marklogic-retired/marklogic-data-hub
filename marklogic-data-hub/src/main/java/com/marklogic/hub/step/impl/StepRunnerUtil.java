@@ -3,7 +3,6 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
@@ -44,12 +43,11 @@ public class StepRunnerUtil {
     }
 
     protected static void initializeStepRun(JobDocManager jobDocManager, RunStepResponse runStepResponse, Flow flow, String step, String jobId) {
-        try{
-            jobDocManager.getJobs(jobId);
-        }
-        catch(ResourceNotFoundException e) {
+        JsonNode json = jobDocManager.getJobDocument(jobId);
+        if (json == null) {
             jobDocManager.createJob(jobId,flow.getName());
         }
+
         try {
             jobDocManager.postJobs(jobId, JobStatus.RUNNING_PREFIX + step, step, null, runStepResponse);
         }
