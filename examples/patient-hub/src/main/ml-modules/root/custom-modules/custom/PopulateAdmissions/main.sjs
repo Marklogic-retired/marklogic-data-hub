@@ -26,7 +26,7 @@ function main(content, options) {
     doc = fn.head(doc.root);
   }
 
-  let instance = {'Patients':{}};
+  let instance = {'Patient':{}};
   let triples = datahub.flow.flowUtils.getTriples(doc) || [];
   let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
 
@@ -36,26 +36,31 @@ function main(content, options) {
   let patientID = doc.envelope.instance.PatientID;
 
   //now, we search for the admissions docs that match this patient ID and harmonize
-  let admissionsDocs = cts.search(cts.andQuery([cts.jsonPropertyRangeQuery('PatientID', '=', patientID),cts.collectionQuery(['CompletedAdmissions'])]));
+  let admissionsDocs = cts.search(
+                        cts.andQuery([
+                          cts.jsonPropertyRangeQuery('PatientID', '=', patientID),
+                          cts.collectionQuery(['CompletedAdmissions'])
+                        ])
+                       );
 
-  const admissions  = [];
+  const Admissions  = [];
 	for (const admissionDoc of admissionsDocs) {
 	  let admission = admissionDoc.xpath('/envelope/instance').toObject()[0];
-	  admissions.push(admission);
+	  Admissions.push(admission);
 	};
 
-   instance.Patients.admissions = admissions;
+   instance.Patient.Admissions = Admissions;
 
-   instance.Patients.PatientID = doc.envelope.instance.PatientID;
-   instance.Patients.gender = doc.envelope.instance.PatientGender;
-   instance.Patients.dob = doc.envelope.instance.PatientDateOfBirth;
-   instance.Patients.race = doc.envelope.instance.PatientRace;
-   instance.Patients['marital-status'] = doc.envelope.instance.PatientMaritalStatus;
-   instance.Patients.language = doc.envelope.instance.PatientLanguage;
-   instance.Patients.percentagebelowpoverty = xs.decimal(doc.envelope.instance.PatientPopulationPercentageBelowPoverty);
+   instance.Patient.PatientID = doc.envelope.instance.PatientID;
+   instance.Patient.Gender = doc.envelope.instance.PatientGender;
+   instance.Patient.DoB = doc.envelope.instance.PatientDateOfBirth;
+   instance.Patient.Race = doc.envelope.instance.PatientRace;
+   instance.Patient['Marital-status'] = doc.envelope.instance.PatientMaritalStatus;
+   instance.Patient.Language = doc.envelope.instance.PatientLanguage;
+   instance.Patient.PercentageBelowPoverty = xs.decimal(doc.envelope.instance.PatientPopulationPercentageBelowPoverty);
 
    instance.info = {
-	"title": "Patients",
+	"title": "Patient",
 	"version": "0.0.1"
 	};
 

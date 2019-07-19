@@ -32,7 +32,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/PATH/TO/datasets/admissions-core",
+        "inputFilePath" : "datasets/admissions-core",
         "inputFileType" : "csv",
         "outputURIReplacement" : ".*datasets,'/datasets'",
         "separator" : "\\t"
