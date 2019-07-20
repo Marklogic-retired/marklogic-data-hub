@@ -1,22 +1,14 @@
 package com.marklogic.hub.web.service;
 
-import static com.marklogic.hub.job.JobStatus.RUNNING_PREFIX;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices.ServiceResult;
-import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
@@ -25,24 +17,21 @@ import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
 import io.opentracing.Scope;
 import io.opentracing.Span;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.PreDestroy;
-import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
+import javax.xml.bind.DatatypeConverter;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.marklogic.hub.job.JobStatus.RUNNING_PREFIX;
+
 @Service
-public class FlowJobService extends ResourceManager {
-    private static final String ML_JOBS_NAME = "ml:jobs";
+public class FlowJobService {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -56,6 +45,7 @@ public class FlowJobService extends ResourceManager {
     private HubConfigImpl hubConfig;
 
     private DatabaseClient client;
+    private JobDocManager jobDocManager;
 
     protected static boolean firstTimeRun = true;
 
@@ -72,7 +62,7 @@ public class FlowJobService extends ResourceManager {
 
     private void setupClient() {
         client = hubConfig.newJobDbClient();
-        client.init(ML_JOBS_NAME, this);
+        this.jobDocManager = new JobDocManager(client);
     }
 
     @PreDestroy
@@ -112,20 +102,14 @@ public class FlowJobService extends ResourceManager {
             .withTag("getAllJobsCall", true)
             .start();
         try (Scope ignored = JaegerConfig.activate(span2)) {
-            RequestParameters params = new RequestParameters();
             List<String> names = new ArrayList<>();
             for (Flow flow : flows) {
                 names.add(flow.getName());
             }
-            params.put("flowNames", names.toArray(new String[]{}));
-            ServiceResultIterator resultItr = this.getServices().get(params);
-            if (resultItr == null || !resultItr.hasNext()) {
+            jsonNode = jobDocManager.getJobDocumentsForFlows(names);
+            if (jsonNode == null) {
                 throw new RuntimeException("Failed to get jobs for flows!");
             }
-
-            ServiceResult res = resultItr.next();
-            jsonNode = res.getContent(new JacksonHandle()).get();
-
         } finally {
             span2.finish();
         }
@@ -249,13 +233,9 @@ public class FlowJobService extends ResourceManager {
      */
     private void updateJobStaleStates(List<String> staleStateJobIds) {
         logger.warn("UPDATING JOB STALE STATES!!!");
-        RequestParameters params = new RequestParameters();
         for (String jobId : staleStateJobIds) {
-            params.add("jobid", jobId);
-            params.add("status", JobStatus.FAILED.toString());
-
             try {
-                this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
+                jobDocManager.updateJobStatus(jobId, JobStatus.FAILED);
             } catch (Exception e) {
                 logger.error(jobId + ":" + e.getMessage());
             }
@@ -268,18 +248,10 @@ public class FlowJobService extends ResourceManager {
             setupClient();
         }
 
-        RequestParameters params = new RequestParameters();
-        if (StringUtils.isNotEmpty(flowName)) {
-            params.add("flow-name", flowName);
-        }
-
-        ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || !resultItr.hasNext()) {
+        JsonNode jsonNode = jobDocManager.getJobDocumentsForFlow(flowName);
+        if (jsonNode == null) {
             throw new RuntimeException("Failed to get jobs for one flow: " + flowName);
         }
-
-        ServiceResult res = resultItr.next();
-        JsonNode jsonNode = res.getContent(new JacksonHandle()).get();
 
         return retrieveJobsByFlowName(flow, jsonNode);
     }
@@ -295,7 +267,6 @@ public class FlowJobService extends ResourceManager {
             jsonNode.forEach(job -> {
                 JSONObject jobJson = new JSONObject(job.get("job"));
                 String jobId = jobJson.getString("jobId");
-                String jobStatus = jobJson.getString("jobStatus");
                 jobs.add(jobId);
                 String currStartTime = jobJson.getString("timeStarted", "");
                 String currEndTime = jobJson.getString("timeEnded", "");
