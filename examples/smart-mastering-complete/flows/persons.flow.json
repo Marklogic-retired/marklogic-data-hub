@@ -32,7 +32,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/Users/rrudin/dev/workspace/marklogic-data-hub/examples/smart-mastering-complete/data/persons",
+        "inputFilePath" : "data/persons",
         "inputFileType" : "json",
         "outputURIReplacement" : ".*data,''",
         "separator" : ","
