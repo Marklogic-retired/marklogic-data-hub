@@ -168,7 +168,7 @@ declare function match-impl:compile-match-options(
                     return
                       cts:json-property-scope-query(
                         fn:local-name-from-QName($property-entity-qname),
-                        $query
+                        cts:or-query($query)
                       )
                   }
                 else
