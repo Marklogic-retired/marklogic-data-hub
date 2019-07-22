@@ -287,15 +287,14 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.stepCommitted("SimpleJSONMastering").getText()).toEqual("6");   
             await jobDetailsPage.clickStepCommitted("SimpleJSONMastering");
             // Verify on Browse Data page
-            /*await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             await browser.sleep(5000);
             await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 8 of 8');
             await expect(browsePage.facetName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
             await expect(browsePage.facetName("mdm-merged").getText()).toEqual("mdm-merged");
             await expect(browsePage.facetCount("mdm-merged").getText()).toEqual("1");
-            await expect(browsePage.facetCount("mdm-content").getText()).toEqual("4");
             await expect(browsePage.facetCount("mdm-auditing").getText()).toEqual("1");
-            await expect(browsePage.facetCount("mdm-archived").getText()).toEqual("3");*/
+            await expect(browsePage.facetCount("mdm-archived").getText()).toEqual("3");
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
             await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleJSONFlow")));
