@@ -46,7 +46,7 @@ const typeDefs = gql`
     name: String
     type: String
     refPath: String
-    refParentPath: String
+    refParent: String
   }
   
   type Query {
