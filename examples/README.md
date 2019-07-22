@@ -22,7 +22,6 @@ in an example project directory.
 1. [healthcare](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/healthcare) - an example of a Healthcare 360 Data Hub
 1. [hr-hub](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/hr-hub) - an example used for our 1.x tutorial. This example harmonizes data from various HR systems
 1. [load-binaries](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/load-binaries) - an example of how to ingest binaries via an MLCP Input Flow
-1. [online-store](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/online-store) - the example we use for our [Tutorial](https://marklogic.github.io/marklogic-data-hub/tutorial/)
 1. [single-step-ingest](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/single-step-ingest) - an example of a custom REST endpoint that a user can call that will ingest a document into the STAGING database and then harmonize the same document immediately after the document was ingested
 1. [spring-batch](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/spring-batch) - an example of how to load relational data into a Data Hub using Spring Batch
 1. [ssl](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhf4/ssl) - an example of how to configure your Data Hub to use SSL for added security

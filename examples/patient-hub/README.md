@@ -9,6 +9,31 @@ This example project will demonstrate, how we can use custom steps to integrate 
     - all the properties from `Patients` entity
     - startDate, endDate, Labs and Diagnoses fom `Admissions` entity
 
+## How to install
+
+To try this project out using QuickStart, start with a clean MarkLogic instance - i.e. without an existing Data hub installation.
+Then, you can either install this project's application via QuickStart or via Gradle.
+
+### Install via QuickStart
+
+To install via QuickStart, simply start QuickStart and browse to this project folder. Use QuickStart to initialize
+this project and then deploy the application.
+
+### Install via Gradle
+
+To install via Gradle, first initialize the project:
+
+    ./gradlew -i hubInit
+    
+Then modify the gradle-local.properties file and either un-comment the mlUsername and mlPassword properties and set the
+password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
+
+Then deploy the application:
+
+    ./gradlew -i mlDeploy
+
+Next, start up QuickStart and browse to this project folder and login to QuickStart. 
+
 ## Predefined Flows
 
 The project has flows predefined for integrating the patients' data.
@@ -20,11 +45,10 @@ The project has flows predefined for integrating the patients' data.
 
 ## How to Integrate the Patient Hub
 
-1. Using Data Hub QuickStart with a clean MarkLogic server, select and install the project folder: examples/patient-hub.
-2. Run the `Diagnoses` flow. This ingests Diagnoses documents into the staging database. You can view the documents in Browse Data view for Staging.
-3. Run the `Labs` flow. This ingests Labs documents into the staging database. You can view the documents in Browse Data view for Staging.
-4. Run the `Admissions` flow. It will run two steps, one for ingesting Admissions documents and a custom step to harmonize them with `Diagnoses` and `Labs` entities, into the staging database. The custom step searches and harmonizes the Labs and Diagnoses instances that match a particular AdmissionID and PatientID. You can view the documents in Browse Data view for Staging. The harmonized `Admissions` entity instances start with the URI `/admissionsComplete`.
-5. Run the `Patients` flow. It will run two steps, one for ingesting Patients documents into staging and a custom step to harmonize them with `Admissions` entity(harmonized in the previous step) into the final database. The custom step searches and harmonizes the Admissions instances that match a particular PatientID. You can view the documents in Browse Data view for Final. The harmonized `Patients` entity instances start with the URI `/patients/admissions`.
+1. Run the `Diagnoses` flow. This ingests Diagnoses documents into the staging database. You can view the documents in Browse Data view for Staging.
+1. Run the `Labs` flow. This ingests Labs documents into the staging database. You can view the documents in Browse Data view for Staging.
+1. Run the `Admissions` flow. It will run two steps, one for ingesting Admissions documents and a custom step to harmonize them with `Diagnoses` and `Labs` entities, into the staging database. The custom step searches and harmonizes the Labs and Diagnoses instances that match a particular AdmissionID and PatientID. You can view the documents in Browse Data view for Staging. The harmonized `Admissions` entity instances start with the URI `/admissionsComplete`.
+1. Run the `Patients` flow. It will run two steps, one for ingesting Patients documents into staging and a custom step to harmonize them with `Admissions` entity(harmonized in the previous step) into the final database. The custom step searches and harmonizes the Admissions instances that match a particular PatientID. You can view the documents in Browse Data view for Final. The harmonized `Patients` entity instances start with the URI `/patients/admissions`.
 
 
 ### Admissions Entity Instance (JSON)
