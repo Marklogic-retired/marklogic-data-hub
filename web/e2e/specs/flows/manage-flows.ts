@@ -33,7 +33,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     });
 
-    it('should create entity', async function () {
+    it('should create entity @smoke', async function () {
       await browser.refresh();
       await browser.sleep(5000);
       await appPage.entitiesTab.click();
@@ -89,7 +89,7 @@ export default function (qaProjectDir) {
       await expect(manageFlowPage.docsFailed(flow1.flowName).getText()).toEqual('0');
     });
 
-    it('should create a flow with title, description and advance settings', async function () {
+    it('should create a flow with title, description and advance settings @smoke', async function () {
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await browser.wait(EC.elementToBeClickable(manageFlowPage.newFlowButton), 5000);
@@ -126,7 +126,7 @@ export default function (qaProjectDir) {
       await expect(manageFlowPage.docsFailed(flow2.flowName).getText()).toEqual('0');
     });
 
-    it('Should not be able to change flow title', async function () {
+    it('Should not be able to change flow title  @smoke', async function () {
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow2.flowName);
@@ -144,7 +144,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.invisibilityOf(manageFlowPage.flowDialogBoxHeader('Flow Settings')));
     });
 
-    it('Should be able to Edit flow settings', async function () {
+    it('Should be able to Edit flow settings  @smoke', async function () {
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow2.flowName);
@@ -179,7 +179,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.manageFlowPageHeader))
     });
 
-    it('Verify edited flow settings ', async function () {
+    it('Verify edited flow settings  @smoke', async function () {
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.clickFlowMenu(flow2.flowName);

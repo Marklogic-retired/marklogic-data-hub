@@ -168,7 +168,7 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeFlow(flowData.flow3);
     });
 
-    it('Should ingest pipe separated CSV', async function () {
+    it('Should ingest pipe separated CSV  @smoke', async function () {
       await manageFlowPage.createFlow(flowData.flow9);
       await browser.sleep(5000);
       await editFlowPage.addStep(flowData.flow9, stepConfig.csv_pipe);
@@ -208,7 +208,7 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeFlow(flowData.flow10);
     });
 
-    it('Should ingest tab separated CSV', async function () {
+    it('Should ingest tab separated CSV  @smoke', async function () {
       await manageFlowPage.createFlow(flowData.flow11);
       await browser.sleep(5000);
       await editFlowPage.addStep(flowData.flow11, stepConfig.csv_tab);
@@ -228,7 +228,7 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeFlow(flowData.flow11);
     });
 
-    it('Should ingest Text', async function () {
+    it('Should ingest Text  @smoke', async function () {
       await manageFlowPage.createFlow(flowData.flow4);
       await editFlowPage.addStep(flowData.flow4, text);
       await browser.sleep(5000);
@@ -245,7 +245,7 @@ export default function (qaProjectDir) {
       await manageFlowPage.removeFlow(flowData.flow4);
     });
 
-    it('Should ingest Binary', async function () {
+    it('Should ingest Binary  @smoke', async function () {
       await manageFlowPage.createFlow(flowData.flow5);
       await editFlowPage.addStep(flowData.flow5, binary);
       await browser.sleep(5000);

@@ -16,7 +16,7 @@ export default function (qaProjectDir) {
       browser.refresh();
     });
 
-    xit('should login and go to entities page', async function () {
+    it('should login and go to entities page @smoke', async function () {
       //await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
@@ -29,7 +29,7 @@ export default function (qaProjectDir) {
     /**
      * Create entity with title
      */
-    it('should create a new Order entity', async function () {
+    it('should create a new Order entity @smoke', async function () {
       await appPage.entitiesTab.click();
       //create Order entity
       console.log('create Order entity');
@@ -166,7 +166,7 @@ export default function (qaProjectDir) {
     /**
      * Modify entity, add description and URI
      */
-    it('should add description and URI to Order entity', async function () {
+    it('should add description and URI to Order entity @smoke', async function () {
       await browser.refresh();
       await browser.waitForAngular();
       await browser.wait(EC.visibilityOf(entityPage.toolsButton));
@@ -581,7 +581,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.invisibilityOf(entityPage.entityEditor));
     });
 
-    it('should not be able to use invalid character and space as title', async function () {
+    it('should not be able to use invalid character and space as title @smoke', async function () {
       await browser.refresh();
       await browser.waitForAngular();
       await browser.wait(EC.visibilityOf(entityPage.toolsButton));
@@ -681,7 +681,7 @@ export default function (qaProjectDir) {
     /**
      * remove entity
      */
-    it('should remove Order entity', async function () {
+    it('should remove Order entity @smoke', async function () {
       await appPage.entitiesTab.click();
       await browser.wait(EC.visibilityOf(entityPage.toolsButton));
       console.log('remove Order entity');

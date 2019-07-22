@@ -4,6 +4,8 @@ import uninstall from '../uninstall';
 import scenarios from '../scenarios';
 
 import CUSTOM_MATCHERS from '../../matchers'
+import entity from "../entities";
+import flows from "../flows";
 
 const request = require('request').defaults({strictSSL: false})
 const path = require('path');
@@ -41,6 +43,9 @@ describe('DataHub', function () {
   });
 
   auth(qaProjectDirectory);
-  scenarios(qaProjectDirectory);
+  entity(qaProjectDirectory);
+  flows(qaProjectDirectory);
+  // scenarios(qaProjectDirectory);
   uninstall(qaProjectDirectory);
+
 });
