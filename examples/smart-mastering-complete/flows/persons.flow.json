@@ -106,18 +106,85 @@
         "mergeOptions" : {
           "matchOptions" : "",
           "propertyDefs" : {
-            "properties" : [ ],
+            "properties" : [ {
+              "localname" : "Address",
+              "name" : "Address"
+            }, {
+              "localname" : "DateOfBirth",
+              "name" : "DateOfBirth"
+            } ],
             "namespaces" : { }
           },
           "algorithms" : {
             "stdAlgorithm" : {
-              "timestamp" : { }
+              "timestamp" : {
+                "path" : "/envelope/headers/createdOn"
+              }
             },
-            "custom" : [ ],
-            "collections" : { }
+            "custom" : [ {
+              "name" : "mergeDob",
+              "function" : "mergeDob",
+              "at" : "/custom-modules/custom/dob-merge.sjs"
+            } ],
+            "collections" : {
+              "onNoMatch" : {
+                "add" : {
+                  "collection" : [ "no-match" ]
+                },
+                "remove" : {
+                  "collection" : [ "" ]
+                },
+                "set" : {
+                  "collection" : [ "" ]
+                }
+              },
+              "onNotification" : {
+                "add" : {
+                  "collection" : [ "likely-match" ]
+                },
+                "remove" : {
+                  "collection" : [ "" ]
+                },
+                "set" : {
+                  "collection" : [ "" ]
+                }
+              },
+              "onMerge" : {
+                "add" : {
+                  "collection" : [ "" ]
+                },
+                "remove" : {
+                  "collection" : [ "no-match", "likely-match" ]
+                },
+                "set" : {
+                  "collection" : [ "" ]
+                }
+              }
+            }
           },
-          "mergeStrategies" : [ ],
-          "merging" : [ ]
+          "mergeStrategies" : [ {
+            "sourceWeights" : [ ],
+            "name" : "retain-single-value",
+            "algorithmRef" : "standard",
+            "maxValues" : "1",
+            "length" : {
+              "weight" : "10"
+            }
+          } ],
+          "merging" : [ {
+            "propertyName" : "Address",
+            "algorithmRef" : "standard",
+            "maxValues" : "1",
+            "length" : {
+              "weight" : "10"
+            },
+            "sourceWeights" : [ ],
+            "strategy" : "retain-single-value"
+          }, {
+            "propertyName" : "DateOfBirth",
+            "algorithmRef" : "mergeDob",
+            "sourceWeights" : [ ]
+          } ]
         },
         "matchOptions" : {
           "dataFormat" : "json",
