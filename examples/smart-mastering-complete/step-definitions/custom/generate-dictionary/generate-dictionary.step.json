@@ -4,19 +4,5 @@
   "description" : "",
   "type" : "CUSTOM",
   "version" : 2,
-  "options" : {
-    "additionalCollections" : [ ],
-    "sourceQuery" : "cts.documentQuery('/flows/persons.flow.json')",
-    "targetEntity" : "",
-    "collections" : [ "generate-dictionary" ],
-    "sourceDatabase" : "data-hub-FINAL",
-    "sourceCollection" : "",
-    "outputFormat" : "json",
-    "targetDatabase" : "data-hub-FINAL"
-  },
-  "customHook" : { },
-  "modulePath" : "/custom-modules/custom/generate-dictionary/main.sjs",
-  "retryLimit" : 0,
-  "batchSize" : 100,
-  "threadCount" : 4
+  "modulePath" : "/custom-modules/custom/generate-dictionary/main.sjs"
 }
