@@ -1,9 +1,16 @@
 This project provides examples of various mastering features in DHF. 
 
-To try this project out, start with a clean MarkLogic instance, initialize this project, and then deploy this project's 
+To try this project out, start with a clean MarkLogic instance and initialize this project via Gradle: 
 application via Gradle:
 
-    ./gradlew -i hubInit mlDeploy
+    ./gradlew -i hubInit
+    
+Then modify the gradle-local.properties file and either un-comment the mlUsername and mlPassword properties and set the
+password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
+
+Then deploy the application:
+
+    ./gradlew -i mlDeploy
 
 Then, start up QuickStart and browse to this project folder. You can then run the "persons" flow to ingest, map, and 
 master the person documents found in the ./data/persons directory.  
@@ -19,7 +26,7 @@ A description of each match is provided below.
 
 ### Exact match
 
-The two ssn-match*.json documents have an Exact match on ZipCode. Each gets a score of 20, which 
+The two ssn-match*.json documents have an Exact match on SSN. Each gets a score of 20, which 
 meets the Match threshold, and so they are merged.
 
 ### Synonym match
