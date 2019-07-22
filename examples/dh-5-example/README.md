@@ -1,16 +1,32 @@
-This example project demonstrates how to create different flow configurations, which are described below.
+This example project demonstrates how to create different flow configurations using DHF 5.
 
-To try this, first initialize the project and extract the test data:
+## How to install
 
-    ./gradlew hubInit extractZip
+To try this project out using QuickStart, start with a clean MarkLogic instance - i.e. without an existing Data hub installation.
+Then, you can either install this project's application via QuickStart or via Gradle.
 
-Before deploying the application, first update gradle.properties and gradle-local.properties 
-[as described in the Data Hub documentation](https://docs.marklogic.com/datahub/tools/gradle/gradle-properties.html). 
+### Install via QuickStart
 
-Next, deploy the application:
+To install via QuickStart, simply start QuickStart and browse to this project folder. Use QuickStart to initialize
+this project and then deploy the application.
 
-    ./gradlew mlDeploy
+### Install via Gradle
 
+To install via Gradle, first initialize the project:
+
+    ./gradlew -i hubInit
+    
+Then modify the gradle-local.properties file and either un-comment the mlUsername and mlPassword properties and set the
+password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
+
+Then deploy the application:
+
+    ./gradlew -i mlDeploy
+
+Next, start up QuickStart and browse to this project folder and login to QuickStart. 
+
+## How to test the flows
+    
 With the application deployed, you're ready to run each of the example flows, which are:
 
 1) ingestion_only-flow.flow.json - This flow contains 7 steps. Each step refers to ingesting a different format of input files. The input files are located in the "input" directory.

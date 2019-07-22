@@ -31,7 +31,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/PATH/TO/datasets/bedrock",
+        "inputFilePath" : "datasets/bedrock",
         "inputFileType" : "csv",
         "outputURIReplacement" : ""
       }

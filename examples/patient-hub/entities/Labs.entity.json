@@ -2,7 +2,7 @@
   "info" : {
     "title" : "Labs",
     "version" : "0.0.1",
-    "baseUri" : "http://example.org",
+    "baseUri" : "http://example.org/",
     "description" : "Labs that were run"
   },
   "definitions" : {

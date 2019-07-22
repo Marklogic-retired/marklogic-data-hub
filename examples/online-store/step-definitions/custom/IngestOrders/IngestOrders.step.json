@@ -1,9 +1,0 @@
-{
-  "name" : "IngestOrders",
-  "type" : "CUSTOM",
-  "version" : 1,
-  "options" : { },
-  "customHook" : { },
-  "language" : "zxx",
-  "modulePath" : "/steps/ingestOrders/main.sjs"
-}
