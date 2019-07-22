@@ -36,7 +36,7 @@ export class AddMatchOptionDialogComponent {
   ngOnInit() {
     this.tooltips = FlowsTooltips.mastering.matching;
     this.form = this.fb.group({
-      propertyName: [this.data.option ? this.data.option.propertyName[0] : ''],
+      propertyName: [this.data.option ? this.data.option.propertyName : ''],
       matchType: [this.data.option ? this.data.option.matchType : 'exact'],
       weight: [this.data.option ? this.data.option.weight : ''],
       thesaurus: [this.data.option ? this.data.option.thesaurus : ''],
@@ -83,9 +83,7 @@ export class AddMatchOptionDialogComponent {
       return this.fb.array([this.createProp('')]);
     }
     const result = [];
-    this.data.option.propertyName.forEach(name => {
-      result.push(this.createProp(name))
-    })
+    result.push(this.createProp(this.data.option.propertyName));
     return this.fb.array(result);
   }
 
