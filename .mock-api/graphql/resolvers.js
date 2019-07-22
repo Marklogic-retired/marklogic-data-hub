@@ -5,8 +5,10 @@ const rightNowData = require('../sample-data/right-now-data.json');
 
 const entities = [];
 entities.push(convertJSON(raceData));
+entities.push(convertRightNowJSON(rightNowData));
+entities.push(convertPureJSON(pureJSONData));
 
-convertPureJSON(pureJSONData);
+
 
 const resolvers = {
   Query: {
@@ -25,9 +27,6 @@ const resolvers = {
         entityDefsArray.push(...entity.entityDefinitions);
       });
       return entityDefsArray;
-    },
-    getRightNowEntity() {
-      return convertRightNowJSON(rightNowData);
     }
   }
 }

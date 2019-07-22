@@ -1,7 +1,7 @@
 module.exports = {
   convertJSON: (data) => {
     const info = data.info;
-    let entityDefinitions = [];
+    let definitions = [];
     for (let [key, value] of Object.entries(data.definitions)) {
       let definition = {
         name: key,
@@ -15,8 +15,8 @@ module.exports = {
             for (let [jKey, jValue] of Object.entries(mValue)) {
               let key = jKey;
               let value = jValue;
-              if (jKey === '$ref') {
-                key = 'ref';
+              if (jKey === 'datatype') {
+                key = 'type';
               }
               if (jKey === 'items'){
                 key = 'ref'
@@ -31,9 +31,9 @@ module.exports = {
           definition = {...definition, [dKey]: dValue};
         }
       }
-      entityDefinitions.push(definition)
+      definitions.push(definition)
     }
-    return { ...info, entityDefinitions};
+    return { ...info, definitions};
   },
   convertRightNowJSON: (data) => {
     let info = {};
@@ -52,7 +52,7 @@ module.exports = {
       }
     }
 
-    let entityDefinitions = [];
+    let definitions = [];
     for (let [key, value] of Object.entries(data.definitions)) {
       let definition = {
         name: key,
@@ -66,13 +66,13 @@ module.exports = {
             for (let [jKey, jValue] of Object.entries(mValue)) {
               let key = jKey;
               let value = jValue;
-              let refItem = {};
+              let item = {};
               if (jKey === 'items'){
                 for (let [iKey, iValue] of Object.entries(jValue)) {
                   if(iKey === 'properties') {
                     for (let [yKey, yValue] of Object.entries(iValue)) {
                       let refname = { name: yKey };
-                      Object.assign(refItem, refname);
+                      Object.assign(item, refname);
                       for (let [zKey, zValue] of Object.entries(yValue)) {
                         let key = zKey;
                         let value = zValue;
@@ -80,11 +80,11 @@ module.exports = {
                           key = 'refPath';
                         }
                         let propertyParameter = { [key]: value};
-                        Object.assign(refItem, propertyParameter);
+                        Object.assign(item, propertyParameter);
                       }
                     }
                   }
-                  propertyObject = {...propertyObject, refItem};
+                  propertyObject = {...propertyObject, item};
                 }
               } else {
                 let propertyParameter = { [key]: value};
@@ -97,12 +97,11 @@ module.exports = {
           definition = {...definition, [dKey]: dValue};
         }
       }
-      entityDefinitions.push(definition)
+      definitions.push(definition)
     }
-    return {...info, entityDefinitions};
+    return {...info, definitions};
   },
   convertPureJSON: (data) => {
-    // console.log('Pure JSON Data', data);
     convertedData = {}
     for (let [key, value] of Object.entries(data)) {
        if(key === 'definitions'){
@@ -147,7 +146,7 @@ module.exports = {
                }
                definition = {...definition, "properties": properties};
              }else if(jKey === '$id'){
-               definition = {...definition, 'id': jValue};
+               definition = {...definition, 'idField': jValue};
              }else{
                definition = {...definition, [jKey]: jValue};
              }
@@ -171,12 +170,11 @@ module.exports = {
        }else if(key === '$schema'){
          Object.assign(convertedData, {"schema": value})
        }else if(key === '$id'){
-         Object.assign(convertedData, {'id': value})
+         Object.assign(convertedData, {'idField': value})
        }else{
-         Object.assign(convertedData,{[key]: value})
+         Object.assign(convertedData, {[key]: value})
        }
    }
-   console.log(convertedData)
    return convertedData;
   }
 }

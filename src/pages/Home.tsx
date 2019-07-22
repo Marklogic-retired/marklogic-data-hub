@@ -1,14 +1,12 @@
 import React from 'react';
 import gql from "graphql-tag";
+import ReactJson from 'react-json-view';
 import { Query } from "react-apollo";
 import Counter from '../components/test';
+import exampleJson from '../assets/example';
 
 interface Data {
-  getEntityByTitle: {
-    title: string,
-    baseUri: string,
-    entityDefinitions: Array<{ name: string, properties: any }>;
-  }
+  getEntityByTitle: any
 };
 
 interface Variables {
@@ -21,12 +19,12 @@ const GET_ENTITY = gql`
     getEntityByTitle(title: $title){
       title
       baseUri
-      entityDefinitions {
+      definitions {
         name
         properties {
           name
           description
-          datatype
+          type
         }
       }
     }
@@ -36,8 +34,7 @@ const GET_ENTITY = gql`
 const Home: React.FC = () => {
   const title = 'Race';
   return (
-    <div>
-      Home View
+    <React.Fragment>
       <Counter initial={10}/>
       <Query<Data, Variables> query={GET_ENTITY} variables={{ title }}>
         {({ loading, error, data }) => {
@@ -54,7 +51,8 @@ const Home: React.FC = () => {
           }
         }}
       </Query> 
-    </div>
+      <ReactJson src={exampleJson} />
+    </React.Fragment>
   );
 }
 
