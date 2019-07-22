@@ -69,6 +69,9 @@ module.exports = {
               let item = {};
               if (jKey === 'items'){
                 for (let [iKey, iValue] of Object.entries(jValue)) {
+                  if (iKey === 'type'){
+                    var itemType = iValue;
+                  }
                   if(iKey === 'properties') {
                     for (let [yKey, yValue] of Object.entries(iValue)) {
                       let refname = { name: yKey };
@@ -78,6 +81,9 @@ module.exports = {
                         let value = zValue;
                         if (key === '$ref') {
                           key = 'refPath';
+                        }
+                        if (key === 'type') {
+                          value = itemType;
                         }
                         let propertyParameter = { [key]: value};
                         Object.assign(item, propertyParameter);
