@@ -83,7 +83,14 @@ export class AddMatchOptionDialogComponent {
       return this.fb.array([this.createProp('')]);
     }
     const result = [];
-    result.push(this.createProp(this.data.option.propertyName));
+    if(typeof this.data.option.propertyName === 'string'){
+      result.push(this.createProp(this.data.option.propertyName))
+    }
+    else{
+      this.data.option.propertyName.forEach(name => {
+        result.push(this.createProp(name))
+      })
+    }
     return this.fb.array(result);
   }
 
