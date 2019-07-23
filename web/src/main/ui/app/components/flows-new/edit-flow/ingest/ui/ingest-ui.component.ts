@@ -124,8 +124,8 @@ export class IngestUiComponent implements OnInit{
   _isVisible: boolean;
   mlcpCommand: string;
   uri:string;
-  OtherDelimiter: string = '';
-  csvSep: string = ',';
+  OtherDelimiter: string;
+  csvSep: string;
 
   constructor(
     private entitiesService: EntitiesService,
@@ -135,7 +135,6 @@ export class IngestUiComponent implements OnInit{
 
   ngOnChanges(){
     this.updateMlcpCommand();
-
   }
 
   ngDoCheck() {
@@ -144,6 +143,8 @@ export class IngestUiComponent implements OnInit{
 
   ngOnInit(): void {
     this.tooltips = FlowsTooltips.ingest;
+    this.csvSep = this.defaultSep();
+    this.OtherDelimiter = this.defaultOtherDelim();
     this.buildURIPreview();
     this.updateMlcpCommand();
   }
@@ -324,5 +325,17 @@ export class IngestUiComponent implements OnInit{
     }
 
     this.onChange();
+  }
+
+  defaultSep(): string {
+    let sep: string;
+    sep = [',',';','|','\\t'].includes(this.step.fileLocations.separator) ? this.step.fileLocations.separator : 'Other';
+    return sep;
+  }
+
+  defaultOtherDelim(): string {
+    let othDelim: string;
+    othDelim = [',',';','|','\\t'].includes(this.step.fileLocations.separator) ?  '' : this.step.fileLocations.separator;
+    return othDelim;
   }
 }

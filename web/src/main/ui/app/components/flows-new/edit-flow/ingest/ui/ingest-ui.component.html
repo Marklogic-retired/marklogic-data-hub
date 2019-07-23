@@ -64,7 +64,7 @@
       </mat-form-field>
 
       <!-- Other Field Separator -->
-      <mat-form-field layout-fill class="delimited-text-separator-other-field" *ngIf="Otherlabel.value === 'Other'">
+      <mat-form-field layout-fill class="delimited-text-separator-other-field" *ngIf="Otherlabel.value === 'Other' || this.csvSep === 'Other'">
           <input
             id="delimited-text-separator"
             matInput
