@@ -112,6 +112,7 @@ declare %private function hent:fix-options($nodes as node()*)
       case element(search:options) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
+          $n/@*,
           <search:constraint name="Collection">
             <search:collection/>
           </search:constraint>,
@@ -125,14 +126,15 @@ declare %private function hent:fix-options($nodes as node()*)
               <search:field name="datahubCreatedByStep"/>
             </search:value>
           </search:constraint>,
-          hent:fix-options(($n/@*, $n/node()))
+          hent:fix-options($n/node())
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-options(($n/@*, $n/node())),
+          $n/@*,
+          hent:fix-options($n/node()),
 
           let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
           where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
