@@ -1,94 +1,64 @@
-/* Custom steps for data hub 5 are 'on rails' code execution within a single transaction, after which the output
-   from these steps will create in-memory objects that will then be written in one single, isolated transaction.
-
-   This is designed to run in QUERY (read-only) mode by default. If you need transactionally consistent updates or
-   serializable read locking on documents, then you must upgrade to an UPDATE transaction either through an update
-   (such as declareUpdate()) or by setting the value of 'stepUpdate' as true in the options and it will be
-   executed in update mode.
+/**
+ * This shows an example of a custom ingestion step, this is for when data comes into the data hub
+ * We must construct an envelope wrapper about it and add any metadata or in-flight transforms here
+ * so it is persisted once written to the database.
+ *
+ * Anytime data is sent to a step that is not from the database, it is mutable
  */
+
+
+//If you'd like to construct triples using the semantics library, uncomment below
+//const sem = require("/MarkLogic/semantics.xqy");
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
 function main(content, options) {
 
-  //grab the doc id/uri
-  let id = content.uri;
+  //example of how to check options for an input format in case we wanted to do operations based on type
+  //let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
 
-  //here we can grab and manipulate the context metadata attached to the document
-  let context = content.context;
-
-  //let's set our output format, so we know what we're exporting
+  //What output format do we want for the data?
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
 
-  //here we check to make sure we're not trying to push out a binary or text document, just xml or json
-  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
-    datahub.debug.log({
-      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',
-      type: 'error'
-    });
-    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
+  //Example of error checking for data types
+  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML && outputFormat !== datahub.flow.consts.BINARY && outputFormat !== datahub.flow.consts.TEXT) {
+    let errMsg = 'The output format of type ' + outputFormat + ' is invalid. Valid options are '
+      + datahub.flow.consts.XML + ' , ' + datahub.flow.consts.JSON + ', '+ datahub.flow.consts.TEXT +' or' + datahub.flow.consts.BINARY + '.';
+    datahub.debug.log({message: errMsg, type: 'error'});
+    throw Error(errMsg);
   }
 
-  /*
-  This scaffolding assumes we obtained the document from the database. If you are inserting information, you will
-  have to map data from the content.value appropriately and create an instance (object), headers (object), and triples
-  (array) instead of using the flowUtils functions to grab them from a document that was pulled from MarkLogic.
-  Also you do not have to check if the document exists as in the code below.
+  //we're going to grab the value of the content that was passed in, and use that to define our instance
+  let instance = content.value.root || content.value;
 
-  Example code for using data that was sent to MarkLogic server for the document
-  let instance = content.value;
+  //If the type of data is binary OR the expected output was set to unstructured data (binary/text), let's return it as is.
+  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
+    return content;
+  }
+  else if (instance.nodeType === Node.TEXT_NODE) {
+    //if it's text, and we want json or xml, let's try to parse it. If it can't, it'll throw an unchecked error.
+    instance = datahub.flow.flowUtils.parseText(instance, outputFormat);
+  }
+
+  //let's create our triples array.
   let triples = [];
-  let headers = {};
-   */
 
-  //Here is an example of a check to make sure it's still present in the cluster before operating on it
-  if (!fn.docAvailable(id)) {
-    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
-    throw Error('The document with the uri: ' + id + ' could not be found.')
-  }
+  //now our headers for any document level metadata
+  let headers = datahub.flow.flowUtils.createHeaders(options);
 
-  //grab the 'doc' from the content value space
-  let doc = content.value;
+  //And lastly we put it all together in an envelope structure
+  content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
-  // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)
-  if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {
-    doc = fn.head(doc.root);
-  }
+  //Context changes are possible, here we show how to grab the context and example manipulate it
+  //let context = content.context;
+  //Get permissions, we can manipulate them here
+  //let permissions = context.permissions;
 
-  //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
-  let instance = datahub.flow.flowUtils.getInstanceAsObject(doc) || {};
+  //uri is set on content.uri
+  //content.uri = "my/new/uri.json";
 
-  // get triples, return null if empty or cannot be found
-  let triples = datahub.flow.flowUtils.getTriplesAsObject(doc) || [];
-
-  //gets headers, return null if cannot be found
-  let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
-
-  //If you want to set attachments, uncomment here
-  // instance['$attachments'] = instance;
-
-
-  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.
-
-
-  //form our envelope here now, specifying our output format
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-
-  //create our return content object, we have a handy helper function for creating a json scaffolding, but you
-  //can also do a node-based one by using nodebuilder, especially if you're dealing with xml!
-  let newContent = datahub.flow.flowUtils.createContentAsObject();
-
-  //assign our envelope value
-  newContent.value = envelope;
-
-  //assign the uri we want, in this case the same
-  newContent.uri = id;
-
-  //assign the context we want
-  newContent.context = context;
-
-  //now let's return out our content to be written, it can be any combination of
-  return newContent;
+  //Now we return out our 'content' object to be written
+  return content;
 }
 
 module.exports = {
