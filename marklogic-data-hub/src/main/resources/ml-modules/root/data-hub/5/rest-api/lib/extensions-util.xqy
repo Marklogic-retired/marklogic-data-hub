@@ -37,7 +37,8 @@ declare private variable $system-transforms-40 := map:map()
 
 declare private variable $system-transforms-50 := map:map()
     =>map:with("ml:runFlow",              "run-flow")
-    =>map:with("ml:runIngest",            "dmsdk-ingest");
+    =>map:with("ml:runIngest",            "dmsdk-ingest")
+    =>map:with("ml:generateFunctionMetadata", "generate-function-metadata");
 
 declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:dbConfigs",              "db-configs")

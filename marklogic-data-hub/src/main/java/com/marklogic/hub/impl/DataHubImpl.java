@@ -98,6 +98,9 @@ public class DataHubImpl implements DataHub {
     private LoadHubArtifactsCommand loadHubArtifactsCommand;
 
     @Autowired
+    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
+
+    @Autowired
     private Versions versions;
 
     @Autowired
@@ -833,6 +836,7 @@ public class DataHubImpl implements DataHub {
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);
         commands.add(loadHubArtifactsCommand);
+        commands.add(generateFunctionMetadataCommand);
 
         for (Command c : commandsMap.get("mlModuleCommands")) {
             if (c instanceof LoadModulesCommand) {
