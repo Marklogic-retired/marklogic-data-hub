@@ -593,6 +593,21 @@ class FlowUtils {
       instance: {}
     };
   }
+
+  parseText(text, outputFormat){
+    try {
+      let options = "format-json";
+      if(outputFormat === datahub.flow.consts.XML) {
+        options = "format-xml";
+      }
+      return fn.head(xdmp.unquote(instance, null, options));
+    }
+    catch (e) {
+      let errMsg = 'The input text document is not a valid ' + outputFormat + ' .';
+      datahub.debug.log({message: errMsg, type: 'error'});
+      throw Error(errMsg);
+    }
+  }
 }
 
 module.exports = FlowUtils;
