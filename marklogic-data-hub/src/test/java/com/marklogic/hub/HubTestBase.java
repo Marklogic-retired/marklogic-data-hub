@@ -177,8 +177,8 @@ public class HubTestBase {
     private  static boolean sslRun = false;
     private  static boolean certAuth = false;
     public static SSLContext certContext;
-    static SSLContext datahubadmincertContext;
-    static SSLContext flowRunnercertContext;
+    static SSLContext flowDevelopercertContext;
+    static SSLContext flowOperatorcertContext;
     private  Properties properties = new Properties();
     public  GenericDocumentManager stagingDocMgr;
     public  GenericDocumentManager flowRunnerDocMgr;
@@ -192,8 +192,8 @@ public class HubTestBase {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-            datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
-            flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-flow-operator-user.p12"));
+            flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
+            flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));
             System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
             throw new DataHubConfigurationException("Root ca not loaded", e);
@@ -323,7 +323,7 @@ public class HubTestBase {
             if (isCertAuth()) {
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY),
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY),
                     DatabaseClient.ConnectionType.GATEWAY);
             } else if (isSslRun()) {
                 switch (authMethod) {
@@ -343,11 +343,11 @@ public class HubTestBase {
         } else {
             if (isCertAuth()) {
                 /*certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
-                datahubadmincertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
-                flowRunnercertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
+                flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-data-hub-admin-user.p12"));
+                flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowRunnercertContext : datahubadmincertContext, SSLHostnameVerifier.ANY));
+                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY));
             } else if (isSslRun()) {
                 switch (authMethod) {
                     case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
@@ -430,9 +430,9 @@ public class HubTestBase {
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-operator.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-operator.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-operator.p12");
-            adminHubConfig.setSslContext(DatabaseKind.JOB,flowRunnercertContext);
-            manageConfig.setSslContext(flowRunnercertContext);
-            adminConfig.setSslContext(flowRunnercertContext);   
+            adminHubConfig.setSslContext(DatabaseKind.JOB, flowOperatorcertContext);
+            manageConfig.setSslContext(flowOperatorcertContext);
+            adminConfig.setSslContext(flowOperatorcertContext);
                      
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
@@ -514,13 +514,13 @@ public class HubTestBase {
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
-            
-            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-data-hub-admin-user.p12");
-            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-data-hub-admin-user.p12");
-            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-data-hub-admin-user.p12");
-            adminHubConfig.setSslContext(DatabaseKind.JOB,datahubadmincertContext);
-            manageConfig.setSslContext(datahubadmincertContext);
-            adminConfig.setSslContext(datahubadmincertContext);
+
+            appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
+            adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
+            adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
+            adminHubConfig.setSslContext(DatabaseKind.JOB, flowDevelopercertContext);
+            manageConfig.setSslContext(flowDevelopercertContext);
+            adminConfig.setSslContext(flowDevelopercertContext);
             
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
