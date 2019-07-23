@@ -10,7 +10,7 @@
     matTooltipPosition="left"
     matTooltipShowDelay="500"
     matTooltipHideDelay="500" layout-fill>
-    <mat-label>Weight</mat-label>
+    <mat-label>Weight Threshold</mat-label>
     <input id="match-threshold-weight" matInput formControlName="above" required  title="" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="match-threshold-weight-error" *ngIf="form.get('above').invalid">A number is required</mat-error>
   </mat-form-field>
