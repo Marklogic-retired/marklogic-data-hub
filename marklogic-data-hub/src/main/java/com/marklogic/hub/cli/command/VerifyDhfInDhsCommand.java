@@ -12,6 +12,7 @@ import com.marklogic.mgmt.resource.security.UserManager;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Properties;
 import java.util.Set;
 
 @Parameters(commandDescription = "Verify a DHF installation in a DHS environment")
@@ -22,7 +23,9 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
 
     @Override
     public void run(ApplicationContext context, Options options) {
-        initializeProject(context, options, System.getProperties());
+        // TODO This is hacky, need a better mechanism for building these properties post 5.0.2
+        Properties props = new InstallIntoDhsCommand().buildDefaultProjectProperties();
+        initializeProject(context, options, props);
 
         long start = System.currentTimeMillis();
 
