@@ -19,7 +19,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
     @Override
     public void run(ApplicationContext context, Options options) {
-        initializeProject(context, options, buildProjectProperties());
+        initializeProject(context, options, buildDefaultProjectProperties());
 
         logger.info("Installing DHF version " + hubConfig.getJarVersion());
 
@@ -80,7 +80,13 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         hubConfig.getAppConfig().setGroupName(groupName);
     }
 
-    protected Properties buildProjectProperties() {
+    /**
+     * Builds a default set of project properties based on assumptions of how DHS works. These can then be overridden
+     * via "-P" arguments on the command line.
+     *
+     * @return
+     */
+    protected Properties buildDefaultProjectProperties() {
         // Include System properties so that a client can override e.g. mlHost/mlUsername/mlPassword via JVM props
         Properties props = new Properties();
         for (String key : System.getProperties().stringPropertyNames()) {
@@ -99,6 +105,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
     public void applyDhsSpecificProperties(Properties props) {
         props.setProperty("mlIsHostLoadBalancer", "true");
         props.setProperty("mlIsProvisionedEnvironment", "true");
+        props.setProperty("mlAppServicesPort", "8010");
 
         props.setProperty("mlFlowDeveloperRole", "flowDeveloper");
         props.setProperty("mlFlowOperatorRole", "flowOperator");
@@ -106,5 +113,34 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         props.setProperty("mlDataHubAdminRole", "flowDeveloper");
         props.setProperty("mlModulePermissions",
             "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert");
+
+        setDefaultPropertiesForSecureConnections(props);
+    }
+
+    /**
+     * As of DHS 2.6.0, all connections to DHS require secure connections. This method then configures both
+     * ml-app-deployer and DHF properties to use secure connections. In addition, all DatabaseClient connections
+     * default to using basic security, again per DHF 2.6.0.
+     *
+     * @param props
+     */
+    protected void setDefaultPropertiesForSecureConnections(Properties props) {
+        props.setProperty("mlAdminScheme", "https");
+        props.setProperty("mlAdminSimpleSsl", "true");
+
+        props.setProperty("mlManageScheme", "https");
+        props.setProperty("mlManageSimpleSsl", "true");
+
+        props.setProperty("mlAppServicesAuthentication", "basic");
+        props.setProperty("mlAppServicesSimpleSsl", "true");
+
+        props.setProperty("mlFinalAuth", "basic");
+        props.setProperty("mlFinalSimpleSsl", "true");
+
+        props.setProperty("mlJobAuth", "basic");
+        props.setProperty("mlJobSimpleSsl", "true");
+
+        props.setProperty("mlStagingAuth", "basic");
+        props.setProperty("mlStagingSimpleSsl", "true");
     }
 }
