@@ -118,13 +118,10 @@ function getTargetEntity(targetEntityType) {
 function retrieveFunctionImports() {
   let customImports = [];
   let shimURIs = datahub.hubUtils.queryLatest(function() {
-    return Sequence.from([
-      cts.uriMatch('/custom-modules/mapping-functions/*.xsl'),
-      cts.uriMatch('/data-hub/5/mapping-functions/*.xsl')
-    ]);
+    return cts.uris(null, null, cts.collectionQuery('http://marklogic.com/entity-services/function-metadata/compiled'));
   }, xdmp.databaseName(xdmp.modulesDatabase()));
   for (let uri of shimURIs) {
-    customImports.push(`<map:use-functions href="${uri.replace(/\.xsl$/, '')}"/>`);
+    customImports.push(`<map:use-functions href="${uri.replace(/\.xslt?$/, '')}"/>`);
   }
   return customImports.join('\n');
 }
