@@ -25,12 +25,12 @@ export class IngestStep extends AppPage {
     return await dropDown.click();
   }
 
-  get csvSeparatorDropDown() {
-    return element(by.id("csv-separator-select"));
+  get delimitedTextSeparatorDropDown() {
+    return element(by.id("delimited-text-separator-select"));
   }
 
-  async clickCsvSeparatorDropDown() {
-    let dropDown = this.csvSeparatorDropDown;
+  async clickDelimitedTextSeparatorDropDown() {
+    let dropDown = this.delimitedTextSeparatorDropDown;
     return await dropDown.click();
   }
   

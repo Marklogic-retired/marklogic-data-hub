@@ -270,8 +270,8 @@ export default function(qaProjectDir) {
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/bedrock");
             browser.sleep(3000);
             await ingestStepPage.clickSourceFileTypeDropDown();
-            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("CSV")));
-            await ingestStepPage.clickSourceFileTypeOption("CSV");
+            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("Delimited Text")));
+            await ingestStepPage.clickSourceFileTypeOption("Delimited Text");
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
@@ -432,8 +432,8 @@ export default function(qaProjectDir) {
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/cerrian");
             browser.sleep(3000);
             await ingestStepPage.clickSourceFileTypeDropDown();
-            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("CSV")));
-            await ingestStepPage.clickSourceFileTypeOption("CSV");
+            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("Delimited Text")));
+            await ingestStepPage.clickSourceFileTypeOption("Delimited Text");
             browser.sleep(3000);
             await ingestStepPage.clickTargetFileTypeDropDown();
             browser.wait(EC.elementToBeClickable(ingestStepPage.targetFileTypeOptions("XML")));

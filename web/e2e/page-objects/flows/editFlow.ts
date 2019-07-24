@@ -188,9 +188,9 @@ export class EditFlow extends AppPage {
       await ingestStepPage.sourceFileTypeDropDown.click();
       await ingestStepPage.clickSourceFileTypeOption(step.sourceFileType);
       await browser.sleep(1000);
-      if (step.sourceFileType === 'CSV') {
+      if (step.sourceFileType === 'Delimited Text') {
         if (step.separator) {
-          await ingestStepPage.clickCsvSeparatorDropDown();
+          await ingestStepPage.clickDelimitedTextSeparatorDropDown();
           await ingestStepPage.clickSourceFileTypeOption(step.separator);
           await browser.sleep(1000);
         }
