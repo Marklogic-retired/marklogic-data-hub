@@ -44,7 +44,7 @@ dependencies {
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
-    
+
     // For installer program
     implementation "com.beust:jcommander:1.72"
     //https://github.com/jaegertracing/jaeger-client-java/tree/master/jaeger-core
@@ -167,7 +167,7 @@ if (!(
 
 tasks.clean.dependsOn cleanUI
 
-jar{ 
+jar{
     enabled = true
 }
 
@@ -384,10 +384,7 @@ task setupSSL{
                             "mlFinalAuth=certificate\n" +
                             "mlHost="+bootStrapHost+"\n"+
                             "mlAdminScheme=https\n" +
-                            "mlFinalScheme=https\n" +
-                            "mlStagingScheme=https\n" +
                             "mlManageScheme=https\n" +
-                            "mlJobScheme=https\n" +
                             "mlJobAuth=certificate")
             }
         }

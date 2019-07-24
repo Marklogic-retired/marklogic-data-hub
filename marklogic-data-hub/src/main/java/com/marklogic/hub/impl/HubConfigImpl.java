@@ -96,7 +96,6 @@ public class HubConfigImpl implements HubConfig
     protected Integer stagingForestsPerHost;
     protected Integer stagingPort;
     protected String stagingAuthMethod;
-    private String stagingScheme;
     private Boolean stagingSimpleSsl;
 
     private SSLContext stagingSslContext;
@@ -112,7 +111,6 @@ public class HubConfigImpl implements HubConfig
     protected Integer finalForestsPerHost;
     protected Integer finalPort;
     protected String finalAuthMethod;
-    private String finalScheme;
 
     private Boolean finalSimpleSsl;
     private SSLContext finalSslContext;
@@ -128,7 +126,6 @@ public class HubConfigImpl implements HubConfig
     protected Integer jobForestsPerHost;
     protected Integer jobPort;
     protected String jobAuthMethod;
-    private String jobScheme;
 
     private Boolean jobSimpleSsl;
     private SSLContext jobSslContext;
@@ -597,44 +594,13 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
+    @Deprecated
     @Override public String getScheme(DatabaseKind kind){
-        String scheme;
-        switch (kind) {
-            case STAGING:
-                scheme = this.stagingScheme;
-                break;
-            case FINAL:
-                scheme = this.finalScheme;
-                break;
-            case JOB:
-                scheme = this.jobScheme;
-                break;
-            case TRACE:
-                scheme = this.jobScheme;
-                break;
-            default:
-                throw new InvalidDBOperationError(kind, "get scheme");
-        }
-        return scheme;
+        return null;
     }
 
+    @Deprecated
     @Override public void setScheme(DatabaseKind kind, String scheme) {
-        switch (kind) {
-            case STAGING:
-                this.stagingScheme = scheme;
-                break;
-            case FINAL:
-                this.finalScheme = scheme;
-                break;
-            case JOB:
-                this.jobScheme = scheme;
-                break;
-            case TRACE:
-                this.jobScheme = scheme;
-                break;
-            default:
-                throw new InvalidDBOperationError(kind, "set auth method");
-        }
     }
 
     @Override public boolean getSimpleSsl(DatabaseKind kind){
@@ -1044,13 +1010,6 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlStagingAuth", stagingAuthMethod);
         }
 
-        if (stagingScheme == null) {
-            stagingScheme = getEnvPropString(projectProperties, "mlStagingScheme", environment.getProperty("mlStagingScheme"));
-        }
-        else {
-            projectProperties.setProperty("mlStagingScheme", stagingScheme);
-        }
-
         if (stagingSimpleSsl == null) {
             stagingSimpleSsl = getEnvPropBoolean(projectProperties, "mlStagingSimpleSsl", false);
         }
@@ -1115,13 +1074,6 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlFinalAuth", finalAuthMethod);
         }
 
-        if (finalScheme == null) {
-            finalScheme = getEnvPropString(projectProperties, "mlFinalScheme", environment.getProperty("mlFinalScheme"));
-        }
-        else {
-            projectProperties.setProperty("mlFinalScheme", finalScheme);
-        }
-
         if (finalSimpleSsl == null) {
             finalSimpleSsl = getEnvPropBoolean(projectProperties, "mlFinalSimpleSsl", false);
         }
@@ -1183,13 +1135,6 @@ public class HubConfigImpl implements HubConfig
         }
         else {
             projectProperties.setProperty("mlJobAuth", jobAuthMethod);
-        }
-
-        if (jobScheme == null) {
-            jobScheme = getEnvPropString(projectProperties, "mlJobScheme", environment.getProperty("mlJobScheme"));
-        }
-        else {
-            projectProperties.setProperty("mlJobScheme", jobScheme);
         }
 
         if (jobSimpleSsl == null) {
@@ -2022,7 +1967,6 @@ public class HubConfigImpl implements HubConfig
         stagingForestsPerHost = null;
         stagingPort = null;
         stagingAuthMethod = null;
-        stagingScheme = null;
         stagingSimpleSsl = null;
 
         stagingSslContext = null;
@@ -2037,7 +1981,6 @@ public class HubConfigImpl implements HubConfig
         finalForestsPerHost = null;
         finalPort = null;
         finalAuthMethod = null;
-        finalScheme = null;
 
         finalSimpleSsl = null;
         finalSslContext = null;
@@ -2052,7 +1995,6 @@ public class HubConfigImpl implements HubConfig
         jobForestsPerHost = null;
         jobPort = null;
         jobAuthMethod = null;
-        jobScheme = null;
 
         jobSimpleSsl = null;
         jobSslContext = null;
