@@ -18,7 +18,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InstallIntoDhsCommandTest extends HubTestBase {
 
     @Test
-    public void buildProjectProperties() {
-        Properties props = new InstallIntoDhsCommand().buildProjectProperties();
+    public void buildDefaultProjectProperties() {
+        Properties props = new InstallIntoDhsCommand().buildDefaultProjectProperties();
         assertEquals("true", props.getProperty("mlIsHostLoadBalancer"), "This is needed to support running legacy flows");
         assertEquals("true", props.getProperty("mlIsProvisionedEnvironment"));
 
@@ -42,6 +41,22 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
 
         assertEquals("flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert",
             props.getProperty("mlModulePermissions"));
+
+        assertEquals("8010", props.getProperty("mlAppServicesPort"), "8000 is not available in DHS, so the staging port is used instead for " +
+            "loading non-REST modules");
+
+        assertEquals("https", props.getProperty("mlAdminScheme"));
+        assertEquals("true", props.getProperty("mlAdminSimpleSsl"));
+        assertEquals("https", props.getProperty("mlManageScheme"));
+        assertEquals("true", props.getProperty("mlManageSimpleSsl"));
+        assertEquals("basic", props.getProperty("mlAppServicesAuthentication"));
+        assertEquals("true", props.getProperty("mlAppServicesSimpleSsl"));
+        assertEquals("basic", props.getProperty("mlFinalAuth"));
+        assertEquals("true", props.getProperty("mlFinalSimpleSsl"));
+        assertEquals("basic", props.getProperty("mlJobAuth"));
+        assertEquals("true", props.getProperty("mlJobSimpleSsl"));
+        assertEquals("basic", props.getProperty("mlStagingAuth"));
+        assertEquals("true", props.getProperty("mlStagingSimpleSsl"));
     }
 
     @Test
