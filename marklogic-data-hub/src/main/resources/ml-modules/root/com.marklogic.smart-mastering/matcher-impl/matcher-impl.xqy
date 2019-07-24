@@ -650,9 +650,11 @@ declare function match-impl:lock-on-search($query-results)
 
 declare function match-impl:query-combinations($required-query as element(*, cts:query))
 {
-  match-impl:group-query-combinations(
-    $required-query/descendant-or-self::element(*, cts:query)[fn:exists(cts:value|cts:text)],
-    ()
+  fn:distinct-values(
+    match-impl:group-query-combinations(
+      $required-query/descendant-or-self::element(*, cts:query)[fn:exists(cts:value|cts:text)],
+      ()
+    )
   )
 };
 
