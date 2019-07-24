@@ -3,6 +3,8 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+const sem = require("/MarkLogic/semantics.xqy");
+const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
 
 const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', 'http://marklogic.com/data-hub/mappings/xml'];
 const entitiesByTargetType = {};
@@ -17,8 +19,7 @@ function buildMappingXML(mappingJSON) {
     let entity = getTargetEntity(mapping.targetEntityType);
     entityTemplates.push(buildEntityMappingXML(mapping, entity));
   }
-  let entityModel = getTargetEntity(mappingJSON.root.targetEntityType);
-  let entityName = getEntityName(entityModel);
+  let entityName = getEntityName(mappingJSON.root.targetEntityType);
   // compose the final template
   let finalTemplate = `
       <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping">
@@ -34,9 +35,10 @@ function buildMappingXML(mappingJSON) {
   return xdmp.unquote(finalTemplate);
 }
 
-function buildMapProperties(mapProperties, entityModel) {
+function buildMapProperties(mapping, entityModel) {
+  let mapProperties = mapping.properties;
   let propertyLines = [];
-  let entityName = getEntityName(entityModel);
+  let entityName = getEntityName(mapping.targetEntityType);
   let entityDefinition = entityModel.definitions[entityName];
   let requiredProps = entityDefinition.required || [entityModel.primaryKey];
   if (!requiredProps.includes(entityModel.primaryKey)) {
@@ -58,8 +60,7 @@ function buildMapProperties(mapProperties, entityModel) {
         let propLine;
         if (externalMappingRef) {
           let externalMapping = mappingLib.getMappingWithVersion(externalMappingRef.name, externalMappingRef.version).toObject();
-          let externalEntity = getTargetEntity(externalMapping.targetEntityType);
-          let externalEntityName = getEntityName(externalEntity);
+          let externalEntityName = getEntityName(externalMapping.targetEntityType);
           propLine = `<${prop}><m:call-template name="${externalEntityName}">
             <m:with-param name="$context" select="."/>
           </m:call-template></${prop}>`;
@@ -98,11 +99,10 @@ function getRelatedMappings(mapping, related = [mapping]) {
 
 function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
-    let targetArr = targetEntityType.split('/');
-    let entityName = targetArr[targetArr.length - 1];
-    let tVersion = targetArr[targetArr.length - 2].split('-');
-    let modelVersion = tVersion[tVersion.length - 1];
-    let entityModel = fn.head(mappingLib.getModel(entityName, modelVersion));
+    let entityModel = getModel(targetEntityType);
+    if (fn.empty(entityModel)) {
+      entityModel = fallbackLegacyEntityLookup(targetEntityType)
+    }
     if (entityModel && (entityModel.constructor.name === "Document" || entityModel.constructor.name === "ObjectNode")) {
       entityModel = entityModel.toObject();
     }
@@ -132,17 +132,29 @@ function buildEntityMappingXML(mapping, entity) {
       <m:entity name="${entityTitle}" xmlns:m="http://marklogic.com/entity-services/mapping">
         <m:param name="context"><m:select>$context</m:select></m:param>
         <${entityTitle}>
-          ${buildMapProperties(mapping.properties, entity)}
+          ${buildMapProperties(mapping, entity)}
         </${entityTitle}>
       </m:entity>`;
 }
 
-function getEntityName(entityModel) {
-  let entityName = entityModel.info.title;
-  if (!entityModel.definitions[entityName]) {
-    entityName = Object.keys(entityModel.definitions)[0];
-  }
-  return entityName;
+function getEntityName(targetEntityType) {
+  return fn.head(fn.reverse(fn.tokenize(targetEntityType,'/')));
+}
+
+function getModel(targetEntityType) {
+  return fn.head(cts.search(
+      cts.andQuery([
+        cts.collectionQuery('http://marklogic.com/entity-services/models'),
+        cts.tripleRangeQuery(sem.iri(targetEntityType), sem.curieExpand("rdf:type"), sem.curieExpand("es:EntityType",semPrefixes), "=")
+      ])));
+}
+
+function fallbackLegacyEntityLookup(targetEntityType) {
+  let targetArr = targetEntityType.split('/');
+  let entityName = targetArr[targetArr.length - 1];
+  let tVersion = targetArr[targetArr.length - 2].split('-');
+  let modelVersion = tVersion[tVersion.length - 1];
+  return fn.head(mappingLib.getModel(entityName, modelVersion));
 }
 
 module.exports = {
