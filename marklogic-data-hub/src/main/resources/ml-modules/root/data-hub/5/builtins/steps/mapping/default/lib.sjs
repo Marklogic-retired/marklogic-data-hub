@@ -1,10 +1,17 @@
+const cachedMappingByNameAndVersion = {};
+const cachedEntityByTitleAndVersion = {};
+
 function getModel(targetEntity, version = '0.0.1') {
-  return xdmp.eval("cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', '" + targetEntity + "',['case-insensitive']), cts.jsonPropertyValueQuery('version', '" + version + "',['case-insensitive'])]))]))", null,
+  let cacheKey = `${targetEntity}:${version}`;
+  if (!cachedEntityByTitleAndVersion[cacheKey]) {
+    cachedEntityByTitleAndVersion[cacheKey] = xdmp.eval("cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', '" + targetEntity + "',['case-insensitive']), cts.jsonPropertyValueQuery('version', '" + version + "',['case-insensitive'])]))]))", null,
     {
       "database": xdmp.schemaDatabase(),
       "ignoreAmps": true,
       "update": 'false'
     })
+  }
+  return cachedEntityByTitleAndVersion[cacheKey];
 }
 
 function getMapping(mappingName) {
@@ -12,7 +19,11 @@ function getMapping(mappingName) {
 }
 
 function getMappingWithVersion(mappingName, version) {
-  return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
+  let cacheKey = `${mappingName}:${version}`;
+  if (!cachedMappingByNameAndVersion[cacheKey]) {
+    cachedMappingByNameAndVersion[cacheKey] = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
+  }
+  return cachedMappingByNameAndVersion[cacheKey];
 }
 
 function getSourceContext(sourceContext) {
@@ -240,6 +251,9 @@ function castDataType(dataType, value) {
 }
 
 module.exports = {
+  // exporting the caches so tests can avoid DB inserts
+  cachedMappingByNameAndVersion,
+  cachedEntityByTitleAndVersion,
   castDataType: castDataType,
   extractInstanceFromModel: extractInstanceFromModel,
   getMapping: getMapping,
