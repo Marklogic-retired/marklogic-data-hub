@@ -81,7 +81,9 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
 
     private void verifyModules() {
         final int finalPort = hubConfig.getPort(DatabaseKind.FINAL);
-        hubConfig.setPort(DatabaseKind.FINAL, hubConfig.getManageConfig().getPort());
+        // Use the staging port to verify the modules that have been loaded, as that port is also used for loading
+        // non-REST modules and thus should be accessible
+        hubConfig.setPort(DatabaseKind.FINAL, hubConfig.getPort(DatabaseKind.STAGING));
         DatabaseClient client = hubConfig.newModulesDbClient();
 
         try {
@@ -130,23 +132,6 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
             } catch (FailedRequestException ex) {
                 throw new RuntimeException("Unable to find options module: " + options);
             }
-        }
-    }
-
-    /**
-     * This uses the Manage port to examine the final and staging databases so that it doesn't matter what group
-     * the host is set to.
-     */
-    protected void verifyArtifacts() {
-        final int finalPort = hubConfig.getPort(DatabaseKind.FINAL);
-        final int stagingPort = hubConfig.getPort(DatabaseKind.STAGING);
-        try {
-            hubConfig.setPort(DatabaseKind.STAGING, hubConfig.getManageConfig().getPort());
-            hubConfig.setPort(DatabaseKind.FINAL, hubConfig.getManageConfig().getPort());
-            super.verifyArtifacts();
-        } finally {
-            hubConfig.setPort(DatabaseKind.STAGING, stagingPort);
-            hubConfig.setPort(DatabaseKind.FINAL, finalPort);
         }
     }
 }
