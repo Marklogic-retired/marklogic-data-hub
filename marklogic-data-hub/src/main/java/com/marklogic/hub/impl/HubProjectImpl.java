@@ -336,7 +336,12 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-create.json", hubTriggersDir.resolve("ml-dh-entity-create.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-modify.json", hubTriggersDir.resolve("ml-dh-entity-modify.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-delete.json", hubTriggersDir.resolve("ml-dh-entity-delete.json"), true);
-               
+
+        // triggers for JSON mapping conversion to Entity Services mapping XML
+        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-create.json", hubTriggersDir.resolve("ml-dh-json-mapping-create.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-modify.json", hubTriggersDir.resolve("ml-dh-json-mapping-modify.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-delete.json", hubTriggersDir.resolve("ml-dh-json-mapping-delete.json"), true);
+
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
         makeExecutable(gradlew);
