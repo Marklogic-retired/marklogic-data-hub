@@ -69,7 +69,7 @@ export class StepConfig {
     stepDesc: 'csv ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
     path: '/input/flow-test/csv',
-    sourceFileType: 'CSV',
+    sourceFileType: 'Delimited Text',
     separator: ',',
     targetFileType: 'JSON',
   };
@@ -80,7 +80,7 @@ export class StepConfig {
     stepDesc: 'csv ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
     path: '/input/flow-test/sep-types/pipe-data',
-    sourceFileType: 'CSV',
+    sourceFileType: 'Delimited Text',
     separator: '|',
     targetFileType: 'JSON',
   };
@@ -91,7 +91,7 @@ export class StepConfig {
     stepDesc: 'csv ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
     path: '/input/flow-test/sep-types/semicolon-data',
-    sourceFileType: 'CSV',
+    sourceFileType: 'Delimited Text',
     separator: ';',
     targetFileType: 'JSON',
   };
@@ -102,7 +102,7 @@ export class StepConfig {
     stepDesc: 'csv ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
     path: '/input/flow-test/sep-types/tab-data',
-    sourceFileType: 'CSV',
+    sourceFileType: 'Delimited Text',
     separator: 'Tab',
     targetFileType: 'JSON',
   };
