@@ -34,6 +34,7 @@ import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
@@ -95,10 +96,10 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private LoadHubArtifactsCommand loadHubArtifactsCommand;
-    
+
     @Autowired
     private Versions versions;
-    
+
     @Autowired
     private LegacyFlowManagerImpl legacyFlowManager;
 
@@ -593,7 +594,20 @@ public class DataHubImpl implements DataHub {
         disableSomeCmaUsage(appConfig);
 
         // 8000 is not available in DHS
-        appConfig.setAppServicesPort(hubConfig.getPort(DatabaseKind.STAGING));
+        int port = hubConfig.getPort(DatabaseKind.STAGING);
+        logger.info("Setting App-Services port to: " + port);
+        appConfig.setAppServicesPort(port);
+
+        if (hubConfig.getSimpleSsl(DatabaseKind.STAGING)) {
+            logger.info("Enabling simple SSL for App-Services");
+            appConfig.setAppServicesSimpleSslConfig();
+        }
+
+        String authMethod = hubConfig.getAuthMethod(DatabaseKind.STAGING);
+        if (authMethod != null) {
+            logger.info("Setting security context type for App-Services to: " + authMethod);
+            appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
+        }
     }
 
     protected List<Command> buildCommandListForInstallingIntoDhs() {
@@ -957,8 +971,8 @@ public class DataHubImpl implements DataHub {
         boolean alreadyInitialized = project.isInitialized();
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
-             * But since it requires 'hubConfig' and 'versions', for now 
-             * leaving it here 
+             * But since it requires 'hubConfig' and 'versions', for now
+             * leaving it here
              */
             if(alreadyInitialized) {
                 // The version provided in "mlDHFVersion" property in gradle.properties.

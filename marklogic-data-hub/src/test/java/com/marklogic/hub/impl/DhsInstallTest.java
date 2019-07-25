@@ -4,6 +4,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
@@ -49,7 +50,7 @@ public class DhsInstallTest extends HubTestBase {
         assertEquals(adminHubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
             "DHS does not allow access to the default App-Services port - 8000 - so it's set to the staging port instead so " +
                 "that user modules can be loaded into the DHF modules database");
-        
+
         assertFalse(appConfig.isCreateForests(), "DHS handles forest creation");
         assertEquals("(staging|final|job)-database.json", appConfig.getResourceFilenamesIncludePattern().pattern(),
             "As DHS is only updating databases, we can get away with specifying a global include pattern, as " +
@@ -64,6 +65,29 @@ public class DhsInstallTest extends HubTestBase {
         assertFalse(cmaConfig.isDeployDatabases(), message);
         assertFalse(cmaConfig.isDeployRoles(), message);
         assertFalse(cmaConfig.isDeployUsers(), message);
+    }
+
+    @Test
+    public void copyStagingSslConfigToAppServices() {
+        AppConfig appConfig = new AppConfig();
+        assertNull(appConfig.getAppServicesSslContext(), "App-Services doesn't use SSL by default");
+        assertEquals(SecurityContextType.DIGEST, appConfig.getAppServicesSecurityContextType(), "App-Services connection defaults to DIGEST");
+
+        final String originalAuthMethod = adminHubConfig.getAuthMethod(DatabaseKind.STAGING);
+        final boolean originalSimpleSsl = adminHubConfig.getSimpleSsl(DatabaseKind.STAGING);
+        try {
+            adminHubConfig.setAppConfig(appConfig);
+            adminHubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
+            adminHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
+
+            new DataHubImpl().prepareAppConfigForInstallingIntoDhs(adminHubConfig);
+
+            assertNotNull(appConfig.getAppServicesSslContext());
+            assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
+        } finally {
+            adminHubConfig.setAuthMethod(DatabaseKind.STAGING, originalAuthMethod);
+            adminHubConfig.setSimpleSsl(DatabaseKind.STAGING, originalSimpleSsl);
+        }
     }
 
     @Test
