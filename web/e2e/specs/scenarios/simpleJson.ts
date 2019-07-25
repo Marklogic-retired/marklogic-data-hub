@@ -316,6 +316,7 @@ export default function (qaProjectDir) {
 
     it('validate mastering step advance settings', async function () {
       await stepsPage.clickAdvSettingsExpandCollapse();
+      await browser.sleep(1000);
       await expect(stepsPage.stepSourceDatabaseDropDown.isDisplayed()).toBe(true);
       await expect(stepsPage.stepTargetDatabaseDropDown.isDisplayed()).toBe(true);
       await expect(stepsPage.targetFormatDropDown.isDisplayed()).toBe(true);
