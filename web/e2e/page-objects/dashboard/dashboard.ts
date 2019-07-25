@@ -107,6 +107,25 @@ export class DashboardPage extends AppPage {
     return element(by.css(".version-link")).getText();
   }
 
+  get databaseTitleCount() {
+    return element.all(by.css(".info-title")).count();
+  }
+
+  get databaseIconCount() {
+    return element.all(by.css(".mdi-database")).count();
+  }
+
+  get databaseColumnHeadCount() {
+    return element.all(by.css(".column-head")).count();
+  }
+
+  get databaseDocumentCount() {
+    return element.all(by.css(".column-body")).count();
+  }
+
+  get databaseDeleteIconCount() {
+    return element.all(by.css(".mdi-delete")).count();
+  }
 }
 
 var dashboardPage = new DashboardPage();

@@ -154,8 +154,16 @@ export class MappingStep extends AppPage {
     return $("#source .help-icon > a").getAttribute("href");
   }
 
+  get source() {
+    return $("#source .item-type");
+  }
+
   get targetSourceLink() {
     return $("#target .help-icon > a").getAttribute("href");
+  }
+
+  get entity() {
+    return $("#target .item-type");
   }
 
 }
