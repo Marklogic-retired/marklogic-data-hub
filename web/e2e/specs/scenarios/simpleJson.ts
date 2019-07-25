@@ -14,8 +14,8 @@ import jobDetailsPage from '../../page-objects/jobs/jobDetails';
 import browsePage from '../../page-objects/browse/browse';
 
 export default function (qaProjectDir) {
-  describe('Login page validation', () => {
-    it('should login', async function () {
+  xdescribe('Login page validation', () => {
+    xit('should login', async function () {
       //await loginPage.browseButton.click();
       await loginPage.setCurrentFolder(qaProjectDir);
       await loginPage.clickNext('ProjectDirTab');
