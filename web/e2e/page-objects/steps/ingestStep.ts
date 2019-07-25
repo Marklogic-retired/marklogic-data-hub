@@ -105,7 +105,11 @@ export class IngestStep extends AppPage {
   }
 
   get mlcpCommand() {
-    return element(by.css(".mlcp-cmd p"));  
+    return element(by.css(".mlcp-cmd p"));
+  }
+
+  get mlcpCommandCopyIcon() {
+    return element(by.css(".mlcp-label .fa-copy"));
   }
 }
 

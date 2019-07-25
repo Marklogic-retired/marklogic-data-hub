@@ -850,12 +850,20 @@ export class MasteringStep extends AppPage {
   }
 
   // TO-DO add remove source name and weight
+  get mergeOptionDialogAddSourceWeightButton() {
+    return element(by.id("add-merge-option-source-weight-btn"));
+  }
+
+  get mergeOptionDialogRemoveSourceWeightButton() {
+    return element(by.id("remove-merge-option-source-weight-btn-0"));
+  }
+
   async clickMergeOptionDialogAddSourceWeight() {
-    return element(by.id("add-merge-option-source-weight-btn")).click();
+    return this.mergeOptionDialogAddSourceWeightButton.click();
   }
 
   async clickMergeOptionDialogRemoveSourceWeight() {
-    return element(by.id("remove-merge-option-source-weight-btn-0")).click();
+    return this.mergeOptionDialogRemoveSourceWeightButton.click();
   }
 
   async addSourceNameForSourceWeightOptionDialog(name: string, row: number) {
@@ -1115,12 +1123,20 @@ export class MasteringStep extends AppPage {
   }
 
   // TO-DO add remove source name and weight
+  get mergeStrategyDialogAddSourceWeight() {
+    return element(by.id("add-merge-strategy-source-weight-btn"));
+  }
+
+  get mergeStrategyDialogRemoveSourceWeight() {
+    return element(by.id("remove-merge-strategy-source-weight-btn-0"));
+  }
+
   async clickMergeStrategyDialogAddSourceWeight() {
-    return element(by.id("add-merge-strategy-source-weight-btn")).click();
+    return this.mergeStrategyDialogAddSourceWeight.click();
   }
 
   async clickMergeStrategyDialogRemoveSourceWeight() {
-    return element(by.id("id=remove-merge-strategy-source-weight-btn-0")).click();
+    return this.mergeStrategyDialogRemoveSourceWeight.click();
   }
 
   async addSourceNameForSourceWeightStrategyDialog(name: string, row: number) {
@@ -1170,6 +1186,34 @@ export class MasteringStep extends AppPage {
 
   get mergeCollectionsTable() {
     return element(by.id("merge-collections-table"));
+  }
+
+  get mergeCollectionEventField() {
+    return element(by.id("merge-collection-event"))
+  }
+
+  get mergeCollectionsToAddButton() {
+    return element(by.id("merge-collection-add-add-btn"))
+  }
+
+  get mergeCollectionsToAddRemoveButton() {
+    return element(by.css(".add-remove-collection-btn"))
+  }
+
+  get mergeCollectionsToRemoveAddButton() {
+    return element(by.id("merge-collection-add-remove-btn"))
+  }
+
+  get mergeCollectionsToRemoveRemoveButton() {
+    return element(by.css(".remove-remove-collection-btn"))
+  }
+
+  get mergeCollectionsToSetAddButton() {
+    return element(by.id("merge-collection-add-set-btn"))
+  }
+
+  get mergeCollectionsToSetRemoveButton() {
+    return element(by.css(".set-remove-collection-btn"))
   }
 
   mergeCollectionEvent(name: string) {
