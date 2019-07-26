@@ -45,5 +45,5 @@
     "range-value-positions" : false,
     "scalar-type" : "string"
   } ],
-  "database-name" : "%%mlFinalDbName%%"
+  "database-name" : "%%mlStagingDbName%%"
 }
