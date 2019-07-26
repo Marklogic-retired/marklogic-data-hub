@@ -232,7 +232,7 @@ export class MappingComponent implements OnInit {
           description:      this.mapping.description || '',
           version:          this.mapping.version || '0',
           targetEntityType: targetEntityType,
-          sourceContext:    this.mapping.sourceContext || '//',
+          sourceContext:    this.mapping.sourceContext || '/',
           sourceURI:        this.sampleDocURI || '',
           properties:       formattedConns
         };

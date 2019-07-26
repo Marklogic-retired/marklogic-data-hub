@@ -2,6 +2,7 @@
   "envelope": {
     "instance": {
       "info": {
+        "title": "Order",
         "version": "1.0.0"
       },
       "Order": {

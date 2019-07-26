@@ -2,7 +2,8 @@
   "info": {
     "title": "Order",
     "description": "DHF Order",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "baseUri": "http://www.marklogic.com/"
   },
   "definitions": {
     "Order": {

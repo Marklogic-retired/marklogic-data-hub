@@ -24,7 +24,6 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
@@ -33,21 +32,26 @@ import com.marklogic.hub.util.json.JSONUtils;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
-import com.marklogic.hub.web.model.FlowJobModel.FlowJobs;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FlowManagerService {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static final String FLOW_FILE_EXTENSION = ".flow.json";
 
@@ -61,9 +65,6 @@ public class FlowManagerService {
     private StepDefinitionManagerService stepDefinitionManagerService;
 
     @Autowired
-    private FlowJobService flowJobService;
-
-    @Autowired
     HubConfigImpl hubConfig;
 
     @Autowired
@@ -75,15 +76,11 @@ public class FlowManagerService {
     @Autowired
     private Scaffolding scaffolding;
 
+    @Autowired
+    private AsyncFlowService asyncFlowService;
+
     public List<FlowStepModel> getFlows() {
-        FlowRunnerChecker.getInstance(flowRunner);
-        List<Flow> flows = flowManager.getFlows();
-        List<FlowStepModel> flowSteps = new ArrayList<>();
-        for (Flow flow : flows) {
-            FlowStepModel fsm = getFlowStepModel(flow, false);
-            flowSteps.add(fsm);
-        }
-        return flowSteps;
+        return asyncFlowService.getFlows(true);
     }
 
     public FlowStepModel createFlow(String flowJson, boolean checkExists) throws IOException {
@@ -138,25 +135,7 @@ public class FlowManagerService {
         if (flow == null) {
             throw new NotFoundException(flowName + " not found!");
         }
-        FlowStepModel fsm = getFlowStepModel(flow, fromRunFlow);
-        return fsm;
-    }
-
-    private FlowStepModel getFlowStepModel(Flow flow, boolean fromRunFlow) {
-        FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
-        if (fromRunFlow) {
-            FlowRunnerChecker.getInstance(flowRunner).resetLatestJob(flow);
-        }
-        FlowJobs flowJobs = null;
-        if (flowRunner.getRunningFlow() != null && flow.getName().equalsIgnoreCase(flowRunner.getRunningFlow().getName())) {
-            fsm.setLatestJob(FlowRunnerChecker.getInstance(flowRunner).getLatestJob(flow));
-        }
-        if (fsm.latestJob != null  && (JobStatus.isJobDone(fsm.latestJob.status) || JobStatus.isStepDone(fsm.latestJob.status))) {
-            flowJobs = flowJobService.getJobs(flow.getName(),true);
-        } else {
-            flowJobs = flowJobService.getJobs(flow.getName(),false);
-        }
-        fsm.setJobs(flowJobs, fromRunFlow);
+        FlowStepModel fsm = asyncFlowService.getFlowStepModel(flow, fromRunFlow, null);
         return fsm;
     }
 
@@ -172,7 +151,7 @@ public class FlowManagerService {
 
     public List<StepModel> getSteps(String flowName) {
         Flow flow = flowManager.getFlow(flowName);
-        Map<String, Step> stepMap = flowManager.getSteps(flow);
+        Map<String, Step> stepMap = flow.getSteps();
 
         List<StepModel> stepModelList = new ArrayList<>();
         for (String key : stepMap.keySet()) {
@@ -190,7 +169,7 @@ public class FlowManagerService {
             throw new NotFoundException(flowName + " not found.");
         }
 
-        Step step = flow.getStepById(getStepKeyInStepMap(flow, stepId));
+        Step step = flow.getStep(getStepKeyInStepMap(flow, stepId));
         if (step == null) {
             throw new NotFoundException(stepId + " not found.");
         }
@@ -202,7 +181,7 @@ public class FlowManagerService {
         StepModel stepModel;
         JsonNode stepJson;
         Flow flow = flowManager.getFlow(flowName);
-        Step existingStep = flow.getStepById(getStepKeyInStepMap(flow, stepId));
+        Step existingStep = flow.getStep(getStepKeyInStepMap(flow, stepId));
 
         if (existingStep == null && !StringUtils.isEmpty(stepId)) {
             throw new NotFoundException("Step " + stepId + " Not Found");
@@ -281,13 +260,13 @@ public class FlowManagerService {
                 throw new BadRequestException("Invalid Step Type");
         }
 
-        Map<String, Step> currSteps = flowManager.getSteps(flow);
+        Map<String, Step> currSteps = flow.getSteps();
         if (stepId != null) {
             String key = getStepKeyInStepMap(flow, stepId);
             if (StringUtils.isNotEmpty(key)) {
                 currSteps.put(key, step);
             }
-            flowManager.setSteps(flow, currSteps);
+            flow.setSteps(currSteps);
         }
         else {
             if (stepOrder == null || stepOrder > currSteps.size()) {
@@ -304,7 +283,7 @@ public class FlowManagerService {
                     newSteps.put(String.valueOf(count[0]), s);
                     ++count[0];
                 });
-                flowManager.setSteps(flow, newSteps);
+                flow.setSteps(newSteps);
             }
         }
 
@@ -325,28 +304,7 @@ public class FlowManagerService {
         }
 
         try {
-            Map<String, Step> stepMap = flowManager.getSteps(flow);
-            int stepOrder = Integer.parseInt(key);
-
-            if (stepOrder == stepMap.size()) {
-                stepMap.remove(key);
-            }
-            else {
-                Map<String, Step> newStepMap = new LinkedHashMap<>();
-                final int[] newStepOrder = {1};
-                final int[] stepIndex = {1};
-                stepMap.values().forEach(step -> {
-                    if (stepIndex[0] != stepOrder) {
-                        newStepMap.put(String.valueOf(newStepOrder[0]++), step);
-                    }
-                    stepIndex[0]++;
-                });
-
-                stepMap = newStepMap;
-            }
-
-            flowManager.setSteps(flow, stepMap);
-            flowManager.saveFlow(flow);
+            flowManager.deleteStep(flow, key);
         }
         catch (DataHubProjectException e) {
             throw new NotFoundException(e.getMessage());
@@ -393,7 +351,7 @@ public class FlowManagerService {
             String type = stepStr[1];
             String[] key = new String[1];
 
-            flowManager.getSteps(flow).forEach((k, v) -> {
+            flow.getSteps().forEach((k, v) -> {
                 if (name.equals(v.getName()) && type.equalsIgnoreCase(v.getStepDefinitionType().toString())) {
                     key[0] = k;
                 }

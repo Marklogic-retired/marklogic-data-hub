@@ -18,6 +18,7 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -36,7 +37,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Component
-public class StepDefinitionManagerImpl implements StepDefinitionManager {
+public class StepDefinitionManagerImpl extends LoggingObject implements StepDefinitionManager {
 
     @Autowired
     private HubConfig hubConfig;
@@ -71,12 +72,14 @@ public class StepDefinitionManagerImpl implements StepDefinitionManager {
 
     @Override
     public void deleteStepDefinition(StepDefinition stepDefinition) {
-        Path dir = resolvePath(hubConfig.getStepsDirByType(stepDefinition.getType()), stepDefinition.getName());
+        final String name = stepDefinition.getName();
+        Path dir = resolvePath(hubConfig.getStepsDirByType(stepDefinition.getType()), name);
         if (dir.toFile().exists()) {
             try {
+                logger.info(format("Deleting step definition with name '%s' in directory: %s", name, dir.toFile()));
                 FileUtils.deleteDirectory(dir.toFile());
             } catch (IOException e) {
-                throw new DataHubProjectException("Could not delete Step for project.");
+                throw new DataHubProjectException(format("Could not delete step with name '%s'", name), e);
             }
         }
     }

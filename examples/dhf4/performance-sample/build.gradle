@@ -1,0 +1,526 @@
+plugins {
+    id 'net.saliman.properties' version '1.4.6'
+    id 'com.marklogic.ml-data-hub' version '4.1.0'
+}
+
+repositories {
+  jcenter()
+  maven { url "https://developer.marklogic.com/maven2/" }
+
+  ivy {
+    url 'http://download.geonames.org/'
+    layout 'pattern', {
+      artifact '/[organisation]/dump/[module].[ext]'
+    }
+  }
+}
+
+configurations {
+  mlcp
+  data
+}
+
+dependencies {
+  mlcp "com.marklogic:mlcp:9.0.7"
+  mlcp files("lib")
+  data "export:cities5000:x@zip"
+}
+
+task clearStagingDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlStagingDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearFinalDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlFinalDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearJobDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlJobDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+task clearDatabases() {
+  dependsOn clearFinalDatabase
+  dependsOn clearJobDatabase
+}
+
+task createXmlEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
+  doFirst { project.ext.entityName = "input-xml" }
+}
+
+task createJsonEntity(type: com.marklogic.gradle.task.CreateEntityTask) {
+  doFirst { project.ext.entityName = "input-json" }
+}
+
+task createSjsXmlInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createXmlEntity
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "input-sjs-xml"
+    project.ext.dataFormat = "xml"
+    project.ext.pluginFormat = "sjs"
+  }
+}
+
+task createXqyXmlInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createXmlEntity
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "input-xqy-xml"
+    project.ext.dataFormat = "xml"
+    project.ext.pluginFormat = "xqy"
+  }
+}
+
+task createSjsJsonInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createJsonEntity
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "input-sjs-json"
+    project.ext.dataFormat = "json"
+    project.ext.pluginFormat = "sjs"
+  }
+}
+
+task createXqyJsonInputFlow(type: com.marklogic.gradle.task.CreateInputFlowTask) {
+  mustRunAfter createJsonEntity
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "input-xqy-json"
+    project.ext.dataFormat = "json"
+    project.ext.pluginFormat = "xqy"
+  }
+}
+
+task createEntityInput() {
+  mustRunAfter mlDeploy
+
+  dependsOn createXmlEntity
+  dependsOn createJsonEntity
+  dependsOn createSjsXmlInputFlow
+  dependsOn createXqyXmlInputFlow
+  dependsOn createSjsJsonInputFlow
+  dependsOn createXqyJsonInputFlow
+
+  finalizedBy mlLoadModules
+  doLast { println "created XML and JSON entities and input flows" }
+}
+
+task getInputData() {
+  def headers = [
+    "geonameid",
+    "name",
+    "asciiname",
+    "alternatenames",
+    "latitude",
+    "longitude",
+    "feature class",
+    "feature code",
+    "country code",
+    "cc2",
+    "admin1 code",
+    "admin2 code",
+    "admin3 code",
+    "admin4 code",
+    "population",
+    "elevation",
+    "dem",
+    "timezone",
+    "modification date"
+  ]
+
+  def zipPath = project.configurations.data.find {
+    it.name.startsWith("cities5000")
+  }
+
+  doFirst {
+    mkdir "./input/"
+  }
+  doLast {
+    def zipFile = zipTree(file(zipPath)).getFiles().first()
+    def combined = new File('./input/raw.txt')
+    combined.text = headers.join("\t") + "\n" + zipFile.text
+  }
+}
+
+task prepareMlcpLog() {
+  mkdir "./lib/"
+  def props = new File('./lib/log4j.properties')
+  props.text = [
+    "log4j.rootLogger=INFO, stdout",
+    "log4j.appender.stdout=org.apache.log4j.ConsoleAppender",
+    "log4j.appender.stdout.Target=System.out",
+    "log4j.appender.stdout.layout=org.apache.log4j.PatternLayout",
+    "log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"
+  ].join("\n")
+}
+
+task loadSjsJson(type: MlcpTask) {
+  mustRunAfter createSjsJsonInputFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+  dependsOn clearStagingDatabase
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "json"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".json"
+  output_collections = "input-json"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.sjs"
+  transform_function = "transform"
+  transform_param =  "entity-name=input-json,flow-name=input-sjs-json"
+  modules_root = "/"
+  thread_count = 4
+}
+
+task loadXqyJson(type: MlcpTask) {
+  mustRunAfter createXqyJsonInputFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+  dependsOn clearStagingDatabase
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "json"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".json"
+  output_collections = "input-json"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.xqy"
+  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_param =  "entity-name=input-json,flow-name=input-xqy-json"
+  modules_root = "/"
+  thread_count = 4
+}
+
+task loadSjsXml(type: MlcpTask) {
+  mustRunAfter createSjsXmlInputFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+  dependsOn clearStagingDatabase
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "xml"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".xml"
+  output_collections = "input-xml"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.sjs"
+  transform_function = "transform"
+  transform_param =  "entity-name=input-xml,flow-name=input-sjs-xml"
+  modules_root = "/"
+  thread_count = 4
+}
+
+task loadXqyXml(type: MlcpTask) {
+  mustRunAfter createXqyXmlInputFlow
+  mustRunAfter mlLoadModules
+  mustRunAfter getInputData
+  dependsOn clearStagingDatabase
+
+  doFirst {
+    database = mlStagingDbName
+    port = mlStagingPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  input_file_path = "./input/raw.txt"
+  delimiter = "\t"
+  input_file_type = "delimited_text"
+  document_type = "xml"
+  output_uri_prefix = "/city/"
+  output_uri_suffix = ".xml"
+  output_collections = "input-xml"
+  transform_module = "/data-hub/4/transforms/mlcp-flow-transform.xqy"
+  transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+  transform_param =  "entity-name=input-xml,flow-name=input-xqy-xml"
+  modules_root = "/"
+  thread_count = 4
+}
+
+task createHarmonizeXqyXml(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "harmonize-xqy-xml"
+    project.ext.pluginFormat = "xqy"
+    project.ext.dataFormat = "xml"
+  }
+}
+
+task createHarmonizeSjsXml(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-xml"
+    project.ext.flowName = "harmonize-sjs-xml"
+    project.ext.pluginFormat = "sjs"
+    project.ext.dataFormat = "xml"
+  }
+}
+
+task createHarmonizeXqyJson(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "harmonize-xqy-json"
+    project.ext.pluginFormat = "xqy"
+    project.ext.dataFormat = "json"
+  }
+}
+
+task createHarmonizeSjsJson(type: com.marklogic.gradle.task.CreateHarmonizeFlowTask) {
+  mustRunAfter createEntityInput
+
+  doFirst {
+    project.ext.entityName = "input-json"
+    project.ext.flowName = "harmonize-sjs-json"
+    project.ext.pluginFormat = "sjs"
+    project.ext.dataFormat = "json"
+  }
+}
+
+task createHarmonizeFlows() {
+  dependsOn createHarmonizeXqyXml
+  dependsOn createHarmonizeSjsXml
+  dependsOn createHarmonizeXqyJson
+  dependsOn createHarmonizeSjsJson
+  finalizedBy mlLoadModules
+}
+
+task runHarmonizeXqyXml(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeXqyXml
+  dependsOn clearDatabases
+  dependsOn loadXqyXml
+
+  entityName = "input-xml"
+  flowName = "harmonize-xqy-xml"
+}
+
+task runHarmonizeSjsXml(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeSjsXml
+  dependsOn clearDatabases
+  dependsOn loadSjsXml
+
+  entityName = "input-xml"
+  flowName = "harmonize-sjs-xml"
+}
+
+task runHarmonizeXqyJson(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeXqyJson
+  dependsOn clearDatabases
+  dependsOn loadXqyJson
+
+  entityName = "input-json"
+  flowName = "harmonize-xqy-json"
+}
+
+task runHarmonizeSjsJson(type: com.marklogic.gradle.task.RunFlowTask) {
+  mustRunAfter createHarmonizeSjsJson
+  dependsOn clearDatabases
+  dependsOn loadSjsJson
+
+  entityName = "input-json"
+  flowName = "harmonize-sjs-json"
+}
+
+task allHarmonizeFlows() {
+  dependsOn createHarmonizeFlows
+  dependsOn runHarmonizeXqyXml
+  dependsOn runHarmonizeSjsXml
+  dependsOn runHarmonizeXqyJson
+  dependsOn runHarmonizeSjsJson
+}
+
+task doAll() {
+  dependsOn mlDeploy
+  dependsOn getInputData
+  dependsOn createEntityInput
+  dependsOn allHarmonizeFlows
+}
+
+import java.util.concurrent.TimeUnit
+class TimingsListener implements TaskExecutionListener, BuildListener {
+  private long startTime
+  private timings = []
+
+  @Override
+  void beforeExecute(Task task) {
+    startTime = System.nanoTime()
+  }
+
+  @Override
+  void afterExecute(Task task, TaskState taskState) {
+    timings.add([
+      TimeUnit.MILLISECONDS.convert(System.nanoTime() -
+         startTime, TimeUnit.NANOSECONDS),
+      task.path
+    ])
+  }
+
+  @Override
+  void buildFinished(BuildResult result) {
+    println "Task timings:"
+    for (timing in timings)
+      printf "%10.3fs  %s\n", (timing[0] / 1000), timing[1]
+  }
+
+  @Override
+  void buildStarted(Gradle gradle) {}
+  @Override
+  void projectsEvaluated(Gradle gradle) {}
+  @Override
+  void projectsLoaded(Gradle gradle) {}
+  @Override
+  void settingsEvaluated(Settings settings) {}
+}
+
+if (project.hasProperty('profile')) {
+  gradle.addListener new TimingsListener()
+}
+
+// This example needs mlcp-util 0.9.0 or greater
+// right now we are relying on an older version of
+// ml-gradle which relies on 0.2.0 of mlcp-util
+// redefining this class here is a stop-gap until
+// we update stuff
+import com.marklogic.client.DatabaseClient
+import com.marklogic.client.io.FileHandle
+import com.marklogic.contentpump.bean.MlcpBean
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.TaskAction
+
+import com.marklogic.appdeployer.AppConfig
+class MlcpTask extends JavaExec {
+
+    @Delegate
+    MlcpBean mlcpBean = new MlcpBean();
+
+    // Set this to define a URI in your content database for mlcp output to be written to as a text document
+    String logOutputUri
+
+    Logger getLogger() {
+        return Logging.getLogger(MlcpTask.class)
+    }
+
+    @TaskAction
+    @Override
+    void exec() {
+        setMain("com.marklogic.contentpump.ContentPump")
+        AppConfig config = getProject().property("mlAppConfig")
+
+        List<String> newArgs = new ArrayList<>()
+        newArgs.add(command)
+
+        mlcpBean.properties.each { prop, val ->
+            def propVal
+            if (val) {
+                switch (prop) {
+                    case "host":
+                        propVal = (val ? val : config.getHost())
+                        break
+                    case "port":
+                        propVal = (val ? val : 8000)
+                        break
+                    case "username":
+                        propVal = (val ? val : config.getRestAdminUsername())
+                        break
+                    case ["class", "logger", "command", "password"]:
+                        // skip for now
+                        return
+                    case "additionalOptions":
+                        // Not supported by this task; use JavaExec's args instead
+                        return
+                    default:
+                        propVal = val
+                        break
+                }
+
+                newArgs.add("-" + prop);
+                newArgs.add(String.valueOf(propVal));
+            }
+        }
+
+        // Ensure connection arguments are present, but not if a COPY
+        boolean isCopy = "COPY".equals(command)
+        if (!isCopy) {
+            if (!newArgs.contains("-host")) {
+                newArgs.add("-host")
+                newArgs.add(config.getHost())
+            }
+            if (!newArgs.contains("-port")) {
+                newArgs.add("-port")
+                newArgs.add("8000")
+            }
+            if (!newArgs.contains("-username")) {
+                newArgs.add("-username")
+                newArgs.add(config.getRestAdminUsername())
+            }
+        }
+
+        // Include any args that a user has configured via the args parameter of the Gradle task
+        newArgs.addAll(getArgs())
+
+        println "mlcp arguments, excluding password: " + newArgs
+
+        if (!isCopy) {
+            newArgs.add("-password")
+            newArgs.add(password ? password : config.getRestAdminPassword())
+        }
+
+        setArgs(newArgs)
+
+        File logOutputFile = null
+        if (logOutputUri) {
+            println "Will write mlcp log output to URI: " + logOutputUri
+            logOutputFile = new File(getProject().getBuildDir(), "mlcp-log-output-" + System.currentTimeMillis() + ".txt")
+            setStandardOutput(logOutputFile.newOutputStream())
+        }
+
+        super.exec()
+
+        if (logOutputFile != null) {
+            AppConfig appConfig = project.property("mlAppConfig")
+            DatabaseClient client = appConfig.newDatabaseClient()
+            client.newDocumentManager().write(logOutputUri, new FileHandle(logOutputFile))
+            println "Wrote mlcp log output to URI: " + logOutputUri
+        }
+    }
+}

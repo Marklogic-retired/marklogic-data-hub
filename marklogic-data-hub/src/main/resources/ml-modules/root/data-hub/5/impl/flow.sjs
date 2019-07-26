@@ -144,16 +144,17 @@ class Flow {
     //set the flow in the context
     this.globalContext.flow = flow;
 
-
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
-    if(!jobDoc){
+    if(!(jobDoc || options.disableJobOutput)) {
       jobDoc = this.datahub.jobs.createJob(flowName, jobId);
     }
-    if (jobDoc && jobDoc.job) {
-      jobDoc = jobDoc.job;
+    if (jobDoc) {
+      if (jobDoc.job) {
+        jobDoc = jobDoc.job;
+      }
+      //set the jobid in the context based on the jobdoc response
+      this.globalContext.jobId = jobDoc.jobId;
     }
-    //set the jobid in the context based on the jobdoc response
-    this.globalContext.jobId = jobDoc.jobId;
     this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
     this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
 
@@ -174,6 +175,8 @@ class Flow {
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
+    // set provenance granularity based off of combined options
+    this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
     // combine all collections
     let collections = [
       options.collections,
@@ -185,7 +188,7 @@ class Flow {
     this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
     this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
-    if (!combinedOptions.noBatchWrite) {
+    if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
       let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
       this.globalContext.batchId = batchDoc.batch.batchId;
     }
@@ -219,16 +222,26 @@ class Flow {
     }
     let stepDefTypeLowerCase = (stepDetails.type) ? stepDetails.type.toLowerCase(): stepDetails.type;
     let stepName = stepRef.name || stepRef.stepDefinitionName;
+    let prov = this.datahub.prov;
     for (let content of this.writeQueue) {
+      let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
       let info = {
-        derivedFrom: content.previousUri || content.uri,
+        derivedFrom: previousUris,
         influencedBy: stepName,
         status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
         metadata: {}
       };
-      let provResult = this.datahub.prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
-      if (provResult instanceof Error) {
-        flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+      // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
+      if (content.provenance !== false) {
+        let provResult;
+        if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
+          provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
+        } else {
+          provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+        }
+        if (provResult instanceof Error) {
+          flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+        }
       }
     }
     if (!combinedOptions.noBatchWrite) {
@@ -240,7 +253,12 @@ class Flow {
           batchStatus = "failed";
         }
       }
-      this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
+      if (!combinedOptions.disableJobOutput) {
+        this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
+      }
+      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+        this.datahub.prov.commit();
+      }
     }
 
     let resp = {
@@ -260,7 +278,6 @@ class Flow {
     this.resetGlobalContext();
     return resp;
   }
-
 
   runStep(uris, content, options, flowName, stepNumber, step) {
     // declareUpdate({explicitCommit: true});
@@ -362,6 +379,49 @@ class Flow {
         self.addToWriteQueue(result, self.globalContext);
       }
     }
+  }
+
+  buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
+    let previousUris = info.derivedFrom;
+    let prov = this.datahub.prov;
+    let newDocURI = content.uri;
+    let docProvIDs = [];
+    // setup variables to group prov info by properties
+    let docProvPropertyIDsByProperty = {};
+    let docProvPropertyValuesByProperty = {};
+    let docProvDocumentIDsByProperty = {};
+    for (let prevUri of previousUris) {
+      let docProvenance = content.provenance[prevUri];
+      let docProperties = Object.keys(docProvenance);
+      let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
+      let docProvID = docPropRecords[0];
+      docProvIDs.push(docProvID);
+      let docProvPropertyIDKeyVals = docPropRecords[1];
+      // accumulating changes here, since merges can have multiple docs with input per property.
+      for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
+        let propDetails = docProvenance[origProp];
+        let prop = propDetails.destination;
+
+        docProvPropertyValuesByProperty[prop] = docProvPropertyValuesByProperty[prop] || [];
+        docProvPropertyValuesByProperty[prop].push(propDetails.value);
+        docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
+        docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
+        docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
+        docProvDocumentIDsByProperty[prop].push(docProvID);
+      }
+    }
+
+    let newPropertyProvIDs = [];
+    for (let prop of Object.keys(docProvPropertyIDsByProperty)) {
+      let docProvDocumentIDs = docProvDocumentIDsByProperty[prop];
+      let docProvPropertyIDs = docProvPropertyIDsByProperty[prop];
+      let docProvPropertyValues = docProvPropertyValuesByProperty[prop];
+      let propInfo = Object.assign({}, info, { metadata: { value: docProvPropertyValues.join(',') } });
+      let newPropertyProvID = prov.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
+      newPropertyProvIDs.push(newPropertyProvID);
+    }
+    // Now create the merged document record from both the original document records & the merged property records
+    return prov.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
   }
 
   isContextDB(databaseName) {

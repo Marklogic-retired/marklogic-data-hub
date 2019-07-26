@@ -26,7 +26,8 @@ xquery version "1.0-ml";
 module namespace merging = "http://marklogic.com/smart-mastering/merging";
 
 import module namespace impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-  at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
+  at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
+    "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 
@@ -71,7 +72,7 @@ declare function merging:save-merge-models-by-uri(
  :)
 declare function merging:rollback-merge(
   $merged-doc-uri as xs:string
-) as empty-sequence()
+) as xs:string*
 {
   impl:rollback-merge($merged-doc-uri, fn:true(), fn:true())
 };
@@ -87,7 +88,7 @@ declare function merging:rollback-merge(
 declare function merging:rollback-merge(
   $merged-doc-uri as xs:string,
   $retain-rollback-info as xs:boolean
-) as empty-sequence()
+) as xs:string*
 {
   impl:rollback-merge($merged-doc-uri, $retain-rollback-info, fn:true())
 };
@@ -106,7 +107,7 @@ declare function merging:rollback-merge(
   $merged-doc-uri as xs:string,
   $retain-rollback-info as xs:boolean,
   $block-future-merges as xs:boolean
-) as empty-sequence()
+) as xs:string*
 {
   impl:rollback-merge($merged-doc-uri, $retain-rollback-info, $block-future-merges)
 };

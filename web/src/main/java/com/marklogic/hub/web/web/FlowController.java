@@ -16,34 +16,49 @@
 package com.marklogic.hub.web.web;
 
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.util.metrics.tracer.JaegerConfig;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
+import io.opentracing.Scope;
+import io.opentracing.Span;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/api/flows")
+@EnableAsync
 public class FlowController {
     @Autowired
     private FlowManagerService flowManagerService;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getFlows() {
+    public Callable<ResponseEntity<?>> getFlows() {
         List<FlowStepModel> flowSteps;
-        try {
+        Span span = JaegerConfig.buildSpan("getFlows").start();
+        try (Scope scope = JaegerConfig.activate(span)) {
             flowSteps = flowManagerService.getFlows();
+            Collections.sort(flowSteps, (a, b) -> a.getName().compareTo(b.getName()));
         } catch (Exception ex) {
             throw new DataHubException(ex.getMessage(), ex);
+        } finally {
+            span.finish();
         }
-        return new ResponseEntity<>(flowSteps, HttpStatus.OK);
+        return () -> ResponseEntity.ok(flowSteps);
     }
 
     @RequestMapping(method = RequestMethod.POST)

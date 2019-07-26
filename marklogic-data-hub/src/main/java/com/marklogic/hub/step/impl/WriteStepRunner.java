@@ -18,10 +18,10 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
-import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
@@ -52,7 +52,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 public class WriteStepRunner implements StepRunner {
@@ -64,6 +63,8 @@ public class WriteStepRunner implements StepRunner {
     private DatabaseClient stagingClient;
     private String destinationDatabase;
     private int previousPercentComplete;
+    protected long csvFilesProcessed;
+    private String currentCsvFile;
     private Map<String, Object> options;
     private boolean stopOnFailure = false;
     private String jobId;
@@ -243,12 +244,75 @@ public class WriteStepRunner implements StepRunner {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
+        loadStepRunnerParameters();
+        if("csv".equalsIgnoreCase(inputFileType)){
+            options.put("inputFileType", "csv");
+        }
+        options.put("flow", this.flow.getName());
 
+        Collection<String> uris = null;
+        //If current step is the first run step, a job doc is created
+        try {
+            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
+        }
+        catch (Exception e){
+            throw e;
+        }
+
+        try {
+            uris = runFileCollector();
+        } catch (Exception e) {
+            runStepResponse.setCounts(0,0, 0, 0, 0)
+                .withStatus(JobStatus.FAILED_PREFIX + step);
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            runStepResponse.withStepOutput(errors.toString());
+            JsonNode jobDoc = null;
+            try {
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+            }
+            catch (Exception ex) {
+                throw ex;
+            }
+            //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
+            try {
+                return StepRunnerUtil.getResponse(jobDoc, step);
+            }
+            catch (Exception ex)
+            {
+                return runStepResponse;
+            }
+        }
+        return this.runIngester(runStepResponse,uris);
+    }
+
+    @Override
+    public RunStepResponse run(Collection<String> uris) {
+        runningThread = null;
+        RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
+        try {
+            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
+        }
+        catch (Exception e){
+            throw e;
+        }
+        return this.runIngester(runStepResponse,uris);
+    }
+
+    @Override
+    public void stop() {
+        isStopped.set(true);
+        if(writeBatcher != null) {
+            dataMovementManager.stopJob(writeBatcher);
+        }
+    }
+
+    protected void loadStepRunnerParameters(){
         JsonNode comboOptions = null;
         try {
             comboOptions = JSONObject.readInput(JSONObject.writeValueAsString(options));
         } catch (IOException e) {
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         JSONObject obj = new JSONObject(comboOptions);
 
@@ -322,63 +386,6 @@ public class WriteStepRunner implements StepRunner {
         if (inputFilePath == null || inputFileType == null) {
             throw new RuntimeException("File path and type cannot be empty");
         }
-        options.put("flow", this.flow.getName());
-
-        Collection<String> uris = null;
-        //If current step is the first run step, a job doc is created
-        try {
-            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
-        }
-
-        try {
-            uris = runFileCollector();
-        } catch (Exception e) {
-            runStepResponse.setCounts(0,0, 0, 0, 0)
-                .withStatus(JobStatus.FAILED_PREFIX + step);
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
-            runStepResponse.withStepOutput(errors.toString());
-            JsonNode jobDoc = null;
-            try {
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
-            }
-            catch (Exception ex) {
-                throw ex;
-            }
-            //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
-            try {
-                return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex)
-            {
-                return runStepResponse;
-            }
-        }
-        return this.runIngester(runStepResponse,uris);
-    }
-
-    @Override
-    public RunStepResponse run(Collection<String> uris) {
-        runningThread = null;
-        RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        try {
-            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
-        }
-        return this.runIngester(runStepResponse,uris);
-    }
-
-    @Override
-    public void stop() {
-        isStopped.set(true);
-        if(writeBatcher != null) {
-            dataMovementManager.stopJob(writeBatcher);
-        }
     }
 
     private Collection<String> runFileCollector() throws Exception {
@@ -404,11 +411,7 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private RunStepResponse runIngester(RunStepResponse runStepResponse, Collection<String> uris) {
-        AtomicLong successfulEvents = new AtomicLong(0);
-        AtomicLong failedEvents = new AtomicLong(0);
-        AtomicLong successfulBatches = new AtomicLong(0);
-        AtomicLong failedBatches = new AtomicLong(0);
-
+        StepMetrics stepMetrics = new StepMetrics();
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
@@ -451,7 +454,7 @@ public class WriteStepRunner implements StepRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-
+        double uriSize = uris.size();
         Map<String,Object> fullResponse = new HashMap<>();
 
         ServerTransform serverTransform = new ServerTransform("ml:runIngest");
@@ -460,7 +463,6 @@ public class WriteStepRunner implements StepRunner {
         serverTransform.addParameter("flow-name", flow.getName());
         String optionString = jsonToString(options);
         serverTransform.addParameter("options", optionString);
-        double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
 
         writeBatcher = dataMovementManager.newWriteBatcher()
             .withBatchSize(batchSize)
@@ -469,10 +471,10 @@ public class WriteStepRunner implements StepRunner {
             .withTransform(serverTransform)
             .onBatchSuccess(batch ->{
                 //TODO: There is one additional item returned, it has to be investigated
-                successfulEvents.addAndGet(batch.getItems().length-1);
-                successfulBatches.addAndGet(1);
-                logger.debug(String.format("Current SuccessfulEvents: %d - FailedEvents: %d", successfulEvents.get(), failedEvents.get()));
-                runStatusListener(successfulBatches.get()+failedBatches.get(), batchCount, successfulEvents, failedEvents);
+                stepMetrics.getSuccessfulEvents().addAndGet(batch.getItems().length-1);
+                stepMetrics.getSuccessfulBatches().addAndGet(1);
+                logger.debug(String.format("Current SuccessfulEvents: %d - FailedEvents: %d", stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount()));
+                runStatusListener(uriSize, stepMetrics);
                 if (stepItemCompleteListeners.size() > 0) {
                     Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
                         stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
@@ -482,9 +484,9 @@ public class WriteStepRunner implements StepRunner {
                 }
             })
             .onBatchFailure((batch, ex) -> {
-                failedEvents.addAndGet(batch.getItems().length-1);
-                failedBatches.addAndGet(1);
-                runStatusListener(successfulBatches.get()+failedBatches.get(), batchCount, successfulEvents, failedEvents);
+                stepMetrics.getFailedEvents().addAndGet(batch.getItems().length-1);
+                stepMetrics.getFailedBatches().addAndGet(1);
+                runStatusListener(uriSize, stepMetrics);
                 if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                     errorMessages.add(ex.getLocalizedMessage());
                 }
@@ -572,27 +574,27 @@ public class WriteStepRunner implements StepRunner {
             }
 
             String stepStatus;
-            if (failedEvents.get() > 0 && stopOnFailure) {
+            if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
                 stepStatus = JobStatus.STOP_ON_ERROR_PREFIX + step;
             } else if (isStopped.get()){
                 stepStatus = JobStatus.CANCELED_PREFIX + step;
-            } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+            } else if (stepMetrics.getFailedEventsCount() > 0 && stepMetrics.getSuccessfulEventsCount() > 0) {
                 stepStatus = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
-            } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
+            } else if (stepMetrics.getFailedEventsCount() == 0 && stepMetrics.getSuccessfulEventsCount() > 0)  {
                 stepStatus = JobStatus.COMPLETED_PREFIX + step ;
             } else {
                 stepStatus = JobStatus.FAILED_PREFIX + step;
             }
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, successfulEvents.get(), failedEvents.get(), "Ingestion completed");
+                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "Ingestion completed");
             });
 
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
 
             dataMovementManager.stopJob(writeBatcher);
 
-            runStepResponse.setCounts(successfulEvents.get() + failedEvents.get(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
+            runStepResponse.setCounts(stepMetrics.getSuccessfulEventsCount() + stepMetrics.getFailedEventsCount(),stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);
@@ -624,6 +626,34 @@ public class WriteStepRunner implements StepRunner {
         return runStepResponse;
     }
 
+    private void processCsv(JacksonHandle jacksonHandle, File file) {
+        String uri = file.getParent();
+        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+            uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+        }
+        try {
+            uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        ObjectMapper mapper = jacksonHandle.getMapper();
+        JsonNode originalContent = jacksonHandle.get();
+        ObjectNode node = mapper.createObjectNode();
+        node.set("content",originalContent);
+        node.put("file", file.getAbsolutePath());
+        jacksonHandle.set(node);
+        try {
+            writeBatcher.add(String.format(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID()), jacksonHandle);
+        }
+        catch (IllegalStateException e) {
+            logger.error("WriteBatcher has been stopped");
+        }
+        if (!file.getAbsolutePath().equalsIgnoreCase(currentCsvFile)) {
+            currentCsvFile = file.getAbsolutePath();
+            ++csvFilesProcessed;
+        }
+    }
+
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
         FileInputStream docStream = new FileInputStream(file);
         //note these ORs are for forward compatibility if we swap out the filecollector for another lib
@@ -635,19 +665,7 @@ public class WriteStepRunner implements StepRunner {
             try {
                 if(! writeBatcher.isStopped()) {
                     Stream<JacksonHandle> contentStream = splitter.split(docStream);
-                    String uri = file.getParent();
-                    if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
-                        uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
-                    }
-                    uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
-                    Stream<DocumentWriteOperation> documentStream =  DocumentWriteOperation.from(
-                        contentStream, DocumentWriteOperation.uriMaker(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json")));
-                    try {
-                        writeBatcher.addAll(documentStream);
-                    }
-                    catch (IllegalStateException e) {
-                        logger.error("WriteBatcher has been stopped");
-                    }
+                    contentStream.forEach(jacksonHandle -> this.processCsv(jacksonHandle, file));
                 }
             } catch (Exception e) {
                throw new RuntimeException(e);
@@ -735,13 +753,30 @@ public class WriteStepRunner implements StepRunner {
         return uri;
     }
 
-    private void runStatusListener(long totalRunBatches, double batchCount, AtomicLong successfulEvents, AtomicLong failedEvents) {
-        int percentComplete = (int) (((double) totalRunBatches/ batchCount) * 100.0);
-        if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
-            previousPercentComplete = percentComplete;
-            stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING_PREFIX + step, successfulEvents.get(), failedEvents.get(), "Ingesting");
-            });
+    //percentComplete for csv files is (csvFilesProcessed/ urisCount) * 100.0
+    //The number of csv files would probably be less than that of regular files, so the step status listeners are updated more frequently
+    //'uris' is backed by DiskQueue whose size changes as the Collection is iterated, so size is calculated before iteration
+    protected void runStatusListener(double uriSize, StepMetrics stepMetrics) {
+        double batchCount = Math.ceil(uriSize / (double) batchSize);
+        long totalRunBatches = stepMetrics.getSuccessfulBatchesCount() + stepMetrics.getFailedBatchesCount();
+        int percentComplete;
+        if("csv".equalsIgnoreCase(inputFileType)) {
+            percentComplete = (int) (((double) csvFilesProcessed/ uriSize) * 100.0);
+            if (percentComplete != previousPercentComplete && (percentComplete % 2 == 0)) {
+                previousPercentComplete = percentComplete;
+                stepStatusListeners.forEach((StepStatusListener listener) -> {
+                    listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING_PREFIX + step, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "Ingesting");
+                });
+            }
+        }
+        else {
+            percentComplete = (int) (((double) totalRunBatches/ batchCount) * 100.0);
+            if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
+                previousPercentComplete = percentComplete;
+                stepStatusListeners.forEach((StepStatusListener listener) -> {
+                    listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING_PREFIX + step, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "Ingesting");
+                });
+            }
         }
     }
 

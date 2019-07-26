@@ -18,6 +18,7 @@ package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -200,5 +201,30 @@ public class Step {
         }
 
         return true;
+    }
+
+    public boolean isMappingStep() {
+        return StepDefinition.StepDefinitionType.MAPPING.equals(stepDefinitionType);
+    }
+
+    public boolean isCustomStep() {
+        return StepDefinition.StepDefinitionType.CUSTOM.equals(stepDefinitionType);
+    }
+
+    /**
+     * @return the name of the mapping if this is a mapping step and the mapping is defined in the step options
+     */
+    public String getMappingName() {
+        if (isMappingStep() && options != null) {
+            Object obj = options.get("mapping");
+            if (obj != null && obj instanceof ObjectNode) {
+                ObjectNode mapping = (ObjectNode)obj;
+                if (mapping.has("name")) {
+                    return mapping.get("name").asText();
+                }
+            }
+        }
+
+        return null;
     }
 }

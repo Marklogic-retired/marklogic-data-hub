@@ -22,6 +22,8 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
+import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
@@ -45,6 +47,8 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
 
     @Autowired
     private HubConfig hubConfig;
+
+    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -104,8 +108,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
-                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                meta.getCollections().add("http://marklogic.com/data-hub/flow");
+                DocumentMetadataHandle meta = buildDocumentMetadata("http://marklogic.com/data-hub/flow");
 
                 if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
                     stagingFlowDocumentWriteSet.add("/flows/" + flowFile.getName(), meta, handle);
@@ -122,8 +125,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
-                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                meta.getCollections().add("http://marklogic.com/data-hub/step-definition");
+                DocumentMetadataHandle meta = buildDocumentMetadata("http://marklogic.com/data-hub/step-definition");
 
                 if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
                     stagingStepDocumentWriteSet.add("/step-definitions/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
@@ -145,6 +147,21 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
             finalDocMgr.write(stagingFlowDocumentWriteSet);
         }
 
+    }
+
+    /**
+     * Per DHFPROD-2772, module permissions are being assigned to hub artifacts, which matches what is done for user
+     * artifacts. This ensures that in ML 10, each hub artifact has some permissions on it and can thus be accessed by
+     * a non-admin user when DHF is installed by a user without any default permissions (e.g. the admin user).
+     *
+     * @param collections
+     * @return
+     */
+    protected DocumentMetadataHandle buildDocumentMetadata(String... collections) {
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().addAll(collections);
+        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+        return meta;
     }
 
     public void setHubConfig(HubConfig hubConfig) {

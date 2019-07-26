@@ -3,9 +3,11 @@ xquery version "1.0-ml";
 module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms";
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
-  at "/com.marklogic.smart-mastering/constants.xqy";
+at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace thsr = "http://marklogic.com/xdmp/thesaurus"
-  at "/MarkLogic/thesaurus.xqy";
+at "/MarkLogic/thesaurus.xqy";
 
 declare namespace match = "http://marklogic.com/smart-mastering/matcher";
 
@@ -27,8 +29,6 @@ declare function algorithms:thesaurus(
 )
 {
   let $property-name := $expand-xml/@property-name
-  let $property-def := $options-xml/*:property-defs/*:property[@name = $property-name]
-  let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
   let $thesaurus := $expand-xml/*:thesaurus
   where fn:exists($thesaurus)
   return
@@ -36,24 +36,25 @@ declare function algorithms:thesaurus(
     let $entries := thsr:lookup($thesaurus, fn:lower-case($value))
     where fn:exists($entries)
     return
-      thsr:expand(
-        if ($options-xml/match:data-format = $const:FORMAT-JSON) then
-          cts:json-property-value-query(
-            fn:string($qname),
-            fn:lower-case($value),
-            "case-insensitive",
-            $expand-xml/@weight
-          )
-        else
-          cts:element-value-query(
-            $qname,
-            fn:lower-case($value),
-            "case-insensitive",
-            $expand-xml/@weight
-          ),
-        $entries,
-        $expand-xml/@weight,
-        (),
-        $expand-xml/*:filter/*
-      )
+      let $query := helper-impl:property-name-to-query($options-xml, $property-name)(fn:lower-case($value), $expand-xml/@weight)
+      return expand-query($query, $entries, $expand-xml)
+};
+
+declare function expand-query(
+  $query as cts:query,
+  $entries as element(thsr:entry)*,
+  $expand-xml as element(match:expand)
+) as cts:query
+{
+  let $weight := $expand-xml/@weight
+  let $filters := $expand-xml/*:filter/*
+  return
+  (: thsr:expand does not yet work properly on cts:json-property-scope-query, so must run thsr:expand on the child query instead :)
+    if ($query instance of cts:json-property-scope-query) then
+      let $property-name := cts:json-property-scope-query-property-name($query)
+      let $child-query := cts:json-property-scope-query-query($query)
+      let $expanded-query := thsr:expand($child-query, $entries, $weight, (), $filters)
+      return cts:json-property-scope-query($property-name, $expanded-query)
+    else
+      thsr:expand($query, $entries, $weight, (), $filters)
 };

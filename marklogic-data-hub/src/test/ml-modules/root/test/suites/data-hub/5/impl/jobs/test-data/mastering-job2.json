@@ -1,0 +1,65 @@
+{
+  "job": {
+    "jobId": "864ab47f-225c-493d-8e35-ab76ee1d02e6",
+    "flow": "ingestion_mapping_mastering-flow",
+    "user": "admin",
+    "lastAttemptedStep": "3",
+    "lastCompletedStep": "3",
+    "jobStatus": "finished",
+    "timeStarted": "2019-06-26T23:12:04.09029Z",
+    "timeEnded": "2019-06-26T23:12:04.744321Z",
+    "stepResponses": {
+      "1": {
+        "flowName": "ingestion_mapping_mastering-flow",
+        "stepName": "ingest-step-json",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 5,
+        "successfulEvents": 5,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:12:04.111655Z",
+        "stepEndTime": "2019-06-26T23:12:04.229183Z"
+      },
+      "2": {
+        "flowName": "ingestion_mapping_mastering-flow",
+        "stepName": "mapping-step-json",
+        "stepDefinitionName": "default-mapping",
+        "stepDefinitionType": "mapping",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 2",
+        "totalEvents": 5,
+        "successfulEvents": 5,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:12:04.27244Z",
+        "stepEndTime": "2019-06-26T23:12:04.408544Z"
+      },
+      "3": {
+        "flowName": "ingestion_mapping_mastering-flow",
+        "stepName": "json-mastering-step-json",
+        "stepDefinitionName": "default-mastering",
+        "stepDefinitionType": "mastering",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 3",
+        "totalEvents": 5,
+        "successfulEvents": 5,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:12:04.449693Z",
+        "stepEndTime": "2019-06-26T23:12:04.715627Z"
+      }
+    }
+  }
+}

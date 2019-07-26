@@ -1,8 +1,6 @@
-import {AppPage} from "../appPage";
-import {pages} from '../page';
-import {browser, by, element, ExpectedConditions as EC, Key} from "protractor";
-import {isBrowserEvents} from "@angular/core/src/render3/discovery_utils";
-import editFlowPage from "../flows/editFlow";
+import { AppPage } from "../appPage";
+import { pages } from '../page';
+import { browser, by, element, ExpectedConditions as EC, Key } from "protractor";
 
 export class MasteringStep extends AppPage {
 
@@ -370,6 +368,10 @@ export class MasteringStep extends AppPage {
 
   get matchOptionPropertyToMatchAddButton() {
     return element(by.css(".add-property-btn"));
+  }
+
+  get matchOptionPropertyToMatchRemoveButton() {
+    return element(by.css(".remove-property-btn"));
   }
 
   async clickPropertyToMatchAddButton() {

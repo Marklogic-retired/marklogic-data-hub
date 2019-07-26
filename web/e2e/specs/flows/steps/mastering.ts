@@ -1,10 +1,9 @@
-import {browser, by, ExpectedConditions as EC, Key, Ptor} from 'protractor';
+import { browser, ExpectedConditions as EC } from 'protractor';
 import loginPage from '../../../page-objects/auth/login';
 import appPage from '../../../page-objects/appPage';
 import manageFlowPage from "../../../page-objects/flows/manageFlows";
 import editFlowPage from "../../../page-objects/flows/editFlow";
 import stepsPage from "../../../page-objects/steps/steps";
-import flowPage from "../../../page-objects/flows/flows";
 import masteringStepPage from "../../../page-objects/steps/masteringStep";
 import entityPage from "../../../page-objects/entities/entities";
 import flowData from "../../../test-objects/flowConfig";
@@ -173,12 +172,18 @@ export default function (qaProjectDir) {
       await browser.wait(EC.elementToBeClickable(masteringStepPage.matchOptionDialogPropertyOptions("fname")));
       await masteringStepPage.clickMatchOptionDialogPropertyOption("fname");
       await masteringStepPage.setMatchOptionDialogWeight(5);
+      await masteringStepPage.matchOptionPropertyToMatchRemoveButton.click();
       await masteringStepPage.clickMatchOptionCancelSave("save");
       await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
       await browser.sleep(2000);
-      await expect(masteringStepPage.matchOptionProperty('lname-fname').getText()).toContain('lname, fname');
-      await expect(masteringStepPage.matchOptionType('lname-fname').getText()).toContain('Reduce');
-      await expect(masteringStepPage.matchOptionWeight("lname-fname").getText()).toContain('5');
+      await expect(masteringStepPage.matchOptionProperty('lname').getText()).toContain('lname');
+      await expect(masteringStepPage.matchOptionType('lname').getText()).toContain('Reduce');
+      await expect(masteringStepPage.matchOptionWeight('lname').getText()).toContain('5');
+      await masteringStepPage.clickMatchOptionMenu('lname');
+      await masteringStepPage.clickMatchOptionMenuOption('delete');
+      await browser.wait(EC.visibilityOf(masteringStepPage.optionDialogWindow));
+      await masteringStepPage.clickOptionCancelDeleteButton('YES');
+      await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
     });
 
     it('should add match option for custom match type', async function () {
@@ -223,7 +228,7 @@ export default function (qaProjectDir) {
     });
 
     it('should remove match options', async function () {
-      let options = ['eyecolor', 'synonym', 'fname', 'zip', 'lname', 'lname-fname'];
+      let options = ['eyecolor', 'synonym', 'fname', 'zip', 'lname'];
       for (let option of options) {
         await masteringStepPage.clickMatchOptionMenu(option);
         await masteringStepPage.clickMatchOptionMenuOption('delete');
@@ -507,6 +512,68 @@ export default function (qaProjectDir) {
           await masteringStepPage.clickOptionCancelDeleteButton('YES');
           await browser.wait(EC.invisibilityOf(masteringStepPage.optionDialogWindow));
         }
+    });
+
+    it('should select target format of the step', async function () {
+      await appPage.clickFlowTab();
+      await manageFlowPage.clickFlowname(flow.flowName);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await editFlowPage.clickNewStepButton();
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await stepsPage.clickStepTypeDropDown();
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mastering")));
+      await stepsPage.clickStepTypeOption("Mastering");
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await stepsPage.setStepName("Mastering");
+      await stepsPage.clickSourceTypeRadioButton("collection");
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await stepsPage.clickStepSourceCollectionDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions("json-ingestion")));
+      await stepsPage.clickStepSourceCollectionOption("json-ingestion");
+      await stepsPage.clickStepTargetEntityDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Person")));
+      await stepsPage.clickStepTargetEntityOption("Person");
+      await stepsPage.clickAdvSettingsExpandCollapse();
+      await stepsPage.clickTargetFormatDropDown();
+      await stepsPage.clickTargetFormatOption("XML");
+      await stepsPage.clickTargetFormatDropDown();
+      await stepsPage.clickTargetFormatOption("JSON");
+      await stepsPage.clickStepCancelSave("cancel");
+    });
+
+    it('should add additional target collections', async function () {
+      await appPage.clickFlowTab();
+      await manageFlowPage.clickFlowname(flow.flowName);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await editFlowPage.clickNewStepButton();
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await stepsPage.clickStepTypeDropDown();
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mastering")));
+      await stepsPage.clickStepTypeOption("Mastering");
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await stepsPage.setStepName("Mastering");
+      await stepsPage.clickSourceTypeRadioButton("collection");
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await stepsPage.clickStepSourceCollectionDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions("json-ingestion")));
+      await stepsPage.clickStepSourceCollectionOption("json-ingestion");
+      await stepsPage.clickStepTargetEntityDropDown();
+      await browser.sleep(2000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Person")));
+      await stepsPage.clickStepTargetEntityOption("Person");
+      await stepsPage.clickAdvSettingsExpandCollapse();
+      await browser.sleep(1000);
+      await stepsPage.clickAddAdditionalCollectionButton();
+      await browser.sleep(500);
+      await stepsPage.setAdditionalCollection(0, "MyCollection1");
+      await stepsPage.setAdditionalCollection(1, "MyCollection2");
+      await stepsPage.clickRemoveAdditionalCollectionButton(0);
+      await stepsPage.clickStepCancelSave("cancel");
     });
 
      it('should remove flow', async function () {

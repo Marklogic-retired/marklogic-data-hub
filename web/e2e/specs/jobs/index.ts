@@ -1,7 +1,7 @@
 import runJobs from './jobs'
 
-export default function () {
+export default function (qaProjectDir) {
   describe('jobs', function () {
-    runJobs()
+    runJobs(qaProjectDir)
   })
 }

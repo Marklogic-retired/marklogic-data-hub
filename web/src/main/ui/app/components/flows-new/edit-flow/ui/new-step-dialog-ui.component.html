@@ -23,18 +23,39 @@
       </mat-radio-group>
     </div>
     <mat-form-field *ngIf="hasSelectedCollection && !isIngestion">
-      <mat-select id="step-source-collection" class="type-select" [placeholder]="'Source Collection' + (sourceRequired ? '*' : '')" formControlName="sourceCollection">
-        <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
+      <mat-select
+        [matTooltip]="tooltips.sourceCollection"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"  
+        id="step-source-collection" 
+        class="type-select" 
+        [placeholder]="'Source Collection' + (sourceRequired ? '*' : '')" 
+        formControlName="sourceCollection">
+          <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field id="step-source-query" *ngIf="hasSelectedQuery && !isIngestion" >
-      <textarea matInput [placeholder]="'Source Query' + (sourceRequired ? '*' : '')" formControlName="sourceQuery"></textarea>
+      <textarea
+        [matTooltip]="tooltips.sourceQuery"
+        matTooltipPosition="left"
+        matTooltipShowDelay="500"
+        matTooltipHideDelay="500"  
+        matInput [placeholder]="'Source Query' + (sourceRequired ? '*' : '')" 
+        formControlName="sourceQuery">
+      </textarea>
     </mat-form-field>
 
-    <mat-form-field *ngIf="!isIngestion">
+    <mat-form-field *ngIf="!isIngestion"
+      [matTooltip]="tooltips.targetEntity"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
       <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="entityRequired">
+        <mat-option *ngIf="isCustom"></mat-option>
         <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
       </mat-select>
+      <mat-error id="step-entity-error" *ngIf="newStepForm.get('targetEntity').invalid">Target Entity is required.</mat-error>
     </mat-form-field>
 
     <mat-accordion>
@@ -45,7 +66,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-form-field *ngIf="!isIngestion">
+        <mat-form-field *ngIf="!isIngestion">  
           <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
@@ -72,7 +93,7 @@
         <div [formGroupName]="i" class="additional-collections-group">
           <mat-form-field>
             <mat-label>Collection Name</mat-label>
-            <input [class]="'add-target-collecions-' + i" matInput formControlName="addCollection"/>
+            <input [class]="'add-target-collections-' + i" matInput formControlName="addCollection"/>
             <mat-error id="'add-target-collections-' + i + '-error">Enter a string</mat-error>
           </mat-form-field>
           <button [id]="'remove-target-collection-btn-' + i" mat-icon-button (click)="onAddRemoveCollection(i)">

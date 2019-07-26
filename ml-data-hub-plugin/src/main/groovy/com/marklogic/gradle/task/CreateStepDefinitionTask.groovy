@@ -31,12 +31,15 @@ class CreateStepDefinitionTask extends HubTask {
     void createStepDefinition() {
         def propName = "stepDefName"
         def propType = "stepDefType"
+        def propFormat = "format"
 
         String stepDefName = project.hasProperty(propName) ? project.property(propName) : null
         if (stepDefName == null) {
             throw new StepDefNameRequiredException()
         }
         String stepDefType = project.hasProperty(propType) ? project.property(propType) : StepDefinition.StepDefinitionType.CUSTOM
+
+        String format = project.hasProperty(propFormat) ? project.property(propFormat) : "sjs"
 
         if(!StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType)) {
             throw new StepDefTypeInvalidException()
@@ -52,10 +55,13 @@ class CreateStepDefinitionTask extends HubTask {
 
         if (stepDefinitionManager.getStepDefinition(stepDefinition.name, stepDefinition.type) == null) {
             Scaffolding scaffolding = getScaffolding()
-            scaffolding.createCustomModule(stepDefName, stepDefType)
-
-            stepDefinition.setModulePath("/custom-modules/" + stepDefType.toLowerCase() + "/" + stepDefName + "/main.sjs")
-
+            scaffolding.createCustomModule(stepDefName, stepDefType, format)
+            if("sjs".equalsIgnoreCase(format) || "xqy".equalsIgnoreCase(format)) {
+                stepDefinition.setModulePath("/custom-modules/" + stepDefType.toLowerCase() + "/" + stepDefName + "/main.sjs")
+            }
+            else {
+                throw new IllegalArgumentException("Invalid code format. The allowed formats are 'xqy' or 'sjs'")
+            }
             stepDefinitionManager.saveStepDefinition(stepDefinition)
         }
         else {

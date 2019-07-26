@@ -34,6 +34,7 @@ import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
@@ -95,10 +96,10 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private LoadHubArtifactsCommand loadHubArtifactsCommand;
-    
+
     @Autowired
     private Versions versions;
-    
+
     @Autowired
     private LegacyFlowManagerImpl legacyFlowManager;
 
@@ -542,20 +543,15 @@ public class DataHubImpl implements DataHub {
 
         logger.warn("Installing the Data Hub into MarkLogic");
 
-        // Turning off CMA for resources that have bugs in ML 9.0-7/8
         AppConfig appConfig = hubConfig.getAppConfig();
-        appConfig.getCmaConfig().setCombineRequests(false);
-        appConfig.getCmaConfig().setDeployDatabases(false);
-        appConfig.getCmaConfig().setDeployRoles(false);
-        appConfig.getCmaConfig().setDeployUsers(false);
+        disableSomeCmaUsage(appConfig);
 
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
-            AppConfig roleConfig = hubConfig.getAppConfig();
             SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
             roleDeployer.setCommands(getSecurityCommandList());
-            roleDeployer.deploy(roleConfig);
+            roleDeployer.deploy(appConfig);
         } catch (HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
                 logger.warn("No manage client for security installs.  Assuming DHS provisioning already there");
@@ -567,6 +563,59 @@ public class DataHubImpl implements DataHub {
         HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
         finalDeployer.deploy(appConfig);
+    }
+
+    /**
+     * Turns off CMA for some resources that have bbugs in ML 9.0-7/8.
+     *
+     * @param appConfig
+     */
+    protected void disableSomeCmaUsage(AppConfig appConfig) {
+        appConfig.getCmaConfig().setCombineRequests(false);
+        appConfig.getCmaConfig().setDeployDatabases(false);
+        appConfig.getCmaConfig().setDeployRoles(false);
+        appConfig.getCmaConfig().setDeployUsers(false);
+    }
+
+    public void dhsInstall(HubDeployStatusListener listener) {
+        prepareAppConfigForInstallingIntoDhs(hubConfig);
+
+        HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        dhsDeployer.setCommands(buildCommandListForInstallingIntoDhs());
+        dhsDeployer.deploy(hubConfig.getAppConfig());
+    }
+
+    protected void prepareAppConfigForInstallingIntoDhs(HubConfig hubConfig) {
+        AppConfig appConfig = hubConfig.getAppConfig();
+
+        appConfig.setModuleTimestampsPath(null);
+        appConfig.setCreateForests(false);
+        appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
+        disableSomeCmaUsage(appConfig);
+
+        // 8000 is not available in DHS
+        int port = hubConfig.getPort(DatabaseKind.STAGING);
+        logger.info("Setting App-Services port to: " + port);
+        appConfig.setAppServicesPort(port);
+
+        if (hubConfig.getSimpleSsl(DatabaseKind.STAGING)) {
+            logger.info("Enabling simple SSL for App-Services");
+            appConfig.setAppServicesSimpleSslConfig();
+        }
+
+        String authMethod = hubConfig.getAuthMethod(DatabaseKind.STAGING);
+        if (authMethod != null) {
+            logger.info("Setting security context type for App-Services to: " + authMethod);
+            appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
+        }
+    }
+
+    protected List<Command> buildCommandListForInstallingIntoDhs() {
+        List<Command> commands = new ArrayList<>();
+        commands.addAll(buildCommandMap().get("mlDatabaseCommands"));
+        commands.add(loadUserArtifactsCommand);
+        commands.add(loadUserModulesCommand);
+        return commands;
     }
 
     /**
@@ -922,8 +971,8 @@ public class DataHubImpl implements DataHub {
         boolean alreadyInitialized = project.isInitialized();
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
-             * But since it requires 'hubConfig' and 'versions', for now 
-             * leaving it here 
+             * But since it requires 'hubConfig' and 'versions', for now
+             * leaving it here
              */
             if(alreadyInitialized) {
                 // The version provided in "mlDHFVersion" property in gradle.properties.

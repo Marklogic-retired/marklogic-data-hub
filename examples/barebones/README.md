@@ -1,44 +1,15 @@
-# Barebones Example
+This example demonstrates the simplest way to get started with DHF using Gradle. 
 
-This example shows you the zen of Data Hub Framework. Simply drop a `build.gradle` into a directory with these contents:
+Assuming you have Gradle installed already, first initialize this project folder:
 
-build.gradle:
-```groovy
-plugins {
-    // this plugin lets you create properties files
-    // for multiple environments... like dev, qa, prod
-    id 'net.saliman.properties' version '1.4.6'
+    gradle hubInit
 
-    // this is the data hub framework gradle plugin
-    // it includes ml-gradle. This plugin is what lets you
-    // run DHF (Data Hub Framework) tasks from the
-    // command line
-    id 'com.marklogic.ml-data-hub' version '4.0.3'
-}
-```
+This will generate a gradle-local.properties file with commented-out mlUsername and mlPassword properties. You should 
+un-comment these and set them to a MarkLogic user with the "admin" or "manage-admin" and "security" roles (for testing purposes, 
+the "admin" user will work).
 
-Next, Initialize your DHF app:
+Then deploy an initial DHF application:
 
-```bash
-gradle hubInit
-```
+    gradle -i mlDeploy
 
-Then Bootstrap your DHF app:
-
-```bash
-gradle mlDeploy
-```
-
-Then Deploy your custom modules:
-
-```bash
-gradle mlLoadModules
-```
-
-You can use scaffolding commands to configure flows.
-
-```bash
-gradle hubCreateInputFlow
-gradle hubCreateHarmonizeFlow
-```
 For a complete list of gradle tasks, check here: [https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks](https://marklogic.github.io/marklogic-data-hub/docs/gradle-tasks)

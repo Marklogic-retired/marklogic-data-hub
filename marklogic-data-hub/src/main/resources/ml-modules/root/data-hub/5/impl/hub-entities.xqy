@@ -112,6 +112,7 @@ declare %private function hent:fix-options($nodes as node()*)
       case element(search:options) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
+          $n/@*,
           <search:constraint name="Collection">
             <search:collection/>
           </search:constraint>,
@@ -125,14 +126,19 @@ declare %private function hent:fix-options($nodes as node()*)
               <search:field name="datahubCreatedByStep"/>
             </search:value>
           </search:constraint>,
-          hent:fix-options(($n/@*, $n/node()))
+          hent:fix-options($n/node())
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-options(($n/@*, $n/node()))
+          $n/@*,
+          hent:fix-options($n/node()),
+
+          let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
+          where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
+          return <search:facet-option>limit=25</search:facet-option>
         }
       case text() return
         fn:replace($n, "es:", "*:")
@@ -226,7 +232,8 @@ declare function hent:dump-tde($entities as json:array)
       $definition => map:get("properties") => map:put($generated-primary-key-column, map:entry("datatype", "string"))
     )
   let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
-  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions)
+  let $entity-name := map:get(map:get($uber-model, "info"), "title")
+  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions, $entity-name)
 };
 
 declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
@@ -234,14 +241,20 @@ declare variable $default-invalid-values as element(tde:invalid-values) := eleme
 (:
   this method doctors the TDE output from ES
 :)
+
 declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map)
+{
+  hent:fix-tde($nodes, $entity-model-contexts, $uber-definitions, ())
+};
+
+declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map, $entity-name as xs:string?)
 {
   for $n in $nodes
   return
     typeswitch($n)
       case document-node() return
         document {
-          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element(tde:nullable) return
         $default-nullable
@@ -274,9 +287,16 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         element { fn:node-name($n) } {
           $n/namespace::node(),
           if ($n = $entity-model-contexts) then
-            fn:replace(fn:string($n),"^\./", ".//")
+            fn:replace(fn:replace(fn:string($n),"^\./", ".//"), "(.)$", "$1[node()]")
           else
-            $n/node()
+          if(fn:count($n) = 1) then
+            let $outer-context := fn:replace(fn:string($n),"//\*:instance", "/*:envelope/*:instance")
+            return if(fn:not(fn:empty($entity-name))) then
+              fn:concat($outer-context, "[*:", $entity-name, "]")
+            else
+              $outer-context
+          else
+          $n/node()
         }
       case element(tde:column) return
         element { fn:node-name($n) } {
@@ -333,7 +353,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                 }
               }
             ) else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element() return
         element { fn:node-name($n) } {

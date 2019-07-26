@@ -1,0 +1,31 @@
+{
+  "info" : {
+    "title" : "Employee",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.com/",
+    "description" : "An Employee entity"
+  },
+  "definitions" : {
+    "Employee" : {
+      "description" : "The Employee entity root.",
+      "primaryKey" : "ID",
+      "required" : ["ID", "HireDate","Salary" ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "ID" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "HireDate" : {
+          "datatype" : "date"
+        },
+        "Salary" : {
+          "datatype" : "double"
+        }
+      }
+    }
+  }
+}

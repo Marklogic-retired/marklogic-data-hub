@@ -3,13 +3,22 @@
   <mat-form-field layout-fill>
     <mat-label>Name</mat-label>
     <input id="match-threshold-name" matInput formControlName="label" required />
+    <mat-error id="match-threshold-name-error" *ngIf="form.get('label').invalid">Name is required</mat-error>
   </mat-form-field>
-  <mat-form-field layout-fill>
-    <mat-label>Weight</mat-label>
-    <input id="match-threshold-weight" matInput formControlName="above" required [errorStateMatcher]="instantErrorMatcher"/>
+  <mat-form-field
+    [matTooltip]="tooltips.weightThreshold"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500" layout-fill>
+    <mat-label>Weight Threshold</mat-label>
+    <input id="match-threshold-weight" matInput formControlName="above" required  title="" [errorStateMatcher]="instantErrorMatcher"/>
     <mat-error id="match-threshold-weight-error" *ngIf="form.get('above').invalid">A number is required</mat-error>
   </mat-form-field>
-  <mat-form-field layout-fill>
+  <mat-form-field
+    [matTooltip]="tooltips.actionThreshold"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500"  layout-fill>
     <mat-select id="match-threshold-action" placeholder="Action" formControlName="action" [(value)]="selectedAction" required>
       <mat-option value="merge">Merge</mat-option>
       <mat-option value="notify">Notify</mat-option>

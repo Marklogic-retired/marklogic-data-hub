@@ -1,6 +1,6 @@
-import {AppPage} from "../appPage";
+import { AppPage } from "../appPage";
 import { pages } from '../page';
-import {browser, by, ExpectedConditions as EC, element} from "protractor";
+import { browser, by, ExpectedConditions as EC, element } from "protractor";
 import manageFlowPage from "../flows/manageFlows";
 
 export class Steps extends AppPage {
@@ -141,7 +141,7 @@ export class Steps extends AppPage {
 
   async clickAdvSettingsExpandCollapse() {
     let panel = this.advSettingsExpandCollapse;
-    return await this.advSettingsExpandCollapse.click();
+    return await panel.click();
   }
 
   get stepSourceDatabaseDropDown() {
@@ -178,6 +178,52 @@ export class Steps extends AppPage {
   async clickStepTargetDatabaseOption(option: string) {
     let stepTargetDatabaseOption = this.stepTargetDatabaseOptions(option);
     return await stepTargetDatabaseOption.click();
+  }
+
+  get targetFormatDropDown() {
+    return element(by.id("step-output-format"));
+  }
+
+  stepTargetFormatOptions(option: string) {
+    return element(by.cssContainingText('mat-option .mat-option-text', option));
+  }
+
+  async clickTargetFormatDropDown(){
+    let dropDown = this.targetFormatDropDown;
+    return await dropDown.click();
+  }
+
+  async clickTargetFormatOption(option: string) {
+    let stepTargetFormatOptions = this.stepTargetFormatOptions(option);
+    return await stepTargetFormatOptions.click();
+  }
+
+  additionalCollectionToAdd(collectionNumber: number) {
+    return element(by.css(`.add-target-collections-${collectionNumber}`));
+  }
+
+  get addAdditionalCollectionButton() {
+    return element(by.id("add-additional-collection-btn"));
+  }
+
+  async clickAddAdditionalCollectionButton() {
+    let button = this.addAdditionalCollectionButton;
+    return await button.click();
+  }
+
+  async setAdditionalCollection(collectionNumber: number, collectionName: string) {
+    let inputField = this.additionalCollectionToAdd(collectionNumber);
+    await inputField.clear();
+    return await inputField.sendKeys(collectionName);
+  }
+
+  removeAdditionalCollectionButton(collectionNumber: number) {
+    return element(by.css(`#remove-target-collection-btn-${collectionNumber}`));
+  }
+
+  async clickRemoveAdditionalCollectionButton(collectionNumber: number) {
+    let button = this.removeAdditionalCollectionButton(collectionNumber);
+    return await button.click();
   }
 
   /**

@@ -81,6 +81,9 @@ export class Step {
     if (json.stepDefinitionName) {
       newStep.stepDefinitionName = json.stepDefinitionName;
     }
+    if(json.description){
+      newStep.description = json.description;
+    }
     if (json.stepDefinitionType) {
       newStep.stepDefinitionType = json.stepDefinitionType;
     }

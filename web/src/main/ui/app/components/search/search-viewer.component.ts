@@ -43,6 +43,9 @@ export class SearchViewerComponent implements OnInit, OnDestroy {
      this.currentDatabase = params['database'];
      this.searchService.getDoc(this.currentDatabase, this.uri).subscribe(doc => {
        this.doc = this.formatData(doc);
+       if(this.doc.length > 200000) {
+         this.doc = this.doc.substr(0, 200000) + '\n\n This document is too large for this viewer and has been truncated.';
+       }
      });
    });
   }

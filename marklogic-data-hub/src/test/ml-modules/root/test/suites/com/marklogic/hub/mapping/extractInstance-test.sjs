@@ -65,7 +65,6 @@ function extractInstanceDefaultSrcCntxtJson() {
   ];
 }
 
-// Here the sourceContext in the mapping is '//'
 function extractInstanceCustomSrcCntxtJson() {
   const modelName = "Order";
   const model = {
@@ -92,7 +91,7 @@ function extractInstanceCustomSrcCntxtJson() {
     "description": "Default description",
     "version": 1,
     "targetEntityType": "http://marklogic.com/Order-0.0.1/Order",
-    "sourceContext": "//",
+    "sourceContext": "/",
     "sourceURI": "",
     "properties": {"OrderID": {"sourcedFrom": "OrderID"}, "CustomerID": {"sourcedFrom": "CustomerID"}}
   };
@@ -123,7 +122,6 @@ function extractInstanceCustomSrcCntxtJson() {
   ];
 }
 
-// Here the sourceContext in mapping is '//'
 function extractInstanceDefaultSrcCntxtXml() {
   const modelName = "Order";
   const model = {

@@ -59,7 +59,7 @@ storiesOf('Components|Mappings', module)
           srcprop1: {sourcedFrom: "entityprop1"},
           srcprop2: {sourcedFrom: "entityprop2"}
         },
-        sourceContext: "//",
+        sourceContext: "/",
         sourceURI: "/example.csv",
         targetEntityType: "http://example.org/Widget-0.0.1/Widget",
         version: 1

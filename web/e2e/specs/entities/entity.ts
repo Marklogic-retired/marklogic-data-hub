@@ -1,9 +1,8 @@
-import {browser, by, ExpectedConditions as EC, Key} from 'protractor';
+import { browser, by, ExpectedConditions as EC } from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import entityPage from '../../page-objects/entities/entities';
 import appPage from '../../page-objects/appPage';
 import settingsPage from '../../page-objects/settings/settings'
-import dashboardPage from '../../page-objects/dashboard/dashboard';
 
 const fs = require('fs-extra');
 
@@ -68,7 +67,7 @@ export default function (qaProjectDir) {
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityTitle.sendKeys('Product');
       await entityPage.entityDescription.sendKeys('Product description');
-      await entityPage.entityURI.sendKeys('Product URI');
+      await entityPage.setEntityURI("http://example.org/productUri/");
       await entityPage.saveEntity.click();
       await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -77,7 +76,7 @@ export default function (qaProjectDir) {
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await entityPage.toolsButton.click();
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('Product description');
-      await expect(entityPage.getEntityBoxURI('Product')).toEqual('Product URI');
+      await expect(entityPage.getEntityBoxURI('Product')).toEqual('http://example.org/productUri/');
       // move entity Product
       console.log('shifting Product entity');
       await entityPage.selectEntity('Product');
@@ -100,7 +99,7 @@ export default function (qaProjectDir) {
       await entityPage.entityTitle.sendKeys('Person');
       await entityPage.setEntityVersion('1');
       await entityPage.entityDescription.sendKeys('Person description');
-      await entityPage.entityURI.sendKeys('Person URI');
+      await entityPage.setEntityURI("http://example.org/personUri/");
       console.log('add properties to Person entity');
       let lastProperty = entityPage.lastProperty;
       // add id property
@@ -135,7 +134,7 @@ export default function (qaProjectDir) {
       await entityPage.toolsButton.click();
       await expect(entityPage.getEntityBoxVersion('Person')).toEqual('v1');
       await expect(entityPage.getEntityBoxDescription('Person')).toEqual('Person description');
-      await expect(entityPage.getEntityBoxURI('Person')).toEqual('Person URI');
+      await expect(entityPage.getEntityBoxURI('Person')).toEqual("http://example.org/personUri/");
     });
 
     it('should verify properties to Person entity', async function () {
@@ -177,9 +176,9 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(entityPage.entityEditor));
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       await entityPage.entityDescription.sendKeys('Order description');
-      await entityPage.entityURI.sendKeys('Order URI');
+      await entityPage.setEntityURI("http://example.org/orderUri/");
       await expect(entityPage.getEntityBoxDescription('Order')).toEqual('Order description');
-      await expect(entityPage.getEntityBoxURI('Order')).toEqual('Order URI');
+      await expect(entityPage.getEntityBoxURI('Order')).toEqual("http://example.org/orderUri/");
     });
 
     /**
@@ -197,7 +196,7 @@ export default function (qaProjectDir) {
       await console.log('modify description');
       await entityPage.setEntityDescription('Modified Product description');
       await console.log('modify URI');
-      await entityPage.setEntityURI('Modified Product URI');
+      await entityPage.setEntityURI("http://example.org/productsUri/");
       await entityPage.saveEntity.click();
       await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       await expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -205,7 +204,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       await expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('Modified Product description');
-      await expect(entityPage.getEntityBoxURI('Product')).toEqual('Modified Product URI');
+      await expect(entityPage.getEntityBoxURI('Product')).toEqual("http://example.org/productsUri/");
     });
 
     /**
@@ -222,8 +221,6 @@ export default function (qaProjectDir) {
       expect(entityPage.entityEditor.isDisplayed()).toBe(true);
       console.log('remove description');
       await entityPage.clearInputField(entityPage.entityDescription);
-      console.log('remove URI');
-      await entityPage.clearInputField(entityPage.entityURI);
       await entityPage.saveEntity.click();
       await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);
@@ -231,7 +228,6 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Product')));
       expect(entityPage.getEntityBox('Product').isDisplayed()).toBe(true);
       await expect(entityPage.getEntityBoxDescription('Product')).toEqual('No description yet');
-      await expect(entityPage.getEntityBoxURI('Product')).toEqual('No Base URI yet');
     });
 
     /**
@@ -339,7 +335,6 @@ export default function (qaProjectDir) {
       await entityPage.getPropertyCardinality(lastProperty).element(by.css(selectCardinalityOneToManyOption)).click();
       await entityPage.getPropertyDescription(lastProperty).sendKeys('products description');
       await entityPage.getPropertyWordLexicon(lastProperty).click();
-
       await entityPage.saveEntity.click();
       browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       expect(entityPage.confirmDialogYesButton.isDisplayed()).toBe(true);

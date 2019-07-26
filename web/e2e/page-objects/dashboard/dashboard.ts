@@ -1,4 +1,4 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC } from 'protractor'
+import { browser, element, by, ExpectedConditions as EC } from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 
@@ -101,6 +101,10 @@ export class DashboardPage extends AppPage {
 
   clearJobButton() {
     return element(by.xpath('//div[contains(text(),\' Jobs\')]/..//button'));
+  }
+
+  get dataHubQSVersion() {
+    return element(by.css(".version-link")).getText();
   }
 
 }

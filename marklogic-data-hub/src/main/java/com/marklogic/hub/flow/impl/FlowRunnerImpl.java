@@ -308,14 +308,14 @@ public class FlowRunnerImpl implements FlowRunner{
 
             resp.setStepResponses(stepOutputs);
 
-            final String jobStatus;
+            final JobStatus jobStatus;
             //Update status of job
             if (isJobCancelled.get()) {
                 if(runningFlow.isStopOnError() && jobStoppedOnError.get()){
-                    jobStatus = JobStatus.STOP_ON_ERROR.toString();
+                    jobStatus = JobStatus.STOP_ON_ERROR;
                 }
                 else {
-                    jobStatus = JobStatus.CANCELED.toString();
+                    jobStatus = JobStatus.CANCELED;
                 }
             }
             else if (!isJobSuccess.get()) {
@@ -323,18 +323,18 @@ public class FlowRunnerImpl implements FlowRunner{
                     long failedStepCount = stepResps.stream().filter((stepResp)-> stepResp.getStatus()
                         .contains(JobStatus.FAILED_PREFIX)).collect(Collectors.counting());
                     if(failedStepCount == stepResps.size()){
-                        jobStatus = JobStatus.FAILED.toString();
+                        jobStatus = JobStatus.FAILED;
                     }
                     else {
-                        jobStatus = JobStatus.FINISHED_WITH_ERRORS.toString();
+                        jobStatus = JobStatus.FINISHED_WITH_ERRORS;
                     }
             }
             else {
-                jobStatus = JobStatus.FINISHED.toString();
+                jobStatus = JobStatus.FINISHED;
             }
-            resp.setJobStatus(jobStatus);
+            resp.setJobStatus(jobStatus.toString());
             try {
-                jobDocManager.postJobs(jobId, jobStatus);
+                jobDocManager.updateJobStatus(jobId, jobStatus);
             }
             catch (Exception e) {
                 logger.error(e.getMessage());
@@ -342,7 +342,7 @@ public class FlowRunnerImpl implements FlowRunner{
             finally {
                 JsonNode jobNode = null;
                 try {
-                    jobNode = jobDocManager.getJobs(jobId);
+                    jobNode = jobDocManager.getJobDocument(jobId);
                 }
                 catch (Exception e) {
                     logger.error(e.getMessage());
@@ -365,7 +365,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 if (!isJobSuccess.get()) {
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                            listener.onStatusChanged(jobId, runningStep, jobStatus.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
                         });
                     } catch (Exception ex) {
                         logger.error(ex.getMessage());
@@ -373,7 +373,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 } else {
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
-                            listener.onStatusChanged(jobId, runningStep, jobStatus, currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                            listener.onStatusChanged(jobId, runningStep, jobStatus.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
                         });
                     } catch (Exception ex) {
                         logger.error(ex.getMessage());
@@ -389,6 +389,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 } else {
                     isRunning.set(false);
                     threadPool.shutdownNow();
+                    runningFlow = null;
                 }
             }
         }

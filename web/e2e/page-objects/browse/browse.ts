@@ -1,6 +1,6 @@
-import {element, by, protractor, $, browser, ExpectedConditions as EC, $$} from 'protractor'
-import {AppPage} from '../appPage';
-import {pages} from '../page';
+import { element, by, protractor, $, browser, ExpectedConditions as EC } from 'protractor'
+import { AppPage } from '../appPage';
+import { pages } from '../page';
 
 export class BrowsePage extends AppPage {
 

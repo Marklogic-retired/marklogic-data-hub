@@ -1,5 +1,4 @@
-import { protractor , browser, element, by, By, $, $$, ExpectedConditions as EC} from 'protractor';
-import dashboardPage from './dashboard/dashboard';
+import { browser, element, by, ExpectedConditions as EC } from 'protractor';
 import { pages } from './page';
 import { Page } from './page';
 var request = require('request').defaults({ strictSSL: false });
@@ -34,16 +33,8 @@ export class AppPage extends Page {
     return element(by.css('#jobs-tab'));
   }
 
-  get tracesTab() {
-    return element(by.css('#traces-tab'));
-  }
-
   get flowsTab() {
     return element(by.css('#flows-tab'));
-  }
-
-  get mappingsTab() {
-    return element(by.css('#mappings-tab'))
   }
 
   get browseDataTab() {
@@ -58,10 +49,37 @@ export class AppPage extends Page {
     return element(by.css('#header-menu'));
   }
 
+  get aboutButton() {
+    return element(by.css('#about-button'));
+  }
+
   async logout() {
     await this.menuButton.click();
     browser.wait(EC.elementToBeClickable(element(by.css('#login-button'))));
     await element(by.css('#login-button')).click();
+  }
+
+  async clickAbout() {
+    await this.menuButton.click();
+    browser.wait(EC.elementToBeClickable(this.aboutButton));
+    await this.aboutButton.click();
+  }
+
+  //about menu
+  get dataHubVersion() {
+    return element(by.css(".about-item.data-hub-version > .value"));
+  }
+
+  get projectDirectory() {
+    return element(by.css(".about-item.project-directory > .value"));
+  }
+
+  get markLogicVersion() {
+    return element(by.css(".about-item.marklogic-version > .value"));
+  }
+
+  get fileBugLink() {
+    return element(by.css(".about-item.bug-link > a")).getAttribute("href");
   }
 
   //click on user link to get the logout button
@@ -92,6 +110,15 @@ export class AppPage extends Page {
     await browser.waitForAngular();
   }
 
+  async clickJobsTab() {
+    await browser.executeScript("arguments[0].click();", this.jobsTab);
+    await browser.waitForAngular();
+  }
+
+  async clickSettingsTab() {
+    await browser.executeScript("arguments[0].click();", this.settingsTab);
+    await browser.waitForAngular();
+  }
 }
 
 var appPage = new AppPage();

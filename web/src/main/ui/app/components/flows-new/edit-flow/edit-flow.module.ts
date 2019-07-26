@@ -43,6 +43,8 @@ import {CustomComponent} from './custom/custom.component';
 import {CustomUiComponent} from './custom/ui/custom-ui.component';
 import {AppCommonModule} from "../../common";
 
+import {ClipboardDirective} from '../../../directives/clipboard/clipboard.directive';
+
 @NgModule({
   declarations: [
     EditFlowComponent,
@@ -72,7 +74,8 @@ import {AppCommonModule} from "../../common";
     ListFilterPipe,
     TruncateCharactersPipe,
     CustomComponent,
-    CustomUiComponent
+    CustomUiComponent,
+    ClipboardDirective
   ],
   imports: [
     CommonModule,
@@ -92,7 +95,8 @@ import {AppCommonModule} from "../../common";
   exports: [
     FocusElementDirective,
     ListFilterPipe,
-    TruncateCharactersPipe
+    TruncateCharactersPipe,
+    ClipboardDirective
   ],
   providers: [],
   entryComponents: [

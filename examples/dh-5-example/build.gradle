@@ -1,8 +1,21 @@
-plugins {
-    id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '5.0.0'
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        jcenter()
+    }
+
+    dependencies {
+        classpath "net.saliman:gradle-properties-plugin:1.5.1"
+        if (project.hasProperty("testing")) {
+            classpath "com.marklogic:ml-data-hub:5.0-SNAPSHOT"
+        } else {
+            classpath "gradle.plugin.com.marklogic:ml-data-hub:5.0.1"
+        }
+    }
 }
 
+apply plugin: "net.saliman.properties"
 apply plugin: "com.marklogic.ml-data-hub"
 
 task extractZip (type: Copy) {
@@ -11,3 +24,4 @@ task extractZip (type: Copy) {
     println("input directory is extracted to: " + destDir + "/input")
     destinationDir = file(destDir)
 }
+mlDeployApp.dependsOn extractZip

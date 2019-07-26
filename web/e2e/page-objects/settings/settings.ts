@@ -1,4 +1,4 @@
-import { protractor, browser, element, by, By, $, $$, ExpectedConditions as EC } from 'protractor'
+import { element, by, $ } from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 
@@ -7,6 +7,18 @@ export class SettingsPage extends AppPage {
   //to get the login box locater
   locator() {
     return by.css('.settings-page');
+  }
+
+  get mlcpPath() {
+    return $("input[name='mlcpPath']");
+  }
+
+  async addMlcpPath(path: string) {
+    this.mlcpPath.sendKeys(path);
+  }
+
+  async clearMlcpPath() {
+    $(".settings-page .fa-close").click();
   }
 
   get uninstallButton() {

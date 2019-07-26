@@ -1,18 +1,15 @@
 /**
-  Copyright 2012-2019 MarkLogic Corporation
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+ Copyright 2012-2019 MarkLogic Corporation
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 'use strict';
 // Batch documents can be cached because they should never be altered across transactions
 const cachedBatchDocuments = {};
@@ -36,20 +33,20 @@ class Jobs {
   createJob(flowName, id = null ) {
     let job = null;
     if(!id) {
-     id = this.hubutils.uuid();
+      id = this.hubutils.uuid();
     }
     job = {
-     job: {
-       jobId: id,
-       flow: flowName,
-       user: xdmp.getCurrentUser(),
-       lastAttemptedStep: 0,
-       lastCompletedStep: 0 ,
-       jobStatus: "started" ,
-       timeStarted:  fn.currentDateTime(),
-       timeEnded: "N/A",
-       stepResponses :{}
-     }
+      job: {
+        jobId: id,
+        flow: flowName,
+        user: xdmp.getCurrentUser(),
+        lastAttemptedStep: 0,
+        lastCompletedStep: 0 ,
+        jobStatus: "started" ,
+        timeStarted:  fn.currentDateTime(),
+        timeEnded: "N/A",
+        stepResponses :{}
+      }
     };
 
     this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobsPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
@@ -69,19 +66,19 @@ class Jobs {
 
   getJobDocWithUri(jobUri) {
     return fn.head(this.hubutils.queryLatest(function() {
-        if (xdmp.documentGetCollections(jobUri).includes("Job")) {
-          return cts.doc(jobUri).toObject();
-        }
-      }, this.config.JOBDATABASE));
+      if (xdmp.documentGetCollections(jobUri).includes("Job")) {
+        return cts.doc(jobUri).toObject();
+      }
+    }, this.config.JOBDATABASE));
   }
 
   deleteJob(jobId) {
     let uris = cts.uris("", null ,cts.andQuery([cts.orQuery([cts.directoryQuery("/jobs/"),cts.directoryQuery("/jobs/batches/")]),
-    cts.jsonPropertyValueQuery("jobId", jobId)]));
+      cts.jsonPropertyValueQuery("jobId", jobId)]));
     for (let doc of uris) {
-     if (fn.docAvailable(doc)){
-       this.hubutils.deleteDocument(doc, this.config.JOBDATABASE);
-     }
+      if (fn.docAvailable(doc)){
+        this.hubutils.deleteDocument(doc, this.config.JOBDATABASE);
+      }
     }
   }
 
@@ -142,9 +139,87 @@ class Jobs {
       }
       let results = cts.search(cts.orQuery(timeQuery));
       if(results) {
-       return results.toArray();
+        return results.toArray();
       }
     }, this.config.JOBDATABASE);
+  }
+
+  getJobDocsForFlows(flowNames) {
+    // Grab all the timeStarted values for each flow
+    const tuples = cts.valueTuples(
+      [
+        cts.jsonPropertyReference("flow"),
+        cts.jsonPropertyReference("timeStarted")
+      ], [],
+      cts.andQuery([
+        cts.collectionQuery("Job"),
+        cts.jsonPropertyRangeQuery("flow", "=", flowNames)
+      ])
+    );
+
+    // Build a map of flowName to latestTime
+    const timeMap = {};
+    tuples.toArray().forEach(values => {
+      const name = values[0];
+      if (timeMap[name] == undefined) {
+        timeMap[name] = values[1];
+      }
+      else {
+        let latestTime = xs.dateTime(timeMap[name]);
+        if (xs.dateTime(values[1]) > latestTime) {
+          timeMap[name] = values[1];
+        }
+      }
+    });
+
+    // Build an array of queries for the latest job for each flow
+    const queryArray = Object.keys(timeMap).map(flowName => {
+      return cts.andQuery([
+        cts.jsonPropertyRangeQuery("flow", "=", flowName),
+        cts.jsonPropertyRangeQuery("timeStarted", "=", xs.dateTime(timeMap[flowName]))
+      ])
+    });
+
+    // Find the latest jobs
+    const latestJobs = cts.search(cts.andQuery([
+      cts.collectionQuery("Job"),
+      cts.orQuery(queryArray)
+    ]));
+
+    // Build a map of flow name to latest job for quick lookup
+    const latestJobMap = {};
+    latestJobs.toArray().forEach(job => {
+      var obj = job.toObject();
+      latestJobMap[obj.job.flow] = obj;
+    });
+
+    // Grab all the job IDs for the flow names
+    // Could get these during the valueTuples call as well, but this is nice because it returns the values in a map
+    const jobIdMap = cts.elementValueCoOccurrences(xs.QName("flow"), xs.QName("jobId"), ["map"], cts.andQuery([
+      cts.collectionQuery("Job"),
+      cts.jsonPropertyRangeQuery("flow", "=", flowNames)
+    ]));
+
+    // For each flow name, return its job IDs and latest job
+    const response = {};
+    if (flowNames != null && flowNames != undefined) {
+      if (Array.isArray(flowNames)) {
+        flowNames.forEach(flowName => {
+          response[flowName] = {
+            jobIds: jobIdMap[flowName],
+            latestJob: latestJobMap[flowName]
+          };
+        });
+      }
+      else {
+        response[flowNames] = {
+          jobIds: jobIdMap[flowNames],
+          latestJob: latestJobMap[flowNames]
+        };
+      }
+    }
+
+    return response;
   }
 
   getJobDocsByFlow(flowName) {
@@ -198,11 +273,11 @@ class Jobs {
   }
 
   getBatchDocWithUri(batchUri) {
-     return fn.head(this.hubutils.queryLatest(function() {
-       if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
-         return cts.doc(batchUri).toObject();
-       }
-     }, this.config.JOBDATABASE));
+    return fn.head(this.hubutils.queryLatest(function() {
+      if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
+        return cts.doc(batchUri).toObject();
+      }
+    }, this.config.JOBDATABASE));
   }
 
   updateBatch(jobId, batchId, batchStatus, uris, writeTransactionInfo, error) {
@@ -221,7 +296,7 @@ class Jobs {
         let stackTraceObj = error.stackFrames[0];
         docObj.batch.fileName = stackTraceObj.uri;
         docObj.batch.lineNumber = stackTraceObj.line;
-      // If we don't get stackFrames, see if we can get the stack
+        // If we don't get stackFrames, see if we can get the stack
       } else if (error.stack) {
         docObj.batch.errorStack = error.stack;
       }

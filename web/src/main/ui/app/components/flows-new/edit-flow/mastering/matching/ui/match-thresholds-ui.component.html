@@ -33,7 +33,7 @@
 
         <!-- Weight Column -->
         <ng-container matColumnDef="above">
-          <mat-header-cell id="match-threshold-weight-sort-btn" *matHeaderCellDef mat-sort-header start="desc">Weight</mat-header-cell>
+          <mat-header-cell id="match-threshold-weight-sort-btn" *matHeaderCellDef mat-sort-header start="desc">Weight Threshold</mat-header-cell>
           <mat-cell class="match-threshold-weight" *matCellDef="let mThr; let i = index">
             <a *ngIf="!mThr.editing" (click)="valueClicked($event, mThr, 'weight')" class="weight-value">
               {{mThr.above}}

@@ -69,10 +69,43 @@ export class StepConfig {
     stepDesc: 'csv ingestion description',
     targetDatabase: 'data-hub-qa-STAGING',
     path: '/input/flow-test/csv',
-    sourceFileType: 'CSV',
+    sourceFileType: 'Delimited Text',
+    separator: ',',
     targetFileType: 'JSON',
   };
 
+  csv_pipe = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/sep-types/pipe-data',
+    sourceFileType: 'Delimited Text',
+    separator: '|',
+    targetFileType: 'JSON',
+  };
+
+  csv_semicolon = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/sep-types/semicolon-data',
+    sourceFileType: 'Delimited Text',
+    separator: ';',
+    targetFileType: 'JSON',
+  };
+
+  csv_tab = {
+    stepType: 'Ingestion',
+    stepName: 'csv-ingestion',
+    stepDesc: 'csv ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/sep-types/tab-data',
+    sourceFileType: 'Delimited Text',
+    separator: 'Tab',
+    targetFileType: 'JSON',
+  };
   text = {
     stepType: 'Ingestion',
     stepName: 'text-ingestion',
@@ -92,6 +125,39 @@ export class StepConfig {
     sourceFileType: 'Binary',
     targetFileType: 'JSON',
   };
+
+  simpleIngest = {
+    stepType: 'Ingestion',
+    stepName: 'SimpleJSONIngest',
+    stepDesc: 'json ingestion description',
+    targetDatabase: 'data-hub-qa-STAGING',
+    path: '/input/flow-test/json',
+    sourceFileType: 'JSON',
+    targetFileType: 'JSON',
+  };
+
+  simpleMapping = {
+    stepType: 'Mapping',
+    stepName: 'SimpleJSONMapping',
+    stepDesc: 'json mapping description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-ingestion',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-STAGING',
+    targetDatabase: 'data-hub-qa-FINAL',
+  };
+
+  simpleMastering = {
+    stepType: 'Mastering',
+    stepName: 'SimpleJSONMastering',
+    stepDesc: 'json mastering description',
+    sourceType: 'Collection',
+    sourceCollection: 'json-mapping',
+    targetEntity: 'Person',
+    sourceDatabase: 'data-hub-qa-FINAL',
+    targetDatabase: 'data-hub-qa-FINAL',
+  };
+
 }
 
 let stepConfig = new StepConfig();

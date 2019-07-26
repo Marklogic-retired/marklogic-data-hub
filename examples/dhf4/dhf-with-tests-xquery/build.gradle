@@ -1,0 +1,40 @@
+buildscript {
+  repositories {
+      jcenter()
+  }
+}
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+
+    // This plugin allows you to create different environments
+    // for your gradle deploy. Each environment is represented
+    // by a gradle-${env}.properties file
+    // See https://github.com/stevesaliman/gradle-properties-plugin
+    // specify the env on the command line with:
+    // gradle -PenvironmentName=x ...
+    id 'net.saliman.properties' version '1.4.6'
+
+    // This gradle plugin extends the ml-gradle plugin with
+    // commands that make the Data Hub Framework do its magic
+    id 'com.marklogic.ml-data-hub' version '4.2.2'
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+
+    if ("true".equalsIgnoreCase(project.findProperty("isDeployUnitTestFramework"))) {
+        // Needed to execute tests written using marklogic-unit-test
+        mlRestApi "com.marklogic:marklogic-unit-test-modules:1.0.beta"
+    }
+
+    
+}
+
+

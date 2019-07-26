@@ -7,6 +7,7 @@ import { ConfirmationDialogComponent } from '../../../common';
 import { FlowSettingsDialogComponent } from '../../manage-flows/ui/flow-settings-dialog.component';
 import { Flow } from '../../models/flow.model';
 import { Step } from '../../models/step.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-edit-flow-ui',
@@ -26,6 +27,7 @@ export class EditFlowUiComponent implements OnChanges {
   @Input() flowEnded: any;
   @Input() runFlowClicked: boolean;
   @Input() disableSelect: boolean;
+  @Input() errorResponse: any;
   @Output() runFlow = new EventEmitter();
   @Output() stopFlow = new EventEmitter();
   @Output() saveFlow = new EventEmitter();
@@ -38,6 +40,7 @@ export class EditFlowUiComponent implements OnChanges {
 
   constructor(
     public dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router
   ) {}
 
@@ -147,4 +150,12 @@ export class EditFlowUiComponent implements OnChanges {
   updateStep(step): void {
     this.stepUpdate.emit(step);
   }
+
+  stepUpdated(step): void {
+    this.snackBar.open("Step Saved", "", {
+      panelClass: ['snackbar'], 
+      duration: 1200
+    });
+  }
+
 }

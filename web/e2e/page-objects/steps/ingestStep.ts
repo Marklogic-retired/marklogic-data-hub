@@ -1,7 +1,7 @@
-import {browser, protractor} from "protractor";
-import {AppPage} from "../appPage";
-import {pages} from '../page';
-import {by, element} from "protractor";
+import { browser, protractor } from "protractor";
+import { AppPage } from "../appPage";
+import { pages } from '../page';
+import { by, element } from "protractor";
 
 export class IngestStep extends AppPage {
   
@@ -22,6 +22,15 @@ export class IngestStep extends AppPage {
 
   async clickSourceFileTypeDropDown() {
     let dropDown = this.sourceFileTypeDropDown;
+    return await dropDown.click();
+  }
+
+  get delimitedTextSeparatorDropDown() {
+    return element(by.id("delimited-text-separator-select"));
+  }
+
+  async clickDelimitedTextSeparatorDropDown() {
+    let dropDown = this.delimitedTextSeparatorDropDown;
     return await dropDown.click();
   }
   
@@ -60,12 +69,12 @@ export class IngestStep extends AppPage {
 
   async clickTargetFileTypeOption(option: string) {
     let targetFileTypeOption = this.targetFileTypeOptions(option);
-    return await targetFileTypeOption.click();
+    return await browser.executeScript("arguments[0].click();", targetFileTypeOption);
   }
 
   async setTargetFileType(option: string) {
-    await this.clickTargetFileTypeDropDown;
-    browser.sleep(1000);
+    await this.targetFileTypeDropDown.click();
+    await browser.sleep(1000);
     return await this.clickTargetFileTypeOption(option);
   }
 
@@ -76,7 +85,8 @@ export class IngestStep extends AppPage {
   async setTargetPermissions(permissions: string) {
     let inputField = this.targetPermissions;
     await inputField.clear();
-    return await inputField.sendKeys(permissions);  
+    await inputField.sendKeys(permissions);
+    await inputField.sendKeys(protractor.Key.ENTER);  
   }
   
   get targetUriReplace() {
@@ -86,7 +96,16 @@ export class IngestStep extends AppPage {
   async setTargetUriReplace(uriReplace: string) {
     let inputField = this.targetUriReplace;
     await inputField.clear();
-    return await inputField.sendKeys(uriReplace);  
+    await inputField.sendKeys(uriReplace);
+    await inputField.sendKeys(protractor.Key.ENTER);  
+  }
+
+  get targetUriPreview() {
+    return element(by.id("uri-preview"));  
+  }
+
+  get mlcpCommand() {
+    return element(by.css(".mlcp-cmd p"));  
   }
 }
 

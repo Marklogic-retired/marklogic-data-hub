@@ -45,7 +45,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class QueryStepRunner implements StepRunner {
@@ -300,10 +299,7 @@ public class QueryStepRunner implements StepRunner {
     }
 
     private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection uris) {
-        AtomicLong successfulEvents = new AtomicLong(0);
-        AtomicLong failedEvents = new AtomicLong(0);
-        AtomicLong successfulBatches = new AtomicLong(0);
-        AtomicLong failedBatches = new AtomicLong(0);
+        StepMetrics stepMetrics = new StepMetrics();
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0,0, "starting step execution");
@@ -370,8 +366,8 @@ public class QueryStepRunner implements StepRunner {
                     optsMap.put("uris", batch.getItems());
 
                     ResponseHolder response = flowResource.run(runStepResponse.getJobId(), step, optsMap);
-                    failedEvents.addAndGet(response.errorCount);
-                    successfulEvents.addAndGet(response.totalCount - response.errorCount);
+                    stepMetrics.getFailedEvents().addAndGet(response.errorCount);
+                    stepMetrics.getSuccessfulEvents().addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
                         if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                             errorMessages.addAll(response.errors.stream().map(jsonNode -> StepRunnerUtil.jsonToString(jsonNode)).collect(Collectors.toList()));
@@ -382,17 +378,17 @@ public class QueryStepRunner implements StepRunner {
                     }
 
                     if (response.errorCount < response.totalCount) {
-                        successfulBatches.addAndGet(1);
+                        stepMetrics.getSuccessfulBatches().addAndGet(1);
                     } else {
-                        failedBatches.addAndGet(1);
+                        stepMetrics.getFailedBatches().addAndGet(1);
                     }
 
-                    int percentComplete = (int) (((double) successfulBatches.get() / batchCount) * 100.0);
+                    int percentComplete = (int) (((double) stepMetrics.getSuccessfulBatchesCount() / batchCount) * 100.0);
 
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
                         previousPercentComplete = percentComplete;
                         stepStatusListeners.forEach((StepStatusListener listener) -> {
-                            listener.onStatusChange(runStepResponse.getJobId(), percentComplete, JobStatus.RUNNING_PREFIX + step, successfulEvents.get(), failedEvents.get(), "");
+                            listener.onStatusChange(runStepResponse.getJobId(), percentComplete, JobStatus.RUNNING_PREFIX + step, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "");
                         });
                     }
 
@@ -425,8 +421,8 @@ public class QueryStepRunner implements StepRunner {
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {
-                failedBatches.addAndGet(1);
-                failedEvents.addAndGet(batchSize);
+                stepMetrics.getFailedBatches().addAndGet(1);
+                stepMetrics.getFailedEvents().addAndGet(batchSize);
             });
 
         if(! isStopped.get()) {
@@ -438,27 +434,27 @@ public class QueryStepRunner implements StepRunner {
             queryBatcher.awaitCompletion();
 
             String stepStatus;
-            if (failedEvents.get() > 0 && stopOnFailure) {
+            if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
                 stepStatus = JobStatus.STOP_ON_ERROR_PREFIX + step;
             } else if( isStopped.get()){
                 stepStatus = JobStatus.CANCELED_PREFIX + step;
-            } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+            } else if (stepMetrics.getFailedEventsCount() > 0 && stepMetrics.getSuccessfulEventsCount() > 0) {
                 stepStatus = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
-            } else if (failedEvents.get() == 0 && successfulEvents.get() > 0)  {
+            } else if (stepMetrics.getFailedEventsCount() == 0 && stepMetrics.getSuccessfulEventsCount() > 0)  {
                 stepStatus = JobStatus.COMPLETED_PREFIX + step;
             } else {
                 stepStatus = JobStatus.FAILED_PREFIX + step;
             }
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, successfulEvents.get(), failedEvents.get(), "");
+                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "");
             });
 
             stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
 
             dataMovementManager.stopJob(queryBatcher);
 
-            runStepResponse.setCounts(uris.size(),successfulEvents.get(), failedEvents.get(), successfulBatches.get(), failedBatches.get());
+            runStepResponse.setCounts(uris.size(),stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);

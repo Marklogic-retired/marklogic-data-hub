@@ -1,0 +1,15 @@
+<employee xmlns="http://example.com/source1/employee">
+    <id>34324</id>
+    <first-name>Robert</first-name>
+    <last-name>Smith</last-name>
+    <date-of-birth>01/01/1981</date-of-birth>
+    <hire-date>12/19/2005</hire-date>
+    <salary-history>
+        <effective-date>12/21/2005</effective-date>
+        <salary>59832</salary>
+    </salary-history>
+    <salary-history>
+        <effective-date>05/14/2009</effective-date>
+        <salary>60832</salary>
+    </salary-history>
+</employee>

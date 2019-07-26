@@ -1,0 +1,17 @@
+{
+  "name": "myNewFlow",
+  "options": {
+    "collections": ["myNewFlow"]
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}

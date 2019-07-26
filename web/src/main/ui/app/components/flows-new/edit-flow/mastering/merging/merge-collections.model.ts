@@ -67,7 +67,7 @@ export class MergeCollection {
   }
 
   /**
-   * Construct a merge collecion from merging configuration data.
+   * Construct a merge collection from merging configuration data.
    */
   static fromMerging(event: string, coll: any) {
     const result = new MergeCollection({ event: event });

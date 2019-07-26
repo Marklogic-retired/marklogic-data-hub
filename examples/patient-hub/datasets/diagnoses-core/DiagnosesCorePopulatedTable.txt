@@ -1,0 +1,373 @@
+﻿PatientID	AdmissionID	PrimaryDiagnosisCode	PrimaryDiagnosisDescription
+80AC01B2-BD55-4BE0-A59A-4024104CF4E9	2	M01.X	Direct infection of joint in infectious and parasitic diseases classified elsewhere
+80AC01B2-BD55-4BE0-A59A-4024104CF4E9	3	D65	Disseminated intravascular coagulation [defibrination syndrome]
+80AC01B2-BD55-4BE0-A59A-4024104CF4E9	4	C92.1	Chronic myeloid leukemia, BCR/ABL-positive
+80AC01B2-BD55-4BE0-A59A-4024104CF4E9	5	M05.51	Rheumatoid polyneuropathy with rheumatoid arthritis of shoulder
+6A57AC0C-57F3-4C19-98A1-51135EFBC4FF	1	C91.00	Acute lymphoblastic leukemia not having achieved remission
+6A57AC0C-57F3-4C19-98A1-51135EFBC4FF	2	G55	Nerve root and plexus compressions in diseases classified elsewhere
+6A57AC0C-57F3-4C19-98A1-51135EFBC4FF	3	M51	Thoracic, thoracolumbar, and lumbosacral intervertebral disc disorders
+6A57AC0C-57F3-4C19-98A1-51135EFBC4FF	4	O04.82	Renal failure following (induced) termination of pregnancy
+6A57AC0C-57F3-4C19-98A1-51135EFBC4FF	5	C33	Malignant neoplasm of trachea
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	1	M05.442	Rheumatoid myopathy with rheumatoid arthritis of left hand
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	2	F12.15	Cannabis abuse with psychotic disorder
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	3	E10.43	Type 1 diabetes mellitus with diabetic autonomic (poly)neuropathy
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	4	M12.162	Kaschin-Beck disease, left knee
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	5	T43.3X1	Poisoning by phenothiazine antipsychotics and neuroleptics, accidental (unintentional)
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	6	C54.3	Malignant neoplasm of fundus uteri
+7A025E77-7832-4F53-B9A7-09A3F98AC17E	7	F06.3	Mood disorder due to known physiological condition
+DCE5AEB8-6DB9-4106-8AE4-02CCC5C23741	1	K91	Intraoperative and postprocedural complications and disorders of digestive system, not elsewhere classified
+DCE5AEB8-6DB9-4106-8AE4-02CCC5C23741	2	F40.01	Agoraphobia with panic disorder
+DCE5AEB8-6DB9-4106-8AE4-02CCC5C23741	3	C40.11	Malignant neoplasm of short bones of right upper limb
+886B5885-1EE2-49F3-98D5-A2F02EB8A9D4	1	M05.752	Rheumatoid arthritis with rheumatoid factor of left hip without organ or systems involvement
+886B5885-1EE2-49F3-98D5-A2F02EB8A9D4	2	I97.81	Intraoperative cerebrovascular infarction
+886B5885-1EE2-49F3-98D5-A2F02EB8A9D4	3	D37.02	Neoplasm of uncertain behavior of tongue
+0E0EADE8-5592-4E0B-9F88-D7596E32EE08	1	C94.6	Myelodysplastic disease, not classified
+0E0EADE8-5592-4E0B-9F88-D7596E32EE08	2	M05.49	Rheumatoid myopathy with rheumatoid arthritis of multiple sites
+0E0EADE8-5592-4E0B-9F88-D7596E32EE08	3	M84.51	Pathological fracture in neoplastic disease, shoulder
+0681FA35-A794-4684-97BD-00B88370DB41	1	C92.51	Acute myelomonocytic leukemia, in remission
+0681FA35-A794-4684-97BD-00B88370DB41	2	M02.38	Reiter's disease, vertebrae
+2E26695A-EFB0-4C7F-9318-E3030B154E39	1	D12.7	Benign neoplasm of rectosigmoid junction
+2E26695A-EFB0-4C7F-9318-E3030B154E39	2	C38.2	Malignant neoplasm of posterior mediastinum
+DDC0BC57-7A4E-4E02-9282-177750B74FBC	1	C79.72	Secondary malignant neoplasm of left adrenal gland
+DDC0BC57-7A4E-4E02-9282-177750B74FBC	2	B95.62	Methicillin resistant Staphylococcus aureus infection as the cause of diseases classified elsewhere
+DDC0BC57-7A4E-4E02-9282-177750B74FBC	3	C05.1	Malignant neoplasm of soft palate
+DDC0BC57-7A4E-4E02-9282-177750B74FBC	4	A52.0	Cardiovascular and cerebrovascular syphilis
+E250799D-F6DE-4914-ADB4-B08A6E5029B9	1	M06.31	Rheumatoid nodule, shoulder
+E250799D-F6DE-4914-ADB4-B08A6E5029B9	2	E09.62	Drug or chemical induced diabetes mellitus with skin complications
+E250799D-F6DE-4914-ADB4-B08A6E5029B9	3	T43.3X	Poisoning by, adverse effect of and underdosing of phenothiazine antipsychotics and neuroleptics
+E250799D-F6DE-4914-ADB4-B08A6E5029B9	4	F21	Schizotypal disorder
+E250799D-F6DE-4914-ADB4-B08A6E5029B9	5	C37	Malignant neoplasm of thymus
+9C75DF1F-9DA6-4C98-8F5B-E10BDC805ED0	1	Z13.810	Encounter for screening for upper gastrointestinal disorder
+9C75DF1F-9DA6-4C98-8F5B-E10BDC805ED0	2	O24.410	Gestational diabetes mellitus in pregnancy, diet controlled
+A19A0B00-4C9A-4206-B1FE-17E6DA3CEB0B	1	Z13.83	Encounter for screening for respiratory disorder NEC
+A19A0B00-4C9A-4206-B1FE-17E6DA3CEB0B	2	F45.41	Pain disorder exclusively related to psychological factors
+A19A0B00-4C9A-4206-B1FE-17E6DA3CEB0B	3	M06.222	Rheumatoid bursitis, left elbow
+E5478913-6819-4977-BB11-4C8B61175B56	1	D39.12	Neoplasm of uncertain behavior of left ovary
+E5478913-6819-4977-BB11-4C8B61175B56	2	M84.552	Pathological fracture in neoplastic disease, left femur
+66154E24-D3EE-4311-89DB-6195278F9B3C	1	O99.41	Diseases of the circulatory system complicating pregnancy
+66154E24-D3EE-4311-89DB-6195278F9B3C	2	O04.86	Cardiac arrest following (induced) termination of pregnancy
+66154E24-D3EE-4311-89DB-6195278F9B3C	3	B97.11	Coxsackievirus as the cause of diseases classified elsewhere
+66154E24-D3EE-4311-89DB-6195278F9B3C	4	B97.34	Human T-cell lymphotrophic virus, type II [HTLV-II] as the cause of diseases classified elsewhere
+66154E24-D3EE-4311-89DB-6195278F9B3C	5	D37.3	Neoplasm of uncertain behavior of appendix
+BC44CE19-9FC5-4AC9-A296-9EBC5E3D03AE	1	O07.32	Renal failure following failed attempted termination of pregnancy
+BC44CE19-9FC5-4AC9-A296-9EBC5E3D03AE	2	D28.0	Benign neoplasm of vulva
+FA157FA5-F488-4884-BF87-E144630D595C	3	J44.1	Chronic obstructive pulmonary disease with (acute) exacerbation
+FA157FA5-F488-4884-BF87-E144630D595C	4	D14.0	Benign neoplasm of middle ear, nasal cavity and accessory sinuses
+FA157FA5-F488-4884-BF87-E144630D595C	5	Z13.85	Encounter for screening for nervous system disorders
+B7E9FC4C-5182-4A34-954E-CEF5FC07E96D	1	E10.630	Type 1 diabetes mellitus with periodontal disease
+1A40AF35-C6D4-4D46-B475-A15D84E8A9D5	1	F11	Opioid related disorders
+1A40AF35-C6D4-4D46-B475-A15D84E8A9D5	2	H47.631	Disorders of visual cortex in (due to) neoplasm, right side of brain
+1A40AF35-C6D4-4D46-B475-A15D84E8A9D5	3	C92.0	Acute myeloblastic leukemia
+1A40AF35-C6D4-4D46-B475-A15D84E8A9D5	4	C41.0	Malignant neoplasm of bones of skull and face
+1A40AF35-C6D4-4D46-B475-A15D84E8A9D5	5	M90.53	Osteonecrosis in diseases classified elsewhere, forearm
+DA6CECFF-DE13-4C4C-919F-64E1A2B76C9D	1	D13.1	Benign neoplasm of stomach
+DA6CECFF-DE13-4C4C-919F-64E1A2B76C9D	2	M02.35	Reiter's disease, hip
+DA6CECFF-DE13-4C4C-919F-64E1A2B76C9D	3	C71.4	Malignant neoplasm of occipital lobe
+DA6CECFF-DE13-4C4C-919F-64E1A2B76C9D	4	Z22.31	Carrier of bacterial disease due to meningococci
+DA6CECFF-DE13-4C4C-919F-64E1A2B76C9D	5	C47.2	Malignant neoplasm of peripheral nerves of lower limb, including hip
+0A9BA3E4-CF3C-49C4-9774-5EEA2EE7D123	1	F31.4	Bipolar disorder, current episode depressed, severe, without psychotic features
+0A9BA3E4-CF3C-49C4-9774-5EEA2EE7D123	2	K76.5	Hepatic veno-occlusive disease
+7C788499-7798-484B-A027-9FCDC4C0DADB	1	O10.113	Pre-existing hypertensive heart disease complicating pregnancy, third trimester
+7C788499-7798-484B-A027-9FCDC4C0DADB	2	E09.649	Drug or chemical induced diabetes mellitus with hypoglycemia without coma
+7C788499-7798-484B-A027-9FCDC4C0DADB	3	D37.1	Neoplasm of uncertain behavior of stomach
+C54B5AAD-98E8-472D-BAA0-638D9F3BD024	1	N49.2	Inflammatory disorders of scrotum
+C54B5AAD-98E8-472D-BAA0-638D9F3BD024	2	I15.2	Hypertension secondary to endocrine disorders
+6985D824-3269-4D12-A9DD-B932D640E26E	1	I25.82	Chronic total occlusion of coronary artery
+6985D824-3269-4D12-A9DD-B932D640E26E	2	M26.6	Temporomandibular joint disorders
+D8B53AA2-7953-4477-9EA4-68400EBAAC5C	1	C51.2	Malignant neoplasm of clitoris
+D8B53AA2-7953-4477-9EA4-68400EBAAC5C	2	C40.11	Malignant neoplasm of short bones of right upper limb
+D8B53AA2-7953-4477-9EA4-68400EBAAC5C	3	E08.42	Diabetes mellitus due to underlying condition with diabetic polyneuropathy
+D8B53AA2-7953-4477-9EA4-68400EBAAC5C	4	E08.32	Diabetes mellitus due to underlying condition with mild nonproliferative diabetic retinopathy
+D8B53AA2-7953-4477-9EA4-68400EBAAC5C	5	M11.052	Hydroxyapatite deposition disease, left hip
+DB92CDC6-FA9B-4492-BC2C-0C588AD78956	1	H75.01	Mastoiditis in infectious and parasitic diseases classified elsewhere, right ear
+DB92CDC6-FA9B-4492-BC2C-0C588AD78956	2	I97.110	Postprocedural cardiac insufficiency following cardiac surgery
+DB92CDC6-FA9B-4492-BC2C-0C588AD78956	3	B08.72	Yaba pox virus disease
+25B786AF-0F99-478C-9CFA-0EA607E45834	1	M01.X5	Direct infection of hip in infectious and parasitic diseases classified elsewhere
+25B786AF-0F99-478C-9CFA-0EA607E45834	2	M63.831	Disorders of muscle in diseases classified elsewhere, right forearm
+25B786AF-0F99-478C-9CFA-0EA607E45834	3	G60.1	Refsum's disease
+25B786AF-0F99-478C-9CFA-0EA607E45834	4	M05.75	Rheumatoid arthritis with rheumatoid factor of hip without organ or systems involvement
+25B786AF-0F99-478C-9CFA-0EA607E45834	5	E08.64	Diabetes mellitus due to underlying condition with hypoglycemia
+25B786AF-0F99-478C-9CFA-0EA607E45834	6	Z22.31	Carrier of bacterial disease due to meningococci
+25B786AF-0F99-478C-9CFA-0EA607E45834	7	M02.352	Reiter's disease, left hip
+F00C64F8-2033-4640-80FE-F1F62CBE26A5	1	E10.339	Type 1 diabetes mellitus with moderate nonproliferative diabetic retinopathy without macular edema
+F00C64F8-2033-4640-80FE-F1F62CBE26A5	2	C40.81	Malignant neoplasm of overlapping sites of bone and articular cartilage of right limb
+B70E5A76-F2BC-41E4-B037-CD4D9ABA0967	1	C19	Malignant neoplasm of rectosigmoid junction
+B70E5A76-F2BC-41E4-B037-CD4D9ABA0967	2	B96.2	Escherichia coli [E. coli ] as the cause of diseases classified elsewhere
+B70E5A76-F2BC-41E4-B037-CD4D9ABA0967	3	O98.611	Protozoal diseases complicating pregnancy, first trimester
+B70E5A76-F2BC-41E4-B037-CD4D9ABA0967	4	C18.6	Malignant neoplasm of descending colon
+F0B53A2C-98CA-415D-B928-E3FD0E52B22A	1	I67.81	Acute cerebrovascular insufficiency
+F0B53A2C-98CA-415D-B928-E3FD0E52B22A	2	C94.02	Acute erythroid leukemia, in relapse
+F0B53A2C-98CA-415D-B928-E3FD0E52B22A	3	N18.4	Chronic kidney disease, stage 4 (severe)
+F0B53A2C-98CA-415D-B928-E3FD0E52B22A	4	O99.35	Diseases of the nervous system complicating pregnancy, childbirth, and the puerperium
+F0B53A2C-98CA-415D-B928-E3FD0E52B22A	5	D63	Anemia in chronic diseases classified elsewhere
+F0B53A2C-98CA-415D-B928-E3FD0E52B22A	6	I51.3	Intracardiac thrombosis, not elsewhere classified
+1A8791E3-A61C-455A-8DEE-763EB90C9B2C	1	C92.50	Acute myelomonocytic leukemia, not having achieved remission
+1A8791E3-A61C-455A-8DEE-763EB90C9B2C	2	T46.3X6	Underdosing of coronary vasodilators
+1A8791E3-A61C-455A-8DEE-763EB90C9B2C	3	C15.8	Malignant neoplasm of overlapping sites of esophagus
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	1	I25.84	Coronary atherosclerosis due to calcified coronary lesion
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	2	M11.072	Hydroxyapatite deposition disease, left ankle and foot
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	3	H47.42	Disorders of optic chiasm in (due to) neoplasm
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	4	M12.162	Kaschin-Beck disease, left knee
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	5	M12.111	Kaschin-Beck disease, right shoulder
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	6	E79	Disorders of purine and pyrimidine metabolism
+81C5B13B-F6B2-4E57-9593-6E7E4C13B2CE	7	A42.0	Pulmonary actinomycosis
+220C8D43-1322-4A9D-B890-D426942A3649	1	M63	Disorders of muscle in diseases classified elsewhere
+220C8D43-1322-4A9D-B890-D426942A3649	2	M72	Fibroblastic disorders
+220C8D43-1322-4A9D-B890-D426942A3649	3	J14	Pneumonia due to Hemophilus influenzae
+220C8D43-1322-4A9D-B890-D426942A3649	4	M12.161	Kaschin-Beck disease, right knee
+C242E3A4-E785-4DF1-A0E4-3B568DC88F2E	1	O9A.1	Malignant neoplasm complicating pregnancy, childbirth and the puerperium
+C242E3A4-E785-4DF1-A0E4-3B568DC88F2E	2	C71.8	Malignant neoplasm of overlapping sites of brain
+C242E3A4-E785-4DF1-A0E4-3B568DC88F2E	3	E10.339	Type 1 diabetes mellitus with moderate nonproliferative diabetic retinopathy without macular edema
+0BC491C5-5A45-4067-BD11-A78BEA00D3BE	1	C75.1	Malignant neoplasm of pituitary gland
+0BC491C5-5A45-4067-BD11-A78BEA00D3BE	2	F25.0	Schizoaffective disorder, bipolar type
+79A7BA2A-D35A-4CB8-A835-6BAA13B0058C	1	M11.071	Hydroxyapatite deposition disease, right ankle and foot
+79A7BA2A-D35A-4CB8-A835-6BAA13B0058C	2	H26.223	Cataract secondary to ocular disorders (degenerative) (inflammatory), bilateral
+79A7BA2A-D35A-4CB8-A835-6BAA13B0058C	3	D14	Benign neoplasm of middle ear and respiratory system
+79A7BA2A-D35A-4CB8-A835-6BAA13B0058C	4	F52.0	Hypoactive sexual desire disorder
+FFCDECD6-4048-4DCB-B910-1218160005B3	1	F01.5	Vascular dementia
+FFCDECD6-4048-4DCB-B910-1218160005B3	2	C91.42	Hairy cell leukemia, in relapse
+FFCDECD6-4048-4DCB-B910-1218160005B3	3	C21.8	Malignant neoplasm of overlapping sites of rectum, anus and anal canal
+CD2ADB1B-97F7-4EF6-BC5C-3E0EC562A06F	1	G47	Sleep disorders
+CD2ADB1B-97F7-4EF6-BC5C-3E0EC562A06F	2	M10.38	Gout due to renal impairment, vertebrae
+CD2ADB1B-97F7-4EF6-BC5C-3E0EC562A06F	3	F34.0	Cyclothymic disorder
+CD2ADB1B-97F7-4EF6-BC5C-3E0EC562A06F	4	B73.1	Onchocerciasis without eye disease
+A50BE9B4-8A0B-4169-B894-F7BD86D7D90B	1	G96.1	Disorders of meninges, not elsewhere classified
+69CC25ED-A54A-4BAF-97E3-774BB3C9DED1	1	C91.5	Adult T-cell lymphoma/leukemia (HTLV-1-associated)
+69CC25ED-A54A-4BAF-97E3-774BB3C9DED1	2	H36	Retinal disorders in diseases classified elsewhere
+69B5D2A0-12FD-46EF-A5FF-B29C4BAFBE49	1	Z91.15	Patient's noncompliance with renal dialysis
+69B5D2A0-12FD-46EF-A5FF-B29C4BAFBE49	2	M05.5	Rheumatoid polyneuropathy with rheumatoid arthritis
+69B5D2A0-12FD-46EF-A5FF-B29C4BAFBE49	3	D15.0	Benign neoplasm of thymus
+69B5D2A0-12FD-46EF-A5FF-B29C4BAFBE49	4	C94.0	Acute erythroid leukemia
+69B5D2A0-12FD-46EF-A5FF-B29C4BAFBE49	5	I25.75	Atherosclerosis of native coronary artery of transplanted heart with angina pectoris
+8D389A8C-A6D8-4447-9DDE-1A28AB4EC667	1	C92.12	Chronic myeloid leukemia, BCR/ABL-positive, in relapse
+8D389A8C-A6D8-4447-9DDE-1A28AB4EC667	2	Z13.22	Encounter for screening for metabolic disorder
+8D389A8C-A6D8-4447-9DDE-1A28AB4EC667	3	Q60.0	Renal agenesis, unilateral
+8D389A8C-A6D8-4447-9DDE-1A28AB4EC667	4	O26.6	Liver and biliary tract disorders in pregnancy, childbirth and the puerperium
+967987B9-FFEF-4776-85CF-AE05CA81F583	1	M05.742	Rheumatoid arthritis with rheumatoid factor of left hand without organ or systems involvement
+967987B9-FFEF-4776-85CF-AE05CA81F583	2	B95.1	Streptococcus, group B, as the cause of diseases classified elsewhere
+967987B9-FFEF-4776-85CF-AE05CA81F583	3	G30	Alzheimer's disease
+967987B9-FFEF-4776-85CF-AE05CA81F583	4	M90.511	Osteonecrosis in diseases classified elsewhere, right shoulder
+967987B9-FFEF-4776-85CF-AE05CA81F583	5	H30.812	Harada's disease, left eye
+9BBF3A51-443D-438B-9289-B98B8E0577C0	1	J66.1	Flax-dressers' disease
+9BBF3A51-443D-438B-9289-B98B8E0577C0	2	E11.32	Type 2 diabetes mellitus with mild nonproliferative diabetic retinopathy
+6D8008ED-D623-4BE4-B93B-335F9797C170	1	N18.1	Chronic kidney disease, stage 1
+6D8008ED-D623-4BE4-B93B-335F9797C170	2	C10.2	Malignant neoplasm of lateral wall of oropharynx
+6D8008ED-D623-4BE4-B93B-335F9797C170	3	D41.4	Neoplasm of uncertain behavior of bladder
+B3892204-880B-40EF-B3BB-B824B50E99E5	1	C88.3	Immunoproliferative small intestinal disease
+B3892204-880B-40EF-B3BB-B824B50E99E5	2	C49.8	Malignant neoplasm of overlapping sites of connective and soft tissue
+B3892204-880B-40EF-B3BB-B824B50E99E5	3	E09.41	Drug or chemical induced diabetes mellitus with neurological complications with diabetic mononeuropathy
+49DADA25-F2C2-42BB-8210-D78E6C7B0D48	1	Z12	Encounter for screening for malignant neoplasms
+49DADA25-F2C2-42BB-8210-D78E6C7B0D48	2	H47.53	Disorders of visual pathways in (due to) vascular disorders
+7548B6CF-79D9-461D-A0C5-20B861406FAC	1	M05.261	Rheumatoid vasculitis with rheumatoid arthritis of right knee
+7548B6CF-79D9-461D-A0C5-20B861406FAC	2	E75.01	Sandhoff disease
+7548B6CF-79D9-461D-A0C5-20B861406FAC	3	M05.511	Rheumatoid polyneuropathy with rheumatoid arthritis of right shoulder
+7548B6CF-79D9-461D-A0C5-20B861406FAC	4	C02.1	Malignant neoplasm of border of tongue
+B5D31F01-7273-4901-B56F-8139769A11EF	1	B40.1	Chronic pulmonary blastomycosis
+B5D31F01-7273-4901-B56F-8139769A11EF	2	E09.649	Drug or chemical induced diabetes mellitus with hypoglycemia without coma
+B5D31F01-7273-4901-B56F-8139769A11EF	3	E11.5	Type 2 diabetes mellitus with circulatory complications
+80D356B4-F974-441F-A5F2-F95986D119A2	1	H34	Retinal vascular occlusions
+80D356B4-F974-441F-A5F2-F95986D119A2	2	K50.014	Crohn's disease of small intestine with abscess
+80D356B4-F974-441F-A5F2-F95986D119A2	3	D68.3	Hemorrhagic disorder due to circulating anticoagulants
+80D356B4-F974-441F-A5F2-F95986D119A2	4	J66.1	Flax-dressers' disease
+80D356B4-F974-441F-A5F2-F95986D119A2	5	C31.3	Malignant neoplasm of sphenoid sinus
+80D356B4-F974-441F-A5F2-F95986D119A2	6	M05.561	Rheumatoid polyneuropathy with rheumatoid arthritis of right knee
+80D356B4-F974-441F-A5F2-F95986D119A2	7	Q61.01	Congenital single renal cyst
+A0A976C8-9B30-4492-B8C4-5B25095B9192	1	M24.251	Disorder of ligament, right hip
+A0A976C8-9B30-4492-B8C4-5B25095B9192	2	T46.0X5	Adverse effect of cardiac-stimulant glycosides and drugs of similar action
+A0A976C8-9B30-4492-B8C4-5B25095B9192	3	F33.1	Major depressive disorder, recurrent, moderate
+A0A976C8-9B30-4492-B8C4-5B25095B9192	4	M90	Osteopathies in diseases classified elsewhere
+A0A976C8-9B30-4492-B8C4-5B25095B9192	5	K57.5	Diverticular disease of both small and large intestine without perforation or abscess
+A0A976C8-9B30-4492-B8C4-5B25095B9192	6	H43	Disorders of vitreous body
+A0A976C8-9B30-4492-B8C4-5B25095B9192	7	F31.6	Bipolar disorder, current episode mixed
+016A590E-D093-4667-A5DA-D68EA6987D93	1	O99.712	Diseases of the skin and subcutaneous tissue complicating pregnancy, second trimester
+016A590E-D093-4667-A5DA-D68EA6987D93	2	E11.64	Type 2 diabetes mellitus with hypoglycemia
+016A590E-D093-4667-A5DA-D68EA6987D93	3	I25.812	Atherosclerosis of bypass graft of coronary artery of transplanted heart without angina pectoris
+016A590E-D093-4667-A5DA-D68EA6987D93	4	O24.1	Pre-existing diabetes mellitus, type 2, in pregnancy, childbirth and the puerperium
+016A590E-D093-4667-A5DA-D68EA6987D93	5	F13.151	Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced psychotic disorder with hallucinations
+3B11D6B3-A36A-4B69-A437-C29BF425A941	1	I79.0	Aneurysm of aorta in diseases classified elsewhere
+3B11D6B3-A36A-4B69-A437-C29BF425A941	2	T82.4	Mechanical complication of vascular dialysis catheter
+3B11D6B3-A36A-4B69-A437-C29BF425A941	3	D12.1	Benign neoplasm of appendix
+E483DE6E-D4E6-47FD-905B-22EE86EC7ACE	1	A98.3	Marburg virus disease
+E483DE6E-D4E6-47FD-905B-22EE86EC7ACE	2	F14.180	Cocaine abuse with cocaine-induced anxiety disorder
+E483DE6E-D4E6-47FD-905B-22EE86EC7ACE	3	M05.252	Rheumatoid vasculitis with rheumatoid arthritis of left hip
+E483DE6E-D4E6-47FD-905B-22EE86EC7ACE	4	M06.051	Rheumatoid arthritis without rheumatoid factor, right hip
+B2EB15FA-5431-4804-9309-4215BDC778C0	1	M05.722	Rheumatoid arthritis with rheumatoid factor of left elbow without organ or systems involvement
+B2EB15FA-5431-4804-9309-4215BDC778C0	2	H75.03	Mastoiditis in infectious and parasitic diseases classified elsewhere, bilateral
+B2EB15FA-5431-4804-9309-4215BDC778C0	3	C91.1	Chronic lymphocytic leukemia of B-cell type
+53B9FFDD-F80B-43BE-93CF-C34A023EE7E9	1	H16.433	Localized vascularization of cornea, bilateral
+53B9FFDD-F80B-43BE-93CF-C34A023EE7E9	2	Q60.4	Renal hypoplasia, bilateral
+53B9FFDD-F80B-43BE-93CF-C34A023EE7E9	3	O9A.53	Psychological abuse complicating the puerperium
+53B9FFDD-F80B-43BE-93CF-C34A023EE7E9	4	I25.711	Atherosclerosis of autologous vein coronary artery bypass graft(s) with angina pectoris with documented spasm
+53B9FFDD-F80B-43BE-93CF-C34A023EE7E9	5	E10.630	Type 1 diabetes mellitus with periodontal disease
+53B9FFDD-F80B-43BE-93CF-C34A023EE7E9	6	H42	Glaucoma in diseases classified elsewhere
+C5D09468-574F-4802-B56F-DB38F4EB1687	1	N25.1	Nephrogenic diabetes insipidus
+C5D09468-574F-4802-B56F-DB38F4EB1687	2	H61.192	Noninfective disorders of pinna, left ear
+C5D09468-574F-4802-B56F-DB38F4EB1687	3	O99.611	Diseases of the digestive system complicating pregnancy, first trimester
+C5D09468-574F-4802-B56F-DB38F4EB1687	4	H47.0	Disorders of optic nerve, not elsewhere classified
+EA7C2F0F-DA1C-4CE8-9700-4BB1FC7AF3FB	1	M02.37	Reiter's disease, ankle and foot
+EA7C2F0F-DA1C-4CE8-9700-4BB1FC7AF3FB	2	O99.411	Diseases of the circulatory system complicating pregnancy, first trimester
+EA7C2F0F-DA1C-4CE8-9700-4BB1FC7AF3FB	3	D39.11	Neoplasm of uncertain behavior of right ovary
+EA7C2F0F-DA1C-4CE8-9700-4BB1FC7AF3FB	4	E08.641	Diabetes mellitus due to underlying condition with hypoglycemia with coma
+35FE7491-1A1D-48CB-810C-8DC2599AB3DD	1	M10.31	Gout due to renal impairment, shoulder
+35FE7491-1A1D-48CB-810C-8DC2599AB3DD	2	D48.4	Neoplasm of uncertain behavior of peritoneum
+BC44CE19-9FC5-4AC9-A296-9EBC5E3D03AE	3	M11.05	Hydroxyapatite deposition disease, hip
+CC9CDA72-B37A-4F8F-AFE4-B08F56A183BE	1	I25.110	Atherosclerotic heart disease of native coronary artery with unstable angina pectoris
+CC9CDA72-B37A-4F8F-AFE4-B08F56A183BE	2	M63.851	Disorders of muscle in diseases classified elsewhere, right thigh
+EA9B67E2-15F0-450B-A8A6-14F6E4AE3D12	1	E72.4	Disorders of ornithine metabolism
+EA9B67E2-15F0-450B-A8A6-14F6E4AE3D12	2	C34.2	Malignant neoplasm of middle lobe, bronchus or lung
+EA9B67E2-15F0-450B-A8A6-14F6E4AE3D12	3	H16.433	Localized vascularization of cornea, bilateral
+3E462A8F-7B90-43A1-A8B6-AD82CB5002C9	1	O24.111	Pre-existing diabetes mellitus, type 2, in pregnancy, first trimester
+9E18822E-7D13-45C7-B50E-F95CFF92BC3E	1	Z13.0	Encounter for screening for diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism
+9E18822E-7D13-45C7-B50E-F95CFF92BC3E	2	M90.6	Osteitis deformans in neoplastic diseases
+9E18822E-7D13-45C7-B50E-F95CFF92BC3E	3	I79.0	Aneurysm of aorta in diseases classified elsewhere
+A7142B71-A144-4D56-BD14-3E966B01DB37	1	M24.22	Disorder of ligament, elbow
+A7142B71-A144-4D56-BD14-3E966B01DB37	2	O99.43	Diseases of the circulatory system complicating the puerperium
+A7142B71-A144-4D56-BD14-3E966B01DB37	3	M05.132	Rheumatoid lung disease with rheumatoid arthritis of left wrist
+A7142B71-A144-4D56-BD14-3E966B01DB37	4	E11.331	Type 2 diabetes mellitus with moderate nonproliferative diabetic retinopathy with macular edema
+A7142B71-A144-4D56-BD14-3E966B01DB37	5	E10.331	Type 1 diabetes mellitus with moderate nonproliferative diabetic retinopathy with macular edema
+FE0B9B59-1927-45B7-8556-E079DC1DE30A	1	C03.0	Malignant neoplasm of upper gum
+FE0B9B59-1927-45B7-8556-E079DC1DE30A	2	K76.7	Hepatorenal syndrome
+FE0B9B59-1927-45B7-8556-E079DC1DE30A	3	C75.3	Malignant neoplasm of pineal gland
+98F593D2-8894-49BB-93B9-5A0E2CF85E2E	1	Z12.2	Encounter for screening for malignant neoplasm of respiratory organs
+98F593D2-8894-49BB-93B9-5A0E2CF85E2E	2	I08.1	Rheumatic disorders of both mitral and tricuspid valves
+98F593D2-8894-49BB-93B9-5A0E2CF85E2E	3	F52.3	Orgasmic disorder
+98F593D2-8894-49BB-93B9-5A0E2CF85E2E	4	C94.32	Mast cell leukemia, in relapse
+98F593D2-8894-49BB-93B9-5A0E2CF85E2E	5	M06.2	Rheumatoid bursitis
+1A220558-5996-43E1-AE5D-7B96180FED35	1	C69.61	Malignant neoplasm of right orbit
+1A220558-5996-43E1-AE5D-7B96180FED35	2	I08.1	Rheumatic disorders of both mitral and tricuspid valves
+1A220558-5996-43E1-AE5D-7B96180FED35	3	Q24.3	Pulmonary infundibular stenosis
+7A7332AD-88B1-4848-9356-E5260E477C59	1	O10.213	Pre-existing hypertensive chronic kidney disease complicating pregnancy, third trimester
+7A7332AD-88B1-4848-9356-E5260E477C59	2	O98.63	Protozoal diseases complicating the puerperium
+7A7332AD-88B1-4848-9356-E5260E477C59	3	E09.621	Drug or chemical induced diabetes mellitus with foot ulcer
+7A7332AD-88B1-4848-9356-E5260E477C59	4	K57.5	Diverticular disease of both small and large intestine without perforation or abscess
+7A7332AD-88B1-4848-9356-E5260E477C59	5	C91.0	Acute lymphoblastic leukemia [ALL]
+6D5DCAC1-17FE-4D7C-923B-806EFBA3E6DF	1	M90.51	Osteonecrosis in diseases classified elsewhere, shoulder
+6D5DCAC1-17FE-4D7C-923B-806EFBA3E6DF	2	E08.32	Diabetes mellitus due to underlying condition with mild nonproliferative diabetic retinopathy
+6D5DCAC1-17FE-4D7C-923B-806EFBA3E6DF	3	M49.84	Spondylopathy in diseases classified elsewhere, thoracic region
+6D5DCAC1-17FE-4D7C-923B-806EFBA3E6DF	4	D48.2	Neoplasm of uncertain behavior of peripheral nerves and autonomic nervous system
+36E2F89E-777A-4D77-9D95-0D70A8AB416F	1	F63.81	Intermittent explosive disorder
+36E2F89E-777A-4D77-9D95-0D70A8AB416F	2	O9A.5	Psychological abuse complicating pregnancy, childbirth and the puerperium
+36E2F89E-777A-4D77-9D95-0D70A8AB416F	3	S37.812	Contusion of adrenal gland
+672D554B-D6D1-40B2-A6A4-21A4CB6B1AA6	1	O10.13	Pre-existing hypertensive heart disease complicating the puerperium
+672D554B-D6D1-40B2-A6A4-21A4CB6B1AA6	2	O99.43	Diseases of the circulatory system complicating the puerperium
+03A481F5-B32A-4A91-BD42-43EB78FEBA77	1	C94.22	Acute megakaryoblastic leukemia, in relapse
+03A481F5-B32A-4A91-BD42-43EB78FEBA77	2	A48.2	Nonpneumonic Legionnaires' disease [Pontiac fever]
+2A5251B1-0945-47FA-A65C-7A6381562591	1	C11	Malignant neoplasm of nasopharynx
+2A5251B1-0945-47FA-A65C-7A6381562591	2	F16.151	Hallucinogen abuse with hallucinogen-induced psychotic disorder with hallucinations
+2A5251B1-0945-47FA-A65C-7A6381562591	3	M05.23	Rheumatoid vasculitis with rheumatoid arthritis of wrist
+2A5251B1-0945-47FA-A65C-7A6381562591	4	M84	Disorder of continuity of bone
+2A5251B1-0945-47FA-A65C-7A6381562591	5	K50.01	Crohn's disease of small intestine with complications
+2A5251B1-0945-47FA-A65C-7A6381562591	6	F95.1	Chronic motor or vocal tic disorder
+8AF47463-8534-4203-B210-C2290F6CE689	1	I43	Cardiomyopathy in diseases classified elsewhere
+8AF47463-8534-4203-B210-C2290F6CE689	2	M90.522	Osteonecrosis in diseases classified elsewhere, left upper arm
+8AF47463-8534-4203-B210-C2290F6CE689	3	F14.15	Cocaine abuse with cocaine-induced psychotic disorder
+8AF47463-8534-4203-B210-C2290F6CE689	4	O24.013	Pre-existing diabetes mellitus, type 1, in pregnancy, third trimester
+8AF47463-8534-4203-B210-C2290F6CE689	5	D55.2	Anemia due to disorders of glycolytic enzymes
+135C831F-7DA5-46C0-959C-EBCBD8810B43	1	E09.359	Drug or chemical induced diabetes mellitus with proliferative diabetic retinopathy without macular edema
+135C831F-7DA5-46C0-959C-EBCBD8810B43	2	M49.87	Spondylopathy in diseases classified elsewhere, lumbosacral region
+135C831F-7DA5-46C0-959C-EBCBD8810B43	3	I25.10	Atherosclerotic heart disease of native coronary artery without angina pectoris
+135C831F-7DA5-46C0-959C-EBCBD8810B43	4	M90.632	Osteitis deformans in neoplastic diseases, left forearm
+135C831F-7DA5-46C0-959C-EBCBD8810B43	5	M05.17	Rheumatoid lung disease with rheumatoid arthritis of ankle and foot
+8856096E-E59C-4156-A767-C091AF799C80	1	M90.6	Osteitis deformans in neoplastic diseases
+6623F5D6-D581-4268-9F9B-21612FBBF7B5	1	C72.1	Malignant neoplasm of cauda equina
+6623F5D6-D581-4268-9F9B-21612FBBF7B5	2	K71.50	Toxic liver disease with chronic active hepatitis without ascites
+6623F5D6-D581-4268-9F9B-21612FBBF7B5	3	Z12.71	Encounter for screening for malignant neoplasm of testis
+6623F5D6-D581-4268-9F9B-21612FBBF7B5	4	M02.352	Reiter's disease, left hip
+6623F5D6-D581-4268-9F9B-21612FBBF7B5	5	C94.32	Mast cell leukemia, in relapse
+65A7FBE0-EA9F-49E9-9824-D8F3AD98DAC0	1	F12.180	Cannabis abuse with cannabis-induced anxiety disorder
+65A7FBE0-EA9F-49E9-9824-D8F3AD98DAC0	2	S35.415	Laceration of left renal vein
+65A7FBE0-EA9F-49E9-9824-D8F3AD98DAC0	3	K08.422	Partial loss of teeth due to periodontal diseases, class II
+65A7FBE0-EA9F-49E9-9824-D8F3AD98DAC0	4	O10.11	Pre-existing hypertensive heart disease complicating pregnancy
+FB909FAE-72DD-4F6F-9828-D92183DF185F	1	C18.3	Malignant neoplasm of hepatic flexure
+FB909FAE-72DD-4F6F-9828-D92183DF185F	2	O24.42	Gestational diabetes mellitus in childbirth
+FB909FAE-72DD-4F6F-9828-D92183DF185F	3	C62.0	Malignant neoplasm of undescended testis
+FB2ABB23-C9D0-4D09-8464-49BF0B982F0F	1	M05.272	Rheumatoid vasculitis with rheumatoid arthritis of left ankle and foot
+FB2ABB23-C9D0-4D09-8464-49BF0B982F0F	2	D44.6	Neoplasm of uncertain behavior of carotid body
+FB2ABB23-C9D0-4D09-8464-49BF0B982F0F	3	C18.7	Malignant neoplasm of sigmoid colon
+64182B95-EB72-4E2B-BE77-8050B71498CE	1	E10.32	Type 1 diabetes mellitus with mild nonproliferative diabetic retinopathy
+64182B95-EB72-4E2B-BE77-8050B71498CE	2	F45.4	Pain disorders related to psychological factors
+64182B95-EB72-4E2B-BE77-8050B71498CE	3	C74.11	Malignant neoplasm of medulla of right adrenal gland
+64182B95-EB72-4E2B-BE77-8050B71498CE	4	E08.51	Diabetes mellitus due to underlying condition with diabetic peripheral angiopathy without gangrene
+64182B95-EB72-4E2B-BE77-8050B71498CE	5	G32.0	Subacute combined degeneration of spinal cord in diseases classified elsewhere
+DB22A4D9-7E4D-485C-916A-9CD1386507FB	1	M06.361	Rheumatoid nodule, right knee
+DB22A4D9-7E4D-485C-916A-9CD1386507FB	2	E09.351	Drug or chemical induced diabetes mellitus with proliferative diabetic retinopathy with macular edema
+DB22A4D9-7E4D-485C-916A-9CD1386507FB	3	F18.150	Inhalant abuse with inhalant-induced psychotic disorder with delusions
+DB22A4D9-7E4D-485C-916A-9CD1386507FB	4	E09.62	Drug or chemical induced diabetes mellitus with skin complications
+6E70D84D-C75F-477C-BC37-9177C3698C66	1	H26.21	Cataract with neovascularization
+6E70D84D-C75F-477C-BC37-9177C3698C66	2	D13.4	Benign neoplasm of liver
+6E70D84D-C75F-477C-BC37-9177C3698C66	3	E08.0	Diabetes mellitus due to underlying condition with hyperosmolarity
+6E70D84D-C75F-477C-BC37-9177C3698C66	4	H81.02	Ménière's disease, left ear
+C8556CC0-32FC-4CA5-A8CD-9CCF38816167	1	Z12.13	Encounter for screening for malignant neoplasm of small intestine
+C8556CC0-32FC-4CA5-A8CD-9CCF38816167	2	Z95.810	Presence of automatic (implantable) cardiac defibrillator
+C8556CC0-32FC-4CA5-A8CD-9CCF38816167	3	M06.37	Rheumatoid nodule, ankle and foot
+C8556CC0-32FC-4CA5-A8CD-9CCF38816167	4	K50.813	Crohn's disease of both small and large intestine with fistula
+7FD13988-E58A-4A5C-8680-89AC200950FA	1	D35.5	Benign neoplasm of carotid body
+7FD13988-E58A-4A5C-8680-89AC200950FA	2	C63.2	Malignant neoplasm of scrotum
+7FD13988-E58A-4A5C-8680-89AC200950FA	3	M06.25	Rheumatoid bursitis, hip
+7FD13988-E58A-4A5C-8680-89AC200950FA	4	D44.5	Neoplasm of uncertain behavior of pineal gland
+C60FE675-CA52-4C55-A233-F4B27E94987F	1	D16.2	Benign neoplasm of long bones of lower limb
+C60FE675-CA52-4C55-A233-F4B27E94987F	2	E11.3	Type 2 diabetes mellitus with ophthalmic complications
+C60FE675-CA52-4C55-A233-F4B27E94987F	3	M90.86	Osteopathy in diseases classified elsewhere, lower leg
+C60FE675-CA52-4C55-A233-F4B27E94987F	4	A83.6	Rocio virus disease
+B39DC5AC-E003-4E6A-91B6-FC07625A1285	1	M06.041	Rheumatoid arthritis without rheumatoid factor, right hand
+B39DC5AC-E003-4E6A-91B6-FC07625A1285	2	C93.01	Acute monoblastic/monocytic leukemia, in remission
+B39DC5AC-E003-4E6A-91B6-FC07625A1285	3	M1A.352	Chronic gout due to renal impairment, left hip
+B39DC5AC-E003-4E6A-91B6-FC07625A1285	4	F11	Opioid related disorders
+B39DC5AC-E003-4E6A-91B6-FC07625A1285	5	M05.441	Rheumatoid myopathy with rheumatoid arthritis of right hand
+FA157FA5-F488-4884-BF87-E144630D595C	1	M05.732	Rheumatoid arthritis with rheumatoid factor of left wrist without organ or systems involvement
+FA157FA5-F488-4884-BF87-E144630D595C	2	M06.34	Rheumatoid nodule, hand
+35FE7491-1A1D-48CB-810C-8DC2599AB3DD	3	M05.741	Rheumatoid arthritis with rheumatoid factor of right hand without organ or systems involvement
+35FE7491-1A1D-48CB-810C-8DC2599AB3DD	4	F94.2	Disinhibited attachment disorder of childhood
+35FE7491-1A1D-48CB-810C-8DC2599AB3DD	5	C47	Malignant neoplasm of peripheral nerves and autonomic nervous system
+868E700E-3C56-458F-A477-078D671DCB20	1	M10.37	Gout due to renal impairment, ankle and foot
+868E700E-3C56-458F-A477-078D671DCB20	2	B33.4	Hantavirus (cardio)-pulmonary syndrome [HPS] [HCPS]
+56A35E74-90BE-44A0-B7BA-7743BB152133	1	C67.5	Malignant neoplasm of bladder neck
+56A35E74-90BE-44A0-B7BA-7743BB152133	2	C76.51	Malignant neoplasm of right lower limb
+56A35E74-90BE-44A0-B7BA-7743BB152133	3	K50.1	Crohn's disease of large intestine
+CC12B481-B516-455B-884F-4CA900B29F2E	1	M10.361	Gout due to renal impairment, right knee
+CC12B481-B516-455B-884F-4CA900B29F2E	2	E87.4	Mixed disorder of acid-base balance
+CC12B481-B516-455B-884F-4CA900B29F2E	3	D89.810	Acute graft-versus-host disease
+714823AF-C52C-414C-B53B-C43EACD194C3	1	K08.121	Complete loss of teeth due to periodontal diseases, class I
+714823AF-C52C-414C-B53B-C43EACD194C3	2	O26.63	Liver and biliary tract disorders in the puerperium
+714823AF-C52C-414C-B53B-C43EACD194C3	3	O9A.513	Psychological abuse complicating pregnancy, third trimester
+3231F930-2978-4F50-8234-755449851E7B	1	E30	Disorders of puberty, not elsewhere classified
+3231F930-2978-4F50-8234-755449851E7B	2	Z49	Encounter for care involving renal dialysis
+3231F930-2978-4F50-8234-755449851E7B	3	F18.17	Inhalant abuse with inhalant-induced dementia
+3231F930-2978-4F50-8234-755449851E7B	4	J84.842	Pulmonary interstitial glycogenosis
+3231F930-2978-4F50-8234-755449851E7B	5	F94.1	Reactive attachment disorder of childhood
+C2CCB1AB-6633-4CB3-B4E8-157E6FB02376	1	G71	Primary disorders of muscles
+C2CCB1AB-6633-4CB3-B4E8-157E6FB02376	2	O46.023	Antepartum hemorrhage with disseminated intravascular coagulation, third trimester
+1311FEE4-2FDC-46E4-83D3-1550A3E51D2C	1	C18.3	Malignant neoplasm of hepatic flexure
+1311FEE4-2FDC-46E4-83D3-1550A3E51D2C	2	C79.51	Secondary malignant neoplasm of bone
+21792512-2D40-4326-BEA2-A40127EB24FF	1	O99.351	Diseases of the nervous system complicating pregnancy, first trimester
+21792512-2D40-4326-BEA2-A40127EB24FF	2	C16.2	Malignant neoplasm of body of stomach
+21792512-2D40-4326-BEA2-A40127EB24FF	3	M90.642	Osteitis deformans in neoplastic diseases, left hand
+21792512-2D40-4326-BEA2-A40127EB24FF	4	M01.X72	Direct infection of left ankle and foot in infectious and parasitic diseases classified elsewhere
+21792512-2D40-4326-BEA2-A40127EB24FF	5	E30	Disorders of puberty, not elsewhere classified
+21792512-2D40-4326-BEA2-A40127EB24FF	6	M10.322	Gout due to renal impairment, left elbow
+EEAFC0B3-B835-4D99-AB33-2F9428E54E5F	1	M05.25	Rheumatoid vasculitis with rheumatoid arthritis of hip
+EEAFC0B3-B835-4D99-AB33-2F9428E54E5F	2	M05.59	Rheumatoid polyneuropathy with rheumatoid arthritis of multiple sites
+EEAFC0B3-B835-4D99-AB33-2F9428E54E5F	3	O98.6	Protozoal diseases complicating pregnancy, childbirth and the puerperium
+EEAFC0B3-B835-4D99-AB33-2F9428E54E5F	4	D37.0	Neoplasm of uncertain behavior of lip, oral cavity and pharynx
+2EE42DEF-37CA-4694-827E-FA4EAF882BFC	1	C57.21	Malignant neoplasm of right round ligament
+2EE42DEF-37CA-4694-827E-FA4EAF882BFC	2	T46.3X6	Underdosing of coronary vasodilators
+2EE42DEF-37CA-4694-827E-FA4EAF882BFC	3	D31.41	Benign neoplasm of right ciliary body
+36775002-9EC3-4889-AD4F-80DC6855C8D8	1	K00	Disorders of tooth development and eruption
+36775002-9EC3-4889-AD4F-80DC6855C8D8	2	M24.242	Disorder of ligament, left hand
+36775002-9EC3-4889-AD4F-80DC6855C8D8	3	C79.02	Secondary malignant neoplasm of left kidney and renal pelvis
+36775002-9EC3-4889-AD4F-80DC6855C8D8	4	E71.31	Disorders of fatty-acid oxidation
+36775002-9EC3-4889-AD4F-80DC6855C8D8	5	M24.272	Disorder of ligament, left ankle
+36775002-9EC3-4889-AD4F-80DC6855C8D8	6	E08.5	Diabetes mellitus due to underlying condition with circulatory complications
+4C201C71-CCED-40D1-9642-F9C8C485B854	1	M63.832	Disorders of muscle in diseases classified elsewhere, left forearm
+4C201C71-CCED-40D1-9642-F9C8C485B854	2	T43.3X5	Adverse effect of phenothiazine antipsychotics and neuroleptics
+4C201C71-CCED-40D1-9642-F9C8C485B854	3	D12.9	Benign neoplasm of anus and anal canal
+4C201C71-CCED-40D1-9642-F9C8C485B854	4	D31.41	Benign neoplasm of right ciliary body
+4C201C71-CCED-40D1-9642-F9C8C485B854	5	M01.X1	Direct infection of shoulder joint in infectious and parasitic diseases classified elsewhere
+4C201C71-CCED-40D1-9642-F9C8C485B854	6	Z22.31	Carrier of bacterial disease due to meningococci
+2A8772FE-61DB-483E-B6BF-6C0A74BA9C2A	1	C72.3	Malignant neoplasm of optic nerve
+2A8772FE-61DB-483E-B6BF-6C0A74BA9C2A	2	M05.13	Rheumatoid lung disease with rheumatoid arthritis of wrist
+2A8772FE-61DB-483E-B6BF-6C0A74BA9C2A	3	H15	Disorders of sclera
+C65A4ADE-112E-49E4-B72A-0DED22C242ED	1	M05.27	Rheumatoid vasculitis with rheumatoid arthritis of ankle and foot
+C65A4ADE-112E-49E4-B72A-0DED22C242ED	2	N16	Renal tubulo-interstitial disorders in diseases classified elsewhere
+C65A4ADE-112E-49E4-B72A-0DED22C242ED	3	D35.2	Benign neoplasm of pituitary gland
+80AC01B2-BD55-4BE0-A59A-4024104CF4E9	1	F06.1	Catatonic disorder due to known physiological condition

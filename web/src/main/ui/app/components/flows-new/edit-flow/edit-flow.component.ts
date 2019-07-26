@@ -1,13 +1,15 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Flow} from "../models/flow.model";
-import {Step} from '../models/step.model';
-import {StepType} from '../models/step.model';
-import {ProjectService} from '../../../services/projects';
-import {ManageFlowsService} from "../services/manage-flows.service";
-import {EntitiesService} from '../../../models/entities.service';
+import { Component, OnInit, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
+import { ActivatedRoute, Router,  Event as NavigationEvent, NavigationStart } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Flow } from "../models/flow.model";
+import { Step } from '../models/step.model';
+import { StepType } from '../models/step.model';
+import { ProjectService } from '../../../services/projects';
+import { ManageFlowsService } from "../services/manage-flows.service";
+import { EntitiesService } from '../../../models/entities.service';
 import { RunningJobService } from '../../jobs-new/services/running-job-service';
-import {Entity} from '../../../models';
+import { EditFlowUiComponent } from './ui/edit-flow-ui.component';
+import { Entity } from '../../../models';
 import * as _ from "lodash";
 
 @Component({
@@ -24,6 +26,7 @@ import * as _ from "lodash";
     [flowEnded]="flowEnded"
     [runFlowClicked]="runFlowClicked"
     [disableSelect]="disableSelect"
+    [errorResponse]="errorResponse"
     (saveFlow)="saveFlow($event)"
     (stopFlow)="stopFlow($event)"
     (runFlow)="runFlow($event)"
@@ -32,10 +35,14 @@ import * as _ from "lodash";
     (stepSelected)="stepSelected($event)"
     (stepUpdate)="updateStep($event)"
     (stepDelete)="deleteStep($event)"
+    (clipboardSuccess)="clipboardSuccess.emit($event)"
   ></app-edit-flow-ui>
 `
 })
 export class EditFlowComponent implements OnInit, OnDestroy {
+
+  @ViewChild(EditFlowUiComponent) editFlowUi: EditFlowUiComponent;
+
   flowId: string;
   flow: Flow;
   flowNames: string[];
@@ -53,6 +60,15 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   stepType: typeof StepType = StepType;
   runFlowClicked: boolean = false;
   disableSelect: boolean = false;
+  errorResponse: any = {
+    isError: false,
+    status: '',
+    statusText: ''
+  };
+  navigationPopState: any;
+
+  @Output() clipboardSuccess = new EventEmitter();
+  
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -60,7 +76,19 @@ export class EditFlowComponent implements OnInit, OnDestroy {
    private runningJobService: RunningJobService,
    private activatedRoute: ActivatedRoute,
    private router: Router
-  ) { }
+  ) {
+    this.navigationPopState = router.events
+    .pipe(
+      filter(( event: NavigationEvent ) => {
+        return( event instanceof NavigationStart );
+      }
+    ))
+    .subscribe(( event: NavigationStart ) => {
+      if (event.navigationTrigger === 'popstate') {
+        this.errorResponse.isError = false;
+      }
+    });
+   }
 
   ngOnInit() {
     this.getFlow();
@@ -70,26 +98,37 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.runningJobService.stopPolling(this.flow.id);
+    if (this.flow) {
+      this.runningJobService.stopPolling(this.flow.id);
+    }
+    this.navigationPopState.unsubscribe();
   }
 
   getFlow() {
-    this.flowId = this.activatedRoute.snapshot.paramMap.get('flowId');
-
-    // GET Flow by ID
-    if (this.flowId) {
-      this.manageFlowsService.getFlowById(this.flowId).subscribe( resp => {
-        console.log('flow by id response', resp);
-        this.flow = Flow.fromJSON(resp);
-        this.getSteps();
-        this.checkLatestJobStatus();
-      });
-    }
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.flowId = params.get('flowId');
+      if (this.flowId) {
+        this.manageFlowsService.getFlowById(this.flowId).subscribe(
+          resp => {
+            console.log('flow by id response', resp);
+            this.flow = Flow.fromJSON(resp);
+            this.getSteps();
+            this.checkLatestJobStatus();
+          },
+          error => {
+            this.flow = null;
+            this.stepsArray = null;
+            this.errorResponse.isError = true;
+            this.errorResponse.status = error.status;
+            this.errorResponse.statusText = error.statusText;
+          });
+      }
+    });
   }
   getAllFlowNames() {
     this.manageFlowsService.getFlows().subscribe((flows: Flow[]) => {
       this.flowNames = _.map(flows, flow => flow.name);
-    })
+    });
   }
   getSteps() {
     this.manageFlowsService.getSteps(this.flowId).subscribe( resp => {
@@ -176,6 +215,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   updateStep(step) {
     this.manageFlowsService.updateStep(this.flow.id, step.id, step).subscribe(resp => {
+      this.editFlowUi.stepUpdated(step);
       this.stepsArray.forEach( step => {
         if (step.id === resp.id) {
           step = resp;
@@ -204,7 +244,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
           description:      '',
           version:          '0',
           targetEntityType: targetEntityType,
-          sourceContext:    '//',
+          sourceContext:    '/',
           sourceURI:        '',
           properties:       {}
         }

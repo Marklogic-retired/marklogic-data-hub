@@ -84,17 +84,20 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
 
-        // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
-        // loaded by the modules loader in the parent class which adds these entries to the ml-javaclient-utils timestamp file
-        String filePath = hubConfig.getAppConfig().getModuleTimestampsPath();
-        File defaultTimestampFile = new File(filePath);
-
         if (forceLoad) {
             pmm.deletePropertiesFile();
-            if (defaultTimestampFile.exists()){
-                defaultTimestampFile.delete();
+
+            // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
+            // loaded by the modules loader in the parent class which adds these entries to the ml-javaclient-utils timestamp file
+            String filePath = hubConfig.getAppConfig().getModuleTimestampsPath();
+            if (filePath != null) {
+                File defaultTimestampFile = new File(filePath);
+                if (defaultTimestampFile.exists()) {
+                    defaultTimestampFile.delete();
+                }
             }
         }
+
         return pmm;
     }
 

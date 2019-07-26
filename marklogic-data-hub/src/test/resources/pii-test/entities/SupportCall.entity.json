@@ -37,7 +37,7 @@
           }
       },
       "primaryKey":"id",
-        "required":["id","callStartTime","callEndTime","servicedBy","caller"],
+        "required":["id","callStartTime","callEndTime","caller"],
       "description" : "",
       "pii":[]
     }

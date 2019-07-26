@@ -1,11 +1,11 @@
 <div layout-padding layout="column" class="custom-page">
-  <!-- <info-label
-    labelText="Modules Database"
-    tooltipPlacement="right"
-    tooltipText="Tooltip here about Module Database"
-  ></info-label> -->
-  <div class="label">Modules Database</div>
-  <mat-form-field class="read-only" appearance="outline" layout-fill>
+  <div class="label"
+    [matTooltip]="tooltips.modulesDatabase"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500" 
+    >Modules Database (Read-Only)</div>
+  <mat-form-field class="read-only" layout-fill class="modules-database-field">
     <input
       id="custom-module"
       matInput
@@ -13,14 +13,18 @@
       [readonly]="true"
     />
   </mat-form-field>
-  <div class="label">Custom Module URI</div>
-  <mat-form-field appearance="outline" >
+  <div class="label"
+    [matTooltip]="tooltips.customModuleURI"
+    matTooltipPosition="left"
+    matTooltipShowDelay="500"
+    matTooltipHideDelay="500" 
+    >Custom Module URI</div>
+  <mat-form-field class="custom-module-uri-field">
     <input
       id="custom-module-uri"
       matInput
       [(ngModel)]="step.modulePath"
-      (blur)="onChange()"
-      (keypress)="onKeyChange($event)"
+      (change)="onChange()"
     />
   </mat-form-field>
 </div>

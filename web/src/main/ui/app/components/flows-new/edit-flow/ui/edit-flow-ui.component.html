@@ -1,6 +1,6 @@
 <div id="edit-flow">
   <div class="back-link">
-    <a [routerLink]="['/flows']">
+    <a routerLink="/flows">
       <span class="back-symbol">&lt;</span> Manage Flows
     </a>
   </div>
@@ -33,4 +33,8 @@
       ></app-step>
     </cdk-step>
   </app-stepper>
+  <http-error
+    *ngIf="errorResponse.isError"
+    [error]="errorResponse"
+  ></http-error>
 </div>

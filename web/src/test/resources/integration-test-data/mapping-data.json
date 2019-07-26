@@ -4,7 +4,7 @@
   "description": "",
   "version": 0,
   "targetEntityType": "/prod-entity-0.0.0.0.1/prod-entity",
-  "sourceContext": "//",
+  "sourceContext": "/",
   "properties": {
     "price": {
       "sourcedFrom": "description"

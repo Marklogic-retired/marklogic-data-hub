@@ -1,4 +1,4 @@
-import {  browser, by, ExpectedConditions as EC} from 'protractor';
+import { browser, by, ExpectedConditions as EC } from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
@@ -293,7 +293,6 @@ export default function(qaProjectDir) {
             await expect(browsePage.facetName("SimpleJSONMastering").getText()).toEqual("SimpleJSONMastering");
             await expect(browsePage.facetName("mdm-merged").getText()).toEqual("mdm-merged");
             await expect(browsePage.facetCount("mdm-merged").getText()).toEqual("1");
-            await expect(browsePage.facetCount("mdm-content").getText()).toEqual("4");
             await expect(browsePage.facetCount("mdm-auditing").getText()).toEqual("1");
             await expect(browsePage.facetCount("mdm-archived").getText()).toEqual("3");
             // Verify on Manage Flows page

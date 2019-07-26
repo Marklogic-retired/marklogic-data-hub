@@ -8,6 +8,9 @@ import module namespace spell = "http://marklogic.com/xdmp/spell"
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
+
 declare namespace match = "http://marklogic.com/smart-mastering/matcher";
 
 declare option xdmp:mapping "false";
@@ -37,8 +40,6 @@ declare
   )
 {
   let $property-name := $expand-xml/@property-name
-  let $property-def := $options-xml/*:property-defs/*:property[@name = $property-name]
-  let $qname := fn:QName($property-def/@namespace, $property-def/@localname)
   let $dictionary := $expand-xml/*:dictionary
   let $spell-options :=
     element spell:options {
@@ -57,22 +58,7 @@ declare
         spell:suggest($dictionary, $value, $spell-options)[fn:not(fn:lower-case(.) = fn:lower-case($value))]
     where fn:exists($expanded-values)
     return
-      if ($options-xml/match:data-format = $const:FORMAT-JSON) then
-        cts:json-property-value-query(
-          fn:string($qname),
-          $expanded-values,
-          "case-insensitive",
-          $expand-xml/@weight
-        )
-      else if ($options-xml/match:data-format = $const:FORMAT-XML) then
-        cts:element-value-query(
-          $qname,
-          $expanded-values,
-          "case-insensitive",
-          $expand-xml/@weight
-        )
-      else
-        fn:error(xs:QName("SM-INVALID-FORMAT"), "invalid format in match options")
+      helper-impl:property-name-to-query($options-xml, $property-name)($expanded-values, $expand-xml/@weight)
 };
 
 declare function algorithms:setup-double-metaphone($expand-xml, $options-xml, $options)
@@ -89,16 +75,20 @@ declare function algorithms:setup-double-metaphone($expand-xml, $options-xml, $o
           $dictionary,
           spell:make-dictionary(
             try {
-              cts:values(
-                cts:element-reference(
-                  $qname,
-                  "collation=" ||
-                    (
-                      map:get($options,"collation"),
-                      fn:default-collation()
-                    )[fn:normalize-space(.)][1]
-                )
-              )
+              let $reference :=
+                if (fn:exists($property-def/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference))) then
+                  $property-def/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference) ! cts:reference-parse(.)
+                else
+                  cts:element-reference(
+                    $qname,
+                    "collation=" ||
+                      (
+                        map:get($options,"collation"),
+                        fn:default-collation()
+                      )[fn:normalize-space(.)][1]
+                  )
+              return
+                cts:values($reference)
             } catch ($e) {
               xdmp:log("Caught an error while generating double-metaphone dictionary: " || xdmp:quote($e), "error")
             }

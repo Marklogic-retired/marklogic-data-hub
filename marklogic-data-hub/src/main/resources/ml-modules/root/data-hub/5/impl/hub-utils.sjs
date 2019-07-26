@@ -170,6 +170,8 @@ class HubUtils {
   normalizeToSequence(value) {
    if (value instanceof Sequence) {
      return value;
+   } else if (value === null || value === undefined) {
+     return Sequence.from([]);
    } else if (value.constructor === Array) {
      return Sequence.from(value);
    } else {

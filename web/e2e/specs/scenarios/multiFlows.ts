@@ -1,4 +1,4 @@
-import {  browser, by, ExpectedConditions as EC} from 'protractor';
+import { browser, by, ExpectedConditions as EC } from 'protractor';
 import loginPage from '../../page-objects/auth/login';
 import dashboardPage from '../../page-objects/dashboard/dashboard';
 import entityPage from '../../page-objects/entities/entities';
@@ -80,26 +80,33 @@ export default function(qaProjectDir) {
 
         it('should create and run IngestAdvantage step', async function() {
             await appPage.flowsTab.click();
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
             await manageFlowPage.clickFlowname("AdvantageFlow");
-            browser.sleep(5000);
-            browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+            await browser.sleep(5000);
+            await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
             await editFlowPage.clickNewStepButton();
-            browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+            await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
             await stepsPage.clickStepTypeDropDown();
-            browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Ingestion")));
+            await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Ingestion")));
             await stepsPage.clickStepTypeOption("Ingestion");
-            browser.wait(EC.visibilityOf(stepsPage.stepName));
+            await browser.wait(EC.visibilityOf(stepsPage.stepName));
             await stepsPage.setStepName("IngestAdvantage");
             await stepsPage.setStepDescription("Ingest Advantage docs");
+            await stepsPage.clickAdvSettingsExpandCollapse();
+            await browser.wait(EC.visibilityOf(stepsPage.additionalCollectionToAdd(0)));
+            await stepsPage.setAdditionalCollection(0, "LoadAdvantage");
             await stepsPage.clickStepCancelSave("save");
-            browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-            browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+            await browser.sleep(3000);
             await expect(stepsPage.stepDetailsName.getText()).toEqual("IngestAdvantage");
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/advantage");
-            browser.sleep(3000);
+            await browser.sleep(3000);
+            // Verify target URI replacement and preview
+            await ingestStepPage.setTargetUriReplace(qaProjectDir + "/input/advantage" + ", " + "\'\/advantage\'");
+            await browser.sleep(3000);
+            await browser.wait(EC.visibilityOf(ingestStepPage.targetUriPreview));
             await editFlowPage.clickRunFlowButton();
-            browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+            await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
             await browser.sleep(5000);
             await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
@@ -118,13 +125,18 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.stepCommitted("IngestAdvantage").getText()).toEqual("1,003");   
             await jobDetailsPage.clickStepCommitted("IngestAdvantage");
             // Verify on Browse Data page
-            browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            browser.sleep(5000);
-            expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1003');
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await browser.sleep(5000);
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 1003');
             await expect(browsePage.facetName("IngestAdvantage").getText()).toEqual("IngestAdvantage");
+            await expect(browsePage.facetName("LoadAdvantage").getText()).toEqual("LoadAdvantage");
+            // Verify target URI replacement
+            await browsePage.searchKeyword("dray");
+            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            await expect(browsePage.resultsUri().getText()).toEqual("/advantage/cust1001.json");
             // Verify on Manage Flows page
             await appPage.flowsTab.click()
-            browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
+            await browser.wait(EC.visibilityOf(manageFlowPage.flowName("AdvantageFlow")));
             await expect(manageFlowPage.status("AdvantageFlow").getText()).toEqual("Finished");
             await expect(manageFlowPage.docsCommitted("AdvantageFlow").getText()).toEqual("1,003");
         });
@@ -258,8 +270,8 @@ export default function(qaProjectDir) {
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/bedrock");
             browser.sleep(3000);
             await ingestStepPage.clickSourceFileTypeDropDown();
-            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("CSV")));
-            await ingestStepPage.clickSourceFileTypeOption("CSV");
+            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("Delimited Text")));
+            await ingestStepPage.clickSourceFileTypeOption("Delimited Text");
             await editFlowPage.clickRunFlowButton();
             browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
             await editFlowPage.clickButtonRunCancel("flow");
@@ -420,8 +432,8 @@ export default function(qaProjectDir) {
             await ingestStepPage.setInputFilePath(qaProjectDir + "/input/cerrian");
             browser.sleep(3000);
             await ingestStepPage.clickSourceFileTypeDropDown();
-            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("CSV")));
-            await ingestStepPage.clickSourceFileTypeOption("CSV");
+            browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("Delimited Text")));
+            await ingestStepPage.clickSourceFileTypeOption("Delimited Text");
             browser.sleep(3000);
             await ingestStepPage.clickTargetFileTypeDropDown();
             browser.wait(EC.elementToBeClickable(ingestStepPage.targetFileTypeOptions("XML")));
@@ -731,7 +743,7 @@ export default function(qaProjectDir) {
             await expect(jobDetailsPage.stepCommitted("MasteringCustomer").getText()).toEqual("2,505");   
             await jobDetailsPage.clickStepCommitted("MasteringCustomer");
             // Verify on Browse Data page
-            await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+            /*await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
             await browser.sleep(10000);
             await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 10 of 2512');
             await expect(browsePage.facetName("MasteringCustomer").getText()).toEqual("MasteringCustomer");
@@ -753,7 +765,7 @@ export default function(qaProjectDir) {
             // Verify the merge doc from xml mapping
             await browsePage.searchKeyword("gardner");
             await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+            await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');*/
             // Verify on Manage Flows page
             await appPage.flowsTab.click();
             await browser.wait(EC.visibilityOf(manageFlowPage.flowName("MasteringFlow")));

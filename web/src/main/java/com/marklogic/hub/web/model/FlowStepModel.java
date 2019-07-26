@@ -183,7 +183,7 @@ public class FlowStepModel {
     }
 
     public void setJobs(FlowJobs flowJobs, boolean fromRunFlow) {
-        if(flowJobs != null) {
+        if (flowJobs != null) {
             this.jobIds = flowJobs.jobIds;
             if (fromRunFlow) {
                 //reset the latestJob info until the running flow starts with a new jobId

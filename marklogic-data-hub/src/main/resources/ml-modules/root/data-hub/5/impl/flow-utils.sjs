@@ -227,35 +227,43 @@ class FlowUtils {
     if (resp instanceof BinaryNode) {
       return xs.hexBinary(resp);
     }
-      let kind = resp ? xdmp.nodeKind(resp) : null;
-      let isXml = (kind === 'element');
-      if (!isXml && resp) {
-        // object with $type key is ES response type
-        if (resp instanceof Object && resp.hasOwnProperty('$type')) {
-          return resp;
-        } else if (dataFormat === this.consts.XML) {
-          return json.transformFromJson(resp, json.config("custom"));
-        } else {
-          return resp;
-        }
-      } else if (isXml && resp) {
-        if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === this.consts.XML) {
-          return json.arrayValues(resp);
-        } else {
-          return resp;
-        }
+
+    if (resp instanceof Sequence) {
+      var cleanResp = [];
+      for (const respPart of resp) {
+        cleanResp.push(this.cleanData(respPart, destination, dataFormat));
       }
-    else if (!resp) {
-        if (destination === "headers" && dataFormat === this.consts.JSON) {
-          return {};
-        }
-        else if (destination === "triples" && dataFormat === this.consts.JSON) {
-          return [];
-        }
-        else {
-          return resp;
-        }
+      return Sequence.from(cleanResp);
+    }
+
+    let kind = resp ? xdmp.nodeKind(resp) : null;
+    let isXml = (kind === 'element');
+    if (!isXml && resp) {
+      // object with $type key is ES response type
+      if (resp instanceof Object && resp.hasOwnProperty('$type')) {
+        return resp;
+      } else if (dataFormat === this.consts.XML) {
+        return json.transformFromJson(resp, json.config("custom"));
+      } else {
+        return resp;
       }
+    } else if (isXml && resp) {
+      if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === this.consts.XML) {
+        return json.arrayValues(resp);
+      } else {
+        return resp;
+      }
+    } else if (!resp) {
+      if (destination === "headers" && dataFormat === this.consts.JSON) {
+        return {};
+      }
+      else if (destination === "triples" && dataFormat === this.consts.JSON) {
+        return [];
+      }
+      else {
+        return resp;
+      }
+    }
 
     if (dataFormat === this.consts.JSON &&
       destination === "triples") {
@@ -505,6 +513,9 @@ class FlowUtils {
     for (let key in options.headers) {
       headers[key] = this.evalSubstituteVal(options.headers[key]);
     }
+    if(options.file) {
+        headers["createdUsingFile"] = options.file;
+    }
     return headers;
   }
 
@@ -515,7 +526,7 @@ class FlowUtils {
     metaData[this.consts.CREATED_ON] = fn.string(this.evalSubstituteVal(this.consts.CREATED_ON));
     metaData[this.consts.CREATED_BY] = fn.string(this.evalSubstituteVal(this.consts.CREATED_BY));
     metaData[this.consts.CREATED_IN_FLOW] = flowName;
-    metaData[this.consts.CREATED_BY_STEP] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[this.consts.CREATED_BY_STEP],"\\s+"),stepName])), " ");
+    metaData[this.consts.CREATED_BY_STEP] = stepName;
     metaData[this.consts.CREATED_BY_JOB] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[this.consts.CREATED_BY_JOB],"\\s+"),jobId])), " ");
 
     return metaData;
