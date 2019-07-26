@@ -48,8 +48,6 @@
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2722'>DHFPROD-2722</a>] -         Error in connecting to the Data Hub API when trying to GET Flows in Quickstart
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2723'>DHFPROD-2723</a>] -         Regression - unable to create/delete the first flow
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2741'>DHFPROD-2741</a>] -         makeEnvelope() should accept a Sequence for headers
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2763'>DHFPROD-2763</a>] -         DHF 5.0.1 Generated TDE templates include rows for external references
@@ -66,8 +64,6 @@
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2821'>DHFPROD-2821</a>] -         Missing slash(/) in the uri preview in QS when inputFileType is &#39;csv&#39;
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2822'>DHFPROD-2822</a>] -         Fix for DHFPROD-2793 broke WriteStepRunnerTest
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2823'>DHFPROD-2823</a>] -         Synonym matcher in Mastering doesn&#39;t work
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2842'>DHFPROD-2842</a>] -         DHF throws and logs an error every time a flow is run from QuickStart
@@ -76,33 +72,8 @@
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2856'>DHFPROD-2856</a>] -         search options doctored in hub-entities.xqy needs to be fixed
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2862'>DHFPROD-2862</a>] -         Ensure ssl/cert auth tests run in 4.x-develop
-</li>
 </ul>
-            
-**Task:**
-<ul>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2356'>DHFPROD-2356</a>] -         Quickstart UI Automation on jobs page validation
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2459'>DHFPROD-2459</a>] -         Create certificates and run SSL/cert auth tests 
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2587'>DHFPROD-2587</a>] -         Reduce latency of getFlows API call on the backend server
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2619'>DHFPROD-2619</a>] -         Extend existing DHS-e2e example to test REST extension
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2659'>DHFPROD-2659</a>] -         Fix E2E UI automation inconsistency on last finished job
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2777'>DHFPROD-2777</a>] -         DOCUMENTATION:Create a xqy module with a gradle switch for &#39;hubCreateStepDefinition&#39; task
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2792'>DHFPROD-2792</a>] -         Separate 4.x, 4.x legacy, and 5.x examples into separate directories in the Examples folder
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2795'>DHFPROD-2795</a>] -         Page validation on MLCP Command
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2801'>DHFPROD-2801</a>] -         Upgrade ml-gradle to 3.15.2 and ml-app-deployer to 3.15.1
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2835'>DHFPROD-2835</a>] -         Page validation for QS about menu.
-</li>
-</ul>
+         
     
 **Sub Task:**
 <ul>
@@ -112,15 +83,9 @@
                                     
 **Story:**
 <ul>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1836'>DHFPROD-1836</a>] -         DH5 docs: New custom step how-to topics (2)
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1886'>DHFPROD-1886</a>] -         Fit and finish: Appearance tweaks for DH 5.0 site
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1954'>DHFPROD-1954</a>] -         DH5 docs: Call a flow with ingestion step using MLCP
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-1982'>DHFPROD-1982</a>] -         Levels of provenance tracking and turning off job document creation
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2025'>DHFPROD-2025</a>] -         DH5 docs: Running flows w/ingestion step with mlcp
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2135'>DHFPROD-2135</a>] -         FE Implementation: Display MLCP command in ingest step
 </li>
@@ -130,37 +95,17 @@
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2386'>DHFPROD-2386</a>] -         Preview Output URI
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2560'>DHFPROD-2560</a>] -         Install DHF 5.0.2 into a new DHS instance
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2586'>DHFPROD-2586</a>] -         DH5 docs: New custom hook how-to topics
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2672'>DHFPROD-2672</a>] -         Verify a DHF 5.0.2 installation in DHS via DHF installer
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2674'>DHFPROD-2674</a>] -         Deploy bare minimum user project files to DHS
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2682'>DHFPROD-2682</a>] -         DH5 docs: Descriptions of parameters in flow declaration file
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2720'>DHFPROD-2720</a>] -         Smart Mastering example that utilizes all SM settings
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2725'>DHFPROD-2725</a>] -         Example project for custom step for load one set of data and enriching it with geospatial information
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2726'>DHFPROD-2726</a>] -         Validate installing 5.0.2 DHF on top of 4.3.1 DHF
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2729'>DHFPROD-2729</a>] -         Example project for how to harmonize from multiple sources into a single entity using a custom step
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2731'>DHFPROD-2731</a>] -         Customize the &#39;CSV Separator&#39; field in Quickstart
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2735'>DHFPROD-2735</a>] -         Add comments to custom step scaffolding for mutability/immutability
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2764'>DHFPROD-2764</a>] -         5.0.2 release notes
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2787'>DHFPROD-2787</a>] -         Draft documentation for Provenance Tracking
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2788'>DHFPROD-2788</a>] -         Final documentation for Provenance Tracking
-</li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2846'>DHFPROD-2846</a>] -         Demonstrate merge options in Smart Mastering example project
-</li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2867'>DHFPROD-2867</a>] -         dhsInstaller needs to be improved to work with ssl DHS stack
 </li>
 </ul>
 
