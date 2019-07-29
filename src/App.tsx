@@ -1,30 +1,20 @@
 import React from 'react';
 import { Switch } from 'react-router';
-import { Route, Link } from 'react-router-dom';
-import { Menu } from 'antd';
+import { Route } from 'react-router-dom';
+import Header from './components/header/header';
 import Home from './pages/Home';
-import Example from './pages/Example';
+import View from './pages/View';
+import Browse from './pages/Browse';
 import './App.scss';
 
 const App: React.FC = () => {
-  // const [key, setKey] = useState('/');
-
   return (
     <div>
-      <Menu mode="horizontal">
-        <Menu.Item key="home">
-          Home
-          <Link to="/"/>
-        </Menu.Item>
-        <Menu.Item key="example">
-          Entity Payload
-          <Link to="/example"/>
-        </Menu.Item>
-      </Menu>
-
+      <Header/>
       <Switch>
         <Route path="/" exact component={Home} />
-        <Route path="/example" exact component={Example} />
+        <Route path="/view" exact component={View} />
+        <Route path="/browse" exact component={Browse} />
       </Switch>
     </div>
   );
