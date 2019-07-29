@@ -6,6 +6,11 @@ def commitMessage="";
 def prResponse="";
 def prNumber;
 def props;
+def loadProperties() {
+    node {
+        props = readProperties file: 'pipeline.properties'
+    }
+}
 def githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
 pipeline{
 	agent none;
