@@ -28,7 +28,7 @@ ext.junitJupiterVersion  = '5.3.1'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.1.2'
-    compile('com.marklogic:ml-app-deployer:3.12.0'){
+    compile('com.marklogic:ml-app-deployer:3.16.0'){
         exclude group: 'org.springframework', module: 'spring-context'
     }
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.0.6.RELEASE'
@@ -55,7 +55,7 @@ dependencies {
     testCompile 'ch.qos.logback:logback-classic:1.1.11'
     testCompile 'org.slf4j:log4j-over-slf4j:1.7.13'
     testCompile("com.marklogic:mlcp-util:0.3.0")
-    testCompile("com.marklogic:mlcp:9.0.8") {
+    testCompile("com.marklogic:mlcp:9.0.10") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
