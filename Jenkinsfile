@@ -312,7 +312,7 @@ pipeline{
 		}
 		stage('Parallel Execution'){
 		when {
-  			branch 'develop'
+  			branch props['ExecutionBranch']
   			beforeAgent true
 		}
 		parallel{
