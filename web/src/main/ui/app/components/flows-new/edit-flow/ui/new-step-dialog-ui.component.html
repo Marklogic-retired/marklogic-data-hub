@@ -3,10 +3,16 @@
 
   <mat-form-field class="ng-invalid">
     <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()"
-                formControlName="stepDefinitionType" required>
+                formControlName="stepDefinitionType" required #stepOptionchoice>
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field class="ng-invalid" *ngIf="stepOptionchoice.value === 'CUSTOM'">
+      <mat-select id="step-type-purpose" class="type-select" placeholder="Step Type Purpose"
+                  formControlName="stepPurpose" required>
+        <mat-option class="type-option" *ngFor="let option of stepTypePurposeOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
+      </mat-select>
+    </mat-form-field>
   <div *ngIf="newStepForm.value.stepDefinitionType || isUpdate">
     <mat-form-field class="">
       <input id="step-name" matInput formControlName="name" placeholder="Name" required [errorStateMatcher]="instantErrorMatcher">

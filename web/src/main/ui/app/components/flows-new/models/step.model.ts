@@ -2,12 +2,20 @@ import { IngestionOptions } from './ingestions-options.model';
 import { MappingOptions } from './mapping-options.model';
 import { MasteringOptions } from './mastering-options.model';
 import { CustomOptions } from './custom-options.model';
+import stepConfig from '../../../../../../../e2e/test-objects/stepConfig';
 
 export enum StepType {
   INGESTION = 'INGESTION',
   MAPPING = 'MAPPING',
   MASTERING = 'MASTERING',
   CUSTOM = 'CUSTOM'
+}
+
+export enum StepTypePurpose {
+  INGESTION = 'CUSTOM INGESTION',
+  MAPPING = 'CUSTOM MAPPING',
+  MASTERING = 'CUSTOM MASTERING',
+  OTHER = 'CUSTOM'
 }
 
 export class Step {
@@ -28,6 +36,14 @@ export class Step {
   };
   // Custom only
   public modulePath: string;
+  public stepPurpose: StepTypePurpose;
+
+  // All step types
+  public customHook: any;
+  public retryLimit: number;
+  public batchSize: number;
+  public threadCount: number;
+
   private constructor() {}
 
   static createIngestionStep(filePath: string): Step {
@@ -62,8 +78,13 @@ export class Step {
   static createCustomStep(): Step {
     const step = new Step();
     step.modulePath = '';
+    //step.stepPurpose = '';
     step.options = new CustomOptions();
     step.options.outputFormat = 'json';
+    step.customHook = {};
+    step.retryLimit = 0;
+    step.batchSize = 100;
+    step.threadCount = 4;
     return step;
   }
 
@@ -95,6 +116,9 @@ export class Step {
     }
     if (json.modulePath) {
       newStep.modulePath = json.modulePath;
+    }
+    if (json.stepPurpose) {
+      newStep.stepPurpose = json.stepPurpose;
     }
     // Check options
     if (json.options) {
@@ -129,6 +153,7 @@ export class Step {
         newStep.options = new CustomOptions();
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
+        newStep.stepPurpose = StepTypePurpose.OTHER;
       }
       const newOptions = Object.assign(newStep.options, json.options);
       newStep.options = newOptions;

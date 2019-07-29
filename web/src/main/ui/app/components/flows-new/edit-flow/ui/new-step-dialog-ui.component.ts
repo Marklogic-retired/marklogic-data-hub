@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
-import { Step, StepType } from '../../models/step.model';
+import { Step, StepType, StepTypePurpose } from '../../models/step.model';
 import {NewStepDialogValidator} from '../../validators/new-step-dialog.validator';
 import {FlowsTooltips} from "../../tooltips/flows.tooltips";
 import {
@@ -27,9 +27,11 @@ export class NewStepDialogUiComponent implements OnInit {
   @Output() getCollections = new EventEmitter();
   @Output() cancelClicked = new EventEmitter();
   @Output() saveClicked = new EventEmitter();
-
+  
   public newStep: Step;
   readonly stepOptions = Object.keys(StepType);
+
+  readonly stepTypePurposeOptions = Object.keys(StepTypePurpose);
   readonly outputFormats = [
     {
       label: 'JSON',
@@ -93,6 +95,7 @@ export class NewStepDialogUiComponent implements OnInit {
         ExistingStepNameValidator.forbiddenName(this.flow, this.step && this.step.name)
       ]],
       stepDefinitionType: [this.step ? this.step.stepDefinitionType : '', Validators.required],
+      stepPurpose: [this.step ? this.step.stepPurpose : '', Validators.required],
       description: [(this.step && this.step.description) ? this.step.description : ''],
       selectedSource: [(selectedSource) ? selectedSource : ''],
       sourceQuery: [(this.step && this.step.options.sourceQuery) ? this.step.options.sourceQuery : ''],
