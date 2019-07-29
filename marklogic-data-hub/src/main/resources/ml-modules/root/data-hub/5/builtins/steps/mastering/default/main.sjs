@@ -11,7 +11,11 @@ function main(content, options) {
   let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
   // Data Hub will persist the results for us.
   let persistResults = false;
-  return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+  if (filteredContent.length) {
+    return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+  } else {
+    return emptySequence;
+  }
 }
 
 function checkOptions(content, options, filteredContent = []) {
@@ -39,6 +43,7 @@ function checkOptions(content, options, filteredContent = []) {
     let docCollections = xdmp.nodeCollections(item.value);
     if (!docCollections.includes(archivedCollection)) {
       xdmp.lockForUpdate(item.uri);
+      item.collections = docCollections;
       filteredContent.push(item);
       contentHasExpectedContentCollection = contentHasExpectedContentCollection && docCollections.includes(contentCollection);
       contentHasTargetEntityCollection = contentHasTargetEntityCollection && docCollections.includes(options.targetEntity);
