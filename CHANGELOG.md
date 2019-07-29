@@ -1,6 +1,6 @@
 # Change Log
 
-## [v5.0.2](https://github.com/marklogic/marklogic-data-hub/releases/tag/5.0.2) (2019-07-25)
+## [v5.0.2](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.2) (2019-07-25)
 
 **Fixed Bugs:**
 <ul>
@@ -110,7 +110,7 @@
 </ul>
 
 
-## [v5.0.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/5.0.1) (2019-06-14)
+## [v5.0.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.1) (2019-06-14)
 
 **Improvements**
 
