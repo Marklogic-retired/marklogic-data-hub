@@ -1,6 +1,6 @@
 import appPage, { AppPage } from "../appPage";
 import { pages } from '../page';
-import { browser, by, ExpectedConditions as EC, element, $$ } from "protractor";
+import {browser, by, ExpectedConditions as EC, element, $$, $} from "protractor";
 
 export class ManageFlows extends AppPage {
 
@@ -131,7 +131,15 @@ export class ManageFlows extends AppPage {
    */
   async clickFlowCancelSave(option: string) {
     let button = this.flowCancelSaveButton(option);
-    return await button.click();
+    await browser.wait(EC.elementToBeClickable(button), 5000);
+    await button.click();
+    await browser.sleep(1000);
+    // this.flowDialogBox.isPresent().then(function(result) {
+    //   if(result) {
+    //     button.click();
+    //     browser.sleep(1000);
+    //   }
+    // });
   }
 
   get redeployButton() {
