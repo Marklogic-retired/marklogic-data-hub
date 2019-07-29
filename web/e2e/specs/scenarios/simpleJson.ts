@@ -76,7 +76,7 @@ export default function (qaProjectDir) {
     });
 
     it('validate new entity dialog fields', async function () {
-      await entityPage.newEntityButton.click();
+      await entityPage.clickNewEntityButton();
       await expect(entityPage.entityHeader.isDisplayed()).toBe(true);
       await expect(entityPage.entityHeader.getText()).toBe("New Entity");
       await expect(entityPage.entityTitle.isDisplayed()).toBe(true);
