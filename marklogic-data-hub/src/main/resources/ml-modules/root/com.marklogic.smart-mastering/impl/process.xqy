@@ -79,7 +79,13 @@ declare variable $STRING-TOKEN := "##";
  : @param $matches
  : @return  map(unique ID -> sequence of URIs)
  :)
-declare function proc-impl:consolidate-merges($matches as map:map) as map:map
+declare function proc-impl:consolidate-merges(
+  $matches as map:map,
+  $matching-options,
+  $max-scan,
+  $merge-threshold,
+  $filter-query
+) as map:map
 {
   map:new((
     let $merges :=
@@ -88,13 +94,37 @@ declare function proc-impl:consolidate-merges($matches as map:map) as map:map
         let $merge-uris as xs:string* := map:get($matches, $key)/result[@action=$const:MERGE-ACTION]/@uri
         where fn:exists($merge-uris)
         return
-          fn:string-join(
-            for $uri in fn:distinct-values(($key, $merge-uris))
-            let $_lock-on-uri := if (fn:not(map:contains($matches,$uri))) then xdmp:lock-for-update($uri) else ()
-            order by $uri
-            return $uri,
-            $STRING-TOKEN
-          )
+          let $additional-uris :=
+            for $merge-uri in $merge-uris
+            return
+              if (map:contains($matches,$merge-uri)) then
+                map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+              else
+                match-impl:find-document-matches-by-options(
+                  fn:doc($merge-uri),
+                  $matching-options,
+                  1,
+                  $max-scan,
+                  $merge-threshold,
+                  (: don't lock for update :)
+                  fn:false(),
+                  (: don't include detailed match information :)
+                  fn:false(),
+                  if ($filter-query instance of cts:true-query) then
+                    cts:not-query(cts:document-query($merge-uris))
+                  else
+                    cts:and-not-query($filter-query, cts:document-query($merge-uris)),
+                  (: return results :)
+                  fn:true()
+                )/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+          return
+            fn:string-join(
+              for $uri in fn:distinct-values(($key, $merge-uris, $additional-uris))
+              let $_lock-on-uri := if (fn:not(map:contains($matches,$uri))) then xdmp:lock-for-update($uri) else ()
+              order by $uri
+              return $uri,
+              $STRING-TOKEN
+            )
       )
     for $merge in $merges
     let $uris := fn:tokenize($merge, $STRING-TOKEN)
@@ -205,6 +235,10 @@ declare function proc-impl:process-match-and-merge-with-options(
               fn:error($const:NO-THRESHOLD-ACTION-FOUND, "No threshold actions to act on.", ($matching-options/matcher:thresholds))
             else ()
   let $lock-on-query := fn:false()
+  let $max-scan := fn:head((
+    $matching-options//*:max-scan ! xs:integer(.),
+    500
+  ))
   let $all-matches :=
     let $start-elapsed := xdmp:elapsed-time()
     let $matches :=
@@ -217,10 +251,7 @@ declare function proc-impl:process-match-and-merge-with-options(
                 (. => map:get("value")),
                 $matching-options,
                 1,
-                fn:head((
-                  $matching-options//*:max-scan ! xs:integer(.),
-                  500
-                )),
+                $max-scan,
                 $minimum-threshold,
                 $lock-on-query,
                 fn:false(),
@@ -228,14 +259,18 @@ declare function proc-impl:process-match-and-merge-with-options(
               )
             )
         ))
-        }, map:entry("update", "false"))
+      }, map:entry("update", "false"))
     return (
       $matches,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
         xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: Matches: " || (xdmp:elapsed-time() - $start-elapsed))
       else ()
     )
-  let $consolidated-merges := proc-impl:consolidate-merges($all-matches)
+  let $consolidated-merges := proc-impl:consolidate-merges($all-matches,
+    $matching-options,
+    $max-scan,
+    $merge-threshold,
+    $filter-query)
   let $merged-uris := map:keys($consolidated-merges)
   let $merged-into := map:map()
   let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
@@ -308,7 +343,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     return (
       $merges,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
-        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: Merges: " || (xdmp:elapsed-time() - $start-elapsed))
+        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: ["||xdmp:request()||"] Merges: " || (xdmp:elapsed-time() - $start-elapsed))
       else ()
     )
   let $uris-that-were-merged := map:keys($merged-into)
@@ -332,7 +367,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     return (
       $archived,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
-        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: Archived: " || (xdmp:elapsed-time() - $start-elapsed))
+        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options:["||xdmp:request()||"] Archived: " || (xdmp:elapsed-time() - $start-elapsed))
       else ()
     )
   let $consolidated-notifies := proc-impl:consolidate-notifies($all-matches, $merged-into)
@@ -345,6 +380,7 @@ declare function proc-impl:process-match-and-merge-with-options(
       let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
       let $doc := $write-object
         => map:get("value")
+
       let $has-merges :=
         fn:number(
           match-impl:find-document-matches-by-options(
@@ -363,15 +399,15 @@ declare function proc-impl:process-match-and-merge-with-options(
           )/@total
         ) gt 0
       return
-        (: If there are merges with a doc outside of this batch then leave it alone. :)
+      (: If there are merges with a doc outside of this batch then leave it alone. :)
         if ($has-merges) then
           map:delete($write-objects-by-uri, $uri)
         (: otherwise, we want to pick up new collections :)
         else
           let $write-context := $write-object
-            => map:get("context")
+          => map:get("context")
           let $current-collections := $write-context
-            => map:get("collections")
+          => map:get("collections")
           let $new-collections := (
             coll-impl:on-no-match(
               map:entry($uri, $current-collections),
@@ -380,17 +416,17 @@ declare function proc-impl:process-match-and-merge-with-options(
             $target-entity
           )
           let $_update := $write-context
-            => map:put("collections", $new-collections)
+          => map:put("collections", $new-collections)
           return
             if (fn:not(map:contains($all-matches, $uri))) then
               xdmp:lock-for-update($uri)
             else ()
-      return (
+    return (
         $no-matches,
         if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
-          xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: No matches: " || (xdmp:elapsed-time() - $start-elapsed))
+          xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options:["||xdmp:request()||"] No matches: " || (xdmp:elapsed-time() - $start-elapsed))
         else ()
-      )
+    )
   let $processed-notifications :=
     let $start-elapsed := xdmp:elapsed-time()
     let $notifications :=
@@ -405,7 +441,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     return (
       $notifications,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
-        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: Notifications: " || (xdmp:elapsed-time() - $start-elapsed))
+        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options:["||xdmp:request()||"] Notifications: " || (xdmp:elapsed-time() - $start-elapsed))
       else ()
     )
   (: Ensure that we are only writing once to a URI and merges take precedence over archives :)
@@ -463,7 +499,7 @@ declare function proc-impl:process-match-and-merge-with-options(
       else
         fn:error(xs:QName("SM-CONFIGURATION"), "Threshold action is not configured or not found", $custom-action-match),
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
-        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: " || (xdmp:elapsed-time() - $start-elapsed))
+        xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options:["||xdmp:request()||"] " || (xdmp:elapsed-time() - $start-elapsed))
       else ()
   ))
 };
@@ -551,4 +587,3 @@ declare function proc-impl:retrieve-write-object(
       $write-obj
     )
 };
-

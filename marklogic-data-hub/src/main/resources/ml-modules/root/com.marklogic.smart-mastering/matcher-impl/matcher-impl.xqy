@@ -632,6 +632,8 @@ declare function match-impl:filter-for-required-queries(
     )
 };
 
+declare variable $_locked-on-uris as map:map := map:map();
+
 declare function match-impl:lock-on-search($query-results)
   as empty-sequence()
 {
@@ -640,7 +642,9 @@ declare function match-impl:lock-on-search($query-results)
   for $required-query in $required-queries
   for $query-combination in match-impl:query-combinations($required-query)
   let $lock-uri := $lock-prefix || $query-combination
+  where fn:not(map:contains($_locked-on-uris, $lock-uri))
   return (
+    map:put($_locked-on-uris, $lock-uri, fn:true()),
     if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
       xdmp:trace($const:TRACE-MATCH-RESULTS, "locking on URI: " || $lock-uri)
     else (),
