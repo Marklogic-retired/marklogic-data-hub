@@ -103,7 +103,11 @@ export class NewStepDialogUiComponent implements OnInit {
       targetEntity: [(this.step && this.step.options.targetEntity) ? this.step.options.targetEntity : ''],
       sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
       targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : ''],
-      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json']
+      outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json'],
+      customHook: [(this.step && this.step.customHook) ? this.step.customHook : {}],
+      retryLimit: [(this.step && this.step.retryLimit) ? this.step.retryLimit : 0],
+      batchSize: [(this.step && this.step.batchSize) ? this.step.batchSize : 100],
+      threadCount: [(this.step && this.step.threadCount) ? this.step.threadCount : 4]
     }, { validators: NewStepDialogValidator });
 
     this.newStepForm.setControl('additionalCollections', this.createTargetCollections());

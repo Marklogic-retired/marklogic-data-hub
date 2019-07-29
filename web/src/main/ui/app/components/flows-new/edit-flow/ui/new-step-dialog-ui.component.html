@@ -108,6 +108,25 @@
         </div>
       </div>
 
+      <!-- Additonal New Fields to match ml-gradle-->
+      <mat-form-field class="">
+          <input id="custom-hook" matInput formControlName="customHook" placeholder="Custom Hook">
+      </mat-form-field>
+      <mat-form-field class="">
+          <input id="retry-limit" matInput formControlName="retryLimit" placeholder="Retry Limit">
+      </mat-form-field>
+      <mat-form-field class="">
+          <input id="batch-size" matInput formControlName="batchSize" placeholder="Batch Size">
+      </mat-form-field>
+      <mat-form-field class="">
+          <input id="thread-count" matInput formControlName="threadCount" placeholder="Thread Count">
+      </mat-form-field>
+      <!-- <mat-form-field>
+          <mat-label>Custom Hook</mat-label>
+            <input [class]="'add-custom-hook'" matInput formControlName="customHook"/>
+            <mat-error id="'add-custom-hook' + '-error">Enter a valid object</mat-error>
+      </mat-form-field> -->
+
       </mat-expansion-panel>
     </mat-accordion>
   </div>
