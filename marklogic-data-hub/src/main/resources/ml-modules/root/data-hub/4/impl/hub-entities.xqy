@@ -18,9 +18,9 @@ xquery version "1.0-ml";
 module namespace hent = "http://marklogic.com/data-hub/hub-entities";
 
 import module namespace es = "http://marklogic.com/entity-services"
-  at "/MarkLogic/entity-services/entity-services.xqy";
+at "/MarkLogic/entity-services/entity-services.xqy";
 import module namespace tde = "http://marklogic.com/xdmp/tde"
-  at "/MarkLogic/tde.xqy";
+at "/MarkLogic/tde.xqy";
 
 declare namespace search = "http://marklogic.com/appservices/search";
 
@@ -47,16 +47,16 @@ declare function hent:get-model($entity-name as xs:string, $used-models as xs:st
     let $model-map as map:map? := $model
     let $refs := $model//*[fn:local-name(.) = '$ref'][fn:starts-with(., "#/definitions")] ! fn:replace(., "#/definitions/", "")
     let $definitions := map:get($model-map, "definitions")
-      let $_ :=
-        for $ref in $refs[fn:not(. = $used-models)]
-        let $m :=
-          if (fn:empty(map:get($definitions, $ref))) then
+    let $_ :=
+      for $ref in $refs[fn:not(. = $used-models)]
+      let $m :=
+        if (fn:empty(map:get($definitions, $ref))) then
           let $other-model as map:map? := hent:get-model($ref, ($used-models, $entity-name))
           let $other-defs := map:get($other-model, "definitions")
           for $key in map:keys($other-defs)
           return
             map:put($definitions, $key, map:get($other-defs, $key))
-          else ()
+        else ()
       return ()
     return $model-map
 };
@@ -84,20 +84,20 @@ declare function hent:uber-model($models as object-node()*) as map:map
 };
 
 declare function hent:wrap-duplicates(
-    $duplicate-map as map:map,
-    $property-name as xs:string,
-    $item as element()
+  $duplicate-map as map:map,
+  $property-name as xs:string,
+  $item as element()
 ) as item()
 {
-    if (map:contains($duplicate-map, $property-name))
-    then
-        comment { "This item is a duplicate and is commented out so as to create a valid artifact.&#10;",
-            xdmp:quote($item),
-            "&#10;"
-        }
-    else (
-        map:put($duplicate-map, $property-name, true()),
-        $item)
+  if (map:contains($duplicate-map, $property-name))
+  then
+    comment { "This item is a duplicate and is commented out so as to create a valid artifact.&#10;",
+    xdmp:quote($item),
+    "&#10;"
+    }
+  else (
+    map:put($duplicate-map, $property-name, true()),
+    $item)
 };
 
 (:
@@ -112,17 +112,33 @@ declare %private function hent:fix-options($nodes as node()*)
       case element(search:options) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
+          $n/@*,
           <search:constraint name="Collection">
             <search:collection/>
           </search:constraint>,
-          hent:fix-options(($n/@*, $n/node()))
+          <search:constraint name="createdByJob">
+            <search:value>
+              <search:field name="datahubCreatedByJob"/>
+            </search:value>
+          </search:constraint>,
+          <search:constraint name="createdByStep">
+            <search:value>
+              <search:field name="datahubCreatedByStep"/>
+            </search:value>
+          </search:constraint>,
+          hent:fix-options($n/node())
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-options(($n/@*, $n/node()))
+          $n/@*,
+          hent:fix-options($n/node()),
+
+          let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
+          where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
+          return <search:facet-option>limit=25</search:facet-option>
         }
       case text() return
         fn:replace($n, "es:", "*:")
@@ -133,7 +149,7 @@ declare function hent:dump-search-options($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return
-    (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
+  (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
     hent:fix-options(es:search-options-generate($uber-model))
 };
 
@@ -146,17 +162,55 @@ declare function hent:dump-pii($entities as json:array)
 declare function hent:dump-indexes($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  let $o := xdmp:from-json(es:database-properties-generate($uber-model))
+
+  let $database-config := xdmp:from-json(es:database-properties-generate($uber-model))
+
   let $_ :=
     for $x in ("database-name", "schema-database", "triple-index", "collection-lexicon")
     return
-      map:delete($o, $x)
+      map:delete($database-config, $x)
+
   let $_ :=
-    for $idx in map:get($o, "range-path-index") ! json:array-values(.)
+    for $idx in map:get($database-config, "range-path-index") ! json:array-values(.)
     return
       map:put($idx, "path-expression", fn:replace(map:get($idx, "path-expression"), "es:", "*:"))
+
+  let $_ := remove-duplicate-range-indexes($database-config)
+
   return
-    xdmp:to-json($o)
+    xdmp:to-json($database-config)
+};
+
+(:
+es:database-properties-generate will generate duplicate range indexes when e.g. two entities have properties with the
+same name and namespace and are both configured to have range indexes. This function removes duplicates, where
+duplicates are considered to have the same local name, namespace URI, and collation.
+:)
+declare function hent:remove-duplicate-range-indexes($database-config as item())
+{
+  let $indexes := map:get($database-config, "range-element-index")
+  return
+    if (fn:exists($indexes)) then
+      let $index-map := map:map()
+      let $_ :=
+        for $index in json:array-values($indexes)
+        let $key := fn:string-join(
+          (
+            "localname", map:get($index, "localname"),
+            "namespace", map:get($index, "namespace-uri"),
+            "collation", map:get($index, "collation")
+          ), "-"
+        )
+        where fn:not(map:contains($index-map, $key))
+        return map:put($index-map, $key, $index)
+
+      let $deduplicated-indexes := json:array()
+      let $_ := map:keys($index-map) ! json:array-push($deduplicated-indexes, map:get($index-map, .))
+      let $_ := map:put($database-config, "range-element-index", $deduplicated-indexes)
+      return ()
+    else
+      let $_ := map:put($database-config, "range-element-index", json:array())
+      return ()
 };
 
 declare variable $generated-primary-key-column as xs:string := "DataHubGeneratedPrimaryKey";
@@ -178,7 +232,8 @@ declare function hent:dump-tde($entities as json:array)
       $definition => map:get("properties") => map:put($generated-primary-key-column, map:entry("datatype", "string"))
     )
   let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
-  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions)
+  let $entity-name := map:get(map:get($uber-model, "info"), "title")
+  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions, $entity-name)
 };
 
 declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
@@ -186,14 +241,20 @@ declare variable $default-invalid-values as element(tde:invalid-values) := eleme
 (:
   this method doctors the TDE output from ES
 :)
+
 declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map)
+{
+  hent:fix-tde($nodes, $entity-model-contexts, $uber-definitions, ())
+};
+
+declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map, $entity-name as xs:string?)
 {
   for $n in $nodes
   return
     typeswitch($n)
       case document-node() return
         document {
-          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element(tde:nullable) return
         $default-nullable
@@ -226,9 +287,16 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         element { fn:node-name($n) } {
           $n/namespace::node(),
           if ($n = $entity-model-contexts) then
-            fn:replace(fn:string($n),"^\./", ".//")
+            fn:replace(fn:replace(fn:string($n),"^\./", ".//"), "(.)$", "$1[node()]")
           else
-            $n/node()
+          if(fn:count($n) = 1) then
+            let $outer-context := fn:replace(fn:string($n),"//\*:instance", "/*:envelope/*:instance")
+            return if(fn:not(fn:empty($entity-name))) then
+              fn:concat($outer-context, "[*:", $entity-name, "]")
+            else
+              $outer-context
+          else
+          $n/node()
         }
       case element(tde:column) return
         element { fn:node-name($n) } {
@@ -285,7 +353,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                 }
               }
             ) else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
         }
       case element() return
         element { fn:node-name($n) } {
