@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import styles from './header.module.scss';
-// React Hooks with TypeScript
-// our components props accept a number for the initial value
-// defaults to 0 if no initial value
-const Header:React.FC<{ }> = () => {
-  // since we pass a number here, clicks is going to be a number.
-  // setClicks is a function that accepts either a number or a function returning
-  // a number
+
+const Header:React.FC<{}> = () => {
   //const [clicks, setClicks] = useState(initial);
   return (
     <Layout.Header>

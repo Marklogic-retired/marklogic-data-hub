@@ -9,14 +9,14 @@ import './App.scss';
 
 const App: React.FC = () => {
   return (
-    <div>
+    <>
       <Header/>
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/view" exact component={View} />
         <Route path="/browse" exact component={Browse} />
       </Switch>
-    </div>
+    </>
   );
 }
 

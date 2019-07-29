@@ -2,7 +2,11 @@ import React from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import styles from './login-form.module.scss';
 
-class LoginForm extends React.Component<{ form: any }, {}> {
+type Props = {
+  form: any;
+}
+
+class LoginForm extends React.Component<Props, {}> {
   handleSubmit = (e:any) => {
     e.preventDefault();
     this.props.form.validateFields((err:any, values:any) => {
