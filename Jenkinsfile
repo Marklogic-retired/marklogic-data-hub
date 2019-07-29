@@ -457,8 +457,9 @@ pipeline{
 		stage('w12_cluster_9.0-8'){
 			agent { label 'master'}
 			steps{ 
-				build '/5.x/dhf-core-develop-winserver2012-cluster_9.0-8'
 					script{
+           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-8', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
@@ -486,8 +487,9 @@ pipeline{
 		stage('w12_cluster_9.0-7'){
 			agent { label 'master'}
 			steps{ 
-				build '/5.x/dhf-core-develop-winserver2012-cluster_9.0-7'
 					script{
+          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-7', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
@@ -515,8 +517,9 @@ pipeline{
 		stage('w12_cluster'){
 			agent { label 'master'}
 			steps{ 
-				build '/5.x/dhf-core-develop-winserver2012-cluster'
 					script{
+          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
@@ -544,8 +547,9 @@ pipeline{
 		stage('qs_rh7_singlenode'){
 			agent { label 'master'}
 			steps{ 
-				build '/5.x/NO_CI_dhf-qs-develop-rh7'
 					script{
+          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
