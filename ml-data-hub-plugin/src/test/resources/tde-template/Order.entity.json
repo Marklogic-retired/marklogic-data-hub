@@ -3,7 +3,7 @@
     "title": "Order",
     "description": "DHF Order",
     "version": "1.0.0",
-    "baseUri": "http://www.marklogic.com/"
+    "baseUri": "http://marklogic.com/data-hub/"
   },
   "definitions": {
     "Order": {
@@ -31,4 +31,5 @@
       "primaryKey": "id",
       "pathRangeIndex": ["id", "totalCost"]
     }
-  },
+  }
+}
