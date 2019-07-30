@@ -14,9 +14,16 @@ function mapsJSONasExpected() {
     },
     "targetEntity" : "Customer"
   }).value.envelope.instance.Customer;
+  const message = `Unexpected output: ${describe(mappedInstance)}`;
   return [
-    test.assertEqual("Bob", mappedInstance.firstname, `Unexpected output: ${describe(mappedInstance)}`),
-    test.assertEqual("Customer-1234", mappedInstance.id, `Unexpected output: ${describe(mappedInstance)}`)
+    test.assertEqual("Bob", mappedInstance.firstname, message),
+    test.assertEqual("Customer-1234", mappedInstance.id, message),
+    test.assertEqual(10, mappedInstance.firstNumber, message),
+    test.assertEqual(null, mappedInstance.secondNumber, message),
+    test.assertEqual(10, mappedInstance.thirdNumber, message),
+    test.assertEqual(10, mappedInstance.fourthNumber, message),
+    test.assertEqual(null, mappedInstance.fifthNumber, message),
+    test.assertEqual(null, mappedInstance.sixthNumber, message)
   ];
 }
 

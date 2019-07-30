@@ -18,6 +18,24 @@
     },
     "updated": {
       "sourcedFrom": "Metadata/CreatedOn"
+    },
+    "firstNumber": {
+      "sourcedFrom": "Number[. >= 10]"
+    },
+    "secondNumber": {
+      "sourcedFrom": "Number[. > 10]"
+    },
+    "thirdNumber": {
+      "sourcedFrom": "Number[. = 10]"
+    },
+    "fourthNumber": {
+      "sourcedFrom": "Number[. <= 10]"
+    },
+    "fifthNumber": {
+      "sourcedFrom": "Number[. < 10]"
+    },
+    "sixthNumber": {
+      "sourcedFrom": "Number[. != 10]"
     }
   }
 }
