@@ -246,53 +246,42 @@ public class DataHubImpl implements DataHub {
                 versionString = versions.getMarkLogicVersion();
             }
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (major < 9) {
+            if (major != 9) {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
             //Support any 9.0 version > 9.0-5 and all 10.0 versions.
-            if (major == 9) {
-                int minor = 0;
-                int hotFixNum = 0;
 
-                //Extract minor version in cases where versions is of type 9.0-6.2 or 9.0-6
-                if(versionString.matches("^.*-(.+)\\.(.*)")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
-                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
-                }
-                else if(versionString.matches("^.*-(.+)$")){
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
+            int minor = 0;
+            int hotFixNum = 0;
 
-                //left pad hotFixNum  with 0 if it is < 10
-                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
-                String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
-                int ver = Integer.parseInt(alteredString);
+            //Extract minor version in cases where versions is of type 9.0-6.2 or 9.0-6
+            if(versionString.matches("^.*-(.+)\\.(.*)")) {
+                minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
+                hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
+            }
+            else if(versionString.matches("^.*-(.+)$")){
+                minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
+            }
+            //left pad minor version with 0 if it is < 10
+            String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
 
-                //ver >= 500 => 9.0-5 and above is supported
-                if (!isNightly && ver < 500) {
-                    return false;
-                }
+            //left pad hotFixNum  with 0 if it is < 10
+            String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
+            String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
+            int ver = Integer.parseInt(alteredString);
+
+            //ver >= 500 => 9.0-5 and above is supported
+            if (!isNightly && ver < 500) {
+                return false;
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
                 //Support all 9.0-nightly on or after 5/5/2018
-                if(major == 9) {
-                    Date minDate = new GregorianCalendar(2018, Calendar.MAY, 5).getTime();
-                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
-                    if (date.before(minDate)) {
-                        return false;
-                    }
-                }
-                //Support all 10.0-nightly on or after 6/11/2019
-                if(major == 10) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 1).getTime();
-                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
-                    if (date.before(minDate)) {
-                        return false;
-                    }
+                Date minDate = new GregorianCalendar(2018, Calendar.MAY, 5).getTime();
+                Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                if (date.before(minDate)) {
+                    return false;
                 }
             }
 
