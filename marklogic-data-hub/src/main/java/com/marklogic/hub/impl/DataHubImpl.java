@@ -250,8 +250,8 @@ public class DataHubImpl implements DataHub {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
-            //Support any 9.0 version > 9.0-5 and all 10.0 versions.
 
+            //Support any 9.0 version >= 9.0-5.
             int minor = 0;
             int hotFixNum = 0;
 
