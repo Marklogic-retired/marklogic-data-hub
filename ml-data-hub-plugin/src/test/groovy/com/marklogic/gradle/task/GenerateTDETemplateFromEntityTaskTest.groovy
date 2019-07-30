@@ -41,9 +41,9 @@ class GenerateTDETemplateFromEntityTaskTest extends BaseTest {
         def entitiesDir5 = pluginDir.resolve("entities").resolve("e2eentity")
         entitiesDir5.toFile().mkdirs()
 
-        FileUtils.copyFile(new File("src/test/resources/tde-template/Order.entity.json"), entitiesDir1.resolve('Order.entity.json').toFile())
         FileUtils.copyFile(new File("src/test/resources/tde-template/Item.entity.json"), entitiesDir2.resolve('Item.entity.json').toFile())
         FileUtils.copyFile(new File("src/test/resources/tde-template/Customer.entity.json"), entitiesDir3.resolve('Customer.entity.json').toFile())
+        FileUtils.copyFile(new File("src/test/resources/tde-template/Order.entity.json"), entitiesDir1.resolve('Order.entity.json').toFile())
 
         FileUtils.copyFile(new File("src/test/resources/tde-template/Order1.entity.json"), entitiesDir4.resolve('Order1.entity.json').toFile())
         FileUtils.copyFile(new File("src/test/resources/tde-template/e2eentity.entity.json"), entitiesDir5.resolve('e2eentity.entity.json').toFile())
