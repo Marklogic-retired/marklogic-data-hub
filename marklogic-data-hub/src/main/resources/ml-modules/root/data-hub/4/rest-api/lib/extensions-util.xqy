@@ -26,7 +26,7 @@ declare variable $extut:trace-id := "restapi.extensions";
 
 declare private variable $is-untraced := ();
 
-declare private variable $system-transforms := map:map()
+declare private variable $system-transforms-40 := map:map()
     =>map:with("ml:extractContent",       "get-content")
     =>map:with("ml:inputFlow",            "run-flow")
     =>map:with("ml:sjsInputFlow",         "run-sjs-flow")
@@ -35,7 +35,11 @@ declare private variable $system-transforms := map:map()
     =>map:with("ml:traceUISearchResults", "trace-json")
     =>map:with("ml:prettifyXML",          "prettify");
 
-declare private variable $system-resource-extensions := map:map()
+declare private variable $system-transforms-50 := map:map()
+    =>map:with("ml:runFlow",              "run-flow")
+    =>map:with("ml:runIngest",            "dmsdk-ingest");
+
+declare private variable $system-resource-extensions-40 := map:map()
     =>map:with("ml:dbConfigs",              "db-configs")
     =>map:with("ml:debug",                  "debug")
     =>map:with("ml:deleteJobs",             "delete-jobs")
@@ -49,6 +53,15 @@ declare private variable $system-resource-extensions := map:map()
     =>map:with("ml:searchOptionsGenerator", "search-options-generator")
     =>map:with("ml:tracing",                "tracing")
     =>map:with("ml:validate",               "validate");
+
+declare private variable $system-resource-extensions-50 := map:map()
+    =>map:with("ml:runFlow",    "runFlow")
+    =>map:with("ml:flows",      "flows")
+    =>map:with("ml:jobs",       "jobs")
+    =>map:with("ml:collections","collections")
+    =>map:with("ml:batches",    "batches")
+    =>map:with("ml:hubstats",   "hubstats")
+    =>map:with("ml:hubversion", "hubversion");
 
 declare function extut:check-untraced() as xs:boolean {
     if (exists($is-untraced)) then ()
@@ -471,7 +484,7 @@ declare function extut:get-extension-function(
         )
 };
 
-declare private function extut:get-extension-function(
+declare function extut:get-extension-function(
     $extension-type as xs:string,
     $extension-name as xs:string,
     $function-name  as xs:string,
@@ -488,10 +501,20 @@ declare private function extut:get-extension-function(
         else
             let $system-module :=
                 if ($extension-type eq "transform")
-                then map:get($system-transforms,$extension-name)
-                else map:get($system-resource-extensions,$extension-name)
+                then
+                  let $_ := map:get($system-transforms-40,$extension-name)
+                  return
+                    if (fn:empty($_)) then
+                      ("5", map:get($system-transforms-50,$extension-name))
+                    else ("4", $_)
+                else
+                  let $_ := map:get($system-resource-extensions-40,$extension-name)
+                  return
+                    if (fn:empty($_)) then
+                      ("5" , map:get($system-resource-extensions-50,$extension-name))
+                    else ("4", $_)
             let $function    :=
-                if (empty($system-module))
+                if (fn:count($system-module) < 2)
                 then xdmp:function(
                     if ($source-format eq "xquery")
                         then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)
@@ -502,12 +525,12 @@ declare private function extut:get-extension-function(
                     )
                 else if ($extension-type eq "transform")
                 then xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/transform/",$system-module), $function-name),
-                    concat("/data-hub/4/transforms/",$system-module,".xqy")
+                    QName(concat("http://marklogic.com/rest-api/transform/",$system-module[2]), $function-name),
+                    concat("/data-hub/", $system-module[1] , "/transforms/",$system-module[2],".xqy")
                     )
                 else  xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/extensions/",$system-module), $function-name),
-                    concat("/data-hub/4/extensions/",$system-module,".xqy")
+                    QName(concat("http://marklogic.com/rest-api/extensions/",$system-module[2]), $function-name),
+                    concat("/data-hub/", $system-module[1]  , "/extensions/",$system-module[2],".xqy")
                     )
             return (
                 if (empty($function)) then ()
