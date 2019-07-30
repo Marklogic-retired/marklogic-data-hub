@@ -422,6 +422,13 @@ public class HubTestBase {
         }
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
+
+        // Turning off CMA for resources that have bugs in ML 9.0-7/8
+        adminHubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
+
         wireClients();
         return adminHubConfig;
     }
