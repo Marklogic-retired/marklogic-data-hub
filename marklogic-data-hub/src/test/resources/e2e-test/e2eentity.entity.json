@@ -1,7 +1,8 @@
 {
   "info" : {
     "title" : "e2eentity",
-    "version" : "0.0.1"
+    "version" : "0.0.1",
+    "baseUri": "http://marklogic.com/data-hub/"
   },
   "definitions" : {
     "e2eentity" : {
