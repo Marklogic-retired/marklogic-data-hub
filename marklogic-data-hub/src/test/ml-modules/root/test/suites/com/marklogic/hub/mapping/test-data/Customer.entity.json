@@ -33,8 +33,22 @@
           }
         },
         "firstNumber" : {
-          "datatype": "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+          "datatype": "int"
+        },
+        "secondNumber" : {
+          "datatype": "int"
+        },
+        "thirdNumber" : {
+          "datatype": "int"
+        },
+        "fourthNumber" : {
+          "datatype": "int"
+        },
+        "fifthNumber" : {
+          "datatype": "int"
+        },
+        "sixthNumber" : {
+          "datatype": "int"
         }
       }
     }

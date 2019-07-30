@@ -1,5 +1,5 @@
 const test = require("/test/test-helper.xqy");
-const mapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
+const mapping = require("/data-hub/5/builtins/steps/mapping/default/main.sjs");
 const emptySequence = Sequence.from([]);
 
 function describe(item) {
@@ -14,17 +14,16 @@ function mapsJSONasExpected() {
     },
     "targetEntity" : "Customer"
   }).value.envelope.instance.Customer;
-  console.log("INSTANCE", mappedInstance);
   const message = `Unexpected output: ${describe(mappedInstance)}`;
   return [
     test.assertEqual("Bob", mappedInstance.firstname, message),
     test.assertEqual("Customer-1234", mappedInstance.id, message),
-    test.assertEqual(10, mappedInstance.firstNumber, message)
-    // test.assertEqual(null, mappedInstance.secondNumber, message),
-    // test.assertEqual(10, mappedInstance.thirdNumber, message),
-    // test.assertEqual(10, mappedInstance.fourthNumber, message),
-    // test.assertEqual(null, mappedInstance.fifthNumber, message),
-    // test.assertEqual(null, mappedInstance.sixthNumber, message)
+    test.assertEqual(10, mappedInstance.firstNumber, message),
+    test.assertEqual(null, mappedInstance.secondNumber, message),
+    test.assertEqual(10, mappedInstance.thirdNumber, message),
+    test.assertEqual(10, mappedInstance.fourthNumber, message),
+    test.assertEqual(null, mappedInstance.fifthNumber, message),
+    test.assertEqual(null, mappedInstance.sixthNumber, message)
   ];
 }
 
@@ -62,5 +61,5 @@ function mapsXMLasExpected() {
 
 []
   .concat(mapsJSONasExpected())
-  //.concat(mapsJSONtoXMLasExpected())
-  //.concat(mapsXMLasExpected());
+  .concat(mapsJSONtoXMLasExpected())
+  .concat(mapsXMLasExpected());
