@@ -419,8 +419,9 @@ pipeline{
 		stage('w12_cluster_9.0-6'){
 			agent { label 'master'}
 			steps{ 
-				build '/4.x/dhf-core-4.x-develop-winserver2012-cluster_9.0-6'
 					script{
+          def Returnresult=build job: '/4.x/dhf-core-4.x-develop-winserver2012-cluster_9.0-6', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
@@ -448,8 +449,9 @@ pipeline{
 		stage('qs_rh7_singlenode'){
 			agent { label 'master'}
 			steps{ 
-				build '/4.x/NO_CI_dhf-qs-4.x-develop-rh7'
 					script{
+          def Returnresult=build job: '/4.x/NO_CI_dhf-qs-4.x-develop-rh7', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
@@ -475,8 +477,9 @@ pipeline{
 		stage('qs_w12_singlenode'){
 			agent { label 'master'}
 			steps{ 
-				build '/4.x/NO_CI_dhf-qs-4.x-develop-winserver2012'
 					script{
+          def Returnresult=build job: '/4.x/NO_CI_dhf-qs-4.x-develop-winserver2012', propagate: false
+               currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
