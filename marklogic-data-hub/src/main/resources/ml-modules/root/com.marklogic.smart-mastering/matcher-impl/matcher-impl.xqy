@@ -258,15 +258,29 @@ declare function match-impl:find-document-matches-by-options(
       xdmp:node-uri($document),
       blocks-impl:get-blocks(fn:base-uri($document))/node()
     )
+    let $excluded-docs-query :=
+      if (fn:exists($excluded-uris)) then
+        cts:document-query($excluded-uris)
+      else ()
+    let $excluded-matches-query := match-impl:build-uniqueness-queries(
+      $document,
+      $is-json,
+      $values-by-qname,
+      $options
+    )
+    let $exclusion-query :=
+      if ($excluded-docs-query or $excluded-matches-query) then
+        cts:or-query($excluded-docs-query, $excluded-matches-query)
+      else ()
     let $match-base-query := cts:and-query((
           $compiled-options => map:get("collectionQuery"),
           $minimum-threshold-combinations-query
         ))
     let $match-query :=
-      if (fn:exists($excluded-uris)) then
+      if (fn:exists($exclusion-query)) then
         cts:and-not-query(
           $match-base-query,
-          cts:document-query($excluded-uris)
+          $exclusion-query,
         )
       else
         $match-base-query
@@ -359,6 +373,55 @@ declare function match-impl:build-boost-query(
       else
         match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries)
   ))
+};
+
+(:
+ : Build a series of queries that match items with present but
+ : different values for declared-unique fields.
+ : @param $document  the source document from which property values are drawn
+ : @param $is-json  true if source document is JSON
+ : @param $values-by-qname  map:map that organizes document values by QName
+ : @param $match-options  XML or JSON representation of match options
+ : @return a series of cts:and-query items
+ :)
+declare function match-impl:build-uniqueness-queries(
+  $document as node(),
+  $is-json as xs:boolean,
+  $values-by-qname as map:map,
+  $match-options as item()
+)
+{
+  let $options :=
+    if ($match-options instance of object-node()) then
+      opt-impl:options-from-json($match-options)
+    else
+      $match-options
+  for $property-def in $options/matcher:property-defs/matcher:property
+    return if (xs:boolean($property-def/matcher:unique)) then
+      let $qname :=
+        fn:QName($property-def/@namespace, $property-def/@localname)
+      let $values := $values-by-qname => map:get(xdmp:key-from-QName($qname))
+      return if ($is-json) then
+        cts:and-query((
+          cts:json-property-scope-query(fn:string($qname), cts:true-query()),
+          cts:not-query(
+            cts:or-query((
+              cts:json-property-value-query(fn:string($qname), ()),
+              cts:json-property-value-query(fn:string($qname), $values)
+            ))
+          )
+        ))
+      else
+        cts:and-query((
+          cts:element-query($qname, cts:true-query()),
+          cts:not-query(
+            cts:or-query((
+              cts:element-value-query($qname, ""),
+              cts:element-value-query($qname, $values)
+            ))
+          )
+        ))
+    else ()
 };
 
 (:
