@@ -61,11 +61,11 @@ function buildMapProperties(mapping, entityModel) {
         if (externalMappingRef) {
           let externalMapping = mappingLib.getMappingWithVersion(externalMappingRef.name, externalMappingRef.version).toObject();
           let externalEntityName = getEntityName(externalMapping.targetEntityType);
-          propLine = `<${prop}><m:call-template name="${externalEntityName}">
+          propLine = `<${prop} ${isArray? 'datatype="array"':''}><m:call-template name="${externalEntityName}">
             <m:with-param name="$context" select="."/>
           </m:call-template></${prop}>`;
         } else {
-          propLine = `<${prop}><m:val>. ! ${dataType}(.)</m:val></${prop}>`;
+          propLine = `<${prop} datatype="array"><m:val>. ! ${dataType}(.)</m:val></${prop}>`;
         }
         propertyLines.push(`<m:for-each><m:select>$context ! ${sourcedFrom}</m:select>
             ${propLine}
@@ -121,7 +121,7 @@ function retrieveFunctionImports() {
     return cts.uris(null, null, cts.collectionQuery('http://marklogic.com/entity-services/function-metadata/compiled'));
   }, xdmp.databaseName(xdmp.modulesDatabase()));
   for (let uri of shimURIs) {
-    customImports.push(`<map:use-functions href="${uri.replace(/\.xslt?$/, '')}"/>`);
+    customImports.push(`<m:use-functions href="${fn.string(uri).replace(/\.xslt?$/, '')}"/>`);
   }
   return customImports.join('\n');
 }
@@ -160,5 +160,7 @@ function fallbackLegacyEntityLookup(targetEntityType) {
 module.exports = {
   xmlMappingCollections,
   buildMappingXML,
-  buildEntityMappingXML
+  buildEntityMappingXML,
+  getEntityName,
+  getTargetEntity
 };
