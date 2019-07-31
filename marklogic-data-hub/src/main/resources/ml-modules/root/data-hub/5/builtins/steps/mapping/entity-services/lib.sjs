@@ -65,13 +65,13 @@ function buildMapProperties(mapping, entityModel) {
             <m:with-param name="$context" select="."/>
           </m:call-template></${prop}>`;
         } else {
-          propLine = `<${prop} datatype="array"><m:val>. ! ${dataType}(.)</m:val></${prop}>`;
+          propLine = `<${prop} datatype="array"><m:val>. ! xs:${dataType}(.)</m:val></${prop}>`;
         }
         propertyLines.push(`<m:for-each><m:select>$context ! ${sourcedFrom}</m:select>
             ${propLine}
           </m:for-each>`);
       } else {
-        let propLine = `<${prop}><m:val>$context ! ${sourcedFrom} ! ${dataType}(.)</m:val></${prop}>`;
+        let propLine = `<${prop}><m:val>$context ! ${sourcedFrom} ! xs:${dataType}(.)</m:val></${prop}>`;
         if (!isRequired) {
           propLine = `<m:optional>${propLine}</m:optional>`
         }
