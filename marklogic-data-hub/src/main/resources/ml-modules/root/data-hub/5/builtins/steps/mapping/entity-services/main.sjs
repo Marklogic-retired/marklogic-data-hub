@@ -51,7 +51,12 @@ function main(content, options) {
     throw Error(mapError);
   }
   let mappingURIforXML = fn.replace(xdmp.nodeUri(mapping), 'json$','xml');
-  let targetEntityType = mapping.root.targetEntityType;
+  let targetEntityType = fn.string(mapping.root.targetEntityType);
+  if (targetEntityType === '') {
+    let errMsg = `Could not find targetEntityType in mapping: ${xdmp.nodeUri(mapping)}.`;
+    datahub.debug.log({message: errMsg, type: 'error'});
+    throw Error(errMsg);
+  }
   let entityName = lib.getEntityName(targetEntityType);
   let entity = lib.getTargetEntity(targetEntityType);
   let instance;
