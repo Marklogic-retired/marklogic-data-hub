@@ -9,7 +9,7 @@
       "document-content": {
         "update-kind": "create"
       },
-      "when": "post-commit"
+      "when": "pre-commit"
     }
   },
   "module": "data-hub/5/triggers/mapping/mappingJSONtoXML.sjs",
