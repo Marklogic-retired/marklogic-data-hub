@@ -74,6 +74,8 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-database.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-schemas-database.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-triggers-database.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/triggers/ml-dh-entity-validate-create.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/triggers/ml-dh-entity-validate-modify.json").exists());
 
         assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
