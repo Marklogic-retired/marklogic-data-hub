@@ -7,9 +7,8 @@
   "definitions" : {
     "e2eentity" : {
       "required" : [ ],
-      "primaryKey": "id",
       "rangeIndex" : [ "name" ],
-      "elementRangeIndex": ["decimal"],
+      "elementRangeIndex": ["salary"],
       "wordLexicon" : [ ],
       "properties" : {
         "id": {
