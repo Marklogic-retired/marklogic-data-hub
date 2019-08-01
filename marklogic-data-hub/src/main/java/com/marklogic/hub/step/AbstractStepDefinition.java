@@ -211,7 +211,6 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         step.setThreadCount(stepDefinition.getThreadCount());
         step.setBatchSize(stepDefinition.getBatchSize());
         step.setRetryLimit(stepDefinition.getRetryLimit());
-        step.setModulePath(stepDefinition.getModulePath());
         step.setCustomHook(stepDefinition.getCustomHook());
         step.setOptions(stepDefinition.getOptions());
         step.setDescription(stepDefinition.getDescription());
@@ -238,10 +237,6 @@ public abstract class AbstractStepDefinition implements StepDefinition {
 
         if (step.getOptions() != null) {
             stepDefinition.setOptions(step.getOptions());
-        }
-
-        if (step.getModulePath() != null) {
-            stepDefinition.setModulePath(step.getModulePath());
         }
 
         if (step.getCustomHook() != null) {
