@@ -237,6 +237,10 @@ public class HubProjectImpl implements HubProject {
 
         Path customModulesDir = getCustomModulesDir();
         customModulesDir.toFile().mkdirs();
+        //scaffold custom mapping|ingestion|mastering dirs.
+        for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
+            customModulesDir.resolve(stepType.toString().toLowerCase()).toFile().mkdirs();
+        }
 
         Path entitiesDir = getHubEntitiesDir();
         entitiesDir.toFile().mkdirs();
