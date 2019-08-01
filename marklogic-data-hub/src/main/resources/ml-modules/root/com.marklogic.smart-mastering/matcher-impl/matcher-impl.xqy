@@ -270,7 +270,7 @@ declare function match-impl:find-document-matches-by-options(
     )
     let $exclusion-query :=
       if ($excluded-docs-query or $excluded-matches-query) then
-        cts:or-query($excluded-docs-query, $excluded-matches-query)
+        cts:or-query(($excluded-docs-query, $excluded-matches-query))
       else ()
     let $match-base-query := cts:and-query((
           $compiled-options => map:get("collectionQuery"),
