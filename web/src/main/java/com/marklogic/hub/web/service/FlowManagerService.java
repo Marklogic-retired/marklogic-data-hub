@@ -153,7 +153,7 @@ public class FlowManagerService {
         List<StepModel> stepModelList = new ArrayList<>();
         for (String key : stepMap.keySet()) {
             Step step = stepMap.get(key);
-            StepModel stepModel = StepModel.transformToWebStepModel(step);
+            StepModel stepModel = transformStepToWebModel(step);
             stepModelList.add(stepModel);
         }
 
@@ -171,7 +171,7 @@ public class FlowManagerService {
             throw new NotFoundException(stepId + " not found.");
         }
 
-        return StepModel.transformToWebStepModel(step);
+        return transformStepToWebModel(step);
     }
 
     public StepModel createStep(String flowName, Integer stepOrder, String stepId, String stringStep) {
@@ -254,11 +254,11 @@ public class FlowManagerService {
         }
 
         if (existingStep != null && existingStep.isEqual(step)) {
-            return StepModel.transformToWebStepModel(existingStep);
+            return transformStepToWebModel(existingStep);
         }
 
         flowManager.saveFlow(flow);
-        return StepModel.transformToWebStepModel(step);
+        return transformStepToWebModel(step);
     }
 
     protected Step upsertStepDefinition(StepModel stepModel, Step step) {
@@ -271,7 +271,7 @@ public class FlowManagerService {
             }
             else {
                 StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
-                StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
+                StepDefinition stepDefinition = transformFromStep(oldStepDefinition, step, stepModel);
                 stepDefinitionManagerService.saveStepDefinition(stepDefinition);
             }
         }
@@ -281,11 +281,10 @@ public class FlowManagerService {
             String modulePath = "/custom-modules/" + stepDefType.toString().toLowerCase() + "/" + stepDefName + "/main.sjs";
 
             StepDefinition stepDefinition = StepDefinition.create(stepDefName, stepDefType);
-            stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
+            stepDefinition = transformFromStep(stepDefinition, step, stepModel);
 
             scaffolding.createCustomModule(stepDefName, stepDefType.toString());
             stepDefinition.setModulePath(modulePath);
-            step.setModulePath(modulePath);
             stepDefinitionManagerService.createStepDefinition(stepDefinition);
         }
         return step;
@@ -333,6 +332,23 @@ public class FlowManagerService {
         return getFlow(flowName, false);
     }
 
+    /*
+    The core and web models for steps are different, webModel has 'modulePath' which provides the uri of the main.sjs
+    whereas it is not present in the core step model. Hence the following 2 transform methods additionally are meant to
+    set modulePaths in 'StepModel' and 'StepDefinition' .
+     */
+    private StepModel transformStepToWebModel(Step step) {
+        StepModel stepModel = StepModel.transformToWebStepModel(step);
+        StepDefinition stepDef = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
+        stepModel.setModulePath(stepDef.getModulePath());
+        return stepModel;
+    }
+
+    private StepDefinition transformFromStep(StepDefinition stepDefinition, Step step, StepModel stepModel) {
+        StepDefinition newStepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
+        newStepDefinition.setModulePath(stepModel.getModulePath());
+        return newStepDefinition;
+    }
 
     private String getStepKeyInStepMap(Flow flow, String stepId) {
         if (flow == null || StringUtils.isEmpty(stepId)) {
