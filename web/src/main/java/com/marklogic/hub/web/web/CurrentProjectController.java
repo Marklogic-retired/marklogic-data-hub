@@ -25,7 +25,9 @@ import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.legacy.LegacyTracing;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import com.marklogic.hub.web.listeners.DeployUserModulesListener;
 import com.marklogic.hub.web.listeners.ValidateListener;
@@ -71,6 +73,9 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
     @Autowired
     private HubConfigImpl hubConfig;
+
+    @Autowired
+    private HubProjectImpl hubProject;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -239,6 +244,10 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             watcherService.watch(stepDefinitionsDir);
             watcherService.watch(entitiesDir);
             watcherService.watch(mappingsDir);
+            //watch ml-modules/root/custom-modules/ingestion|mapping|mastering dirs
+            for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
+                watcherService.watch(hubProject.getCustomModulesDir().resolve(stepType.toString().toLowerCase()).toString());
+            }
             watcherService.addListener(this);
         }
     }
