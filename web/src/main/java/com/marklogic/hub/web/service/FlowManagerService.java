@@ -35,6 +35,7 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,16 +215,10 @@ public class FlowManagerService {
                 throw new BadRequestException("Changing step name or step type not supported.");
             }
         }
-        boolean invalidStepType = true;
-        for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
-            if (stepType.equals(step.getStepDefinitionType())) {
-                invalidStepType = false;
-                break;
-            }
-        }
-        if(invalidStepType) {
+        if(!EnumUtils.isValidEnumIgnoreCase(StepDefinition.StepDefinitionType.class, step.getStepDefinitionType().toString())) {
             throw new BadRequestException("Invalid Step Type");
         }
+
         step = upsertStepDefinition(stepModel, step);
 
         Map<String, Step> currSteps = flow.getSteps();
