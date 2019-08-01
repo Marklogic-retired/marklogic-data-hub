@@ -274,6 +274,8 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-create.json", hubTriggersDir.resolve("ml-dh-entity-create.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-modify.json", hubTriggersDir.resolve("ml-dh-entity-modify.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-delete.json", hubTriggersDir.resolve("ml-dh-entity-delete.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-validate-create.json", hubTriggersDir.resolve("ml-dh-entity-validate-create.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-validate-modify.json", hubTriggersDir.resolve("ml-dh-entity-validate-modify.json"), true);
                
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
