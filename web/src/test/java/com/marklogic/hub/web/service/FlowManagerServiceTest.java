@@ -31,6 +31,7 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +55,18 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String FLOW = "testFlow";
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
+
+    private String customIngestStep = "{\"name\":\"firstIngest\",\"description\":\"\",\"isValid\":false,\"fileLocations\":{\"inputFilePath\":" +
+        "\"/Users/ssambasu/Downloads/2508\",\"inputFileType\":\"json\",\"outputURIReplacement\":\"\",\"separator\":\",\"},\"options\":{\"collections\"" +
+        ":[\"firstIngest\"],\"additionalCollections\":[],\"permissions\":\"rest-reader,read,rest-writer,update\",\"outputFormat\":\"json\",\"sourceQuery\"" +
+        ":\"cts.collectionQuery([])\",\"sourceCollection\":\"\",\"targetEntity\":\"\",\"sourceDatabase\":\"\",\"targetDatabase\":\"data-hub-STAGING\"}," +
+        "\"stepDefinitionType\":\"INGESTION\",\"stepDefinitionName\":\"firstIngest\",\"selectedSource\":\"\"}";
+
+    private String customMappingStep = "{\"id\":\"firstMapping-mapping\",\"name\":\"firstMapping\",\"stepDefinitionName\":\"firstMapping\",\"" +
+        "stepDefinitionType\":\"MAPPING\",\"description\":\"\",\"options\":{\"additionalCollections\":[],\"sourceQuery\":\"cts.collectionQuery" +
+        "([\\\"test-ingest\\\"])\",\"targetEntity\":\"User\",\"sourceDatabase\":\"data-hub-STAGING\",\"collections\":[\"firstMapping\",\"User\"]," +
+        "\"sourceCollection\":\"test-ingest\",\"outputFormat\":\"json\",\"targetDatabase\":\"data-hub-FINAL\",\"mapping\":{\"name\":\"FirstFlow-firstMapping" +
+        "\",\"version\":0}},\"language\":null,\"isValid\":true,\"customHook\":{}}";
 
     @Autowired
     FlowManagerService flowManagerService;
@@ -241,5 +253,22 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
         assertNull(stagingDocumentManager.exists(expectedStepUri));
         assertNull(finalDocumentManager.exists(expectedStepUri));
+    }
+
+    @Test
+    void createCustomSteps() {
+        flowManagerService.createStep(FLOW, 6, null, customIngestStep);
+        Flow flow = flowManager.getFlow("testFlow");
+        Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstIngest", StepDefinition.StepDefinitionType.INGESTION) != null);
+        Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstIngest", StepDefinition.StepDefinitionType.INGESTION).getModulePath().equals("/custom-modules/ingestion/firstIngest/main.sjs"));
+        Assertions.assertTrue(project.getCustomModuleDir("firstIngest", "ingestion").resolve("main.sjs").toFile().exists());
+        //Assertions.assertTrue(flow.getStep("6").getModulePath() == null);
+
+        flowManagerService.createStep(FLOW, 6, null, customMappingStep);
+        Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMapping", StepDefinition.StepDefinitionType.MAPPING) != null);
+        Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMapping", StepDefinition.StepDefinitionType.MAPPING).getModulePath().equals("/custom-modules/mapping/firstMapping/main.sjs"));
+        Assertions.assertTrue(project.getCustomModuleDir("firstMapping", "mapping").resolve("main.sjs").toFile().exists());
+        flow = flowManager.getFlow("testFlow");
+        Assertions.assertTrue(flow.getSteps().size() == 7);
     }
 }

@@ -34,20 +34,17 @@ import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.*;
 
 @Service
 public class FlowManagerService {
@@ -217,48 +214,17 @@ public class FlowManagerService {
                 throw new BadRequestException("Changing step name or step type not supported.");
             }
         }
-
-        // Only save step if step is of Custom type, for rest use the default steps.
-        switch (step.getStepDefinitionType()) {
-            case INGESTION:
-                StepDefinition defaultIngestDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/ingestion/marklogic/default-ingestion.step.json", StepDefinition.StepDefinitionType.INGESTION);
-                Step defaultIngest = defaultIngestDefinition.transformToStep(step.getName(), defaultIngestDefinition, new Step());
-                step = StepModel.mergeFields(stepModel, defaultIngest, step);
+        boolean invalidStepType = true;
+        for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
+            if (stepType.equals(step.getStepDefinitionType())) {
+                invalidStepType = false;
                 break;
-            case MAPPING:
-                StepDefinition defaultMappingDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/mapping/marklogic/default-mapping.step.json", StepDefinition.StepDefinitionType.MAPPING);
-                Step defaultMapping = defaultMappingDefinition.transformToStep(step.getName(), defaultMappingDefinition, new Step());
-                step = StepModel.mergeFields(stepModel, defaultMapping, step);
-                break;
-            case MASTERING:
-                StepDefinition defaultMasterDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/mastering/marklogic/default-mastering.step.json", StepDefinition.StepDefinitionType.MASTERING);
-                Step defaultMaster = defaultMasterDefinition.transformToStep(step.getName(), defaultMasterDefinition, new Step());
-                step = StepModel.mergeFields(stepModel, defaultMaster, step);
-                break;
-            case CUSTOM:
-                if (stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType()) != null) {
-                    StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
-                    StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
-                    stepDefinitionManagerService.saveStepDefinition(stepDefinition);
-                }
-                else {
-                    String stepDefName = step.getStepDefinitionName();
-                    StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.CUSTOM;
-                    String modulePath = "/custom-modules/" + stepDefType.toString().toLowerCase() + "/" + stepDefName + "/main.sjs";
-
-                    StepDefinition stepDefinition = StepDefinition.create(stepDefName, stepDefType);
-                    stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
-
-                    scaffolding.createCustomModule(stepDefName, stepDefType.toString());
-                    stepDefinition.setModulePath(modulePath);
-                    step.setModulePath(modulePath);
-
-                    stepDefinitionManagerService.createStepDefinition(stepDefinition);
-                }
-                break;
-            default:
-                throw new BadRequestException("Invalid Step Type");
+            }
         }
+        if(invalidStepType) {
+            throw new BadRequestException("Invalid Step Type");
+        }
+        step = upsertStepDefinition(stepModel, step);
 
         Map<String, Step> currSteps = flow.getSteps();
         if (stepId != null) {
@@ -293,6 +259,36 @@ public class FlowManagerService {
 
         flowManager.saveFlow(flow);
         return StepModel.transformToWebStepModel(step);
+    }
+
+    protected Step upsertStepDefinition(StepModel stepModel, Step step) {
+        if (stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType()) != null) {
+            String stepType = step.getStepDefinitionType().toString().toLowerCase();
+            if(step.getStepDefinitionName().equalsIgnoreCase("default-" + stepType)) {
+                StepDefinition defaultStepDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/" + stepType + "/marklogic/default-"+ stepType +".step.json", step.getStepDefinitionType());
+                Step defaultStep = defaultStepDefinition.transformToStep(step.getName(), defaultStepDefinition, new Step());
+                step = StepModel.mergeFields(stepModel, defaultStep, step);
+            }
+            else {
+                StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
+                StepDefinition stepDefinition = oldStepDefinition.transformFromStep(oldStepDefinition, step);
+                stepDefinitionManagerService.saveStepDefinition(stepDefinition);
+            }
+        }
+        else {
+            String stepDefName = step.getStepDefinitionName();
+            StepDefinition.StepDefinitionType stepDefType = step.getStepDefinitionType();
+            String modulePath = "/custom-modules/" + stepDefType.toString().toLowerCase() + "/" + stepDefName + "/main.sjs";
+
+            StepDefinition stepDefinition = StepDefinition.create(stepDefName, stepDefType);
+            stepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
+
+            scaffolding.createCustomModule(stepDefName, stepDefType.toString());
+            stepDefinition.setModulePath(modulePath);
+            step.setModulePath(modulePath);
+            stepDefinitionManagerService.createStepDefinition(stepDefinition);
+        }
+        return step;
     }
 
     public void deleteStep(String flowName, String stepId) {
