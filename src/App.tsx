@@ -8,12 +8,13 @@ import Browse from './pages/Browse';
 import './App.scss';
 const App: React.FC = () => {
  const [authentication, setAuthentication] = useState(false);
+
  const ProtectedRoute = ({ isAllowed, ...props }: any ) =>
    isAllowed ? <Route {...props}/> : <Redirect to="/"/>;
  const checkLogin = (username: string, password: string) => {
    console.log('test login username', username);
    console.log('test login pw', password);
-   // setAuthentication(true)
+   setAuthentication(true)
  }
 
  const logout = () => {
