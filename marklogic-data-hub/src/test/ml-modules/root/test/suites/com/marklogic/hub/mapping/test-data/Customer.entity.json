@@ -21,26 +21,6 @@
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
         },
-        "lastname" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
-        "gender" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
-        "postal" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
-        "phone" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
-        "email" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
         "updated" : {
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
@@ -51,6 +31,10 @@
             "datatype" : "string",
             "collation" : "http://marklogic.com/collation/codepoint"
           }
+        },
+        "firstNumber" : {
+          "datatype": "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
         }
       }
     }

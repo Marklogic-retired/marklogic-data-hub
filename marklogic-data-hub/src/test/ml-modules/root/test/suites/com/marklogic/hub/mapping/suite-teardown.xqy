@@ -7,4 +7,4 @@ import module namespace lib = "http://marklogic.com/datahub/test" at "lib/lib.xq
   "/mappings/CustomerJSON-CustomerJSONMapping/CustomerJSON-CustomerJSONMapping-0.mapping.json",
   "/mappings/CustomerXML-CustomerXMLMapping/CustomerXML-CustomerXMLMapping-0.mapping.json",
   "/entities/Customer.entity.json"
-) ! xdmp:document-delete(.)
+) ! xdmp:log(.) (: xdmp:document-delete(.) :)

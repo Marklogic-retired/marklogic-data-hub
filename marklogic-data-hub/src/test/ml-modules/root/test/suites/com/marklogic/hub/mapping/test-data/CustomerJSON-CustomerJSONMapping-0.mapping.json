@@ -18,6 +18,9 @@
     },
     "updated": {
       "sourcedFrom": "Metadata/CreatedOn"
+    },
+    "firstNumber": {
+      "sourcedFrom": "Number[. >= 10]"
     }
   }
 }
