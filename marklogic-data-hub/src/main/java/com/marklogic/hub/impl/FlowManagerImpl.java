@@ -114,7 +114,12 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Override
     public List<String> getFlowNames() {
         // Get all the files with flow.json extension from flows dir
-        List<File> files = (List<File>) FileUtils.listFiles(hubConfig.getFlowsDir().toFile(), new String[]{"flow.json"}, false);
+        File flowsDir = hubConfig.getFlowsDir().toFile();
+        if (flowsDir == null || !flowsDir.exists()) {
+            return new ArrayList<>();
+        }
+
+        List<File> files = (List<File>) FileUtils.listFiles(flowsDir, new String[]{"flow.json"}, false);
         List<String> flowNames = files.stream()
             .map(f -> f.getName().replaceAll("(.+)\\.flow\\.json", "$1"))
             .collect(Collectors.toList());

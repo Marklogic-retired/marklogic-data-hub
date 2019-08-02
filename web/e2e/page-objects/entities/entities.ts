@@ -1,4 +1,4 @@
-import { browser, element, by, ElementFinder, Key } from 'protractor'
+import {browser, element, by, ElementFinder, Key, ExpectedConditions as EC} from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 
@@ -23,6 +23,12 @@ export class EntityPage extends AppPage {
 
   get newEntityButton() {
     return element(by.css('#new-entity'));
+  }
+
+  async clickNewEntityButton() {
+    await browser.wait(EC.visibilityOf(this.newEntityButton));
+    await this.newEntityButton.click();
+    await browser.wait(EC.visibilityOf(entityPage.entityHeader));
   }
 
   get entityEditor() {

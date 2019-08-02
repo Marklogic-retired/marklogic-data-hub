@@ -32,22 +32,22 @@ declare private variable $caller  := xdmp:function(
 declare function runFlow:source-format() as xs:string {
   "javascript"
 };
-declare %rapi:transaction-mode("update") function runFlow:get(
+declare %rapi:transaction-mode("query") function runFlow:get(
   $context as map:map, $params as map:map
 ) as map:map {
   xdmp:apply($caller,$extName,$modPath,"GET",$context,$params)
 };
-declare %rapi:transaction-mode("update") function runFlow:delete(
+declare %rapi:transaction-mode("query") function runFlow:delete(
   $context as map:map, $params as map:map
 ) as map:map {
   xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params)
 };
-declare %rapi:transaction-mode("update") function runFlow:post(
+declare %rapi:transaction-mode("query") function runFlow:post(
   $context as map:map, $params as map:map, $input as document-node()*
 ) as map:map {
   xdmp:apply($caller,$extName,$modPath,"POST",$context,$params,$input)
 };
-declare %rapi:transaction-mode("update") function runFlow:put($context as map:map, $params as map:map, $input as document-node()*
+declare %rapi:transaction-mode("query") function runFlow:put($context as map:map, $params as map:map, $input as document-node()*
 ) as map:map {
   xdmp:apply($caller,$extName,$modPath,"PUT",$context,$params,$input)
 };

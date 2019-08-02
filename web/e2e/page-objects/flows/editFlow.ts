@@ -217,7 +217,9 @@ export class EditFlow extends AppPage {
       await stepsPage.clickStepCancelSave("save");
       await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
       await browser.sleep(5000);
-      await stepsPage.stepSelectContainer(step.stepName).click();
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSelectContainer(step.stepName)), 5000);
+      await browser.executeScript("arguments[0].click();", stepsPage.stepSelectContainer(step.stepName));
+      //await stepsPage.stepSelectContainer(step.stepName).click();
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
     }
   }

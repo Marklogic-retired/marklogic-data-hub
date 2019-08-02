@@ -37,6 +37,8 @@ public class StepModel {
     protected String language;
     protected Boolean isValid;
     protected JsonNode customHook;
+    protected Integer batchSize;
+    protected Integer threadCount;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private JsonNode fileLocations;
@@ -132,6 +134,22 @@ public class StepModel {
         this.modulePath = modulePath;
     }
 
+    public Integer getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public Integer getThreadCount() {
+        return threadCount;
+    }
+
+    public void setThreadCount(Integer threadCount) {
+        this.threadCount = threadCount;
+    }
+
     public static StepModel fromJson(JsonNode node) {
         StepModel step = new StepModel();
 
@@ -159,6 +177,8 @@ public class StepModel {
         step.setLanguage("zxx");
         step.setIsValid(jsonObject.getBoolean("isValid"));
         step.setCustomHook(jsonObject.getNode("customHook"));
+        step.setBatchSize(jsonObject.getInt("batchSize"));
+        step.setThreadCount(jsonObject.getInt("threadCount"));
 
         return step;
     }
@@ -195,6 +215,8 @@ public class StepModel {
         node.put("language", getLanguage());
         node.put("isValid", getIsValid());
         node.set("customHook", getCustomHook());
+        node.put("batchSize", getBatchSize());
+        node.put("threadCount", getThreadCount());
 
         return node;
     }
@@ -208,7 +230,8 @@ public class StepModel {
         step.setDescription(stepModel.getDescription());
         step.setCustomHook(stepModel.getCustomHook());
         step.setFileLocations(stepModel.getFileLocations());
-        step.setModulePath(stepModel.getModulePath());
+        step.setBatchSize(stepModel.getBatchSize());
+        step.setThreadCount(stepModel.getThreadCount());
         JSONObject jsonObject = new JSONObject(stepJson);
         step.setOptions(jsonObject.getMap("options"));
 
@@ -222,9 +245,10 @@ public class StepModel {
         stepModel.setStepDefinitionName(step.getStepDefinitionName());
         stepModel.setStepDefinitionType(step.getStepDefinitionType());
         stepModel.setFileLocations(step.getFileLocations());
-        stepModel.setModulePath(step.getModulePath());
         stepModel.setDescription(step.getDescription());
         stepModel.setCustomHook(step.getCustomHook());
+        stepModel.setThreadCount(step.getThreadCount());
+        stepModel.setBatchSize(step.getBatchSize());
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.putMap(step.getOptions());
@@ -267,7 +291,6 @@ public class StepModel {
         defaultStep.setRetryLimit(step.getRetryLimit());
         defaultStep.setThreadCount(step.getThreadCount());
         defaultStep.setBatchSize(step.getBatchSize());
-        defaultStep.setModulePath(step.getModulePath());
 
         return defaultStep;
     }

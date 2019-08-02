@@ -39,9 +39,6 @@ public class Step {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private JsonNode fileLocations;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String modulePath;
-
     public String getName() {
         return name;
     }
@@ -122,14 +119,6 @@ public class Step {
         this.fileLocations = fileLocations;
     }
 
-    public String getModulePath() {
-        return modulePath;
-    }
-
-    public void setModulePath(String modulePath) {
-        this.modulePath = modulePath;
-    }
-
     public static Step deserialize(JsonNode json) {
         Step step = new Step();
 
@@ -148,11 +137,6 @@ public class Step {
         step.setBatchSize(jsonObject.getInt("batchSize"));
         step.setThreadCount(jsonObject.getInt("threadCount"));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
-
-        if (jsonObject.isExist("modulePath")) {
-            step.setModulePath(jsonObject.getNode("modulePath").asText());
-        }
-
         return step;
     }
 
@@ -195,11 +179,6 @@ public class Step {
                 return false;
             }
         }
-
-        if (StringUtils.isNotEmpty(modulePath) ? !modulePath.equals(that.modulePath) : StringUtils.isNotEmpty(that.modulePath)) {
-            return false;
-        }
-
         return true;
     }
 

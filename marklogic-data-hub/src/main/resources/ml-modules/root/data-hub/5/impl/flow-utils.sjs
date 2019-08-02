@@ -531,6 +531,14 @@ class FlowUtils {
 
     return metaData;
   }
+  
+  getInstanceAsObject(doc) {
+    let instance = this.getInstance(doc);
+    if(instance){
+      instance = instance.toObject();
+    }
+    return instance;
+  }
 
   getInstance(doc) {
     let instance = fn.head(doc.xpath('/*:envelope/*:instance'));
@@ -538,6 +546,14 @@ class FlowUtils {
       instance = null;
     }
     return instance;
+  }
+
+  getHeadersAsObject(doc) {
+    let headers = this.getHeaders(doc);
+    if(headers){
+      headers = headers.toObject();
+    }
+    return headers;
   }
 
   getHeaders(doc) {
@@ -551,6 +567,14 @@ class FlowUtils {
     return headers;
   }
 
+  getTriplesAsObject(doc) {
+    let triples = this.getTriples(doc);
+    if(triples){
+      triples = triples.toObject();
+    }
+    return triples;
+  }
+
   getTriples(doc) {
     let triples = doc.xpath('/*:envelope/*:triples');
     if (fn.count(triples) === 0) {
@@ -560,6 +584,29 @@ class FlowUtils {
       triples = null;
     }
     return triples;
+  }
+
+  createContentAsObject() {
+    return {
+      triples : [],
+      headers: {},
+      instance: {}
+    };
+  }
+
+  parseText(text, outputFormat){
+    try {
+      let options = "format-json";
+      if(outputFormat === datahub.flow.consts.XML) {
+        options = "format-xml";
+      }
+      return fn.head(xdmp.unquote(instance, null, options));
+    }
+    catch (e) {
+      let errMsg = 'The input text document is not a valid ' + outputFormat + ' .';
+      datahub.debug.log({message: errMsg, type: 'error'});
+      throw Error(errMsg);
+    }
   }
 }
 
