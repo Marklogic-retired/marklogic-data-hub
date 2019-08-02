@@ -1,10 +1,11 @@
 import React from 'react';
 import LoginForm from '../components/login-form/login-form';
 
-const Home: React.FC = () => {
+type Props = { checkLogin: any};
+const Home: React.FC<Props> = props => {
   return (
     <>
-      <LoginForm />
+    <LoginForm checkLogin={props.checkLogin}/>    
     </>
   );
 }
