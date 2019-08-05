@@ -1,5 +1,7 @@
 xquery version "1.0-ml";
 
+import module namespace blocks-impl = "http://marklogic.com/smart-mastering/blocks-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
 
@@ -34,6 +36,7 @@ let $_ :=
     </options>
   )
 
+let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: Now each doc should have a block on the other doc. :)
 let $assertions := (
   $assertions,
