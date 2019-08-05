@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Icon, Input, Button } from 'antd';
 import styles from './login-form.module.scss';
+
 type Props = {
  checkLogin: any;
 }
@@ -25,32 +26,32 @@ class LoginForm extends React.Component<Props, State> {
  render() {
    // TODO Add validate status functionality
    return (
-     <Form onSubmit={this.handleSubmit} className={styles.login}>
-       <Form.Item hasFeedback validateStatus="">
-         <Input
-           id="username"
-           prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-           placeholder="UserName"
-           value={this.state.username}
-           onChange={this.handleChange}
-         />
-       </Form.Item>
-       <Form.Item hasFeedback validateStatus="">
-         <Input
-           id="password"
-           prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-           placeholder="Password"
-           type="password"
-           value={this.state.password}
-           onChange={this.handleChange}
-         />
-       </Form.Item>
-       <Form.Item>
-         <Button type="primary" htmlType="submit" className={styles.loginButton}>
-           Log in
-         </Button>
-       </Form.Item>
-     </Form>
+      <Form onSubmit={this.handleSubmit} className={styles.login}>
+        <Form.Item hasFeedback validateStatus="">
+          <Input
+            id="username"
+            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="Username"
+            value={this.state.username}
+            onChange={this.handleChange}
+          />
+        </Form.Item>
+        <Form.Item hasFeedback validateStatus="">
+          <Input
+            id="password"
+            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="Password"
+            type="password"
+            value={this.state.password}
+            onChange={this.handleChange}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" className={styles.loginButton}>
+            Sign in
+          </Button>
+        </Form.Item>
+      </Form>
    );
  }
 }
