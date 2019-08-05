@@ -150,7 +150,6 @@ declare function matcher:find-document-matches-by-options(
     $start,
     $page-length,
     fn:min($options//(array-node("thresholds")/object-node()|*:thresholds/*:threshold)/(@above|above) ! fn:number(.)),
-    fn:false(),
     $include-matches,
     $filter-query
   )
@@ -165,7 +164,6 @@ declare function matcher:find-document-matches-by-options(
  : @param $page-length  maximum number of results to return in this call
  : @param $minimum-threshold  value of the lowest threshold score; the match query will require matches to score at
                               least this high to be returned
- : @param $lock-on-search  TODO
  : @param $include-matches  whether the response should list the matched properties for each potential match
  : @param $filter-query  a cts:query used to restrict matches to a set, such as a specific entity type or collection
  : @return the queries used for search and the search results themselves
@@ -177,13 +175,12 @@ declare function matcher:find-document-matches-by-options(
   $start as xs:integer,
   $page-length as xs:integer,
   $minimum-threshold as xs:double,
-  $lock-on-search as xs:boolean,
   $include-matches as xs:boolean,
   $filter-query
 ) as element(results)
 {
   match-impl:find-document-matches-by-options(
-    $document, $options, $start, $page-length, $minimum-threshold, $lock-on-search, $include-matches, $filter-query
+    $document, $options, $start, $page-length, $minimum-threshold, $include-matches, $filter-query
   )
 };
 
