@@ -89,10 +89,10 @@ const expectedTemplate = fn.tail(xdmp.tidy(`
   <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <m:param name="context"><m:select>$context</m:select></m:param>
     <Customer>
-      <ID><m:val>$context ! string(@CustomerID) ! string(.)</m:val></ID>
-      <m:optional><Date><m:val>$context ! parseDateTime('DD/MM/YYYY-hh:mm:ss', date) ! dateTime(.)</m:val></Date></m:optional>
+      <ID><m:val>$context ! string(@CustomerID) ! xs:string(.)</m:val></ID>
+      <m:optional><Date><m:val>$context ! parseDateTime('DD/MM/YYYY-hh:mm:ss', date) ! xs:dateTime(.)</m:val></Date></m:optional>
       <m:for-each><m:select>$context ! orders/order</m:select>
-        <Orders>
+        <Orders datatype='array'>
           <m:call-template name="Order">
             <m:with-param name="$context" select="."/>
           </m:call-template>
