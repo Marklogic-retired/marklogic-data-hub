@@ -14,7 +14,7 @@ const App: React.FC = () => {
  const checkLogin = (username: string, password: string) => {
    console.log('test login username', username);
    console.log('test login pw', password);
-   setAuthentication(true)
+   setAuthentication(true)  
  }
 
  const logout = () => {
