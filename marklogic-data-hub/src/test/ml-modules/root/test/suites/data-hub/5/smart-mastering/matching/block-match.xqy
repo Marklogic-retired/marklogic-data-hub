@@ -31,6 +31,7 @@ let $_ :=
     </options>
   )
 
+let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: Now each doc should have a block on the other doc. :)
 let $assertions := (
   $assertions,

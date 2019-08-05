@@ -75,11 +75,7 @@ declare function helper-impl:property-name-to-query($options as element(), $full
               function($val, $weight) {
                 $scope-query(cts:json-property-value-query(
                   fn:string($qname),
-                  (
-                    $val,
-                    $val ! fn:number(.)[fn:string(.) ne "NaN"],
-                    $val[. castable as xs:boolean] ! xs:boolean(.)
-                  ),
+                  $val,
                   ("case-insensitive"),
                   $weight
                 ))

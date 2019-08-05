@@ -11,6 +11,8 @@ xquery version "1.0-ml";
 
 module namespace proc-impl = "http://marklogic.com/smart-mastering/process-records/impl";
 
+import module namespace blocks-impl = "http://marklogic.com/smart-mastering/blocks-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
@@ -163,8 +165,6 @@ declare function proc-impl:expand-uris-for-merge(
             1,
             $max-scan,
             $merge-threshold,
-            (: don't lock for update :)
-            fn:false(),
             (: don't include detailed match information :)
             fn:false(),
             if ($filter-query instance of cts:true-query) then
@@ -272,6 +272,7 @@ declare function proc-impl:process-match-and-merge-with-options(
     $normalized-input
   )
   let $uris := map:keys($write-objects-by-uri)
+  let $_prime-blocks-cache := blocks-impl:get-blocks-of-uris($uris)
   let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "processing: " || fn:string-join($uris, ", "))
       else ()
@@ -292,7 +293,6 @@ declare function proc-impl:process-match-and-merge-with-options(
             if (fn:empty($minimum-threshold)) then
               fn:error($const:NO-THRESHOLD-ACTION-FOUND, "No threshold actions to act on.", ($matching-options/matcher:thresholds))
             else ()
-  let $lock-on-query := fn:false()
   let $max-scan := fn:head((
     $matching-options//*:max-scan ! xs:integer(.),
     500
@@ -300,7 +300,6 @@ declare function proc-impl:process-match-and-merge-with-options(
   let $all-matches :=
     let $start-elapsed := xdmp:elapsed-time()
     let $matches :=
-      xdmp:invoke-function(function() {
         map:new((
           $normalized-input !
             map:entry(
@@ -311,13 +310,11 @@ declare function proc-impl:process-match-and-merge-with-options(
                 1,
                 $max-scan,
                 $minimum-threshold,
-                $lock-on-query,
                 fn:false(),
                 $filter-query
               )
             )
         ))
-      }, map:entry("update", "false"))
     return (
       $matches,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
@@ -439,22 +436,23 @@ declare function proc-impl:process-match-and-merge-with-options(
       let $doc := $write-object
         => map:get("value")
       let $has-merges :=
-        fn:number(
-          match-impl:find-document-matches-by-options(
-            $doc,
-            $matching-options,
-            1,
-            1,
-            $merge-threshold,
-            (: don't lock for update :)
-            fn:false(),
-            (: don't include detailed match information :)
-            fn:false(),
-            $filter-query,
-            (: don't return results. we just want the estimate. :)
-            fn:false()
-          )/@total
-        ) gt 0
+        if (map:contains($all-matches, $uri)) then
+          fn:number(map:get($all-matches, $uri)/@total) gt 0
+        else
+          fn:number(
+            match-impl:find-document-matches-by-options(
+              $doc,
+              $matching-options,
+              1,
+              1,
+              $merge-threshold,
+              (: don't include detailed match information :)
+              fn:false(),
+              $filter-query,
+              (: don't return results. we just want the estimate. :)
+              fn:false()
+            )/@total
+          ) gt 0
       return
       (: If there are merges with a doc outside of this batch then leave it alone. :)
         if ($has-merges) then

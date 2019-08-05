@@ -185,7 +185,6 @@ declare function match-impl:compile-match-options(
  : @param $page-length  paging: number of results to return
  : @param $minimum-threshold  the required score for the lowest-scoring
  :                            threshold (see match options)
- : @param $lock-on-search
  : @param $include-matches  if true, the response will include, for each result,
  :                          the properties that earned points for the match
  :                          (similar) to snippets
@@ -199,7 +198,6 @@ declare function match-impl:find-document-matches-by-options(
   $start as xs:integer,
   $page-length as xs:integer,
   $minimum-threshold as xs:double,
-  $lock-on-search as xs:boolean,
   $include-matches as xs:boolean,
   $filter-query as cts:query
 ) as element(results)
@@ -212,7 +210,6 @@ declare function match-impl:find-document-matches-by-options(
     $start,
     $page-length,
     $minimum-threshold,
-    $lock-on-search,
     $include-matches,
     $filter-query,
     fn:true()
@@ -225,7 +222,6 @@ declare function match-impl:find-document-matches-by-options(
   $start as xs:integer,
   $page-length as xs:integer,
   $minimum-threshold as xs:double,
-  $lock-on-search as xs:boolean,
   $include-matches as xs:boolean,
   $filter-query as cts:query,
   $include-results as xs:boolean
@@ -274,13 +270,8 @@ declare function match-impl:find-document-matches-by-options(
       element match-query {
         $match-query
       }
-    let $_lock-on-search :=
-      if ($lock-on-search) then
-        match-impl:lock-on-search($serialized-match-query/cts:or-query)
-      else ()
     let $estimate := xdmp:estimate(cts:search(fn:collection(), match-impl:instance-query-wrapper($match-query, $is-json), "unfiltered"))
     return (
-      $_lock-on-search,
       element results {
         attribute total { $estimate },
         attribute page-length { $page-length },
@@ -290,7 +281,7 @@ declare function match-impl:find-document-matches-by-options(
           let $boost-query := match-impl:build-boost-query($document, $values-by-qname, $compiled-options, $cached-queries)
           return
               match-impl:search(
-                match-impl:strip-query-weights($match-query),
+                $match-query,
                 $boost-query,
                 $filter-query,
                 $minimum-threshold,
@@ -438,16 +429,15 @@ declare function match-impl:search(
   $is-json as xs:boolean
 ) {
   let $range := $start to ($start + $page-length - 1)
-  let $boost-query := cts:boost-query($match-query, $boosting-query)
   let $query :=
     match-impl:instance-query-wrapper(
       if (fn:not($filter-query instance of cts:true-query)) then
         cts:and-query((
-          match-impl:strip-query-weights($filter-query),
-          $boost-query
+          $filter-query,
+          $match-query
         ))
       else
-        $boost-query,
+        $match-query,
       $is-json
     )
   let $cts-walk-query :=
@@ -554,44 +544,6 @@ declare function match-impl:minimum-threshold-combinations($query-results, $thre
   )
 };
 
-(: sets the @weight attributes from cts:queries to 0
- :)
-declare function match-impl:strip-query-weights($query as cts:query)
-{
-  let $doc := document {$query}
-  let $items-to-transform := $doc//schema-element(cts:query)[. except (self::cts:or-query|self::cts:and-query)]
-  return
-    if (fn:exists($items-to-transform)) then
-      let $new-query-xml := match-impl:strip-query-weights-typeswitch($doc)
-      return cts:query($new-query-xml/*)
-    else
-      $query
-};
-
-(: sets the @weight attributes from cts:queries to 0
- : note: return type left off to allow for tail recursion optimization
- :)
-declare function match-impl:strip-query-weights-typeswitch($node as node())
-{
-  xdmp:xslt-eval(
-    <xsl:stylesheet version="2.0" xmlns:cts="http://marklogic.com/cts" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-        <xsl:template match="node()|@*">
-            <xsl:copy>
-                <xsl:apply-templates select="node()|@*"/>
-            </xsl:copy>
-        </xsl:template>
-        <xsl:template match="schema-element(cts:query)">
-            <xsl:copy>
-                <xsl:attribute name="weight">
-                    <xsl:value-of select="'0'"/>
-                </xsl:attribute>
-                <xsl:apply-templates select="node()|(@* except @weight)"/>
-            </xsl:copy>
-        </xsl:template>
-    </xsl:stylesheet>
-  , $node)
-};
-
 (:
  : Find combinations of queries whose weights are individually below the threshold, but combined are above it.
  :
@@ -631,59 +583,6 @@ declare function match-impl:filter-for-required-queries(
       )
     )
 };
-
-declare variable $_locked-on-uris as map:map := map:map();
-
-declare function match-impl:lock-on-search($query-results)
-  as empty-sequence()
-{
-  let $required-queries := $query-results/element(*, cts:query)
-  let $lock-prefix := "/com.marklogic.smart-mastering/query-lock/"
-  for $required-query in $required-queries
-  for $query-combination in match-impl:query-combinations($required-query)
-  let $lock-uri := $lock-prefix || $query-combination
-  where fn:not(map:contains($_locked-on-uris, $lock-uri))
-  return (
-    map:put($_locked-on-uris, $lock-uri, fn:true()),
-    if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
-      xdmp:trace($const:TRACE-MATCH-RESULTS, "locking on URI: " || $lock-uri)
-    else (),
-    fn:function-lookup(xs:QName("xdmp:lock-for-update"),1)($lock-uri)
-  )
-};
-
-declare function match-impl:query-combinations($required-query as element(*, cts:query))
-{
-  match-impl:group-query-combinations(
-    $required-query/descendant-or-self::element(*, cts:query)[fn:exists(cts:value|cts:text)],
-    ()
-  )
-};
-
-declare function match-impl:group-query-combinations(
-  $queries as element(*, cts:query)*,
-  $accumulated-values as xs:string*
-)
-{
-  if (fn:empty($queries)) then
-    fn:string-join(
-      for $value in ($accumulated-values ! fn:normalize-space(fn:lower-case(fn:string(.))))
-      order by $value
-      return $value,
-      "|"
-    )
-  else (
-    let $current := fn:head($queries)
-    let $tail := fn:tail($queries)
-    for $value in $current/(cts:value|cts:text)
-    return
-      match-impl:group-query-combinations(
-        $tail,
-        fn:string($value)
-      )
-  )
-};
-
 
 (:
  : Convert XML match results to JSON.

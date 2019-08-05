@@ -3,7 +3,8 @@ xquery version "1.0-ml";
 (:
  : Test the merging:rollback-merge function.
  :)
-
+import module namespace blocks-impl = "http://marklogic.com/smart-mastering/blocks-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace merging = "http://marklogic.com/smart-mastering/merging"
@@ -188,7 +189,7 @@ let $unmerge :=
     },
     $lib:INVOKE_OPTIONS
   )
-
+let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: And now there should be blocks :)
 let $assertions := (
   $assertions,

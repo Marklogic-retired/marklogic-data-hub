@@ -178,16 +178,22 @@ declare function notify-impl:get-existing-match-notification(
       if (fn:exists($threshold-label)) then
         cts:element-value-query(
           xs:QName("sm:threshold-label"),
-          $threshold-label
+          $threshold-label,
+          "exact",
+          0
         )
       else (),
       if (fn:exists($uris)) then
         cts:element-value-query(
           xs:QName("sm:document-uri"),
-          $uris
+          $uris,
+          "exact",
+          0
         )
       else ()
-    ))
+    )),
+    ("unfiltered","score-random"),
+    0
   )
 };
 
