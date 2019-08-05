@@ -1,16 +1,25 @@
 .logo {
-  float: left;
-  margin: 0 20px;
+
   color: white;
 }
 
+
 .icon {
-  margin-top: 15px;
+  padding-top: 10px;
+  margin-right: 5px;
+  align-content: right;
 }
+
 
 .title {
   font-size: 20px;
+  float: left;
+  margin: 0px 40px 0px 60px;
   color: silver;
   font-weight: bold;
   text-align: right;
+}
+
+.user {
+  float: right;
 }
