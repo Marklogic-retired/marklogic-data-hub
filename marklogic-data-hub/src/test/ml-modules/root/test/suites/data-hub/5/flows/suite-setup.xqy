@@ -5,6 +5,20 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 
 declare option xdmp:mapping "false";
 
+xdmp:document-insert(
+  "/entities/Customer.entity.json",
+  test:get-test-file("Customer.entity.json"),
+  xdmp:default-permissions(),
+  "http://marklogic.com/entity-services/models"
+);
+
+xquery version "1.0-ml";
+
+import module namespace lib = "http://marklogic.com/datahub/test" at "lib/lib.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+
+declare option xdmp:mapping "false";
+
 xdmp:invoke-function(function() {
   xdmp:document-insert(
     "/test/custom-null-step/main.sjs",
@@ -58,11 +72,4 @@ xdmp:document-insert(
   test:get-test-file("CustomerNull.step.json"),
   xdmp:default-permissions(),
   "http://marklogic.com/data-hub/step-definition"
-),
-
-xdmp:document-insert(
-  "/entities/Customer.entity.json",
-  test:get-test-file("Customer.entity.json"),
-  xdmp:default-permissions(),
-  "http://marklogic.com/entity-services/models"
-)
+);
