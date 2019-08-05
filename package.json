@@ -4,17 +4,9 @@
   "private": true,
   "dependencies": {
     "antd": "^3.20.5",
-    "apollo-cache-inmemory": "^1.6.2",
-    "apollo-client": "^2.6.3",
-    "apollo-link": "^1.2.12",
-    "apollo-link-error": "^1.1.11",
-    "apollo-link-http": "^1.5.15",
     "axios": "^0.19.0",
-    "graphql": "^14.4.2",
-    "graphql-tag": "^2.10.1",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",
     "react-json-view": "^1.19.1",
     "react-router-dom": "^5.0.1",
@@ -27,7 +19,6 @@
     "test": "react-app-rewired test",
     "server": "npm run start --prefix ./.mock-api",
     "client": "react-app-rewired start",
-    "mocks": "concurrently \"npm run server\" \"npm run client\"",
     "eject": "react-scripts eject"
   },
   "jest": {
@@ -60,7 +51,6 @@
     "@types/react-router-dom": "^4.3.4",
     "babel-plugin-import": "^1.12.0",
     "chai": "^4.2.0",
-    "concurrently": "^4.1.1",
     "customize-cra": "^0.2.14",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
