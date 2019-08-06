@@ -5,6 +5,8 @@ const datahub = DataHubSingleton.instance();
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
+const dhMappingTrace = 'DH-MAPPING';
+const dhMappingTraceIsEnabled = xdmp.traceEnabled(dhMappingTrace);
 
 const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', 'http://marklogic.com/data-hub/mappings/xml'];
 const entitiesByTargetType = {};
@@ -12,12 +14,21 @@ const entitiesByTargetType = {};
 function buildMappingXML(mappingJSON) {
   // Obtain all linked JSON mappings
   const relatedMappings = getRelatedMappings(mappingJSON).map((mappingDoc) => mappingDoc.toObject());
-
+  if (dhMappingTraceIsEnabled) {
+    xdmp.trace(dhMappingTrace, 'Building mapping XML');
+  }
   // for each mapping build out the mapping XML
   const entityTemplates = [];
   for (let mapping of relatedMappings) {
+    if (dhMappingTraceIsEnabled) {
+      xdmp.trace(dhMappingTrace, `Generating template for ${mapping.targetEntityType}`);
+    }
     let entity = getTargetEntity(mapping.targetEntityType);
-    entityTemplates.push(buildEntityMappingXML(mapping, entity));
+    let entityTemplate = buildEntityMappingXML(mapping, entity);
+    if (dhMappingTraceIsEnabled) {
+      xdmp.trace(dhMappingTrace, `Generated template: ${entityTemplate}`);
+    }
+    entityTemplates.push(entityTemplate);
   }
   let entityName = getEntityName(mappingJSON.root.targetEntityType);
   // compose the final template
@@ -38,8 +49,18 @@ function buildMappingXML(mappingJSON) {
 function buildMapProperties(mapping, entityModel) {
   let mapProperties = mapping.properties;
   let propertyLines = [];
+  if (dhMappingTraceIsEnabled) {
+    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with 
+    '${xdmp.describe(entityModel)}'`);
+  }
   let entityName = getEntityName(mapping.targetEntityType);
+  if (dhMappingTraceIsEnabled) {
+    xdmp.trace(dhMappingTrace, `Using entity name: ${entityName}`);
+  }
   let entityDefinition = entityModel.definitions[entityName];
+  if (dhMappingTraceIsEnabled) {
+    xdmp.trace(dhMappingTrace, `Using entity definition: ${entityDefinition}`);
+  }
   let requiredProps = entityDefinition.required || [entityModel.primaryKey];
   if (!requiredProps.includes(entityModel.primaryKey)) {
     requiredProps.push(entityModel.primaryKey);
@@ -55,14 +76,14 @@ function buildMapProperties(mapping, entityModel) {
         dataType = entityProperties[prop].items.datatype;
       }
       let externalMappingRef = mapProperties[prop].externalMapping;
-      let sourcedFrom = mapProperties[prop].sourcedFrom;
+      let sourcedFrom = `(${escapeXML(mapProperties[prop].sourcedFrom)})`;
       if (externalMappingRef || isArray) {
         let propLine;
         if (externalMappingRef) {
-          let externalMapping = mappingLib.getMappingWithVersion(externalMappingRef.name, externalMappingRef.version).toObject();
+          let externalMapping = mappingLib.getMappingWithVersion(externalMappingRef.externalName, externalMappingRef.externalVersion).toObject();
           let externalEntityName = getEntityName(externalMapping.targetEntityType);
           propLine = `<${prop} ${isArray? 'datatype="array"':''}><m:call-template name="${externalEntityName}">
-            <m:with-param name="$context" select="."/>
+            <m:with-param name="context" select="."/>
           </m:call-template></${prop}>`;
         } else {
           propLine = `<${prop} datatype="array"><m:val>. ! xs:${dataType}(.)</m:val></${prop}>`;
@@ -84,10 +105,16 @@ function buildMapProperties(mapping, entityModel) {
 
 function getRelatedMappings(mapping, related = [mapping]) {
   // get references to external mappings
+  if (dhMappingTraceIsEnabled) {
+    xdmp.trace(dhMappingTrace, `Getting related mappings for '${xdmp.describe(mapping)}'`);
+  }
   let externalReferences = mapping.xpath('/properties/*/externalMapping');
   for (let mappingRef of externalReferences) {
-    let name = mappingRef.name;
-    let version = mapping;
+    let name = mappingRef.externalName;
+    let version = mappingRef.externalVersion;
+    if (dhMappingTraceIsEnabled) {
+      xdmp.trace(dhMappingTrace, `Found external mapping name '${name}', version '${version}'`);
+    }
     if (!related.includes((mapping) => mapping.root.name === name && mapping.root.version === version)) {
       let externalMapping = mappingLib.getMappingWithVersion(name, version);
       related.push(externalMapping);
@@ -155,6 +182,17 @@ function fallbackLegacyEntityLookup(targetEntityType) {
   let tVersion = targetArr[targetArr.length - 2].split('-');
   let modelVersion = tVersion[tVersion.length - 1];
   return fn.head(mappingLib.getModel(entityName, modelVersion));
+}
+
+function escapeXML(input = '') {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;')
+    .replace(/{/g, '&#123;')
+    .replace(/}/g, '&#125;');
 }
 
 module.exports = {
