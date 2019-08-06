@@ -11,6 +11,11 @@ mat-form-field {
   width: 50%;
 }
 
+app-folder-browser {
+  max-width: 500px;
+  left: 0px !important;
+}
+
 #save-custom {
   position: absolute;
   top: 468px;
@@ -27,6 +32,13 @@ div.label {
   font-weight: normal;
 }
 
+div.Input-label {
+  padding-top: 15px;
+  padding-bottom: 10px;
+  font-size: 20px;
+  font-weight: normal;
+}
+
 /deep/ .mat-tooltip {
   white-space: pre-line !important;
   position: relative;
@@ -37,5 +49,39 @@ div.label {
 
 /deep/ .mat-form-field.modules-database-field,
 /deep/ .mat-form-field.custom-module-uri-field {
+  width: 600px !important;
+}
+
+
+/deep/ .mat-tooltip.source-path-tooltip {
+  left: 320px !important;
+}
+
+/deep/ .delimited-text-separator-field {
+  padding: 8px 0 !important;
+}
+
+/deep/ .mat-tooltip.source-file-type-tooltip,
+/deep/ .mat-tooltip.delimited-text-separator-field-tooltip,
+/deep/ .mat-tooltip.target-file-type-tooltip {
+  left: 300px !important;
+}
+
+/deep/ .mat-form-field.source-file-type,
+/deep/ .mat-form-field.target-file-type {
+  width: 200px !important;
+}
+
+/deep/ .mat-form-field.delimited-text-separator-field {
+  width: 184px !important;
+}
+
+/deep/ .mat-form-field.delimited-text-separator-other-field {
+  width: 80px !important;
+  padding: 5px 10px;
+}
+
+/deep/ .mat-form-field.target-permissions-field,
+/deep/ .mat-form-field.target-uri-replace-field {
   width: 600px !important;
 }

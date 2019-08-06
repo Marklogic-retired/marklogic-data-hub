@@ -3,17 +3,17 @@
 
   <mat-form-field class="ng-invalid">
     <mat-select id="step-type" class="type-select" placeholder="Step Type" (selectionChange)="stepTypeChange()"
-                formControlName="stepDefinitionType" required #stepOptionchoice>
+                formControlName="stepDefinitionType" required>
       <mat-option class="type-option" *ngFor="let option of stepOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field class="ng-invalid" *ngIf="stepOptionchoice.value === 'CUSTOM'">
-      <mat-select id="step-type-purpose" class="type-select" placeholder="Step Type Purpose"
+  <mat-form-field class="ng-invalid" *ngIf="isCustom">
+      <mat-select id="step-type-purpose" class="type-select" placeholder="Custom Step Type" (selectionChange)="setStepPurpose()"
                   formControlName="stepPurpose" required>
         <mat-option class="type-option" *ngFor="let option of stepTypePurposeOptions" [value]="option">{{capitalFirstLetter(option)}}</mat-option>
       </mat-select>
     </mat-form-field>
-  <div *ngIf="newStepForm.value.stepDefinitionType || isUpdate">
+  <div *ngIf="(!isCustom ? newStepForm.value.stepDefinitionType : (newStepForm.value.stepDefinitionType && newStepForm.value.stepPurpose)) || isUpdate ">
     <mat-form-field class="">
       <input id="step-name" matInput formControlName="name" placeholder="Name" required [errorStateMatcher]="instantErrorMatcher">
       <mat-error id="step-name-error" *ngIf="newStepForm.get('name').invalid">{{getNameErrorMessage()}}</mat-error>
@@ -72,7 +72,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-form-field *ngIf="!isIngestion">  
+        <mat-form-field *ngIf="!isIngestion ? (isCustom ? (newStepForm.value.stepPurpose !== 'INGESTION') : true) : false">  
           <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
@@ -82,7 +82,7 @@
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="!isIngestion">
+        <mat-form-field *ngIf="!isIngestion ? (isCustom ? (newStepForm.value.stepPurpose !== 'INGESTION') : true) : false">
           <mat-select id="step-output-format" class="type-select" placeholder="Target Format" formControlName="outputFormat">
             <mat-option class="type-option" *ngFor="let outputFormat of outputFormatOptions" [value]="outputFormat.value">{{outputFormat.label}}</mat-option>
           </mat-select>
@@ -109,23 +109,55 @@
       </div>
 
       <!-- Additonal New Fields to match ml-gradle-->
-      <mat-form-field class="">
-          <input id="custom-hook" matInput formControlName="customHook" placeholder="Custom Hook">
-      </mat-form-field>
-      <mat-form-field class="">
-          <input id="retry-limit" matInput formControlName="retryLimit" placeholder="Retry Limit">
-      </mat-form-field>
-      <mat-form-field class="">
+      <mat-form-field class=""
+      [matTooltip]="tooltips.batchSize"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
           <input id="batch-size" matInput formControlName="batchSize" placeholder="Batch Size">
       </mat-form-field>
       <mat-form-field class="">
           <input id="thread-count" matInput formControlName="threadCount" placeholder="Thread Count">
       </mat-form-field>
-      <!-- <mat-form-field>
-          <mat-label>Custom Hook</mat-label>
-            <input [class]="'add-custom-hook'" matInput formControlName="customHook"/>
-            <mat-error id="'add-custom-hook' + '-error">Enter a valid object</mat-error>
-      </mat-form-field> -->
+      <mat-form-field class="">
+          <input id="custom-hook" matInput formControlName="customHook" placeholder="Custom Hook">
+          <canvas width="25" height="20"></canvas>
+      </mat-form-field>
+    
+    <ng-container *ngIf="isCustom"> 
+      <mat-label>
+          <span
+            [matTooltip]="tooltips.options"
+            matTooltipPosition="left"
+            matTooltipShowDelay="500"
+            matTooltipHideDelay="500"
+            matTooltipClass="options-tooltip">
+            Options
+          </span>
+        </mat-label>
+        <button class="step-add-option-btn" mat-icon-button (click)="onAddOption()">
+          <mat-icon>add_circle</mat-icon>
+        </button>
+        <div
+          id="step-dialog"
+          formArrayName="customOptions"
+          *ngFor="let option of this.options.controls; let i = index;">
+          <div [formGroupName]="i" class="key-value-group">
+            <mat-form-field>
+              <mat-label>Key</mat-label>
+              <input [class]="'step-option-key-' + i" matInput formControlName="key"/>
+            </mat-form-field>
+            <mat-icon></mat-icon>
+            <mat-form-field>
+              <mat-label>Value</mat-label>
+              <input [class]="'step-option-value-' + i" matInput formControlName="value"/>
+            </mat-form-field>
+            <button class="step-remove-option-btn" mat-icon-button (click)="onRemoveOption(i)">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-container> 
 
       </mat-expansion-panel>
     </mat-accordion>

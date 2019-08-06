@@ -3,6 +3,7 @@ import { MappingOptions } from './mapping-options.model';
 import { MasteringOptions } from './mastering-options.model';
 import { CustomOptions } from './custom-options.model';
 import stepConfig from '../../../../../../../e2e/test-objects/stepConfig';
+import {isNumber} from "util";
 
 export enum StepType {
   INGESTION = 'INGESTION',
@@ -37,10 +38,10 @@ export class Step {
   // Custom only
   public modulePath: string;
   public stepPurpose: StepTypePurpose;
+  public stepDefType: any;
 
   // All step types
   public customHook: any;
-  public retryLimit: number;
   public batchSize: number;
   public threadCount: number;
 
@@ -58,6 +59,13 @@ export class Step {
     step.options = new IngestionOptions();
     step.options.permissions = 'rest-reader,read,rest-writer,update';
     step.options.outputFormat = 'json';
+    step.customHook = {"module" : "",
+    "parameters" : {},
+    "user" : "",
+    "runBefore" : false
+  };
+    step.batchSize = 100;
+    step.threadCount = 4;
     return step;
   }
 
@@ -75,14 +83,24 @@ export class Step {
     return step;
   }
 
-  static createCustomStep(): Step {
+  static createCustomStep(filePath: string): Step {
     const step = new Step();
+    const fileLocations = {
+      inputFilePath: filePath,
+      inputFileType: 'json',
+      outputURIReplacement: '',
+      separator: ',',
+    };
+    step.fileLocations = fileLocations;
     step.modulePath = '';
-    //step.stepPurpose = '';
     step.options = new CustomOptions();
+    step.options.permissions = 'rest-reader,read,rest-writer,update';
     step.options.outputFormat = 'json';
-    step.customHook = {};
-    step.retryLimit = 0;
+    step.customHook = {"module" : "",
+    "parameters" : {},
+    "user" : "",
+    "runBefore" : false
+  };
     step.batchSize = 100;
     step.threadCount = 4;
     return step;
@@ -117,8 +135,17 @@ export class Step {
     if (json.modulePath) {
       newStep.modulePath = json.modulePath;
     }
-    if (json.stepPurpose) {
-      newStep.stepPurpose = json.stepPurpose;
+    if (json.stepDefType) {
+      newStep.stepDefType = json.stepDefType;
+    }
+    if (json.customHook) {
+      newStep.customHook = json.customHook;
+    }
+    if (json.batchSize && isNumber(parseInt(json.batchSize))) {
+      newStep.batchSize = json.batchSize;
+    }
+    if (json.threadCount && isNumber(parseInt(json.threadCount))) {
+      newStep.threadCount = json.threadCount;
     }
     // Check options
     if (json.options) {
@@ -149,11 +176,22 @@ export class Step {
         newStep.options.sourceDatabase = databases.final;
         newStep.options.targetDatabase = databases.final;
       }
-      if (json.stepDefinitionType === StepType.CUSTOM) {
+      if ((json.stepDefinitionType === StepType.CUSTOM)) {
+        // if (json.fileLocations && json.fileLocations.inputFilePath === 'path/to/folder') {
+          const fileLocations = {
+            inputFilePath: projectDirectory,
+            inputFileType: 'json',
+            outputURIReplacement: '',
+            separator: ','
+          };
+          newStep.fileLocations = fileLocations;
+        //}
+        
         newStep.options = new CustomOptions();
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
-        newStep.stepPurpose = StepTypePurpose.OTHER;
+        //newStep.stepPurpose = json.stepPurpose || 'CUSTOM';
+        newStep.options.customOptions = json.options.customOptions;
       }
       const newOptions = Object.assign(newStep.options, json.options);
       newStep.options = newOptions;

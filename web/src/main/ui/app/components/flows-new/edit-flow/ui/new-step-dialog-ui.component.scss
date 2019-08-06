@@ -66,3 +66,30 @@ div.additional-collections-group input {
 /deep/ #step-source-type .mat-radio-button.mat-accent div.mat-radio-inner-circle {
   background-color: #6d8ba5 !important;
 }
+
+.step-add-option-btn .mat-icon {
+  position: relative;
+  top: -1px;
+}
+
+/deep/ .mat-tooltip.options-tooltip {
+  white-space: pre-line !important;
+  position: relative;
+  left: 427px;
+  top: 0;
+}
+
+.key-value-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+div.key-value-group {
+  /deep/ div.mat-form-field-infix {
+    width: 170px !important;
+  }
+  input {
+    border: 0;
+  }
+}

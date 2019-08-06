@@ -6,4 +6,6 @@ export class CustomOptions {
   public sourceDatabase: string = '';
   public targetDatabase: string;
   public outputFormat: string;
+  public permissions: string;
+  public customOptions: {};
 }

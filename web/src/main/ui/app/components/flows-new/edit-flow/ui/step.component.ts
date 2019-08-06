@@ -90,5 +90,35 @@ export class StepComponent implements OnChanges {
     }
     this.updateStep.emit(step);
   }
+  
+  createStepHeader(step: any): string {
+    if (step.stepDefinitionType === this.stepType.INGESTION){
+      if(step.stepDefinitionName === 'default-ingestion'){
+        return 'INGESTION';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MAPPING){
+      if(step.stepDefinitionName === 'default-mapping'){
+        return 'MAPPING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MASTERING){
+      if(step.stepDefinitionName === 'default-mastering'){
+        return 'MAPPING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else {
+        return 'CUSTOM';
+    }
+  }
 
 }
