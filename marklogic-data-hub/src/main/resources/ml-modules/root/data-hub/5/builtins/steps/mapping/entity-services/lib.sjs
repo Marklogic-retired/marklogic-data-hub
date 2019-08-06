@@ -86,13 +86,13 @@ function buildMapProperties(mapping, entityModel) {
             <m:with-param name="context" select="."/>
           </m:call-template></${prop}>`;
         } else {
-          propLine = `<${prop} datatype="array"><m:val>. ! xs:${dataType}(.)</m:val></${prop}>`;
+          propLine = `<${prop} datatype="array" xsi:type="xs:${dataType}"><m:val>. ! xs:${dataType}(.)</m:val></${prop}>`;
         }
         propertyLines.push(`<m:for-each><m:select>$context ! ${sourcedFrom}</m:select>
             ${propLine}
           </m:for-each>`);
       } else {
-        let propLine = `<${prop}><m:val>$context ! ${sourcedFrom} ! xs:${dataType}(.)</m:val></${prop}>`;
+        let propLine = `<${prop} xsi:type="xs:${dataType}"><m:val>$context ! ${sourcedFrom} ! xs:${dataType}(.)</m:val></${prop}>`;
         if (!isRequired) {
           propLine = `<m:optional>${propLine}</m:optional>`
         }
@@ -158,7 +158,7 @@ function buildEntityMappingXML(mapping, entity) {
   return `
       <m:entity name="${entityTitle}" xmlns:m="http://marklogic.com/entity-services/mapping">
         <m:param name="context"><m:select>$context</m:select></m:param>
-        <${entityTitle}>
+        <${entityTitle} xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           ${buildMapProperties(mapping, entity)}
         </${entityTitle}>
       </m:entity>`;
