@@ -158,6 +158,7 @@ main:
           { url: '/refs/server-side-library/', text: 'Server Side API Library' },
           { url: '/refs/security/', text: 'Security' },
           { url: '/refs/index-settings/', text: 'Index Settings' },
+          { url: '/refs/version-compatibility/', text: 'Version Compatibility' },
         ]
       }
     - { url: '/refs/faqs/', text: 'FAQs' }

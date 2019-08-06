@@ -21,11 +21,11 @@ mkdir data-hub
 cd data-hub
 </pre>
 
-- Download the latest [Quick Start war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version }}/quick-start-{{ site.data.global.hub_version }}.war) and place it in the folder you just created.
+- Download the [Quick Start war](https://github.com/marklogic/marklogic-data-hub/releases/download/v{{ site.data.global.hub_version_2x }}/quick-start-{{ site.data.global.hub_version_2x }}.war) and place it in the folder you just created.
 
 ## 3 - Download the Sample Data
 
-- Create a folder to hold your input data  
+- Create a folder to hold your input data
 
 <pre class="cmdline">
 mkdir input
@@ -37,7 +37,7 @@ Your directory should look like this:
 
 <pre class="cmdline">
 data-hub
- +-- input  
+ +-- input
  +-- quick-start-{{ site.data.global.hub_version_2x }}.war
 </pre>
 
