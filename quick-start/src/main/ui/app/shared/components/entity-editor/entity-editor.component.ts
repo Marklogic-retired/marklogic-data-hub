@@ -49,11 +49,15 @@ export class EntityEditorComponent implements AfterViewChecked {
 
   propAdded: boolean = false;
   validTitle: boolean = true;
+  validBaseUri: boolean = true;
 
   // property name pattern: name cannot have space characters in it
   readonly PROPERTY_NAME_PATTERN = /^[^\s]+$/;
   // Entity title: no space or invalid characters
   readonly ENTITY_TITLE_REGEX = /^.*?(?=[\^\s!@#%&$\*:;<>\?/\{\|\}]).*$/;
+
+  // Base URI: http://example.org/
+  readonly BASE_URI_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]/;
 
   constructor(
     private dialog: MdlDialogReference,
@@ -231,6 +235,9 @@ export class EntityEditorComponent implements AfterViewChecked {
       if (this.ENTITY_TITLE_REGEX.test(this.entity.info.title) || this.entity.info.title === '') {
         // invalid characters in title
         this.validTitle = false;
+        return;
+      } if (!this.BASE_URI_REGEX.test(this.entity.info.baseUri) || this.entity.info.baseUri === '' || this.entity.info.baseUri === null) {
+        this.validBaseUri = false;
         return;
       } else {
         this.validTitle = true;

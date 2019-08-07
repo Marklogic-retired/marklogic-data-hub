@@ -160,7 +160,7 @@ export class Entity {
         height: 100
       },
       'info': {
-        'baseUri': null,
+        'baseUri': 'http://example.org',
         'description': null,
         'title': null,
         'version': '0.0.1'
