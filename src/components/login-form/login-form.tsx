@@ -1,58 +1,56 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Form, Icon, Input, Button } from 'antd';
 import styles from './login-form.module.scss';
+import { AuthContext } from '../../util/auth-context';
+import useForm from '../../hooks/use-form';
 
-type Props = {
- checkLogin: any;
+interface Props extends RouteComponentProps<any> {}
+
+const LoginForm: React.FC<Props> = ({ history }) => {
+  const defaultFormInputs = {
+    username: '',
+    password: ''
+  }
+  const { userAuthenticated } = useContext(AuthContext);
+
+  const submitForm = () => {
+    console.log('submitted values', values);
+    if (values.username === 'admin' && values.password === 'admin') {
+      userAuthenticated(values.username);
+      history.push('/view');
+    }
+  }
+  const { values, handleChange, handleSubmit } = useForm(defaultFormInputs, submitForm);
+
+  return (
+    <Form onSubmit={handleSubmit} className={styles.login}>
+      <Form.Item hasFeedback validateStatus="">
+        <Input
+          id="username"
+          prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+          placeholder="Username"
+          value={values.username}
+          onChange={handleChange}
+        />
+      </Form.Item>
+      <Form.Item hasFeedback validateStatus="">
+        <Input
+          id="password"
+          prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+          placeholder="Password"
+          type="password"
+          value={values.password}
+          onChange={handleChange}
+        />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" className={styles.loginButton}>
+          Sign in
+        </Button>
+      </Form.Item>
+    </Form>
+  )
 }
-type State = {
- username: string;
- password: string;
-};
-class LoginForm extends React.Component<Props, State> {
- readonly state: State = {
-   username: '',
-   password: ''
- };
- handleSubmit = (event: any) => {
-   const { username, password } = this.state;
-   event.preventDefault();
-   this.props.checkLogin(username, password);
- };
- handleChange = (event: any)=> {
-   const key = event.target.id;
-   this.setState({[key]: event.target.value} as Pick<State, keyof State>);
- }
- render() {
-   // TODO Add validate status functionality
-   return (
-      <Form onSubmit={this.handleSubmit} className={styles.login}>
-        <Form.Item hasFeedback validateStatus="">
-          <Input
-            id="username"
-            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-            placeholder="Username"
-            value={this.state.username}
-            onChange={this.handleChange}
-          />
-        </Form.Item>
-        <Form.Item hasFeedback validateStatus="">
-          <Input
-            id="password"
-            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-            placeholder="Password"
-            type="password"
-            value={this.state.password}
-            onChange={this.handleChange}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className={styles.loginButton}>
-            Sign in
-          </Button>
-        </Form.Item>
-      </Form>
-   );
- }
-}
-export default LoginForm
+
+export default withRouter(LoginForm);
