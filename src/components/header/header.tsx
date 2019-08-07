@@ -1,27 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout, Menu, Icon } from 'antd';
 import styles from './header.module.scss';
-import DatahubIcon from '../datahub-icon/datahub-icon'
+import DatahubIcon from '../datahub-icon/datahub-icon';
+import { AuthContext } from '../../util/auth-context';
 
 const { SubMenu } = Menu;
 
-type Props={
-  auth: boolean;
-  user: string;
-  logout: any;
-}
-
-
-const Header:React.FC<Props> = props => {
-  //const [clicks, setClicks] = useState(initial);
-  console.log('passed logout:', props.auth)
+const Header:React.FC = () => {
+  const { user, userNotAuthenticated } = useContext(AuthContext);
 
   const handleLogout = () => {
-    props.logout();
+    userNotAuthenticated();
   };
 
-  const showMenu = props.auth && (
+  const showMenu = user.authenticated && (
     <Menu 
       mode="horizontal"
       theme="dark"
@@ -37,7 +30,7 @@ const Header:React.FC<Props> = props => {
         Browse Entities
         <Link to="/browse"/>
       </Menu.Item>
-      <SubMenu className = {styles.user}  title={<span><Icon type="user" /><span>{props.user}</span></span>}>
+      <SubMenu className = {styles.user}  title={<span><Icon type="user" /><span>{user.name}</span></span>}>
         <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
       </SubMenu>
     </Menu>
