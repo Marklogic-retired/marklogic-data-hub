@@ -53,6 +53,10 @@ export class EntityPage extends AppPage {
     return element(by.css('mdl-textfield[label=Version] input'));
   }
 
+  get entityBaseUri() {
+    return element(by.css('mdl-textfield[label="Base URI"] input'));
+  }
+
   getEntityBox(entityName: string) {
     return element(by.cssContainingText('app-entity-box div.title span', entityName));
   }
