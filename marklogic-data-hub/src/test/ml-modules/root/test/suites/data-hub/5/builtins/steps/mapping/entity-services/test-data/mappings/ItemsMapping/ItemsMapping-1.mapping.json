@@ -1,0 +1,20 @@
+{
+  "language" : "zxx",
+  "name" : "ItemsMapping",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://marklogic.com/data-hub/example/ItemType-0.0.1/ItemType",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "name" : {
+      "sourcedFrom" : "name"
+    },
+    "quantity" : {
+      "sourcedFrom" : "quantity"
+    },
+    "price" : {
+      "sourcedFrom" : "price"
+    }
+  }
+}

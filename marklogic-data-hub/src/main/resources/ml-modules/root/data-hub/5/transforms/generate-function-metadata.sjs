@@ -11,8 +11,14 @@ function transform(context, params, content) {
     let uriVal = match[1];
     let metaDataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
     let collection = 'http://marklogic.com/entity-services/function-metadata';
-    datahub.hubUtils.writeDocument(uriVal+ ".xml", metaDataXml, 'xdmp.defaultPermissions()',  [collection], datahub.config.MODULESDATABASE);
-    es.functionMetadataPut(uriVal+ ".xml")
+    let permissionsExpression = `xdmp.defaultPermissions().concat([
+  xdmp.permission('${datahub.config.FLOWOPERATORROLE}','execute'),
+  xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','execute'),
+  xdmp.permission('${datahub.config.FLOWOPERATORROLE}','read'),
+  xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read')
+])`;
+    datahub.hubUtils.writeDocument(uriVal+ ".xml", metaDataXml, permissionsExpression,  [collection], datahub.config.MODULESDATABASE);
+    es.functionMetadataPut(uriVal+ ".xml");
   }
   return content;
 }
