@@ -1,17 +1,21 @@
 import React, { useContext } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { Layout, Menu, Icon } from 'antd';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
 import { AuthContext } from '../../util/auth-context';
 
+
+interface Props extends RouteComponentProps<any> {}
+
 const { SubMenu } = Menu;
 
-const Header:React.FC = () => {
+const Header:React.FC<Props> = ({history}) => {
   const { user, userNotAuthenticated } = useContext(AuthContext);
 
   const handleLogout = () => {
     userNotAuthenticated();
+    history.push('/');
   };
 
   const showMenu = user.authenticated && (
@@ -53,4 +57,4 @@ const Header:React.FC = () => {
     )
 }
 
-export default Header;
+export default withRouter(Header);
