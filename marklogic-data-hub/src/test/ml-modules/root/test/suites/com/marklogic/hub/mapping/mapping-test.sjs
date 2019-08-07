@@ -10,17 +10,17 @@ function describe(item) {
 }
 
 function mapsJSONasExpected() {
-  const mappedInstance = mapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
     },
     "targetEntity" : "Customer"
-  }).value.envelope.instance.Customer;
+  }).value.root.envelope.instance.Customer;
   const message = `Unexpected output: ${describe(mappedInstance)}`;
   return [
-    test.assertEqual("Bob", mappedInstance.firstname, message),
-    test.assertEqual("Customer-1234", mappedInstance.id, message)
+    test.assertEqual("Bob", fn.string(mappedInstance.firstname), message),
+    test.assertEqual("Customer-1234", fn.string(mappedInstance.id), message)
   ]
 }
 
@@ -53,7 +53,7 @@ function esMapsJSONasExpected() {
 }
 
 function mapsJSONtoXMLasExpected() {
-  const mappedInstance = fn.head(mapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = fn.head(esMapping.main({"value": cts.doc("/customer1.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -70,13 +70,13 @@ function mapsJSONtoXMLasExpected() {
 }
 
 function mapsXMLasExpected() {
-  const mappedInstance = mapping.main({"value": cts.doc("/customer1.xml")}, {
+  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.xml")}, {
     "mapping" : {
       "name" : "CustomerXML-CustomerXMLMapping",
       "version" : 0
     },
     "targetEntity" : "Customer"
-  }).value.envelope.instance.Customer;
+  }).value.toObject().envelope.instance.Customer;
   return [
     test.assertEqual("Bob", mappedInstance.firstname, `Unexpected output: ${describe(mappedInstance)}`),
     test.assertEqual("Customer-1234", mappedInstance.id, `Unexpected output: ${describe(mappedInstance)}`),
