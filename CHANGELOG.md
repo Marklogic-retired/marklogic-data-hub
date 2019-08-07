@@ -1,6 +1,19 @@
 # Change Log
 
-# [v4.3.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.3.0) (2019-04-16)
+
+
+# [v4.3.2](https://github.com/marklogic/marklogic-data-hub/tree/v4.3.2) (2019-08-07)
+
+**Fixed bugs:**
+- [DHFPROD-2207] - mlDeploy on DataHub fails with no group named &quot;Default&quot; on Marklogic server
+- [DHFPROD-2307] - Update Deploy to DHS page
+- [DHFPROD-2973] - pre-commit trigger that validates an entity model generates unexpected XDMP-ARGTYPE error
+
+**Improvement**
+- [DHFPROD-2912] - Make necessary changes in 4.3.x branch to make it work with 9.0-10 ML server
+
+
+# [v4.3.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.3.1) (2019-04-16)
 
 **Fixed bugs:**
 - [DHFPROD-1417] - Make the title field required on Entity editor 
