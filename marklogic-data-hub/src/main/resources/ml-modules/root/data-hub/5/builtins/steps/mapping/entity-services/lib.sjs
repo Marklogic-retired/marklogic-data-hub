@@ -11,6 +11,13 @@ const dhMappingTraceIsEnabled = xdmp.traceEnabled(dhMappingTrace);
 const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', 'http://marklogic.com/data-hub/mappings/xml'];
 const entitiesByTargetType = {};
 
+const xsltPermissions = [
+  xdmp.permission(datahub.config.FLOWOPERATORROLE,'execute'),
+  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'execute'),
+  xdmp.permission(datahub.config.FLOWOPERATORROLE,'read'),
+  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read')
+];
+
 function buildMappingXML(mappingJSON) {
   // Obtain all linked JSON mappings
   const relatedMappings = getRelatedMappings(mappingJSON).map((mappingDoc) => mappingDoc.toObject());
@@ -196,6 +203,7 @@ function escapeXML(input = '') {
 }
 
 module.exports = {
+  xsltPermissions,
   xmlMappingCollections,
   buildMappingXML,
   buildEntityMappingXML,

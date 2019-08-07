@@ -1,0 +1,34 @@
+{
+  "language" : "zxx",
+  "name" : "OrdersMapping",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://marklogic.com/data-hub/example/OrderType-0.0.1/OrderType",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "purchaseDate" : {
+      "sourcedFrom" : "parseDate('MM/DD/YYYY', transactionDate)"
+    },
+    "orderCost": {
+      "sourcedFrom" : "sum(items ! (quantity * price))"
+    },
+    "customer" : {
+      "sourcedFrom": "customer",
+      "externalMapping" : {
+        "externalName": "CustomersMapping",
+        "externalVersion": 1
+      }
+    },
+    "items" : {
+      "sourcedFrom": "items",
+      "externalMapping" : {
+        "externalName": "ItemsMapping",
+        "externalVersion": 1
+      }
+    }
+  }
+}
