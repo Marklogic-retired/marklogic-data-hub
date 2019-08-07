@@ -1,0 +1,42 @@
+.logo {
+
+  color: white;
+}
+
+.icon {
+  padding-top: 10px;
+  margin-right: 5px;
+  align-content: right;
+}
+
+.iconContain {
+  height: 0px;
+  width: 240px;
+}
+
+.title {
+  font-size: 20px;
+  float: left;
+  margin: 0px 40px 0px 60px;
+  color: silver;
+  font-weight: bold;
+  text-align: right;
+}
+
+.user {
+  float: right;
+  margin-right: 5px;
+}
+
+.help {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.helpContain {
+  top: 0;
+  right: 30px;
+  position: fixed;
+  color:white;
+  z-index: 3000;
+}
