@@ -98,6 +98,7 @@ export class NewStepDialogUiComponent implements OnInit {
       else if (this.step && this.step.options && this.step.options.sourceCollection)
         selectedSource = 'collection';
     }
+
     this.instantErrorMatcher = new InstantErrorStateMatcher();
     this.hasSelectedCollection = selectedSource === 'collection';
     this.hasSelectedQuery = selectedSource === 'query';
@@ -152,6 +153,9 @@ export class NewStepDialogUiComponent implements OnInit {
         if (this.newStep.options.targetEntity) {
           this.newStep.options.collections = this.newStep.options.collections.filter(val => val !== this.newStep.options.targetEntity);
         }
+      }
+      if(this.newStep.options.customOptions){
+        this.options = this.newStep.options.customOptions
       }
     }
   }
@@ -306,8 +310,9 @@ export class NewStepDialogUiComponent implements OnInit {
     this.newStep.threadCount = parseInt(this.newStepForm.value.threadCount);
     
     if (this.newStep.stepDefType === StepType.CUSTOM) {
-      this.newStep.options.customOptions = this.newStepForm.value.customOptions;
-   
+      const newOptions = this.newStepForm.value.customOptions ? this.updateOptions(this.newStepForm.value.customOptions) : [];
+      this.newStep.options = Object.assign(this.newStep.options, newOptions);
+      this.step.customOptions = this.newStepForm.value.customOptions;
     }
 
     if (this.newStep.name !== '') {
@@ -469,6 +474,16 @@ export class NewStepDialogUiComponent implements OnInit {
     else {
       return stepDefType;
     }
+  }
+  
+  updateOptions(options: { key: string, value: string }[]) {
+    const result = {};
+    _.forEach(options, option => {
+      if (option.key) {
+        result[option.key] = option.value;
+      }
+    });
+    return result;
   }
 
 

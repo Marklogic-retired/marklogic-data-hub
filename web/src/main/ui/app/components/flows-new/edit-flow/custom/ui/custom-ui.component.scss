@@ -12,8 +12,9 @@ mat-form-field {
 }
 
 app-folder-browser {
-  max-width: 500px;
-  left: 0px !important;
+  max-width: 700px;
+  display: flex;
+  justify-content: left;
 }
 
 #save-custom {
