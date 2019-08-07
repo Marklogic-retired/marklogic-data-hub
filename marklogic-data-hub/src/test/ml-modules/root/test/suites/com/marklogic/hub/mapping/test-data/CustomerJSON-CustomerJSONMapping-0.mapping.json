@@ -18,6 +18,48 @@
     },
     "updated": {
       "sourcedFrom": "Metadata/CreatedOn"
+    },
+    "firstNumber": {
+      "sourcedFrom": "Number[. >= 10]"
+    },
+    "secondNumber": {
+      "sourcedFrom": "Number[. > 10]"
+    },
+    "thirdNumber": {
+      "sourcedFrom": "Number[. = 10]"
+    },
+    "fourthNumber": {
+      "sourcedFrom": "Number[. <= 10]"
+    },
+    "fifthNumber": {
+      "sourcedFrom": "Number[. < 10]"
+    },
+    "sixthNumber": {
+      "sourcedFrom": "Number[. != 10]"
+    },
+    "sum": {
+      "sourcedFrom": "Number + AnotherNumber"
+    },
+    "difference": {
+      "sourcedFrom": "Number - 10"
+    },
+    "product": {
+      "sourcedFrom": "Number * 10"
+    },
+    "quotient": {
+      "sourcedFrom": "Number div 4"
+    },
+    "stringJoin" : {
+      "sourcedFrom": "concat(FirstName, ' Cratchit')"
+    },
+    "stringRemove" : {
+      "sourcedFrom": "translate(CustomerID, '4', '')"
+    },
+    "currentDateTime" : {
+      "sourcedFrom" : "parseDateTime('DD/MM/YYYY-hh:mm:ss',CurrentDateTime)"
+    },
+    "currentDate" : {
+      "sourcedFrom" : "parseDate('Mon DD, YYYY',CurrentDate)"
     }
   }
 }
