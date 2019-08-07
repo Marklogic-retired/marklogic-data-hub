@@ -1,0 +1,37 @@
+{
+  "info" : {
+    "title" : "OrderType",
+    "version" : "0.0.1",
+    "baseUri": "http://marklogic.com/data-hub/example/"
+  },
+  "definitions" : {
+    "OrderType" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "purchaseDate": {
+          "datatype": "date"
+        },
+        "orderCost": {
+          "datatype": "decimal"
+        },
+        "items" : {
+          "datatype" : "array",
+          "items" : {
+            "$ref": "http://marklogic.com/data-hub/example/ItemType-0.0.1/ItemType"
+          }
+        },
+        "customer" : {
+          "$ref": "http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType"
+        }
+      }
+    }
+  }
+}
