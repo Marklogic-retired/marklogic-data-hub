@@ -7,13 +7,15 @@ var uri;
 let xmlURI = fn.replace(uri, '\\.json$', '.xml');
 let jsonDoc = cts.doc(uri);
 let xmlDoc = esMappingLib.buildMappingXML(jsonDoc);
+let docPermissions = xdmp.nodePermissions(jsonDoc).concat(esMappingLib.xsltPermissions);
+
 xdmp.invokeFunction(function() {
     xdmp.documentInsert(
       xmlURI,
       xmlDoc,
       {
         collections: esMappingLib.xmlMappingCollections,
-        permissions: xdmp.defaultPermissions()
+        permissions: docPermissions
       }
     );
   },
