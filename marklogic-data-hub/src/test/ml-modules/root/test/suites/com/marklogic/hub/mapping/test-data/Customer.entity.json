@@ -49,6 +49,32 @@
         },
         "sixthNumber" : {
           "datatype": "int"
+        },
+        "sum" : {
+          "datatype": "int"
+        },
+        "difference" : {
+          "datatype": "int"
+        },
+        "product" : {
+          "datatype": "int"
+        },
+        "quotient" : {
+          "datatype": "float"
+        },
+        "stringJoin" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "stringRemove" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "currentDateTime" : {
+          "datatype" : "dateTime"
+        },
+        "currentDate" : {
+          "datatype" : "date"
         }
       }
     }

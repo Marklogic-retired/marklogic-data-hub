@@ -1,6 +1,9 @@
 const test = require("/test/test-helper.xqy");
 const mapping = require("/data-hub/5/builtins/steps/mapping/default/main.sjs");
+const esMapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
 const emptySequence = Sequence.from([]);
+const serverTimezone = sem.timezoneString(fn.currentDateTime());
+let expectedDateTime = `2014-01-06T18:13:50${serverTimezone}`;
 
 function describe(item) {
   return xdmp.describe(item, emptySequence, emptySequence);
@@ -17,13 +20,35 @@ function mapsJSONasExpected() {
   const message = `Unexpected output: ${describe(mappedInstance)}`;
   return [
     test.assertEqual("Bob", mappedInstance.firstname, message),
-    test.assertEqual("Customer-1234", mappedInstance.id, message),
+    test.assertEqual("Customer-1234", mappedInstance.id, message)
+  ]
+}
+
+function esMapsJSONasExpected() {
+  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.json")}, {
+    "mapping" : {
+      "name" : "CustomerJSON-CustomerJSONMapping",
+      "version" : 0
+    },
+    "targetEntity" : "Customer"
+  }).value.toObject().envelope.instance.Customer;
+  console.log("INSTANCE", mappedInstance);
+  const message = `Unexpected output: ${describe(mappedInstance)}`;
+  return [
+    test.assertEqual(15, mappedInstance.sum, message),
+    test.assertEqual(0, mappedInstance.difference, message),
+    test.assertEqual(100, mappedInstance.product, message),
+    test.assertEqual(2.5, mappedInstance.quotient, message),
     test.assertEqual(10, mappedInstance.firstNumber, message),
     test.assertEqual(null, mappedInstance.secondNumber, message),
     test.assertEqual(10, mappedInstance.thirdNumber, message),
     test.assertEqual(10, mappedInstance.fourthNumber, message),
     test.assertEqual(null, mappedInstance.fifthNumber, message),
-    test.assertEqual(null, mappedInstance.sixthNumber, message)
+    test.assertEqual(null, mappedInstance.sixthNumber, message),
+    test.assertEqual("Bob Cratchit", mappedInstance.stringJoin, message),
+    test.assertEqual("Customer-123", mappedInstance.stringRemove, message),
+    test.assertEqual(expectedDateTime,mappedInstance.currentDateTime,message),
+    test.assertEqual("2014-01-06",mappedInstance.currentDate,message)
   ];
 }
 
@@ -61,5 +86,6 @@ function mapsXMLasExpected() {
 
 []
   .concat(mapsJSONasExpected())
+  .concat(esMapsJSONasExpected())
   .concat(mapsJSONtoXMLasExpected())
   .concat(mapsXMLasExpected());
