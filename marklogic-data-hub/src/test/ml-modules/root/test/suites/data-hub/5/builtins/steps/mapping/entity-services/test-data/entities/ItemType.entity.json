@@ -1,0 +1,28 @@
+{
+  "info" : {
+    "title" : "ItemType",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/data-hub/example/"
+  },
+  "definitions" : {
+    "ItemType" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "name": {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "quantity": {
+          "datatype": "integer"
+        },
+        "price": {
+          "datatype": "decimal"
+        }
+      }
+    }
+  }
+}
