@@ -17,6 +17,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
+    "test:cypress": "start-server-and-test start http://localhost:3000 cypress",
+    "cypress": "cypress run",
     "server": "npm run start --prefix ./.mock-api",
     "client": "react-app-rewired start",
     "eject": "react-scripts eject"
@@ -55,6 +57,8 @@
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "enzyme-to-json": "^3.3.5",
+    "cypress": "^3.4.0",
+    "start-server-and-test": "^1.9.1",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "react-app-rewired": "^2.1.3"
