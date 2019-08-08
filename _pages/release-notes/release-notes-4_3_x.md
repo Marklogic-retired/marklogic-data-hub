@@ -5,7 +5,7 @@
 
   In previous versions, the base URI property of entities was optional, as it still is in Entity Services.
 
-  Now, Data Hub validates the base URI property of entities and makes the property required. It must be in the format `http://example.org/`.
+  Now, Data Hub validates the base URI property of entities and makes the property required. It must be in the format `http://example.org`.
 
   To add the base URI property to existing entity definitions,
 
@@ -16,7 +16,7 @@
       "info" : {
         "title" : "MyEntity",
         "version" : "0.0.1",
-        "baseUri" : "http://example.org/"
+        "baseUri" : "http://example.org"
       },
       "definitions" : {
         ...
