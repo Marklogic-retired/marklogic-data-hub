@@ -109,20 +109,59 @@
       </div>
 
       <!-- Additonal New Fields to match ml-gradle-->
-      <mat-form-field class=""
+      <mat-form-field
       [matTooltip]="tooltips.batchSize"
       matTooltipPosition="left"
       matTooltipShowDelay="500"
       matTooltipHideDelay="500">
           <input id="batch-size" matInput formControlName="batchSize" placeholder="Batch Size">
       </mat-form-field>
-      <mat-form-field class="">
+      <mat-form-field
+      [matTooltip]="tooltips.threadCount"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
           <input id="thread-count" matInput formControlName="threadCount" placeholder="Thread Count">
       </mat-form-field>
-      <mat-form-field class="">
-          <input id="custom-hook" matInput formControlName="customHook" placeholder="Custom Hook">
-          <canvas width="25" height="20"></canvas>
+      
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+              Custom Hook
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+      <mat-form-field
+      [matTooltip]="tooltips.cHmodule"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
+          <input id="custom-hook-module" matInput formControlName="cHmodule" placeholder="Module">
       </mat-form-field>
+      <mat-form-field
+      [matTooltip]="tooltips.cHparameters"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
+          <input id="custom-hook-parameters" matInput formControlName="cHparameters" placeholder="Parameters">
+      </mat-form-field>
+      <mat-form-field
+      [matTooltip]="tooltips.cHuser"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
+          <input id="custom-hook-user" matInput formControlName="cHuser" placeholder="User">
+      </mat-form-field>
+      <mat-form-field
+      [matTooltip]="tooltips.cHrunBefore"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500">
+        <mat-select id="custom-hook-run-before" class="type-select" placeholder="RunBefore" formControlName="cHrunBefore">
+          <mat-option value="true">True</mat-option>
+          <mat-option value="false">False</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-expansion-panel>
     
     <ng-container *ngIf="isCustom"> 
       <mat-label>

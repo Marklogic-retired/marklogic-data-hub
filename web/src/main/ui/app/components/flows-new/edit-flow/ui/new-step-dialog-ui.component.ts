@@ -68,8 +68,11 @@ export class NewStepDialogUiComponent implements OnInit {
   hasSelectedQuery: boolean = false;
   tooltips: any;
   options: FormArray;
-  customHook: any;
   customStepType: any;
+  cHmodule: string = '';
+  cHparameters: any;
+  cHuser: string =  '';
+  cHrunBefore: string;
 
   constructor(
     private formBuilder: FormBuilder) {}
@@ -81,10 +84,15 @@ export class NewStepDialogUiComponent implements OnInit {
 
     if(this.step){
       this.step.stepDefType = this.createStepInitials(this.step);
-      this.customHook = JSON.stringify(this.step.customHook,null,4);
     }
     if(this.step && this.step.stepDefType === 'CUSTOM'){
       this.customStepType = (this.createStepInitials(this.step) === StepType.CUSTOM ? (this.step.stepDefinitionType !== StepType.CUSTOM ? this.step.stepDefinitionType: 'OTHER'): '');
+    }
+    if(this.step && this.step.customHook){
+      this.cHmodule = this.step.customHook['module'];
+      this.cHparameters = JSON.stringify(this.step.customHook['parameters']);
+      this.cHuser = this.step.customHook['user'];
+      this.cHrunBefore = this.step.customHook['runBefore'] === true? "true": "false";
     }
 
     if (this.step) {
@@ -118,12 +126,12 @@ export class NewStepDialogUiComponent implements OnInit {
       sourceDatabase: [(this.step && this.step.options.sourceDatabase) ? this.step.options.sourceDatabase : ''],
       targetDatabase: [(this.step && this.step.options.targetDatabase) ? this.step.options.targetDatabase : ''],
       outputFormat: [(this.step && this.step.options.outputFormat) ? this.step.options.outputFormat : 'json'],
-      customHook: [(this.step && this.step.customHook) ? this.customHook : JSON.stringify({"module" : "",
-      "parameters" : {},
-      "user" : "",
-      "runBefore" : false},null,4)],
       batchSize: [(this.step && this.step.batchSize) ? this.step.batchSize || 100 : 100, CustomFieldValidator.number({min: 1})],
-      threadCount: [(this.step && this.step.threadCount) ? this.step.threadCount || 4 : 4, CustomFieldValidator.number({min: 1})]
+      threadCount: [(this.step && this.step.threadCount) ? this.step.threadCount || 4 : 4, CustomFieldValidator.number({min: 1})],
+      cHmodule: [(this.step && this.cHmodule) ? this.cHmodule : ''],
+      cHparameters: [(this.step && this.cHparameters) ? this.cHparameters : JSON.stringify({},null,4)],
+      cHuser: [(this.step && this.cHuser) ? this.cHuser : ''],
+      cHrunBefore: [(this.step && this.cHrunBefore) ? this.cHrunBefore : "false"]
     }, { validators: NewStepDialogValidator });
 
     this.newStepForm.setControl('additionalCollections', this.createTargetCollections());
@@ -237,11 +245,6 @@ export class NewStepDialogUiComponent implements OnInit {
   
   setStepPurpose(){
     const type = this.newStepForm.value.stepPurpose;
-
-    // this.newStepForm.patchValue({
-    //   stepPurpose: type
-    // });
-    //this.step.stepPurpose = type;
     this.customStepType = type;
   }
   onSave() {
@@ -273,7 +276,7 @@ export class NewStepDialogUiComponent implements OnInit {
     } else {
       this.newStep.stepDefinitionName = 'default-' + (this.newStep.stepDefType || '').toLowerCase();
     }
-    //this.newStep.customHook = JSON.parse(this.newStepForm.value.customHook);
+  
     this.newStep.description = this.newStepForm.value.description;
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
@@ -305,7 +308,12 @@ export class NewStepDialogUiComponent implements OnInit {
     this.setCollections();
 
     // Saving the new fields
-    this.newStep.customHook = JSON.parse(this.newStepForm.value.customHook);
+   
+    this.newStep.customHook = {"module": this.newStepForm.value.cHmodule,
+                              "parameters": JSON.parse(this.newStepForm.value.cHparameters),//this.newStepForm.value.cHparameters, //JSON.parse(cHParam),
+                              "user": this.newStepForm.value.cHuser,
+                              "runBefore": this.newStepForm.value.cHrunBefore === "true"? true : false};
+
     this.newStep.batchSize = parseInt(this.newStepForm.value.batchSize);
     this.newStep.threadCount = parseInt(this.newStepForm.value.threadCount);
     
