@@ -1,0 +1,46 @@
+{
+  "info": {
+    "title": "Northwind",
+    "version": "0.0.1",
+    "baseUri": "http://example.org"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "CustomerId": {
+          "datatype": "string"
+        },
+        "CompanyName": {
+          "datatype": "string"
+        },
+        "Country": {
+          "datatype":"string" 
+        },
+        "ContactName":{
+          "datatype":"string" 
+        },
+        "likes": {
+          "datatype" : "array" ,
+          "items": { "datatype" : "array",items: {"datatype":"string"} }
+        }
+      },
+      "primaryKey" : "CustomerId"
+    },
+    "Product": {
+      "properties": {
+        "ProductName": {
+          "datatype": "string"
+        },
+        "UnitPrice": {
+          "datatype": "integer"
+        },
+        "SupplierID":{
+          "datatype":"integer"
+        },
+        "Discontinued":{
+          "datatype":"boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "info": {
+    "title": "DBProp-Ref-Same",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/testing-entity-type",
+    "description":"Model descriptor for bug 38858 and 41677"
+  },
+  "definitions": {
+    "SchemaCompleteEntityType": {
+      "description": "This is a entity type having all the ESD and IRIs.",
+      "properties": {
+        "orderId": {
+          "description": "orderId property",
+          "datatype": "string",
+          "collation" : "http://marklogic.com/collation/"
+        },
+        "primaryKey": "orderId"
+      },
+      "required": ["orderId"],
+      "rangeIndex": ["orderId"],
+      "wordLexicon": ["orderId"]
+    }
+  }
+}

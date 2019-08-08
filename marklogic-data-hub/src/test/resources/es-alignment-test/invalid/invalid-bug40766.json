@@ -1,0 +1,46 @@
+{
+  "info": {
+    "title": "ET-Prop-Not-Distinct",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/testing-entity-type",
+    "description":"Model where ET and property names are not distinct"
+  },
+  "definitions": {
+    "Order":{  
+         "properties":{  
+            "OrderID":{  
+               "datatype":"integer"
+            },
+            "productName":{  
+               "$ref":"#/definitions/OrderDetails"
+            },
+            "OrderDate":{  
+               "datatype":"dateTime"
+            },
+            "ShipAddress":{  
+               "datatype":"string"
+            },
+            "OrderDetails":{  
+               "datatype":"array",
+               "items":{  
+                  "$ref":"#/definitions/OrderDetails"
+               }
+            }
+         },
+         "primaryKey":"OrderID",
+         "required":["OrderID"],
+         "rangeIndex":["OrderDate", "productName", "OrderID"]
+    },
+    "OrderDetails": {
+      "properties": {
+        "quantity": {
+          "datatype": "integer"
+        },
+        "productName": {
+          "datatype": "string"
+        }
+      },
+      "primaryKey": "quantity"
+    }
+  }
+}

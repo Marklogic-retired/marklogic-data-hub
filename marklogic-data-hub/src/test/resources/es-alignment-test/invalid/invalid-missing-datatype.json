@@ -1,0 +1,27 @@
+{
+  "info": {
+    "title":"invalid-missing-datatype",
+    "version": "0.0.2",
+    "baseUri": "http://example.org",
+    "description":"This invalid document has a missing datatype"
+  },
+  "definitions": {
+    "Order": {
+      "properties": {
+        "orderId": {},
+        "base64BinaryKey": { "datatype": "base64Binary" }
+      },
+      "primaryKey": "orderId"
+    },
+    "OrderDetails": {
+      "properties": {
+        "quantity": {
+          "datatype": "integer"
+        },
+        "productName": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

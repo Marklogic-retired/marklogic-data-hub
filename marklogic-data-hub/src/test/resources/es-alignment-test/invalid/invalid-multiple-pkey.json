@@ -1,0 +1,35 @@
+{  
+   "info":{  
+      "title":"Invalid-Multiple-Primary-Key",
+      "version":"0.0.1",
+      "baseUri":"http://marklogic.com/tests"
+   },
+   "definitions":{  
+      "Customer":{  
+         "properties":{  
+            "CustomerId":{  
+               "datatype":"string"
+            },
+            "CompanyName":{  
+               "datatype":"string"
+            },
+            "Country":{  
+               "datatype":"string"
+            },
+            "ContactName":{  
+               "datatype":"string"
+            },
+            "likes":{  
+               "datatype":"array",
+               "items":{  
+                  "datatype":"int"
+               }
+            }
+         },
+         "primaryKey":[  
+            "CustomerId",
+            "CompanyName"
+         ]
+      }
+   }
+}

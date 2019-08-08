@@ -1,0 +1,21 @@
+{ "info" : { 
+  "title": "Customer",
+  "version":"0.0.1",
+  "baseUri": "http://example.org",
+  "description":"Customer entity type to validate that datatype and ref are mutually exclusive"
+  },
+  "definitions": { 
+    "ANATR" : { 
+        "properties":{
+            "companyName":{
+                "datatype": "string",
+                "collation":"http://marklogic.com/collation/en",
+                "$ref":"#definitions/EntityTypeName3"
+            },
+            "postalCode":{
+                "datatype": "integer"
+            }
+        }
+     }
+  }
+}
