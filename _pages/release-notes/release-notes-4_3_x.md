@@ -44,6 +44,8 @@
 
   Data Hub Framework 4.3.2 requires MarkLogic Server 9.0-7 up to the latest 9.x version.
 
+  **NOTE:** Data Hub Framework 4.3.2 is not compatible with MarkLogic Server 10.x. If you prefer to use MarkLogic Server 10.x, you must upgrade to [Data Hub 5.x](https://docs.marklogic.com/datahub/upgrade.html).
+
   </div>
 </details>
 

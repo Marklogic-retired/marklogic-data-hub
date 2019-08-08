@@ -10,7 +10,9 @@ permalink: /upgrade/upgrade-to-4_3_x/
 
 Data Hub Framework 4.3 requires the following software:
 
-- [MarkLogic Server 9.0-5 up to the latest 9.x version]({{site.baseurl}}/refs/version-compatibility/)
+- MarkLogic Server:
+
+  - For DHF 4.3.2, [MarkLogic Server 9.0-7 up to the latest 9.x version](http://developer.marklogic.com/products/marklogic-server/9.0). [(See the version compatibility page for other DHF versions.)]({{site.baseurl}}/refs/version-compatibility/)
 
   - {% include_relative conref-note-div-mlserver.md %}
 

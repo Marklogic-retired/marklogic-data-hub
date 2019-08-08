@@ -137,7 +137,7 @@ permalink: /refs/version-compatibility/
           </ul>
         </td>
         <td>2.x</td>
-        <td></td>
+        <td rowspan="6">Not supported.</td>
       </tr>
       <tr>
         <!-- <td/> -->
@@ -148,7 +148,7 @@ permalink: /refs/version-compatibility/
           </ul>
         </td>
         <td>2.x</td>
-        <td></td>
+        <!-- <td/> -->
       </tr>
       <tr>
         <!-- <td/> -->
@@ -159,7 +159,7 @@ permalink: /refs/version-compatibility/
           </ul>
         </td>
         <td>2.x</td>
-        <td></td>
+        <!-- <td/> -->
       </tr>
       <tr>
         <!-- <td/> -->
@@ -170,7 +170,7 @@ permalink: /refs/version-compatibility/
           </ul>
         </td>
         <td>2.x</td>
-        <td></td>
+        <!-- <td/> -->
       </tr>
       <tr>
         <!-- <td/> -->
@@ -181,7 +181,7 @@ permalink: /refs/version-compatibility/
           </ul>
         </td>
         <td>2.x</td>
-        <td></td>
+        <!-- <td/> -->
       </tr>
       <tr>
         <!-- <td/> -->
@@ -192,7 +192,7 @@ permalink: /refs/version-compatibility/
           </ul>
         </td>
         <td>1.x</td>
-        <td>Not supported.</td>
+        <!-- <td/> -->
       </tr>
 
       <tr>
