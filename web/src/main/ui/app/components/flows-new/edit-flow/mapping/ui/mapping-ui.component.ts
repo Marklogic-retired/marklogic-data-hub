@@ -93,7 +93,7 @@ export class MappingUiComponent implements OnChanges {
    */
   uriNotFound(uri) {
     let result = this.dialogService.alert(
-      'Document URI not found: ' + uri,
+      'No document found. You must ingest source documents',
       'OK'
     );
     result.subscribe( () => {
