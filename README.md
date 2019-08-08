@@ -6,6 +6,7 @@ The MarkLogic Data Hub Framework is a data integration framework and toolset to 
 
 # Version Support
 MarkLogic 9.0-5 or later is required with version 3.0.0+ of the DHF.
+# THIS VERSION (3.x) WILL NO LONGER BE ACTIVELY MAINTAINED OR DEVELOPED AS OF AUGUST 8th 2019.
 
 # Getting Started
 Grab the [latest release](https://github.com/marklogic/marklogic-data-hub/releases) then visit our [Data Hub Framework website](https://marklogic.github.io/marklogic-data-hub/) to get started.
