@@ -1,0 +1,29 @@
+{
+  "info": {
+    "title":"invalid-bad-datatype",
+    "version": "0.0.2",
+    "baseUri": "http://example.org",
+    "description":"This invalid document has a datatype that is not XSD or sem:iri or a ref"
+  },
+  "definitions": {
+    "Order": {
+      "properties": {
+        "orderId": {
+          "datatype": "anySimpleType"
+        },
+        "base64BinaryKey": { "datatype": "base64Binary" }
+      },
+      "primaryKey": "orderId"
+    },
+    "OrderDetails": {
+      "properties": {
+        "quantity": {
+          "datatype": "integer"
+        },
+        "productName": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

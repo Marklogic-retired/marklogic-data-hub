@@ -1,0 +1,40 @@
+{
+  "info": {
+    "title": "Conflicting",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/testing-entity-type",
+    "description":"Model where element name conflicts"
+  },
+  "definitions": {
+    "Order":{  
+         "properties":{  
+            "OrderID":{  
+               "datatype":"integer"
+            },
+            "productName":{  
+               "$ref":"#/definitions/OrderDetails"
+            },
+            "OrderDate":{  
+               "datatype":"dateTime"
+            },
+            "OrderID":{  
+               "datatype":"string"
+            }
+         },
+         "primaryKey":"OrderID",
+         "required":["OrderID"],
+         "rangeIndex":["OrderDate", "productName", "OrderID"]
+    },
+    "OrderDetails": {
+      "properties": {
+        "quantity": {
+          "datatype": "integer"
+        },
+        "productName": {
+          "datatype": "string"
+        }
+      },
+      "primaryKey": "quantity"
+    }
+  }
+}

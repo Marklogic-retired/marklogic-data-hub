@@ -1,0 +1,66 @@
+{  
+   "info":{  
+      "title":"no-Primary-Yes-Required",
+      "version":"0.0.1",
+      "baseUri":"http://no-prim-yes-req"
+   },
+   "definitions":{  
+      "Customer":{  
+         "properties":{  
+            "CustomerId":{  
+               "datatype":"string"
+            },
+            "CompanyName":{  
+               "datatype":"string"
+            },
+            "Country":{  
+               "datatype":"string"
+            },
+            "Address":{  
+               "datatype":"string"
+            }
+         },
+         "required": [ "CustomerID", "Address" ]
+      },
+      "Product":{  
+         "properties":{  
+            "ProductName":{  
+               "datatype":"string"
+            },
+            "ProductID":{  
+               "datatype":"integer"
+            },
+            "UnitPrice":{  
+               "datatype":"integer"
+            },
+            "SupplierID":{  
+               "datatype":"integer"
+            },
+            "Discontinued":{  
+               "datatype":"boolean"
+            }
+         },
+         "required": [ "ProductID" ]
+      },
+      "Order":{  
+         "properties":{  
+            "OrderID":{  
+               "datatype":"integer"
+            },
+            "CustomerID":{  
+               "$ref":"#/definitions/Customer"
+            },
+            "CompanyName":{  
+               "$ref":"#/definitions/Customer"
+            },
+            "OrderDate":{  
+               "datatype":"dateTime"
+            },
+            "ShipAddress":{  
+               "datatype":"string"
+            }
+         },
+         "required": [ "OrderID" ]
+      }
+   }
+}

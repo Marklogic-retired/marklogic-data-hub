@@ -1,0 +1,59 @@
+{
+  "info": {
+    "title": "Lets-test-DB-prop-generate",
+    "version": "0.0.1",
+    "baseUri":"http://marklogic.com/tests"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "CustomerId": {
+          "datatype": "integer",
+          "collation" : "http://marklogic.com/collation/en"
+        },
+        "CompanyName": {
+          "datatype": "string"
+        },
+        "Country": {
+          "datatype":"boolean" 
+        },
+        "ContactName":{
+          "datatype":"iri" 
+        },
+        "Liking":{
+           "datatype" :"anyURI"
+        },
+        "Age":{"datatype":"double"},
+        "Height":{"datatype":"int"},
+        "Weight":{"datatype":"short"},
+        "YearsofService":{"datatype":"gMonthDay"},
+        "Numberyrs":{"datatype":"byte"},
+        "Awards":{"datatype":"float"},
+        "dateofShipment":{"datatype":"date"},
+        "dateofOrder":{"datatype":"dateTime"},
+        "CustSince":{"datatype":"dayTimeDuration"},
+        "DaysofSurfing":{"datatype":"nonNegativeInteger"}
+      },
+      "primaryKey" : "CustomerId",
+      "rangeIndex" : ["CompanyName","YearsofService"],
+      "wordLexicon" : ["CustomerId","Age","Weight","DaysofSurfing"]
+    },
+    "Product": {
+      "properties": {
+        "ProductName": {
+          "datatype": "string"
+        },
+        "UnitPrice": {
+          "datatype": "integer"
+        },
+        "SupplierID":{
+          "datatype":"integer"
+        },
+        "Discontinued":{
+          "datatype":"boolean"
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,12 @@
+{  
+   "definitions":{  
+      "Order":{  
+         "properties":{  
+            "base64BinaryKey":{  
+               "datatype":"base64Binary"
+            }
+         },
+         "primaryKey":"orderId"
+      }
+   }
+}

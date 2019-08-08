@@ -1,0 +1,36 @@
+{
+  "info": {
+    "title": "invalid-same-ns",
+    "version": "0.0.1",
+    "baseUri": "http://example.org"
+  },
+  "definitions": {
+    "test1": {
+      "properties": {
+        "testa": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri",
+    "namespacePrefix" : "invalid1"
+    },
+    "test2": {
+      "properties": {
+        "testb": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri",
+    "namespacePrefix" : "invalid2"
+    },
+    "test3": {
+      "properties": {
+        "testc": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri",
+    "namespacePrefix" : "invalid3"
+    }
+  }
+}

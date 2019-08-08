@@ -1,0 +1,19 @@
+{
+  "info": {
+    "title": "invalid-ns-uri",
+    "version": "0.0.1",
+    "baseUri": "http://example.org"
+  },
+  "definitions": {
+    "test": {
+      "properties": {
+        "CustomerId": {
+          "datatype": "string"
+        }
+      },
+    "primaryKey" : "CustomerId",
+    "namespace"  : "www.foo.bar",
+    "namespacePrefix" : "invalid"
+    }
+  }
+}

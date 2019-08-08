@@ -1,0 +1,26 @@
+{
+  "info": {
+    "title": "invalid-no-uri",
+    "baseUri": "http://example.org",
+    "version": "0.0.1"
+  },
+  "definitions": {
+    "test1": {
+      "properties": {
+        "testa": {
+          "datatype": "string"
+        }
+      },
+    "namespacePrefix"  : "invalid1"
+    },
+    "test2": {
+      "properties": {
+        "testb": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri2",
+    "namespacePrefix" : "invalid2"
+    }
+  }
+}

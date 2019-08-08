@@ -1,0 +1,36 @@
+{
+  "info": {
+    "title": "invalid-same-prefix",
+    "version": "0.0.1",
+    "baseUri": "http://example.org"
+  },
+  "definitions": {
+    "test1": {
+      "properties": {
+        "testa": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri1",
+    "namespacePrefix" : "invalid"
+    },
+    "test2": {
+      "properties": {
+        "testb": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri2",
+    "namespacePrefix" : "invalid"
+    },
+    "test3": {
+      "properties": {
+        "testc": {
+          "datatype": "string"
+        }
+      },
+    "namespace"  : "http://uri3",
+    "namespacePrefix" : "invalid"
+    }
+  }
+}

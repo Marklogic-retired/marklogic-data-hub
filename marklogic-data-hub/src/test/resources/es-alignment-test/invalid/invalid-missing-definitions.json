@@ -1,0 +1,7 @@
+{ "info" : { 
+  "title": "Entities-document-with-no-definitions-element",
+  "baseUri" : "http://myorganization.com/datahub",
+  "version":"0.0.1",
+  "description":"This is an entity type missing definitions element"
+  } 
+}

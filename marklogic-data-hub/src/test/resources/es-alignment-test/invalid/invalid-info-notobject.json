@@ -1,0 +1,39 @@
+{
+  "info": "abcd"
+  ,
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "CustomerId": {
+          "datatype": "string"
+        },
+        "CompanyName": {
+          "datatype": "string"
+        },
+        "Country": {
+          "datatype":"string" 
+        },
+        "ContactName":{
+          "datatype":"string" 
+        }
+      },
+      "primaryKey" : "CustomerId"
+    },
+    "Product": {
+      "properties": {
+        "ProductName": {
+          "datatype": "string"
+        },
+        "UnitPrice": {
+          "datatype": "integer"
+        },
+        "SupplierID":{
+          "datatype":"integer"
+        },
+        "Discontinued":{
+          "datatype":"boolean"
+        }
+      }
+    }
+  }
+}

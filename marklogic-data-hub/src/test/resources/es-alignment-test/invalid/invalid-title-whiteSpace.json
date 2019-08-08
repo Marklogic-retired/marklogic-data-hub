@@ -1,0 +1,46 @@
+{
+  "info": {
+    "title": "Invalid Whitespace Test",
+    "version": "0.0.1",
+    "baseUri":"http://marklogic.com/test"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "CustomerId": {
+          "datatype": "string"
+        },
+        "CompanyName": {
+          "datatype": "string"
+        },
+        "Country": {
+          "datatype":"string" 
+        },
+        "ContactName":{
+          "datatype":"string" 
+        },
+        "likes": {
+          "datatype" : "array" ,
+          "items": { "datatype" : "int" }
+        }
+      },
+      "primaryKey" : "CustomerId"
+    },
+    "Product": {
+      "properties": {
+        "ProductName": {
+          "datatype": "string"
+        },
+        "UnitPrice": {
+          "datatype": "integer"
+        },
+        "SupplierID":{
+          "datatype":"integer"
+        },
+        "Discontinued":{
+          "datatype":"boolean"
+        }
+      }
+    }
+  }
+}

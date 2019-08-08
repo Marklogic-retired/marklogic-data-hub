@@ -1,0 +1,43 @@
+{
+  "info": {
+    "title": "Northwind",
+    "version": "0.0.1",
+    "baseUri":"http://marklogic.com/test"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "CustomerId": {
+          "datatype": "string"
+        },
+        "CompanyName": {
+          "datatype": "string"
+        },
+        "Country": {
+          "datatype":"string" 
+        },
+        "ContactName":{
+          "datatype":"string" 
+        }
+      },
+      "primaryKey" : "CustomerId", 
+      "required":["hello"]
+    },
+    "Product": {
+      "properties": {
+        "ProductName": {
+          "datatype": "string"
+        },
+        "UnitPrice": {
+          "datatype": "integer"
+        },
+        "SupplierID":{
+          "datatype":"integer"
+        },
+        "Discontinued":{
+          "datatype":"boolean"
+        }
+      }
+    }
+  }
+}
