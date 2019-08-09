@@ -14,3 +14,4 @@ permalink: /refs/
 - [DHF Gradle Tasks]({{site.baseurl}}/refs/gradle-tasks/)
 - [Server Side API Library]({{site.baseurl}}/refs/server-side-library/)
 - [Index Settings]({{site.baseurl}}/refs/index-settings/)
+- [Version Compatibility]({{site.baseurl}}/refs/version-compatibility/)

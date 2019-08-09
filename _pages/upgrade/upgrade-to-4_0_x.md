@@ -19,11 +19,15 @@ The software listed in this section is required for using Data Hub Framework for
 
 Data Hub Framework 4.0.x requires the following software:
 
-- MarkLogic Server 9.0-5 or later
+- MarkLogic Server:
 
-    - {% include_relative conref-note-div-mlserver.md %}
+  - For DHF 4.0.0, [MarkLogic Server 9.0-5 up to the latest 9.x version](http://developer.marklogic.com/products/marklogic-server/9.0). [(See the version compatibility page for other DHF versions.)]({{site.baseurl}}/refs/version-compatibility/)
 
-    - {% include_relative conref-note-dhs-reqs.md %}
+  - {% include_relative conref-note-div-mlserver.md %}
+
+  - {% include_relative conref-note-div-mlserver10-dh5.md %}
+
+  - {% include_relative conref-note-dhs-reqs.md %}
 
 - Oracle Java 8 JRE (client-side)
 

@@ -17,6 +17,8 @@ By grouping <span style="text-decoration: underline">all the data</span> about a
 ### What is the Data Hub Framework?
 The MarkLogic Data Hub Framework (or DHF) is a set of tools and libraries that help you build an Operational Data Hub on top of the most current maintenance release of MarkLogic Server version 9. Version 3.x of DHF requires MarkLogic Server 9.0-5 or later.
 
+To use MarkLogic Server version 10, you must upgrade to Data Hub 5.0.
+
 ### Why do I need the DHF?
 Here's what the DHF can do for you:
 - Accelerate the process of building a data hub on top of MarkLogic.
