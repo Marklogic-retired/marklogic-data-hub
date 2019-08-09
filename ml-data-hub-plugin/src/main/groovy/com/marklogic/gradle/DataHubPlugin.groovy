@@ -50,6 +50,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
+    private MasteringManagerImpl masteringManager
     private StepDefinitionManagerImpl stepManager
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
@@ -105,6 +106,13 @@ class DataHubPlugin implements Plugin<Project> {
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
+
+        // Hub Mastering tasks
+        String masteringGroup = "MarkLogic Data Hub Mastering Tasks"
+        project.task("hubUnmergeDocs", group: masteringGroup, type: UnmergeDocs,
+            description: "Reverses the last set of merges made into the given -PmergeURI=URI. " +
+                "-PretainAuditTrail (default true) determines if provenance for the merge/unmerge is kept. " +
+                "-PblockFutureMerges (default true) ensures that the documents won't be merged together in the next mastering run.")
 
         /**
          * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
@@ -186,6 +194,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
+        masteringManager = ctx.getBean(MasteringManagerImpl.class)
         stepManager = ctx.getBean(StepDefinitionManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
@@ -212,7 +221,7 @@ class DataHubPlugin implements Plugin<Project> {
         else {
 
             // If the user called hubInit, only load the configuration. Refreshing the project will fail because
-            // gradle.properties doesn't exist yet. 
+            // gradle.properties doesn't exist yet.
             if (calledHubInit) {
                 hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
             }
@@ -251,6 +260,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
             project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
+            project.extensions.add("masteringManager", masteringManager)
             project.extensions.add("stepManager", stepManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("legacyFlowManager", legacyFlowManager)

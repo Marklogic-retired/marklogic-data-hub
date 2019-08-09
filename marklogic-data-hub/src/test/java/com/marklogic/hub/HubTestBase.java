@@ -143,6 +143,9 @@ public class HubTestBase {
     protected MappingManager mappingManager;
 
     @Autowired
+    protected MasteringManager masteringManager;
+
+    @Autowired
     protected StepDefinitionManager stepDefinitionManager;
 
     @Autowired
@@ -202,7 +205,7 @@ public class HubTestBase {
     public  GenericDocumentManager modMgr;
     public  String bootStrapHost = null;
     static TrustManagerFactory tmf;
-    
+
     static {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
@@ -304,7 +307,7 @@ public class HubTestBase {
         && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
             setCertAuth(true);
         }
-               
+
         try {
             stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
@@ -445,7 +448,7 @@ public class HubTestBase {
             adminHubConfig.setSslContext(DatabaseKind.JOB,flowOperatorcertContext);
             manageConfig.setSslContext(flowOperatorcertContext);
             adminConfig.setSslContext(flowOperatorcertContext);
-                     
+
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
             appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
@@ -457,7 +460,7 @@ public class HubTestBase {
 
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
             adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
-            
+
             //manageConfig.setConfigureSimpleSsl(false);
             manageConfig.setSecuritySslContext(certContext);
             manageConfig.setPassword(null);
@@ -489,9 +492,9 @@ public class HubTestBase {
         try {
             File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
-                projectDir.mkdirs();                
+                projectDir.mkdirs();
             }
-                    
+
             // force module loads for new test runs.
             File timestampDirectory = new File(projectDir + "/.tmp");
             if ( timestampDirectory.exists() ) {
@@ -515,25 +518,25 @@ public class HubTestBase {
     private void certInit() {
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-                
+
         appConfig = adminHubConfig.getAppConfig();
         manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
         manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
         adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
 
         if(isCertAuth()) {
-            
+
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
-            
+
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB, flowDevelopercertContext);
             manageConfig.setSslContext(flowDevelopercertContext);
             adminConfig.setSslContext(flowDevelopercertContext);
-            
+
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
             appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
@@ -563,7 +566,7 @@ public class HubTestBase {
         ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
         wireClients();
     }
-    
+
     public void deleteProjectDir() {
         if (new File(PROJECT_PATH).exists()) {
             try {
@@ -1020,7 +1023,7 @@ public class HubTestBase {
             e.printStackTrace();
         }
         return sslContext;
-                
+
     }
 
     private static void installCARootCertIntoStore(File caRootCert) {
@@ -1092,9 +1095,9 @@ public class HubTestBase {
             throw new RuntimeException(e);
         }
     }
-    
-    
-    public void wireClients() {        
+
+
+    public void wireClients() {
         fm.setupClient();
         dataHub.wireClient();
         versions.setupClient();
@@ -1104,13 +1107,13 @@ public class HubTestBase {
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "flowManager", 
+        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
                 "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {
                 ReflectionUtils.makeAccessible(f);
-                ReflectionUtils.setField(f, adminHubConfig, null);                
+                ReflectionUtils.setField(f, adminHubConfig, null);
             }
         }
     }
