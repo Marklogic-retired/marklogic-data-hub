@@ -241,9 +241,12 @@ public class WriteStepRunner implements StepRunner {
 
     @Override
     public RunStepResponse run() {
+        boolean disableJobOutput = false;
+        if (options != null && options.containsKey("disableJobOutput")) {
+            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        }
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         loadStepRunnerParameters();
         if("csv".equalsIgnoreCase(inputFileType)){
             options.put("inputFileType", "csv");
@@ -251,12 +254,12 @@ public class WriteStepRunner implements StepRunner {
         options.put("flow", this.flow.getName());
 
         Collection<String> uris = null;
-        //If current step is the first run step, a job doc is created
-        try {
+        //If current step is the first run step job output isn't disabled, a job doc is created
+        if (!disableJobOutput) {
+            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
             StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
+        } else {
+            jobDocManager = null;
         }
 
         try {
@@ -267,21 +270,21 @@ public class WriteStepRunner implements StepRunner {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
-            JsonNode jobDoc = null;
-            try {
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+            if (!disableJobOutput) {
+                JsonNode jobDoc = null;
+                try {
+                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+                }
+                catch (Exception ex) {
+                    throw ex;
+                }
+                //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
+                try {
+                    return StepRunnerUtil.getResponse(jobDoc, step);
+                }
+                catch (Exception ignored) {}
             }
-            catch (Exception ex) {
-                throw ex;
-            }
-            //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
-            try {
-                return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex)
-            {
-                return runStepResponse;
-            }
+            return runStepResponse;
         }
         return this.runIngester(runStepResponse,uris);
     }
