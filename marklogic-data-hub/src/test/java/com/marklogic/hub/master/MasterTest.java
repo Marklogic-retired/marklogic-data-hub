@@ -19,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -112,7 +111,7 @@ public class MasterTest extends HubTestBase {
         RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("1","2","3"));
         flowRunner.awaitCompletion();
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
-        assertTrue(masterJob.isSuccess(), "Mastering job failed");
+        assertTrue(masterJob.isSuccess(), "Mastering job failed!");
         assertTrue(getFinalDocCount("mdm-merged") >= 10,"At least 10 merges occur");
         assertTrue(getFinalDocCount("master") > 0, "Documents didn't receive master collection");
         assertEquals(209, getFinalDocCount("mdm-content"), "We end with the correct amount of final docs");
