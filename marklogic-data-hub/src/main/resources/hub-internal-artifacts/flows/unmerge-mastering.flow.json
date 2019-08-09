@@ -1,0 +1,17 @@
+{
+  "name": "unmerge-mastering",
+  "description": "This is the unmerge flow for reverting previously merged",
+  "options": {
+    "sourceQuery": "cts.collectionQuery('mdm-content')"
+  },
+  "steps": {
+    "1": {
+      "stepDefinitionType": "mastering",
+      "stepDefinitionName": "unmerge-mastering",
+      "retryLimit": 0,
+      "options": {
+        "outputFormat": "json"
+      }
+    }
+  }
+}

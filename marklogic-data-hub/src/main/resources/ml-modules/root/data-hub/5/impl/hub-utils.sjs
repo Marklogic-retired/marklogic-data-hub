@@ -116,6 +116,27 @@ class HubUtils {
     return xdmp.invokeFunction(queryFunction, { commit: 'auto', update: 'false', ignoreAmps: true, database: database ? xdmp.database(database): xdmp.database()})
   }
 
+  queryToContentDescriptorArray(query, options = {}, database) {
+    let hubUtils = this;
+    let content = [];
+    this.queryLatest(function () {
+      let results = cts.search(query, cts.indexOrder(cts.uriReference()));
+      for (let doc of results) {
+        content.push({
+          uri: xdmp.nodeUri(doc),
+          value: doc,
+          context: {
+            permissions: options.permissions ? hubUtils.parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
+            metadata: xdmp.nodeMetadata(doc),
+            // provide original collections, should a step like to read them
+            originalCollections: xdmp.nodeCollections(doc)
+          }
+        });
+      }
+    }, database);
+    return content;
+  }
+
   invoke(moduleUri, parameters, user = null, database) {
     let options = this.buildInvokeOptions(user, database);
     xdmp.invoke(moduleUri, parameters, options)
