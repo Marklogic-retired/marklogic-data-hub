@@ -61,7 +61,8 @@ declare private variable $system-resource-extensions-50 := map:map()
     =>map:with("ml:collections","collections")
     =>map:with("ml:batches",    "batches")
     =>map:with("ml:hubstats",   "hubstats")
-    =>map:with("ml:hubversion", "hubversion");
+    =>map:with("ml:hubversion", "hubversion")
+    =>map:with("ml:smMerge",    "smMerge");
 
 declare function extut:check-untraced() as xs:boolean {
     if (exists($is-untraced)) then ()
@@ -122,9 +123,9 @@ declare function extut:get-parse-format(
     if (empty($format) or $format eq "xquery")
     then "text"
     else if ($format eq "javascript")
-    then "text" 
+    then "text"
     else if ($format eq "xslt")
-    then "xml" 
+    then "xml"
     else error((),"RESTAPI-INTERNALERROR",concat("unknown format: ",$format))
 };
 
@@ -171,7 +172,7 @@ declare function extut:install-extension(
     let $source-uri   := extut:make-source-uri($base-uri,$extension-type,$source-format)
     let $wrapper-uri  :=
         if (empty($wrapper-doc)) then ()
-        else 
+        else
             (: new case, javascript wrapper :)
             (: and old case, xquery wrapper for xslt :)
             extut:make-source-uri($base-uri,$extension-type,"xquery")
@@ -274,7 +275,7 @@ declare private function extut:refresh-extension(
                     string-join(map:keys($service-defs),", "),") in the ",
                     $source-ns," namespace"
                     )),
- 
+
                 let $success := (
                     extut:write-extension-metadata(
                         $extension-type,$extension-name,$metadata,$source-format,
@@ -412,8 +413,8 @@ declare function extut:get-extension-source-document(
     let $found :=
         extut:get-extension-source($extension-type,$extension-name,$source-formats)
     return
-        if (count($found) lt 2) 
-        then 
+        if (count($found) lt 2)
+        then
            error((), "RESTAPI-NODOCUMENT", ("No extension with name " || $extension-name || " found."))
         else tail($found)
 };
@@ -441,7 +442,7 @@ declare function extut:get-extension-source(
                 let $found := subsequence(
                     for $source-format in $source-formats
                     let $source-uri :=
-                        extut:make-source-uri($base-uri,$extension-type,$source-format) 
+                        extut:make-source-uri($base-uri,$extension-type,$source-format)
                     return
                         if (not(doc-available($source-uri))) then ()
                         else ($source-format, $source-uri),
@@ -569,7 +570,7 @@ declare function extut:execute-transform(
     $transform as item(),
     $context   as map:map,
     $params    as map:map,
-    $content   as document-node()  
+    $content   as document-node()
 ) as document-node()?
 {
     xdmp:security-assert("http://marklogic.com/xdmp/privileges/rest-reader", "execute"),

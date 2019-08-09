@@ -42,9 +42,9 @@ class DeployHubArtifactTaskTest extends BaseTest {
         result.task(":hubDeployArtifacts").outcome == SUCCESS
 
         // Steps ingest, mapping, and master
-        getStagingDocCount("http://marklogic.com/data-hub/step-definition") == 3
+        getStagingDocCount("http://marklogic.com/data-hub/step-definition") == 4
         // Flows ingest, mapping, mastering, map-and-master
-        getStagingDocCount("http://marklogic.com/data-hub/flow") == 4
+        getStagingDocCount("http://marklogic.com/data-hub/flow") == 5
         getModulesDocCount() == modCount
     }
 

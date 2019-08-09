@@ -49,25 +49,11 @@ function post(context, params, input) {
       let sourceQuery = combinedOptions.sourceQuery || flow.sourceQuery;
       query = sourceQuery ? cts.query(sourceQuery) : null;
     }
-    let content = [];
+    let content;
     if (!query && input && fn.count(input) === uris.length) {
       content = datahub.hubUtils.normalizeToArray(input).map((inputDoc, i) => { return { uri: uris[i],  value: inputDoc }; });
     } else {
-      datahub.hubUtils.queryLatest(function () {
-        let results = cts.search(query, cts.indexOrder(cts.uriReference()));
-        for (let doc of results) {
-          content.push({
-            uri: xdmp.nodeUri(doc),
-            value: doc,
-            context: {
-              permissions: combinedOptions.permissions ? datahub.hubUtils.parsePermissions(combinedOptions.permissions) : xdmp.nodePermissions(doc),
-              metadata: xdmp.nodeMetadata(doc),
-              // provide original collections, should a step like to read them
-              originalCollections: xdmp.nodeCollections(doc)
-            }
-          });
-        }
-      }, sourceDatabase);
+      content = datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
     }
     return datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
   }
