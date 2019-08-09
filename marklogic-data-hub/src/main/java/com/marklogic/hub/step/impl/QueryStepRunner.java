@@ -30,6 +30,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
@@ -75,6 +76,7 @@ public class QueryStepRunner implements StepRunner {
     private QueryBatcher queryBatcher = null;
     private JobDocManager jobDocManager;
     private AtomicBoolean isStopped = new AtomicBoolean(false) ;
+    private StepDefinition stepDef;
 
     public QueryStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -94,6 +96,11 @@ public class QueryStepRunner implements StepRunner {
 
     public StepRunner withJobId(String jobId) {
         this.jobId = jobId;
+        return this;
+    }
+
+    public StepRunner withStepDefinition(StepDefinition stepDefinition){
+        this.stepDef = stepDefinition;
         return this;
     }
 
@@ -129,7 +136,31 @@ public class QueryStepRunner implements StepRunner {
 
     @Override
     public StepRunner withOptions(Map<String, Object> options) {
-        this.options = options;
+        if(flow == null){
+            throw new DataHubConfigurationException("Flow has to be set before setting options");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> stepDefMap = null;
+        if(stepDef != null) {
+            stepDefMap = mapper.convertValue(stepDef.getOptions(), Map.class);
+        }
+        Map<String, Object> stepMap = mapper.convertValue(this.flow.getStep(step).getOptions(), Map.class);
+        Map<String,Object> flowMap = mapper.convertValue(flow.getOptions(), Map.class);
+        Map<String, Object> combinedOptions = new HashMap<>();
+
+        if(stepDefMap != null){
+            combinedOptions.putAll(stepDefMap);
+        }
+        if(flowMap != null) {
+            combinedOptions.putAll(flowMap);
+        }
+        if(stepMap != null){
+            combinedOptions.putAll(stepMap);
+        }
+        if(options != null) {
+            combinedOptions.putAll(options);
+        }
+        this.options = combinedOptions;
         return this;
     }
 
@@ -187,6 +218,10 @@ public class QueryStepRunner implements StepRunner {
 
     @Override
     public RunStepResponse run() {
+        boolean disableJobOutput = false;
+        if (options != null && options.containsKey("disableJobOutput")) {
+            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        }
         runningThread = null;
         if(stepConfig.get("batchSize") != null){
             this.batchSize = (int) stepConfig.get("batchSize");
@@ -198,7 +233,6 @@ public class QueryStepRunner implements StepRunner {
             this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
         }
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         if (options == null) {
             options = new HashMap<>();
         } else {
@@ -207,19 +241,19 @@ public class QueryStepRunner implements StepRunner {
             }
         }
         if(options.get("sourceDatabase") != null) {
-            this.stagingClient = hubConfig.newStagingClient((String) options.get("sourceDatabase"));
+            this.stagingClient = hubConfig.newStagingClient(StepRunnerUtil.objectToString(options.get("sourceDatabase")));
         }
         if(options.get("targetDatabase") != null) {
-            this.destinationDatabase = (String) options.get("targetDatabase");
+            this.destinationDatabase = StepRunnerUtil.objectToString(options.get("targetDatabase"));
         }
         options.put("flow", this.flow.getName());
         Collection<String> uris = null;
-        //If current step is the first run step, a job doc is created
-        try {
+        //If current step is the first run step job output isn't disabled, a job doc is created
+        if (!disableJobOutput) {
+            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
             StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
+        } else {
+            jobDocManager = null;
         }
 
         try {
@@ -230,20 +264,15 @@ public class QueryStepRunner implements StepRunner {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
-            JsonNode jobDoc = null;
-            try {
+            if (!disableJobOutput) {
+                JsonNode jobDoc = null;
                 jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+                try {
+                    return StepRunnerUtil.getResponse(jobDoc, step);
+                } catch (Exception ignored) {
+                }
             }
-            catch (Exception ex) {
-                throw ex;
-            }
-            try {
-                return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex)
-            {
-                return runStepResponse;
-            }
+            return runStepResponse;
         }
         return this.runHarmonizer(runStepResponse,uris);
     }

@@ -154,9 +154,9 @@ class Flow {
       }
       //set the jobid in the context based on the jobdoc response
       this.globalContext.jobId = jobDoc.jobId;
+      this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
+      this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
     }
-    this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
-    this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
 
     //grab the step, or the first if its null/not set
     if(!stepNumber) {
