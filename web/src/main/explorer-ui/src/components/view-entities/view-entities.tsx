@@ -61,7 +61,7 @@ const ViewEntities:React.FC<{}> = () => {
           <Statistic title="Total Entities" value={13} />
         </div>
         <div className={styles.documentsStat}>
-        <Statistic title="Total Documents" value={14563} />
+          <Statistic title="Total Documents" value={14563} />
         </div>
       </div>
       <Table
