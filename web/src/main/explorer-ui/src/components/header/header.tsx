@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { Layout, Menu, Icon } from 'antd';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
@@ -22,8 +22,7 @@ const Header:React.FC<Props> = ({history}) => {
     <Menu 
       mode="horizontal"
       theme="dark"
-      defaultSelectedKeys={['1']}
-      defaultOpenKeys={['sub1']}
+      defaultSelectedKeys={['view']}
       style={{ lineHeight: '64px' }}
     >
       <Menu.Item key="view">
@@ -41,14 +40,12 @@ const Header:React.FC<Props> = ({history}) => {
   )
     return (
     <Layout.Header>
-      <Link to="/">
-        <div className={styles.iconContain}>
-          <div className={styles.icon}>
-            <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
-          </div>
+      <div className={styles.iconContain}>
+        <div className={styles.icon}>
+          <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
         </div>
-        <div className={styles.title}> Data Hub Explorer </div>
-      </Link>
+      </div>
+      <div className={styles.title}>Data Hub Explorer</div>
       {showMenu}
        <div className={styles.helpContain}>
         <Icon className={styles.help} type="question-circle"/>
