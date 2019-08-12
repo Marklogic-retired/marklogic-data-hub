@@ -27,6 +27,7 @@ import com.marklogic.client.ext.modulesloader.ModulesManager;
 import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
@@ -201,6 +202,10 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
             if (startPath.toFile().exists()) {
                 XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
                 DocumentWriteSet documentWriteSet = documentManager.newWriteSet();
+                // Provide default permissions for files written
+                DocumentMetadataHandle meta = new DocumentMetadataHandle();
+                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+                documentWriteSet.addDefault(meta);
 
                 ModulesManager modulesManager = modulesLoader.getModulesManager();
 
