@@ -2,5 +2,5 @@ rootProject.name = 'marklogic-data-hub'
 include ':marklogic-data-hub'
 include ':ml-data-hub-plugin'
 include ':web'
-
+include ':explorer'
 project(':ml-data-hub-plugin').name = 'ml-data-hub'
