@@ -73,6 +73,16 @@ export class NewStepDialogUiComponent implements OnInit {
   cHparameters: any;
   cHuser: string =  '';
   cHrunBefore: string;
+  private defaultOptions: any = ["additionalCollections",
+        "collections",
+        "headers",
+        "outputFormat",
+        "permissions",
+        "sourceQuery",
+        "sourceCollection",
+        "sourceDatabase",
+        "targetDatabase",
+        "targetEntity"]
 
   constructor(
     private formBuilder: FormBuilder) {}
@@ -81,7 +91,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.tooltips = FlowsTooltips.ingest;
     let selectedSource;
     this.databases = Object.values(this.databaseObject).slice(0, -1);
-
+    
     if(this.step){
       this.step.stepDefType = this.createStepInitials(this.step);
     }
@@ -98,6 +108,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (this.step) {
       this.newStep = this.step;
     }
+
+    
     if (this.step && this.step.selectedSource)
       selectedSource = this.step.selectedSource;
     else {
@@ -136,9 +148,9 @@ export class NewStepDialogUiComponent implements OnInit {
 
     this.newStepForm.setControl('additionalCollections', this.createTargetCollections());
     this.additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
-    this.newStepForm.setControl('customOptions', this.createOptions());
-    this.options = this.newStepForm.get('customOptions') as FormArray;
-
+    this.newStepForm.setControl('options', this.createOptions());
+    this.options = this.newStepForm.get('options') as FormArray;
+ 
     if (this.step && this.step.options && this.step.options.sourceDatabase)
       this.getCollections.emit(this.step.options.sourceDatabase);
 
@@ -161,9 +173,6 @@ export class NewStepDialogUiComponent implements OnInit {
         if (this.newStep.options.targetEntity) {
           this.newStep.options.collections = this.newStep.options.collections.filter(val => val !== this.newStep.options.targetEntity);
         }
-      }
-      if(this.newStep.options.customOptions){
-        this.options = this.newStep.options.customOptions
       }
     }
   }
@@ -224,6 +233,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.getCollections.emit(this.newStepForm.value.sourceDatabase);
     }
     this.setType(type);
+
   }
 
   setType(type: string) {
@@ -246,6 +256,8 @@ export class NewStepDialogUiComponent implements OnInit {
   setStepPurpose(){
     const type = this.newStepForm.value.stepPurpose;
     this.customStepType = type;
+
+    this.newStep = Step.updateCustomStep(this.newStep,this.customStepType,this.projectDirectory);
   }
   onSave() {
     if (this.isUpdate) {
@@ -310,23 +322,28 @@ export class NewStepDialogUiComponent implements OnInit {
     // Saving the new fields
    
     this.newStep.customHook = {"module": this.newStepForm.value.cHmodule,
-                              "parameters": JSON.parse(this.newStepForm.value.cHparameters),//this.newStepForm.value.cHparameters, //JSON.parse(cHParam),
+                              "parameters": JSON.parse(this.newStepForm.value.cHparameters),
                               "user": this.newStepForm.value.cHuser,
                               "runBefore": this.newStepForm.value.cHrunBefore === "true"? true : false};
 
     this.newStep.batchSize = parseInt(this.newStepForm.value.batchSize);
     this.newStep.threadCount = parseInt(this.newStepForm.value.threadCount);
     
-    if (this.newStep.stepDefType === StepType.CUSTOM) {
-      const newOptions = this.newStepForm.value.customOptions ? this.updateOptions(this.newStepForm.value.customOptions) : [];
-      this.newStep.options = Object.assign(this.newStep.options, newOptions);
-      this.step.customOptions = this.newStepForm.value.customOptions;
+    if (this.isCustom) {
+      const newOptions = this.newStepForm.value.options ? this.updateOptions(this.newStepForm.value.options) : [];
+      
+      let tempOptions = {};
+      for (var key in this.newStep.options) {
+        if (this.newStep.options.hasOwnProperty(key) && this.defaultOptions.includes(key)) {
+          tempOptions[key] = this.newStep.options[key];
+        }
+      }
+      this.newStep.options = Object.assign(tempOptions, newOptions);
     }
 
     if (this.newStep.name !== '') {
       this.saveClicked.emit(this.newStep);
     }
-    console.log(this.newStep)
   }
   capitalFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -402,12 +419,14 @@ export class NewStepDialogUiComponent implements OnInit {
 
 
   createOptions() {
-    if (!this.newStep || !this.newStep.options.customOptions) {
+    if (!this.step || !this.step.options) {
       return this.formBuilder.array([this.createOption('', '')]);
     }
     const result = [];
-    _.forOwn(this.newStep.options.customOptions, (value, key) => {
+    _.forOwn(this.step.options, (value, key) => {
+      if (!this.defaultOptions.includes(key)) {
       result.push(this.createOption(key, value))
+          }
     });
     return this.formBuilder.array(result);
   }
@@ -420,12 +439,12 @@ export class NewStepDialogUiComponent implements OnInit {
   }
 
   onAddOption() {
-    const options = this.newStepForm.get('customOptions') as FormArray;
+    const options = this.newStepForm.get('options') as FormArray;
     options.push(this.createOption('', ''));
   }
 
   onRemoveOption(i) {
-    const options = this.newStepForm.get('customOptions') as FormArray;
+    const options = this.newStepForm.get('options') as FormArray;
     options.removeAt(i);
   }
 
@@ -448,7 +467,7 @@ export class NewStepDialogUiComponent implements OnInit {
     }
     else if (step.stepDefinitionType === StepType.MASTERING){
       if(step.stepDefinitionName === 'default-mastering'){
-        return 'MAPPING';
+        return 'MASTERING';
       }
       else{
         return 'CUSTOM';

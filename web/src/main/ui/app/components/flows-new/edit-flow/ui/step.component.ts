@@ -38,7 +38,7 @@ export class StepComponent implements OnChanges {
     // workaround for: https://github.com/angular/material2/issues/7006
     if (changes &&
       changes.selectedStepId &&
-      this.step.stepDefinitionType === this.stepType.MASTERING &&
+      this.createStepHeader(this.step) === this.stepType.MASTERING &&
       this.step.id === changes.selectedStepId.currentValue) {
       setTimeout(() => {
         this.masteringTabGroup.realignInkBar();
@@ -90,7 +90,7 @@ export class StepComponent implements OnChanges {
     }
     this.updateStep.emit(step);
   }
-  
+
   createStepHeader(step: any): string {
     if (step.stepDefinitionType === this.stepType.INGESTION){
       if(step.stepDefinitionName === 'default-ingestion'){
@@ -110,7 +110,7 @@ export class StepComponent implements OnChanges {
     }
     else if (step.stepDefinitionType === this.stepType.MASTERING){
       if(step.stepDefinitionName === 'default-mastering'){
-        return 'MAPPING';
+        return 'MASTERING';
       }
       else{
         return 'CUSTOM';

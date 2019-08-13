@@ -118,8 +118,10 @@ export class CustomUiComponent implements OnInit{
 
   ngOnInit(){
     this.tooltips = FlowsTooltips.custom;
+    if(this.step.fileLocations){
     this.csvSep = this.defaultSep();
     this.OtherDelimiter = this.defaultOtherDelim();
+    }
   }
 
   config = settings;
@@ -180,7 +182,7 @@ export class CustomUiComponent implements OnInit{
     }
     else if (step.stepDefinitionType === 'MASTERING'){
       if(step.stepDefinitionName === 'default-mastering'){
-        return 'MAPPING';
+        return 'MASTERING';
       }
       else{
         return 'CUSTOM';

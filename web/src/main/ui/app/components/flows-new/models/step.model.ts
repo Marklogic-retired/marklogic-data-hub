@@ -73,6 +73,13 @@ export class Step {
     const step = new Step();
     step.options = new MappingOptions();
     step.options.outputFormat = 'json';
+    step.customHook = {"module" : "",
+    "parameters" : {},
+    "user" : "",
+    "runBefore" : false
+  };
+    step.batchSize = 100;
+    step.threadCount = 4;
     return step;
   }
 
@@ -80,18 +87,18 @@ export class Step {
     const step = new Step();
     step.options = new MasteringOptions();
     step.options.outputFormat = 'json';
+    step.customHook = {"module" : "",
+    "parameters" : {},
+    "user" : "",
+    "runBefore" : false
+  };
+    step.batchSize = 100;
+    step.threadCount = 4;
     return step;
   }
 
   static createCustomStep(filePath: string): Step {
     const step = new Step();
-    const fileLocations = {
-      inputFilePath: filePath,
-      inputFileType: 'json',
-      outputURIReplacement: '',
-      separator: ',',
-    };
-    step.fileLocations = fileLocations;
     step.modulePath = '';
     step.options = new CustomOptions();
     step.options.permissions = 'rest-reader,read,rest-writer,update';
@@ -105,6 +112,19 @@ export class Step {
     step.threadCount = 4;
     return step;
   }
+  
+  static updateCustomStep(step: Step,customStepType: String,filePath: string) : Step {
+    if(customStepType === StepType.INGESTION){
+      const fileLocations = {
+        inputFilePath: filePath,
+        inputFileType: 'json',
+        outputURIReplacement: '',
+        separator: ',',
+      };
+      step.fileLocations = fileLocations;
+    }
+    return step;
+  }
 
   static fromJSON(json, projectDirectory, databases) {
     const newStep = new Step();
@@ -113,7 +133,7 @@ export class Step {
     }
     if (json.name) {
       newStep.name = json.name;
-    }
+    } 
     if (json.selectedSource) {
       newStep.selectedSource = json.selectedSource;
     }
@@ -147,10 +167,13 @@ export class Step {
     if (json.threadCount && isNumber(parseInt(json.threadCount))) {
       newStep.threadCount = json.threadCount;
     }
+    // if (json.CustOptions) {
+    //   newStep.CustOptions = json.CustOptions;
+    // }
     // Check options
     if (json.options) {
       // set defaults for each step type
-      if (json.stepDefinitionType === StepType.INGESTION) {
+      if (json.stepDefinitionType === StepType.INGESTION && json.stepDefinitionName === 'default-ingestion') {
         // Hard check to see if it's default gradle step
         if (json.fileLocations.inputFilePath === 'path/to/folder') {
           const fileLocations = {
@@ -166,32 +189,30 @@ export class Step {
         newStep.options.outputFormat = 'json';
         newStep.options.targetDatabase = databases.staging;
       }
-      if (json.stepDefinitionType === StepType.MAPPING) {
+      if (json.stepDefinitionType === StepType.MAPPING && json.stepDefinitionName === 'default-mapping') {
         newStep.options = new MappingOptions();
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
       }
-      if (json.stepDefinitionType === StepType.MASTERING) {
+      if (json.stepDefinitionType === StepType.MASTERING && json.stepDefinitionName === 'default-mastering') {
         newStep.options = new MasteringOptions();
         newStep.options.sourceDatabase = databases.final;
         newStep.options.targetDatabase = databases.final;
       }
-      if ((json.stepDefinitionType === StepType.CUSTOM)) {
-        // if (json.fileLocations && json.fileLocations.inputFilePath === 'path/to/folder') {
-          const fileLocations = {
+      if (json.stepDefinitionType === StepType.CUSTOM || (json.stepDefinitionType === StepType.INGESTION && json.stepDefinitionName !== 'default-ingestion') || (json.stepDefinitionType === StepType.MAPPING && json.stepDefinitionName !== 'default-mapping') || (json.stepDefinitionType === StepType.MASTERING && json.stepDefinitionName !== 'default-mastering')) {
+        if(json.stepDefinitionType === StepType.INGESTION)  {
+        const fileLocations = {
             inputFilePath: projectDirectory,
             inputFileType: 'json',
             outputURIReplacement: '',
             separator: ','
           };
           newStep.fileLocations = fileLocations;
-        //}
+        }
         
         newStep.options = new CustomOptions();
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
-        //newStep.stepPurpose = json.stepPurpose || 'CUSTOM';
-        newStep.options.customOptions = json.options.customOptions;
       }
       const newOptions = Object.assign(newStep.options, json.options);
       newStep.options = newOptions;

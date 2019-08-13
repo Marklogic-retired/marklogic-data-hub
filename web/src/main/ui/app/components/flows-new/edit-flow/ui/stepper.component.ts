@@ -134,7 +134,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
     }
     else if (step.stepDefinitionType === this.stepType.MASTERING){
       if(step.stepDefinitionName === 'default-mastering'){
-        return 'MAPPING';
+        return 'MASTERING';
       }
       else{
         return 'CUSTOM';
