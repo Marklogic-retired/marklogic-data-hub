@@ -202,11 +202,21 @@ function escapeXML(input = '') {
     .replace(/}/g, '&#125;');
 }
 
+function versionIsCompatibleWithES(version = xdmp.version()) {
+  let numberSensitiveCollation = 'http://marklogic.com/collation//MO';
+  let isNightly = /^[0-9]+\.[0-9]+-[0-9]{8}$/.test(version);
+  if (isNightly) {
+    return fn.compare(version, '9.0-20190726', numberSensitiveCollation) >= 0;
+  }
+  return fn.compare(version, '9.0-10', numberSensitiveCollation) >= 0;
+}
+
 module.exports = {
   xsltPermissions,
   xmlMappingCollections,
   buildMappingXML,
   buildEntityMappingXML,
   getEntityName,
-  getTargetEntity
+  getTargetEntity,
+  versionIsCompatibleWithES
 };
