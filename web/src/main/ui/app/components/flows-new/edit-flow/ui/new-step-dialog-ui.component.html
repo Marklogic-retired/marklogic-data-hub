@@ -22,7 +22,7 @@
       <input id="step-description" matInput formControlName="description" placeholder="Description">
     </mat-form-field>
     <div *ngIf="!isIngestion">
-      <label>Source Type: <span *ngIf="sourceRequired" class="source-req">*</span></label>
+      <label>Source Type: <span *ngIf="sourceRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING'))" class="source-req">*</span></label>
       <mat-radio-group id="step-source-type" formControlName="selectedSource" (change)="stepSourceChange($event)">
         <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
         <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
@@ -36,7 +36,7 @@
         matTooltipHideDelay="500"  
         id="step-source-collection" 
         class="type-select" 
-        [placeholder]="'Source Collection' + (sourceRequired ? '*' : '')" 
+        [placeholder]="'Source Collection' + (sourceRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING')) ? '*' : '')" 
         formControlName="sourceCollection">
           <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
       </mat-select>
@@ -47,7 +47,7 @@
         matTooltipPosition="left"
         matTooltipShowDelay="500"
         matTooltipHideDelay="500"  
-        matInput [placeholder]="'Source Query' + (sourceRequired ? '*' : '')" 
+        matInput [placeholder]="'Source Query' + (sourceRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING')) ? '*' : '')" 
         formControlName="sourceQuery">
       </textarea>
     </mat-form-field>
@@ -57,7 +57,7 @@
       matTooltipPosition="left"
       matTooltipShowDelay="500"
       matTooltipHideDelay="500">
-      <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="entityRequired">
+      <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="entityRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING'))">
         <mat-option *ngIf="isCustom"></mat-option>
         <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
       </mat-select>
