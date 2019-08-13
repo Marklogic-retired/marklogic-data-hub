@@ -13,8 +13,8 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    sourceCompatibility = "1.11"
+    targetCompatibility = "1.11"
 
     repositories {
         mavenCentral()
@@ -37,7 +37,7 @@ subprojects {
 }
 
 wrapper {
-    gradleVersion = '4.10'
+    gradleVersion = '5.4.1'
 }
 
 //Task to update versions in files they are hardcoded. If version is hardcoded in any other files in the future,it has to be added to the list
