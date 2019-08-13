@@ -25,9 +25,9 @@ import com.marklogic.hub.HubConfig
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ExportLegacyJobsTaskTest extends BaseTest {
-    private final int JOB_COUNT = 3
+    private final static int JOB_COUNT = 3
 
-    private final String FILENAME = 'testExportJobs.zip'
+    private final static String FILENAME = 'testExportJobs.zip'
 
     def setupSpec() {
         createGradleFiles()
