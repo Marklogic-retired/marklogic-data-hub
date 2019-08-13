@@ -87,7 +87,7 @@ class UpdateIndexesTaskTest extends BaseTest {
 		result.task(":mlUpdateIndexes").outcome == SUCCESS
                 /* <><> TODO <><>
                  * The two assert statements fail when running against existing
-                 * databases.  They are commentyed out until SHDPROD-2574 is
+                 * databases.  They are commented out until DHFPROD-2574 is
                  * addressed.
                  */
 // <><>         assert (getStagingRangePathIndexSize() == stagingIndexCount+1)
