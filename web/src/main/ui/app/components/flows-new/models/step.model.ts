@@ -97,7 +97,7 @@ export class Step {
     return step;
   }
 
-  static createCustomStep(filePath: string): Step {
+  static createCustomStep(): Step {
     const step = new Step();
     step.modulePath = '';
     step.options = new CustomOptions();

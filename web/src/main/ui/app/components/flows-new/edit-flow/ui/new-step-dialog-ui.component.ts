@@ -220,7 +220,7 @@ export class NewStepDialogUiComponent implements OnInit {
         targetDatabase: this.databaseObject.final
       });
       this.tooltips = FlowsTooltips.custom;
-      this.newStep = Step.createCustomStep(this.projectDirectory);
+      this.newStep = Step.createCustomStep();
     }
     if (type === StepType.INGESTION) {
       this.newStepForm.patchValue({
