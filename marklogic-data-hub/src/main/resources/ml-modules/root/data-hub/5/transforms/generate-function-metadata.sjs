@@ -19,8 +19,14 @@ function transform(context, params, content) {
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','read'),
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read')
       ])`;
-      datahub.hubUtils.writeDocument(uriVal + ".xml", metaDataXml, permissionsExpression, [collection], datahub.config.MODULESDATABASE);
-      es.functionMetadataPut(uriVal + ".xml");
+      let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metaDataXml, permissionsExpression, [collection], datahub.config.MODULESDATABASE);
+      if (writeInfo && fn.exists(writeInfo.transaction)) {
+        // Workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
+        xdmp.moduleCacheClear();
+        es.functionMetadataPut(uriVal + ".xml");
+      } else {
+        datahub.debug.log({message: `No write for function metadata. (${xdmp.describe(writeInfo)})`, type: 'notice'});
+      }
     }
   } else {
     datahub.debug.log({message: `Uploading declarative mapping library (${content.uri}) to incompatible MarkLogic version (${xdmp.version()}).`, type: 'notice'});
