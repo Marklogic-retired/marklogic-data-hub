@@ -41,7 +41,7 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
         ApplyTransformListener transformListener = new ApplyTransformListener()
             .withTransform(serverTransform)
             .withApplyResult(ApplyTransformListener.ApplyResult.IGNORE)
-            .onBatchFailure((batch, throwable) -> {
+            .onFailure((batch, throwable) -> {
                 logger.error(throwable.getMessage());
                 // throw the first exception
                 if (caughtException == null) {
