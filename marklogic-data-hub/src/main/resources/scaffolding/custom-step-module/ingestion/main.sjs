@@ -51,7 +51,7 @@ function main(content, options) {
 
   //Context changes are possible, here we show how to grab the context and example manipulate it
   //let context = content.context;
-  //Get permissions, we can manipulate them here
+  //For example, we can get permissions, then manipulate them here
   //let permissions = context.permissions;
 
   //uri is set on content.uri
