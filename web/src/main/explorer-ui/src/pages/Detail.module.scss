@@ -1,0 +1,37 @@
+  .container {
+    width: 95%;
+    margin: 0px 10px 10px 20px;
+  }
+
+  .title {
+    margin: 0px;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .header {
+    overflow: hidden;
+  }
+
+  .heading {
+    margin: 15px 0px 10px 0px;
+    padding: 10, auto, 0, auto;
+    font-size: 14px;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    float: left;
+  }
+
+  .menu {
+    margin: 0px 0px 10px 0px;
+    display: flex;
+    justify-content: flex-end;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    float: right;
+  }
