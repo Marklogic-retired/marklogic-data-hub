@@ -1,25 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './view-entities.module.scss';
 import { Statistic, Table } from 'antd';
 
-const ViewEntities:React.FC<{}> = () => {
+type Props = {
+  entities: any[];
+}
 
-  const expandedRowRender = () => {
+const ViewEntities:React.FC<Props> = (props) => {
+
+  const expandedRowRender = (entity) => {
     const columns = [
       { title: 'Property', dataIndex: 'property', width: 200 },
       { title: 'Data Type', dataIndex: 'datatype', width: 200 },
       { title: 'Index Settings', dataIndex: 'indexSettings' }
     ];
 
-    const data = [
-      { property: 'id', datatype: 'int', indexSettings: 'Primary Key' },
-      { property: 'first_name', datatype: 'string', indexSettings: 'Required' },
-      { property: 'last_name', datatype: 'string', indexSettings: 'Required' },
-      { property: 'email', datatype: 'string', indexSettings: 'None' },
-    ];
+    let properties = entity.definition.properties.map(property => {
+      let indexes: string[] = [];
+      if (entity.definition.elementRangeIndex.includes(property.name)){
+        indexes.push('Primary Key');
+      }
+      if (entity.definition.pii.includes(property.name)){
+        indexes.push('pii');
+      }
+      if (entity.definition.rangeIndex.includes(property.name)){
+        indexes.push('Range Index');
+      }
+      if (entity.definition.required.includes(property.name)){
+        indexes.push('Required');
+      }
+      if (entity.definition.wordLexicon.includes(property.name)){
+        indexes.push('Word Lexicon');
+      }
+      if(indexes.length === 0) {
+        indexes.push('None');
+      }
+      let data = {
+        property: property.name,
+        datatype: property.datatype,
+        indexSettings: indexes.join(', ')
+      }
+      return data
+    });
 
-    return <Table columns={columns} dataSource={data} pagination={false} />;
+    return <Table rowKey="property" columns={columns} dataSource={properties} pagination={false} />;
   };
+
 
   const columns = [
     { 
@@ -40,19 +66,18 @@ const ViewEntities:React.FC<{}> = () => {
       sorter: (a, b) => { return a.created.localeCompare(b.created) }
     }
   ];
-
-  const data = [
-    { name: 'Customer', documents: 515, created: '2019-07-30T16:08:30' },
-    { name: 'Order', documents: 3654, created: '2019-07-29T08:09:22' },
-    { name: 'Shipment', documents: 3209, created: '2019-07-28T02:11:45' },
-    { name: 'SupportCall', documents: 442, created: '2019-07-27T11:54:55' },
-    { name: 'Exmployee', documents: 66, created: '2019-07-26T15:33:03' },
-    { name: 'Location', documents: 18, created: '2019-07-25T19:36:09' },
-    { name: 'Supplier', documents: 57, created: '2019-07-24T13:42:37' },
-    { name: 'ProductGroup', documents: 31, created: '2019-07-23T13:32:31' },
-    { name: 'Product', documents: 91, created: '2019-07-22T14:01:45' },
-    { name: 'Promotion', documents: 25, created: '2019-07-21T16:07:52' }
-  ];
+  
+  const realData = props.entities.map((entity, index) => {
+    const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
+    // TODO add document count and created date
+    let parsedEntity = {
+      name: entity.info.title,
+      documents: 123, 
+      created: '2019-07-30T16:08:30',
+      definition: entityDefinition
+    }
+    return parsedEntity
+  });
 
   return (
     <div className={styles.viewContainer}>
@@ -65,10 +90,11 @@ const ViewEntities:React.FC<{}> = () => {
         </div>
       </div>
       <Table
+        rowKey="name"
         className="components-table-demo-nested"
         columns={columns}
         expandedRowRender={expandedRowRender}
-        dataSource={data}
+        dataSource={realData}
       />
     </div>
   );
