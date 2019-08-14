@@ -58,12 +58,12 @@ public class StepRunnerUtil {
     }
 
     protected static String objectToString(Object obj) {
-        String objStr;
+        String objStr = null;
         if (obj instanceof String) {
             objStr = (String) obj;
         } else if (obj instanceof TextNode) {
             objStr = ((TextNode) obj).textValue();
-        } else {
+        } else if (obj != null){
             objStr = obj.toString();
         }
         return objStr;

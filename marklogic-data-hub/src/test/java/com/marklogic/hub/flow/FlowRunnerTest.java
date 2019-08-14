@@ -257,7 +257,31 @@ public class FlowRunnerTest extends HubTestBase {
         RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
         fr.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 1);
+        // Assert that a Job document is created
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Job") == 1);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+    }
+
+    @Test
+    public void testDisableJobOutput(){
+        Map<String,Object> opts = new HashMap<>();
+        List<String> steps = new ArrayList<>();
+        steps.add("1");
+        steps.add("2");
+        List<String> coll = new ArrayList<>();
+        coll.add("test-collection");
+        opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
+        opts.put("collections", coll);
+        opts.put("permissions", "rest-reader,read");
+        opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
+        opts.put("disableJobOutput", Boolean.TRUE);
+
+        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts);
+        fr.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 2);
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        // Assert that no Jobs documents were created
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs") == 0);
     }
 
     @Test
