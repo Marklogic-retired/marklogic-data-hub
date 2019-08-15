@@ -1,9 +1,10 @@
 import React from 'react';
+import Sidebar from '../components/sidebar/sidebar';
 
 const Browse: React.FC = () => {
   return (
     <div>
-      Browse Entities Page
+      <Sidebar />
     </div>
   );
 }
