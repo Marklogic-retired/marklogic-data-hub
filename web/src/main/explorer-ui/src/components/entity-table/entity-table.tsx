@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import styles from './view-entities.module.scss';
-import { Statistic, Table } from 'antd';
+import styles from './entity-table.module.scss';
+import { Table } from 'antd';
 
 type Props = {
   entities: any[];
 }
 
-const ViewEntities:React.FC<Props> = (props) => {
+const EntityTable:React.FC<Props> = (props) => {
 
   const expandedRowRender = (entity) => {
     const columns = [
@@ -80,15 +80,6 @@ const ViewEntities:React.FC<Props> = (props) => {
   });
 
   return (
-    <div className={styles.viewContainer}>
-      <div>
-        <div className={styles.entitiesStat}>
-          <Statistic title="Total Entities" value={13} />
-        </div>
-        <div className={styles.documentsStat}>
-          <Statistic title="Total Documents" value={14563} />
-        </div>
-      </div>
       <Table
         rowKey="name"
         className="components-table-demo-nested"
@@ -96,9 +87,7 @@ const ViewEntities:React.FC<Props> = (props) => {
         expandedRowRender={expandedRowRender}
         dataSource={realData}
       />
-    </div>
   );
-
 }
 
-export default ViewEntities;
+export default EntityTable;
