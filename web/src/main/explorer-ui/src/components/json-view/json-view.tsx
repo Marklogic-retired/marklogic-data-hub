@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactJson from 'react-json-view'
-import ExampleJson from '../../assets/example';
 
-const JsonView: React.FC = () => {
+const JsonView = (props) => {
 
     return (
-        <ReactJson src={ExampleJson} />
+        <ReactJson src={props.document} />
     );
 }
 

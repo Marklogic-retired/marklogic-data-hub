@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
-import ExampleJson from '../assets/example';
+import Document from '../assets/example';
 import { Typography, Icon, Menu, PageHeader } from 'antd';
 
 interface Props extends RouteComponentProps<any> {}
@@ -27,18 +27,18 @@ const Detail: React.FC<Props> = ({ history }) => {
           <Text>Customer</Text>
           <Icon style={{ fontSize: '12px' }} type="right" />
           <Text type="secondary">id: </Text>
-          <Text>{ExampleJson.envelope.instance.id}</Text>
+          <Text>{Document.envelope.instance.id}</Text>
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
             <Text type="secondary">Created: </Text>
-            <Text>{ExampleJson.envelope.headers.createdOn}</Text>
+            <Text>{Document.envelope.headers.createdOn}</Text>
             <Text type="secondary"> Sources: </Text>
-            <Text>{ExampleJson.envelope.headers.sources[0].name}</Text>
+            <Text>{Document.envelope.headers.sources[0].name}</Text>
             <Text type="secondary"> File Type: </Text>
             <Text>JSON</Text>
             <Text type="secondary"> User: </Text>
-            <Text>{ExampleJson.envelope.headers.createdBy}</Text>
+            <Text>{Document.envelope.headers.createdBy}</Text>
           </div>
           <div className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -51,7 +51,7 @@ const Detail: React.FC<Props> = ({ history }) => {
             </Menu>
           </div>
         </div>
-        {selected === 'instance' ? <TableView /> : <JsonView />}
+        {selected === 'instance' ? <TableView document={Document}/> : <JsonView document={Document}/>}
       </div>
     </div>
   );
