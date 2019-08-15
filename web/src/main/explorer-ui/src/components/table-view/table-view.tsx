@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { Table } from 'antd';
-import ExampleJson from '../../assets/example';
 
-let data = new Array();
+const TableView = (props) => {
 
-Object.keys(ExampleJson.envelope.instance).forEach(function (key) {
-  data.push({property: key, value: ExampleJson.envelope.instance[key] });
-});
+  let data = new Array();
 
-const TableView: React.FC = () => {
-  
+  Object.keys(props.document.envelope.instance).forEach(function (key) {
+    data.push({ property: key, value: props.document.envelope.instance[key] });
+  });
+
   const [expanded, setExpanded] = useState(false);
 
   const handleClick = () => {
-    expanded === false? setExpanded(true) : setExpanded(false)
+    expanded === false ? setExpanded(true) : setExpanded(false)
   }
 
   const columns = [
@@ -42,7 +41,7 @@ const TableView: React.FC = () => {
   return (
     <Table
       className="document-table-demo"
-      rowKey = "property"
+      rowKey="property"
       dataSource={data}
       columns={columns}
       pagination={false}
