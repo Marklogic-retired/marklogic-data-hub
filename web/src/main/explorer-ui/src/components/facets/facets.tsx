@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Icon } from 'antd';
 import Facet from '../facet/facet';
 import styles from './facets.module.scss';
@@ -14,13 +14,19 @@ const Facets = (props) => {
     />
   );
 
+  const [show, toggleShow] = useState(true);
+
   return (
     <div className={styles.facetsContainer}>
       <div className={styles.header}>
         <div className={styles.title}>{props.title}</div>
-        <div className={styles.toggle}><Icon style={{fontSize: '12px'}} type="up" /></div>
+        <div className={styles.toggle} onClick={() => toggleShow(!show)}>
+          <Icon style={{fontSize: '12px'}} type={(show) ? 'up' : 'down'} />
+        </div>
       </div>
-      {facets}
+      <div style={{display: (show) ? 'block' : 'none'}}>
+        {facets}
+      </div>
     </div>
   )
 }
