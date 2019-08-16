@@ -13,7 +13,6 @@ describe("Table view component", () => {
       });
 
     test("renders", () => {
-        const wrapper = shallow(<TableView document={MockDocument}/>)
         expect(wrapper.exists()).toBe(true);
     }) 
 
