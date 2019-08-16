@@ -253,6 +253,9 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
      *
      * So for a mapping - we need to get the name of the mapping and then see if any other flow references that mapping.
      *
+     * For custom Mapping/Ingestion/Mastering, the type is not Custom, so we need to check if there is a custom-module path
+     * to delete the step definition artifacts
+     *
      * @param flow
      * @param removedStep
      */
@@ -261,7 +264,13 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             return;
         }
 
-        if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep)) {
+        Path custModulePath = this.hubConfig.getModulesDir().resolve("root").resolve("custom-modules")
+            .resolve(removedStep.getStepDefinitionType().toString().toLowerCase())
+            .resolve(removedStep.getStepDefinitionName());
+
+        if(!removedStep.isCustomStep() && custModulePath.toFile().exists()){
+            deleteStepDefinitionArtifacts(removedStep);
+        } else if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep)) {
             deleteMappingArtifacts(flow, removedStep);
         } else if (removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM)) {
             deleteStepDefinitionArtifacts(removedStep);
