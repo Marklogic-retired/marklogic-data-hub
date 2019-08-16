@@ -65,7 +65,7 @@ const SearchResults = () => {
                 renderItem={item => (
                     <List.Item>
                         <List.Item.Meta
-                            title={<a href="https://ant.design">{item.collection} > id: {item.id}</a>}
+                            title={<a href="/detail">{item.collection} > id: {item.id}</a>}
                             description={item.detail}
                         />
                     </List.Item>
