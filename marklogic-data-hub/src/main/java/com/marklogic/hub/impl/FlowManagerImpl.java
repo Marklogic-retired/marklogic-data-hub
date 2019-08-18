@@ -35,7 +35,6 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -265,14 +264,16 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             return;
         }
 
-        StepDefinition.StepDefinitionType stepTypeOfRemovedStep = EnumUtils.getEnumIgnoreCase(StepDefinition.StepDefinitionType.class, removedStep.getStepDefinitionType().toString());
+        StepDefinition.StepDefinitionType stepTypeOfRemovedStep = StepDefinition.StepDefinitionType.getStepDefinitionType(
+                                                    removedStep.getStepDefinitionType().toString()
+                                                    );
 
         if(!removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), stepTypeOfRemovedStep)) {
-            deleteStepDefinitionArtifacts(removedStep);
+            deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
         } else if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep)) {
             deleteMappingArtifacts(flow, removedStep);
         } else if (removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM)) {
-            deleteStepDefinitionArtifacts(removedStep);
+            deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
         }
     }
 
@@ -319,11 +320,9 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         deleteDocumentsInDirectory(format("/mappings/%s/", mappingName));
     }
 
-    protected void deleteStepDefinitionArtifacts(Step removedStep) {
+    protected void deleteStepDefinitionArtifacts(Step removedStep, StepDefinition.StepDefinitionType stepTypeOfRemovedStep) {
         logger.info("Deleting custom step as it's no longer referenced by any flows: " + removedStep.getName() +
             ". The module associated with this step will not be deleted in case other modules refer to it.");
-        //Need to handle the deletion for all the custom step types
-        StepDefinition.StepDefinitionType stepTypeOfRemovedStep = EnumUtils.getEnumIgnoreCase(StepDefinition.StepDefinitionType.class, removedStep.getStepDefinitionType().toString());
         StepDefinition stepDef = StepDefinition.create(removedStep.getName(), stepTypeOfRemovedStep);
         stepDefinitionManager.deleteStepDefinition(stepDef);
         deleteDocumentsInDirectory(format("/step-definitions/%s/%s/", stepDef.getType().toString(), stepDef.getName()));
