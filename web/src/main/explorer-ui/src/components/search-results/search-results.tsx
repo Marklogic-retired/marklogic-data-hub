@@ -1,17 +1,18 @@
 import React from 'react';
 import { List } from 'antd';
 import styles from './search-results.module.scss';
-import searchResults from '../../assets/mock-data/search-results';
 
-const SearchResults = () => {
+type Props = {
+    data: any[];
+};
 
-    const data = searchResults;
+const SearchResults:React.FC<Props> = (props) => {
 
     return (
         <div className={styles.searchResultsContainer}>
             <List
                 itemLayout="horizontal"
-                dataSource={data}
+                dataSource={props.data}
                 renderItem={item => (
                     <List.Item>
                         <List.Item.Meta
