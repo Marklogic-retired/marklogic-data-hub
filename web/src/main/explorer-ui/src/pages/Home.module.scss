@@ -3,7 +3,6 @@
     position: absolute;
     margin-top: -150px;
     right: 70px;
-  
 }
 
 .grid{
@@ -14,3 +13,24 @@
     font-size: 40px;
     text-align: middle;
 }
+
+.copyright {
+    position: absolute;
+    bottom: -50px;
+    width: 100%;
+    text-align: center;
+}
+
+.copyright a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+.policy {
+    line-height: 1.2;
+}
+
+.policy a {
+    color: inherit;
+    text-decoration: underline;
+  }
