@@ -49,6 +49,16 @@
   </div>
 </details>
 
+<details open><summary class="relnote-summary">Improvements</summary>
+  <div markdown="1">
+
+  - Made necessary changes in 4.3.2 to make it work with 9.0-10+ ML server.
+  - Upgraded to ml-gradle 3.16.0.
+  - Upgraded to Java API Client 4.2.0.
+
+  </div>
+</details>
+
 
 
 # Release Notes for DHF 4.3.1
