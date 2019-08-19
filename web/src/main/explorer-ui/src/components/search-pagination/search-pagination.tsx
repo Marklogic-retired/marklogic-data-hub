@@ -7,7 +7,7 @@ const SearchPagination = () => {
         <div className={styles.searchPaginationContainer}>
             <Pagination 
                 defaultCurrent={6} 
-                total={500} 
+                total={50} 
             />
         </div>
     )
