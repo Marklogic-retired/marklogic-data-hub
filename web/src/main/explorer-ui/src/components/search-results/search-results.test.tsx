@@ -1,14 +1,15 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import List from './search-results';
+import SearchResults from './search-results';
+import MockData from '../../assets/mock-data/search-results';
 
 describe("Search Pagination component", () => {
 
     let wrapper;
 
     beforeAll(() => {
-        wrapper = mount(<List />);
-      });
+        wrapper = mount(<SearchResults data={MockData}/>);
+    });
 
     test("renders", () => {
         expect(wrapper.exists()).toBe(true);
