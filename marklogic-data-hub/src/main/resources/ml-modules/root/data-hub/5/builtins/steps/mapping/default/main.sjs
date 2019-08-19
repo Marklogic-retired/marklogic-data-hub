@@ -18,14 +18,6 @@ function main(content, options) {
     throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
   }
 
-  //let's see if our doc is in the cluster at update time
-  //if (!fn.docAvailable(id)) {
-  //  datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
-  //  throw Error('The document with the uri: ' + id + ' could not be found.')
-  //}
-
-  //grab the doc
-  // let doc = cts.doc(id);
   let doc = content.value;
 
   //then we grab our mapping
@@ -94,7 +86,7 @@ function main(content, options) {
   }
 
   //now let's make our attachments, if it's xml, it'll be passed as string
-  instance['$attachments'] = doc;
+  instance['$attachments'] = datahub.flow.flowUtils.createAttachments(doc, outputFormat);
 
   content.value = buildEnvelope(doc, instance, outputFormat, options);
   content.provenance = { [content.uri]: provenance };
