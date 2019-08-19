@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   return (
     <>
       <div className={styles.icon}>
-        <DatahubIcon size={890} fill='lightgrey' view='0 0 55 55' />
+        <DatahubIcon size={780} fill='lightgrey' view='0 0 60 50' />
       </div>
       <Row className={styles.grid}>
         <Col span={12} offset={3}>
