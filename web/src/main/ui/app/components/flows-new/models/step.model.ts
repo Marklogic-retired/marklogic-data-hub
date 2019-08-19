@@ -167,9 +167,7 @@ export class Step {
     if (json.threadCount && isNumber(parseInt(json.threadCount))) {
       newStep.threadCount = json.threadCount;
     }
-    // if (json.CustOptions) {
-    //   newStep.CustOptions = json.CustOptions;
-    // }
+ 
     // Check options
     if (json.options) {
       // set defaults for each step type
