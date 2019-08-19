@@ -57,11 +57,12 @@ function main(content, options) {
   let headers = {};
    */
 
-  //Here is an example of a check to make sure it's still present in the cluster before operating on it
+  /* Here is an example of a check to make sure it's still present in the cluster before operating on it
   if (!fn.docAvailable(id)) {
     datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
     throw Error('The document with the uri: ' + id + ' could not be found.')
   }
+  */
 
   //grab the 'doc' from the content value space
   let doc = content.value;
@@ -80,8 +81,12 @@ function main(content, options) {
   //gets headers, return null if cannot be found
   let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
 
-  //If you want to set attachments, uncomment here
-  // instance['$attachments'] = instance;
+  //If you want to set attachments, use the $attachments key and grab the node version
+  instance['$attachments'] = datahub.flow.flowUtils.createAttachments(doc, outputFormat);
+
+  //for ES models, you will want to specify entity/version if they are not already part of your instance
+  //instance['$title'] = 'myEntity';
+  //instance['$version'] = '0.0.1'
 
 
   //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.
