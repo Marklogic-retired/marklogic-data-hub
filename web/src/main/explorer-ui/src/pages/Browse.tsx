@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import axios from 'axios';
 import { Layout } from 'antd';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
@@ -9,6 +10,17 @@ import searchResultsData from '../assets/mock-data/search-results';
 
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
+
+  useEffect(() => {
+    const fetchData = async () => {
+    const result = await axios(
+        `/v1/search?format=json&database=data-hub-STAGING`,
+      );
+        console.log('fetch flows', result);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Layout>
