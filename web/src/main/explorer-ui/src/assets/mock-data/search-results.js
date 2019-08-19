@@ -1,4 +1,4 @@
-const searchResults = 
+const searchResultsData = 
     [
         {
             collection: 'Customer',
@@ -92,4 +92,4 @@ const searchResults =
         }
     ];
 
-export default searchResults;
+export default searchResultsData;
