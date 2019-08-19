@@ -29,25 +29,7 @@ function main(content, options) {
     throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
   }
 
-  /*
-  This scaffolding assumes we obtained the document from the database. If you are inserting information, you will
-  have to map data from the content.value appropriately and create an instance (object), headers (object), and triples
-  (array) instead of using the flowUtils functions to grab them from a document that was pulled from MarkLogic.
-  Also you do not have to check if the document exists as in the code below.
-
-  Example code for using data that was sent to MarkLogic server for the document
-  let instance = content.value;
-  let triples = [];
-  let headers = {};
-   */
-
-  //Here is an example of a check to make sure it's still present in the cluster before operating on it
-  if (!fn.docAvailable(id)) {
-    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
-    throw Error('The document with the uri: ' + id + ' could not be found.')
-  }
-
-  //grab the 'doc' from the content value space
+  //grab the 'document' (as represented as a document object in memory) from the content.value space
   let doc = content.value;
 
   // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)
@@ -64,18 +46,21 @@ function main(content, options) {
   //gets headers, return null if cannot be found
   let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
 
-  //If you want to set attachments, uncomment here
-  // instance['$attachments'] = instance;
+  //If you want to set attachments, use the $attachments key and grab the node version
+  instance['$attachments'] = datahub.flow.flowUtils.createAttachments(doc, outputFormat);
 
+  //for ES models, you will want to specify entity/version if they are not already part of your instance
+  //instance['$title'] = 'myEntity';
+  //instance['$version'] = '0.0.1'
 
-  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.
+  //insert code here to manipulate the instance, triples, headers, uri, context metadata, etc.
 
 
   //form our envelope here now, specifying our output format
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   //create our return content object, we have a handy helper function for creating a json scaffolding, but you
-  //can also do a node-based one by using nodebuilder, especially if you're dealing with xml!
+  //can also do a node-based one by using nodebuilder, especially if you're dealing with raw XML
   let newContent = datahub.flow.flowUtils.createContentAsObject();
 
   //assign our envelope value
