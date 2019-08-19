@@ -22,7 +22,7 @@
       <input id="step-description" matInput formControlName="description" placeholder="Description">
     </mat-form-field>
     <div *ngIf="!isIngestion">
-      <label>Source Type: <span *ngIf="sourceRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING'))" class="source-req">*</span></label>
+      <label>Source Type: <span *ngIf="sourceRequired || (isCustom && (customStepType === 'MAPPING' || customStepType === 'MASTERING'))" class="source-req">*</span></label>
       <mat-radio-group id="step-source-type" formControlName="selectedSource" (change)="stepSourceChange($event)">
         <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
         <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
@@ -36,7 +36,7 @@
         matTooltipHideDelay="500"  
         id="step-source-collection" 
         class="type-select" 
-        [placeholder]="'Source Collection' + (sourceRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING')) ? '*' : '')" 
+        [placeholder]="'Source Collection' + (sourceRequired || (isCustom && (customStepType === 'MAPPING' || customStepType === 'MASTERING')) ? '*' : '')" 
         formControlName="sourceCollection">
           <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
       </mat-select>
@@ -47,7 +47,7 @@
         matTooltipPosition="left"
         matTooltipShowDelay="500"
         matTooltipHideDelay="500"  
-        matInput [placeholder]="'Source Query' + (sourceRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING')) ? '*' : '')" 
+        matInput [placeholder]="'Source Query' + (sourceRequired || (isCustom && (customStepType === 'MAPPING' || customStepType === 'MASTERING')) ? '*' : '')" 
         formControlName="sourceQuery">
       </textarea>
     </mat-form-field>
@@ -57,7 +57,7 @@
       matTooltipPosition="left"
       matTooltipShowDelay="500"
       matTooltipHideDelay="500">
-      <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="entityRequired || (isCustom && (newStepForm.value.stepPurpose === 'MAPPING' || newStepForm.value.stepPurpose === 'MASTERING'))">
+      <mat-select id="step-target-entity" placeholder="Target Entity" formControlName="targetEntity" [required]="entityRequired || (isCustom && (customStepType === 'MAPPING' || customStepType === 'MASTERING'))">
         <mat-option *ngIf="isCustom"></mat-option>
         <mat-option *ngFor="let entity of entities" [value]="entity.name">{{entity.name}}</mat-option>
       </mat-select>
@@ -72,7 +72,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-form-field *ngIf="!isIngestion ? (isCustom ? (newStepForm.value.stepPurpose !== 'INGESTION') : true) : false">  
+        <mat-form-field *ngIf="!isIngestion ? (isCustom ? (customStepType !== 'INGESTION') : true) : false">  
           <mat-select id="step-source-database" placeholder="Source Database" formControlName="sourceDatabase">
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
@@ -82,7 +82,7 @@
             <mat-option *ngFor="let database of databases" [value]="database">{{database}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="!isIngestion ? (isCustom ? (newStepForm.value.stepPurpose !== 'INGESTION') : true) : false">
+        <mat-form-field *ngIf="!isIngestion ? (isCustom ? (customStepType !== 'INGESTION') : true) : false">
           <mat-select id="step-output-format" class="type-select" placeholder="Target Format" formControlName="outputFormat">
             <mat-option class="type-option" *ngFor="let outputFormat of outputFormatOptions" [value]="outputFormat.value">{{outputFormat.label}}</mat-option>
           </mat-select>

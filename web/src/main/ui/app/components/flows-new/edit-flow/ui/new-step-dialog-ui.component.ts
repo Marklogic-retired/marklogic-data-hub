@@ -256,7 +256,30 @@ export class NewStepDialogUiComponent implements OnInit {
   setStepPurpose(){
     const type = this.newStepForm.value.stepPurpose;
     this.customStepType = type;
-
+    if (this.customStepType === StepType.INGESTION) {
+      this.newStepForm.patchValue({
+        sourceDatabase: '',
+        targetDatabase: this.databaseObject.staging
+      });
+    }
+    if (this.customStepType === StepType.MAPPING) {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.staging,
+        targetDatabase: this.databaseObject.final
+      });
+    }
+    if (this.customStepType === StepType.MASTERING) {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.final,
+        targetDatabase: this.databaseObject.final
+      });
+    }
+    if (this.customStepType === 'OTHER') {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.staging,
+        targetDatabase: this.databaseObject.final
+      });
+    }
     this.newStep = Step.updateCustomStep(this.newStep,this.customStepType,this.projectDirectory);
   }
   onSave() {
