@@ -80,13 +80,13 @@ const EntityTable:React.FC<Props> = (props) => {
   });
 
   return (
-      <Table
-        rowKey="name"
-        className="components-table-demo-nested"
-        columns={columns}
-        expandedRowRender={expandedRowRender}
-        dataSource={realData}
-      />
+    <Table
+      rowKey="name"
+      className="components-table-demo-nested"
+      columns={columns}
+      expandedRowRender={expandedRowRender}
+      dataSource={realData}
+    />
   );
 }
 

@@ -19,7 +19,8 @@ const Header:React.FC<Props> = ({history}) => {
   };
 
   const showMenu = user.authenticated && (
-    <Menu 
+    <Menu
+      id="menu-links" 
       mode="horizontal"
       theme="dark"
       defaultSelectedKeys={['view']}
@@ -33,23 +34,23 @@ const Header:React.FC<Props> = ({history}) => {
         Browse Entities
         <Link to="/browse"/>
       </Menu.Item>
-      <SubMenu className = {styles.user}  title={<span><Icon style={{fontSize: '18px'}} type="user" /><span>{user.name}</span></span>}>
-        <Menu.Item onClick={handleLogout}>Sign Out</Menu.Item>
+      <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px'}} type="user" /><span id="username">{user.name}</span></span>}>
+        <Menu.Item id="sign-out" onClick={handleLogout}>Sign Out</Menu.Item>
       </SubMenu>
     </Menu>
   )
     return (
     <Layout.Header>
       <div className={styles.iconContain}>
-        <div className={styles.icon}>
+        <div id="logo" className={styles.icon}>
           <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
         </div>
       </div>
-      <div className={styles.title}>Data Hub Explorer</div>
+      <div id="title" className={styles.title}>Data Hub Explorer</div>
       {showMenu}
-       <div className={styles.helpContain}>
+      <a id="help-icon" className={styles.helpContain} target="_blank" href="https://www.marklogic.com/">
         <Icon className={styles.help} type="question-circle"/>
-      </div> 
+      </a>
     </Layout.Header>
     )
 }
