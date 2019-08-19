@@ -268,10 +268,10 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
                                                     removedStep.getStepDefinitionType().toString()
                                                     );
 
-        if(!removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), stepTypeOfRemovedStep)) {
-            deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
-        } else if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep)) {
+        if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep) && !isCustomMapping(removedStep)) {
             deleteMappingArtifacts(flow, removedStep);
+        } else if(!removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), stepTypeOfRemovedStep)) {
+            deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
         } else if (removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM)) {
             deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
         }
@@ -311,6 +311,11 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             }
         }
         return false;
+    }
+
+    protected boolean isCustomMapping(Step removedStep) {
+        String modulePath = "/custom-modules/mapping/"+removedStep.getStepDefinitionName()+"/main.sjs";
+        return stepDefinitionManager.getStepDefinition(removedStep.getStepDefinitionName(), StepDefinition.StepDefinitionType.MAPPING).getModulePath().equals(modulePath);
     }
 
     protected void deleteMappingArtifacts(Flow flow, Step removedStep) {
