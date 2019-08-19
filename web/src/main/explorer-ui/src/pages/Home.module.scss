@@ -5,6 +5,17 @@
     right: 70px;
 }
 
+.container {
+    min-height: 90vh;
+    background: transparent;
+    position: relative;
+}
+
+.footer {
+    position: relative;
+    background: transparent;
+}
+
 .grid{
     margin-top: 180px;
 }
@@ -15,8 +26,7 @@
 }
 
 .copyright {
-    position: absolute;
-    bottom: 15px;
+    position: relative;
     width: 100%;
     text-align: center;
 }
