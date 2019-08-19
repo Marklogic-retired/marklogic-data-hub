@@ -5,6 +5,7 @@ import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
+import searchResultsData from '../assets/mock-data/search-results';
 
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
@@ -20,7 +21,7 @@ const Browse: React.FC = () => {
           <SearchPagination />
           <br />
           <br />
-          <SearchResults />
+          <SearchResults data={searchResultsData}/>
         </Content>
     </Layout>
   );
