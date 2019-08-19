@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import axios from 'axios';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
@@ -8,6 +9,19 @@ import SearchResults from '../components/search-results/search-results';
 
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
+
+  useEffect(() => {
+    const fetchData = async () => {
+    const result = await axios(
+        `/v1/search?format=json&database=data-hub-STAGING`,
+      );
+        console.log('fetch flows', result);
+    };
+
+    fetchData();
+  }, []);
+
+  
   return (
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
