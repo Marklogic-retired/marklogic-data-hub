@@ -3,57 +3,47 @@ import { RouteComponentProps } from 'react-router-dom';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
+import DocumentHeader from '../components/detail-header/detail-header';
 import Document from '../assets/example';
-import { Typography, Icon, Menu, PageHeader } from 'antd';
+import { Layout, Menu, PageHeader } from 'antd';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> { }
 
 const Detail: React.FC<Props> = ({ history }) => {
 
+  const { Content } = Layout;
   const [selected, setSelected] = useState('instance');
-  const { Text } = Typography;
 
   const handleClick = (event) => {
     setSelected(event.key);
   }
 
   return (
-    <div>
-      <div id='back-button'>
-        <PageHeader onBack={() => history.push('/browse')} title="Back" />
-      </div>
-      <div className={styles.container}>
-        <div id='title' className={styles.title}>
-          <Text>Customer</Text>
-          <Icon style={{ fontSize: '12px' }} type="right" />
-          <Text type="secondary">id: </Text>
-          <Text>{Document.envelope.instance.id}</Text>
+    <Layout>
+      <Content style={{ background: '#fff', padding: '24px' }}>
+        <div id='back-button'>
+          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title="Back" />
         </div>
-        <div id='header' className={styles.header}>
+        <div className={styles.header}>
           <div className={styles.heading}>
-            <Text type="secondary">Created: </Text>
-            <Text>{Document.envelope.headers.createdOn}</Text>
-            <Text type="secondary"> Sources: </Text>
-            <Text>{Document.envelope.headers.sources[0].name}</Text>
-            <Text type="secondary"> File Type: </Text>
-            <Text>JSON</Text>
-            <Text type="secondary"> User: </Text>
-            <Text>{Document.envelope.headers.createdBy}</Text>
+            <DocumentHeader document={Document} />
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
               <Menu.Item key="instance" id='instance'>
                 Instance
-            </Menu.Item>
+             </Menu.Item>
               <Menu.Item key="full" id='full'>
                 Full
-            </Menu.Item>
+             </Menu.Item>
             </Menu>
           </div>
         </div>
-        {selected === 'instance' ? <TableView document={Document}/> : <JsonView document={Document}/>}
-      </div>
-    </div>
+        <div>
+          {selected === 'instance' ? <TableView document={Document} /> : <JsonView document={Document} />}
+        </div>
+      </Content>
+    </Layout>
   );
 }
 
