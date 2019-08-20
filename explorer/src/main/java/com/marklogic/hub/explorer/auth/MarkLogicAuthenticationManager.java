@@ -19,7 +19,9 @@ package com.marklogic.hub.explorer.auth;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.hub.explorer.util.DatabaseClientHolder;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,6 +39,9 @@ import java.security.NoSuchAlgorithmException;
  */
 @Component
 public class MarkLogicAuthenticationManager implements AuthenticationProvider, AuthenticationManager {
+
+    @Autowired
+    DatabaseClientHolder databaseClientHolder;
 
     public MarkLogicAuthenticationManager() {
     }
@@ -62,6 +67,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
             throw new BadCredentialsException("Invalid credentials");
         }
 
+        // TODO: Possibly use 'ml-java-client-util' for client creation
         DatabaseClientFactory.SecurityContext securityContext = new DatabaseClientFactory.DigestAuthContext(username, password);
         try {
             SSLContext sslContext = SSLContext.getDefault();
@@ -86,6 +92,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
 //            }
 //        });
 
+        // TODO: Get info from config/properties file.
         DatabaseClient databaseClient = DatabaseClientFactory.newClient(hostname, 8011, securityContext, DatabaseClient.ConnectionType.GATEWAY);
         try {
             databaseClient.newDocumentManager().exists("user");
@@ -98,6 +105,9 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
                 throw ex;
             }
         }
+
+        // Now that we're authorized, store the databaseClient for future use in a session scoped bean.
+        databaseClientHolder.setDatabaseClient(databaseClient);
 
         return new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
             token.getHostname(), token.getAuthorities());

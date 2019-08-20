@@ -20,22 +20,16 @@ import com.marklogic.hub.explorer.auth.ConnectionAuthenticationFilter;
 import com.marklogic.hub.explorer.auth.LoginFailureHandler;
 import com.marklogic.hub.explorer.auth.MarkLogicAuthenticationManager;
 import com.marklogic.hub.explorer.auth.RestAuthenticationEntryPoint;
-import com.marklogic.spring.http.RestConfig;
-import com.marklogic.spring.http.SimpleRestConfig;
-import com.marklogic.spring.security.context.SpringSecurityCredentialsProvider;
-import org.apache.http.client.CredentialsProvider;
+import com.marklogic.hub.explorer.web.CurrentProjectController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 /**
  * Extends Spring Boot's default web security configuration class and hooks in MarkLogic-specific classes from
@@ -44,44 +38,25 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @Configuration
 @EnableWebSecurity
 public class AuthConfig extends WebSecurityConfigurerAdapter {
-    /**
-     * @return a config class with ML connection properties
-     */
-    @Bean
-    public RestConfig restConfig() {
-        return new SimpleRestConfig();
-    }
-
-    @Bean
-    public CredentialsProvider credentialsProvider() {
-        return new SpringSecurityCredentialsProvider();
-    }
-
-    @Bean
-    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
-        return new ServletListenerRegistrationBean<>(new HttpSessionEventPublisher());
-    }
 
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+    @Autowired
+    private CurrentProjectController currentProjectController;
 
     @Lazy
     @Autowired
     private ConnectionAuthenticationFilter authFilter;
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/h2-console/**");
-    }
-
     @Autowired
     public MarkLogicAuthenticationManager markLogicAuthenticationManager;
 
     @Bean
-    public ConnectionAuthenticationFilter getConnectionAuthenticationFilter() throws Exception{
+    public ConnectionAuthenticationFilter getConnectionAuthenticationFilter() throws Exception {
         ConnectionAuthenticationFilter authFilter = new ConnectionAuthenticationFilter();
         authFilter.setAuthenticationManager(markLogicAuthenticationManager);
-//        authFilter.setAuthenticationSuccessHandler(currentProjectController);
+        authFilter.setAuthenticationSuccessHandler(currentProjectController);
         authFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
 
         return authFilter;
@@ -89,23 +64,20 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * Sets MarkLogicAuthenticationProvider as the authentication manager, which overrides the in-memory authentication
-     * manager that Spring Boot uses by default. We also have to set eraseCredentials to false so that the password is
-     * kept in the Authentication object, which allows HttpProxy to use it when authenticating against MarkLogic.
+     * manager that Spring Boot uses by default.
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         super.configure(auth);
         auth.parentAuthenticationManager(markLogicAuthenticationManager);
-        auth.eraseCredentials(false);
+
+//        TODO: Erase credentials?
+//        We can reuse the credentials to re-establish connection with MarkLogic if ML session expires but user session is still valid.
+//        auth.eraseCredentials(false);
     }
 
     /**
-     * Configures what requests require authentication and which ones are always permitted. Uses CorsRequestMatcher to
-     * allow for certain requests - e.g. put/post/delete requests - to be proxied successfully back to MarkLogic.
-     *
-     * This uses a form login by default, as for many MarkLogic apps (particularly demos), it's convenient to be able to
-     * easily logout and login as a different user to show off security features. Spring Security has a very plain form
-     * login page - you can customize this, just google for examples.
+     * Configures what requests require authentication and which ones are always permitted.
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -122,8 +94,8 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
             .and()
             .logout()
-            .logoutUrl("/api/logout")
-//            .logoutSuccessHandler(currentProjectController)
+            .logoutUrl("/datahub/v2/logout")
+            .logoutSuccessHandler(currentProjectController)
         ;
 
     }
@@ -135,7 +107,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
      * @return
      */
     protected String[] getAlwaysPermittedPatterns() {
-        return new String[] {
+        return new String[]{
             "/",
             "/*.js",
             "/*.ttf",
