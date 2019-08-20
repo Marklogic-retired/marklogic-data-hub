@@ -20,7 +20,7 @@ const Detail: React.FC<Props> = ({ history }) => {
 
   return (
     <Layout>
-      <Content style={{ background: '#fff', padding: '24px' }}>
+      <Content style={{ background: '#fff', padding: '18px 36px' }}>
         <div id='back-button'>
           <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title="Back" />
         </div>
@@ -34,7 +34,7 @@ const Detail: React.FC<Props> = ({ history }) => {
                 Instance
              </Menu.Item>
               <Menu.Item key="full" id='full'>
-                Full
+                Source
              </Menu.Item>
             </Menu>
           </div>
