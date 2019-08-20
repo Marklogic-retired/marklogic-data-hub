@@ -19,17 +19,17 @@ const Detail: React.FC<Props> = ({ history }) => {
 
   return (
     <div>
-      <div>
+      <div id='back-button'>
         <PageHeader onBack={() => history.push('/browse')} title="Back" />
       </div>
       <div className={styles.container}>
-        <div className={styles.title}>
+        <div id='title' className={styles.title}>
           <Text>Customer</Text>
           <Icon style={{ fontSize: '12px' }} type="right" />
           <Text type="secondary">id: </Text>
           <Text>{Document.envelope.instance.id}</Text>
         </div>
-        <div className={styles.header}>
+        <div id='header' className={styles.header}>
           <div className={styles.heading}>
             <Text type="secondary">Created: </Text>
             <Text>{Document.envelope.headers.createdOn}</Text>
@@ -40,12 +40,12 @@ const Detail: React.FC<Props> = ({ history }) => {
             <Text type="secondary"> User: </Text>
             <Text>{Document.envelope.headers.createdBy}</Text>
           </div>
-          <div className={styles.menu}>
+          <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
-              <Menu.Item key="instance">
+              <Menu.Item key="instance" id='instance'>
                 Instance
             </Menu.Item>
-              <Menu.Item key="full">
+              <Menu.Item key="full" id='full'>
                 Full
             </Menu.Item>
             </Menu>
@@ -57,4 +57,4 @@ const Detail: React.FC<Props> = ({ history }) => {
   );
 }
 
-export default Detail;
+export default Detail as any;
