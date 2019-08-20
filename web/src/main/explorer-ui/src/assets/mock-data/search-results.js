@@ -7,7 +7,7 @@ const searchResultsData =
             source: 'AdvantageFlow',
             fileType: 'JSON',
             user: 'admin',
-            content: 'John Smith 28 124 Cascade Blvd San Franscisco CA 98765 655-907-8899 655-887-9898 john.smith@hellomail.com'
+            content: 'Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing.'
         },
         {
             collection: 'Customer',
@@ -16,16 +16,16 @@ const searchResultsData =
             source: 'AdvantageFlow',
             fileType: 'JSON',
             user: 'admin',
-            content: 'Mary Lou'
+            content: 'Quo sanctus intellegebat conclusionemque an, has libris dolores interesset ex. Vidisse eruditi incorrupte in quo, ex mea primis ridens minimum. Ad rebum eligendi atomorum has.'
         },
         {
             collection: 'MapCust',
             id: 1002,
             created: '2005-03-22T12:03:07.665187-07:00',
             source: 'BedrockFlow',
-            fileType: 'CSV',
+            fileType: 'XML',
             user: 'admin',
-            content: 'Some data here...'
+            content: 'Ut pri intellegam dissentiunt, ex velit voluptua qui, vis ne quod exerci postea. Ex solum mentitum ponderum eum, eu per congue laoreet sapientem. Nam ad veri principes, ut mea corrumpit accommodare.'
         },
         {
             collection: 'Product',
@@ -34,7 +34,7 @@ const searchResultsData =
             source: 'ProdFlow',
             fileType: 'XML',
             user: 'admin',
-            content: 'Andrew Deer'
+            content: 'Vel minim audiam in, eu facer legere vim, qui noster inermis reformidans cu. Ut dolore fabulas scribentur vis, alterum perpetua imperdiet eum ex.'
         },
         {
             collection: 'Product',
@@ -43,7 +43,7 @@ const searchResultsData =
             source: 'TestFlow',
             fileType: 'JSON',
             user: 'admin',
-            content: 'Test test test'
+            content: 'Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing.'
         },
         {
             collection: 'Customer',
@@ -52,7 +52,7 @@ const searchResultsData =
             source: 'AdvantageFlow',
             fileType: 'JSON',
             user: 'admin',
-            content: 'DeAndre Gold'
+            content: 'Quo sanctus intellegebat conclusionemque an, has libris dolores interesset ex. Vidisse eruditi incorrupte in quo, ex mea primis ridens minimum. Ad rebum eligendi atomorum has.'
         },
         {
             collection: 'MapProd',
@@ -61,16 +61,16 @@ const searchResultsData =
             source: 'Prod2Flow',
             fileType: 'XML',
             user: 'admin',
-            content: 'This is the product for...'
+            content: 'Ut pri intellegam dissentiunt, ex velit voluptua qui, vis ne quod exerci postea. Ex solum mentitum ponderum eum, eu per congue laoreet sapientem. Nam ad veri principes, ut mea corrumpit accommodare.'
         },
         {
             collection: 'Product',
             id: 4566,
             created: '2014-03-02T12:03:07.665187-07:00',
             source: 'MyProdFlow',
-            fileType: 'CSV',
+            fileType: 'JSON',
             user: 'admin',
-            content: 'Air Conditioned'
+            content: 'Vel minim audiam in, eu facer legere vim, qui noster inermis reformidans cu. Ut dolore fabulas scribentur vis, alterum perpetua imperdiet eum ex.'
         },
         {
             collection: 'Customer',
@@ -79,16 +79,16 @@ const searchResultsData =
             source: 'AdvantageFlow',
             fileType: 'JSON',
             user: 'admin',
-            content: 'Stephanie Laurie'
+            content: 'Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing.'
         },
         {
             collection: 'MapCust',
             id: 123,
             created: '2014-03-23T12:03:07.665187-07:00',
             source: 'MappingCustFlow',
-            fileType: 'CSV',
+            fileType: 'XML',
             user: 'admin',
-            content: 'Mapping to be done here'
+            content: 'Quo sanctus intellegebat conclusionemque an, has libris dolores interesset ex. Vidisse eruditi incorrupte in quo, ex mea primis ridens minimum. Ad rebum eligendi atomorum has.'
         }
     ];
 

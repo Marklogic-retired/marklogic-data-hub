@@ -5,7 +5,7 @@ const SearchSummary = (props) => {
 
   return (
     <div className={styles.searchSummaryContainer}>
-      Showing 1-10 of 1,234
+      <label>Showing</label> <span className={styles.summaryValue}>1-10</span> <label>of</label> <span className={styles.summaryValue}>1,234</span>
     </div>
   );
 }

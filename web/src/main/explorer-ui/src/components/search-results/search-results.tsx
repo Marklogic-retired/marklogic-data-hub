@@ -17,7 +17,7 @@ const SearchResults:React.FC<Props> = (props) => {
                 renderItem={item => (
                     <List.Item>
                         <List.Item.Meta
-                            title={<Link to="/detail" style={{ color: 'black', fontWeight: 'bold' }}>{item.collection + " > id: " + item.id}</Link>} 
+                            title={<Link to="/detail" style={{ color: 'rgba(0, 0, 0, 0.65)', fontWeight: 'bold', fontSize: '16px' }}>{item.collection + " > id: " + item.id}</Link>} 
                             description={
                                 <p>
                                     <label className={styles.label}>Created: </label>{item.created} 
@@ -25,7 +25,7 @@ const SearchResults:React.FC<Props> = (props) => {
                                     <label className={styles.label}>&nbsp; &nbsp; File Type: </label>{item.fileType}
                                     <label className={styles.label}>&nbsp; &nbsp; User: </label>{item.user}
                                     <br />
-                                    <label className={styles.label}>Content: </label>{item.content}
+                                    {item.content}
                                 </p>
                             }
                         />

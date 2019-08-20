@@ -9,19 +9,19 @@ const Header = (props) => {
         <>
             <div id='header'>
                 <div id='title' className={styles.title}>
-                    <Text>Customer</Text>
+                    <Text>Customer </Text>
                     <Icon style={{ fontSize: '12px' }} type="right" />
-                    <Text type="secondary">id: </Text>
+                    <Text type="secondary"> id: </Text>
                     <Text>{props.document.envelope.instance.id}</Text>
                 </div>
                 <div id='summary' className={styles.summary}>
                     <Text type="secondary">Created: </Text>
                     <Text>{props.document.envelope.headers.createdOn}</Text>
-                    <Text type="secondary"> Sources: </Text>
+                    <Text type="secondary">&nbsp; &nbsp; Sources: </Text>
                     <Text>{props.document.envelope.headers.sources[0].name}</Text>
-                    <Text type="secondary"> File Type: </Text>
+                    <Text type="secondary">&nbsp; &nbsp; File Type: </Text>
                     <Text>JSON</Text>
-                    <Text type="secondary"> User: </Text>
+                    <Text type="secondary">&nbsp; &nbsp; User: </Text>
                     <Text>{props.document.envelope.headers.createdBy}</Text>
                 </div>
             </div>

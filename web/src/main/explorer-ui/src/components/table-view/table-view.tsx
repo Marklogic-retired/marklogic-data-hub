@@ -30,7 +30,9 @@ const TableView = (props) => {
           textOverflow: 'ellipsis',
           overflow: 'hidden',
           maxWidth: '150ex',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          padding: '0',
+          margin: '0'
         } as React.CSSProperties
         return <p onClick={() => handleClick()} style={pStyle}>{value}</p>
       },
