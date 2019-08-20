@@ -95,7 +95,10 @@ export class FlowsTooltips {
       cHmodule: 'The path to your custom hook module.',
       cHparameters: 'Parameters, as key-value pairs, to pass to your custom hook module.',
       cHuser: 'The user account to use to run the module. Default is the user running the flow; e.g., flow-operator.',
-      cHrunBefore: 'For a pre-step hook, set to true. For a post-step hook, set to false.'
+      cHrunBefore: 'For a pre-step hook, set to true. For a post-step hook, set to false.',
+      targetURIReplace: "A comma-separated list of regular expression patterns and their replacement strings to customize the URIs of the ingested records. Example: /foo/bar,'/mydir'",
+      targetURIPreview: 'An example of a URI of an ingested document based on the specified options. The actual URI will vary for each document.',
+      targetPerms: 'The comma-separated roles required to access the ingested data.'
   }
 
 }

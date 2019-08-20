@@ -21,14 +21,14 @@
     <mat-form-field class="">
       <input id="step-description" matInput formControlName="description" placeholder="Description">
     </mat-form-field>
-    <div *ngIf="!isIngestion">
+    <div *ngIf="!isIngestion ? (isCustom ? (customStepType !== 'INGESTION' ? true : false) : true) : true">
       <label>Source Type: <span *ngIf="sourceRequired || (isCustom && (customStepType === 'MAPPING' || customStepType === 'MASTERING'))" class="source-req">*</span></label>
       <mat-radio-group id="step-source-type" formControlName="selectedSource" (change)="stepSourceChange($event)">
         <mat-radio-button id="step-source-type-collection-radio" value="collection">Collection</mat-radio-button>
         <mat-radio-button id="step-source-type-query-radio" value="query">Query</mat-radio-button>
       </mat-radio-group>
     </div>
-    <mat-form-field *ngIf="hasSelectedCollection && !isIngestion">
+    <mat-form-field *ngIf="hasSelectedCollection && (!isIngestion ? (isCustom ? (customStepType !== 'INGESTION' ? true : false) : true) : true)">
       <mat-select
         [matTooltip]="tooltips.sourceCollection"
         matTooltipPosition="left"
@@ -41,7 +41,7 @@
           <mat-option class="type-option" *ngFor="let collection of collections" [value]="collection">{{collection}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field id="step-source-query" *ngIf="hasSelectedQuery && !isIngestion" >
+    <mat-form-field id="step-source-query" *ngIf="hasSelectedQuery && (!isIngestion ? (isCustom ? (customStepType !== 'INGESTION' ? true : false) : true) : true)" >
       <textarea
         [matTooltip]="tooltips.sourceQuery"
         matTooltipPosition="left"
@@ -52,7 +52,7 @@
       </textarea>
     </mat-form-field>
 
-    <mat-form-field *ngIf="!isIngestion"
+    <mat-form-field *ngIf="!isIngestion ? (isCustom ? (customStepType !== 'INGESTION' ? true : false) : true) : true"
       [matTooltip]="tooltips.targetEntity"
       matTooltipPosition="left"
       matTooltipShowDelay="500"

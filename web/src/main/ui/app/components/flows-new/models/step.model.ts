@@ -198,14 +198,16 @@ export class Step {
         newStep.options.targetDatabase = databases.final;
       }
       if (json.stepDefinitionType === StepType.CUSTOM || (json.stepDefinitionType === StepType.INGESTION && json.stepDefinitionName !== 'default-ingestion') || (json.stepDefinitionType === StepType.MAPPING && json.stepDefinitionName !== 'default-mapping') || (json.stepDefinitionType === StepType.MASTERING && json.stepDefinitionName !== 'default-mastering')) {
-        if(json.stepDefinitionType === StepType.INGESTION)  {
-        const fileLocations = {
-            inputFilePath: projectDirectory,
-            inputFileType: 'json',
-            outputURIReplacement: '',
-            separator: ','
-          };
-          newStep.fileLocations = fileLocations;
+        if (json.stepDefinitionType === StepType.INGESTION) {
+          if (json.fileLocations.inputFilePath === 'path/to/folder') {
+            const fileLocations = {
+              inputFilePath: projectDirectory,
+              inputFileType: 'json',
+              outputURIReplacement: '',
+              separator: ','
+            };
+            newStep.fileLocations = fileLocations;
+          }
         }
         
         newStep.options = new CustomOptions();

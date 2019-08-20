@@ -37,7 +37,7 @@
     matTooltipClass="source-path-tooltip"
     >{{config.inputFilePath.label}}</div>
    <app-folder-browser
-    [startPath]="step.fileLocations.inputFilePath"
+    [startPath]="this.step.fileLocations.inputFilePath"
     (folderChosen)="changeFolder($event)"
     showFiles="true"
     [absoluteOnly]="true"
@@ -53,7 +53,7 @@
 <mat-form-field layout-fill class="source-file-type">
   <mat-select
     id="source-file-type-select"
-    [(ngModel)]="step.fileLocations.inputFileType"
+    [(ngModel)]="this.step.fileLocations.inputFileType"
     name="filetype"
     (selectionChange)="onChange()"
   >
@@ -162,6 +162,24 @@
     (change)="onChange()"
   />
 </mat-form-field>
+
+<div class="label"
+      [matTooltip]="tooltips.targetURIPreview"
+      matTooltipPosition="left"
+      matTooltipShowDelay="500"
+      matTooltipHideDelay="500"
+    >{{config.outputURIPreview.label}}
+    </div>
+  <mat-form-field layout-fill class="target-uri-replace-field">
+    <input
+      id="uri-preview"
+      matInput
+      value = {{uri}}
+      name="uri-preview"
+      readonly
+    />
+  </mat-form-field>
+
 </div>
 
 </div>

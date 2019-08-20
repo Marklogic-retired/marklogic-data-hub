@@ -7,4 +7,5 @@ export class CustomOptions {
   public targetDatabase: string;
   public outputFormat: string;
   public permissions: string;
+  public targetEntity: string;
 }

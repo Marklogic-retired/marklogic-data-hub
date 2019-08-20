@@ -15,7 +15,7 @@ import { Flow } from '../../models/flow.model';
 })
 export class CustomComponent  implements OnInit {
 
-  @Input() step: Step;
+  @Input() step: any;
   @Input() flow: Flow;
   @Input() module: string;
   @Input() projectDirectory: string;
@@ -29,32 +29,31 @@ export class CustomComponent  implements OnInit {
   "sourceCollection",
   "sourceDatabase",
   "targetDatabase",
-  "targetEntity"]
+  "targetEntity"];
+
   constructor() {
   }
 
   ngOnInit(): void {
+    if(this.step.stepDefinitionType === 'INGESTION'){
     this.checkDefaults();
+    }
   }
 
   private checkDefaults(): void {
-    if(this.step.fileLocations){
-      const {
-        inputFilePath,
-        inputFileType,
-        outputURIReplacement,
-        separator
-      } = this.step.fileLocations;
+    const {
+      inputFilePath,
+      inputFileType,
+      outputURIReplacement,
+      separator
+    } = this.step.fileLocations;
 
-      const fileLocations = {
-        inputFilePath: inputFilePath || this.projectDirectory || '.',
-        inputFileType: inputFileType || 'json',
-        outputURIReplacement: outputURIReplacement || '',
-        separator: separator || ','
-      };
-
-      this.step.fileLocations = fileLocations;
-    }
+    const fileLocations = {
+      inputFilePath: inputFilePath || this.projectDirectory || '.',
+      inputFileType: inputFileType || 'json',
+      outputURIReplacement: outputURIReplacement || '',
+      separator: separator || ','
+    };
 
     const options = {
       additionalCollections: this.step.options.additionalCollections || [],
@@ -71,12 +70,14 @@ export class CustomComponent  implements OnInit {
     };
 
     let cOptions = {};
-    for (var key in this.step.options){
-      if(this.step.options.hasOwnProperty(key) && !this.defaultOptions.includes(key)) {
+    for (var key in this.step.options) {
+      if (this.step.options.hasOwnProperty(key) && !this.defaultOptions.includes(key)) {
         cOptions[key] = this.step.options[key];
       }
     }
-    this.step.options = Object.assign(options,cOptions);
+
+    this.step.fileLocations = fileLocations;
+    this.step.options = Object.assign(options, cOptions);
     
     
   }
