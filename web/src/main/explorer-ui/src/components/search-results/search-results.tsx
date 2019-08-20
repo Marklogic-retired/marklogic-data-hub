@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { List } from 'antd';
 import styles from './search-results.module.scss';
 
@@ -16,7 +17,7 @@ const SearchResults:React.FC<Props> = (props) => {
                 renderItem={item => (
                     <List.Item>
                         <List.Item.Meta
-                            title={<a href="/detail" className={styles.a}>{item.collection} > <label className={styles.label}>id:</label> {item.id}</a>}
+                            title={<Link to="/detail" style={{ color: 'black', fontWeight: 'bold' }}>{item.collection + " > id: " + item.id}</Link>} 
                             description={
                                 <p>
                                     <label className={styles.label}>Created: </label>{item.created} 
