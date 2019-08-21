@@ -202,4 +202,9 @@ public class ConnectionAuthenticationFilter extends
         return hostnameParameter;
     }
 
+    public static class LoginInfo {
+        public String username;
+        public String password;
+    }
+
 }
