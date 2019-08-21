@@ -8,6 +8,7 @@ type Props = {
 };
 
 const SearchResults:React.FC<Props> = (props) => {
+    console.log(props.data);
 
     return (
         <div className={styles.searchResultsContainer}>
@@ -17,15 +18,15 @@ const SearchResults:React.FC<Props> = (props) => {
                 renderItem={item => (
                     <List.Item>
                         <List.Item.Meta
-                            title={<Link to="/detail" style={{ color: 'rgba(0, 0, 0, 0.65)', fontWeight: 'bold', fontSize: '16px' }}>{item.collection + " > id: " + item.id}</Link>} 
+                            title={<Link to="/detail">{"Customer > uri: " + item.uri}</Link>}
                             description={
                                 <p>
-                                    <label className={styles.label}>Created: </label>{item.created} 
-                                    <label className={styles.label}>&nbsp; &nbsp; Source: </label>{item.source}
-                                    <label className={styles.label}>&nbsp; &nbsp; File Type: </label>{item.fileType}
-                                    <label className={styles.label}>&nbsp; &nbsp; User: </label>{item.user}
+                                    <label className={styles.label}>Created: </label>{"2019-2019-09-09T12:03:07.665187-07:00-05"}
+                                    <label className={styles.label}>&nbsp; &nbsp; Source: </label>{"AdvantageFlow"}
+                                    <label className={styles.label}>&nbsp; &nbsp; File Type: </label>{item.format}
+                                    <label className={styles.label}>&nbsp; &nbsp; User: </label>{"admin"}
                                     <br />
-                                    {item.content}
+                                    {"Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing."}
                                 </p>
                             }
                         />
