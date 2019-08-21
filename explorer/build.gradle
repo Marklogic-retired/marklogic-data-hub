@@ -57,21 +57,18 @@ dependencies {
 
     compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
-    compile project(":marklogic-data-hub")
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     compile("org.apache.commons:commons-csv:1.4")
 
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
     compile("org.springframework.boot:spring-boot-devtools")
 
-    // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.8") {
-        exclude group: 'org.apache.avro', module: 'avro-tools'
-    }
+    compile 'com.marklogic:marklogic-client-api:4.2.0'
+
     //this really needs to go
     compile("com.marklogic:marklogic-spring-web:1.0")
 
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.session:spring-session-core'
     implementation 'org.springframework.session:spring-session-jdbc'
 
@@ -81,14 +78,11 @@ dependencies {
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-  
+
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
     testCompile "io.rest-assured:rest-assured:3.0.3"
-    testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
-evaluationDependsOn(':marklogic-data-hub')
-compileTestJava.dependsOn tasks.getByPath(':marklogic-data-hub:testClasses')
 
 configurations {
     all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
