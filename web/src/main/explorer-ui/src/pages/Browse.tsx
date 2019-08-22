@@ -1,28 +1,30 @@
-import React, {useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout } from 'antd';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
-import searchResultsData from '../assets/mock-data/search-results';
 
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
 
+  const [data, setData] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
-    const result = await axios(
+      const result = await axios(
         `/v1/search?format=json&database=data-hub-STAGING`,
       );
-        console.log('fetch flows', result);
+      setData(result.data.results);
+      console.log('fetch flows', result.data);
     };
 
     fetchData();
   }, []);
 
-  
+
   return (
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
@@ -34,7 +36,7 @@ const Browse: React.FC = () => {
           <SearchPagination />
           <br />
           <br />
-          <SearchResults data={searchResultsData}/>
+          <SearchResults data={data}/>
         </Content>
     </Layout>
   );

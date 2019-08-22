@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { List } from 'antd';
+import { List, Descriptions } from 'antd';
 import styles from './search-results.module.scss';
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
 };
 
 const SearchResults:React.FC<Props> = (props) => {
+    console.log(props.data);
 
     return (
         <div className={styles.searchResultsContainer}>
@@ -17,16 +18,21 @@ const SearchResults:React.FC<Props> = (props) => {
                 renderItem={item => (
                     <List.Item>
                         <List.Item.Meta
-                            title={<Link to="/detail" style={{ color: 'rgba(0, 0, 0, 0.65)', fontWeight: 'bold', fontSize: '16px' }}>{item.collection + " > id: " + item.id}</Link>} 
+                            title={
+                                <Link to={{ pathname: "/detail", state: { uri: item.uri, database: "data-hub-FINAL" }}}>
+                                    {"Customer > uri: " + item.uri}
+                                </Link>
+                            }
                             description={
-                                <p>
-                                    <label className={styles.label}>Created: </label>{item.created} 
-                                    <label className={styles.label}>&nbsp; &nbsp; Source: </label>{item.source}
-                                    <label className={styles.label}>&nbsp; &nbsp; File Type: </label>{item.fileType}
-                                    <label className={styles.label}>&nbsp; &nbsp; User: </label>{item.user}
+                                <Descriptions title="Content">
+                                    <Descriptions.Item label="Created" className={styles.label}>2019-09-09</Descriptions.Item>
+                                    <Descriptions.Item label="Source" className={styles.label}>AdvantageFlow</Descriptions.Item>
+                                    <Descriptions.Item label="File Type" className={styles.label}>{item.format}</Descriptions.Item>
+                                    <Descriptions.Item label="User" className={styles.label}>admin</Descriptions.Item>
                                     <br />
-                                    {item.content}
-                                </p>
+                                    <br />
+                                    <Descriptions.Item span={3}>Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing.</Descriptions.Item>
+                                </Descriptions>
                             }
                         />
                     </List.Item>
