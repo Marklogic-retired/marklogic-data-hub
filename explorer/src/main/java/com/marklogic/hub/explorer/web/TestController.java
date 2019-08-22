@@ -16,8 +16,7 @@
  */
 package com.marklogic.hub.explorer.web;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.explorer.util.DatabaseClientHolder;
+import com.marklogic.hub.explorer.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -36,14 +35,11 @@ public class TestController {
     //TODO: Only for Example. Remove the controller ASAP
 
     @Autowired
-    private DatabaseClientHolder databaseClientHolder;
+    private TestService testService;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getMappings() {
-        DatabaseClient databaseClient = databaseClientHolder.getDatabaseClient();
-        System.out.println("DB client ===> " + databaseClient);
-
-        return new ResponseEntity<>(databaseClient.newDocumentManager().exists("/entities/Admissions.entity.json"), HttpStatus.OK);
+        return new ResponseEntity<>(testService.test(), HttpStatus.OK);
     }
 }
