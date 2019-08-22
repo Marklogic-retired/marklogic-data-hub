@@ -24,14 +24,12 @@ const SearchResults:React.FC<Props> = (props) => {
                                 </Link>
                             }
                             description={
-                                <Descriptions title="Content">
-                                    <Descriptions.Item label="Created" className={styles.label}>2019-09-09</Descriptions.Item>
+                                <Descriptions column={2}>
+                                    <Descriptions.Item label="Created" className={styles.label}>2019-09-09T12:03:07.665187-07:00</Descriptions.Item>
                                     <Descriptions.Item label="Source" className={styles.label}>AdvantageFlow</Descriptions.Item>
                                     <Descriptions.Item label="File Type" className={styles.label}>{item.format}</Descriptions.Item>
                                     <Descriptions.Item label="User" className={styles.label}>admin</Descriptions.Item>
-                                    <br />
-                                    <br />
-                                    <Descriptions.Item span={3}>Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing.</Descriptions.Item>
+                                    <Descriptions.Item span={2}>Lorem ipsum dolor sit amet, eos ei utamur scriptorem, omnesque efficiendi interesset vis an. Illud ullum vim te, sit atqui dolore cu, vix te modus lorem sadipscing.</Descriptions.Item>
                                 </Descriptions>
                             }
                         />
