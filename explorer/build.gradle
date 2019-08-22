@@ -22,7 +22,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'com.moowork.node' version '1.2.0'
-    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'org.springframework.boot' version '2.1.7.RELEASE'
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -43,10 +43,10 @@ ext.junitJupiterVersion  = '5.3.1'
 
 dependencies {
     compile 'javax.annotation:javax.annotation-api:1.3.2'
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.3.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.1.4.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.1.4.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.1.4.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.7.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.1.5.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.1.5.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.1.5.RELEASE'
     compile group: 'org.springframework', name: 'spring-web', version: '5.1.5.RELEASE'
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.5.RELEASE'
     compile group: 'org.springframework', name: 'spring-websocket', version: '5.1.5.RELEASE'
@@ -65,7 +65,7 @@ dependencies {
     implementation 'org.springframework.session:spring-session-jdbc'
 
     //spring boot test libs
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.3.RELEASE'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.7.RELEASE'
     testImplementation 'org.springframework.security:spring-security-test'
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
