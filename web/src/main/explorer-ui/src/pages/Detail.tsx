@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { RouteComponentProps } from 'react-router-dom';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DocumentHeader from '../components/detail-header/detail-header';
-import Document from '../assets/example';
-import { Layout, Menu, PageHeader } from 'antd';
+import { Layout, Menu, PageHeader, Typography } from 'antd';
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -13,6 +13,22 @@ const Detail: React.FC<Props> = ({ history }) => {
 
   const { Content } = Layout;
   const [selected, setSelected] = useState('instance');
+  const [data, setData] = useState();
+  const [query, setQuery] = useState(history.location.state.uri);
+
+  let database = history.location.state.database;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios(
+        `/v1/documents?database=` + database + `&uri=${query}`,
+      );
+      setData(result.data);
+    };
+
+    
+    fetchData();
+  }, []);
 
   const handleClick = (event) => {
     setSelected(event.key);
@@ -26,7 +42,7 @@ const Detail: React.FC<Props> = ({ history }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            <DocumentHeader document={Document} />
+          {data && <DocumentHeader document={data} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -40,7 +56,7 @@ const Detail: React.FC<Props> = ({ history }) => {
           </div>
         </div>
         <div>
-          {selected === 'instance' ? <TableView document={Document} /> : <JsonView document={Document} />}
+          {selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)}
         </div>
       </Content>
     </Layout>
