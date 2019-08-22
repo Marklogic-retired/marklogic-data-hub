@@ -5,8 +5,8 @@ const TableView = (props) => {
 
   let data = new Array();
 
-  Object.keys(props.document.envelope.instance).forEach(function (key) {
-    data.push({ property: key, value: props.document.envelope.instance[key] });
+  Object.keys(props.document.envelope.attachments.envelope.instance).forEach(function (key) {
+    data.push({ property: key, value: props.document.envelope.attachments.envelope.instance[key] });
   });
 
   const [expanded, setExpanded] = useState(false);
