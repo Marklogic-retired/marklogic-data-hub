@@ -4,25 +4,33 @@ import styles from './detail-header.module.scss';
 
 const Header = (props) => {
     const { Text } = Typography;
+    var envelope = props.document.envelope;
+    const innerObject = Object.keys(envelope.instance)[0];
+    const title = envelope.instance.info.title; 
+    const id = envelope.instance[innerObject].id
+    const timestamp = envelope.headers.createdOn;
+    const sources = envelope.headers.sources[0].name;
+    const fileType = 'JSON';
+    const user = envelope.headers.createdBy;
 
     return (
         <>
             <div id='header'>
                 <div id='title' className={styles.title}>
-                    <Text>{props.document.envelope.instance.info.title} </Text>
+                    <Text>{title} </Text>
                     <Icon style={{ fontSize: '12px' }} type="right" />
                     <Text type="secondary"> id: </Text>
-                    <Text>{props.document.envelope.attachments.envelope.instance.id}</Text>
+                    <Text>{id}</Text>
                 </div>
                 <div id='summary' className={styles.summary}>
                     <Text type="secondary">Created: </Text>
-                    <Text>{props.document.envelope.attachments.envelope.headers.createdOn}</Text>
+                    <Text>{timestamp}</Text>
                     <Text type="secondary">&nbsp; &nbsp; Sources: </Text>
-                    <Text>{props.document.envelope.attachments.envelope.headers.sources[0].name}</Text>
+                    <Text>{sources}</Text>
                     <Text type="secondary">&nbsp; &nbsp; File Type: </Text>
-                    <Text>JSON</Text>
+                    <Text>{fileType}</Text>
                     <Text type="secondary">&nbsp; &nbsp; User: </Text>
-                    <Text>{props.document.envelope.attachments.envelope.headers.createdBy}</Text>
+                    <Text>{user}</Text>
                 </div>
             </div>
         </>
