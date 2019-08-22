@@ -43,7 +43,13 @@ const EntityTable:React.FC<Props> = (props) => {
       return data
     });
 
-    return <Table rowKey="property" columns={columns} dataSource={properties} pagination={false} />;
+    return <Table 
+              rowKey="property"
+              className="property-table"
+              columns={columns} 
+              dataSource={properties} 
+              pagination={false} 
+            />;
   };
 
 
@@ -82,7 +88,7 @@ const EntityTable:React.FC<Props> = (props) => {
   return (
     <Table
       rowKey="name"
-      className="components-table-demo-nested"
+      className="entity-table"
       columns={columns}
       expandedRowRender={expandedRowRender}
       dataSource={realData}

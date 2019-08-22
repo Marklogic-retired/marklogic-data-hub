@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import TableView from '../../components/table-view/table-view';
-import MockDocument from '../../assets/example';
+import MockDocument from '../../assets/mock-data/example';
 
 
 describe("Table view component", () => {

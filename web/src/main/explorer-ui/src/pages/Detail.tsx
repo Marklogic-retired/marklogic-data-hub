@@ -4,7 +4,7 @@ import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DocumentHeader from '../components/detail-header/detail-header';
-import Document from '../assets/example';
+import Document from '../assets/mock-data/example';
 import { Layout, Menu, PageHeader } from 'antd';
 
 interface Props extends RouteComponentProps<any> { }

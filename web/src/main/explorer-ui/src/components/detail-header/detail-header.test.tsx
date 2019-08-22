@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import DetailHeader from './detail-header';
-import MockDocument from '../../assets/example';
+import MockDocument from '../../assets/mock-data/example';
 
 
 
