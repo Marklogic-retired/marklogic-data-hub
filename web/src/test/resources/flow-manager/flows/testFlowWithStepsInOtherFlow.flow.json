@@ -1,0 +1,6 @@
+{
+  "name": "testFlowWithStepsInOtherFlow",
+  "description": "flow description",
+  "stopOnError": "true",
+  "steps": { }
+}
