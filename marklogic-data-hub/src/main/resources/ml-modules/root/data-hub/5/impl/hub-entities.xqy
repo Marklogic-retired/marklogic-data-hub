@@ -126,6 +126,31 @@ declare %private function hent:fix-options($nodes as node()*)
               <search:field name="datahubCreatedByStep"/>
             </search:value>
           </search:constraint>,
+          <search:constraint name="createdByJobRangeConstraint">
+            <search:range>
+              <search:field name="datahubCreatedByJob"/>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdByStepRangeConstraint">
+            <search:range>
+              <search:field name="datahubCreatedByStep"/>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdOnRangeConstraint">
+            <search:range>
+              <search:field name="datahubCreatedOn"/>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdByRangeConstraint">
+            <search:range>
+              <search:field name="datahubCreatedBy"/>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdInFlowRangeConstraint">
+            <search:range>
+              <search:field name="datahubCreatedInFlow"/>
+            </search:range>
+          </search:constraint>,
           hent:fix-options($n/node())
         }
       case element(search:additional-query) return ()
