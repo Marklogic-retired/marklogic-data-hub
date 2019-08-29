@@ -586,6 +586,8 @@ public class DataHubImpl implements DataHub {
     }
 
     protected void prepareAppConfigForInstallingIntoDhs(HubConfig hubConfig) {
+        setKnownValuesForDhsInstall(hubConfig);
+
         AppConfig appConfig = hubConfig.getAppConfig();
 
         appConfig.setModuleTimestampsPath(null);
@@ -608,6 +610,26 @@ public class DataHubImpl implements DataHub {
             logger.info("Setting security context type for App-Services to: " + authMethod);
             appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
         }
+    }
+
+    /**
+     * Per DHFPROD-2897, these are known values in a DHS installation that can be set so that they override any changes
+     * the user may have made for their on-premise installation.
+     *
+     * @param hubConfig
+     */
+    protected void setKnownValuesForDhsInstall(HubConfig hubConfig) {
+        hubConfig.setHttpName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
+        hubConfig.setHttpName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
+        hubConfig.setHttpName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
+        hubConfig.setDbName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
+        hubConfig.setDbName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
+        hubConfig.setDbName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
+        hubConfig.setDbName(DatabaseKind.MODULES, HubConfig.DEFAULT_MODULES_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.STAGING_TRIGGERS, HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.STAGING_SCHEMAS, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.FINAL_TRIGGERS, HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.FINAL_SCHEMAS, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
     }
 
     protected List<Command> buildCommandListForInstallingIntoDhs() {
