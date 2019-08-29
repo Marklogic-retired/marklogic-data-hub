@@ -1,4 +1,5 @@
 import {Component, Input} from "@angular/core";
+import {StepType} from '../../models/step.model';
 
 @Component({
   selector: 'step-icons-ui',
@@ -7,5 +8,5 @@ import {Component, Input} from "@angular/core";
 })
 export class StepIconsUiComponent {
   @Input() steps: Array<Object> = new Array<Object>();
-
+  
 }
