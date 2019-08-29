@@ -21,9 +21,17 @@ function transform(context, params, content) {
       ])`;
       let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metaDataXml, permissionsExpression, [collection], datahub.config.MODULESDATABASE);
       if (writeInfo && fn.exists(writeInfo.transaction)) {
-        // Workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
-        xdmp.moduleCacheClear();
-        es.functionMetadataPut(uriVal + ".xml");
+        // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
+        try {
+          es.functionMetadataPut(uriVal + ".xml");
+        } catch (e) {
+          if (/(prefix|XSLT-UNBPRFX)/ig.test(e.message)) {
+            xdmp.moduleCacheClear();
+            es.functionMetadataPut(uriVal + ".xml");
+          } else {
+            throw e;
+          }
+        }
       } else {
         datahub.debug.log({message: `No write for function metadata. (${xdmp.describe(writeInfo)})`, type: 'notice'});
       }
