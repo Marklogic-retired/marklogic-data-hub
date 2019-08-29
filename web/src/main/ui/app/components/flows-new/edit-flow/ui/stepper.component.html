@@ -57,7 +57,7 @@
             (click)="stepClicked(i)"
             cdkDrag
             >
-              <div class="bar {{stepsArray[i].stepDefinitionType.toLowerCase()}}"></div>
+              <div class="bar {{createStepHeader(stepsArray[i]).toLowerCase()}}"></div>
               <div *ngIf="!flow.latestJob || status[0] !== 'running'" class="step-reorder-handle move-icon" cdkDragHandle>
                 <svg width="18px" fill="white" viewBox="0 0 24 24">
                   <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
@@ -65,7 +65,7 @@
                 </svg>
               </div>
               <div class="header">
-                <div class="step-type step-title {{stepsArray[i].stepDefinitionType.toLowerCase()}}">{{stepsArray[i].stepDefinitionType}}</div>
+                <div class="step-type step-title {{createStepHeader(stepsArray[i]).toLowerCase()}}">{{createStepHeader(stepsArray[i])===stepType.CUSTOM ? (createStepHeader(stepsArray[i])!==stepsArray[i].stepDefinitionType ? createStepHeader(stepsArray[i])+' '+stepsArray[i].stepDefinitionType : createStepHeader(stepsArray[i])):createStepHeader(stepsArray[i])}}</div>
                 <div class="step-icons header-icons">
                   <!-- TODO display validity icon when functionality works DHFPROD-2296 -->
                   <!-- <mat-icon *ngIf="stepsArray[i].isValid" class="step-valid check-icon">check_circle</mat-icon>
@@ -74,26 +74,26 @@
                 </div>
               </div>
               <h3 class="step-name" title={{stepsArray[i]?.description}}>{{step.label}}</h3>
-              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.INGESTION">
+              <div class="summary" *ngIf="createStepHeader(stepsArray[i]) === stepType.INGESTION">
                 <div class="summary-label">Source Directory Path</div>
                 <div class="summary-content" *ngIf="stepsArray[i].fileLocations.inputFilePath"
                 title="{{stepsArray[i].fileLocations.inputFilePath}}">
                   {{stepsArray[i].fileLocations.inputFilePath | truncate : -23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.MAPPING">
+              <div class="summary" *ngIf="createStepHeader(stepsArray[i]) === stepType.MAPPING">
                 <div class="summary-label">Target Entity</div>
                 <div class="summary-content" *ngIf="stepsArray[i].options.targetEntity">
                   {{stepsArray[i].options.targetEntity | truncate : 23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.MASTERING">
+              <div class="summary" *ngIf="createStepHeader(stepsArray[i]) === stepType.MASTERING">
                 <div class="summary-label">Target Entity</div>
                 <div class="summary-content" *ngIf="stepsArray[i].options.targetEntity">
                   {{stepsArray[i].options.targetEntity | truncate : 23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="stepsArray[i].stepDefinitionType === stepType.CUSTOM">
+              <div class="summary" *ngIf="createStepHeader(stepsArray[i]) === stepType.CUSTOM">
                 <div class="summary-label">Module</div>
                 <div *ngIf="stepsArray[i].modulePath"  class="summary-content">{{stepsArray[i].modulePath | truncate : -23}}</div>
               </div>

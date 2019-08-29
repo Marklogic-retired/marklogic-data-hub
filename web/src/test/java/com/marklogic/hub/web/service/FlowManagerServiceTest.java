@@ -54,19 +54,26 @@ import static org.junit.jupiter.api.Assertions.*;
 class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String FLOW = "testFlow";
+    private static String FLOWWITHCOMMONSTEPS = "testFlowWithStepsInOtherFlow";
+
     private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     private String customIngestStep = "{\"name\":\"firstIngest\",\"description\":\"\",\"isValid\":false,\"fileLocations\":{\"inputFilePath\":" +
-        "\"/Users/ssambasu/Downloads/2508\",\"inputFileType\":\"json\",\"outputURIReplacement\":\"\",\"separator\":\",\"},\"options\":{\"collections\"" +
-        ":[\"firstIngest\"],\"additionalCollections\":[],\"permissions\":\"rest-reader,read,rest-writer,update\",\"outputFormat\":\"json\",\"sourceQuery\"" +
+        "\"/Users/ssambasu/Downloads/2508\",\"inputFileType\":\"json\",\"outputURIReplacement\":\"\",\"separator\":\",\"},\"options\":{\"ingestionKey\":\"ingestionVal\"," +
+        "\"collections\":[\"firstIngest\"],\"additionalCollections\":[],\"permissions\":\"rest-reader,read,rest-writer,update\",\"outputFormat\":\"json\",\"sourceQuery\"" +
         ":\"cts.collectionQuery([])\",\"sourceCollection\":\"\",\"targetEntity\":\"\",\"sourceDatabase\":\"\",\"targetDatabase\":\"data-hub-STAGING\"}," +
         "\"stepDefinitionType\":\"INGESTION\",\"stepDefinitionName\":\"firstIngest\",\"selectedSource\":\"\"}";
 
-    private String customMappingStep = "{\"id\":\"firstMapping-mapping\",\"name\":\"firstMapping\",\"stepDefinitionName\":\"firstMapping\",\"" +
-        "stepDefinitionType\":\"MAPPING\",\"description\":\"\",\"options\":{\"additionalCollections\":[],\"sourceQuery\":\"cts.collectionQuery" +
-        "([\\\"test-ingest\\\"])\",\"targetEntity\":\"User\",\"sourceDatabase\":\"data-hub-STAGING\",\"collections\":[\"firstMapping\",\"User\"]," +
-        "\"sourceCollection\":\"test-ingest\",\"outputFormat\":\"json\",\"targetDatabase\":\"data-hub-FINAL\",\"mapping\":{\"name\":\"FirstFlow-firstMapping" +
-        "\",\"version\":0}},\"language\":null,\"isValid\":true,\"customHook\":{}}";
+    private String customMappingStep = "{\"id\":\"firstMapping-mapping\", \"name\":\"firstMapping\", \"stepDefinitionName\":\"firstMapping\", " +
+        "\"stepDefinitionType\":\"MAPPING\", \"description\":\"\", \"options\":{\"mappingKey\":\"mappingVal\", \"additionalCollections\":[], " +
+        "\"sourceQuery\":\"cts.collectionQuery([\\\"test-ingest\\\"])\", \"targetEntity\":\"User\", \"sourceDatabase\":\"data-hub-STAGING\"," +
+        "\"collections\":[\"firstMapping\",\"User\"], \"sourceCollection\":\"test-ingest\", \"outputFormat\":\"json\", \"targetDatabase\":\"data-hub-FINAL\"}, " +
+        "\"language\":null, \"modulePath\":\"/custom-modules/mapping/firstMapping/main.sjs\",\"isValid\":true, \"customHook\":{}}";
+
+    private String customMasteringStep = "{\"name\":\"firstMastering\",\"description\":\"\",\"options\":{\"masteringKey\":\"masteringVal\",\"additionalCollections\":[]," +
+        "\"sourceQuery\":\"cts.collectionQuery([\\\"firstMastering\\\"])\",\"targetEntity\":\"Person\",\"collections\":[\"custom-mastering\",\"Person\"],\"sourceDatabase\":" +
+        "\"data-hub-STAGING\",\"permissions\":\"rest-reader,read,rest-writer,update\",\"sourceCollection\":\"custom-mapping\",\"outputFormat\":\"json\",\"targetDatabase\":" +
+        "\"data-hub-FINAL\"},\"customHook\":{},\"batchSize\":100,\"threadCount\":4,\"stepDefinitionName\":\"firstMastering\",\"stepDefinitionType\":\"MASTERING\"}";
 
     @Autowired
     FlowManagerService flowManagerService;
@@ -92,6 +99,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         Path flowDir = projectDir.resolve("flows");
 
         FileUtil.copy(getResourceStream("flow-manager/flows/testFlow.flow.json"), flowDir.resolve("testFlow.flow.json").toFile());
+        FileUtil.copy(getResourceStream("flow-manager/flows/testFlowWithStepsInOtherFlow.flow.json"), flowDir.resolve("testFlowWithStepsInOtherFlow.flow.json").toFile());
 
         installUserModules(getDataHubAdminConfig(), true);
     }
@@ -106,9 +114,10 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     @Test
     void deleteFlow() throws InterruptedException {
         List<String> flowList = flowManagerService.getFlowNames();
-        assertEquals(1, flowList.size());
+        assertEquals(2, flowList.size());
 
         flowManagerService.deleteFlow(FLOW);
+        flowManagerService.deleteFlow(FLOWWITHCOMMONSTEPS);
 
         flowList = flowManagerService.getFlowNames();
         assertEquals(0, flowList.size());
@@ -260,6 +269,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         flowManagerService.createStep(FLOW, 6, null, customIngestStep);
         Flow flow = flowManager.getFlow("testFlow");
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstIngest", StepDefinition.StepDefinitionType.INGESTION) != null);
+        Assertions.assertTrue(flow.getStep("6").getOptions().containsKey("ingestionKey"));
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstIngest", StepDefinition.StepDefinitionType.INGESTION).getModulePath().equals("/custom-modules/ingestion/firstIngest/main.sjs"));
         Assertions.assertTrue(project.getCustomModuleDir("firstIngest", "ingestion").resolve("main.sjs").toFile().exists());
         //Assertions.assertTrue(flow.getStep("6").getModulePath() == null);
@@ -270,5 +280,58 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         Assertions.assertTrue(project.getCustomModuleDir("firstMapping", "mapping").resolve("main.sjs").toFile().exists());
         flow = flowManager.getFlow("testFlow");
         Assertions.assertTrue(flow.getSteps().size() == 7);
+        Assertions.assertTrue(flow.getStep("6").getOptions().get("mappingKey").toString().equals("\"mappingVal\""));
+
+        flowManagerService.createStep(FLOW, 6, null, customMasteringStep);
+        Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMastering", StepDefinition.StepDefinitionType.MASTERING) != null);
+        Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMastering", StepDefinition.StepDefinitionType.MASTERING).getModulePath().equals("/custom-modules/mastering/firstMastering/main.sjs"));
+        Assertions.assertTrue(project.getCustomModuleDir("firstMastering", "mastering").resolve("main.sjs").toFile().exists());
+        flow = flowManager.getFlow("testFlow");
+        Assertions.assertTrue(flow.getSteps().size() == 8);
+        Assertions.assertTrue(flow.getStep("6").getOptions().containsKey("masteringKey"));
+    }
+
+    @Test
+    void deleteCustomSteps() {
+        flowManagerService.createStep(FLOW, 6, null, customIngestStep);
+        flowManagerService.createStep(FLOW, 6, null, customMappingStep);
+        flowManagerService.createStep(FLOW, 6, null, customMasteringStep);
+
+        flowManagerService.deleteStep(FLOW, "firstIngest-INGESTION");
+        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
+
+        flowManagerService.deleteStep(FLOW, "firstMapping-MAPPING");
+        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
+
+        flowManagerService.deleteStep(FLOW, "firstMastering-MASTERING");
+        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
+    }
+
+    @Test
+    void deleteCustomStepUsedInOtherFlow() {
+        flowManagerService.createStep(FLOW, 6, null, customIngestStep);
+        flowManagerService.createStep(FLOW, 6, null, customMappingStep);
+        flowManagerService.createStep(FLOW, 6, null, customMasteringStep);
+        flowManagerService.createStep(FLOWWITHCOMMONSTEPS, 1, null, customIngestStep);
+        flowManagerService.createStep(FLOWWITHCOMMONSTEPS, 1, null, customMappingStep);
+        flowManagerService.createStep(FLOWWITHCOMMONSTEPS, 1, null, customMasteringStep);
+
+        //attempt1 -- Shouldnt delete the step definition since it is referenced by another flow
+
+        flowManagerService.deleteStep(FLOW, "firstMapping-MAPPING");
+        Assertions.assertTrue(project.getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
+        flowManagerService.deleteStep(FLOW, "firstMastering-MASTERING");
+        Assertions.assertTrue(project.getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
+        flowManagerService.deleteStep(FLOW, "firstIngest-INGESTION");
+        Assertions.assertTrue(project.getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
+
+        //attempt2 -- Should delete the step definition since it is not referenced by another flow
+
+        flowManagerService.deleteStep(FLOWWITHCOMMONSTEPS, "firstMapping-MAPPING");
+        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
+        flowManagerService.deleteStep(FLOWWITHCOMMONSTEPS, "firstMastering-MASTERING");
+        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
+        flowManagerService.deleteStep(FLOWWITHCOMMONSTEPS, "firstIngest-INGESTION");
+        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
     }
 }
