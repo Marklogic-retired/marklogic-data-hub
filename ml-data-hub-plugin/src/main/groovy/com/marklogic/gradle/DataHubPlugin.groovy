@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.gradle.task.dhs.DhsDeployTask
+import com.marklogic.gradle.task.nifi.GenerateNifiTemplateTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.cli.command.InstallIntoDhsCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
@@ -176,6 +177,11 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
             description: "Deploy project resources and modules into a DHS instance"
         )
+
+        String nifiGroup = "MarkLogic Data Hub and NiFi Integration"
+        project.task("hubGenerateNifiTemplate", group: nifiGroup, type: GenerateNifiTemplateTask,
+            description: "Generate a NiFi template based on a flow. Use -PflowUri to specify the URI of the flow and " +
+            "-PtemplatePath to specify the file path to write the template to.")
 
         logger.info("Finished initializing ml-data-hub\n")
     }
