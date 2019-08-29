@@ -7,6 +7,7 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -65,6 +66,37 @@ public class DhsInstallTest extends HubTestBase {
         assertFalse(cmaConfig.isDeployDatabases(), message);
         assertFalse(cmaConfig.isDeployRoles(), message);
         assertFalse(cmaConfig.isDeployUsers(), message);
+    }
+
+    @Test
+    public void knownPropertyValuesShouldBeFixed() {
+        // Set these to custom values that a user may use on-premise
+        HubConfigImpl hubConfig = new HubConfigImpl();
+        hubConfig.setHttpName(DatabaseKind.STAGING, "my-staging-server");
+        hubConfig.setHttpName(DatabaseKind.FINAL, "my-final-server");
+        hubConfig.setHttpName(DatabaseKind.JOB, "my-job-server");
+        hubConfig.setDbName(DatabaseKind.STAGING, "my-staging-db");
+        hubConfig.setDbName(DatabaseKind.FINAL, "my-final-db");
+        hubConfig.setDbName(DatabaseKind.JOB, "my-job-db");
+        hubConfig.setDbName(DatabaseKind.MODULES, "my-modules-db");
+        hubConfig.setDbName(DatabaseKind.STAGING_TRIGGERS, "my-staging-triggers");
+        hubConfig.setDbName(DatabaseKind.STAGING_SCHEMAS, "my-staging-schemas");
+        hubConfig.setDbName(DatabaseKind.FINAL_TRIGGERS, "my-final-triggers");
+        hubConfig.setDbName(DatabaseKind.FINAL_SCHEMAS, "my-final-schemas");
+
+        new DataHubImpl().setKnownValuesForDhsInstall(hubConfig);
+
+        assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getHttpName(DatabaseKind.STAGING));
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, hubConfig.getHttpName(DatabaseKind.FINAL));
+        assertEquals(HubConfig.DEFAULT_JOB_NAME, hubConfig.getHttpName(DatabaseKind.JOB));
+        assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getDbName(DatabaseKind.STAGING));
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, hubConfig.getDbName(DatabaseKind.FINAL));
+        assertEquals(HubConfig.DEFAULT_JOB_NAME, hubConfig.getDbName(DatabaseKind.JOB));
+        assertEquals(HubConfig.DEFAULT_MODULES_DB_NAME, hubConfig.getDbName(DatabaseKind.MODULES));
+        assertEquals(HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME, hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS));
+        assertEquals(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS));
+        assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
+        assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
     }
 
     @Test
