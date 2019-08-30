@@ -44,6 +44,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
 
     protected AbstractStepDefinition() {
         language = "zxx";
+        description = "";
         version = 1;
 
         options = new HashMap<>();
