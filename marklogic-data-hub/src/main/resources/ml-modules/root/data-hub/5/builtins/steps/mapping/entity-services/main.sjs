@@ -59,17 +59,18 @@ function main(content, options) {
   }
   let entityName = lib.getEntityName(targetEntityType);
   let entity = lib.getTargetEntity(targetEntityType);
-  let instance;
+  let instance = doc.xpath('head((/*:envelope/(*:instance[count(* except *:info) gt 1]|*:instance/(* except *:info)),./object-node(),./*))');
   let provenance = {};
-  //Then we obtain the instance and process it from the source context
+  //Then we obtain the newInstance and process it from the source context
+  let newInstance;
   try {
-    instance = es.mapToCanonical(doc, mappingURIforXML, {'entity':entityName,'format':outputFormat});;
+    newInstance = es.mapToCanonical(instance, mappingURIforXML, {'format':outputFormat});
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
   }
 
-  content.value = buildEnvelope(entity.info, doc, instance, outputFormat, options);
+  content.value = buildEnvelope(entity.info, doc, newInstance, outputFormat, options);
   content.provenance = { [content.uri]: provenance };
   return content;
 }
