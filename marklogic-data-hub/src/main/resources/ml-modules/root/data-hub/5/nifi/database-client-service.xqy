@@ -85,7 +85,7 @@ declare function build-database-client-service($params as map:map)
       </entry>
       <entry>
         <key>Port</key>
-        <value>8010</value>
+        {element value{"${stagingPort}"}}
       </entry>
       <entry>
         <key>Load Balancer</key>
@@ -104,7 +104,7 @@ declare function build-database-client-service($params as map:map)
       </entry>
       <entry>
         <key>Database</key>
-        <value>data-hub-STAGING</value>
+        {element value{"${stagingDatabase}"}}
       </entry>
       <entry>
         <key>External name</key>

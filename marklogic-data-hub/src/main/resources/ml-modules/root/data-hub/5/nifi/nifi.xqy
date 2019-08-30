@@ -121,7 +121,7 @@ declare function build-template-from-flow($flow-json as item()) as element(templ
           map:entry("x", $step-x),
           map:entry("y", 0),
           map:entry("http-method", "GET"),
-          map:entry("remote-url", "http://${host}:8010/v1/internal/hubcollector5?flow-name=" || $flow-name || "&amp;database=data-hub-STAGING&amp;step=" || $step-number),
+          map:entry("remote-url", "http://${host}:${stagingPort}/v1/internal/hubcollector5?flow-name=" || $flow-name || "&amp;database=data-hub-STAGING&amp;step=" || $step-number),
           map:entry("basic-authentication-username", $username),
           map:entry("digest-authentication", "true")
         )))
@@ -214,6 +214,14 @@ declare function build-template-from-flow($flow-json as item()) as element(templ
             <entry>
               <key>host</key>
               <value>localhost</value>
+            </entry>
+            <entry>
+              <key>stagingPort</key>
+              <value>8010</value>
+            </entry>
+            <entry>
+              <key>stagingDatabase</key>
+              <value>data-hub-STAGING</value>
             </entry>
           </variables>
         </processGroups>
