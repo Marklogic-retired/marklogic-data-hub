@@ -1,9 +1,11 @@
 package com.marklogic.hub.util.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -19,6 +21,7 @@ import java.util.*;
 
 public class JSONObject {
     private static Logger logger = LoggerFactory.getLogger(JSONObject.class);
+
     ObjectMapper mapper;
     JsonNode json;
 
@@ -120,6 +123,13 @@ public class JSONObject {
      */
     public static String writeValueAsString(Object obj, boolean hasPrettyPrint) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+
+        // Adding this so that the ObjectMapper in this class can be JsonIgnore'd.
+        // Otherwise, serializing instances of this class can fail with the following error:
+        // "No serializer found for class com.marklogic.hub.util.json.JSONObject and no properties discovered to create
+        // BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS)"
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
         if (hasPrettyPrint) {
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         }
@@ -138,6 +148,7 @@ public class JSONObject {
      * Returns the mapper
      * @return an object mapper
      */
+    @JsonIgnore
     public ObjectMapper getMapper() {
         return mapper;
     }
