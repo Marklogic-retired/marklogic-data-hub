@@ -68,7 +68,6 @@ public class SearchFacetsTest extends HubTestBase {
             hubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
         installUserModules(getDataHubAdminConfig(), true);
         installHubArtifacts(getDataHubAdminConfig(), true);
-        getHubFlowRunnerConfig();
         fr.runFlow("testFlow");
         fr.awaitCompletion();
     }
