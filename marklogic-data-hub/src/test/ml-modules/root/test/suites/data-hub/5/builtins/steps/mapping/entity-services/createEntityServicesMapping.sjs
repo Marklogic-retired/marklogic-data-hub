@@ -87,15 +87,12 @@ defaultMappingLib.cachedEntityByTitleAndVersion['Order:0.0.1'] = orderEntity;
 const template = fn.tail(xdmp.tidy(mappingLib.buildEntityMappingXML(customerMapping.toObject(), customerEntity.toObject()), { inputXml: 'yes'}));
 const expectedTemplate = fn.tail(xdmp.tidy(`
   <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
-    <m:param name="context"><m:select>$context</m:select></m:param>
     <Customer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <ID xsi:type="xs:string"><m:val>$context ! (string(@CustomerID)) ! xs:string(.)</m:val></ID>
-      <m:optional><Date xsi:type="xs:dateTime"><m:val>$context ! (parseDateTime('DD/MM/YYYY-hh:mm:ss', date)) ! xs:dateTime(.)</m:val></Date></m:optional>
-      <m:for-each><m:select>$context ! (orders/order)</m:select>
+      <ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID>
+      <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></Date></m:optional>
+      <m:for-each><m:select>orders/order</m:select>
         <Orders datatype='array'>
-          <m:call-template name="Order">
-            <m:with-param name="context" select="."/>
-          </m:call-template>
+          <m:call-template name="Order"/>
         </Orders>
       </m:for-each>      
     </Customer>

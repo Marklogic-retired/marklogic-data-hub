@@ -7,7 +7,7 @@ let instance = result.envelope.instance;
 let assertions = [
   test.assertEqual('2019-12-07', fn.string(instance.OrderType.purchaseDate)),
   test.assertEqual(165.05, fn.number(instance.OrderType.orderCost)),
-  test.assertEqual('Female', fn.string(instance.OrderType.customer.gender))
+  test.assertEqual('Female', fn.string(instance.OrderType.customer.CustomerType.gender))
 ];
 
 assertions;
