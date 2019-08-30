@@ -58,7 +58,7 @@ dependencies {
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
     compile("org.springframework.boot:spring-boot-devtools")
 
-    compile 'com.marklogic:marklogic-client-api:4.2.0'
+    compile 'com.marklogic:marklogic-client-api:5.0.0'
 
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.session:spring-session-core'
