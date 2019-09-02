@@ -28,8 +28,8 @@ import module namespace csu = "http://marklogic.com/rest-api/config-query-util"
 import module namespace dec = "http://marklogic.com/rest-api/lib/href-decorator"
     at "rest-result-decorator.xqy";
 
-import module namespace qbemod = "http://marklogic.com/rest-api/models/qbe-model"
-    at "/MarkLogic/rest-api/models/qbe-model.xqy";
+import module namespace qbe = "http://marklogic.com/appservices/querybyexample"
+    at "/MarkLogic/appservices/search/qbe.xqy";
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
@@ -37,7 +37,6 @@ import module namespace lid = "http://marklogic.com/util/log-id"
 declare namespace json-basic  = "http://marklogic.com/xdmp/json/basic";
 declare namespace qry         = "http://marklogic.com/cts/query";
 declare namespace rapi        = "http://marklogic.com/rest-api";
-declare namespace qbe         = "http://marklogic.com/appservices/querybyexample";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -386,7 +385,7 @@ declare function sut:make-structured-query(
         sut:handle-query($sq,$params,$qtext)
     case element(qbe:query) return
         sut:handle-cts(
-            document {qbemod:xml-to-cts-query($sq)}/*, $params, $qtext, $options
+            document {qbe:by-example($sq)}/*, $params, $qtext, $options
             )
     case element(search:search) return
         let $queries := $sq/* except $sq/(search:options|search:qtext|search:sparql)
@@ -406,7 +405,7 @@ declare function sut:make-structured-query(
             )
     case object-node("$query") return
         sut:handle-cts(
-            document {qbemod:json-to-cts-query($sq)}/*, $params, $qtext, $options
+            document {qbe:by-example($sq)}/*, $params, $qtext, $options
             )
     case object-node("search") return
         let $queries := $sq/(* except (options|qtext|sparql))
@@ -586,7 +585,7 @@ declare function sut:validate-query(
 ) as element()?
 {
     if (empty($q)) then ()
-    else 
+    else
         let $rest-properties  := eput:get-properties-map()
         let $debug            := not($is-untraced or sut:check-untraced())
         let $validate-queries := head((map:get($rest-properties,"validate-queries"),false()))
