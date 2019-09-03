@@ -3,10 +3,11 @@ import { Table } from 'antd';
 
 const TableView = (props) => {
 
+  const innerObject = Object.keys(props.document.envelope.instance)[0];
   let data = new Array();
 
-  Object.keys(props.document.envelope.attachments.envelope.instance).forEach(function (key) {
-    data.push({ property: key, value: props.document.envelope.attachments.envelope.instance[key] });
+  Object.keys(props.document.envelope.instance[innerObject]).forEach(function (key) {
+    data.push({ property: key, value: props.document.envelope.instance[innerObject][key] });
   });
 
   const [expanded, setExpanded] = useState(false);
