@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import JsonView from '../../components/json-view/json-view';
-import MockDocument from '../../assets/example';
+import MockDocument from '../../assets/mock-data/example';
 
 
 describe("Json view component", () => {
