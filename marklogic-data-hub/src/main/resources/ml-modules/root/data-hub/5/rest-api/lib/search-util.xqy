@@ -27,19 +27,30 @@ import module namespace csu = "http://marklogic.com/rest-api/config-query-util"
 
 import module namespace dec = "http://marklogic.com/rest-api/lib/href-decorator"
     at "rest-result-decorator.xqy";
-
-import module namespace qbe = "http://marklogic.com/appservices/querybyexample"
-    at "/MarkLogic/appservices/search/qbe.xqy";
-
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 declare namespace json-basic  = "http://marklogic.com/xdmp/json/basic";
 declare namespace qry         = "http://marklogic.com/cts/query";
 declare namespace rapi        = "http://marklogic.com/rest-api";
+declare namespace qbe         = "http://marklogic.com/appservices/querybyexample";
+declare namespace qbemod      = "http://marklogic.com/rest-api/models/qbe-model";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
+
+declare variable $legacy-qbe-function := xdmp:function(xs:QName('qbemod:to-cts-query'), '/MarkLogic/rest-api/models/qbe-model.xqy');
+declare variable $new-qbe-function := xdmp:function(xs:QName('qbe:by-example'), '/MarkLogic/appservices/search/qbe.xqy');
+declare variable $qbe-function := (
+  (: Calling xdmp:function-signature to determine if new function exists. If not, use legacy. :)
+  try {
+    let $fun-sig := xdmp:function-signature($new-qbe-function)
+    return $new-qbe-function
+  } catch ($e) {
+    $legacy-qbe-function
+  }
+);
+
 
 declare private variable $unquoted-datatypes := (
     "xs:boolean", "xs:double", "xs:float", "xs:int", "xs:short", "xs:unsignedInt", "xs:unsignedShort"
@@ -385,7 +396,7 @@ declare function sut:make-structured-query(
         sut:handle-query($sq,$params,$qtext)
     case element(qbe:query) return
         sut:handle-cts(
-            document {qbe:by-example($sq)}/*, $params, $qtext, $options
+            document {xdmp:apply($qbe-function,$sq)}/*, $params, $qtext, $options
             )
     case element(search:search) return
         let $queries := $sq/* except $sq/(search:options|search:qtext|search:sparql)
@@ -405,7 +416,7 @@ declare function sut:make-structured-query(
             )
     case object-node("$query") return
         sut:handle-cts(
-            document {qbe:by-example($sq)}/*, $params, $qtext, $options
+            document {xdmp:apply($qbe-function,$sq)}/*, $params, $qtext, $options
             )
     case object-node("search") return
         let $queries := $sq/(* except (options|qtext|sparql))
