@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class SearchQuery {
     private String query;
-    private String entityName;
+    private List<String> entityNames;
     private long start;
     private long pageLength;
     private Map<String, List<String>> facets;
@@ -14,8 +14,8 @@ public class SearchQuery {
         return query;
     }
 
-    public String getEntityName() {
-        return entityName;
+    public List<String> getEntityNames() {
+        return entityNames;
     }
 
     public long getStart() {
@@ -28,5 +28,25 @@ public class SearchQuery {
 
     public Map<String, List<String>> getFacets() {
         return facets;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public void setEntityName(List<String> entityNames) {
+        this.entityNames = entityNames;
+    }
+
+    public void setStart(long start) {
+        this.start = start;
+    }
+
+    public void setPageLength(long pageLength) {
+        this.pageLength = pageLength;
+    }
+
+    public void setFacets(Map<String, List<String>> facets) {
+        this.facets = facets;
     }
 }

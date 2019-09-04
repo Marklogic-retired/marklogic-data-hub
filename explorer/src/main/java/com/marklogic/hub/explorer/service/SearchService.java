@@ -10,8 +10,10 @@ import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SearchService {
@@ -26,48 +28,40 @@ public class SearchService {
         QueryManager queryMgr = client.newQueryManager();
         queryMgr.setPageLength(searchQuery.getPageLength());
 
-        StructuredQueryBuilder qb = queryMgr.newStructuredQueryBuilder(OPTIONS_NAME);
+        StructuredQueryBuilder searchQueryBuilder = queryMgr.newStructuredQueryBuilder(OPTIONS_NAME);
 
         // Creating queries object
-        ArrayList<StructuredQueryDefinition> queries = new ArrayList<>();
+        List<StructuredQueryDefinition> queries = new ArrayList<>();
 
         // Filtering search results for docs related to an entity
-        if (searchQuery.getEntityName() != null && !searchQuery.getEntityName().equals("")) {
-            StructuredQueryDefinition querydef = qb.collection(searchQuery.getEntityName());
-            queries.add(querydef);
+        if (! CollectionUtils.isEmpty(searchQuery.getEntityNames())) {
+            String[] collections = searchQuery.getEntityNames().toArray(new String[0]);
+            queries.add(searchQueryBuilder.collection(collections));
         }
 
         // Filtering by facets
         if (searchQuery.getFacets() != null) {
-            searchQuery.getFacets().entrySet().forEach(entry -> entry.getValue().forEach(value -> {
-                StructuredQueryDefinition def = null;
-                if (entry.getKey().equals("Collection")) {
-                    def = qb.collectionConstraint(entry.getKey(), value);
+            searchQuery.getFacets().forEach((facetType, facetValues) -> facetValues.forEach(facetValue -> {
+                StructuredQueryDefinition facetDef = null;
+                if (facetType.equals("Collection")) {
+                    facetDef = searchQueryBuilder.collectionConstraint(facetType, facetValue);
                 } else {
-                    def = addRangeConstraint(qb, entry.getKey(), value);
+                    facetDef = searchQueryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ, facetValue);
                 }
 
-                if (def != null) {
-                    queries.add(def);
+                if (facetDef != null) {
+                    queries.add(facetDef);
                 }
             }));
         }
 
         // And between all the queries
-        StructuredQueryDefinition sqd = qb.and(queries.toArray(new StructuredQueryDefinition[0]));
-        sqd.setCriteria(searchQuery.getQuery());
+        StructuredQueryDefinition finalQueryDef = searchQueryBuilder.and(queries.toArray(new StructuredQueryDefinition[0]));
+        finalQueryDef.setCriteria(searchQuery.getQuery());
 
         // Setting criteria and searching
-        StringHandle sh = new StringHandle();
-        sh.setFormat(Format.JSON);
-        return queryMgr.search(sqd, sh, searchQuery.getStart());
-    }
-
-    private static StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
-        StructuredQueryDefinition sqd = null;
-        if (value != null && !value.isEmpty()) {
-            sqd = sb.rangeConstraint(name, StructuredQueryBuilder.Operator.EQ, value);
-        }
-        return sqd;
+        StringHandle resultHandle = new StringHandle();
+        resultHandle.setFormat(Format.JSON);
+        return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
     }
 }

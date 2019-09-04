@@ -3,8 +3,6 @@ package com.marklogic.hub.explorer.web;
 import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/datahub/v2/search")
-@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
+@RequestMapping(value = "/v2/search")
 public class SearchController {
 
     @Autowired
