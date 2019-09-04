@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("datahub/v2/models")
+@RequestMapping("/v2/models")
 public class ModelController {
 
     @Autowired
