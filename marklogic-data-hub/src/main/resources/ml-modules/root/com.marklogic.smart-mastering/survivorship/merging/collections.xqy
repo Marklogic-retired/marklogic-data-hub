@@ -86,7 +86,7 @@ declare function collection-impl:build-collection-algorithm-map(
 declare function collection-impl:execute-algorithm(
   $event-name as xs:string,
   $collections-by-uri as map:map,
-  $event-options as element()?
+  $event-options as node()?
 )
 {
   let $algorithm-map :=
@@ -115,7 +115,7 @@ declare function collection-impl:execute-algorithm(
       xdmp:apply($algorithm, $event-name, $collections-by-uri, $event-options)
 };
 
-declare function collection-impl:on-merge($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-merge($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-merge",
     $collections-by-uri,
@@ -123,7 +123,7 @@ declare function collection-impl:on-merge($collections-by-uri as map:map, $event
   )
 };
 
-declare function collection-impl:on-archive($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-archive($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-archive",
     $collections-by-uri,
@@ -131,7 +131,7 @@ declare function collection-impl:on-archive($collections-by-uri as map:map, $eve
   )
 };
 
-declare function collection-impl:on-no-match($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-no-match($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-no-match",
     $collections-by-uri,
@@ -139,7 +139,7 @@ declare function collection-impl:on-no-match($collections-by-uri as map:map, $ev
   )
 };
 
-declare function collection-impl:on-notification($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-notification($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-notification",
     $collections-by-uri,
@@ -150,13 +150,13 @@ declare function collection-impl:on-notification($collections-by-uri as map:map,
 declare function collection-impl:default-collection-handler(
   $event-name as xs:string,
   $collections-by-uri as map:map,
-  $event-options as element()?
+  $event-options as node()?
 ) {
-  if (fn:exists($event-options/merging:set/merging:collection[. ne ''])) then
-    $event-options/merging:set/merging:collection ! fn:string(.)
+  if (fn:exists($event-options/*:set/*:collection[. ne ''])) then
+    $event-options/*:set/*:collection ! fn:string(.)
   else (
     let $merge-options := collection-impl:get-options-root($event-options)
-    let $match-options := matcher:get-options($merge-options/merging:match-options, $const:FORMAT-XML)
+    let $match-options := matcher:get-options($merge-options/(merging:match-options|matchOptions), $const:FORMAT-XML)
     let $content-collection-options := fn:head(($match-options,$merge-options))
     let $all-collections := fn:distinct-values((
           map:keys(-$collections-by-uri),
@@ -173,7 +173,7 @@ declare function collection-impl:default-collection-handler(
               ()
         ))
     let $remove-collections := fn:distinct-values((
-        $event-options/merging:remove/merging:collection ! fn:string(.),
+        $event-options/*:remove/*:collection ! fn:string(.),
         switch ($event-name)
           case $const:ON-ARCHIVE-EVENT return
             coll:content-collections($content-collection-options)
@@ -183,7 +183,7 @@ declare function collection-impl:default-collection-handler(
     return
       (
         $all-collections[fn:not(. = $remove-collections)],
-        $event-options/merging:add/merging:collection ! fn:string(.)
+        $event-options/*:add/*:collection ! fn:string(.)
       )[. ne '']
   )
 };
@@ -192,7 +192,7 @@ declare function collection-impl:get-options-root(
   $event-options as element()?
 ) as element(merging:options)? {
   if (fn:exists($event-options)) then
-    fn:root($event-options)/(self::merging:options|merging:options)
+    fn:root($event-options)/(self::*:options|*:options)
   else
     ()
 };

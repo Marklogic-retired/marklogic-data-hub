@@ -15,10 +15,12 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
@@ -27,6 +29,8 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MasteringManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class MasteringManagerImpl implements MasteringManager {
@@ -43,6 +47,11 @@ public class MasteringManagerImpl implements MasteringManager {
     @Override
     public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
         return getMergeResource().unmerge(mergeURI, retainAuditTrail, blockFutureMerges);
+    }
+
+    @Override
+    public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
+        return getMergeResource().merge(mergeURIs, flowName, stepNumber, preview, options);
     }
 
     private MergeResource getMergeResource() {
@@ -86,6 +95,37 @@ public class MasteringManagerImpl implements MasteringManager {
                     StringHandle handle = new StringHandle();
                     ObjectMapper objectMapper = new ObjectMapper();
                     resp = objectMapper.readValue(res.getContent(handle).get(), UnmergeResponse.class);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (resultItr != null) {
+                    resultItr.close();
+                }
+            }
+            return resp;
+        }
+
+        public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
+            MergeResponse resp;
+
+            RequestParameters params = new RequestParameters();
+            params.put("uri", mergeURIs);
+            params.put("preview", preview.toString());
+            params.put("flowName", flowName);
+            params.put("step", stepNumber);
+            params.put("targetDatabase", targetDatabase);
+            params.put("sourceDatabase", targetDatabase);
+            JacksonHandle jsonOptions = new JacksonHandle().with(options);
+            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, jsonOptions);
+            try {
+                if (resultItr == null || !resultItr.hasNext()) {
+                    resp = null;
+                } else {
+                    ResourceServices.ServiceResult res = resultItr.next();
+                    StringHandle handle = new StringHandle();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    resp = objectMapper.readValue(res.getContent(handle).get(), MergeResponse.class);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

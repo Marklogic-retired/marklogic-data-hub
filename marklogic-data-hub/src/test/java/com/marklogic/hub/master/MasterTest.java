@@ -1,5 +1,6 @@
 package com.marklogic.hub.master;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -25,10 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -118,6 +118,31 @@ public class MasterTest extends HubTestBase {
         assertEquals(209, getFinalDocCount("mdm-content"), "We end with the correct amount of final docs");
         assertEquals(40, getFinalDocCount("mdm-notification"), "Notifications have incorrect count");
         testUnmerge();
+    }
+
+    @Test
+    public void testManualMerge() throws Exception {
+        installProject();
+
+        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+
+        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+
+        installHubArtifacts(getDataHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
+
+        Flow flow = flowManager.getFlow("myNewFlow");
+        if (flow == null) {
+            throw new Exception("myNewFlow Not Found");
+        }
+        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("1","2"));
+        flowRunner.awaitCompletion();
+        List<String> docsToMerge = Arrays.asList("/person-1.json","/person-1-1.json","/person-1-2.json","/person-1-3.json");
+        masteringManager.merge(docsToMerge, "myNewFlow","3", Boolean.FALSE, new ObjectMapper().createObjectNode());
+        assertEquals(1, getFinalDocCount("mdm-merged"),"One merge should have occurred");
+        assertEquals(docsToMerge.size(), getFinalDocCount("mdm-archived"),docsToMerge.size() + " documents should have been archived");
     }
 
     private void testUnmerge() {

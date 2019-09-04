@@ -1,0 +1,15 @@
+{
+  "language": "zxx",
+  "name": "manual-merge-mastering",
+  "type": "mastering",
+  "version": 1,
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/manual-merge.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "options": {
+    "stepUpdate": true,
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL"
+  }
+}
