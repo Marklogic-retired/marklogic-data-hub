@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/datahub/v2/test")
+@RequestMapping(value = "/v2/test")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 public class TestController {
 
