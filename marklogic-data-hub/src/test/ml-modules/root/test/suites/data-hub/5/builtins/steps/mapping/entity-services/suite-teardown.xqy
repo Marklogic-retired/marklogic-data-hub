@@ -1,10 +1,6 @@
 xquery version "1.0-ml";
 
-(
-  "/mappings/CustomersMapping/CustomersMapping-1.mapping.json",
-  "/mappings/ItemsMapping/ItemsMapping-1.mapping.json",
-  "/mappings/OrdersMapping/OrdersMapping-1.mapping.json",
-  "/entities/CustomerType.entity.json",
-  "/entities/ItemType.entity.json",
-  "/entities/OrderType.entity.json"
-) ! xdmp:document-delete(.)
+import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+
+hub-test:delete-artifacts($test:__CALLER_FILE__)

@@ -3,7 +3,7 @@
   "name" : "CustomerJSON-CustomerJSONMapping",
   "description" : "",
   "version" : 0,
-  "targetEntityType" : "Customer-0.0.1/Customer",
+  "targetEntityType" : "http://marklogic.com/Customer-0.0.1/Customer",
   "sourceContext" : "/",
   "sourceURI" : "",
   "properties" : {
