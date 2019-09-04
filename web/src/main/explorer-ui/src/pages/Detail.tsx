@@ -5,7 +5,7 @@ import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DocumentHeader from '../components/detail-header/detail-header';
-import { Layout, Menu, PageHeader } from 'antd';
+import { Layout, Menu, PageHeader, Spin } from 'antd';
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -15,15 +15,18 @@ const Detail: React.FC<Props> = ({ history }) => {
   const [selected, setSelected] = useState('instance');
   const [data, setData] = useState();
   const [query, setQuery] = useState(history.location.state.uri);
+  const [isLoading, setIsLoading] = useState(false);
 
   let database = history.location.state.database;
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchData = async () => {
       const result = await axios(
         `/v1/documents?database=` + database + `&uri=${query}`,
       );
       setData(result.data);
+      setIsLoading(false);
     };
 
     
@@ -56,8 +59,11 @@ const Detail: React.FC<Props> = ({ history }) => {
           </div>
         </div>
         <div>
-          {selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)}
-        </div>
+        {
+          isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
+          : 
+          selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
+        }        </div>
       </Content>
     </Layout>
   );
