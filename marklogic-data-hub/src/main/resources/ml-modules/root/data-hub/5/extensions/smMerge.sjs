@@ -19,7 +19,37 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 function get(context, params) {}
 
 function post(context, params, input) {
-  // TODO manual merge will go here
+  let inputOptions = input ? input.toObject() : {};
+  const datahub = DataHubSingleton.instance({
+    performanceMetrics: !!inputOptions.performanceMetrics
+  });
+  let flowName = 'manual-merge-mastering';
+  let stepNumber = 1;
+  let refFlowName = params.flowName;
+  let refStepNumber = params.step || '1';
+  let flow = datahub.flow.getFlow(refFlowName);
+  let stepRef = flow.steps[refStepNumber];
+  let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+  // build combined options
+  let flowOptions = flow.options || {};
+  let stepRefOptions = stepRef.options || {};
+  let stepDetailsOptions = stepDetails.options || {};
+  let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
+  let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
+
+  combinedOptions.fullOutput = true;
+  combinedOptions.noWrite = params.preview === 'true';
+  combinedOptions.acceptsBatch = true;
+  let jobId = params["job-id"];
+  let uris = datahub.hubUtils.normalizeToArray(params.uri);
+  let query = cts.documentQuery(uris);
+  let content = datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
+  let results = datahub.flow.runFlow(flowName, jobId, content, combinedOptions, stepNumber);
+  return {
+    'success': results.errorCount === 0,
+    'mergedURIs': uris,
+    'mergedDocument': results.documents.filter((doc) => !uris.includes(doc.uri))[0]
+  };
 }
 
 function put(context, params, input) {

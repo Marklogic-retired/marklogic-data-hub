@@ -15,7 +15,10 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles the calls to the Mastering endpoints.
@@ -32,6 +35,17 @@ public interface MasteringManager {
     public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges);
 
     /**
+     * Manually merges a set of documents
+     * @param mergeURIs - URIs of the documents to merge
+     * @param flowName - The name of the flow that has the mastering settings
+     * @param stepNumber - The number of the mastering step with settings
+     * @param preview - determines if the changes should be written to the database
+     * @param options - Overrides any options for the step
+     * @return - a MergeResponse
+     */
+    public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
+
+    /**
      * Holds the response information from an unmerge request
      */
     class UnmergeResponse {
@@ -41,6 +55,19 @@ public interface MasteringManager {
 
         public String toString() {
             return String.format("{success: %b, mergeURIs: %s, restoredURIs: %s}", success, mergeURIs, restoredURIs);
+        }
+    }
+
+    /**
+     * Holds the response information from an manual merge request
+     */
+    class MergeResponse {
+        public List<String> mergedURIs;
+        public boolean success;
+        public Map<String,Object> mergedDocument;
+
+        public String toString() {
+            return String.format("{success: %b, mergedURIs: %s, mergeDocument: %s}", success, mergedURIs, mergedDocument);
         }
     }
 }
