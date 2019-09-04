@@ -12,6 +12,9 @@ const Browse: React.FC = () => {
 
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [startPagination, setStartPagination] = useState();
+  const [lengthPagination, setLengthPagination] = useState();
+  const [totalDocuments, setTotalDocuments] = useState();
 
   useEffect(() => {
     setIsLoading(true);
@@ -20,6 +23,9 @@ const Browse: React.FC = () => {
         `/v1/search?format=json&database=data-hub-STAGING`,
       );
       setData(result.data.results);
+      setTotalDocuments(result.data.total);
+      setStartPagination(result.data.start);
+      setLengthPagination(result.data['page-length']);
       console.log('fetch flows', result.data);
       setIsLoading(false);
     };
@@ -39,7 +45,7 @@ const Browse: React.FC = () => {
             <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
           : 
             <>
-            <SearchSummary />
+            <SearchSummary total={totalDocuments} start={startPagination} length={lengthPagination} />
             <SearchPagination />
             <br />
             <br />
