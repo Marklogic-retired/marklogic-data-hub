@@ -12,7 +12,6 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,26 +28,21 @@ public class ModelService {
     /**
      * Get all the models
      * @return
-     * @throws IOException
      */
-    public JsonNode getModels() throws IOException {
+    public JsonNode getModels()  {
         DatabaseClient dbClient = dbClientHolder.getDatabaseClient();
         QueryManager queryMgr = dbClient.newQueryManager();
         queryMgr.setPageLength(Integer.MAX_VALUE);
         StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("default");
 
-        StringHandle sh = new StringHandle();
-        sh.setFormat(Format.JSON);
         JsonNode jsonRes = JsonNodeFactory.instance.arrayNode();
 
         GenericDocumentManager docMgr = dbClient.newDocumentManager();
-        List<DocumentRecord> documentRecords = new ArrayList<>();
-        docMgr.search(sb.collection(ENTITY_MODEL_COLLECTION_NAME), 0 , sh).forEach(documentRecords::add);
         StringHandle handle = new StringHandle();
-        for (DocumentRecord record : documentRecords) {
-            record.getContent(handle);
+        docMgr.search(sb.collection(ENTITY_MODEL_COLLECTION_NAME),0).forEach(documentRecord -> {
+            documentRecord.getContent(handle);
             ((ArrayNode) jsonRes).add(handle.get());
-        }
+        });
 
         return jsonRes;
     }
@@ -57,9 +51,8 @@ public class ModelService {
      * Get a model info by name
      * @param modelName
      * @return
-     * @throws IOException
      */
-    public String getModel(String modelName) throws IOException {
+    public String getModel(String modelName) {
         DatabaseClient dbClient = dbClientHolder.getDatabaseClient();
         QueryManager queryMgr = dbClient.newQueryManager();
 
