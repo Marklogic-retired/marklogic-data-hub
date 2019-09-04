@@ -45,18 +45,13 @@ const Browse: React.FC = () => {
             <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
           : 
             <>
-            <SearchSummary />
+            <SearchSummary total={totalDocuments} start={startPagination} length={lengthPagination} />
             <SearchPagination />
             <br />
             <br />
             <SearchResults data={data} />
             </>
           }
-          <SearchSummary total={totalDocuments} start={startPagination} length={lengthPagination}/>
-          <SearchPagination />
-          <br />
-          <br />
-          <SearchResults data={data}/>
         </Content>
       </Layout>
   );
