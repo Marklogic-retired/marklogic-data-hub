@@ -18,6 +18,9 @@ public class CreateStepDefinitionTest {
     public void ingestionStep() {
         JsonNode node = createStep(StepDefinition.StepDefinitionType.INGESTION);
         verifyCommonFieldsOnStep(node);
+
+        assertEquals("cts.collectionQuery([])", node.get("options").get("sourceQuery").asText(),
+            "Per DHFPROD-3056, sourceQuery now gets a default value to match QuickStart");
     }
 
     @Test
