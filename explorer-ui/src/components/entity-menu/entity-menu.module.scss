@@ -1,23 +1,19 @@
 .entityMenuContainer {
 	width: 252px;
-	padding: 0 0 15px 0;
+	padding: 0 0 17px 0;
 
-	.header {
-		padding: 0 0 2px 0;
-
-		.title {
-			display: inline-block;
-			font-size: 15px;
-			color: #999;
-			width: 230px;
-			text-transform: uppercase;
-			font-weight: bold;
-			padding: 0 0 0 5px;
-		}
-
-		.menu {
-			padding: 10px 0 0 5px;
-		}
-
+	.title {
+		display: inline-block;
+		font-size: 15px;
+		color: #999;
+		width: 230px;
+		text-transform: uppercase;
+		font-weight: bold;
+		padding: 0 0 0 5px;
 	}
+
+	.menu {
+		padding: 10px 0 0 5px;
+	}
+
 }

@@ -18,13 +18,11 @@ const EntityMenu = (props) => {
 
   return (
     <div className={styles.entityMenuContainer}>
-      <div className={styles.header}>
-        <div className={styles.title}>{props.title}</div>
-        <div className={styles.menu}>
-          <Select defaultValue="All" style={{ width: 242 }} onChange={handleChange}>
-            {options}
-          </Select>
-        </div>
+      <div className={styles.title}>{props.title}</div>
+      <div className={styles.menu}>
+        <Select defaultValue="All" style={{ width: 242 }} onChange={handleChange}>
+          {options}
+        </Select>
       </div>
     </div>
   )
