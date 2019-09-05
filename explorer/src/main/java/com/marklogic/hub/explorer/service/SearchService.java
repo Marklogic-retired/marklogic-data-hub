@@ -18,17 +18,18 @@ import java.util.List;
 @Service
 public class SearchService {
 
+    private static final String SEARCH_QUERY_OPTIONS = "final-entity-options";
+
     @Autowired
     private DatabaseClientHolder databaseClientHolder;
 
     public StringHandle search(SearchQuery searchQuery) {
         DatabaseClient client = databaseClientHolder.getDatabaseClient();
-        String OPTIONS_NAME = "final-entity-options";
 
         QueryManager queryMgr = client.newQueryManager();
         queryMgr.setPageLength(searchQuery.getPageLength());
 
-        StructuredQueryBuilder searchQueryBuilder = queryMgr.newStructuredQueryBuilder(OPTIONS_NAME);
+        StructuredQueryBuilder searchQueryBuilder = queryMgr.newStructuredQueryBuilder(SEARCH_QUERY_OPTIONS);
 
         // Creating queries object
         List<StructuredQueryDefinition> queries = new ArrayList<>();
