@@ -1,13 +1,15 @@
 import React from 'react';
+import axios from 'axios';
 import LoginForm from '../components/login-form/login-form';
 import DatahubIcon from '../components/datahub-icon/datahub-icon';
 import styles from './Home.module.scss';
 import { Layout, Row, Col, Typography } from 'antd';
 
 const { Title, Text } = Typography;
+const { Content, Footer } = Layout;
 
 const Home: React.FC = () => {
-  const { Content, Footer } = Layout;
+  
   return (
     <Layout className={styles.container}>
       <Content>

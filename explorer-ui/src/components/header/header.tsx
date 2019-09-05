@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
@@ -12,10 +13,18 @@ const { SubMenu } = Menu;
 
 const Header:React.FC<Props> = ({history}) => {
   const { user, userNotAuthenticated } = useContext(AuthContext);
-
-  const handleLogout = () => {
-    userNotAuthenticated();
-    history.push('/');
+  
+  const handleLogout = async () => {
+    try {
+      let response = await axios(
+        `/datahub/v2/logout`,
+      );
+      console.log('response', response);
+      userNotAuthenticated();
+      history.push('/');
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   const showMenu = user.authenticated && (

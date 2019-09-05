@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Layout, Statistic } from 'antd';
 import EntityTable from '../components/entity-table/entity-table';
 import { entityFromJSON } from '../util/data-conversion';
@@ -8,8 +9,26 @@ import modelResponse from '../assets/mock-data/model-response';
 const { Content } = Layout;
 
 const Browse: React.FC = () => {
-  const entities = entityFromJSON(modelResponse);
+  // const [entities, setEntites] = useState<any[]>([]);
 
+  useEffect(() => {
+    getEntityModel();
+  }, []);
+
+  const getEntityModel = async () => {
+    try {
+      let response = await axios(
+        `/datahub/v2/models`,
+      );
+      console.log('response', response);
+      //setEntites(entityFromJSON(response.data));
+    } catch (error) {
+      console.log('error', error.response);
+    }
+  }
+
+  const entities = entityFromJSON(modelResponse);
+  
   return (
     <Layout className={styles.container}>
       <Content>
