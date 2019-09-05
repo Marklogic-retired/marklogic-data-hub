@@ -1,0 +1,37 @@
+.title {
+	padding-top: 5px;
+	font-size: 16px;
+	font-weight: bold;
+
+	.entityName {
+		color: #999;
+		font-weight: bold;
+		padding-right: 10px;
+	}
+
+}
+
+.metadata {
+	padding-top: 8px;
+
+	.metaItem {
+		display: inline-block;
+		width: 240px;
+	}
+
+	.metaLabel {
+		font-weight: bold;
+		color: #999;
+		padding-right: 8px;
+	}
+
+	.metaValue {
+		padding-right: 5px;
+	}
+
+}
+
+.snippet {
+	padding-top: 8px;
+	padding-bottom: 10px;
+}
