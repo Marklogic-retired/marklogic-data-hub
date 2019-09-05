@@ -11,49 +11,63 @@ const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
 
   const [data, setData] = useState();
+  const [searchUrl, setSearchUrl] = useState({ url: `/v1/search?format=json&database=data-hub-FINAL`, method: 'get' });
+  const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10 });
   const [isLoading, setIsLoading] = useState(false);
-  const [startPagination, setStartPagination] = useState();
-  const [lengthPagination, setLengthPagination] = useState();
   const [totalDocuments, setTotalDocuments] = useState();
 
-  useEffect(() => {
+  const fetchData = async (method) => {
+    method = searchUrl.method
     setIsLoading(true);
-    const fetchData = async () => {
-      const result = await axios(
-        `/v1/search?format=json&database=data-hub-STAGING`,
-      );
-      setData(result.data.results);
-      setTotalDocuments(result.data.total);
-      setStartPagination(result.data.start);
-      setLengthPagination(result.data['page-length']);
-      console.log('fetch flows', result.data);
-      setIsLoading(false);
-    };
+    const result = await axios({
+      method: method,
+      url: searchUrl.url,
+      // data: {
+      //   pageLength: searchData.pageLength
+      // }
+    });
 
-    fetchData();
-  }, []);
+    setData(result.data.results);
+    setTotalDocuments(result.data.total);
+    console.log('fetch flows', result.data);
+    setIsLoading(false);
+  };
 
+  useEffect(() => {
+    fetchData(searchUrl.method);
+  }, [searchUrl, searchParams]);
+
+  const handleSearch = (searchString: string) => {
+    console.log('The user typed string is ' + searchString);
+    setSearchUrl({ ...searchUrl, url: `/v1/search?q=${searchString}&format=json&database=data-hub-FINAL&pageLength=${searchParams.pageLength}`, method: 'post' });
+  }
+  
+  const handlePageChange = (pageNumber: number) => {
+    console.log('The user selected page ' + pageNumber);
+    setSearchParams({ ...searchParams, start: pageNumber});
+    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&start=${searchParams.start}` });
+  }
 
   return (
-      <Layout>
-        <Sider width={300} style={{ background: '#f3f3f3' }}>
-          <Sidebar />
-        </Sider>
-        <Content style={{ background: '#fff', padding: '24px' }}>
-          <SearchBar />
-          {isLoading ? 
-            <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
+    <Layout>
+      <Sider width={300} style={{ background: '#f3f3f3' }}>
+        <Sidebar />
+      </Sider>
+      <Content style={{ background: '#fff', padding: '24px' }}>
+        <SearchBar searchCallback={handleSearch} />
+        {isLoading ? 
+          <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
           : 
-            <>
-            <SearchSummary total={totalDocuments} start={startPagination} length={lengthPagination} />
-            <SearchPagination />
+          <>
+            <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
+            <SearchPagination total={totalDocuments} onPageChange={handlePageChange} currentPage={searchParams.start}/>
             <br />
             <br />
             <SearchResults data={data} />
-            </>
-          }
-        </Content>
-      </Layout>
+          </>
+        }
+      </Content>
+    </Layout>
   );
 }
 
