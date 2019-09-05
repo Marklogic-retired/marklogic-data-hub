@@ -2,7 +2,7 @@ import React from 'react';
 import { Input } from 'antd';
 import styles from './search-bar.module.scss';
 
-const SearchBar = () => {
+const SearchBar = ({ searchCallback }) => {
     const { Search } = Input;
 
     return (
@@ -11,7 +11,7 @@ const SearchBar = () => {
                 placeholder="input search text"
                 enterButton="Search"
                 size="large"
-                onSearch={value => console.log(value)}
+                onSearch={value => searchCallback(value)}
             />
         </div>
     )
