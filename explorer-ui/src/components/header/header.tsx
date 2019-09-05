@@ -31,7 +31,7 @@ const Header:React.FC<Props> = ({history}) => {
         <Link to="/view"/>
       </Menu.Item>
       <Menu.Item key="browse">
-        Browse Entities
+        Browse Documents
         <Link to="/browse"/>
       </Menu.Item>
       <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px'}} type="user" /><span id="username">{user.name}</span></span>}>

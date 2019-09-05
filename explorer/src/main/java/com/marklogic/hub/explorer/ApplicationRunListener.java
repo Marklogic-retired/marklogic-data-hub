@@ -28,32 +28,39 @@ public class ApplicationRunListener implements SpringApplicationRunListener {
     @Autowired
     Environment environment;
 
-    public ApplicationRunListener(SpringApplication application, String[] args) { }
+    public ApplicationRunListener(SpringApplication application, String[] args) {
+    }
 
     @Override
-    public void starting() {}
+    public void starting() {
+    }
 
     @Override
-    public void environmentPrepared(ConfigurableEnvironment environment) {}
+    public void environmentPrepared(ConfigurableEnvironment environment) {
+    }
 
     @Override
-    public void contextPrepared(ConfigurableApplicationContext context) {}
+    public void contextPrepared(ConfigurableApplicationContext context) {
+    }
 
     @Override
-    public void contextLoaded(ConfigurableApplicationContext context) {}
+    public void contextLoaded(ConfigurableApplicationContext context) {
+    }
 
     @Override
     public void started(ConfigurableApplicationContext context) {
         String port = context.getEnvironment().getProperty("local.server.port");
+        String scheme = context.getEnvironment().getProperty("server.ssl.key-store") != null ? "https" : "http";
         System.out.println("Web UI is Ready and Listening on port " + port + ".\n");
-        System.out.println("Open your browser to http://localhost:" + port + ".\t(We recommend you use Chrome or FireFox.)");
+        System.out.println("Open your browser to " + scheme + "://localhost:" + port + ".\t(We recommend you use Chrome or FireFox.)");
     }
 
     @Override
-    public void running(ConfigurableApplicationContext context) { }
+    public void running(ConfigurableApplicationContext context) {
+    }
 
     @Override
     public void failed(ConfigurableApplicationContext context, Throwable exception) {
-       throw new RuntimeException(exception);
+        throw new RuntimeException(exception);
     }
 }

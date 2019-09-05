@@ -8,7 +8,7 @@ const SearchBar = ({ searchCallback }) => {
     return (
         <div className={styles.searchBarContainer}>
             <Search
-                placeholder="input search text"
+                placeholder="Type search text"
                 enterButton="Search"
                 size="large"
                 onSearch={value => searchCallback(value)}
