@@ -44,8 +44,7 @@ class AuthTest {
     private static String BASE_URL = "/v2";
     private static String LOGIN_URL = BASE_URL + "/login";
     private static String LOGOUT_URL = BASE_URL + "/logout";
-    // TODO: Change the test page url to actual one
-    private static String PAGE_URL = BASE_URL + "/test";
+    private static String PAGE_URL = BASE_URL + "/models";
 
     @Autowired
     private MockMvc mockMvc;
