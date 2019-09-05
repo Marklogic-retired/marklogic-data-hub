@@ -11,12 +11,14 @@
 .iconContain {
   height: 0px;
   width: 240px;
+  position: relative;
+  left: -40px;
 }
 
 .title {
   font-size: 20px;
   float: left;
-  margin: 0px 40px 0px 60px;
+  margin: 0px 40px 0px 20px;
   color: silver;
   font-weight: bold;
   text-align: right;
