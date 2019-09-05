@@ -42,6 +42,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
         setFileLocations(this.fileLocations);
 
         Map<String, Object> options = getOptions();
+        options.put("sourceQuery", "cts.collectionQuery([])");
         options.put("outputFormat", "json");
 
         List<String> collectionName = new ArrayList<>();

@@ -20,7 +20,7 @@
       },
       "options": {
         "targetDatabase": "%%mlStagingDbName%%",
-        "sourceQuery": null,
+        "sourceQuery": "cts.collectionQuery([])",
         "outputFormat": "json",
         "collections": [
           "default-ingestion"
