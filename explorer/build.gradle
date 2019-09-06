@@ -90,6 +90,10 @@ task startRest {
   }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 task stopBootrun {
   doLast {
     println("STOPPING Spring Boot")
