@@ -1,10 +1,9 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Form, Icon, Input, Button, Typography } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { AuthContext } from '../../util/auth-context';
-import useForm from '../../hooks/use-form';
 
 interface Props extends RouteComponentProps<any> {}
 

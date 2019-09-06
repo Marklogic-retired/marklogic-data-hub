@@ -9,12 +9,11 @@ const { Content } = Layout;
 
 const View: React.FC = () => {
   const [entities, setEntites] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const getEntityModel = async () => {
     try {
-      const response = await axios(
-        `/datahub/v2/models`,
-      );
+      const response = await axios(`/datahub/v2/models`);
       setEntites(entityFromJSON(response.data));
       setIsLoading(false);
     } catch (error) {

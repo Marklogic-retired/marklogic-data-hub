@@ -16,14 +16,12 @@ const Header:React.FC<Props> = ({history}) => {
   
   const handleLogout = async () => {
     try {
-      let response = await axios(
-        `/datahub/v2/logout`,
-      );
+      let response = await axios(`/datahub/v2/logout`);
       console.log('response', response);
       userNotAuthenticated();
       history.push('/');
     } catch (error) {
-      console.log(error.response);
+      // console.log(error.response);
     }
   };
 
@@ -48,7 +46,7 @@ const Header:React.FC<Props> = ({history}) => {
       </SubMenu>
     </Menu>
   )
-    return (
+  return (
     <Layout.Header>
       <div className={styles.iconContain}>
         <div id="logo" className={styles.icon}>
@@ -61,7 +59,7 @@ const Header:React.FC<Props> = ({history}) => {
         <Icon className={styles.help} type="question-circle"/>
       </a>
     </Layout.Header>
-    )
+  )
 }
 
 export default withRouter(Header);
