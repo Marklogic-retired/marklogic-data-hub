@@ -63,9 +63,10 @@ pipeline{
                     def email;
                     if(env.CHANGE_AUTHOR){
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    email=author;
                     }else{
                     	email=Email
-                    	email=author;
+
                     }
                     sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the Unit Tests Passed on $BRANCH_NAME ',false,'Unit Tests for  $BRANCH_NAME Passed'
                     }
