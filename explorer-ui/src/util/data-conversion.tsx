@@ -1,7 +1,7 @@
 export const entityFromJSON = (data: any) => {
   interface EntityModel {
     uri: string,
-    info: any
+    info: any,
     definitions: Definitions[]
   }
 
@@ -23,15 +23,16 @@ export const entityFromJSON = (data: any) => {
 
   let entityArray: EntityModel[] = [];
 
-  for (let item of data) {
-
+  data.map( raw => {
+    const item = JSON.parse(raw);
+    // TODO check uri and baseUri diff with server
     let entityModel: EntityModel = {
       uri: item['uri'],
-      info: item['docs']['info'],
+      info: item['info'],
       definitions: []
     }
 
-    let definitions = item['docs']['definitions'];
+    let definitions = item['definitions'];
 
     for ( let definition in definitions ) {
 
@@ -49,27 +50,27 @@ export const entityFromJSON = (data: any) => {
 
       entityDefinition.name = definition;
 
-      for (let entityKeys in item['docs']['definitions'][definition]) {
+      for (let entityKeys in item['definitions'][definition]) {
         if (entityKeys === 'properties') {
-          for (let properties in item['docs']['definitions'][definition][entityKeys]) {
+          for (let properties in item['definitions'][definition][entityKeys]) {
             let property: Property = {
               name: '',
               datatype: '',
               collation: ''
             }
             property.name = properties;
-            property.collation = item['docs']['definitions'][definition][entityKeys][properties]['collation'];
-            property.datatype = item['docs']['definitions'][definition][entityKeys][properties]['datatype'];
+            property.collation = item['definitions'][definition][entityKeys][properties]['collation'];
+            property.datatype = item['definitions'][definition][entityKeys][properties]['datatype'];
             entityProperties.push(property);
           }
         } else {
-          entityDefinition[entityKeys] = item['docs']['definitions'][definition][entityKeys];
+          entityDefinition[entityKeys] = item['definitions'][definition][entityKeys];
         }
         entityDefinition.properties = entityProperties;
       }
       entityModel.definitions.push(entityDefinition);
     }
     entityArray.push(entityModel);
-  }
+  });
   return entityArray;
 }

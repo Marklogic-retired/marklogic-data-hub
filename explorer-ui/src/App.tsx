@@ -29,7 +29,7 @@ const App: React.FC = () => {
     <>
       <Header/>
       <Switch>
-        <Route path="/" exact component={Home}/>
+        <Route path="/" exact render={() => <Home/>}/>
         <PrivateRoute path="/view" exact component={View} />
         <PrivateRoute path="/browse" exact component={Browse}/>
         <PrivateRoute path="/detail" exact component={Detail}/>
