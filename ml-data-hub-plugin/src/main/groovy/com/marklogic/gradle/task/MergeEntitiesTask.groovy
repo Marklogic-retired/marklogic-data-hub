@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-class MergeDocs extends HubTask  {
+class MergeEntitiesTask extends HubTask  {
     @TaskAction
     void mergeDocs() {
         def propName = "mergeURIs"
