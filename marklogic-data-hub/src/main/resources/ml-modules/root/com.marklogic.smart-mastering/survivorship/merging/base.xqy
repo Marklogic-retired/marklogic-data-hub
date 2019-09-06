@@ -137,10 +137,8 @@ declare function merge-impl:build-merging-map(
  :)
 declare function merge-impl:all-merged($uris as xs:string*) as xs:boolean
 {
-  let $locks := xdmp:transaction-locks()/host:write/fn:string()
-  return
-    every $uri in $uris
-    satisfies $uri = $locks
+  every $uri in $uris
+  satisfies merge-impl:is-uri-locked($uri)
 };
 
 declare function merge-impl:build-merge-uri($id as xs:string, $format as xs:string)
@@ -2284,49 +2282,42 @@ declare function merge-impl:NCName-compatible-reverse($value as xs:string)
 
 (: Prefix for locking to identify the task being done on the URI :)
 declare variable $lock-task-prefix as xs:string := "sm-merging:";
+declare variable $locked-uris-map as map:map := map:map();
+
+declare function merge-impl:locked-uris() {
+  if (map:contains($locked-uris-map, "runAlready")) then
+    map:get($locked-uris-map, "lockedURIs")
+  else
+    let $locked-uris := (
+      map:get($locked-uris-map, "lockedURIs"),
+      for $host-status in xdmp:host-status(xdmp:hosts())
+      let $host-id := $host-status/host:host-id
+      for $transaction-id in $host-status/host:transactions/host:transaction/host:transaction-id
+      (: We only care about locks by mastering. We'll still need to wait on outside transactions. :)
+      return xdmp:transaction-locks($host-id, $transaction-id)/host:write[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+    )
+    return (
+      map:put($locked-uris-map, "runAlready", fn:true()),
+      map:put($locked-uris-map, "lockedURIs", $locked-uris),
+      $locked-uris
+    )
+};
 
 declare function merge-impl:filter-out-locked-uris($uris) {
-  $uris
-(: Below is experimental code for identifying if a $URI is locked by another process. :)
-(:  try {
-    let $spawn-options := map:new((
-      map:entry('update', 'true'),
-      map:entry('result', fn:true()),
-      map:entry('priority', 'higher'),
-      map:entry('timeLimit', 2)
-    ))
-    for $uri in $uris
-    let $task-uri := $lock-task-prefix || $uri
-    return xdmp:spawn-function(function() {
-      if (fn:not(merge-impl:is-uri-locked($uri))) then
-        $uri
-      else
-        ()
-    },$spawn-options)
-  } catch * {
-    $uris
-  }
-:)
+  let $locked-uris := merge-impl:locked-uris()
+  return $uris[fn:not(. = $locked-uris)]
 };
 
 declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
-  try {
-    xdmp:invoke-function(
-      function() {
-        xdmp:set-transaction-time-limit(1),
-        merge-impl:lock-for-update($uri),
-        fn:false()
-      },
-      map:entry('update','true')
-    )
-  } catch * {
-    fn:contains(fn:lower-case($err:description), "time limit")
-  }
+  $uri = merge-impl:locked-uris()
 };
 
 declare function merge-impl:lock-for-update($uri as xs:string) {
-  xdmp:lock-for-update($uri)
+  if (fn:not(merge-impl:is-uri-locked($uri))) then
+    map:put($locked-uris-map, "lockedURIs", (map:get($locked-uris-map, "lockedURIs"),$uri))
+  else (),
+  (: This is to tell transactions outside mastering we are working with this document :)
+  xdmp:lock-for-update($uri),
   (: Below is to identify locks specific to mastering  :)
-  (:,
-  xdmp:lock-for-update($lock-task-prefix || $uri):)
+  xdmp:lock-for-update($lock-task-prefix || $uri)
 };

@@ -7,10 +7,10 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 
 declare option xdmp:mapping "false";
 
-xdmp:lock-for-update("/uri1"),
-xdmp:lock-for-update("/uri2"),
-xdmp:lock-for-update("/uri3"),
-xdmp:lock-for-update("/uri4"),
+merge-impl:lock-for-update("/uri1"),
+merge-impl:lock-for-update("/uri2"),
+merge-impl:lock-for-update("/uri3"),
+merge-impl:lock-for-update("/uri4"),
 
 test:assert-true(merge-impl:all-merged(("/uri1"))),
 test:assert-true(merge-impl:all-merged(("/uri1", "/uri2"))),
