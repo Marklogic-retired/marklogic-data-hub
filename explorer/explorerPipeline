@@ -70,7 +70,8 @@ pipeline{
                    }
                    unsuccessful {
                       println("Unqit Tests Failed")
-                      archiveArtifacts artifacts: '/var/opt/MarkLogic/Logs/*'
+                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                       archiveArtifacts artifacts: 'MLLogs/**/*'
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
