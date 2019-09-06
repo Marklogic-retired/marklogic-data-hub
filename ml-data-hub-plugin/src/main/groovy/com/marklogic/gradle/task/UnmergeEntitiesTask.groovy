@@ -4,7 +4,7 @@ package com.marklogic.gradle.task
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-class UnmergeDocs extends HubTask  {
+class UnmergeEntitiesTask extends HubTask  {
     @TaskAction
     void unmergeDocs() {
         def propName = "mergeURI"

@@ -109,10 +109,17 @@ class DataHubPlugin implements Plugin<Project> {
 
         // Hub Mastering tasks
         String masteringGroup = "MarkLogic Data Hub Mastering Tasks"
-        project.task("hubUnmergeDocs", group: masteringGroup, type: UnmergeDocs,
-            description: "Reverses the last set of merges made into the given -PmergeURI=URI. " +
-                "-PretainAuditTrail (default true) determines if provenance for the merge/unmerge is kept. " +
-                "-PblockFutureMerges (default true) ensures that the documents won't be merged together in the next mastering run.")
+        project.task("hubUnmergeEntities", group: masteringGroup, type: UnmergeEntitiesTask,
+            description: "Reverses the last set of merges made into the given merge URI.\n -PmergeURI=URI. \n" +
+                "-PretainAuditTrail=<true|false> (default true) determines if provenance for the merge/unmerge is kept. \n" +
+                "-PblockFutureMerges=<true|false> (default true) ensures that the documents won't be merged together in the next mastering run.")
+
+        project.task("hubMergeEntities", group: masteringGroup, type: MergeEntitiesTask,
+            description: "Manually merge documents together given a set of options.\n -PmergeURIs=<URI1>,...,<URIn> –  the URIs of the documents to merge, separated by commas.\n" +
+                "-PflowName=<true|false> – optional; if true, the merged document will be moved to an archive collection; if false, the merged document will be deleted. Defaults to true.\n" +
+                "-Pstep=<masteringStepNumber> – optional; The number of the mastering step with settings. Defaults to 1.\n" +
+                "-Ppreview=<true|false> – optional; if true, the merge doc is returned in the response body and not committed to the database; if false, the merged document will be saved. Defaults to false.\n" +
+                "-Poptions=<stepOptionOverrides> – optional; Any overrides to the mastering step options. Defaults to {}.")
 
         /**
          * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
