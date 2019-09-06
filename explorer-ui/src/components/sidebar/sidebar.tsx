@@ -9,9 +9,6 @@ const Sidebar = (props) => {
 
   return (
     <div className={styles.sidebarContainer}>
-      <EntityMenu 
-        title="Entities"
-      />
       <Facets 
         title="Entity Properties"
         data={EntityProperties}

@@ -15,6 +15,9 @@ const SearchResult = (props) => {
                     {props.item.uri}
                 </Link>
             </div>
+            <div className={styles.snippet}>
+                {props.item.matches[0]['match-text'][0]}
+            </div>
             <div className={styles.metadata}>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>Created</span>
@@ -32,9 +35,6 @@ const SearchResult = (props) => {
                     <span className={styles.metaLabel}>User</span>
                     <span className={styles.metaValue}>admin</span>
                 </div>
-            </div>
-            <div className={styles.snippet}>
-                {props.item.matches[0]['match-text'][0]}
             </div>
         </div>
     )

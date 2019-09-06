@@ -6,13 +6,18 @@
 	.entityName {
 		color: #999;
 		font-weight: bold;
-		padding-right: 10px;
+		padding-right: 8px;
 	}
 
 }
 
+.snippet {
+	padding-top: 8px;
+}
+
 .metadata {
 	padding-top: 8px;
+	padding-bottom: 6px;
 
 	.metaItem {
 		display: inline-block;
@@ -29,9 +34,4 @@
 		padding-right: 5px;
 	}
 
-}
-
-.snippet {
-	padding-top: 8px;
-	padding-bottom: 10px;
 }
