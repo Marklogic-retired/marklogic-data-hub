@@ -14,7 +14,8 @@ declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("flows", "http://marklogic.com/data-hub/flow"),
   map:entry("entities", "http://marklogic.com/entity-services/models"),
   map:entry("mappings", "http://marklogic.com/data-hub/mappings"),
-  map:entry("step-definitions", "http://marklogic.com/data-hub/step-definition")
+  map:entry("step-definitions", "http://marklogic.com/data-hub/step-definition"),
+  map:entry("content", "raw-content")
 ));
 
 declare function load-artifacts($caller-path as xs:string) as xs:string*

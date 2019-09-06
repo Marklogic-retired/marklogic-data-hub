@@ -99,9 +99,9 @@ function buildMapProperties(mapping, entityModel) {
           </m:for-each>`);
       } else {
         let propLine = `<${prop} xsi:type="xs:${dataType}"><m:val>${sourcedFrom}</m:val></${prop}>`;
-        if (!isRequired) {
-          propLine = `<m:optional>${propLine}</m:optional>`
-        }
+        // If a property is required but not marked as optional, it will always be added, and then entity validation
+        // will not fail because the property exists with an empty string as the value.
+        propLine = `<m:optional>${propLine}</m:optional>`
         propertyLines.push(propLine);
       }
     }

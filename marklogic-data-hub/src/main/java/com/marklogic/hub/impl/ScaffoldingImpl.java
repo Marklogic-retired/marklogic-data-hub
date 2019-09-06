@@ -34,12 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -149,23 +144,14 @@ public class ScaffoldingImpl implements Scaffolding {
         flowsDir.toFile().mkdirs();
         File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
 
-        Map<String, String> customTokens = new HashMap<>();
-        customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
-        customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
-        customTokens.put("%%mlFlowName%%", flowName);
-
         if (flowsDir.toFile().exists()) {
-            String flowSrcFile = "scaffolding/defaultFlow.flow.json";
-            InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
-            try {
-                String fileContents = IOUtils.toString(inputStream);
-                for (String key : customTokens.keySet()) {
+            Map<String, String> customTokens = new HashMap<>();
+            customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
+            customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
+            customTokens.put("%%mlFlowName%%", flowName);
 
-                    String value = customTokens.get(key);
-                    if (value != null) {
-                        fileContents = fileContents.replace(key, value);
-                    }
-                }
+            try {
+                String fileContents = buildFlowFromDefaultFlow(customTokens);
                 FileWriter writer = new FileWriter(flowFile);
                 writer.write(fileContents);
                 writer.close();
@@ -174,6 +160,20 @@ public class ScaffoldingImpl implements Scaffolding {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    protected String buildFlowFromDefaultFlow(Map<String, String> customTokens) throws IOException {
+        String flowSrcFile = "scaffolding/defaultFlow.flow.json";
+        InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
+
+        String fileContents = IOUtils.toString(inputStream);
+        for (String key : customTokens.keySet()) {
+            String value = customTokens.get(key);
+            if (value != null) {
+                fileContents = fileContents.replace(key, value);
+            }
+        }
+        return fileContents;
     }
 
     @Override public void createLegacyFlow(String entityName, String flowName,
@@ -236,19 +236,6 @@ public class ScaffoldingImpl implements Scaffolding {
             fw.close();
         }
         catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Document readLegacyFlowXml(File file) {
-        try {
-            FileInputStream is = new FileInputStream(file);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(is);
-        }
-        catch(IOException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         }
     }

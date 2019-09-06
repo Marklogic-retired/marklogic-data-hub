@@ -50,7 +50,8 @@
         "mapping": {
           "name": "mapping-name",
           "version": 1
-        }
+        },
+        "validateEntity": false
       }
     },
     "3": {
