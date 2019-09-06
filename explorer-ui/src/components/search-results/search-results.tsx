@@ -28,7 +28,7 @@ const SearchResults:React.FC<Props> = (props) => {
                                     <Descriptions.Item label="Source" className={styles.label}>AdvantageFlow</Descriptions.Item>
                                     <Descriptions.Item label="File Type" className={styles.label}>{item.format}</Descriptions.Item>
                                     <Descriptions.Item label="User" className={styles.label}>admin</Descriptions.Item>
-                                    <Descriptions.Item span={4}>{item.matches[0]['match-text'][0]}</Descriptions.Item>
+                                    <Descriptions.Item span={2}>{item.matches[0]['match-text'][0].length > 1 && item.matches[0]['match-text'][0]}</Descriptions.Item>
                                 </Descriptions>
                             }
                         />
