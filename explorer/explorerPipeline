@@ -30,6 +30,7 @@ pipeline{
                       def email;
                     if(env.CHANGE_AUTHOR){
                     	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	email=author;
                     }else{
                     email=Email
                     }
@@ -41,7 +42,7 @@ pipeline{
 		stage('Unit-Tests'){
 		agent { label 'explorerLinux'}
 			steps{
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','10.0-1'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/explorer;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap;./gradlew explorer:test || true;'
 				junit '**/TEST-*.xml'
@@ -64,18 +65,20 @@ pipeline{
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
                     }else{
                     	email=Email
+                    	email=author;
                     }
                     sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the Unit Tests Passed on $BRANCH_NAME ',false,'Unit Tests for  $BRANCH_NAME Passed'
                     }
                    }
                    unsuccessful {
-                      println("Unqit Tests Failed")
+                      println("Unit Tests Failed")
                       sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
                        archiveArtifacts artifacts: 'MLLogs/**/*'
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
                     	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	email=author;
                     }else{
                     email=Email
                     }
