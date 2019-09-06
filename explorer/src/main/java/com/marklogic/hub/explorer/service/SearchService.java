@@ -42,24 +42,23 @@ public class SearchService {
         }
 
         // Filtering by facets
-        if (searchQuery.getFacets() != null) {
-            searchQuery.getFacets().forEach((facetType, facetValues) -> {
-                StructuredQueryDefinition facetDef = null;
-                facetDef = facetType.equals("Collection") ? queryBuilder.collectionConstraint(facetType,
-                    facetValues.toArray(new String[0])) : queryBuilder.rangeConstraint(facetType,
-                    StructuredQueryBuilder.Operator.EQ, facetValues.toArray(new String[0]));
+        searchQuery.getFacets().forEach((facetType, facetValues) -> {
+            StructuredQueryDefinition facetDef = null;
+            facetDef = facetType.equals("Collection") ?
+                queryBuilder.collectionConstraint(facetType, facetValues.toArray(new String[0])) :
+                queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
+                    facetValues.toArray(new String[0]));
 
-                if (facetDef != null) {
-                    queries.add(facetDef);
-                }
-            });
-        }
+            if (facetDef != null) {
+                queries.add(facetDef);
+            }
+        });
 
         // And between all the queries
         StructuredQueryDefinition finalQueryDef = queryBuilder.and(queries.toArray(new StructuredQueryDefinition[0]));
 
         // Setting search string if provided by user
-        if(StringUtils.isNotEmpty(searchQuery.getQuery())) {
+        if (StringUtils.isNotEmpty(searchQuery.getQuery())) {
             finalQueryDef.setCriteria(searchQuery.getQuery());
         }
 
