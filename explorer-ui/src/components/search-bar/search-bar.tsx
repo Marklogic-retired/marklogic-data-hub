@@ -28,7 +28,7 @@ const SearchBar = ({ searchCallback }) => {
                     placeholder="Type search text"
                     enterButton="Search"
                     size="large"
-                    onSearch={value => console.log(value)}
+                    onSearch={value => searchCallback(value)}
                 />
             </div>
         </div>
