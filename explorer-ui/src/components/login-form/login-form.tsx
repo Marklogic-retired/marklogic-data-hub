@@ -7,7 +7,9 @@ import { AuthContext } from '../../util/auth-context';
 import useForm from '../../hooks/use-form';
 
 interface Props extends RouteComponentProps<any> {}
+
 const { Text } = Typography;
+
 const LoginForm: React.FC<Props> = ({ history }) => {
 
   const { userAuthenticated } = useContext(AuthContext);
