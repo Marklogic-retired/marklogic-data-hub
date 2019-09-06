@@ -1,5 +1,7 @@
 package com.marklogic.hub.explorer.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ public class SearchQuery {
     }
 
     public void setEntityName(List<String> entityNames) {
-        this.entityNames = entityNames;
+        this.entityNames = (entityNames != null) ? entityNames : new ArrayList<>();
     }
 
     public void setStart(long start) {
@@ -47,6 +49,6 @@ public class SearchQuery {
     }
 
     public void setFacets(Map<String, List<String>> facets) {
-        this.facets = facets;
+        this.facets = (facets != null) ? facets : new HashMap<>();
     }
 }
