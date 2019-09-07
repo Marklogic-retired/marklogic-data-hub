@@ -11,6 +11,7 @@ const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
 
   const [data, setData] = useState();
+  const [facets, setFacets] = useState();
   const [searchUrl, setSearchUrl] = useState({ url: `/v1/search?format=json&database=data-hub-FINAL`, method: 'get' });
   const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10 });
   const [isLoading, setIsLoading] = useState(false);
@@ -27,9 +28,10 @@ const Browse: React.FC = () => {
       // }
     });
 
-    setData(result.data.results);
-    setTotalDocuments(result.data.total);
     console.log('fetch flows', result.data);
+    setData(result.data.results);
+    setFacets(result.data.facets);
+    setTotalDocuments(result.data.total);
     setIsLoading(false);
   };
 
@@ -51,7 +53,7 @@ const Browse: React.FC = () => {
   return (
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
-        <Sidebar />
+        <Sidebar facets={facets} />
       </Sider>
       <Content style={{ background: '#fff', padding: '24px' }}>
         <SearchBar searchCallback={handleSearch} />

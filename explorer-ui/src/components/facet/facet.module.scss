@@ -57,15 +57,25 @@
 		}
 	}
 
+	.checkContainer {
+		display: inline-block;
+		width: 200px;
+		padding: 0 0 0 5px;
+	}
+
 	.value {
 		display: inline-block;
-		width: 180px;
-		padding: 0 0 0 5px;
+		position: relative;
+		top: 5px;
+		width: 162px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.count {
 		display: inline-block;
-		width: 70px;
+		width: 50px;
 		text-align: right;
 		padding: 0 5px 0 0;
 		color: #999;

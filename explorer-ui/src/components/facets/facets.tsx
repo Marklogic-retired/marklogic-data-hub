@@ -5,14 +5,17 @@ import styles from './facets.module.scss';
 
 const Facets = (props) => {
 
-  const keys = Object.keys(props.data.facets);
-  const facets = keys.map((k, i) =>
-    <Facet
-      name={k}
-      data={props.data.facets[k]}
-      key={i}
-    />
-  );
+  let facets: any = [];
+
+  if (props.data) {
+    facets = Object.keys(props.data).map((k, i) =>
+      <Facet
+        name={k}
+        data={props.data[k]}
+        key={i}
+      />
+    );
+  }
 
   const [show, toggleShow] = useState(true);
 

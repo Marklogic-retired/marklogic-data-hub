@@ -25,12 +25,14 @@ const Facet = (props) => {
 
   const values = props.data.facetValues.slice(0, numToShow).map((f, i) =>
     <div key={i}>
-      <div className={styles.value}>
+      <div className={styles.checkContainer}>
         <Checkbox 
           value={f.value}
           onChange={(e) => handleChecked(e)}
           checked={checked.indexOf(f.value) > -1}
-        >{f.value}</Checkbox>
+        >
+          <div title={f.value} className={styles.value}>{f.value}</div>
+        </Checkbox>
       </div>
       <div className={styles.count}>{f.count}</div>
     </div>

@@ -1,21 +1,20 @@
 import React from 'react';
-import EntityMenu from '../entity-menu/entity-menu';
 import Facets from '../facets/facets';
-import EntityProperties from '../../assets/mock-data/entity-properties';
-import HubProperties from '../../assets/mock-data/hub-properties';
 import styles from './sidebar.module.scss';
 
 const Sidebar = (props) => {
+
+  // TODO sort entity vs. hub properties and pass accordingly
 
   return (
     <div className={styles.sidebarContainer}>
       <Facets 
         title="Entity Properties"
-        data={EntityProperties}
+        data={props.facets}
       />
       <Facets 
         title="Hub Properties"
-        data={HubProperties}
+        data={props.facets}
       />
     </div>
   );
