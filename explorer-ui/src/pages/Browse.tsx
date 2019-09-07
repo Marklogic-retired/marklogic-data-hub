@@ -44,8 +44,14 @@ const Browse: React.FC = () => {
   
   const handlePageChange = (pageNumber: number) => {
     console.log('The user selected page ' + pageNumber);
-    setSearchParams({ ...searchParams, start: pageNumber});
+    setSearchParams({ ...searchParams, start: pageNumber });
     setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&start=${searchParams.start}` });
+  }
+
+  const handlePageLengthChange = (current: number, pageSize: number) => {
+    console.log('The user changed page length ' + pageSize);
+    setSearchParams({ ...searchParams, pageLength: pageSize});
+    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&pageLength=${searchParams.pageLength}` });
   }
 
   return (
@@ -60,7 +66,13 @@ const Browse: React.FC = () => {
           : 
           <>
             <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
-            <SearchPagination total={totalDocuments} onPageChange={handlePageChange} currentPage={searchParams.start}/>
+            <SearchPagination 
+              total={totalDocuments} 
+              onPageChange={handlePageChange} 
+              onPageLengthChange={handlePageLengthChange} 
+              currentPage={searchParams.start}
+              pageLength={searchParams.pageLength} 
+            />
             <br />
             <br />
             <SearchResults data={data} />
