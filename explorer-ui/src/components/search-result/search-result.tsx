@@ -16,7 +16,10 @@ const SearchResult = (props) => {
                 </Link>
             </div>
             <div className={styles.snippet}>
-                {props.item.matches[0]['match-text'][0].length > 1 && props.item.matches[0]['match-text'][0]}
+                { props.item.matches // TODO return snippets in results
+                  ? props.item.matches[0]['match-text'][0].length > 1 && props.item.matches[0]['match-text'][0]
+                  : ''
+                }
             </div>
             <div className={styles.metadata}>
                 <div className={styles.metaItem}>

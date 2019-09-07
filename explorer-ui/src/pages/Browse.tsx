@@ -12,42 +12,48 @@ const Browse: React.FC = () => {
 
   const [data, setData] = useState();
   const [facets, setFacets] = useState();
-  const [searchUrl, setSearchUrl] = useState({ url: `/v1/search?format=json&database=data-hub-FINAL`, method: 'get' });
+  const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search?format=json&database=data-hub-FINAL`, method: 'post' });
+  const [searchQuery, setSearchQuery] = useState();
   const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10 });
   const [isLoading, setIsLoading] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
 
-  const fetchData = async (method) => {
-    method = searchUrl.method
-    setIsLoading(true);
-    const result = await axios({
-      method: method,
-      url: searchUrl.url,
-      // data: {
-      //   pageLength: searchData.pageLength
-      // }
-    });
-
-    console.log('fetch flows', result.data);
-    setData(result.data.results);
-    setFacets(result.data.facets);
-    setTotalDocuments(result.data.total);
-    setIsLoading(false);
-  };
+  const getSearchResults = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios({
+        method: searchUrl.method,
+        url: searchUrl.url,
+        data: {
+          query: searchQuery,
+          entityNames: [], // TODO handle entity selection
+          start: searchParams.start,
+          pageLength: searchParams.pageLength,
+          facets: {} // TODO handle facet selection
+        }
+      });
+      console.log('response.data', response.data);
+      setData(response.data.results);
+      setFacets(response.data.facets);
+      setTotalDocuments(response.data.total);
+      setIsLoading(false);
+    } catch (error) {
+      console.log('error', error.response);
+    }
+  }
 
   useEffect(() => {
-    fetchData(searchUrl.method);
-  }, [searchUrl, searchParams]);
+    getSearchResults();
+  }, [searchQuery, searchParams]);
 
   const handleSearch = (searchString: string) => {
     console.log('The user typed string is ' + searchString);
-    setSearchUrl({ ...searchUrl, url: `/v1/search?q=${searchString}&format=json&database=data-hub-FINAL&pageLength=${searchParams.pageLength}`, method: 'post' });
+    setSearchQuery(searchString);
   }
   
   const handlePageChange = (pageNumber: number) => {
     console.log('The user selected page ' + pageNumber);
     setSearchParams({ ...searchParams, start: pageNumber});
-    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&start=${searchParams.start}` });
   }
 
   return (
