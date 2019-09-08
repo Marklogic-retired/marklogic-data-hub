@@ -45,13 +45,13 @@ const Browse: React.FC = () => {
   const handlePageChange = (pageNumber: number) => {
     console.log('The user selected page ' + pageNumber);
     setSearchParams({ ...searchParams, start: pageNumber });
-    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&start=${searchParams.start}` });
+    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&start=${pageNumber}` });
   }
 
   const handlePageLengthChange = (current: number, pageSize: number) => {
     console.log('The user changed page length ' + pageSize);
     setSearchParams({ ...searchParams, pageLength: pageSize});
-    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&pageLength=${searchParams.pageLength}` });
+    setSearchUrl({ ...searchUrl, url: `/v1/search?format=json&database=data-hub-FINAL&pageLength=${pageSize}` });
   }
 
   return (
