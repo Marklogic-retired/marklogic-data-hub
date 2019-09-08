@@ -9,15 +9,28 @@ const Facet = (props) => {
   const [more, toggleMore] = useState(props.data.facetValues.length > limit);
   const [checked, setChecked] = useState<string[]>([]);
 
-  const handleChecked = (e) => {
+  const handleClick = (e) => {
     let index = checked.indexOf(e.target.value)
+    // Selection
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
-    } else if (index !== -1){
+      // pass facet state to parent
+      props.onFacetClick(props.name, [...checked, e.target.value]);
+    } 
+    // Deselection
+    else if (index !== -1){
       let newChecked = [...checked];
       newChecked.splice(index, 1);
       setChecked(newChecked);
+      // pass facet state to parent
+      props.onFacetClick(props.name, newChecked);
     }
+  }
+
+  const handleClear = () => {
+    setChecked([]);
+    // pass facet state to parent
+    props.onFacetClick(props.name, []);
   }
 
   const numToShow = (props.data.facetValues.length > limit && more) ? 
@@ -28,7 +41,7 @@ const Facet = (props) => {
       <div className={styles.checkContainer}>
         <Checkbox 
           value={f.value}
-          onChange={(e) => handleChecked(e)}
+          onChange={(e) => handleClick(e)}
           checked={checked.indexOf(f.value) > -1}
         >
           <div title={f.value} className={styles.value}>{f.value}</div>
@@ -46,7 +59,7 @@ const Facet = (props) => {
           <div className={styles.selected}>{checked.length} selected</div>
           <div 
             className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)} 
-            onClick={() => setChecked([])}
+            onClick={() => handleClear()}
           >Clear</div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)}>
             <Icon style={{fontSize: '12px'}} type={(show) ? 'up' : 'down'} />

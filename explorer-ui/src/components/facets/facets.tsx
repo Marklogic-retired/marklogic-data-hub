@@ -5,6 +5,10 @@ import styles from './facets.module.scss';
 
 const Facets = (props) => {
 
+  const handleFacetClick = (name, vals) => {
+    props.onFacetClick(name, vals);
+  }
+
   let facets: any = [];
 
   if (props.data) {
@@ -13,6 +17,7 @@ const Facets = (props) => {
         name={k}
         data={props.data[k]}
         key={i}
+        onFacetClick={handleFacetClick}
       />
     );
   }

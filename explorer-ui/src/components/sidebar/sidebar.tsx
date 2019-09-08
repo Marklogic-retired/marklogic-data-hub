@@ -4,6 +4,10 @@ import styles from './sidebar.module.scss';
 
 const Sidebar = (props) => {
 
+  const handleFacetClick = (name, vals) => {
+    props.onFacetClick(name, vals);
+  }
+
   let hubFacets = {};
   let entityFacets = {};
 
@@ -30,10 +34,12 @@ const Sidebar = (props) => {
       <Facets 
         title="Entity Properties"
         data={entityFacets}
+        onFacetClick={handleFacetClick}
       />
       <Facets 
         title="Hub Properties"
         data={hubFacets}
+        onFacetClick={handleFacetClick}
       />
     </div>
   );
