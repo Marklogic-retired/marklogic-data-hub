@@ -4,17 +4,36 @@ import styles from './sidebar.module.scss';
 
 const Sidebar = (props) => {
 
-  // TODO sort entity vs. hub properties and pass accordingly
+  let hubFacets = {};
+  let entityFacets = {};
+
+  // Facets to display under Hub Properties
+  // https://project.marklogic.com/jira/browse/DHFPROD-3042
+  const hubKeys = [
+    'Collection', 'flowName', 'stepName', 
+    'jobID', 'createdOn', 'createdBy'
+  ];
+
+  if (props.facets) {
+    // Assume if not hub facet, then entity facet
+    Object.keys(props.facets).forEach(prop => {
+      if (hubKeys.includes(prop)) {
+        hubFacets[prop] = props.facets[prop];
+      } else {
+        entityFacets[prop] = props.facets[prop];
+      }
+    })
+  }
 
   return (
     <div className={styles.sidebarContainer}>
       <Facets 
         title="Entity Properties"
-        data={props.facets}
+        data={entityFacets}
       />
       <Facets 
         title="Hub Properties"
-        data={props.facets}
+        data={hubFacets}
       />
     </div>
   );
