@@ -177,8 +177,14 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     void deleteMappingStepThatIsNotReferencedByAnyOtherFlows() throws IOException {
         final String mappingName = "testMapping";
 
+        Path entityDir = projectDir.resolve("entities");
+        String entityFilename = "test-entity" + EntityManagerService.ENTITY_FILE_EXTENSION;
+        FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
+
         // Create a mapping with 2 versions
         MappingModel mappingModel = mappingManagerService.getMapping(mappingName, true);
+        mappingModel.setTargetEntityType("http://www.marklogic.com/test-entity-0.0.1/test-entity");
+        mappingModel.setProperties(null);
         mappingManagerService.saveMapping(mappingName, mappingModel.toJson());
         mappingModel.setDescription("This is the second version");
         mappingManagerService.saveMapping(mappingName, mappingModel.toJson());
@@ -196,6 +202,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
         // Install artifacts so we can verify that the mappings are deleted
         installHubArtifacts(hubConfig, true);
+        installUserModules(hubConfig, true);
 
         // Verify the mappings exist
         GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();
