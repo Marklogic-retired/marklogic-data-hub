@@ -37,7 +37,7 @@ pipeline{
 		stage('Unit-Tests'){
 		agent { label 'explorerLinux'}
 			steps{
-				sh 'cd $WORKSPACE/explorer-ui;npm install; CI=true npm run test | true'
+				sh 'cd $WORKSPACE/explorer-ui/explorer-ui;npm install; CI=true npm run test | true'
 				junit '**/TEST-*.xml'
 				script{
 				if(env.CHANGE_TITLE){
