@@ -29,7 +29,7 @@ pipeline{
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().toLowerCase()
+                    	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
                     	email=author;
                     }else{
                     email=Email
@@ -61,8 +61,8 @@ pipeline{
                     println("Unit Tests Completed")
                     script{
                     def email;
-                    if(env.CHANGE_AUTHOR){
-                    def author=env.CHANGE_AUTHOR.toString().toLowerCase()
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
                     email=author;
                     }else{
                     	email=Email
@@ -77,8 +77,8 @@ pipeline{
                        archiveArtifacts artifacts: 'MLLogs/**/*'
                       script{
                       def email;
-                    if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().toLowerCase()
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
                     	email=author;
                     }else{
                     email=Email
