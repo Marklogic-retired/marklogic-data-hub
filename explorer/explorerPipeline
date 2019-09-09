@@ -13,7 +13,7 @@ pipeline{
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
 	parameters{
-	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,rvudutal@marklogic.com,ayuwono@marklogic.com', description: 'Who should I say send the email to?')
+	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,rvudutal@marklogic.com,'dbrown@marklogic.com,'hliu@marklogic.com','asonvane@marklogic.com'', description: 'Who should I say send the email to?')
 	}
 	stages{
 		stage('Build-explorer'){
@@ -29,7 +29,7 @@ pipeline{
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	def author=env.CHANGE_AUTHOR.toString().toLowerCase()
                     	email=author;
                     }else{
                     email=Email
@@ -62,7 +62,7 @@ pipeline{
                     script{
                     def email;
                     if(env.CHANGE_AUTHOR){
-                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    def author=env.CHANGE_AUTHOR.toString().toLowerCase()
                     email=author;
                     }else{
                     	email=Email
@@ -78,7 +78,7 @@ pipeline{
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	def author=env.CHANGE_AUTHOR.toString().toLowerCase()
                     	email=author;
                     }else{
                     email=Email
