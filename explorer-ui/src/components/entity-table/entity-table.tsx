@@ -4,6 +4,7 @@ import { Table } from 'antd';
 
 type Props = {
   entities: any[];
+  facetValues: any[];
 }
 
 const EntityTable:React.FC<Props> = (props) => {
@@ -17,8 +18,11 @@ const EntityTable:React.FC<Props> = (props) => {
 
     let properties = entity.definition.properties.map(property => {
       let indexes: string[] = [];
-      if (entity.definition.elementRangeIndex.includes(property.name)){
+      if (entity.definition.primaryKey.includes(property.name)){
         indexes.push('Primary Key');
+      }
+      if (entity.definition.elementRangeIndex.includes(property.name)){
+        indexes.push('Element Range Index');
       }
       if (entity.definition.pii.includes(property.name)){
         indexes.push('pii');
@@ -75,10 +79,18 @@ const EntityTable:React.FC<Props> = (props) => {
   
   const realData = props.entities.map((entity, index) => {
     const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
-    // TODO add document count and created date
+    // TODO add created date
+    let documentCount = 0;
+
+    if (props.facetValues.length) {
+      const name = entity.info.title.toLowerCase();
+      const collectionObject = props.facetValues.find(collection => collection.name === name + '-collection');
+      documentCount = collectionObject.count;
+    }
+
     let parsedEntity = {
       name: entity.info.title,
-      documents: 123, 
+      documents: documentCount, 
       created: '2019-07-30T16:08:30',
       definition: entityDefinition
     }

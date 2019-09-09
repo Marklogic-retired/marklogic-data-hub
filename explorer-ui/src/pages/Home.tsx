@@ -23,7 +23,7 @@ const Home: React.FC = () => {
             <div className={styles.policy}>
               <Text type="secondary">
                 We're committed to processing your personal data in{<br />}
-                compliance with our <a href="https://www.marklogic.com/privacy/" target="_blank">Privacy Statement</a> while providing{<br />}
+                compliance with our <a href="https://www.marklogic.com/privacy/" rel="noopener noreferrer" target="_blank">Privacy Statement</a> while providing{<br />}
                 you with transparent notice about our practices.</Text>
             </div>
           </Col>
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
       </Content>
       <Footer className={styles.footer}>
         <div className={styles.copyright}>
-          <Text type="secondary">Copyright @ 2019 MarkLogic Corporation. All Rights Reserved | <a href="https://s3-us-west-2.amazonaws.com/marklogic-services-resources/legal/ServiceTerms.pdf" target="_blank">Terms and Conditions</a> | <a href="https://www.marklogic.com/privacy/" target="_blank">Policies</a></Text>
+          <Text type="secondary">Copyright @ 2019 MarkLogic Corporation. All Rights Reserved | <a href="https://s3-us-west-2.amazonaws.com/marklogic-services-resources/legal/ServiceTerms.pdf" rel="noopener noreferrer" target="_blank">Terms and Conditions</a> | <a href="https://www.marklogic.com/privacy/" rel="noopener noreferrer" target="_blank">Policies</a></Text>
         </div>
       </Footer>
     </Layout>
