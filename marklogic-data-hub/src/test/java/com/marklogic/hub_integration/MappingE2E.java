@@ -246,19 +246,19 @@ public class MappingE2E extends HubTestBase {
                 createMapping(mapName, sourceContext.getValue(), targetEntity , property.getValue().split(","));
         	}
         }
+
         // Corner/ Invalid cases
         createMapping("nonExistentPath", "//test1/validtest/","http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
         createMapping("inCorrectPath", "//invalidtestns/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
         createMapping("empty-sourceContext", null,"http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
 
         createMapping("default-without-sourcedFrom", "/","http://marklogic.com/example/Schema-0.0.1/e2eentity",  "empid,fullname,monthlysalary".split(","));
-        createMapping("default-no-properties", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", new String[1]);
-        createMapping("default-diffCanonicalProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity","empid,fullname,monthlysalary".split(","));
+        createMapping("default-no-properties", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity");
 
-        createMapping("diff-entity-validPath", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/fakeentity", "empid,fullname,monthlysalary".split(","));
+        createMapping("diff-entity-validPath", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", "empid,fullname,monthlysalary".split(","));
         //Create another version of existing mapping
         createMapping("validPath1-threeProp", "//*:validtest/*:","http://marklogic.com/example/Schema-0.0.1/e2eentity", true, "empid,fullname,monthlysalary".split(","));
-        allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,default-diffCanonicalProp,diff-entity-validPath".split(",")));
+        allMappings.addAll(Arrays.asList("nonExistentPath,inCorrectPath,empty-sourceContext,default-without-sourcedFrom,default-no-properties,diff-entity-validPath".split(",")));
 
         installUserModules(getDataHubAdminConfig(), true);
     }
@@ -284,12 +284,6 @@ public class MappingE2E extends HubTestBase {
 		    		mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
 		    		mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
 		    		mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "fakeprop1"));
-		      	}
-		    	//non-existing property in canonical model
-		    	else if(name.contains("default-diffCanonicalProp")) {
-		    		mappingProperties.put("id1", mapper.createObjectNode().put("sourcedFrom", "empid"));
-		    		mappingProperties.put("name1", mapper.createObjectNode().put("sourcedFrom", "fullname"));
-		    		mappingProperties.put("salary1", mapper.createObjectNode().put("sourcedFrom", "monthlysalary"));
 		      	}
 		    	else if(name.contains("without-sourcedFrom")) {
 		    		//do nothing
