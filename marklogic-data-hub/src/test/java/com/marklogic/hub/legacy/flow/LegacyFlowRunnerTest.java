@@ -282,15 +282,12 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         //deploys the entity to final db
         installUserModules(getDataHubAdminConfig(), false);
 
-        ObjectMapper mapper = new ObjectMapper();
         Mapping testMap = Mapping.create("test");
         testMap.setDescription("This is a test.");
         testMap.setSourceContext("/");
-        testMap.setTargetEntityType(ENTITY);
-        HashMap<String, ObjectNode> mappingProperties = new HashMap<>();
-        mappingProperties.put("id", mapper.createObjectNode().put("sourcedFrom", "id"));
-        mappingProperties.put("name", mapper.createObjectNode().put("sourcedFrom", "name"));
-        mappingProperties.put("salary", mapper.createObjectNode().put("sourcedFrom", "salary"));
+        testMap.setTargetEntityType("http://marklogic.com/" + ENTITY + "-0.0.1/" + ENTITY);
+        // We don't need any mapping properties for the purpose of this test
+        testMap.getProperties().clear();
         mappingManager.saveMapping(testMap);
 
         try {
