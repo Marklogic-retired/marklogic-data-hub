@@ -18,9 +18,11 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class GenerateFunctionMetadataCommand extends AbstractCommand {
+
     @Autowired
     private HubConfig hubConfig;
     private Throwable caughtException;
+    private DatabaseClient modulesClient;
 
     public GenerateFunctionMetadataCommand() {
         super();
@@ -28,12 +30,20 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
     }
 
+    public GenerateFunctionMetadataCommand(DatabaseClient modulesClient) {
+        this();
+        this.modulesClient = modulesClient;
+    }
+
     @Override
     public void execute(CommandContext context) {
-        DatabaseClient databaseClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.MODULES));
-        DataMovementManager dataMovementManager = databaseClient.newDataMovementManager();
+        if (modulesClient == null) {
+            modulesClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.MODULES));
+        }
 
-        StructuredQueryBuilder sb = databaseClient.newQueryManager().newStructuredQueryBuilder();
+        DataMovementManager dataMovementManager = modulesClient.newDataMovementManager();
+
+        StructuredQueryBuilder sb = modulesClient.newQueryManager().newStructuredQueryBuilder();
 
 
         ServerTransform serverTransform = new ServerTransform("ml:generateFunctionMetadata");
