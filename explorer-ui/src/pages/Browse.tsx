@@ -39,7 +39,7 @@ const Browse: React.FC = () => {
 
   const handleSearch = (searchString: string) => {
     console.log('The user typed string is ' + searchString);
-    setSearchUrl({ ...searchUrl, url: `/v1/search?q=${searchString}&format=json&database=data-hub-FINAL&pageLength=${searchParams.pageLength}`, method: 'post' });
+    setSearchUrl({ ...searchUrl, url: `/v1/search?q=${searchString}&format=json&database=data-hub-FINAL`, method: 'post' });
   }
   
   const handlePageChange = (pageNumber: number) => {
@@ -76,6 +76,15 @@ const Browse: React.FC = () => {
             <br />
             <br />
             <SearchResults data={data} />
+            <br />
+            <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
+            <SearchPagination 
+              total={totalDocuments} 
+              onPageChange={handlePageChange} 
+              onPageLengthChange={handlePageLengthChange} 
+              currentPage={searchParams.start}
+              pageLength={searchParams.pageLength} 
+            />
           </>
         }
       </Content>
