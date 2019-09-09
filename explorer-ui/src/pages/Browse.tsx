@@ -59,7 +59,7 @@ const Browse: React.FC = () => {
 
   const handlePageLengthChange = (current: number, pageSize: number) => {
     console.log('The user changed page length ' + pageSize);
-    setSearchParams({ ...searchParams, pageLength: pageSize});
+    setSearchParams({ ...searchParams, pageLength: pageSize, start: 1});
   }
 
   const handleFacetClick = (name, vals) => {
