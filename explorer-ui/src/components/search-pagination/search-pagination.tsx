@@ -8,6 +8,10 @@ const SearchPagination = (props) => {
         props.onPageChange(pageNumber);
     }
 
+    const onPageSizeChange = (current, pageSize) => {
+        props.onPageLengthChange(current, pageSize);
+    }
+
     return (
         <div className={styles.searchPaginationContainer}>
             <Pagination 
@@ -16,7 +20,9 @@ const SearchPagination = (props) => {
             	total={props.total} 
                 showSizeChanger
                 onChange={onPageChange}
+                onShowSizeChange={onPageSizeChange}
                 current={props.currentPage}
+                pageSize={props.pageLength}
             />
         </div>
     )

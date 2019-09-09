@@ -56,6 +56,11 @@ const Browse: React.FC = () => {
     setSearchParams({ ...searchParams, start: pageNumber});
   }
 
+  const handlePageLengthChange = (current: number, pageSize: number) => {
+    console.log('The user changed page length ' + pageSize);
+    setSearchParams({ ...searchParams, pageLength: pageSize});
+  }
+
   return (
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
@@ -68,10 +73,25 @@ const Browse: React.FC = () => {
           : 
           <>
             <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
-            <SearchPagination total={totalDocuments} onPageChange={handlePageChange} currentPage={searchParams.start}/>
+            <SearchPagination 
+              total={totalDocuments} 
+              onPageChange={handlePageChange} 
+              onPageLengthChange={handlePageLengthChange} 
+              currentPage={searchParams.start}
+              pageLength={searchParams.pageLength} 
+            />
             <br />
             <br />
             <SearchResults data={data} />
+            <br />
+            <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
+            <SearchPagination 
+              total={totalDocuments} 
+              onPageChange={handlePageChange} 
+              onPageLengthChange={handlePageLengthChange} 
+              currentPage={searchParams.start}
+              pageLength={searchParams.pageLength} 
+            />
           </>
         }
       </Content>
