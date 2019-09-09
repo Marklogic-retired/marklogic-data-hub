@@ -86,22 +86,13 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("blockFutureMerges", blockFutureMerges.toString());
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().delete(params, null);
+            StringHandle handle = new StringHandle();
+            this.getServices().delete(params, handle);
             try {
-                if (resultItr == null || !resultItr.hasNext()) {
-                    resp = null;
-                } else {
-                    ResourceServices.ServiceResult res = resultItr.next();
-                    StringHandle handle = new StringHandle();
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    resp = objectMapper.readValue(res.getContent(handle).get(), UnmergeResponse.class);
-                }
+                ObjectMapper objectMapper = new ObjectMapper();
+                resp = objectMapper.readValue(handle.get(), UnmergeResponse.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
-            } finally {
-                if (resultItr != null) {
-                    resultItr.close();
-                }
             }
             return resp;
         }

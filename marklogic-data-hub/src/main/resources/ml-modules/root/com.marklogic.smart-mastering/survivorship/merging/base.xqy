@@ -2293,8 +2293,12 @@ declare function merge-impl:locked-uris() {
       for $host-status in xdmp:host-status(xdmp:hosts())
       let $host-id := $host-status/host:host-id
       for $transaction-id in $host-status/host:transactions/host:transaction/host:transaction-id
-      (: We only care about locks by mastering. We'll still need to wait on outside transactions. :)
-      return xdmp:transaction-locks($host-id, $transaction-id)/host:write[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+      return
+        (: Surround in try/catch since transaction could have closed since status or call to other host could timeout :)
+        try {
+          (: We only care about locks by mastering. We'll still need to wait on outside transactions. :)
+          xdmp:transaction-locks($host-id, $transaction-id)/host:write[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+        } catch ($e) {()}
     )
     return (
       map:put($locked-uris-map, "runAlready", fn:true()),
@@ -2313,7 +2317,7 @@ declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
 };
 
 declare function merge-impl:lock-for-update($uri as xs:string) {
-  if (fn:not(merge-impl:is-uri-locked($uri))) then
+  if (fn:not(map:get($locked-uris-map, "lockedURIs") = $uri)) then
     map:put($locked-uris-map, "lockedURIs", (map:get($locked-uris-map, "lockedURIs"),$uri))
   else (),
   (: This is to tell transactions outside mastering we are working with this document :)

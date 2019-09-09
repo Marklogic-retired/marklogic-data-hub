@@ -47,6 +47,7 @@ function post(context, params, input) {
   let results = datahub.flow.runFlow(flowName, jobId, content, combinedOptions, stepNumber);
   return {
     'success': results.errorCount === 0,
+    'errors': results.errors,
     'mergedURIs': uris,
     'mergedDocument': results.documents.filter((doc) => !uris.includes(doc.uri))[0]
   };
@@ -73,6 +74,7 @@ function deleteFunction(context, params) {
   let results = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
   return {
     'success': results.errorCount === 0,
+    'errors': results.errors,
     'mergeURIs': mergeURIs,
     'documentsRestored': results.documents.map((doc) => doc.uri).filter((uri) => !mergeURIs.includes(uri))
   };

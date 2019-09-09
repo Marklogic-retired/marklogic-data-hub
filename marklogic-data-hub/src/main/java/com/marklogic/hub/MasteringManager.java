@@ -51,10 +51,11 @@ public interface MasteringManager {
     class UnmergeResponse {
         public List<String> mergeURIs;
         public boolean success;
-        public List<String> restoredURIs;
+        public List<Map<String,Object>> errors;
+        public List<String> documentsRestored;
 
         public String toString() {
-            return String.format("{success: %b, mergeURIs: %s, restoredURIs: %s}", success, mergeURIs, restoredURIs);
+            return String.format("{success: %b, errors: %s, mergeURIs: %s, documentsRestored: %s}", success, errors, mergeURIs, documentsRestored);
         }
     }
 
@@ -64,10 +65,11 @@ public interface MasteringManager {
     class MergeResponse {
         public List<String> mergedURIs;
         public boolean success;
+        public List<Map<String,Object>> errors;
         public Map<String,Object> mergedDocument;
 
         public String toString() {
-            return String.format("{success: %b, mergedURIs: %s, mergeDocument: %s}", success, mergedURIs, mergedDocument);
+            return String.format("{success: %b, errors: %s, mergedURIs: %s, mergeDocument: %s}", success, errors, mergedURIs, mergedDocument);
         }
     }
 }

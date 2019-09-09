@@ -153,8 +153,8 @@ public class MasterTest extends HubTestBase {
             "cts:document-query('" + singleMergedURI + "')" +
             "))";
         assertTrue(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Merged doc doesn't have the expected collections");
-        masteringManager.unmerge(singleMergedURI, Boolean.TRUE, Boolean.TRUE);
-        assertFalse(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Document didn't get unmerged");
+        MasteringManager.UnmergeResponse unmergeResp = masteringManager.unmerge(singleMergedURI, Boolean.TRUE, Boolean.TRUE);
+        assertFalse(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Document didn't get unmerged: " + unmergeResp.toString());
     }
 
     private String getUriByQuery(String query, String database) {
