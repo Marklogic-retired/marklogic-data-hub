@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
@@ -66,9 +67,33 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
 
     @Test
     public void testMetaDataGeneration() {
-        CommandContext context = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
-        generateFunctionMetadataCommand.execute(context);
-        Assertions.assertFalse(getModulesFile("/custom-modules/mapping-functions/testModule.xml.xslt").isEmpty());
+        String serverVersion = dataHub.getServerVersion();
+        if (serverVersion != null && versionIsCompatibleWithES(serverVersion)) {
+            CommandContext context = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
+            generateFunctionMetadataCommand.execute(context);
+            Assertions.assertFalse(getModulesFile("/custom-modules/mapping-functions/testModule.xml.xslt").isEmpty());
+        }
     }
+
+    //TODO Find a better home for this, since it could be used elsewhere.
+    public boolean versionIsCompatibleWithES(String version) {
+        boolean compatibleWithES = false;
+        int majorVersion = Integer.parseInt(version.replace("^([0-9]+)\\..*$", "$1"));
+        if (majorVersion >= 9) {
+            boolean isNightly = Pattern.matches("^[0-9]+\\.[0-9]+-[0-9]{8}$", version);
+            if (isNightly) {
+                int dateInt = Integer.parseInt(version.replace("^[0-9]+\\.[0-9]+-([0-9]{8})$", "$1"));
+                compatibleWithES = dateInt >= 20190726;
+            } else if (majorVersion == 9) {
+                int minorInt = Integer.parseInt(version.replace("^[0-9]+\\.[0-9]+-([0-9]{2,})$", "$1"));
+                compatibleWithES = minorInt >= 10;
+            } else {
+                compatibleWithES = true;
+            }
+        }
+        return compatibleWithES;
+
+    }
+
 }
 
