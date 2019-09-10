@@ -1,0 +1,69 @@
+{ "info": { 
+    "title": "Order",
+    "description": "Data Hub Example",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/data-hub/"
+  },
+  "definitions": {
+    "Order": {
+      "properties": {
+        "OrderID": { "datatype": "string" },
+        "PurchasedItems": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "CustomerID": { "datatype": "string" },
+        "DateTimeFormat1": { "datatype": "dateTime" },
+        "DateTimeFormat2": { "datatype": "dateTime" },
+        "DateTimeFormat3": { "datatype": "dateTime" },
+        "DateTimeFormat4": { "datatype": "dateTime" },
+        "DateTimeFormat5": { "datatype": "dateTime" },
+        "ShippedDate1": { "datatype": "date" },
+        "ShippedDate2": { "datatype": "date" },
+        "ShippedDate3": { "datatype": "date" },
+        "ShippedDate4": { "datatype": "date" },
+        "ShippedDate5": { "datatype": "date" },
+        "RequiredDate1": { "datatype": "date" },
+        "RequiredDate2": { "datatype": "date" },
+        "RequiredDate3": { "datatype": "date" },
+        "RequiredDate4": { "datatype": "date" },
+        "RequiredDate5": { "datatype": "date" },
+        "MemoryLookup": { "datatype":  "string"},
+        "DocumentLookup": { "datatype":  "string"},
+        "TotalCost": { "datatype": "double" },
+        "Updated": {
+          "datatype": "dateTime"
+        },
+        "Priciest": {
+          "datatype": "double"
+        },
+        "CountofProducts": {
+          "datatype": "int"
+        },
+        "StringJoin": {
+          "datatype": "string"
+        },
+        "StringRemove": {
+          "datatype": "string"
+        }
+      },
+      "required": ["OrderID", "TotalCost"],
+      "primaryKey": "OrderID",
+      "pathRangeIndex": ["OrderID", "TotalCost"]
+    },
+    "Item": {
+      "properties": {
+        "ProductID": { "datatype": "int" },
+        "ProductName": { "datatype": "string" },
+        "Quantity": { "datatype": "string" },
+        "UnitPrice": { "datatype": "double" }
+      },
+      "required": ["ProductID", "ProductName"],
+      "primaryKey": "ProductID",
+      "pathRangeIndex": ["ProductID", "UnitPrice"],
+      "wordLexicon": ["ProductName"]
+    } 
+  }
+}
