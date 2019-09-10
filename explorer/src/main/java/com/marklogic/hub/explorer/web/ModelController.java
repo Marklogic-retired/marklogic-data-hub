@@ -1,5 +1,7 @@
 package com.marklogic.hub.explorer.web;
 
+import java.io.IOException;
+
 import com.marklogic.hub.explorer.service.ModelService;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/v2/models")

@@ -1,5 +1,8 @@
 package com.marklogic.hub.explorer.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
@@ -15,9 +18,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ModelService {
