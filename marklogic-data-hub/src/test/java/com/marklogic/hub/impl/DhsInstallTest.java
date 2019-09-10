@@ -15,10 +15,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,7 +73,10 @@ public class DhsInstallTest extends HubTestBase {
     @Test
     public void knownPropertyValuesShouldBeFixed() {
         // Set these to custom values that a user may use on-premise
-        HubConfigImpl hubConfig = new HubConfigImpl();
+        HubConfigImpl hubConfig = new HubConfigImpl(new MockEnvironment());
+        AppConfig appConfig = new AppConfig();
+        hubConfig.setAppConfig(appConfig, true);
+
         hubConfig.setHttpName(DatabaseKind.STAGING, "my-staging-server");
         hubConfig.setHttpName(DatabaseKind.FINAL, "my-final-server");
         hubConfig.setHttpName(DatabaseKind.JOB, "my-job-server");
@@ -83,6 +88,9 @@ public class DhsInstallTest extends HubTestBase {
         hubConfig.setDbName(DatabaseKind.STAGING_SCHEMAS, "my-staging-schemas");
         hubConfig.setDbName(DatabaseKind.FINAL_TRIGGERS, "my-final-triggers");
         hubConfig.setDbName(DatabaseKind.FINAL_SCHEMAS, "my-final-schemas");
+        // This will set all the tokens based on the custom values above
+        hubConfig.modifyCustomTokensMap(appConfig);
+        assertEquals("my-staging-db", appConfig.getCustomTokens().get("%%mlStagingDbName%%"));
 
         new DataHubImpl().setKnownValuesForDhsInstall(hubConfig);
 
@@ -97,6 +105,20 @@ public class DhsInstallTest extends HubTestBase {
         assertEquals(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS));
         assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
         assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
+
+        // Verify that the tokens are set back to the expected default values
+        Map<String, String> tokens = hubConfig.getAppConfig().getCustomTokens();
+        assertEquals(HubConfig.DEFAULT_STAGING_NAME, tokens.get("%%mlStagingAppserverName%%"));
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, tokens.get("%%mlFinalAppserverName%%"));
+        assertEquals(HubConfig.DEFAULT_JOB_NAME, tokens.get("%%mlJobAppserverName%%"));
+        assertEquals(HubConfig.DEFAULT_STAGING_NAME, tokens.get("%%mlStagingDbName%%"));
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, tokens.get("%%mlFinalDbName%%"));
+        assertEquals(HubConfig.DEFAULT_JOB_NAME, tokens.get("%%mlJobDbName%%"));
+        assertEquals(HubConfig.DEFAULT_MODULES_DB_NAME, tokens.get("%%mlModulesDbName%%"));
+        assertEquals(HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME, tokens.get("%%mlStagingTriggersDbName%%"));
+        assertEquals(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, tokens.get("%%mlStagingSchemasDbName%%"));
+        assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, tokens.get("%%mlFinalTriggersDbName%%"));
+        assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, tokens.get("%%mlFinalSchemasDbName%%"));
     }
 
     @Test

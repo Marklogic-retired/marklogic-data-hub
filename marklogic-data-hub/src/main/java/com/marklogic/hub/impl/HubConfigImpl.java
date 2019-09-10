@@ -192,6 +192,10 @@ public class HubConfigImpl implements HubConfig
         projectProperties = new Properties();
     }
 
+    public HubConfigImpl(Environment environment) {
+        this();
+        this.environment = environment;
+    }
 
     public void createProject(String projectDirString) {
         hubProject.createProject(projectDirString);
@@ -1630,15 +1634,15 @@ public class HubConfigImpl implements HubConfig
 
     private Map<String, String> getCustomTokens() {
         AppConfig appConfig = getAppConfig();
-
         if (appConfig == null) {
             appConfig = new DefaultAppConfigFactory().newAppConfig();
         }
-
-        return getCustomTokens(appConfig, appConfig.getCustomTokens());
+        modifyCustomTokensMap(appConfig);
+        return appConfig.getCustomTokens();
     }
 
-    private Map<String, String> getCustomTokens(AppConfig appConfig, Map<String, String> customTokens) {
+    protected void modifyCustomTokensMap(AppConfig appConfig) {
+        Map<String, String> customTokens = appConfig.getCustomTokens();
         customTokens.put("%%mlHost%%", appConfig == null ? environment.getProperty("mlHost") : appConfig.getHost());
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName == null ? environment.getProperty("mlStagingAppserverName") : stagingHttpName);
         customTokens.put("%%mlStagingPort%%", stagingPort == null ? environment.getProperty("mlStagingPort") : stagingPort.toString());
@@ -1714,8 +1718,6 @@ public class HubConfigImpl implements HubConfig
             }
         }
         */
-
-        return customTokens;
     }
 
     /**
@@ -1766,10 +1768,10 @@ public class HubConfigImpl implements HubConfig
 
         config.setSchemasPath(getUserSchemasDir().toString());
 
-        Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
+        modifyCustomTokensMap(config);
 
         String version = getJarVersion();
-        customTokens.put("%%mlHubVersion%%", version);
+        config.getCustomTokens().put("%%mlHubVersion%%", version);
 
         appConfig = config;
     }
