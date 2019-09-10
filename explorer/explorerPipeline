@@ -49,7 +49,9 @@ pipeline{
 				script{
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+				if(JIRA_ID.startsWith("DHFPROD")){
 				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
 				}
 				}
 			}
