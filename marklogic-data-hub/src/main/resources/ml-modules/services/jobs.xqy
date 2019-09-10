@@ -19,12 +19,12 @@ declare function ml-jobs:source-format() as xs:string {
 declare function ml-jobs:get(
   $context as map:map, $params as map:map
 ) as document-node()? {
-  map:get(xdmp:apply($caller,$extName,$modPath,"GET",$context,$params),"results")
+  map:get(xdmp:apply($caller,$extName,$modPath,"GET",$context,$params),"result")
 };
 declare function ml-jobs:delete(
   $context as map:map, $params as map:map
 ) as document-node()? {
-  map:get(xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params),"results")
+  map:get(xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params),"result")
 };
 declare function ml-jobs:post(
   $context as map:map, $params as map:map, $input as document-node()*
