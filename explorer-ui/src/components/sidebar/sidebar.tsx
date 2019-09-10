@@ -1,30 +1,31 @@
 import React from 'react';
 import Facets from '../facets/facets';
+import hubPropertiesConfig from '../../config/hub-properties.config';
 import styles from './sidebar.module.scss';
 
 const Sidebar = (props) => {
 
-  const handleFacetClick = (name, vals) => {
-    props.onFacetClick(name, vals);
+  const handleFacetClick = (constraint, vals) => {
+    props.onFacetClick(constraint, vals);
   }
 
   let hubFacets = {};
+  let sortedHubFacets = {};
   let entityFacets = {};
 
-  // Facets to display under Hub Properties
-  // https://project.marklogic.com/jira/browse/DHFPROD-3042
-  const hubKeys = [
-    'Collection', 'flowName', 'stepName', 
-    'jobID', 'createdOn', 'createdBy'
-  ];
-
   if (props.facets) {
-    // Assume if not hub facet, then entity facet
+    // If not hub facet, then entity facet
     Object.keys(props.facets).forEach(prop => {
-      if (hubKeys.includes(prop)) {
+      if (hubPropertiesConfig[prop]) {
         hubFacets[prop] = props.facets[prop];
       } else {
         entityFacets[prop] = props.facets[prop];
+      }
+    })
+    // Sort hub facets in config order
+    Object.keys(hubPropertiesConfig).forEach(prop => {
+      if (hubFacets[prop]) {
+        sortedHubFacets[prop] = hubFacets[prop];
       }
     })
   }
@@ -38,7 +39,7 @@ const Sidebar = (props) => {
       />
       <Facets 
         title="Hub Properties"
-        data={hubFacets}
+        data={sortedHubFacets}
         onFacetClick={handleFacetClick}
       />
     </div>

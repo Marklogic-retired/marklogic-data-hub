@@ -62,13 +62,13 @@ const Browse: React.FC = () => {
     setSearchParams({ ...searchParams, pageLength: pageSize, start: 1});
   }
 
-  const handleFacetClick = (name, vals) => {
-    console.log('Updated a facet ' + name + ': ' + vals);
+  const handleFacetClick = (constraint, vals) => {
+    console.log('Updated a facet ' + constraint + ': ' + vals);
     if (vals.length > 0) {
-      setSearchFacets({ ...searchFacets, [name]: vals});
+      setSearchFacets({ ...searchFacets, [constraint]: vals});
     } else {
       let newSearchFacets = { ...searchFacets };
-      delete newSearchFacets[name];
+      delete newSearchFacets[constraint];
       setSearchFacets(newSearchFacets);
     }
   }

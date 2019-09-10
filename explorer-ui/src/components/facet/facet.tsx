@@ -15,7 +15,7 @@ const Facet = (props) => {
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
       // pass facet state to parent
-      props.onFacetClick(props.name, [...checked, e.target.value]);
+      props.onFacetClick(props.constraint, [...checked, e.target.value]);
     } 
     // Deselection
     else if (index !== -1){
@@ -23,14 +23,14 @@ const Facet = (props) => {
       newChecked.splice(index, 1);
       setChecked(newChecked);
       // pass facet state to parent
-      props.onFacetClick(props.name, newChecked);
+      props.onFacetClick(props.constraint, newChecked);
     }
   }
 
   const handleClear = () => {
     setChecked([]);
     // pass facet state to parent
-    props.onFacetClick(props.name, []);
+    props.onFacetClick(props.constraint, []);
   }
 
   const numToShow = (props.data.facetValues.length > limit && more) ? 
