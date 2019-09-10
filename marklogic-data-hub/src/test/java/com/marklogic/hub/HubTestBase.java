@@ -36,10 +36,7 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -62,7 +59,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,6 +134,9 @@ public class HubTestBase {
 
     @Autowired
     protected LoadUserArtifactsCommand loadUserArtifactsCommand;
+
+    @Autowired
+    protected GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
 
     @Autowired
     protected Scaffolding scaffolding;
@@ -695,6 +697,22 @@ public class HubTestBase {
         return count;
     }
 
+    protected JSONObject getQueryResults(String query, String database) {
+        EvalResultIterator resultItr = runInDatabase(query, database);
+        if (resultItr == null || ! resultItr.hasNext()) {
+            return null;
+        }
+        EvalResult res = resultItr.next();
+
+        JSONObject json = null;
+        try {
+            json = (JSONObject) JSONParser.parseJSON(res.getString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     protected int getTelemetryInstallCount(){
         int count = 0;
         EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
@@ -959,6 +977,24 @@ public class HubTestBase {
         // Provides some time for post-commit triggers to complete
         try {
             Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
+        }
+    }
+
+    protected void generateFunctionMetadata(HubConfig hubConfig) {
+        logger.debug("Generating function metadata into MarkLogic");
+        List<Command> commands = new ArrayList<>();
+
+        commands.add(generateFunctionMetadataCommand);
+
+        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
+
+        // Provides some time for post-commit triggers to complete
+        try {
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
         }

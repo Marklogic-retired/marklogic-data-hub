@@ -1,0 +1,20 @@
+{
+  "language": "zxx",
+  "name": "OrderJSON-OrderJSONMapping",
+  "description": "",
+  "version": 0,
+  "targetEntityType": "Order-0.0.1/Order",
+  "sourceContext": "/",
+  "sourceURI": "",
+  "properties": {
+    "OrderID": {
+      "sourcedFrom": "OrderID"
+    },
+    "CustomerID": {
+      "sourcedFrom": "CustomerID"
+    },
+    "DateTimeFormat5": {
+      "sourcedFrom": "customDateTime('YYYYMMDDThhmmss',DateTimeFormat5)"
+    }
+  }
+}
