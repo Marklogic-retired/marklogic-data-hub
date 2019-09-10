@@ -9,6 +9,6 @@
   "authentication": "%%mlStagingAuth%%",
   "default-error-format": "json",
   "error-handler": "/MarkLogic/rest-api/error-handler.xqy",
-  "url-rewriter": "/MarkLogic/rest-api/rewriter.xml",
+  "url-rewriter": "/data-hub/rewriter/%%mlServerVersion%%-rewriter.xml",
   "rewrite-resolves-globally": true
 }
