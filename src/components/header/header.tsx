@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { Link, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
@@ -12,18 +13,24 @@ const { SubMenu } = Menu;
 
 const Header:React.FC<Props> = ({history}) => {
   const { user, userNotAuthenticated } = useContext(AuthContext);
-
-  const handleLogout = () => {
-    userNotAuthenticated();
-    history.push('/');
+  
+  const handleLogout = async () => {
+    try {
+      let response = await axios(`/datahub/v2/logout`);
+      console.log('response', response);
+      userNotAuthenticated();
+      history.push('/');
+    } catch (error) {
+      // console.log(error.response);
+    }
   };
 
   const showMenu = user.authenticated && (
-    <Menu 
+    <Menu
+      id="menu-links" 
       mode="horizontal"
       theme="dark"
-      defaultSelectedKeys={['1']}
-      defaultOpenKeys={['sub1']}
+      defaultSelectedKeys={['view']}
       style={{ lineHeight: '64px' }}
     >
       <Menu.Item key="view">
@@ -31,30 +38,28 @@ const Header:React.FC<Props> = ({history}) => {
         <Link to="/view"/>
       </Menu.Item>
       <Menu.Item key="browse">
-        Browse Entities
+        Browse Documents
         <Link to="/browse"/>
       </Menu.Item>
-      <SubMenu className = {styles.user}  title={<span><Icon style={{fontSize: '18px'}} type="user" /><span>{user.name}</span></span>}>
-        <Menu.Item onClick={handleLogout}>Sign Out</Menu.Item>
+      <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px'}} type="user" /><span id="username">{user.name}</span></span>}>
+        <Menu.Item id="sign-out" onClick={handleLogout}>Sign Out</Menu.Item>
       </SubMenu>
     </Menu>
   )
-    return (
+  return (
     <Layout.Header>
-      <Link to="/">
-        <div className={styles.iconContain}>
-          <div className={styles.icon}>
-            <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
-          </div>
+      <div className={styles.iconContain}>
+        <div id="logo" className={styles.icon}>
+          <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
         </div>
-        <div className={styles.title}> Data Hub Explorer </div>
-      </Link>
+      </div>
+      <div id="title" className={styles.title}>Data Hub Explorer</div>
       {showMenu}
-       <div className={styles.helpContain}>
+      <a id="help-icon" className={styles.helpContain} target="_blank" href="https://www.marklogic.com/">
         <Icon className={styles.help} type="question-circle"/>
-      </div> 
+      </a>
     </Layout.Header>
-    )
+  )
 }
 
 export default withRouter(Header);

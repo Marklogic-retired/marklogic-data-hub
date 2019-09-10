@@ -1,5 +1,4 @@
 .logo {
-
   color: white;
 }
 
@@ -12,12 +11,14 @@
 .iconContain {
   height: 0px;
   width: 240px;
+  position: relative;
+  left: -40px;
 }
 
 .title {
   font-size: 20px;
   float: left;
-  margin: 0px 40px 0px 60px;
+  margin: 0px 40px 0px 20px;
   color: silver;
   font-weight: bold;
   text-align: right;
@@ -33,10 +34,14 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
+.help:hover {
+  color: rgba(255, 255, 255, 0.98);
+}
+
 .helpContain {
   top: 0;
   right: 30px;
-  position: fixed;
+  position: absolute;
   color:white;
   z-index: 3000;
 }
