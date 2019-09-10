@@ -18,7 +18,7 @@ const EntityTable:React.FC<Props> = (props) => {
 
     let properties = entity.definition.properties.map(property => {
       let indexes: string[] = [];
-      if (entity.definition.primaryKey.includes(property.name)){
+      if (entity.definition.hasOwnProperty('primaryKey') && entity.definition.primaryKey.includes(property.name)){
         indexes.push('Primary Key');
       }
       if (entity.definition.elementRangeIndex.includes(property.name)){
@@ -83,8 +83,8 @@ const EntityTable:React.FC<Props> = (props) => {
     let documentCount = 0;
 
     if (props.facetValues.length) {
-      const name = entity.info.title.toLowerCase();
-      const collectionObject = props.facetValues.find(collection => collection.name === name + '-collection');
+      // const name = entity.info.title.toLowerCase();
+      const collectionObject = props.facetValues.find(collection => collection.name === entity.info.title);
       if (collectionObject) {
         documentCount = collectionObject.count;
       }
