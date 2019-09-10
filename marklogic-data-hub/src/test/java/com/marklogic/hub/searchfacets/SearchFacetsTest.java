@@ -1,8 +1,12 @@
 package com.marklogic.hub.searchfacets;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
@@ -89,5 +93,26 @@ public class SearchFacetsTest extends HubTestBase {
         assertTrue(facets.length == 6,"There should be 5 meta data range indexes and 1 collection index");
         assertTrue(Arrays.equals(facets, expectedFacets), "The returned facets on the empty search should match with" +
             "expected facets");
+    }
+
+    // Performing a search on harmonized docs and verify the snippet and matched docs information is
+    // returned
+    @Test
+    public void testSnippetAndSearchContent() throws InterruptedException, IOException {
+        DatabaseClient finalClient = hubConfig.newFinalClient();
+        QueryManager queryMgr = finalClient.newQueryManager();
+        StructuredQueryBuilder qb = queryMgr.newStructuredQueryBuilder();
+        StructuredQueryDefinition sqd = qb.and();
+        sqd.setCriteria("123");
+        StringHandle resultsHandle = new StringHandle();
+        resultsHandle.withFormat(Format.JSON);
+        queryMgr.search(sqd, resultsHandle);
+
+        // look for headers in content, snippets and matches data
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readValue(resultsHandle.get(), JsonNode.class);
+
+        assertTrue(node.get("snippet-format").asText().equals("snippet"), "Snippet format should be snippet and not empty");
+        assertTrue(node.get("results").get(0).get("matches") != null, "Matches array in results shouldn't be null");
     }
 }

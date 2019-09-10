@@ -155,6 +155,13 @@ declare %private function hent:fix-options($nodes as node()*)
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
+      case element(search:extract-document-data) return
+        element { fn:node-name($n) } {
+         $n/namespace::node(),
+         $n/@*,
+         hent:fix-options($n/node()),
+         <search:extract-path xmlns:search="http://marklogic.com/appservices/search" xmlns:es="http://marklogic.com/entity-services">/envelope/*:headers</search:extract-path>}
+      case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
