@@ -29,7 +29,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.web.model.FlowModel;
 import com.marklogic.hub.web.model.PluginModel;
 import com.marklogic.hub.web.model.entity_services.EntityModel;

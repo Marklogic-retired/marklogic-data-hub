@@ -34,7 +34,7 @@ import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;

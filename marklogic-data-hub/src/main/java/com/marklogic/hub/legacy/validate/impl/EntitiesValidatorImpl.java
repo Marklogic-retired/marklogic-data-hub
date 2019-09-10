@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.validate.impl;
+package com.marklogic.hub.legacy.validate.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
@@ -23,7 +23,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 
 public class EntitiesValidatorImpl extends ResourceManager implements EntitiesValidator {
     private static final String NAME = "ml:validate";

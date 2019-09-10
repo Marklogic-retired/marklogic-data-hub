@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.validate;
+package com.marklogic.hub.legacy.validate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.validate.impl.EntitiesValidatorImpl;
+import com.marklogic.hub.legacy.validate.impl.EntitiesValidatorImpl;
 
 /**
  * Uses a supplied DatabaseClient to run an entity validation against all entities defined or
