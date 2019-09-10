@@ -1,0 +1,22 @@
+button {
+  outline: none;
+}
+
+mat-form-field {
+  width: 100%;
+}
+mat-radio-group {
+  margin-left: 10px;
+}
+mat-radio-button {
+  margin-left: 10px;
+}
+
+.content {
+  background: #f3f3f3;
+  padding: 10px 15px 20px 15px;
+}
+
+mat-dialog-actions {
+  justify-content: flex-end;
+}

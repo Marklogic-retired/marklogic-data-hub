@@ -1,12 +1,15 @@
 import {Component, EventEmitter, Input, Output, OnInit} from '@angular/core';
 import { Step } from '../../../models/step.model';
+import { MatDialog } from '@angular/material';
 import {FlowsTooltips} from "../../../tooltips/flows.tooltips";
 import { Flow } from '../../../models/flow.model';
+import { AlertDialogComponent } from '../../../../common';
+import { ManageFlowsService } from "../../../services/manage-flows.service";
 
 const settings = {
   inputFilePath: {
     label: 'Source Directory Path',
-    description: 'Fhe filesystem location(s) to use for input. Default is current project path relative to the server location',
+    description: 'The filesystem location(s) to use for input. Default is current project path relative to the server location',
     value: '.'
   },
   fileTypes: {
@@ -116,8 +119,8 @@ export class CustomUiComponent implements OnInit{
   csvSep: string;
   uri:string;
 
-  
-  constructor() {
+
+  constructor(private manageFlowsService: ManageFlowsService,public dialog: MatDialog) {
   }
 
   ngOnInit(){
@@ -127,6 +130,22 @@ export class CustomUiComponent implements OnInit{
     this.OtherDelimiter = this.defaultOtherDelim();
     this.buildURIPreview();
     }
+  }
+
+  openValidateDialog(flow: Flow, step: any): void {
+    let title;
+    this.manageFlowsService.validateStep(this.flow.name, this.step.name + "-" + this.step.stepDefinitionType.toLowerCase()).subscribe(resp => {
+    if(resp["valid"]) {
+      title = "Validation Passed";
+    }
+    else {
+      title = "Validation Failed";
+    }
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '650px',
+      data: {title: title, alertMessage: resp["response"] }
+    });
+    });
   }
 
   config = settings;

@@ -62,7 +62,8 @@ declare private variable $system-resource-extensions-50 := map:map()
     =>map:with("ml:batches",    "batches")
     =>map:with("ml:hubstats",   "hubstats")
     =>map:with("ml:hubversion", "hubversion")
-    =>map:with("ml:smMerge",    "smMerge");
+    =>map:with("ml:smMerge",    "smMerge")
+    =>map:with("ml:stepValidate","stepValidate");
 
 declare function extut:check-untraced() as xs:boolean {
     if (exists($is-untraced)) then ()
