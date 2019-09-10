@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/v2/models")
 public class ModelController {
 
-  @Autowired protected ModelService modelService;
+  @Autowired
+  protected ModelService modelService;
 
   @RequestMapping(method = RequestMethod.GET)
   @ResponseBody

@@ -23,7 +23,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ModelService {
 
-  @Autowired DatabaseClientHolder dbClientHolder;
+  @Autowired
+  DatabaseClientHolder dbClientHolder;
 
   public static final String ENTITY_MODEL_COLLECTION_NAME =
       "http://marklogic.com/entity-services/models";
@@ -57,7 +58,6 @@ public class ModelService {
   /**
    * Get an entity info by name
    *
-   * @param modelName
    * @return a string representation for an entity
    */
   public String getModel(String modelName) {

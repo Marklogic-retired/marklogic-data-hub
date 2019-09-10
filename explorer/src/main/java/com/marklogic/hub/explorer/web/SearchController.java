@@ -3,6 +3,7 @@ package com.marklogic.hub.explorer.web;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.service.SearchService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/v2/search")
 public class SearchController {
 
-    @Autowired
-    private SearchService searchService;
+  @Autowired
+  private SearchService searchService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    @ResponseBody
-    public String search(@RequestBody SearchQuery searchQuery) {
-        return searchService.search(searchQuery).get();
-    }
+  @RequestMapping(method = RequestMethod.POST)
+  @ResponseBody
+  public String search(@RequestBody SearchQuery searchQuery) {
+    return searchService.search(searchQuery).get();
+  }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody

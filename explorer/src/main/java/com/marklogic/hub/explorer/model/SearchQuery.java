@@ -6,49 +6,51 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchQuery {
-    private String query;
-    private List<String> entityNames;
-    private long start;
-    private long pageLength;
-    private Map<String, List<String>> facets;
 
-    public String getQuery() {
-        return query;
-    }
+  private String query;
+  private List<String> entityNames;
+  private long start;
+  private long pageLength;
+  private Map<String, List<String>> facets;
 
-    public List<String> getEntityNames() {
-        return entityNames;
-    }
+  public String getQuery() {
+    return query;
+  }
 
-    public long getStart() {
-        return start;
-    }
+  public List<String> getEntityNames() {
+    return entityNames;
+  }
 
-    public long getPageLength() {
-        return pageLength;
-    }
+  public long getStart() {
+    return start;
+  }
 
-    public Map<String, List<String>> getFacets() {
-        return facets;
-    }
+  public long getPageLength() {
+    return pageLength;
+  }
 
-    public void setQuery(String query) {
-        this.query = query;
-    }
+  public Map<String, List<String>> getFacets() {
+    return facets;
+  }
 
-    public void setEntityName(List<String> entityNames) {
-        this.entityNames = (entityNames != null) ? entityNames : new ArrayList<>();
-    }
+  public void setQuery(String query) {
+    this.query = query;
+  }
 
-    public void setStart(long start) {
-        this.start = start;
-    }
+  public void setEntityName(List<String> entityNames) {
+    this.entityNames = (entityNames != null) ? entityNames : new ArrayList<>();
+  }
 
-    public void setPageLength(long pageLength) {
-        this.pageLength = pageLength;
-    }
+  public void setStart(long start) {
+    this.start = start;
+  }
 
-    public void setFacets(Map<String, List<String>> facets) {
-        this.facets = (facets != null) ? facets : new HashMap<>();
-    }
+  public void setPageLength(long pageLength) {
+    this.pageLength = pageLength;
+  }
+
+  public void setFacets(Map<String, List<String>> facets) {
+    this.facets = (facets != null) ? facets : new HashMap<>();
+  }
+
 }
